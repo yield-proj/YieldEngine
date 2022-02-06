@@ -30,6 +30,7 @@ public class GameHandler implements Runnable {
             game.getWindow().startGraphics();
             game.getWindow().getWindowG().repaint();
             end = System.nanoTime();
+
             try {
                 Thread.sleep(1000 / game.getConfiguration().fps);
             } catch (InterruptedException e) {
