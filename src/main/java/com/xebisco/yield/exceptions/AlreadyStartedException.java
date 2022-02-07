@@ -1,4 +1,4 @@
-package com.xebisco.yield.exception;
+package com.xebisco.yield.exceptions;
 
 public class AlreadyStartedException extends RuntimeException {
 

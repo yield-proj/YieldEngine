@@ -22,13 +22,19 @@ public class GameHandler implements Runnable {
         while (running) {
             start = System.nanoTime();
             float delta = (start - end) / 1_000_000_000f;
-            for(int i = 0; i < game.getExtensions().size(); i++) {
+            for (int i = 0; i < game.getExtensions().size(); i++) {
                 YldExtension extension = game.getExtensions().get(i);
                 extension.update(delta);
             }
+            game.setFrames(game.getFrames() + 1);
             game.update(delta);
+            game.process(delta);
+            if (game.getScene() != null)
+                game.updateScene(delta);
             game.getWindow().startGraphics();
             game.getWindow().getWindowG().repaint();
+            if(game.getInput() != null)
+                game.getInput().setClicking(false);
             end = System.nanoTime();
 
             try {

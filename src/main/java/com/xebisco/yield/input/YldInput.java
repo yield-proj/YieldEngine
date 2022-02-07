@@ -1,16 +1,30 @@
 package com.xebisco.yield.input;
 
+import com.xebisco.yield.Resolution;
+import com.xebisco.yield.Yld;
+import com.xebisco.yield.engine.YldWindow;
 import com.xebisco.yield.utils.YldAction;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class YldInput implements KeyListener {
+public class YldInput implements KeyListener, MouseListener {
 
     private HashMap<Keys, YldAction> shortcuts = new HashMap<>();
     private ArrayList<Integer> pressing = new ArrayList<>();
+    private boolean touching, clicking;
+    private final YldWindow window;
+
+    public YldInput(YldWindow window) {
+        this.window = window;
+        window.getFrame().addKeyListener(this);
+        window.getFrame().addMouseListener(this);
+    }
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -31,6 +45,31 @@ public class YldInput implements KeyListener {
         pressing.removeIf(s -> (s == e.getKeyCode()));
     }
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        clicking = true;
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        touching = true;
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        touching = false;
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
     public boolean isPressing(int...keyCode) {
         int contains = 0;
         int i = 0;
@@ -44,7 +83,7 @@ public class YldInput implements KeyListener {
         return contains == keyCode.length;
     }
 
-    public boolean justPressed(int...keyCode) {
+    public boolean justPressed(int... keyCode) {
         int contains = 0;
         int i = 0;
         while (i < keyCode.length) {
@@ -76,5 +115,53 @@ public class YldInput implements KeyListener {
 
     public void setPressing(ArrayList<Integer> pressing) {
         this.pressing = pressing;
+    }
+
+    public int getX() {
+        int p = MouseInfo.getPointerInfo().getLocation().x;
+        p -= window.getFrame().getX() + window.getFrame().getInsets().left;
+        if (Resolution.getActResolution() == null) {
+            if (p > window.getWindowG().getWidth())
+                p = window.getWindowG().getWidth();
+        } else {
+            p = (int) ((p / (float) window.getWindowG().getWidth()) * Resolution.getActResolution().getWidth());
+            if (p > Resolution.getActResolution().getWidth())
+                p = Resolution.getActResolution().getWidth();
+        }
+        if (p < 0)
+            p = 0;
+        return p;
+    }
+
+    public int getY() {
+        int p = MouseInfo.getPointerInfo().getLocation().y;
+        p -= window.getFrame().getY() + window.getFrame().getInsets().top;
+        if (Resolution.getActResolution() == null) {
+            if (p > window.getWindowG().getHeight())
+                p = window.getWindowG().getHeight();
+        } else {
+            p = (int) ((p / (float) window.getWindowG().getHeight()) * Resolution.getActResolution().getHeight());
+            if (p > Resolution.getActResolution().getHeight())
+                p = Resolution.getActResolution().getHeight();
+        }
+        if (p < 0)
+            p = 0;
+        return p;
+    }
+
+    public boolean isTouching() {
+        return touching;
+    }
+
+    public void setTouching(boolean touching) {
+        this.touching = touching;
+    }
+
+    public boolean isClicking() {
+        return clicking;
+    }
+
+    public void setClicking(boolean clicking) {
+        this.clicking = clicking;
     }
 }

@@ -10,6 +10,7 @@ public class YldGraphics {
     public final ArrayList<Obj> shapeRends = new ArrayList<>();
     private Color color = Color.CYAN;
     private Font font = new Font("arial", Font.BOLD, 20);
+    private ArrayList<YldFilter> filters = new ArrayList<>();
 
     public Obj rect(float x, float y, float width, float height, boolean filled) {
         Obj shape = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.RECT, filled, color, null, null, null);
@@ -41,6 +42,10 @@ public class YldGraphics {
         return shape;
     }
 
+    public Obj text(String text) {
+        return text(text, 0, 0);
+    }
+
     public Obj img(Image image, float x, float y, float width, float height) {
         Obj shape = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.RECT, false, color, null, null, image);
         shapeRends.add(shape);
@@ -63,6 +68,18 @@ public class YldGraphics {
 
     public Obj oval(float x, float y, float width, float height) {
         return oval(x, y, width, height, true);
+    }
+
+    public void addFilter(YldFilter filter) {
+        filters.add(filter);
+    }
+
+    public ArrayList<YldFilter> getFilters() {
+        return filters;
+    }
+
+    public void setFilters(ArrayList<YldFilter> filters) {
+        this.filters = filters;
     }
 
     public Color getColor() {

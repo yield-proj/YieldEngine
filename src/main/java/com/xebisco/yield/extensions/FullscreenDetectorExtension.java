@@ -8,21 +8,18 @@ public class FullscreenDetectorExtension extends YldExtension {
 
     private boolean fullscreen;
 
-    private int frames, fullscreenKey = KeyEvent.VK_F11;
+    private int fullscreenKey = KeyEvent.VK_F11;
+    private boolean importConfig = true;
 
     @Override
     public void update(float delta) {
-        frames++;
-        if(frames == 1 && fullscreen) {
-            setFullscreen(true);
+        if(importConfig) {
+            importConfig = false;
+            fullscreen = game.getConfiguration().fullscreen;
         }
         if(game.getInput().justPressed(fullscreenKey)) {
             setFullscreen(!fullscreen);
         }
-    }
-
-    public int getFrames() {
-        return frames;
     }
 
     public int getFullscreenKey() {

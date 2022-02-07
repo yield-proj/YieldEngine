@@ -3,21 +3,21 @@ package com.xebisco.yield;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class YldCamera {
+public class Resolution {
     private final BufferedImage image;
-    private static YldCamera actCamera;
+    private static Resolution actResolution;
     private static int standardImageType = BufferedImage.TYPE_INT_RGB;
     private final int width, height;
     private Color bgColor = new Color(0xFF1E2D74);
 
-    public YldCamera(int width, int height) {
+    public Resolution(int width, int height) {
         actC();
         this.width = width;
         this.height = height;
         image = new BufferedImage(width, height, standardImageType);
     }
 
-    public YldCamera(int width, int height, Color bgColor) {
+    public Resolution(int width, int height, Color bgColor) {
         actC();
         this.width = width;
         this.height = height;
@@ -26,8 +26,8 @@ public class YldCamera {
     }
 
     private void actC() {
-        if(actCamera == null) {
-            actCamera = this;
+        if(actResolution == null) {
+            actResolution = this;
         }
     }
 
@@ -43,20 +43,20 @@ public class YldCamera {
         this.bgColor = bgColor;
     }
 
-    public static YldCamera getActCamera() {
-        return actCamera;
+    public static Resolution getActResolution() {
+        return actResolution;
     }
 
     public static int getStandardImageType() {
         return standardImageType;
     }
 
-    public static void setActCamera(YldCamera actCamera) {
-        YldCamera.actCamera = actCamera;
+    public static void setActResolution(Resolution actCamera) {
+        Resolution.actResolution = actCamera;
     }
 
     public static void setStandardImageType(int standardImageType) {
-        YldCamera.standardImageType = standardImageType;
+        Resolution.standardImageType = standardImageType;
     }
 
     public int getHeight() {

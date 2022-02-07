@@ -3,33 +3,28 @@ package com.xebisco.yield;
 import com.xebisco.yield.config.GameConfiguration;
 import com.xebisco.yield.engine.GameHandler;
 import com.xebisco.yield.engine.YldWindow;
-import com.xebisco.yield.exception.AlreadyStartedException;
+import com.xebisco.yield.exceptions.AlreadyStartedException;
 import com.xebisco.yield.input.YldInput;
 
 import java.util.ArrayList;
 
-public class YldGame implements YldB {
+public class YldGame extends YldScene {
 
     private GameConfiguration configuration;
     private boolean started = false;
     private YldWindow window;
     private GameHandler handler;
     private final ArrayList<YldExtension> extensions = new ArrayList<>();
-    private int frames;
-    protected YldGraphics graphics;
-    protected YldInput input;
+    protected ArrayList<YldScene> scenes = new ArrayList<>();
+    protected YldScene scene;
 
     @Override
-    public void create() {
-
-    }
-
-    @Override
-    public void update(float delta) {
+    public final void start() {
 
     }
 
     public static void launch(YldGame game, GameConfiguration configuration) {
+        game.game = game;
         if (game.started)
             throw new AlreadyStartedException();
         game.started = true;
@@ -37,6 +32,8 @@ public class YldGame implements YldB {
         game.window = new YldWindow();
         if (configuration.title == null)
             game.window.getFrame().setTitle(game.getClass().getSimpleName() + " (Yield " + Yld.VERSION + ")");
+        else
+            game.window.getFrame().setTitle(configuration.title);
         if (!configuration.fullscreen)
             game.window.toWindow(configuration);
         else
@@ -44,10 +41,20 @@ public class YldGame implements YldB {
         game.handler = new GameHandler(game);
         game.window.getWindowG().setHandler(game.handler);
         game.setGraphics(game.window.getGraphics());
-        YldInput input = new YldInput();
-        game.window.getFrame().addKeyListener(input);
-        game.input = input;
+        game.input = new YldInput(game.window);
         game.handler.getGameThread().start();
+    }
+
+    public final void updateScene(float delta) {
+        if (scene.getFrames() == 0)
+            scene.create();
+        scene.setFrames(scene.getFrames() + 1);
+        if(scene.isCallStart()) {
+            scene.start();
+            scene.setCallStart(false);
+        }
+        scene.update(delta);
+        scene.process(delta);
     }
 
     public YldWindow getWindow() {
@@ -70,14 +77,6 @@ public class YldGame implements YldB {
         this.handler = handler;
     }
 
-    public int getFrames() {
-        return frames;
-    }
-
-    public void setFrames(int frames) {
-        this.frames = frames;
-    }
-
     public void addExtension(YldExtension extension) {
         extension.create();
         extension.setGame(this);
@@ -88,19 +87,43 @@ public class YldGame implements YldB {
         return extensions;
     }
 
-    public YldGraphics getGraphics() {
-        return graphics;
+    public void addScene(YldScene scene) {
+        scene.setInput(input);
+        scene.game = this;
+        scenes.add(scene);
     }
 
-    public void setGraphics(YldGraphics graphics) {
-        this.graphics = graphics;
+    public ArrayList<YldScene> getScenes() {
+        return scenes;
     }
 
-    public YldInput getInput() {
-        return input;
+    public void setScenes(ArrayList<YldScene> scenes) {
+        this.scenes = scenes;
     }
 
-    public void setInput(YldInput input) {
-        this.input = input;
+    public YldScene getScene() {
+        return scene;
+    }
+
+    public void setScene(YldScene scene) {
+        scene.setCallStart(true);
+        this.scene = scene;
+    }
+
+    public void setScene(String name) {
+        YldScene scene = null;
+        int i = 0;
+        while (i < scenes.size()) {
+            if (scenes.get(i).getClass().getSimpleName().hashCode() == name.hashCode()) {
+                if (scenes.get(i).getClass().getSimpleName().equals(name)) {
+                    scene = scenes.get(i);
+                    break;
+                }
+            }
+            i++;
+        }
+        if (scene == null)
+            throw new NullPointerException("none scene with name: " + name);
+        setScene(scene);
     }
 }
