@@ -2,7 +2,6 @@ package com.xebisco.yield.components;
 
 import com.xebisco.yield.Component;
 import com.xebisco.yield.Obj;
-import com.xebisco.yield.Yld;
 import com.xebisco.yield.YldGraphics;
 import com.xebisco.yield.graphics.Texture;
 
@@ -37,10 +36,26 @@ public class Renderer extends Component {
             if (!graphics.shapeRends.contains(obj)) {
                 graphics.shapeRends.add(obj);
             }
+            if(texture.getType() == Texture.TextureType.RECTANGLE) {
+                obj.type = Obj.ShapeType.RECT;
+            } else if(texture.getType() == Texture.TextureType.OVAL) {
+                obj.type = Obj.ShapeType.OVAL;
+            }
+            if(!texture.isImg()) {
+                obj.filled = !texture.getMaterial().isLined();
+            }
             obj.x = (int) transform.position.x;
             obj.y = (int) transform.position.y;
-            obj.x2 = (int) transform.scale.x;
-            obj.y2 = (int) transform.scale.y;
+            obj.x2 = (int) transform.size.x;
+            obj.y2 = (int) transform.size.y;
+            obj.rotationV = (int) -transform.rotation;
+            if(transform.middleRotation) {
+                obj.rotationX = (int) (transform.position.x + transform.size.x / 2);
+                obj.rotationY = (int) (transform.position.y + transform.size.y / 2);
+            } else {
+                obj.rotationX = (int) (transform.position.x + transform.middle.x);
+                obj.rotationY = (int) (transform.position.y + transform.middle.y);
+            }
         } else {
             graphics.shapeRends.remove(obj);
         }

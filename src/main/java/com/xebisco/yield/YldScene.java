@@ -2,6 +2,7 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.graphics.Texture;
 import com.xebisco.yield.input.YldInput;
+import com.xebisco.yield.physics.systems.PhysicsSystem;
 
 import javax.xml.soap.Text;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class YldScene implements YldB {
     protected YldGame game;
 
     public YldScene() {
-
+        addSystem(new PhysicsSystem());
     }
 
     @Override

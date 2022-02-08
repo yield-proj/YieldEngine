@@ -1,12 +1,15 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.components.Transform;
+import com.xebisco.yield.input.YldInput;
 
 public class Component implements YldB {
     private String name = getClass().getSimpleName();
     private int frames;
     private Entity entity;
     protected Transform transform;
+    protected YldGame game;
+    protected YldInput input;
 
     @Override
     public void create() {
@@ -56,5 +59,21 @@ public class Component implements YldB {
 
     public void setTransform(Transform transform) {
         this.transform = transform;
+    }
+
+    public YldGame getGame() {
+        return game;
+    }
+
+    public void setGame(YldGame game) {
+        this.game = game;
+    }
+
+    public YldInput getInput() {
+        return input;
+    }
+
+    public void setInput(YldInput input) {
+        this.input = input;
     }
 }

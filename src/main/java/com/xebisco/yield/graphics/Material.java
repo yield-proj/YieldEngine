@@ -5,6 +5,7 @@ import java.awt.*;
 public class Material {
 
     private Color color = Color.RED;
+    private boolean lined;
 
     public Material() {
     }
@@ -19,5 +20,13 @@ public class Material {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    public boolean isLined() {
+        return lined;
+    }
+
+    public void setLined(boolean lined) {
+        this.lined = lined;
     }
 }

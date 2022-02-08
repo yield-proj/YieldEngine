@@ -34,6 +34,9 @@ public final class Entity {
 
     public void addComponent(Component component) {
         component.transform = transform;
+        component.setGame(scene.game);
+        component.setInput(scene.game.input);
+        component.setEntity(this);
         component.create();
         components.add(component);
     }

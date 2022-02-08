@@ -1,7 +1,6 @@
 package com.xebisco.yield.input;
 
-import com.xebisco.yield.Resolution;
-import com.xebisco.yield.Yld;
+import com.xebisco.yield.View;
 import com.xebisco.yield.engine.YldWindow;
 import com.xebisco.yield.utils.YldAction;
 
@@ -120,13 +119,13 @@ public class YldInput implements KeyListener, MouseListener {
     public int getX() {
         int p = MouseInfo.getPointerInfo().getLocation().x;
         p -= window.getFrame().getX() + window.getFrame().getInsets().left;
-        if (Resolution.getActResolution() == null) {
+        if (View.getActView() == null) {
             if (p > window.getWindowG().getWidth())
                 p = window.getWindowG().getWidth();
         } else {
-            p = (int) ((p / (float) window.getWindowG().getWidth()) * Resolution.getActResolution().getWidth());
-            if (p > Resolution.getActResolution().getWidth())
-                p = Resolution.getActResolution().getWidth();
+            p = (int) ((p / (float) window.getWindowG().getWidth()) * View.getActView().getWidth());
+            if (p > View.getActView().getWidth())
+                p = View.getActView().getWidth();
         }
         if (p < 0)
             p = 0;
@@ -136,13 +135,13 @@ public class YldInput implements KeyListener, MouseListener {
     public int getY() {
         int p = MouseInfo.getPointerInfo().getLocation().y;
         p -= window.getFrame().getY() + window.getFrame().getInsets().top;
-        if (Resolution.getActResolution() == null) {
+        if (View.getActView() == null) {
             if (p > window.getWindowG().getHeight())
                 p = window.getWindowG().getHeight();
         } else {
-            p = (int) ((p / (float) window.getWindowG().getHeight()) * Resolution.getActResolution().getHeight());
-            if (p > Resolution.getActResolution().getHeight())
-                p = Resolution.getActResolution().getHeight();
+            p = (int) ((p / (float) window.getWindowG().getHeight()) * View.getActView().getHeight());
+            if (p > View.getActView().getHeight())
+                p = View.getActView().getHeight();
         }
         if (p < 0)
             p = 0;

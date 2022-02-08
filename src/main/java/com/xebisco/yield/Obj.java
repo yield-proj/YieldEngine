@@ -3,7 +3,7 @@ package com.xebisco.yield;
 import java.awt.*;
 
 public class Obj {
-    public int x, x2, y, y2, index = -1;
+    public int x, x2, y, y2, index = -1, rotationV, rotationX, rotationY;
     public ShapeType type;
     public boolean filled, center;
     public Color color, drawColor;
@@ -26,9 +26,9 @@ public class Obj {
     }
 
     public void center() {
-        if(Resolution.getActResolution() != null) {
-            x = Resolution.getActResolution().getWidth() / 2 - x2 / 2;
-            y = Resolution.getActResolution().getHeight() / 2 - y2 / 2;
+        if(View.getActView() != null) {
+            x = View.getActView().getWidth() / 2 - x2 / 2;
+            y = View.getActView().getHeight() / 2 - y2 / 2;
         }
     }
 

@@ -1,16 +1,12 @@
 package com.xebisco.yield.engine;
 
-import com.xebisco.yield.Obj;
-import com.xebisco.yield.Resolution;
-import com.xebisco.yield.YldExtension;
-import com.xebisco.yield.YldGraphics;
+import com.xebisco.yield.*;
 import com.xebisco.yield.config.WindowConfiguration;
 import com.xebisco.yield.exceptions.RendException;
 
 import javax.swing.*;
-import javax.tools.Tool;
 import java.awt.*;
-import java.util.Collections;
+import java.awt.geom.AffineTransform;
 import java.util.Objects;
 
 public class YldWindow {
@@ -91,12 +87,12 @@ public class YldWindow {
         protected void paintComponent(Graphics g1) {
             Graphics g = g1;
             int width = getWidth(), height = getHeight();
-            if (Resolution.getActResolution() != null) {
-                if (Resolution.getActResolution().getImage() != null) {
-                    g = Resolution.getActResolution().getImage().getGraphics();
-                    g.setColor(Resolution.getActResolution().getBgColor());
-                    width = Resolution.getActResolution().getImage().getWidth();
-                    height = Resolution.getActResolution().getImage().getHeight();
+            if (View.getActView() != null) {
+                if (View.getActView().getImage() != null) {
+                    g = View.getActView().getImage().getGraphics();
+                    g.setColor(View.getActView().getBgColor());
+                    width = View.getActView().getImage().getWidth();
+                    height = View.getActView().getImage().getHeight();
                 }
 
             } else {
@@ -113,8 +109,8 @@ public class YldWindow {
             }
             handleGraphics(g, handler.getGame().getGraphics());
 
-            if (Resolution.getActResolution() != null) {
-                g1.drawImage(Resolution.getActResolution().getImage(), 0, 0, getWidth(), getHeight(), this);
+            if (View.getActView() != null) {
+                g1.drawImage(View.getActView().getImage(), 0, 0, getWidth(), getHeight(), this);
             }
             g.dispose();
         }
@@ -126,7 +122,7 @@ public class YldWindow {
                     throw new RendException("index cannot be less than -1.");
                 }
                 if (rend.index != -1) {
-                    if(rend.index >= graphics.shapeRends.size())
+                    if (rend.index >= graphics.shapeRends.size())
                         rend.index = graphics.shapeRends.size() - 1;
                     int indexOf = graphics.shapeRends.indexOf(rend);
                     Obj rend1 = graphics.shapeRends.get(rend.index);
@@ -137,6 +133,9 @@ public class YldWindow {
             int i = 0;
             while (i < graphics.shapeRends.size()) {
                 Obj rend = graphics.shapeRends.get(i);
+                Graphics2D g2 = (Graphics2D) g;
+                AffineTransform transform = g2.getTransform();
+                g2.rotate(Math.toRadians(rend.rotationV), rend.rotationX, rend.rotationY);
                 if (rend.center) {
                     if (rend.x2 != 0 || rend.y2 != 0) {
                         rend.center();
@@ -170,7 +169,7 @@ public class YldWindow {
                     g.drawString(rend.value, rend.x, rend.y + rend.y2);
                 }
 
-
+                g2.setTransform(transform);
                 i++;
             }
         }
