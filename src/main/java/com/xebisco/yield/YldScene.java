@@ -1,5 +1,6 @@
 package com.xebisco.yield;
 
+import com.xebisco.yield.graphics.Material;
 import com.xebisco.yield.graphics.Texture;
 import com.xebisco.yield.input.YldInput;
 import com.xebisco.yield.physics.systems.PhysicsSystem;
@@ -115,10 +116,38 @@ public class YldScene implements YldB {
         this.game = game;
     }
 
-    public Entity entity(Texture texture) {
-        Entity entity = new Entity(this, texture);
+    public Entity instantiate(String name, Material material) {
+        Entity entity = new Entity(name, this, material);
         entities.add(entity);
         return entity;
+    }
+
+    public Entity instantiate(String name) {
+        return instantiate(name, new Material());
+    }
+
+    public Entity instantiate(Material material) {
+        return instantiate(null, material);
+    }
+
+    public boolean destroy(Entity entity) {
+        return entities.remove(entity);
+    }
+
+    public boolean destroy(String name) {
+        Entity entity = null;
+        int i = 0;
+        while (i < entities.size()) {
+            Entity e = entities.get(i);
+            if(e.getName().hashCode() == name.hashCode()) {
+                if(e.getName().equals(name)) {
+                    entity = e;
+                    break;
+                }
+            }
+            i++;
+        }
+        return entities.remove(entity);
     }
 
     @Deprecated

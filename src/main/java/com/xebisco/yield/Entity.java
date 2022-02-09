@@ -2,6 +2,7 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.components.Renderer;
 import com.xebisco.yield.components.Transform;
+import com.xebisco.yield.graphics.Material;
 import com.xebisco.yield.graphics.Texture;
 
 import java.util.ArrayList;
@@ -10,14 +11,18 @@ public final class Entity {
     private ArrayList<Component> components = new ArrayList<>();
     private Transform transform;
     private Renderer renderer;
-    private Texture texture;
+    private Material material;
+    private String name;
     private final YldScene scene;
 
-    public Entity(YldScene scene, Texture texture) {
-        this.texture = texture;
+    public Entity(String name, YldScene scene, Material material) {
+        if(name == null)
+            name = getClass().getSimpleName();
+        this.name = name;
+        this.material = material;
         this.scene = scene;
         addComponent(transform = new Transform());
-        addComponent(renderer = new Renderer(scene.getGraphics(), texture));
+        addComponent(renderer = new Renderer(scene.getGraphics(), material));
     }
 
     public void process(float delta) {
@@ -98,15 +103,23 @@ public final class Entity {
         this.renderer = renderer;
     }
 
-    public Texture getTexture() {
-        return texture;
+    public Material getMaterial() {
+        return material;
     }
 
-    public void setTexture(Texture texture) {
-        this.texture = texture;
+    public void setMaterial(Material material) {
+        this.material = material;
     }
 
     public YldScene getScene() {
         return scene;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
