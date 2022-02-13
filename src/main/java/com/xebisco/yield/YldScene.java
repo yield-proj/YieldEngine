@@ -11,13 +11,15 @@ public class YldScene implements YldB {
     private int frames;
     protected YldGraphics graphics = new YldGraphics();
     private ArrayList<Entity> entities = new ArrayList<>();
-    private ArrayList<ProcessSystem> systems = new ArrayList<>();
+    private ArrayList<YldSystem> systems = new ArrayList<>();
     protected YldInput input;
     private boolean callStart;
     protected YldGame game;
+    protected YldTime time = new YldTime();
 
     public YldScene() {
         //addSystem(new PhysicsSystem());
+        YldSystem timeSystem = addSystem(new YldTimeSystem());
     }
 
     @Override
@@ -37,33 +39,39 @@ public class YldScene implements YldB {
     public final void process(float delta) {
         int i = 0;
         while (i < systems.size()) {
-            ProcessSystem system = systems.get(i);
-            int i2 = 0;
-            while (i2 < entities.size()) {
-                List<Component> components = entities.get(i2).getComponents();
-                int i3 = 0;
-                while (i3 < components.size()) {
-                    Component component = components.get(i3);
-                    boolean call = false;
-                    if (system.componentFilters() != null) {
-                        for (int i4 = 0; i4 < system.componentFilters().length; i4++) {
-                            if (component.getName().hashCode() == system.componentFilters()[i4].hashCode()) {
-                                if (component.getName().equals(system.componentFilters()[i4])) {
-                                    call = true;
-                                    break;
+            YldSystem sys = systems.get(i);
+            if (sys instanceof ProcessSystem) {
+                ProcessSystem system = (ProcessSystem) sys;
+                int i2 = 0;
+                while (i2 < entities.size()) {
+                    List<Component> components = entities.get(i2).getComponents();
+                    int i3 = 0;
+                    while (i3 < components.size()) {
+                        Component component = components.get(i3);
+                        boolean call = false;
+                        if (system.componentFilters() != null) {
+                            for (int i4 = 0; i4 < system.componentFilters().length; i4++) {
+                                if (component.getName().hashCode() == system.componentFilters()[i4].hashCode()) {
+                                    if (component.getName().equals(system.componentFilters()[i4])) {
+                                        call = true;
+                                        break;
+                                    }
                                 }
                             }
+                        } else {
+                            call = true;
                         }
-                    } else {
-                        call = true;
-                    }
 
-                    if (call)
-                        system.process(component, delta);
-                    i3++;
+                        if (call)
+                            system.process(component, delta);
+                        i3++;
+                    }
+                    i2++;
                 }
-                i2++;
+            } else if (sys instanceof UpdateSystem) {
+                ((UpdateSystem) sys).update(delta);
             }
+
             i++;
         }
         i = 0;
@@ -119,6 +127,10 @@ public class YldScene implements YldB {
         return entity;
     }
 
+    public Entity instantiate() {
+        return instantiate(null);
+    }
+
     public boolean destroy(Entity entity) {
         return entities.remove(entity);
     }
@@ -128,8 +140,8 @@ public class YldScene implements YldB {
         int i = 0;
         while (i < entities.size()) {
             Entity e = entities.get(i);
-            if(e.getName().hashCode() == name.hashCode()) {
-                if(e.getName().equals(name)) {
+            if (e.getName().hashCode() == name.hashCode()) {
+                if (e.getName().equals(name)) {
                     entity = e;
                     break;
                 }
@@ -153,16 +165,25 @@ public class YldScene implements YldB {
         this.entities = entities;
     }
 
-    public ProcessSystem addSystem(ProcessSystem system) {
+    public YldSystem addSystem(YldSystem system) {
+        system.setScene(this);
         systems.add(system);
         return system;
     }
 
-    public ArrayList<ProcessSystem> getSystems() {
+    public ArrayList<YldSystem> getSystems() {
         return systems;
     }
 
-    public void setSystems(ArrayList<ProcessSystem> systems) {
+    public void setSystems(ArrayList<YldSystem> systems) {
         this.systems = systems;
+    }
+
+    public YldTime getTime() {
+        return time;
+    }
+
+    public void setTime(YldTime time) {
+        this.time = time;
     }
 }

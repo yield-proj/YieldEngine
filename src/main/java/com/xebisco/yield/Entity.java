@@ -2,6 +2,7 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.components.Renderer;
 import com.xebisco.yield.components.Transform;
+import com.xebisco.yield.graphics.Material;
 
 import java.util.ArrayList;
 
@@ -13,6 +14,8 @@ public final class Entity {
     private Transform selfTransform;
     private Renderer renderer;
     private String name;
+    private Material material = defaultMaterial;
+    private static Material defaultMaterial = new Material();
     private final YldScene scene;
 
     public Entity(String name, YldScene scene, Entity parent) {
@@ -63,6 +66,8 @@ public final class Entity {
         component.setGame(scene.game);
         component.setInput(scene.game.input);
         component.setEntity(this);
+        component.setScene(scene);
+        component.setTime(scene.time);
         component.create();
         components.add(component);
     }
@@ -170,6 +175,10 @@ public final class Entity {
         return entity;
     }
 
+    public Entity instantiate() {
+        return instantiate(null);
+    }
+
     public boolean destroy(Entity entity) {
         return children.remove(entity);
     }
@@ -217,5 +226,21 @@ public final class Entity {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
+
+    public static Material getDefaultMaterial() {
+        return defaultMaterial;
+    }
+
+    public static void setDefaultMaterial(Material defaultMaterial) {
+        Entity.defaultMaterial = defaultMaterial;
     }
 }

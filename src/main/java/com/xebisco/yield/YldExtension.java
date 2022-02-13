@@ -1,8 +1,5 @@
 package com.xebisco.yield;
 
-import com.xebisco.yield.YldB;
-import com.xebisco.yield.YldGame;
-
 import java.awt.*;
 
 public class YldExtension implements YldB {

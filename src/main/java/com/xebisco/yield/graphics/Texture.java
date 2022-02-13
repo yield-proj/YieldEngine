@@ -1,22 +1,23 @@
 package com.xebisco.yield.graphics;
 
+import com.xebisco.yield.RelativeFile;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
-public class Texture {
+public class Texture extends RelativeFile {
 
     private Image image;
-    private final String internalPath;
 
     public Texture(Image image) {
+        super("");
         this.image = image;
-        internalPath = "";
     }
 
-    public Texture(String internalPath) {
-        this.internalPath = internalPath;
-        this.image = new ImageIcon(Objects.requireNonNull(Texture.class.getResource(internalPath))).getImage();
+    public Texture(final String relativePath) {
+        super(relativePath);
+        this.image = new ImageIcon(Objects.requireNonNull(Texture.class.getResource(getPath()))).getImage();
     }
 
     public Image getImage() {
@@ -25,9 +26,5 @@ public class Texture {
 
     public void setImage(Image image) {
         this.image = image;
-    }
-
-    public String getInternalPath() {
-        return internalPath;
     }
 }
