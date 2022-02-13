@@ -42,6 +42,7 @@ public class YldGame extends YldScene {
         game.window.getWindowG().setHandler(game.handler);
         game.setGraphics(game.window.getGraphics());
         game.input = new YldInput(game.window);
+        game.scene = game;
         game.handler.getGameThread().start();
     }
 

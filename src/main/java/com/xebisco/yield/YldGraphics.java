@@ -12,6 +12,10 @@ public class YldGraphics {
     private Font font = new Font("arial", Font.BOLD, 20);
     private ArrayList<YldFilter> filters = new ArrayList<>();
 
+    public Obj sample() {
+        return rect(0, 0, 0, 0);
+    }
+
     public Obj rect(float x, float y, float width, float height, boolean filled) {
         Obj shape = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.RECT, filled, color, null, null, null);
         shapeRends.add(shape);

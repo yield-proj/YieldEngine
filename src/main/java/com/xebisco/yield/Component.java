@@ -25,6 +25,18 @@ public class Component implements YldB {
 
     }
 
+    public Entity instantiate(String name) {
+        return entity.instantiate(name);
+    }
+
+    public boolean destroy(Entity entity) {
+        return this.entity.destroy(entity);
+    }
+
+    public boolean destroy(String name) {
+        return entity.destroy(name);
+    }
+
     public String getName() {
         return name;
     }
@@ -54,11 +66,15 @@ public class Component implements YldB {
     }
 
     public Transform getTransform() {
-        return transform;
+        return entity.getTransform();
     }
 
-    public void setTransform(Transform transform) {
-        this.transform = transform;
+    public Transform getSelfTransform() {
+        return entity.getSelfTransform();
+    }
+
+    public void setSelfTransform(Transform selfTransform) {
+        entity.setSelfTransform(selfTransform);
     }
 
     public YldGame getGame() {

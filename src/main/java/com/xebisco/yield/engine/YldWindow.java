@@ -119,7 +119,7 @@ public class YldWindow {
             for (int i = 0; i < graphics.shapeRends.size(); i++) {
                 Obj rend = graphics.shapeRends.get(i);
                 if (rend.index < -1) {
-                    throw new RendException("index cannot be less than -1.");
+                    throw new RendException("index cannot be less than -1");
                 }
                 if (rend.index != -1) {
                     if (rend.index >= graphics.shapeRends.size())
@@ -149,16 +149,16 @@ public class YldWindow {
                 if (rend.type == Obj.ShapeType.RECT)
                     if (rend.image == null)
                         if (rend.filled)
-                            g.fillRect(rend.x, rend.y, rend.x2, rend.y2);
+                            g.fillRect(rend.x, rend.y, rend.x2 - rend.x, rend.y2 - rend.y);
                         else
-                            g.drawRect(rend.x, rend.y, rend.x2, rend.y2);
+                            g.drawRect(rend.x, rend.y, rend.x2 - rend.x, rend.y2 - rend.y);
                     else
-                        g.drawImage(rend.image, rend.x, rend.y, rend.x2, rend.y2, null);
+                        g.drawImage(rend.image, rend.x, rend.y, rend.x2 - rend.x, rend.y2 - rend.y, null);
                 else if (rend.type == Obj.ShapeType.OVAL)
                     if (rend.filled)
-                        g.fillOval(rend.x, rend.y, rend.x2, rend.y2);
+                        g.fillOval(rend.x, rend.y, rend.x2 - rend.x, rend.y2 - rend.y);
                     else
-                        g.drawOval(rend.x, rend.y, rend.x2, rend.y2);
+                        g.drawOval(rend.x, rend.y, rend.x2 - rend.x, rend.y2 - rend.y);
                 else if (rend.type == Obj.ShapeType.LINE)
                     g.drawLine(rend.x, rend.y, rend.x2, rend.y2);
                 else if (rend.type == Obj.ShapeType.POINT)

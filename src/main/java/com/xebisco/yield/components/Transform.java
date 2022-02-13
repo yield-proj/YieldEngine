@@ -4,7 +4,7 @@ import com.xebisco.yield.Component;
 import com.xebisco.yield.utils.Vector2;
 
 public class Transform extends Component {
-    public Vector2 position = new Vector2(), size = new Vector2(64, 64), middle;
+    public Vector2 position = new Vector2(), scale = new Vector2(1, 1), middle;
     public float rotation = 0;
     public boolean middleRotation = true;
 
@@ -19,5 +19,14 @@ public class Transform extends Component {
 
     public void rotate(float degrees) {
         rotation += degrees;
+    }
+
+    public static void setAs(Transform toSet, Transform transform) {
+        toSet.position = transform.position.get();
+        toSet.scale = transform.scale.get();
+        if (transform.middle != null)
+            toSet.middle = transform.middle.get();
+        toSet.rotation = transform.rotation;
+        toSet.middleRotation = transform.middleRotation;
     }
 }
