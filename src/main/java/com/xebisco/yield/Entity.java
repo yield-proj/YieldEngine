@@ -37,7 +37,7 @@ public final class Entity {
             component.update(delta);
             i++;
         }
-        if(children.size() > 0) {
+        if (children.size() > 0) {
             i = 0;
             while (i < children.size()) {
                 Entity e = children.get(i);
@@ -54,23 +54,22 @@ public final class Entity {
                 }
                 i++;
             }
-        } else {
-            i = 0;
-            while (i < scene.getEntities().size()) {
-                Entity e = scene.getEntities().get(i);
-                if (e.getIndex() < -1) {
-                    throw new IllegalArgumentException("index cannot be less than -1");
-                }
-                if (e.getIndex() != -1) {
-                    if (e.getIndex() >= scene.getEntities().size())
-                        e.setIndex(scene.getEntities().size() - 1);
-                    int indexOf = scene.getEntities().indexOf(e);
-                    Entity e1 = scene.getEntities().get(e.getIndex());
-                    scene.getEntities().set(e.getIndex(), e);
-                    scene.getEntities().set(indexOf, e1);
-                }
-                i++;
+        }
+        i = 0;
+        while (i < scene.getEntities().size()) {
+            Entity e = scene.getEntities().get(i);
+            if (e.getIndex() < -1) {
+                throw new IllegalArgumentException("index cannot be less than -1");
             }
+            if (e.getIndex() != -1) {
+                if (e.getIndex() >= scene.getEntities().size())
+                    e.setIndex(scene.getEntities().size() - 1);
+                int indexOf = scene.getEntities().indexOf(e);
+                Entity e1 = scene.getEntities().get(e.getIndex());
+                scene.getEntities().set(e.getIndex(), e);
+                scene.getEntities().set(indexOf, e1);
+            }
+            i++;
         }
 
         i = 0;
@@ -207,8 +206,8 @@ public final class Entity {
         int i = 0;
         while (i < children.size()) {
             Entity e = children.get(i);
-            if(e.getName().hashCode() == name.hashCode()) {
-                if(e.getName().equals(name)) {
+            if (e.getName().hashCode() == name.hashCode()) {
+                if (e.getName().equals(name)) {
                     entity = e;
                     break;
                 }
