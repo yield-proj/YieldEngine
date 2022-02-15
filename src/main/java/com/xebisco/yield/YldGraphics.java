@@ -8,7 +8,7 @@ import java.util.Objects;
 public class YldGraphics {
 
     public final ArrayList<Obj> shapeRends = new ArrayList<>();
-    private Color color = Color.CYAN;
+    private Color color = Colors.CYAN;
     private Font font = new Font("arial", Font.BOLD, 20);
     private ArrayList<YldFilter> filters = new ArrayList<>();
 

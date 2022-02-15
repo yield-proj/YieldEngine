@@ -24,8 +24,8 @@ public class Text extends Shape {
 
     @Override
     public void process(Obj obj) {
-        obj.x = (int) (getEntity().getTransform().position.x);
-        obj.y = (int) (getEntity().getTransform().position.y);
+        obj.x = (int) (getEntity().getTransform().position.x) - obj.x2 / 2;
+        obj.y = (int) (getEntity().getTransform().position.y) - obj.y2 / 2;
         obj.value = contents;
         obj.type = Obj.ShapeType.TEXT;
     }

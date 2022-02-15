@@ -2,7 +2,6 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.components.Renderer;
 import com.xebisco.yield.components.Transform;
-import com.xebisco.yield.graphics.Material;
 
 import java.util.ArrayList;
 

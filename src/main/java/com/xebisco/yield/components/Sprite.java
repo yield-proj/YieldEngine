@@ -2,10 +2,9 @@ package com.xebisco.yield.components;
 
 import com.xebisco.yield.Obj;
 import com.xebisco.yield.YldGraphics;
+import com.xebisco.yield.Color;
 
-import java.awt.*;
-
-public class Sprite extends Square {
+public class Sprite extends Rectangle {
     @Override
     public void process(Obj obj) {
         super.process(obj);

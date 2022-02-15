@@ -13,8 +13,17 @@ public class Transform extends Component {
         position.y += vector2.y;
     }
 
+    public void scale(Vector2 vector2) {
+        scale.x += vector2.x;
+        scale.y += vector2.y;
+    }
+
     public void translate(float x, float y) {
         translate(new Vector2(x, y));
+    }
+
+    public void scale(float x, float y) {
+        scale(new Vector2(x, y));
     }
 
     public void rotate(float degrees) {

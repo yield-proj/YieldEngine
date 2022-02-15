@@ -1,10 +1,8 @@
-package com.xebisco.yield.graphics;
-
-import java.awt.*;
+package com.xebisco.yield;
 
 public class Material {
 
-    private Color color = Color.RED;
+    private Color color = Colors.RED;
     private Texture texture;
     private boolean lined;
     private Shape shape = Shape.RECTANGLE;

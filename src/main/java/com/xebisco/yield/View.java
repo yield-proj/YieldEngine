@@ -1,6 +1,5 @@
 package com.xebisco.yield;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class View {
@@ -8,7 +7,7 @@ public class View {
     private static View actView;
     private static int standardImageType = BufferedImage.TYPE_INT_RGB;
     private final int width, height;
-    private Color bgColor = new Color(0xFF1E2D74);
+    private Color bgColor = new Color(.1176470588235294f, .1764705882352941f, .4549019607843137f);
 
     public View(int width, int height) {
         actC();

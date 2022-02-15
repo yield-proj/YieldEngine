@@ -6,9 +6,10 @@ import java.io.InputStream;
 
 public class RelativeFile {
     private InputStream stream;
-    private String path;
+    private String path, relativePath;
 
     public RelativeFile(final String relativePath) {
+        this.relativePath = relativePath;
         if(relativePath.hashCode() != "".hashCode()) {
             try {
                 path = new File(relativePath).getCanonicalPath();
@@ -33,5 +34,13 @@ public class RelativeFile {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getRelativePath() {
+        return relativePath;
+    }
+
+    public void setRelativePath(String relativePath) {
+        this.relativePath = relativePath;
     }
 }

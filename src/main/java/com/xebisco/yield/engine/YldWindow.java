@@ -6,6 +6,7 @@ import com.xebisco.yield.exceptions.RendException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.util.Objects;
 
@@ -90,7 +91,7 @@ public class YldWindow {
             if (View.getActView() != null) {
                 if (View.getActView().getImage() != null) {
                     g = View.getActView().getImage().getGraphics();
-                    g.setColor(View.getActView().getBgColor());
+                    g.setColor(new Color((int) (View.getActView().getBgColor().getR() * 255), (int) (View.getActView().getBgColor().getG() * 255), (int) (View.getActView().getBgColor().getB() * 255), (int) (View.getActView().getBgColor().getA() * 255)));
                     width = View.getActView().getImage().getWidth();
                     height = View.getActView().getImage().getHeight();
                 }
@@ -144,29 +145,43 @@ public class YldWindow {
                 for (int i2 = 0; i2 < graphics.getFilters().size(); i2++) {
                     graphics.getFilters().get(i2).process(rend);
                 }
-                g.setColor(rend.drawColor);
+                g.setColor(new Color((int) (rend.drawColor.getR() * 255), (int) (rend.drawColor.getG() * 255), (int) (rend.drawColor.getB() * 255), (int) (rend.drawColor.getA() * 255)));
                 g.setFont(rend.font);
+                int x = rend.x, x2 = rend.x2, y = rend.y, y2 = rend.y2;
+                if(rend.type != Obj.ShapeType.TEXT) {
+                    if(x2 < x) {
+                        int sx = x;
+                        x = x2;
+                        x2 = sx;
+                    }
+                    if(y2 < y) {
+                        int sy = y;
+                        y = y2;
+                        y2 = sy;
+                    }
+                }
+
                 if (rend.type == Obj.ShapeType.RECT)
                     if (rend.image == null)
                         if (rend.filled)
-                            g.fillRect(rend.x, rend.y, rend.x2 - rend.x, rend.y2 - rend.y);
+                            g.fillRect(x, y, x2 - x, y2 - y);
                         else
-                            g.drawRect(rend.x, rend.y, rend.x2 - rend.x, rend.y2 - rend.y);
+                            g.drawRect(x, y, x2 - x, y2 - y);
                     else
-                        g.drawImage(rend.image, rend.x, rend.y, rend.x2 - rend.x, rend.y2 - rend.y, null);
+                        g.drawImage(rend.image, x, y, x2 - x, y2 - y, null);
                 else if (rend.type == Obj.ShapeType.OVAL)
                     if (rend.filled)
-                        g.fillOval(rend.x, rend.y, rend.x2 - rend.x, rend.y2 - rend.y);
+                        g.fillOval(x, y, x2 - x, y2 - y);
                     else
-                        g.drawOval(rend.x, rend.y, rend.x2 - rend.x, rend.y2 - rend.y);
+                        g.drawOval(x, y, x2 - x, y2 - y);
                 else if (rend.type == Obj.ShapeType.LINE)
-                    g.drawLine(rend.x, rend.y, rend.x2, rend.y2);
+                    g.drawLine(x, y, x2, y2);
                 else if (rend.type == Obj.ShapeType.POINT)
-                    g.drawRect(rend.x, rend.y, 1, 1);
+                    g.drawRect(x, y, 1, 1);
                 else if (rend.type == Obj.ShapeType.TEXT) {
                     rend.x2 = g.getFontMetrics().stringWidth(rend.value);
                     rend.y2 = g.getFontMetrics().getHeight();
-                    g.drawString(rend.value, rend.x, rend.y + rend.y2);
+                    g.drawString(rend.value, x, y + y2);
                 }
 
                 g2.setTransform(transform);

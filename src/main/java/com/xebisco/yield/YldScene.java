@@ -1,6 +1,5 @@
 package com.xebisco.yield;
 
-import com.xebisco.yield.graphics.Material;
 import com.xebisco.yield.input.YldInput;
 
 import java.util.ArrayList;

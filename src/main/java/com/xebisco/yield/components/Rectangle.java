@@ -3,7 +3,7 @@ package com.xebisco.yield.components;
 import com.xebisco.yield.Obj;
 import com.xebisco.yield.YldGraphics;
 
-public class Square extends Shape {
+public class Rectangle extends Shape {
     private boolean filled = true;
     private float width = 64, height = 64;
 
@@ -19,10 +19,14 @@ public class Square extends Shape {
 
     @Override
     public void process(Obj obj) {
-        obj.x = (int) (getEntity().getTransform().position.x - width / 2);
-        obj.y = (int) (getEntity().getTransform().position.y - height / 2);
-        obj.x2 = (int) (getEntity().getTransform().position.x - width / 2 + getEntity().getTransform().scale.x * width);
-        obj.y2 = (int) (getEntity().getTransform().position.y - height / 2 + getEntity().getTransform().scale.y * height);
+        if (transform.middleRotation) {
+            obj.rotationX = (int) (getTransform().position.x + getTransform().scale.x);
+            obj.rotationY = (int) (getTransform().position.y + getTransform().scale.y);
+        }
+        obj.x = (int) (getEntity().getTransform().position.x - width / 2 * getTransform().scale.x);
+        obj.y = (int) (getEntity().getTransform().position.y - height / 2 * getTransform().scale.y);
+        obj.x2 = (int) (getEntity().getTransform().position.x - width / 2 * getTransform().scale.x + getEntity().getTransform().scale.x * width);
+        obj.y2 = (int) (getEntity().getTransform().position.y - height / 2 * getTransform().scale.y + getEntity().getTransform().scale.y * height);
         obj.filled = filled;
         obj.type = Obj.ShapeType.RECT;
     }

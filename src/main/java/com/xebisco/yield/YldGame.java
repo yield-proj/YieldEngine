@@ -1,6 +1,5 @@
 package com.xebisco.yield;
 
-import com.xebisco.yield.config.GameConfiguration;
 import com.xebisco.yield.engine.GameHandler;
 import com.xebisco.yield.engine.YldWindow;
 import com.xebisco.yield.exceptions.AlreadyStartedException;

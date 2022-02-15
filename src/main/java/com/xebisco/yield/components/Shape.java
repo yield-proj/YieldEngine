@@ -3,14 +3,14 @@ package com.xebisco.yield.components;
 import com.xebisco.yield.Component;
 import com.xebisco.yield.Obj;
 import com.xebisco.yield.YldGraphics;
-
-import java.awt.*;
+import com.xebisco.yield.Color;
+import com.xebisco.yield.Colors;
 
 public abstract class Shape extends Component {
 
     private Renderer renderer;
     private Obj obj;
-    private Color color = Color.CYAN;
+    private Color color = Colors.CYAN;
 
     @Override
     public void start() {
@@ -28,8 +28,17 @@ public abstract class Shape extends Component {
     public void update(float delta) {
         super.update(delta);
         obj.color = color;
+        obj.rotationV = (int) getTransform().rotation;
+        if (!transform.middleRotation) {
+            obj.rotationX = (int) getTransform().middle.x;
+            obj.rotationY = (int) getTransform().middle.y;
+        }
         process(obj);
         renderer.getGraphics().shapeRends.add(obj);
+    }
+
+    public void setCentered(boolean centered) {
+        obj.center = centered;
     }
 
     public abstract void process(Obj obj);
