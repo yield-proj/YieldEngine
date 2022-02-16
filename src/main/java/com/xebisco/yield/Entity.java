@@ -55,21 +55,16 @@ public final class Entity {
                 i++;
             }
         }
-        i = 0;
-        while (i < scene.getEntities().size()) {
-            Entity e = scene.getEntities().get(i);
-            if (e.getIndex() < -1) {
-                throw new IllegalArgumentException("index cannot be less than -1");
-            }
-            if (e.getIndex() != -1) {
-                if (e.getIndex() >= scene.getEntities().size())
-                    e.setIndex(scene.getEntities().size() - 1);
-                int indexOf = scene.getEntities().indexOf(e);
-                Entity e1 = scene.getEntities().get(e.getIndex());
-                scene.getEntities().set(e.getIndex(), e);
-                scene.getEntities().set(indexOf, e1);
-            }
-            i++;
+        if (index < -1) {
+            throw new IllegalArgumentException("index cannot be less than -1");
+        }
+        if (index != -1) {
+            if (index >= scene.getEntities().size())
+                index = scene.getEntities().size() - 1;
+            Entity e1 = scene.getEntities().get(index);
+            scene.getEntities().set(scene.getEntities().indexOf(this), e1);
+            scene.getEntities().set(index, this);
+            index = -1;
         }
 
         i = 0;
@@ -104,6 +99,22 @@ public final class Entity {
             i++;
         }
         return component;
+    }
+
+    public boolean containsComponent(String name) {
+        boolean contains = false;
+        int i = 0;
+        while (i < components.size()) {
+            Component component1 = components.get(i);
+            if (component1.getName().hashCode() == name.hashCode()) {
+                if (component1.getName().equals(name)) {
+                    contains = true;
+                    break;
+                }
+            }
+            i++;
+        }
+        return contains;
     }
 
     public Component getComponentInParent(String name) {

@@ -29,4 +29,12 @@ public class Vector2 {
     public Vector2 get() {
         return new Vector2(x, y);
     }
+
+    @Override
+    public String toString() {
+        return "Vector2{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

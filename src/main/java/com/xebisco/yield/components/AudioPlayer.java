@@ -71,8 +71,11 @@ public class AudioPlayer extends Component {
     }
 
     public void restart() {
-        position = 0;
-        clip.setFramePosition(0);
+        position = audioClip.getStartPos().getPosition();
+        if (audioClip.getStartPos().isMicrosecond())
+            clip.setMicrosecondPosition(0);
+        else
+            clip.setFramePosition(0);
     }
 
     public boolean isLoop() {

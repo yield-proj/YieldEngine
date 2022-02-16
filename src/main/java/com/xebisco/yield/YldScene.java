@@ -1,6 +1,7 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.input.YldInput;
+import com.xebisco.yield.systems.PhysicsSystem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +18,8 @@ public class YldScene implements YldB {
     protected YldTime time = new YldTime();
 
     public YldScene() {
-        //addSystem(new PhysicsSystem());
-        YldSystem timeSystem = addSystem(new YldTimeSystem());
+        addSystem(new PhysicsSystem());
+        addSystem(new YldTimeSystem());
     }
 
     @Override
@@ -150,6 +151,9 @@ public class YldScene implements YldB {
         return entities.remove(entity);
     }
 
+    /**
+     *  This method is deprecated and will be removed in a future version, use instantiate() instead.
+     */
     @Deprecated
     public Entity addEntity(Entity entity) {
         entities.add(entity);
@@ -164,10 +168,9 @@ public class YldScene implements YldB {
         this.entities = entities;
     }
 
-    public YldSystem addSystem(YldSystem system) {
+    public void addSystem(YldSystem system) {
         system.setScene(this);
         systems.add(system);
-        return system;
     }
 
     public ArrayList<YldSystem> getSystems() {
