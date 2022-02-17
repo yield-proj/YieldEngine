@@ -16,7 +16,7 @@ public class RelativeFile {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            stream = RelativeFile.class.getResourceAsStream(relativePath);
+            stream = getClass().getResourceAsStream(relativePath);
         }
     }
 

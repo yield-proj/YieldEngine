@@ -1,7 +1,7 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.input.YldInput;
-import com.xebisco.yield.systems.PhysicsSystem;
+import com.xebisco.yield.script.YldScript;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,6 @@ public class YldScene implements YldB {
     protected YldTime time = new YldTime();
 
     public YldScene() {
-        addSystem(new PhysicsSystem());
         addSystem(new YldTimeSystem());
     }
 
@@ -80,6 +79,11 @@ public class YldScene implements YldB {
             i++;
         }
     }
+
+    public YldScript load(String relativePath) {
+        return YldScript.load(relativePath);
+    }
+
 
     public YldGraphics getGraphics() {
         return graphics;

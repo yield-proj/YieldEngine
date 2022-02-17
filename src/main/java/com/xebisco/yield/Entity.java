@@ -2,6 +2,7 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.components.Renderer;
 import com.xebisco.yield.components.Transform;
+import com.xebisco.yield.script.YldScript;
 
 import java.util.ArrayList;
 
@@ -72,6 +73,10 @@ public final class Entity {
             children.get(i).process(delta);
             i++;
         }
+    }
+
+    public void addScript(YldScript script) {
+        
     }
 
     public void addComponent(Component component) {

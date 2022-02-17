@@ -1,12 +1,14 @@
 package com.xebisco.yield.engine;
 
-import com.xebisco.yield.*;
+import com.xebisco.yield.Obj;
+import com.xebisco.yield.View;
+import com.xebisco.yield.YldExtension;
+import com.xebisco.yield.YldGraphics;
 import com.xebisco.yield.config.WindowConfiguration;
 import com.xebisco.yield.exceptions.RendException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.util.Objects;
 
@@ -101,9 +103,11 @@ public class YldWindow {
             }
             g.fillRect(0, 0, width, height);
             this.g = g;
-            for (int i = 0; i < handler.getGame().getExtensions().size(); i++) {
-                YldExtension extension = handler.getGame().getExtensions().get(i);
-                extension.render(g);
+            if (handler.getGame().getExtensions() != null) {
+                for (int i = 0; i < handler.getGame().getExtensions().size(); i++) {
+                    YldExtension extension = handler.getGame().getExtensions().get(i);
+                    extension.render(g);
+                }
             }
             if (handler.getGame().getScene() != null) {
                 handleGraphics(g, handler.getGame().getScene().getGraphics());
@@ -148,13 +152,13 @@ public class YldWindow {
                 g.setColor(new Color((int) (rend.drawColor.getR() * 255), (int) (rend.drawColor.getG() * 255), (int) (rend.drawColor.getB() * 255), (int) (rend.drawColor.getA() * 255)));
                 g.setFont(rend.font);
                 int x = rend.x, x2 = rend.x2, y = rend.y, y2 = rend.y2;
-                if(rend.type != Obj.ShapeType.TEXT) {
-                    if(x2 < x) {
+                if (rend.type != Obj.ShapeType.TEXT) {
+                    if (x2 < x) {
                         int sx = x;
                         x = x2;
                         x2 = sx;
                     }
-                    if(y2 < y) {
+                    if (y2 < y) {
                         int sy = y;
                         y = y2;
                         y2 = sy;

@@ -12,8 +12,7 @@ public class AudioPlayer extends Component {
     private AudioInputStream audioInputStream;
     private long position;
     private boolean loop;
-
-    public AudioPlayer() {
+   public AudioPlayer() {
         try {
             clip = AudioSystem.getClip();
         } catch (LineUnavailableException e) {
