@@ -1,7 +1,6 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.input.YldInput;
-import com.xebisco.yield.script.YldScript;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +29,10 @@ public class YldScene implements YldB {
 
     }
 
+    public void exit() {
+
+    }
+
     @Override
     public void update(float delta) {
 
@@ -50,8 +53,8 @@ public class YldScene implements YldB {
                         boolean call = false;
                         if (system.componentFilters() != null) {
                             for (int i4 = 0; i4 < system.componentFilters().length; i4++) {
-                                if (component.getName().hashCode() == system.componentFilters()[i4].hashCode()) {
-                                    if (component.getName().equals(system.componentFilters()[i4])) {
+                                if (component.getClass().getName().hashCode() == system.componentFilters()[i4].getClass().getName().hashCode()) {
+                                    if (component.getClass().getName().equals(system.componentFilters()[i4].getClass().getName())) {
                                         call = true;
                                         break;
                                     }
@@ -79,11 +82,6 @@ public class YldScene implements YldB {
             i++;
         }
     }
-
-    public YldScript load(String relativePath) {
-        return YldScript.load(relativePath);
-    }
-
 
     public YldGraphics getGraphics() {
         return graphics;

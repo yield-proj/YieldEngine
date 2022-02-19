@@ -15,7 +15,7 @@ public abstract class Shape extends Component {
     @Override
     public void start() {
         super.start();
-        renderer = (Renderer) getComponent("Renderer");
+        renderer = getComponent(Renderer.class);
         Color previous = renderer.getGraphics().getColor();
         renderer.getGraphics().setColor(getColor());
         parameters(renderer.getGraphics());

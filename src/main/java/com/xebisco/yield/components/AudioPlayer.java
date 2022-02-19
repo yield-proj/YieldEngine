@@ -22,7 +22,7 @@ public class AudioPlayer extends Component {
 
     public void load(AudioClip audioClip) {
         try {
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(audioClip.getStream());
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(audioClip.getUrl());
             clip.open(inputStream);
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
             e.printStackTrace();

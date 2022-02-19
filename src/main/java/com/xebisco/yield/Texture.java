@@ -17,7 +17,7 @@ public class Texture extends RelativeFile {
 
     public Texture(Texture texture, int x, int y, int width, int height) {
         super(texture.getRelativePath());
-        final BufferedImage img = new BufferedImage(image.getWidth(null), image.getHeight(null), imageType);
+        final BufferedImage img = new BufferedImage(texture.getImage().getWidth(null), texture.getImage().getHeight(null), imageType);
         img.getGraphics().drawImage(texture.image, 0, 0, null);
         this.image = img.getSubimage(x, y, width, height);
     }

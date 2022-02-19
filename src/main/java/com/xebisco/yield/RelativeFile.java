@@ -3,29 +3,30 @@ package com.xebisco.yield;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 public class RelativeFile {
-    private InputStream stream;
+    private URL url;
     private String path, relativePath;
 
     public RelativeFile(final String relativePath) {
         this.relativePath = relativePath;
         if(relativePath.hashCode() != "".hashCode()) {
             try {
-                path = new File(relativePath).getCanonicalPath();
+                path = new File(".", relativePath).getCanonicalPath();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            stream = getClass().getResourceAsStream(relativePath);
+            url = getClass().getResource(relativePath);
         }
     }
 
-    public InputStream getStream() {
-        return stream;
+    public URL getUrl() {
+        return url;
     }
 
-    public void setStream(InputStream stream) {
-        this.stream = stream;
+    public void setUrl(URL url) {
+        this.url = url;
     }
 
     public String getPath() {

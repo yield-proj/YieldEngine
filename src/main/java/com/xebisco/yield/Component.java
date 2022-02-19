@@ -3,8 +3,9 @@ package com.xebisco.yield;
 import com.xebisco.yield.components.Transform;
 import com.xebisco.yield.input.YldInput;
 
+import java.util.ArrayList;
+
 public abstract class Component implements YldB {
-    private String name = getClass().getSimpleName();
     private int frames;
     private Entity entity;
     protected Transform transform;
@@ -43,14 +44,6 @@ public abstract class Component implements YldB {
         return entity.destroy(name);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getFrames() {
         return frames;
     }
@@ -59,8 +52,36 @@ public abstract class Component implements YldB {
         this.frames = frames;
     }
 
-    public Component getComponent(String name) {
-        return entity.getComponent(name);
+    public void addComponent(Component component) {
+        entity.addComponent(component);
+    }
+
+    public <T extends Component> T getComponent(Class<T> type) {
+        return entity.getComponent(type);
+    }
+
+    public <T extends Component> T getComponentInChildren(Class<T> type) {
+        return entity.getComponentInChildren(type);
+    }
+
+    public <T extends Component> T getComponentInParent(Class<T> type) {
+        return entity.getComponentInParent(type);
+    }
+
+    public void setMaterial(Material material) {
+        entity.setMaterial(material);
+    }
+
+    public Material getMaterial() {
+        return entity.getMaterial();
+    }
+
+    public ArrayList<Component> getComponents() {
+        return entity.getComponents();
+    }
+
+    public <T extends Component> boolean containsComponent(Class<T> type) {
+        return entity.containsComponent(type);
     }
 
     public Entity getEntity() {

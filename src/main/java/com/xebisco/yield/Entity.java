@@ -2,7 +2,6 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.components.Renderer;
 import com.xebisco.yield.components.Transform;
-import com.xebisco.yield.script.YldScript;
 
 import java.util.ArrayList;
 
@@ -75,10 +74,6 @@ public final class Entity {
         }
     }
 
-    public void addScript(YldScript script) {
-        
-    }
-
     public void addComponent(Component component) {
         component.transform = selfTransform;
         component.setGame(scene.game);
@@ -90,64 +85,38 @@ public final class Entity {
         components.add(component);
     }
 
-    public Component getComponent(String name) {
-        Component component = null;
+    public <T extends Component> T getComponent(Class<T> type) {
+        T component = null;
         int i = 0;
         while (i < components.size()) {
             Component component1 = components.get(i);
-            if (component1.getName().hashCode() == name.hashCode()) {
-                if (component1.getName().equals(name)) {
-                    component = component1;
+            if (component1.getClass().getName().hashCode() == type.getName().hashCode()) {
+                if (component1.getClass().getName().equals(type.getName())) {
+                    component = type.cast(component1);
                     break;
                 }
             }
             i++;
         }
+
         return component;
     }
 
-    public boolean containsComponent(String name) {
-        boolean contains = false;
-        int i = 0;
-        while (i < components.size()) {
-            Component component1 = components.get(i);
-            if (component1.getName().hashCode() == name.hashCode()) {
-                if (component1.getName().equals(name)) {
-                    contains = true;
-                    break;
-                }
-            }
-            i++;
-        }
-        return contains;
+    public <T extends Component> boolean containsComponent(Class<T> type) {
+        return getComponent(type) != null;
     }
 
-    public Component getComponentInParent(String name) {
-        return parent.getComponent(name);
+    public <T extends Component> T getComponentInParent(Class<T> type) {
+        return parent.getComponent(type);
     }
 
-    public Component getComponentInChildren(String name) {
-        Component c = null;
+    public <T extends Component> T getComponentInChildren(Class<T> type) {
+        T component = null;
         int i = 0;
-        while (c == null || i < children.size()) {
-            c = children.get(i).getComponent(name);
-            i++;
-        }
-        return c;
-    }
-
-    public Component getComponent(Component comp) {
-        String name = comp.getName();
-        Component component = null;
-        int i = 0;
-        while (i < components.size()) {
-            Component component1 = components.get(i);
-            if (component1.getName().hashCode() == name.hashCode()) {
-                if (component1.getName().equals(name)) {
-                    component = component1;
-                    break;
-                }
-            }
+        while (i < children.size()) {
+            component = children.get(i).getComponent(type);
+            if (component != null)
+                break;
             i++;
         }
         return component;

@@ -6,6 +6,7 @@ import com.xebisco.yield.exceptions.AlreadyStartedException;
 import com.xebisco.yield.input.YldInput;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class YldGame extends YldScene {
 
@@ -23,6 +24,7 @@ public class YldGame extends YldScene {
     }
 
     public static void launch(YldGame game, GameConfiguration configuration) {
+        Locale.setDefault(Locale.US);
         game.game = game;
         if (game.started)
             throw new AlreadyStartedException();
