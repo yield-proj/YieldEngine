@@ -63,7 +63,6 @@ public class Transform extends Component {
             chords = new String(chars);
             toPrint += chords;
             writer.print(toPrint);
-            Yld.log(toPrint);
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();

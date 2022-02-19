@@ -1,9 +1,7 @@
 package com.xebisco.yield.utils;
 
-import com.xebisco.yield.RelativeFile;
-
-public class TransformSave extends RelativeFile {
+public class TransformSave extends SaveFile {
     public TransformSave(String relativePath) {
-        super(relativePath + ".ylds");
+        super(relativePath);
     }
 }

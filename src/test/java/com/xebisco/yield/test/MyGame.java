@@ -5,9 +5,12 @@ import com.xebisco.yield.components.Rectangle;
 import com.xebisco.yield.components.Sprite;
 import com.xebisco.yield.extensions.AntialiasingExtension;
 import com.xebisco.yield.extensions.FullscreenDetectorExtension;
+import com.xebisco.yield.utils.Save;
+import com.xebisco.yield.utils.SaveFile;
 import com.xebisco.yield.utils.TransformSave;
 
 import java.awt.event.KeyEvent;
+import java.util.Objects;
 
 class MyGame extends YldGame {
 
@@ -68,10 +71,10 @@ class MovementScript extends Component {
         if (input.isPressing(KeyEvent.VK_A))
             transform.rotate(-1);
         if(input.justPressed(KeyEvent.VK_SPACE)) {
-            transform.saveTo(new TransformSave("/com/xebisco/yield/test/Save"));
+            Save.save(String.valueOf(transform.position.x), new SaveFile(), false);
         }
         if(input.justPressed(KeyEvent.VK_ENTER)) {
-            transform.load(new TransformSave("/com/xebisco/yield/test/Save"));
+            transform.position.x = Float.parseFloat(Objects.requireNonNull(Save.load(new SaveFile())));
         }
     }
 }
