@@ -43,7 +43,8 @@ public class YldGame extends YldScene {
         game.window.getWindowG().setHandler(game.handler);
         game.setGraphics(game.window.getGraphics());
         game.input = new YldInput(game.window);
-        game.scene = game;
+        game.addScene(game);
+        game.setScene(game);
         game.handler.getGameThread().start();
     }
 
@@ -92,6 +93,7 @@ public class YldGame extends YldScene {
     public void addScene(YldScene scene) {
         scene.setInput(input);
         scene.game = this;
+        scene.setMasterEntity(new Entity("masterEntity", this, null));
         scenes.add(scene);
     }
 

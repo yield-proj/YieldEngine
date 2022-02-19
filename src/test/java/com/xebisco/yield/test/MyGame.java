@@ -7,7 +7,6 @@ import com.xebisco.yield.extensions.AntialiasingExtension;
 import com.xebisco.yield.extensions.FullscreenDetectorExtension;
 import com.xebisco.yield.utils.Save;
 import com.xebisco.yield.utils.SaveFile;
-import com.xebisco.yield.utils.TransformSave;
 
 import java.awt.event.KeyEvent;
 import java.util.Objects;

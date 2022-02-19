@@ -9,7 +9,7 @@ public class YldScene implements YldB {
 
     private int frames;
     protected YldGraphics graphics = new YldGraphics();
-    private ArrayList<Entity> entities = new ArrayList<>();
+    private Entity masterEntity;
     private ArrayList<YldSystem> systems = new ArrayList<>();
     protected YldInput input;
     private boolean callStart;
@@ -39,48 +39,7 @@ public class YldScene implements YldB {
     }
 
     public final void process(float delta) {
-        int i = 0;
-        while (i < systems.size()) {
-            YldSystem sys = systems.get(i);
-            if (sys instanceof ProcessSystem) {
-                ProcessSystem system = (ProcessSystem) sys;
-                int i2 = 0;
-                while (i2 < entities.size()) {
-                    List<Component> components = entities.get(i2).getComponents();
-                    int i3 = 0;
-                    while (i3 < components.size()) {
-                        Component component = components.get(i3);
-                        boolean call = false;
-                        if (system.componentFilters() != null) {
-                            for (int i4 = 0; i4 < system.componentFilters().length; i4++) {
-                                if (component.getClass().getName().hashCode() == system.componentFilters()[i4].getClass().getName().hashCode()) {
-                                    if (component.getClass().getName().equals(system.componentFilters()[i4].getClass().getName())) {
-                                        call = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        } else {
-                            call = true;
-                        }
-
-                        if (call)
-                            system.process(component, delta);
-                        i3++;
-                    }
-                    i2++;
-                }
-            } else if (sys instanceof UpdateSystem) {
-                ((UpdateSystem) sys).update(delta);
-            }
-
-            i++;
-        }
-        i = 0;
-        while (i < entities.size()) {
-            entities.get(i).process(delta);
-            i++;
-        }
+        masterEntity.process(delta);
     }
 
     public YldGraphics getGraphics() {
@@ -124,50 +83,27 @@ public class YldScene implements YldB {
     }
 
     public Entity instantiate(String name) {
-        Entity entity = new Entity(name, this, null);
-        entities.add(entity);
-        return entity;
+        return masterEntity.instantiate(name);
     }
 
     public Entity instantiate() {
-        return instantiate(null);
+        return masterEntity.instantiate();
     }
 
     public boolean destroy(Entity entity) {
-        return entities.remove(entity);
+        return masterEntity.destroy(entity);
     }
 
     public boolean destroy(String name) {
-        Entity entity = null;
-        int i = 0;
-        while (i < entities.size()) {
-            Entity e = entities.get(i);
-            if (e.getName().hashCode() == name.hashCode()) {
-                if (e.getName().equals(name)) {
-                    entity = e;
-                    break;
-                }
-            }
-            i++;
-        }
-        return entities.remove(entity);
+        return masterEntity.destroy(name);
     }
 
-    /**
-     *  This method is deprecated and will be removed in a future version, use instantiate() instead.
-     */
-    @Deprecated
-    public Entity addEntity(Entity entity) {
-        entities.add(entity);
-        return entity;
+    public Entity getMasterEntity() {
+        return masterEntity;
     }
 
-    public ArrayList<Entity> getEntities() {
-        return entities;
-    }
-
-    public void setEntities(ArrayList<Entity> entities) {
-        this.entities = entities;
+    public void setMasterEntity(Entity masterEntity) {
+        this.masterEntity = masterEntity;
     }
 
     public void addSystem(YldSystem system) {
