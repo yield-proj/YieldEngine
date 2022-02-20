@@ -93,6 +93,7 @@ public class YldGame extends YldScene {
     public void addScene(YldScene scene) {
         scene.setInput(input);
         scene.game = this;
+        scene.time = new YldTime(handler);
         scene.setMasterEntity(new Entity("masterEntity", this, null));
         scenes.add(scene);
     }

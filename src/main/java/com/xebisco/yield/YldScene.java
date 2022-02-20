@@ -14,7 +14,7 @@ public class YldScene implements YldB {
     protected YldInput input;
     private boolean callStart;
     protected YldGame game;
-    protected YldTime time = new YldTime();
+    protected YldTime time;
 
     public YldScene() {
         addSystem(new YldTimeSystem());

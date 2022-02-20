@@ -7,11 +7,12 @@ public class GameHandler implements Runnable {
 
     private final Thread gameThread = new Thread(this);
     private final YldGame game;
+    private int fps;
     private boolean running;
-
 
     public GameHandler(YldGame game) {
         this.game = game;
+        fps = game.getConfiguration().fps;
     }
 
     @Override
@@ -38,7 +39,7 @@ public class GameHandler implements Runnable {
             end = System.nanoTime();
 
             try {
-                Thread.sleep(1000 / game.getConfiguration().fps);
+                Thread.sleep(1000 / fps);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -64,5 +65,13 @@ public class GameHandler implements Runnable {
 
     public YldGame getGame() {
         return game;
+    }
+
+    public int getFps() {
+        return fps;
+    }
+
+    public void setFps(int fps) {
+        this.fps = fps;
     }
 }
