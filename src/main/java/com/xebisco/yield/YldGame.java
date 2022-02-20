@@ -131,4 +131,21 @@ public class YldGame extends YldScene {
             throw new NullPointerException("none scene with name: " + name);
         setScene(scene);
     }
+
+    public <T extends YldScene> void setScene(Class<T> type) {
+        YldScene scene = null;
+        int i = 0;
+        while (i < scenes.size()) {
+            if (scenes.get(i).getClass().getName().hashCode() == type.getName().hashCode()) {
+                if (scenes.get(i).getClass().getName().equals(type.getName())) {
+                    scene = scenes.get(i);
+                    break;
+                }
+            }
+            i++;
+        }
+        if (scene == null)
+            throw new NullPointerException("none scene with name: " + type.getName());
+        setScene(scene);
+    }
 }
