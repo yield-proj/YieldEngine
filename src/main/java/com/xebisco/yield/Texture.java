@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Texture extends RelativeFile {
 
     private Image image;
-    public static int imageType = BufferedImage.SCALE_SMOOTH;
+    public static int imageType = BufferedImage.TYPE_INT_ARGB;
 
     public Texture(Image image) {
         super("");
