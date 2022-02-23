@@ -1,9 +1,10 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.input.YldInput;
+import com.xebisco.yield.systems.MiddlePointSystem;
+import com.xebisco.yield.systems.YldTimeSystem;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class YldScene implements YldB {
 
@@ -18,6 +19,7 @@ public class YldScene implements YldB {
 
     public YldScene() {
         addSystem(new YldTimeSystem());
+        addSystem(new MiddlePointSystem());
     }
 
     @Override

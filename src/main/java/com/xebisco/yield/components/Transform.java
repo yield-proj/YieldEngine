@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.Scanner;
 
 public class Transform extends Component {
-    public Vector2 position = new Vector2(), scale = new Vector2(1, 1), middle;
+    public Vector2 position = new Vector2(), scale = new Vector2(1, 1), middle = new Vector2(0, 0);
     public float rotation = 0;
     public boolean middleRotation = true;
 

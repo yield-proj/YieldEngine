@@ -3,7 +3,7 @@ package com.xebisco.yield;
 import com.xebisco.yield.engine.GameHandler;
 
 public class YldTime {
-    protected float delta, fps;
+    private float delta, fps;
     private GameHandler gameHandler;
 
     public YldTime(GameHandler gameHandler) {
@@ -32,5 +32,15 @@ public class YldTime {
 
     public void setGameHandler(GameHandler gameHandler) {
         this.gameHandler = gameHandler;
+    }
+
+    public void setDelta(float delta)
+    {
+        this.delta = delta;
+    }
+
+    public void setFps(float fps)
+    {
+        this.fps = fps;
     }
 }

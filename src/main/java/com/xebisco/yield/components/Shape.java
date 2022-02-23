@@ -6,14 +6,16 @@ import com.xebisco.yield.YldGraphics;
 import com.xebisco.yield.Color;
 import com.xebisco.yield.Colors;
 
-public abstract class Shape extends Component {
+public abstract class Shape extends Component
+{
 
     private Renderer renderer;
     private Obj obj;
     private Color color = Colors.CYAN;
 
     @Override
-    public void start() {
+    public void start()
+    {
         super.start();
         renderer = getComponent(Renderer.class);
         Color previous = renderer.getGraphics().getColor();
@@ -25,40 +27,45 @@ public abstract class Shape extends Component {
     }
 
     @Override
-    public void update(float delta) {
+    public void update(float delta)
+    {
         super.update(delta);
         obj.color = color;
         obj.rotationV = (int) getTransform().rotation;
-        if (!transform.middleRotation) {
-            obj.rotationX = (int) getTransform().middle.x;
-            obj.rotationY = (int) getTransform().middle.y;
-        }
+        obj.rotationX = (int) getTransform().middle.x;
+        obj.rotationY = (int) getTransform().middle.y;
         process(obj);
         renderer.getGraphics().shapeRends.add(obj);
     }
 
-    public void setCentered(boolean centered) {
+    public void setCentered(boolean centered)
+    {
         obj.center = centered;
     }
 
     public abstract void process(Obj obj);
 
     public abstract void parameters(YldGraphics graphics);
+
     public abstract void previous(YldGraphics graphics);
 
-    public Obj getObj() {
+    public Obj getObj()
+    {
         return obj;
     }
 
-    public void setObj(Obj obj) {
+    public void setObj(Obj obj)
+    {
         this.obj = obj;
     }
 
-    public Color getColor() {
+    public Color getColor()
+    {
         return color;
     }
 
-    public void setColor(Color color) {
+    public void setColor(Color color)
+    {
         this.color = color;
     }
 }

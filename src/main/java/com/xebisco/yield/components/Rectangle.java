@@ -19,10 +19,6 @@ public class Rectangle extends Shape {
 
     @Override
     public void process(Obj obj) {
-        if (transform.middleRotation) {
-            obj.rotationX = (int) (getTransform().position.x + getTransform().scale.x);
-            obj.rotationY = (int) (getTransform().position.y + getTransform().scale.y);
-        }
         obj.x = (int) (getEntity().getTransform().position.x - width / 2 * getTransform().scale.x);
         obj.y = (int) (getEntity().getTransform().position.y - height / 2 * getTransform().scale.y);
         obj.x2 = (int) (getEntity().getTransform().position.x - width / 2 * getTransform().scale.x + getEntity().getTransform().scale.x * width);
