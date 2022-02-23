@@ -18,6 +18,7 @@ public final class Entity
     private Material material = defaultMaterial;
     private static Material defaultMaterial = new Material();
     private final YldScene scene;
+    private boolean active = true;
 
     public Entity(String name, YldScene scene, Entity parent)
     {
@@ -32,91 +33,94 @@ public final class Entity
 
     public void process(float delta)
     {
-        int i = 0;
-        while (i < scene.getSystems().size())
+        if (active)
         {
-            YldSystem sys = scene.getSystems().get(i);
-            if (sys instanceof ProcessSystem)
+            int i = 0;
+            while (i < scene.getSystems().size())
             {
-                ProcessSystem system = (ProcessSystem) sys;
-                int i1 = 0;
-                while (i1 < components.size())
+                YldSystem sys = scene.getSystems().get(i);
+                if (sys instanceof ProcessSystem)
                 {
-                    Component component = components.get(i1);
-                    boolean call = false;
-                    if (system.componentFilters() != null)
+                    ProcessSystem system = (ProcessSystem) sys;
+                    int i1 = 0;
+                    while (i1 < components.size())
                     {
-                        for (int i4 = 0; i4 < system.componentFilters().length; i4++)
+                        Component component = components.get(i1);
+                        boolean call = false;
+                        if (system.componentFilters() != null)
                         {
-                            if (component.getClass().getName().hashCode() == system.componentFilters()[i4].hashCode())
+                            for (int i4 = 0; i4 < system.componentFilters().length; i4++)
                             {
-                                if (component.getClass().getName().equals(system.componentFilters()[i4]))
+                                if (component.getClass().getName().hashCode() == system.componentFilters()[i4].hashCode())
                                 {
-                                    call = true;
-                                    break;
+                                    if (component.getClass().getName().equals(system.componentFilters()[i4]))
+                                    {
+                                        call = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
-                    }
-                    else
-                    {
-                        call = true;
-                    }
+                        else
+                        {
+                            call = true;
+                        }
 
-                    if (call)
-                        system.process(component, delta);
-                    i1++;
+                        if (call)
+                            system.process(component, delta);
+                        i1++;
+                    }
+                }
+                else if (sys instanceof UpdateSystem)
+                {
+                    ((UpdateSystem) sys).update(delta);
+                }
+
+                i++;
+            }
+            i = 0;
+            while (i < components.size())
+            {
+                Component component = components.get(i);
+                component.setFrames(component.getFrames() + 1);
+                if (component.getFrames() == 1)
+                    component.start();
+                component.update(delta);
+                i++;
+            }
+            if (children.size() > 0)
+            {
+                i = 0;
+                while (i < children.size())
+                {
+                    Entity e = children.get(i);
+                    if (e.getIndex() < -1)
+                    {
+                        throw new IllegalArgumentException("index cannot be less than -1");
+                    }
+                    if (e.getIndex() != -1)
+                    {
+                        if (e.getIndex() >= children.size())
+                            e.setIndex(children.size() - 1);
+                        int indexOf = children.indexOf(e);
+                        Entity e1 = children.get(e.getIndex());
+                        children.set(e.getIndex(), e);
+                        children.set(indexOf, e1);
+                    }
+                    i++;
                 }
             }
-            else if (sys instanceof UpdateSystem)
+            if (index < -1)
             {
-                ((UpdateSystem) sys).update(delta);
+                throw new IllegalArgumentException("index cannot be less than -1");
             }
 
-            i++;
-        }
-        i = 0;
-        while (i < components.size())
-        {
-            Component component = components.get(i);
-            component.setFrames(component.getFrames() + 1);
-            if (component.getFrames() == 1)
-                component.start();
-            component.update(delta);
-            i++;
-        }
-        if (children.size() > 0)
-        {
             i = 0;
             while (i < children.size())
             {
-                Entity e = children.get(i);
-                if (e.getIndex() < -1)
-                {
-                    throw new IllegalArgumentException("index cannot be less than -1");
-                }
-                if (e.getIndex() != -1)
-                {
-                    if (e.getIndex() >= children.size())
-                        e.setIndex(children.size() - 1);
-                    int indexOf = children.indexOf(e);
-                    Entity e1 = children.get(e.getIndex());
-                    children.set(e.getIndex(), e);
-                    children.set(indexOf, e1);
-                }
+                children.get(i).process(delta);
                 i++;
             }
-        }
-        if (index < -1)
-        {
-            throw new IllegalArgumentException("index cannot be less than -1");
-        }
-
-        i = 0;
-        while (i < children.size())
-        {
-            children.get(i).process(delta);
-            i++;
         }
     }
 
@@ -127,6 +131,7 @@ public final class Entity
         component.setInput(scene.game.input);
         component.setEntity(this);
         component.setScene(scene);
+        component.setGraphics(scene.graphics);
         component.setTime(scene.time);
         component.create();
         components.add(component);
@@ -329,5 +334,15 @@ public final class Entity
     public static void setDefaultMaterial(Material defaultMaterial)
     {
         Entity.defaultMaterial = defaultMaterial;
+    }
+
+    public boolean isActive()
+    {
+        return active;
+    }
+
+    public void setActive(boolean active)
+    {
+        this.active = active;
     }
 }

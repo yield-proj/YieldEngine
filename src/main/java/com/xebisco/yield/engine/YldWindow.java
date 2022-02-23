@@ -12,22 +12,26 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.Objects;
 
-public class YldWindow {
+public class YldWindow
+{
     private final JFrame frame;
     private final YldWindowG windowG;
     private final YldGraphics graphics = new YldGraphics();
 
-    public YldWindow() {
+    public YldWindow()
+    {
         Toolkit.getDefaultToolkit().setDynamicLayout(false);
         frame = new JFrame();
         frame.add(windowG = new YldWindowG());
     }
 
-    public void startGraphics() {
+    public void startGraphics()
+    {
 
     }
 
-    public void toWindow(WindowConfiguration configuration) {
+    public void toWindow(WindowConfiguration configuration)
+    {
         frame.dispose();
         if (configuration.hideMouse)
             frame.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(
@@ -39,7 +43,8 @@ public class YldWindow {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         windowG.setDoubleBuffered(configuration.doubleBuffered);
         frame.setSize(configuration.width, configuration.height);
-        if (configuration.position == WindowConfiguration.WindowPos.CENTER) {
+        if (configuration.position == WindowConfiguration.WindowPos.CENTER)
+        {
             frame.setLocationRelativeTo(null);
         }
         frame.setExtendedState(JFrame.NORMAL);
@@ -49,7 +54,8 @@ public class YldWindow {
         frame.requestFocus();
     }
 
-    public void toFullscreen(WindowConfiguration configuration) {
+    public void toFullscreen(WindowConfiguration configuration)
+    {
         frame.dispose();
         if (configuration.hideMouse)
             frame.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(
@@ -66,15 +72,18 @@ public class YldWindow {
         frame.requestFocus();
     }
 
-    public JFrame getFrame() {
+    public JFrame getFrame()
+    {
         return frame;
     }
 
-    public YldWindowG getWindowG() {
+    public YldWindowG getWindowG()
+    {
         return windowG;
     }
 
-    public static class YldWindowG extends JPanel {
+    public static class YldWindowG extends JPanel
+    {
 
         private GameHandler handler;
 
@@ -82,51 +91,65 @@ public class YldWindow {
         private Color bgColor = new Color(0xFF1E2D74);
 
         @Override
-        public void update(Graphics g) {
+        public void update(Graphics g)
+        {
             paintComponent(g);
         }
 
         @Override
-        protected void paintComponent(Graphics g1) {
+        protected void paintComponent(Graphics g1)
+        {
             Graphics g = g1;
             int width = getWidth(), height = getHeight();
-            if (View.getActView() != null) {
-                if (View.getActView().getImage() != null) {
+            if (View.getActView() != null)
+            {
+                if (View.getActView().getImage() != null)
+                {
                     g = View.getActView().getImage().getGraphics();
                     g.setColor(new Color((int) (View.getActView().getBgColor().getR() * 255), (int) (View.getActView().getBgColor().getG() * 255), (int) (View.getActView().getBgColor().getB() * 255), (int) (View.getActView().getBgColor().getA() * 255)));
                     width = View.getActView().getImage().getWidth();
                     height = View.getActView().getImage().getHeight();
                 }
 
-            } else {
+            }
+            else
+            {
                 g.setColor(bgColor);
             }
             g.fillRect(0, 0, width, height);
             this.g = g;
-            if (handler.getGame().getExtensions() != null) {
-                for (int i = 0; i < handler.getGame().getExtensions().size(); i++) {
+            if (handler.getGame().getExtensions() != null)
+            {
+                for (int i = 0; i < handler.getGame().getExtensions().size(); i++)
+                {
                     YldExtension extension = handler.getGame().getExtensions().get(i);
                     extension.render(g);
                 }
             }
-            if (handler.getGame().getScene() != null) {
+            if (handler.getGame().getScene() != null)
+            {
                 handleGraphics(g, handler.getGame().getScene().getGraphics());
             }
             handleGraphics(g, handler.getGame().getGraphics());
 
-            if (View.getActView() != null) {
+            if (View.getActView() != null)
+            {
                 g1.drawImage(View.getActView().getImage(), 0, 0, getWidth(), getHeight(), this);
             }
             g.dispose();
         }
 
-        public static void handleGraphics(Graphics g, YldGraphics graphics) {
-            for (int i = 0; i < graphics.shapeRends.size(); i++) {
+        public static void handleGraphics(Graphics g, YldGraphics graphics)
+        {
+            for (int i = 0; i < graphics.shapeRends.size(); i++)
+            {
                 Obj rend = graphics.shapeRends.get(i);
-                if (rend.index < -1) {
+                if (rend.index < -1)
+                {
                     throw new RendException("index cannot be less than -1");
                 }
-                if (rend.index != -1) {
+                if (rend.index != -1)
+                {
                     if (rend.index >= graphics.shapeRends.size())
                         rend.index = graphics.shapeRends.size() - 1;
                     int indexOf = graphics.shapeRends.indexOf(rend);
@@ -136,90 +159,108 @@ public class YldWindow {
                 }
             }
             int i = 0;
-            while (i < graphics.shapeRends.size()) {
+            while (i < graphics.shapeRends.size())
+            {
                 Obj rend = graphics.shapeRends.get(i);
-                Graphics2D g2 = (Graphics2D) g;
-                AffineTransform transform = g2.getTransform();
-                g2.rotate(Math.toRadians(rend.rotationV), rend.rotationX, rend.rotationY);
-                if (rend.center) {
-                    if (rend.x2 != 0 || rend.y2 != 0) {
-                        rend.center();
+                if (rend.active)
+                {
+                    Graphics2D g2 = (Graphics2D) g;
+                    AffineTransform transform = g2.getTransform();
+                    g2.rotate(Math.toRadians(rend.rotationV), rend.rotationX, rend.rotationY);
+                    if (rend.center)
+                    {
+                        if (rend.x2 != 0 || rend.y2 != 0)
+                        {
+                            rend.center();
+                        }
                     }
-                }
-                for (int i2 = 0; i2 < graphics.getFilters().size(); i2++) {
-                    graphics.getFilters().get(i2).process(rend);
-                }
-                g.setColor(new Color((int) (rend.drawColor.getR() * 255), (int) (rend.drawColor.getG() * 255), (int) (rend.drawColor.getB() * 255), (int) (rend.drawColor.getA() * 255)));
-                g.setFont(rend.font);
-                int x = rend.x, x2 = rend.x2, y = rend.y, y2 = rend.y2;
-                if (rend.type != Obj.ShapeType.TEXT) {
-                    if (x2 < x) {
-                        int sx = x;
-                        x = x2;
-                        x2 = sx;
+                    for (int i2 = 0; i2 < graphics.getFilters().size(); i2++)
+                    {
+                        graphics.getFilters().get(i2).process(rend);
                     }
-                    if (y2 < y) {
-                        int sy = y;
-                        y = y2;
-                        y2 = sy;
+                    g.setColor(new Color((int) (rend.drawColor.getR() * 255), (int) (rend.drawColor.getG() * 255), (int) (rend.drawColor.getB() * 255), (int) (rend.drawColor.getA() * 255)));
+                    g.setFont(rend.font);
+                    int x = rend.x, x2 = rend.x2, y = rend.y, y2 = rend.y2;
+                    if (rend.type != Obj.ShapeType.TEXT)
+                    {
+                        if (x2 < x)
+                        {
+                            int sx = x;
+                            x = x2;
+                            x2 = sx;
+                        }
+                        if (y2 < y)
+                        {
+                            int sy = y;
+                            y = y2;
+                            y2 = sy;
+                        }
                     }
-                }
 
-                if (rend.type == Obj.ShapeType.RECT)
-                    if (rend.image == null)
-                        if (rend.filled)
-                            g.fillRect(x, y, x2 - x, y2 - y);
+                    if (rend.type == Obj.ShapeType.RECT)
+                        if (rend.image == null)
+                            if (rend.filled)
+                                g.fillRect(x, y, x2 - x, y2 - y);
+                            else
+                                g.drawRect(x, y, x2 - x, y2 - y);
                         else
-                            g.drawRect(x, y, x2 - x, y2 - y);
-                    else
-                        g.drawImage(rend.image, x, y, x2 - x, y2 - y, null);
-                else if (rend.type == Obj.ShapeType.OVAL)
-                    if (rend.filled)
-                        g.fillOval(x, y, x2 - x, y2 - y);
-                    else
-                        g.drawOval(x, y, x2 - x, y2 - y);
-                else if (rend.type == Obj.ShapeType.LINE)
-                    g.drawLine(x, y, x2, y2);
-                else if (rend.type == Obj.ShapeType.POINT)
-                    g.drawRect(x, y, 1, 1);
-                else if (rend.type == Obj.ShapeType.TEXT) {
-                    rend.x2 = g.getFontMetrics().stringWidth(rend.value);
-                    rend.y2 = g.getFontMetrics().getHeight();
-                    g.drawString(rend.value, x, y + y2);
-                }
+                            g.drawImage(rend.image, x, y, x2 - x, y2 - y, null);
+                    else if (rend.type == Obj.ShapeType.OVAL)
+                        if (rend.filled)
+                            g.fillOval(x, y, x2 - x, y2 - y);
+                        else
+                            g.drawOval(x, y, x2 - x, y2 - y);
+                    else if (rend.type == Obj.ShapeType.LINE)
+                        g.drawLine(x, y, x2, y2);
+                    else if (rend.type == Obj.ShapeType.POINT)
+                        g.drawRect(x, y, 1, 1);
+                    else if (rend.type == Obj.ShapeType.TEXT)
+                    {
+                        rend.x2 = g.getFontMetrics().stringWidth(rend.value);
+                        rend.y2 = g.getFontMetrics().getHeight();
+                        g.drawString(rend.value, x, y + y2);
+                    }
 
-                g2.setTransform(transform);
+                    g2.setTransform(transform);
+                }
                 i++;
             }
         }
 
-        public Color getBgColor() {
+        public Color getBgColor()
+        {
             return bgColor;
         }
 
-        public void setBgColor(Color bgColor) {
+        public void setBgColor(Color bgColor)
+        {
             this.bgColor = bgColor;
         }
 
-        public Graphics getG() {
+        public Graphics getG()
+        {
             return g;
         }
 
-        public void setG(Graphics g) {
+        public void setG(Graphics g)
+        {
             this.g = g;
         }
 
-        public GameHandler getHandler() {
+        public GameHandler getHandler()
+        {
             return handler;
         }
 
-        public void setHandler(GameHandler handler) {
+        public void setHandler(GameHandler handler)
+        {
             this.handler = handler;
         }
     }
 
 
-    public YldGraphics getGraphics() {
+    public YldGraphics getGraphics()
+    {
         return graphics;
     }
 }

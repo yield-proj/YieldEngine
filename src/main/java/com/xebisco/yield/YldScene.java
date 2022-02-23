@@ -1,5 +1,6 @@
 package com.xebisco.yield;
 
+import com.xebisco.yield.components.YieldMessages;
 import com.xebisco.yield.input.YldInput;
 import com.xebisco.yield.systems.MiddlePointSystem;
 import com.xebisco.yield.systems.YldTimeSystem;
@@ -16,6 +17,7 @@ public class YldScene implements YldB {
     private boolean callStart;
     protected YldGame game;
     protected YldTime time;
+    private Entity messagesEntity;
 
     public YldScene() {
         addSystem(new YldTimeSystem());
@@ -127,5 +129,15 @@ public class YldScene implements YldB {
 
     public void setTime(YldTime time) {
         this.time = time;
+    }
+
+    public Entity getMessagesEntity()
+    {
+        return messagesEntity;
+    }
+
+    public void setMessagesEntity(Entity messagesEntity)
+    {
+        this.messagesEntity = messagesEntity;
     }
 }

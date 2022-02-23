@@ -5,7 +5,7 @@ import java.awt.*;
 public class Obj {
     public int x, x2, y, y2, index = -1, rotationV, rotationX, rotationY;
     public ShapeType type;
-    public boolean filled, center;
+    public boolean filled, center, active = true;
     public Color color, drawColor;
     public String value;
     public Font font;

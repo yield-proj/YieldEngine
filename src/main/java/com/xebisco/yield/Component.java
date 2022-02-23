@@ -5,7 +5,8 @@ import com.xebisco.yield.input.YldInput;
 
 import java.util.ArrayList;
 
-public abstract class Component implements YldB {
+public abstract class Component implements YldB
+{
     private int frames;
     private Entity entity;
     protected Transform transform;
@@ -13,126 +14,167 @@ public abstract class Component implements YldB {
     protected YldScene scene;
     protected YldTime time;
     protected YldInput input;
+    protected YldGraphics graphics;
 
     @Override
-    public void create() {
+    public void create()
+    {
 
     }
 
-    public void start() {
+    public void start()
+    {
 
     }
 
     @Override
-    public void update(float delta) {
+    public void update(float delta)
+    {
 
     }
 
-    public Entity instantiate(String name) {
+    public Entity instantiate(String name)
+    {
         return entity.instantiate(name);
     }
 
-    public Entity instantiate() {
+    public Entity instantiate()
+    {
         return instantiate(null);
     }
 
-    public boolean destroy(Entity entity) {
+    public boolean destroy(Entity entity)
+    {
         return this.entity.destroy(entity);
     }
 
-    public boolean destroy(String name) {
+    public boolean destroy(String name)
+    {
         return entity.destroy(name);
     }
 
-    public int getFrames() {
+    public int getFrames()
+    {
         return frames;
     }
 
-    public void setFrames(int frames) {
+    public void setFrames(int frames)
+    {
         this.frames = frames;
     }
 
-    public void addComponent(Component component) {
+    public void addComponent(Component component)
+    {
         entity.addComponent(component);
     }
 
-    public <T extends Component> T getComponent(Class<T> type) {
+    public <T extends Component> T getComponent(Class<T> type)
+    {
         return entity.getComponent(type);
     }
 
-    public <T extends Component> T getComponentInChildren(Class<T> type) {
+    public <T extends Component> T getComponentInChildren(Class<T> type)
+    {
         return entity.getComponentInChildren(type);
     }
 
-    public <T extends Component> T getComponentInParent(Class<T> type) {
+    public <T extends Component> T getComponentInParent(Class<T> type)
+    {
         return entity.getComponentInParent(type);
     }
 
-    public void setMaterial(Material material) {
+    public void setMaterial(Material material)
+    {
         entity.setMaterial(material);
     }
 
-    public Material getMaterial() {
+    public Material getMaterial()
+    {
         return entity.getMaterial();
     }
 
-    public ArrayList<Component> getComponents() {
+    public ArrayList<Component> getComponents()
+    {
         return entity.getComponents();
     }
 
-    public <T extends Component> boolean containsComponent(Class<T> type) {
+    public <T extends Component> boolean containsComponent(Class<T> type)
+    {
         return entity.containsComponent(type);
     }
 
-    public Entity getEntity() {
+    public Entity getEntity()
+    {
         return entity;
     }
 
-    public void setEntity(Entity entity) {
+    public void setEntity(Entity entity)
+    {
         this.entity = entity;
     }
 
-    public Transform getTransform() {
+    public Transform getTransform()
+    {
         return entity.getTransform();
     }
 
-    public Transform getSelfTransform() {
+    public Transform getSelfTransform()
+    {
         return entity.getSelfTransform();
     }
 
-    public void setSelfTransform(Transform selfTransform) {
+    public void setSelfTransform(Transform selfTransform)
+    {
         entity.setSelfTransform(selfTransform);
     }
 
-    public YldGame getGame() {
+    public YldGame getGame()
+    {
         return game;
     }
 
-    public void setGame(YldGame game) {
+    public void setGame(YldGame game)
+    {
         this.game = game;
     }
 
-    public YldInput getInput() {
+    public YldInput getInput()
+    {
         return input;
     }
 
-    public void setInput(YldInput input) {
+    public void setInput(YldInput input)
+    {
         this.input = input;
     }
 
-    public YldScene getScene() {
+    public YldScene getScene()
+    {
         return scene;
     }
 
-    public void setScene(YldScene scene) {
+    public void setScene(YldScene scene)
+    {
         this.scene = scene;
     }
 
-    public YldTime getTime() {
+    public YldTime getTime()
+    {
         return time;
     }
 
-    public void setTime(YldTime time) {
+    public void setTime(YldTime time)
+    {
         this.time = time;
+    }
+
+    public YldGraphics getGraphics()
+    {
+        return graphics;
+    }
+
+    public void setGraphics(YldGraphics graphics)
+    {
+        this.graphics = graphics;
     }
 }

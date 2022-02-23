@@ -1,5 +1,6 @@
 package com.xebisco.yield;
 
+import com.xebisco.yield.components.YieldMessages;
 import com.xebisco.yield.engine.GameHandler;
 import com.xebisco.yield.engine.YldWindow;
 import com.xebisco.yield.exceptions.AlreadyStartedException;
@@ -8,7 +9,8 @@ import com.xebisco.yield.input.YldInput;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class YldGame extends YldScene {
+public class YldGame extends YldScene
+{
 
     private GameConfiguration configuration;
     private boolean started = false;
@@ -19,11 +21,13 @@ public class YldGame extends YldScene {
     protected YldScene scene;
 
     @Override
-    public final void start() {
+    public final void start()
+    {
 
     }
 
-    public static void launch(YldGame game, GameConfiguration configuration) {
+    public static void launch(YldGame game, GameConfiguration configuration)
+    {
         Locale.setDefault(Locale.US);
         game.game = game;
         if (game.started)
@@ -48,11 +52,13 @@ public class YldGame extends YldScene {
         game.handler.getGameThread().start();
     }
 
-    public final void updateScene(float delta) {
+    public final void updateScene(float delta)
+    {
         if (scene.getFrames() == 0)
             scene.create();
         scene.setFrames(scene.getFrames() + 1);
-        if(scene.isCallStart()) {
+        if (scene.isCallStart())
+        {
             scene.start();
             scene.setCallStart(false);
         }
@@ -60,67 +66,85 @@ public class YldGame extends YldScene {
         scene.process(delta);
     }
 
-    public YldWindow getWindow() {
+    public YldWindow getWindow()
+    {
         return window;
     }
 
-    public boolean isStarted() {
+    public boolean isStarted()
+    {
         return started;
     }
 
-    public GameConfiguration getConfiguration() {
+    public GameConfiguration getConfiguration()
+    {
         return configuration;
     }
 
-    public GameHandler getHandler() {
+    public GameHandler getHandler()
+    {
         return handler;
     }
 
-    public void setHandler(GameHandler handler) {
+    public void setHandler(GameHandler handler)
+    {
         this.handler = handler;
     }
 
-    public void addExtension(YldExtension extension) {
+    public void addExtension(YldExtension extension)
+    {
         extension.create();
         extension.setGame(this);
         extensions.add(extension);
     }
 
-    public ArrayList<YldExtension> getExtensions() {
+    public ArrayList<YldExtension> getExtensions()
+    {
         return extensions;
     }
 
-    public void addScene(YldScene scene) {
+    public void addScene(YldScene scene)
+    {
         scene.setInput(input);
         scene.game = this;
         scene.time = new YldTime(handler);
         scene.setMasterEntity(new Entity("masterEntity", this, null));
+        scene.setMessagesEntity(scene.instantiate("MessagesEntity"));
+        scene.getMessagesEntity().addComponent(new YieldMessages());
         scenes.add(scene);
     }
 
-    public ArrayList<YldScene> getScenes() {
+    public ArrayList<YldScene> getScenes()
+    {
         return scenes;
     }
 
-    public void setScenes(ArrayList<YldScene> scenes) {
+    public void setScenes(ArrayList<YldScene> scenes)
+    {
         this.scenes = scenes;
     }
 
-    public YldScene getScene() {
+    public YldScene getScene()
+    {
         return scene;
     }
 
-    public void setScene(YldScene scene) {
+    public void setScene(YldScene scene)
+    {
         scene.setCallStart(true);
         this.scene = scene;
     }
 
-    public void setScene(String name) {
+    public void setScene(String name)
+    {
         YldScene scene = null;
         int i = 0;
-        while (i < scenes.size()) {
-            if (scenes.get(i).getClass().getSimpleName().hashCode() == name.hashCode()) {
-                if (scenes.get(i).getClass().getSimpleName().equals(name)) {
+        while (i < scenes.size())
+        {
+            if (scenes.get(i).getClass().getSimpleName().hashCode() == name.hashCode())
+            {
+                if (scenes.get(i).getClass().getSimpleName().equals(name))
+                {
                     scene = scenes.get(i);
                     break;
                 }
@@ -132,12 +156,16 @@ public class YldGame extends YldScene {
         setScene(scene);
     }
 
-    public <T extends YldScene> void setScene(Class<T> type) {
+    public <T extends YldScene> void setScene(Class<T> type)
+    {
         YldScene scene = null;
         int i = 0;
-        while (i < scenes.size()) {
-            if (scenes.get(i).getClass().getName().hashCode() == type.getName().hashCode()) {
-                if (scenes.get(i).getClass().getName().equals(type.getName())) {
+        while (i < scenes.size())
+        {
+            if (scenes.get(i).getClass().getName().hashCode() == type.getName().hashCode())
+            {
+                if (scenes.get(i).getClass().getName().equals(type.getName()))
+                {
                     scene = scenes.get(i);
                     break;
                 }
