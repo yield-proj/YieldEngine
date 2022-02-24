@@ -4,5 +4,5 @@ import com.xebisco.yield.config.WindowConfiguration;
 
 public class GameConfiguration extends WindowConfiguration {
     public int fps = 60;
-    public boolean disableFps = false;
+    public boolean fpsLock = true;
 }

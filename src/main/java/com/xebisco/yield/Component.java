@@ -5,12 +5,11 @@ import com.xebisco.yield.input.YldInput;
 
 import java.util.ArrayList;
 
-public abstract class Component implements YldB
+public abstract class Component extends YldB
 {
     private int frames;
     private Entity entity;
     protected Transform transform;
-    protected YldGame game;
     protected YldScene scene;
     protected YldTime time;
     protected YldInput input;
@@ -23,6 +22,12 @@ public abstract class Component implements YldB
     }
 
     public void start()
+    {
+
+    }
+
+    @Override
+    public void onDestroy()
     {
 
     }
@@ -43,14 +48,13 @@ public abstract class Component implements YldB
         return instantiate(null);
     }
 
-    public boolean destroy(Entity entity)
+    public void destroy()
     {
-        return this.entity.destroy(entity);
+        this.entity.destroy();
     }
 
-    public boolean destroy(String name)
-    {
-        return entity.destroy(name);
+    public <E extends Entity> void destroy(Class<E> type) {
+        this.entity.destroy(type);
     }
 
     public int getFrames()
@@ -126,16 +130,6 @@ public abstract class Component implements YldB
     public void setSelfTransform(Transform selfTransform)
     {
         entity.setSelfTransform(selfTransform);
-    }
-
-    public YldGame getGame()
-    {
-        return game;
-    }
-
-    public void setGame(YldGame game)
-    {
-        this.game = game;
     }
 
     public YldInput getInput()

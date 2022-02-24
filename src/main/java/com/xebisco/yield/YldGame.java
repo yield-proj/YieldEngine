@@ -5,6 +5,7 @@ import com.xebisco.yield.engine.YldWindow;
 import com.xebisco.yield.exceptions.AlreadyStartedException;
 import com.xebisco.yield.extensions.YieldOverlay;
 import com.xebisco.yield.input.YldInput;
+import com.xebisco.yield.utils.ChangeScene;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -50,7 +51,7 @@ public class YldGame extends YldScene
         game.addExtension(new YieldOverlay());
         game.addScene(game);
         game.setScene(game);
-        game.handler.getGameThread().start();
+        game.handler.getThread().start();
     }
 
     public final void updateScene(float delta)
@@ -141,7 +142,7 @@ public class YldGame extends YldScene
         scene.setInput(input);
         scene.game = this;
         scene.time = new YldTime(handler);
-        scene.setMasterEntity(new Entity("masterEntity", this, null));
+        scene.setMasterEntity(new Entity("MasterEntity", scene, null));
         scenes.add(scene);
     }
 
@@ -166,6 +167,7 @@ public class YldGame extends YldScene
         this.scene = scene;
     }
 
+    @Deprecated
     public void setScene(String name)
     {
         YldScene scene = null;
@@ -187,7 +189,7 @@ public class YldGame extends YldScene
         setScene(scene);
     }
 
-    public <T extends YldScene> void setScene(Class<T> type)
+    public <T extends YldScene> void setScene(Class<T> type, ChangeScene how)
     {
         YldScene scene = null;
         int i = 0;
@@ -197,6 +199,8 @@ public class YldGame extends YldScene
             {
                 if (scenes.get(i).getClass().getName().equals(type.getName()))
                 {
+                    if(how == ChangeScene.DESTROY_LAST && getScene() != null)
+                        getScene().destroyScene();
                     scene = scenes.get(i);
                     break;
                 }
@@ -206,5 +210,9 @@ public class YldGame extends YldScene
         if (scene == null)
             throw new NullPointerException("none scene with name: " + type.getName());
         setScene(scene);
+    }
+    public <T extends YldScene> void setScene(Class<T> type)
+    {
+        setScene(type, ChangeScene.DESTROY_LAST);
     }
 }

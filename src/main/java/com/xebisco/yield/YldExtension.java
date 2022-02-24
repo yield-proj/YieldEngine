@@ -2,27 +2,28 @@ package com.xebisco.yield;
 
 import java.awt.*;
 
-public class YldExtension implements YldB {
-    protected YldGame game;
+public class YldExtension extends YldB
+{
     @Override
-    public void create() {
+    public void create()
+    {
 
     }
 
     @Override
-    public void update(float delta) {
+    public void update(float delta)
+    {
 
     }
 
-    public void render(Graphics graphics) {
+    @Override
+    public final void onDestroy()
+    {
 
     }
 
-    public YldGame getGame() {
-        return game;
-    }
+    public void render(Graphics graphics)
+    {
 
-    public void setGame(YldGame game) {
-        this.game = game;
     }
 }

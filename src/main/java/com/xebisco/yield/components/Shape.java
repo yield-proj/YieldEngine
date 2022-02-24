@@ -38,6 +38,13 @@ public abstract class Shape extends Component
         renderer.getGraphics().shapeRends.add(obj);
     }
 
+    @Override
+    public void onDestroy()
+    {
+        scene.getGraphics().shapeRends.remove(obj);
+        renderer.getGraphics().shapeRends.remove(obj);
+    }
+
     public void setCentered(boolean centered)
     {
         obj.center = centered;

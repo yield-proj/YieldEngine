@@ -1,13 +1,13 @@
 package com.xebisco.yield;
 
-import com.xebisco.yield.components.YieldMessages;
 import com.xebisco.yield.input.YldInput;
 import com.xebisco.yield.systems.MiddlePointSystem;
 import com.xebisco.yield.systems.YldTimeSystem;
 
 import java.util.ArrayList;
 
-public class YldScene implements YldB {
+public class YldScene extends YldB
+{
 
     private int frames;
     protected YldGraphics graphics = new YldGraphics();
@@ -15,118 +15,140 @@ public class YldScene implements YldB {
     private ArrayList<YldSystem> systems = new ArrayList<>();
     protected YldInput input;
     private boolean callStart;
-    protected YldGame game;
     protected YldTime time;
 
-    public YldScene() {
+    public YldScene()
+    {
         addSystem(new YldTimeSystem());
         addSystem(new MiddlePointSystem());
     }
 
     @Override
-    public void create() {
+    public void create()
+    {
 
     }
 
-    public void start() {
+    public void start()
+    {
 
     }
 
-    public void exit() {
+    @Deprecated
+    public void exit()
+    {
 
     }
 
     @Override
-    public void update(float delta) {
+    public void onDestroy()
+    {
 
     }
 
-    public final void process(float delta) {
+    public final void destroyScene() {
+        masterEntity.destroy();
+        onDestroy();
+    }
+
+    @Override
+    public void update(float delta)
+    {
+
+    }
+
+    public final void process(float delta)
+    {
         masterEntity.process(delta);
     }
 
-    public YldGraphics getGraphics() {
+    public YldGraphics getGraphics()
+    {
         return graphics;
     }
 
-    public void setGraphics(YldGraphics graphics) {
+    public void setGraphics(YldGraphics graphics)
+    {
         this.graphics = graphics;
     }
 
-    public YldInput getInput() {
+    public YldInput getInput()
+    {
         return input;
     }
 
-    public void setInput(YldInput input) {
+    public void setInput(YldInput input)
+    {
         this.input = input;
     }
 
-    public int getFrames() {
+    public int getFrames()
+    {
         return frames;
     }
 
-    public void setFrames(int frames) {
+    public void setFrames(int frames)
+    {
         this.frames = frames;
     }
 
-    public boolean isCallStart() {
+    public boolean isCallStart()
+    {
         return callStart;
     }
 
-    public void setCallStart(boolean callStart) {
+    public void setCallStart(boolean callStart)
+    {
         this.callStart = callStart;
     }
 
-    public YldGame getGame() {
-        return game;
-    }
-
-    public void setGame(YldGame game) {
-        this.game = game;
-    }
-
-    public Entity instantiate(String name) {
+    public Entity instantiate(String name)
+    {
         return masterEntity.instantiate(name);
     }
 
-    public Entity instantiate() {
+    public Entity instantiate()
+    {
         return masterEntity.instantiate();
     }
 
-    public boolean destroy(Entity entity) {
-        return masterEntity.destroy(entity);
+    public <E extends Entity> void destroy(Class<E> type) {
+        this.masterEntity.destroy(type);
     }
 
-    public boolean destroy(String name) {
-        return masterEntity.destroy(name);
-    }
-
-    public Entity getMasterEntity() {
+    public Entity getMasterEntity()
+    {
         return masterEntity;
     }
 
-    public void setMasterEntity(Entity masterEntity) {
+    public void setMasterEntity(Entity masterEntity)
+    {
         this.masterEntity = masterEntity;
     }
 
-    public void addSystem(YldSystem system) {
+    public void addSystem(YldSystem system)
+    {
         system.setScene(this);
         systems.add(system);
     }
 
-    public ArrayList<YldSystem> getSystems() {
+    public ArrayList<YldSystem> getSystems()
+    {
         return systems;
     }
 
-    public void setSystems(ArrayList<YldSystem> systems) {
+    public void setSystems(ArrayList<YldSystem> systems)
+    {
         this.systems = systems;
     }
 
-    public YldTime getTime() {
+    public YldTime getTime()
+    {
         return time;
     }
 
-    public void setTime(YldTime time) {
+    public void setTime(YldTime time)
+    {
         this.time = time;
     }
 }

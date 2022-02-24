@@ -2,31 +2,41 @@ package com.xebisco.yield.engine;
 
 import com.xebisco.yield.YldExtension;
 import com.xebisco.yield.YldGame;
+import com.xebisco.yield.utils.YldAction;
 
-public class GameHandler implements Runnable
+public class GameHandler extends Engine
 {
-
-    private final Thread gameThread = new Thread(this);
     private final YldGame game;
     private int fps;
-    private boolean running;
+    private Engine defaultConcurrentEngine;
 
     public GameHandler(YldGame game)
     {
+        super(null);
         this.game = game;
         fps = game.getConfiguration().fps;
+        defaultConcurrentEngine = new Engine(null);
+        defaultConcurrentEngine.getThread().start();
     }
 
     @Override
     public void run()
     {
-        running = true;
+        setRunning(true);
         game.create();
         long start, end = System.nanoTime();
-        while (running)
+        while (isRunning())
         {
             start = System.nanoTime();
             float delta = (start - end) / 1_000_000_000f;
+            if (!isIgnoreTodo())
+            {
+                for (YldAction action : getTodoList())
+                {
+                    action.onAction();
+                    getTodoList().remove(action);
+                }
+            }
             for (int i = 0; i < game.getExtensions().size(); i++)
             {
                 YldExtension extension = game.getExtensions().get(i);
@@ -43,7 +53,7 @@ public class GameHandler implements Runnable
                 game.getInput().setClicking(false);
             end = System.nanoTime();
 
-            if (!game.getConfiguration().disableFps)
+            if (game.getConfiguration().fpsLock)
             {
                 try
                 {
@@ -56,26 +66,11 @@ public class GameHandler implements Runnable
         }
         try
         {
-            gameThread.join();
+            getThread().join();
         } catch (InterruptedException e)
         {
             e.printStackTrace();
         }
-    }
-
-    public boolean isRunning()
-    {
-        return running;
-    }
-
-    public void setRunning(boolean running)
-    {
-        this.running = running;
-    }
-
-    public Thread getGameThread()
-    {
-        return gameThread;
     }
 
     public YldGame getGame()
@@ -91,5 +86,15 @@ public class GameHandler implements Runnable
     public void setFps(int fps)
     {
         this.fps = fps;
+    }
+
+    public Engine getDefaultConcurrentEngine()
+    {
+        return defaultConcurrentEngine;
+    }
+
+    public void setDefaultConcurrentEngine(Engine defaultConcurrentEngine)
+    {
+        this.defaultConcurrentEngine = defaultConcurrentEngine;
     }
 }

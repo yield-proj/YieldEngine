@@ -4,7 +4,6 @@ import com.xebisco.yield.components.Renderer;
 import com.xebisco.yield.components.Transform;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public final class Entity
 {
@@ -255,29 +254,36 @@ public final class Entity
         return instantiate(null);
     }
 
-    public boolean destroy(Entity entity)
+    public <E extends Entity> void destroy(Class<E> type)
     {
-        return children.remove(entity);
-    }
-
-    public boolean destroy(String name)
-    {
-        Entity entity = null;
         int i = 0;
         while (i < children.size())
         {
             Entity e = children.get(i);
-            if (e.getName().hashCode() == name.hashCode())
+            if (e.getName().hashCode() == type.getName().hashCode())
             {
                 if (e.getName().equals(name))
                 {
-                    entity = e;
+                    e.destroy();
                     break;
                 }
             }
             i++;
         }
-        return children.remove(entity);
+    }
+
+    public void destroy()
+    {
+        for (Entity e : children)
+        {
+            e.destroy();
+        }
+        for (Component component : components)
+        {
+            component.onDestroy();
+        }
+        if (parent != null)
+            parent.getChildren().remove(this);
     }
 
     public ArrayList<Entity> getChildren()
