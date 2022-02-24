@@ -8,7 +8,7 @@ import java.util.Random;
 
 public final class Yld
 {
-    public static final String VERSION = "4 dev6";
+    public static final String VERSION = "4 beta6";
     public static final ArrayList<String> MESSAGES = new ArrayList<>();
     public static final Random RAND = new Random();
     public static final long BUILD = 3;

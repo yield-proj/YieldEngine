@@ -9,7 +9,7 @@ public class Engine implements Runnable
 {
     private final Thread thread = new Thread(this);
     private final EngineController controller;
-    private final ArrayList<YldAction> todoList = new ArrayList<>();
+    private final ArrayList<YldEngineAction> todoList = new ArrayList<>();
     private int targetTime = 33;
     private EngineStop stop = EngineStop.NONE;
     private boolean running, ignoreTodo;
@@ -31,9 +31,19 @@ public class Engine implements Runnable
             {
                 for (int i = 0; i < todoList.size(); i++)
                 {
-                    YldAction action = todoList.get(i);
-                    action.onAction();
-                    todoList.remove(action);
+                    YldEngineAction engineAction = todoList.get(i);
+                    if (engineAction.getToExec() <= 0)
+                    {
+                        engineAction.getAction().onAction();
+                        if (!engineAction.isRepeat())
+                            todoList.remove(engineAction);
+                        engineAction.setToExec(engineAction.getInitialToExec());
+                    }
+                    else
+                    {
+                        engineAction.setToExec(engineAction.getToExec() - targetTime);
+                    }
+
                 }
             }
             if (controller != null)
@@ -82,7 +92,7 @@ public class Engine implements Runnable
         return controller;
     }
 
-    public ArrayList<YldAction> getTodoList()
+    public ArrayList<YldEngineAction> getTodoList()
     {
         return todoList;
     }

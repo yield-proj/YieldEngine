@@ -88,6 +88,7 @@ public class YieldOverlay extends YldExtension
             g.drawString("Extensions Active: " + game.getExtensions().size(), x, 80 + 40 * 8);
             g.drawString("Architecture: " + System.getProperty("os.arch"), x, 80 + 40 * 9);
             g.drawString("Act Resolution: " + w + "x" + h, x, 80 + 40 * 10);
+            g.drawString("Processors: " + Runtime.getRuntime().availableProcessors(), x, 80 + 40 * 11);
 
             //MESSAGES
             for (int i = 0; i < Yld.MESSAGES.size(); i++)

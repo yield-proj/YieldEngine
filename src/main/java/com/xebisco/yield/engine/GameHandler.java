@@ -31,10 +31,21 @@ public class GameHandler extends Engine
             float delta = (start - end) / 1_000_000_000f;
             if (!isIgnoreTodo())
             {
-                for (YldAction action : getTodoList())
+                for (int i = 0; i < getTodoList().size(); i++)
                 {
-                    action.onAction();
-                    getTodoList().remove(action);
+                    YldEngineAction engineAction = getTodoList().get(i);
+                    if (engineAction.getToExec() <= 0)
+                    {
+                        engineAction.getAction().onAction();
+                        if (!engineAction.isRepeat())
+                            getTodoList().remove(engineAction);
+                        engineAction.setToExec(engineAction.getInitialToExec());
+                    }
+                    else
+                    {
+                        engineAction.setToExec(engineAction.getToExec() - (int) ((start - end) / 1_000_000));
+                    }
+
                 }
             }
             for (int i = 0; i < game.getExtensions().size(); i++)
