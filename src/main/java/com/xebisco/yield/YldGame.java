@@ -100,6 +100,12 @@ public class YldGame extends YldScene
         extensions.add(extension);
     }
 
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+    }
+
     public <T extends YldExtension> YldExtension getExtension(Class<T> type)
     {
         YldExtension extension = null;
