@@ -4,12 +4,8 @@ import java.util.Arrays;
 
 public class Keys {
     public final Integer[] keyCode;
-    public Keys(Integer keyCode) {
-        this.keyCode = new Integer[1];
-        this.keyCode[0] = keyCode;
-    }
 
-    public Keys(Integer[] keyCode) {
+    public Keys(Integer...keyCode) {
         this.keyCode = keyCode;
     }
 

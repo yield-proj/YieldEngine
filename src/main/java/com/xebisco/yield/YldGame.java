@@ -1,9 +1,9 @@
 package com.xebisco.yield;
 
-import com.xebisco.yield.components.YieldMessages;
 import com.xebisco.yield.engine.GameHandler;
 import com.xebisco.yield.engine.YldWindow;
 import com.xebisco.yield.exceptions.AlreadyStartedException;
+import com.xebisco.yield.extensions.YieldOverlay;
 import com.xebisco.yield.input.YldInput;
 
 import java.util.ArrayList;
@@ -47,6 +47,7 @@ public class YldGame extends YldScene
         game.window.getWindowG().setHandler(game.handler);
         game.setGraphics(game.window.getGraphics());
         game.input = new YldInput(game.window);
+        game.addExtension(new YieldOverlay());
         game.addScene(game);
         game.setScene(game);
         game.handler.getGameThread().start();
@@ -98,6 +99,38 @@ public class YldGame extends YldScene
         extensions.add(extension);
     }
 
+    public <T extends YldExtension> YldExtension getExtension(Class<T> type)
+    {
+        YldExtension extension = null;
+        for (YldExtension e : extensions)
+        {
+            if (e.getClass().getName().hashCode() == type.getName().hashCode())
+            {
+                if (e.getClass().getName().equals(type.getName()))
+                {
+                    extension = e;
+                    break;
+                }
+            }
+        }
+        return extension;
+    }
+
+    public <T extends YldExtension> void removeExtension(Class<T> type)
+    {
+        for (YldExtension e : extensions)
+        {
+            if (e.getClass().getName().hashCode() == type.getName().hashCode())
+            {
+                if (e.getClass().getName().equals(type.getName()))
+                {
+                    extensions.remove(e);
+                    break;
+                }
+            }
+        }
+    }
+
     public ArrayList<YldExtension> getExtensions()
     {
         return extensions;
@@ -109,8 +142,6 @@ public class YldGame extends YldScene
         scene.game = this;
         scene.time = new YldTime(handler);
         scene.setMasterEntity(new Entity("masterEntity", this, null));
-        scene.setMessagesEntity(scene.instantiate("MessagesEntity"));
-        scene.getMessagesEntity().addComponent(new YieldMessages());
         scenes.add(scene);
     }
 

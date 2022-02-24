@@ -6,6 +6,7 @@ import com.xebisco.yield.Component;
 
 import java.awt.Font;
 
+@Deprecated
 public class YieldMessages extends Component
 {
     public static Color bgColor = Colors.DARK_GRAY, textColor = Colors.WHITE;
