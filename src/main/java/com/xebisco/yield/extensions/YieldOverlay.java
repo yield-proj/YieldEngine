@@ -11,13 +11,14 @@ import java.util.Objects;
 
 public class YieldOverlay extends YldExtension
 {
-    private final java.awt.Color bgColor = new Color(64, 64, 64, 200),
-            buttonColor = new Color(67, 67, 67, 255),
-            selectedButtonColor = new Color(106, 106, 106, 255);
+    private final java.awt.Color bgColor = new Color(64, 64, 64),
+            buttonColor = new Color(67, 67, 67),
+            selectedButtonColor = new Color(106, 106, 106);
     private final BufferedImage image = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_ARGB);
     private final Image yieldImage = new ImageIcon(Objects.requireNonNull(YieldOverlay.class.getResource("/com/xebisco/yield/assets/yieldlogo.png"))).getImage();
     private final Font font1 = new Font("Verdana", Font.BOLD, 30), font2 = new Font("arial", Font.BOLD, 30);
     private int w, h;
+    private static int offsetAnimation;
     private final int arc = 40;
     private static boolean show;
     private boolean exitButtonSelected;
@@ -52,7 +53,6 @@ public class YieldOverlay extends YldExtension
         {
             Graphics2D g = image.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             g.setBackground(new Color(255, 255, 255, 0));
             g.clearRect(0, 0, image.getWidth(), image.getHeight());
@@ -124,7 +124,8 @@ public class YieldOverlay extends YldExtension
             g.drawString("Close", 1100, 680);
 
             g.dispose();
-            graphics.drawImage(image, 0, 0, w, h, null);
+            graphics.drawImage(image, 0, offsetAnimation, w, h, null);
+            offsetAnimation -= offsetAnimation / 4;
         }
     }
 
@@ -186,5 +187,7 @@ public class YieldOverlay extends YldExtension
     public static void setShow(boolean show)
     {
         YieldOverlay.show = show;
+        YieldOverlay.offsetAnimation = -1000;
+
     }
 }
