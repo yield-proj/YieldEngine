@@ -102,9 +102,9 @@ public class YldScene extends YldB
         this.callStart = callStart;
     }
 
-    public Entity instantiate(String name)
+    public Entity instantiate(Prefab prefab)
     {
-        return masterEntity.instantiate(name);
+        return masterEntity.instantiate(prefab);
     }
 
     public Entity instantiate()
@@ -112,7 +112,7 @@ public class YldScene extends YldB
         return masterEntity.instantiate();
     }
 
-    public <E extends Entity> void destroy(Class<E> type) {
+    public <E extends Prefab> void destroy(Class<E> type) {
         this.masterEntity.destroy(type);
     }
 

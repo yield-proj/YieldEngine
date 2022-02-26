@@ -241,11 +241,16 @@ public final class Entity
         this.name = name;
     }
 
-    public Entity instantiate(String name)
+    public Entity instantiate(Prefab prefab)
     {
+        String name = "Entity";
+        if (prefab != null)
+            name = prefab.getClass().getName();
         Entity entity = new Entity(name, scene, null);
         entity.setParent(this);
         children.add(entity);
+        if (prefab != null)
+            prefab.create(entity);
         return entity;
     }
 
@@ -254,7 +259,7 @@ public final class Entity
         return instantiate(null);
     }
 
-    public <E extends Entity> void destroy(Class<E> type)
+    public <E extends Prefab> void destroy(Class<E> type)
     {
         int i = 0;
         while (i < children.size())

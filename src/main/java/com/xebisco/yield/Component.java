@@ -38,9 +38,9 @@ public abstract class Component extends YldB
 
     }
 
-    public Entity instantiate(String name)
+    public Entity instantiate(Prefab prefab)
     {
-        return entity.instantiate(name);
+        return entity.instantiate(prefab);
     }
 
     public Entity instantiate()
@@ -53,7 +53,8 @@ public abstract class Component extends YldB
         this.entity.destroy();
     }
 
-    public <E extends Entity> void destroy(Class<E> type) {
+    public <E extends Prefab> void destroy(Class<E> type)
+    {
         this.entity.destroy(type);
     }
 
