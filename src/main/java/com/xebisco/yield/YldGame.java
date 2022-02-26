@@ -51,6 +51,7 @@ public class YldGame extends YldScene
         game.addExtension(new YieldOverlay());
         game.addScene(game);
         game.setScene(game);
+        System.setProperty("sun.java2d.opengl", String.valueOf(configuration.hardwareAcceleration));
         game.handler.getThread().start();
     }
 

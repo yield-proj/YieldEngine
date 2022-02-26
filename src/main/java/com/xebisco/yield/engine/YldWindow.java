@@ -100,6 +100,8 @@ public class YldWindow
         protected void paintComponent(Graphics g1)
         {
             Graphics g = g1;
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
             int width = getWidth(), height = getHeight();
             if (View.getActView() != null)
             {
