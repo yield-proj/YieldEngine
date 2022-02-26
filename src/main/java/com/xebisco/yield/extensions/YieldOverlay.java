@@ -186,8 +186,8 @@ public class YieldOverlay extends YldExtension
 
     public static void setShow(boolean show)
     {
+        if (!YieldOverlay.isShow())
+            YieldOverlay.offsetAnimation = -1000;
         YieldOverlay.show = show;
-        YieldOverlay.offsetAnimation = -1000;
-
     }
 }
