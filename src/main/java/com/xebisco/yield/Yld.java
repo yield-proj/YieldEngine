@@ -1,6 +1,7 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.extensions.YieldOverlay;
+import com.xebisco.yield.utils.YldAction;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,10 +9,11 @@ import java.util.Random;
 
 public final class Yld
 {
-    public static final String VERSION = "4 beta7";
+    public static final String VERSION = "4 1.0";
     public static final ArrayList<String> MESSAGES = new ArrayList<>();
     public static final Random RAND = new Random();
-    public static final long BUILD = 6;
+    public static boolean debug;
+    public static final long BUILD = 7;
     public static final int MEMORY = (int) ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024), MAX_MEMORY = (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
 
     public static void message(Object msg)
@@ -24,6 +26,18 @@ public final class Yld
             Yld.MESSAGES.remove(Yld.MESSAGES.size() - 1);
         }
         System.out.println(msg);
+    }
+
+    public static void debug(YldAction action)
+    {
+        if (debug)
+            action.onAction();
+    }
+
+    public static void release(YldAction action)
+    {
+        if (!debug)
+            action.onAction();
     }
 
     public static void log(Object msg)
