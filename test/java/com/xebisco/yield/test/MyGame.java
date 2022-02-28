@@ -4,8 +4,6 @@ import com.xebisco.yield.*;
 
 public class MyGame extends YldGame
 {
-
-
     public static void main(String[] args)
     {
         final GameConfiguration config = new GameConfiguration();

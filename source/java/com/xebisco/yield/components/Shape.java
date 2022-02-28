@@ -34,6 +34,7 @@ public abstract class Shape extends Component
         obj.rotationV = (int) getTransform().rotation;
         obj.rotationX = (int) getTransform().middle.x;
         obj.rotationY = (int) getTransform().middle.y;
+        obj.index = getEntity().getEntityIndex();
         process(obj);
         renderer.getGraphics().shapeRends.add(obj);
     }

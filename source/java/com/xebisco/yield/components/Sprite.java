@@ -17,7 +17,7 @@ public class Sprite extends Rectangle {
     public void previous(YldGraphics graphics) {
         if(getEntity().getMaterial().getTexture() != null) {
             getObj().x2 = getEntity().getMaterial().getTexture().getImage().getWidth(null);
-            getObj().x2 = getEntity().getMaterial().getTexture().getImage().getHeight(null);
+            getObj().y2 = getEntity().getMaterial().getTexture().getImage().getHeight(null);
         }
     }
 

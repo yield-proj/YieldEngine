@@ -321,7 +321,19 @@ public final class Entity
 
     public int getIndex()
     {
-        return parent.getChildren().indexOf(this);
+        if (parent != null)
+            return parent.getChildren().indexOf(this);
+        else return 0;
+    }
+
+    public int getEntityIndex()
+    {
+        int index = getIndex();
+        if (parent != null)
+        {
+            index += parent.getChildren().size();
+        }
+        return index;
     }
 
     public void setIndex(int index)
