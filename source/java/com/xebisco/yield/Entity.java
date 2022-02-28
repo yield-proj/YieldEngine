@@ -11,6 +11,7 @@ public final class Entity
 {
     private ArrayList<Component> components = new ArrayList<>();
     private ArrayList<Entity> children = new ArrayList<>();
+    private int index = -1;
     private Entity parent;
     private Transform selfTransform;
     private Renderer renderer;
@@ -263,7 +264,7 @@ public final class Entity
             component.onDestroy();
         }
         if (parent != null)
-            parent.getChildren().remove(this);
+            parent.getChildren().removeIf(e -> e == this);
     }
 
     public ArrayList<Entity> getChildren()
@@ -321,37 +322,38 @@ public final class Entity
 
     public int getIndex()
     {
-        if (parent != null)
+        if (parent != null && index != -1)
             return parent.getChildren().indexOf(this);
-        else return 0;
+        else return index;
     }
 
     public int getEntityIndex()
     {
-        int index = getIndex();
+        int index = getIndex(), max = 0;
         if (parent != null)
         {
-            index += parent.getEntityIndex();
+            for (int i = 0; i < index; i++)
+            {
+                Entity e = null;
+                try
+                {
+                    e = parent.getChildren().get(i);
+                } catch (IndexOutOfBoundsException ignore)
+                {
+                }
+
+                if (e != null)
+                    if (e.getEntityIndex() > max)
+                        max = e.getEntityIndex();
+
+            }
         }
-        return index;
+        return index + max;
     }
 
     public void setIndex(int index)
     {
-        if (index < -1)
-        {
-            throw new IllegalArgumentException("index cannot be less than -1");
-        }
-        if (index != -1)
-        {
-            int i = index;
-            if (index >= parent.getChildren().size())
-                i = parent.getChildren().size() - 1;
-            int indexOf = parent.getChildren().indexOf(this);
-            Entity e1 = parent.getChildren().get(i);
-            parent.getChildren().set(i, this);
-            parent.getChildren().set(indexOf, e1);
-        }
+        this.index = index;
     }
 
     public Material getMaterial()

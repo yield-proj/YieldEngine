@@ -9,17 +9,24 @@ public class Text extends Shape {
     private String contents = "Sample Text";
     private Font font;
 
-    private Font previous;
+    private Font previousFont;
+
+    public Text() {
+    }
+
+    public Text(String contents) {
+        this.contents = contents;
+    }
 
     @Override
     public void parameters(YldGraphics graphics) {
-        previous = graphics.getFont();
+        previousFont = graphics.getFont();
         graphics.setFont(font);
     }
 
     @Override
     public void previous(YldGraphics graphics) {
-        graphics.setFont(previous);
+        graphics.setFont(previousFont);
     }
 
     @Override
@@ -36,5 +43,25 @@ public class Text extends Shape {
 
     public void setContents(String contents) {
         this.contents = contents;
+    }
+
+    public Font getFont()
+    {
+        return font;
+    }
+
+    public void setFont(Font font)
+    {
+        this.font = font;
+    }
+
+    public Font getPreviousFont()
+    {
+        return previousFont;
+    }
+
+    public void setPreviousFont(Font previousFont)
+    {
+        this.previousFont = previousFont;
     }
 }

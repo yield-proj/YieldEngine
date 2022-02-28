@@ -3,7 +3,7 @@ package com.xebisco.yield;
 import java.awt.*;
 
 public class Obj {
-    public int x, x2, y, y2, index = -1, rotationV, rotationX, rotationY;
+    public int x, x2, y, y2, index, rotationV, rotationX, rotationY;
     public ShapeType type;
     public boolean filled, center, active = true;
     public Color color, drawColor;

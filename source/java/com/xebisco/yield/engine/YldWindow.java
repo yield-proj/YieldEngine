@@ -143,28 +143,15 @@ public class YldWindow
 
         public static void handleGraphics(Graphics g, YldGraphics graphics)
         {
-            for (int i = 0; i < graphics.shapeRends.size(); i++)
-            {
-                Obj rend = graphics.shapeRends.get(i);
-                if (rend.index < -1)
-                {
-                    throw new RendException("index cannot be less than -1");
-                }
-                if (rend.index != -1)
-                {
-                    if (rend.index >= graphics.shapeRends.size())
-                        rend.index = graphics.shapeRends.size() - 1;
-                    int indexOf = graphics.shapeRends.indexOf(rend);
-                    Obj rend1 = graphics.shapeRends.get(rend.index);
-                    graphics.shapeRends.set(rend.index, rend);
-                    graphics.shapeRends.set(indexOf, rend1);
-                }
+            int i = 0, max = 0;
+            for(int r = 0; r < graphics.shapeRends.size(); r++) {
+                if(graphics.shapeRends.get(r).index > max)
+                    max = graphics.shapeRends.get(r).index;
             }
-            int i = 0;
-            while (i < graphics.shapeRends.size())
+            while (i <= max)
             {
                 Obj rend = graphics.shapeRends.get(i);
-                if (rend.active)
+                if (rend.active && i == rend.index)
                 {
                     Graphics2D g2 = (Graphics2D) g;
                     AffineTransform transform = g2.getTransform();
