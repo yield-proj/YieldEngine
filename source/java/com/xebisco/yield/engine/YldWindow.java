@@ -150,68 +150,71 @@ public class YldWindow
             }
             while (i <= max)
             {
-                Obj rend = graphics.shapeRends.get(i);
-                if (rend.active && i == rend.index)
-                {
-                    Graphics2D g2 = (Graphics2D) g;
-                    AffineTransform transform = g2.getTransform();
-                    g2.rotate(Math.toRadians(rend.rotationV), rend.rotationX, rend.rotationY);
-                    if (rend.center)
+                for(int r = 0; r < graphics.shapeRends.size(); r++) {
+                    Obj rend = graphics.shapeRends.get(r);
+                    if (rend.active && i == rend.index)
                     {
-                        if (rend.x2 != 0 || rend.y2 != 0)
+                        Graphics2D g2 = (Graphics2D) g;
+                        AffineTransform transform = g2.getTransform();
+                        g2.rotate(Math.toRadians(rend.rotationV), rend.rotationX, rend.rotationY);
+                        if (rend.center)
                         {
-                            rend.center();
+                            if (rend.x2 != 0 || rend.y2 != 0)
+                            {
+                                rend.center();
+                            }
                         }
-                    }
-                    for (int i2 = 0; i2 < graphics.getFilters().size(); i2++)
-                    {
-                        graphics.getFilters().get(i2).process(rend);
-                    }
-                    g.setColor(new Color((int) (rend.drawColor.getR() * 255), (int) (rend.drawColor.getG() * 255), (int) (rend.drawColor.getB() * 255), (int) (rend.drawColor.getA() * 255)));
-                    g.setFont(rend.font);
-                    int x = rend.x, x2 = rend.x2, y = rend.y, y2 = rend.y2;
-                    if (rend.type != Obj.ShapeType.TEXT)
-                    {
-                        if (x2 < x)
+                        for (int i2 = 0; i2 < graphics.getFilters().size(); i2++)
                         {
-                            int sx = x;
-                            x = x2;
-                            x2 = sx;
+                            graphics.getFilters().get(i2).process(rend);
                         }
-                        if (y2 < y)
+                        g.setColor(new Color((int) (rend.drawColor.getR() * 255), (int) (rend.drawColor.getG() * 255), (int) (rend.drawColor.getB() * 255), (int) (rend.drawColor.getA() * 255)));
+                        g.setFont(rend.font);
+                        int x = rend.x, x2 = rend.x2, y = rend.y, y2 = rend.y2;
+                        if (rend.type != Obj.ShapeType.TEXT)
                         {
-                            int sy = y;
-                            y = y2;
-                            y2 = sy;
+                            if (x2 < x)
+                            {
+                                int sx = x;
+                                x = x2;
+                                x2 = sx;
+                            }
+                            if (y2 < y)
+                            {
+                                int sy = y;
+                                y = y2;
+                                y2 = sy;
+                            }
                         }
-                    }
 
-                    if (rend.type == Obj.ShapeType.RECT)
-                        if (rend.image == null)
-                            if (rend.filled)
-                                g.fillRect(x, y, x2 - x, y2 - y);
+                        if (rend.type == Obj.ShapeType.RECT)
+                            if (rend.image == null)
+                                if (rend.filled)
+                                    g.fillRect(x, y, x2 - x, y2 - y);
+                                else
+                                    g.drawRect(x, y, x2 - x, y2 - y);
                             else
-                                g.drawRect(x, y, x2 - x, y2 - y);
-                        else
-                            g.drawImage(rend.image, x, y, x2 - x, y2 - y, null);
-                    else if (rend.type == Obj.ShapeType.OVAL)
-                        if (rend.filled)
-                            g.fillOval(x, y, x2 - x, y2 - y);
-                        else
-                            g.drawOval(x, y, x2 - x, y2 - y);
-                    else if (rend.type == Obj.ShapeType.LINE)
-                        g.drawLine(x, y, x2, y2);
-                    else if (rend.type == Obj.ShapeType.POINT)
-                        g.drawRect(x, y, 1, 1);
-                    else if (rend.type == Obj.ShapeType.TEXT)
-                    {
-                        rend.x2 = g.getFontMetrics().stringWidth(rend.value);
-                        rend.y2 = g.getFontMetrics().getHeight();
-                        g.drawString(rend.value, x, y + y2);
-                    }
+                                g.drawImage(rend.image, x, y, x2 - x, y2 - y, null);
+                        else if (rend.type == Obj.ShapeType.OVAL)
+                            if (rend.filled)
+                                g.fillOval(x, y, x2 - x, y2 - y);
+                            else
+                                g.drawOval(x, y, x2 - x, y2 - y);
+                        else if (rend.type == Obj.ShapeType.LINE)
+                            g.drawLine(x, y, x2, y2);
+                        else if (rend.type == Obj.ShapeType.POINT)
+                            g.drawRect(x, y, 1, 1);
+                        else if (rend.type == Obj.ShapeType.TEXT)
+                        {
+                            rend.x2 = g.getFontMetrics().stringWidth(rend.value);
+                            rend.y2 = g.getFontMetrics().getHeight();
+                            g.drawString(rend.value, x, y + y2);
+                        }
 
-                    g2.setTransform(transform);
+                        g2.setTransform(transform);
+                    }
                 }
+
                 i++;
             }
         }
