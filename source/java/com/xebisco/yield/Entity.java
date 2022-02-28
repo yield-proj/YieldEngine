@@ -331,7 +331,7 @@ public final class Entity
         int index = getIndex();
         if (parent != null)
         {
-            index += parent.getChildren().size();
+            index += parent.getEntityIndex();
         }
         return index;
     }
