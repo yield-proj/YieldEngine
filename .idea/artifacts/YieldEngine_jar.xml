@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="YieldEngine:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/YieldEngine_jar</output-path>
-    <root id="archive" name="YieldEngine.jar">
-      <element id="module-output" name="main" />
-      <element id="dir-copy" path="$PROJECT_DIR$/src/main/resources" />
-    </root>
-  </artifact>
-</component>
