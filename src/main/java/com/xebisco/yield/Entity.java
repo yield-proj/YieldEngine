@@ -3,13 +3,14 @@ package com.xebisco.yield;
 import com.xebisco.yield.components.Renderer;
 import com.xebisco.yield.components.Transform;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public final class Entity
 {
     private ArrayList<Component> components = new ArrayList<>();
     private ArrayList<Entity> children = new ArrayList<>();
-    private int index = -1;
     private Entity parent;
     private Transform selfTransform;
     private Renderer renderer;
@@ -86,32 +87,6 @@ public final class Entity
                     component.start();
                 component.update(delta);
                 i++;
-            }
-            if (children.size() > 0)
-            {
-                i = 0;
-                while (i < children.size())
-                {
-                    Entity e = children.get(i);
-                    if (e.getIndex() < -1)
-                    {
-                        throw new IllegalArgumentException("index cannot be less than -1");
-                    }
-                    if (e.getIndex() != -1)
-                    {
-                        if (e.getIndex() >= children.size())
-                            e.setIndex(children.size() - 1);
-                        int indexOf = children.indexOf(e);
-                        Entity e1 = children.get(e.getIndex());
-                        children.set(e.getIndex(), e);
-                        children.set(indexOf, e1);
-                    }
-                    i++;
-                }
-            }
-            if (index < -1)
-            {
-                throw new IllegalArgumentException("index cannot be less than -1");
             }
 
             i = 0;
@@ -302,6 +277,33 @@ public final class Entity
         return e;
     }
 
+    public void transmit(String method, Object... arguments)
+    {
+        for (Component c : components)
+        {
+            Method[] methods = c.getClass().getDeclaredMethods();
+            for (Method m : methods)
+            {
+                try
+                {
+                    if (m.getName().hashCode() == method.hashCode() && m.getName().equals(method))
+                        m.invoke(c, arguments);
+                } catch (IllegalAccessException | InvocationTargetException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void transmitToChildren(String method, Object... arguments)
+    {
+        for (Entity e : children)
+        {
+            e.transmit(method, arguments);
+        }
+    }
+
     public void setChildren(ArrayList<Entity> children)
     {
         this.children = children;
@@ -319,12 +321,25 @@ public final class Entity
 
     public int getIndex()
     {
-        return index;
+        return parent.getChildren().indexOf(this);
     }
 
     public void setIndex(int index)
     {
-        this.index = index;
+        if (index < -1)
+        {
+            throw new IllegalArgumentException("index cannot be less than -1");
+        }
+        if (index != -1)
+        {
+            int i = index;
+            if (index >= parent.getChildren().size())
+                i = parent.getChildren().size() - 1;
+            int indexOf = parent.getChildren().indexOf(this);
+            Entity e1 = parent.getChildren().get(i);
+            parent.getChildren().set(i, this);
+            parent.getChildren().set(indexOf, e1);
+        }
     }
 
     public Material getMaterial()

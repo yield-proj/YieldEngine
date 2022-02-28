@@ -4,11 +4,7 @@ import com.xebisco.yield.*;
 
 public class MyGame extends YldGame
 {
-    @Override
-    public void create()
-    {
 
-    }
 
     public static void main(String[] args)
     {
