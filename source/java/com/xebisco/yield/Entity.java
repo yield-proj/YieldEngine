@@ -11,7 +11,7 @@ public final class Entity
 {
     private ArrayList<Component> components = new ArrayList<>();
     private ArrayList<Entity> children = new ArrayList<>();
-    private int index = -1;
+    private int index = 0;
     private Entity parent;
     private Transform selfTransform;
     private Renderer renderer;
@@ -322,7 +322,7 @@ public final class Entity
 
     public int getIndex()
     {
-        if (parent != null && index != -1)
+        if (parent != null && index == -1)
             return parent.getChildren().indexOf(this);
         else return index;
     }
