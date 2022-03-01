@@ -7,9 +7,8 @@ import java.awt.*;
 
 public class Text extends Shape {
     private String contents = "Sample Text";
-    private Font font;
-
-    private Font previousFont;
+    private Font font = defaultFont;
+    private static Font defaultFont = new Font("arial", Font.PLAIN, 30);
 
     public Text() {
     }
@@ -20,13 +19,13 @@ public class Text extends Shape {
 
     @Override
     public void parameters(YldGraphics graphics) {
-        previousFont = graphics.getFont();
-        graphics.setFont(font);
+
     }
 
     @Override
-    public void previous(YldGraphics graphics) {
-        graphics.setFont(previousFont);
+    public void previous(YldGraphics graphics)
+    {
+        getObj().font = font;
     }
 
     @Override
@@ -55,13 +54,13 @@ public class Text extends Shape {
         this.font = font;
     }
 
-    public Font getPreviousFont()
+    public static Font getDefaultFont()
     {
-        return previousFont;
+        return defaultFont;
     }
 
-    public void setPreviousFont(Font previousFont)
+    public static void setDefaultFont(Font defaultFont)
     {
-        this.previousFont = previousFont;
+        Text.defaultFont = defaultFont;
     }
 }

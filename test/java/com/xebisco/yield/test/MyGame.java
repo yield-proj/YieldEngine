@@ -3,15 +3,14 @@ package com.xebisco.yield.test;
 import com.xebisco.yield.*;
 import com.xebisco.yield.components.Text;
 
+import java.awt.*;
+
 public class MyGame extends YldGame
 {
     @Override
     public void create()
     {
-        instantiate((e) -> {
-            e.addComponent(new Text("))"));
-            e.setIndex(10);
-        });
+
     }
 
     public static void main(String[] args)
