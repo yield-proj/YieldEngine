@@ -6,4 +6,5 @@ public class GameConfiguration extends WindowConfiguration
 {
     public int fps = 60;
     public boolean fpsLock = true, hardwareAcceleration = true;
+    public String appName;
 }

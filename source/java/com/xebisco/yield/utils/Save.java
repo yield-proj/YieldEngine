@@ -1,5 +1,7 @@
 package com.xebisco.yield.utils;
 
+import com.xebisco.yield.GameConfiguration;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,9 +10,36 @@ import java.util.Scanner;
 
 public class Save {
 
-    public static String load(SaveFile save) {
+    public static void saveContents(String contents, GameConfiguration config, boolean encrypted) {
+        if(config.appName == null) {
+            throw new NullPointerException("GameConfiguration.appName can't be null!");
+        }
+        String appdataPath = System.getenv("APPDATA");
+        File dir = new File(appdataPath + "\\YieldGames\\");
+        boolean c = dir.mkdir();
+        File file = new File(appdataPath + "\\YieldGames\\" + config.appName + ".ylds");
+        try
+        {
+            boolean created = file.createNewFile();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        save(contents, file.getPath(), encrypted);
+    }
+
+    public static String getContents(GameConfiguration config) {
+        if(config.appName == null) {
+            throw new NullPointerException("GameConfiguration.appName can't be null!");
+        }
+        String appdataPath = System.getenv("APPDATA");
+        File file = new File(appdataPath + "\\YieldGames\\" + config.appName + ".ylds");
+        return load(file.getPath());
+    }
+
+    public static String load(String savePath) {
         try {
-            Scanner sc = new Scanner(new File(save.getUrl().getPath()));
+            Scanner sc = new Scanner(new File(savePath));
             StringBuilder contents = new StringBuilder();
             while (sc.hasNextLine()) {
                 contents.append(sc.nextLine());
@@ -22,10 +51,10 @@ public class Save {
         return null;
     }
 
-    public static void save(String contents, SaveFile saveFile, boolean encrypted) {
+    public static void save(String contents, String savePath, boolean encrypted) {
         PrintWriter writer;
         try {
-            writer = new PrintWriter(saveFile.getUrl().getPath(), "UTF-8");
+            writer = new PrintWriter(savePath, "UTF-8");
             String toPrint = "";
             if (encrypted)
                 toPrint += "y";
