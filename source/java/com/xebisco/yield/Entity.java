@@ -330,14 +330,14 @@ public final class Entity
     public int getEntityIndex()
     {
         int index = getIndex(), max = 0;
-        if (parent != null)
+        if (parent != null && parent.getParent() != null)
         {
             for (int i = 0; i < index; i++)
             {
                 Entity e = null;
                 try
                 {
-                    e = parent.getChildren().get(i);
+                    e = parent.getParent().getChildren().get(i);
                 } catch (IndexOutOfBoundsException ignore)
                 {
                 }
