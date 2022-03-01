@@ -8,6 +8,7 @@ import com.xebisco.yield.config.WindowConfiguration;
 import com.xebisco.yield.exceptions.RendException;
 
 import javax.swing.*;
+import javax.tools.Tool;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.Objects;
@@ -17,6 +18,7 @@ public class YldWindow
     private final JFrame frame;
     private final YldWindowG windowG;
     private final YldGraphics graphics = new YldGraphics();
+    private boolean sync;
 
     public YldWindow()
     {
@@ -52,6 +54,7 @@ public class YldWindow
         frame.setResizable(configuration.resizable);
         frame.setVisible(true);
         frame.requestFocus();
+        sync = configuration.sync;
     }
 
     public void toFullscreen(WindowConfiguration configuration)
@@ -70,6 +73,7 @@ public class YldWindow
         frame.setUndecorated(true);
         frame.setVisible(true);
         frame.requestFocus();
+        sync = configuration.sync;
     }
 
     public JFrame getFrame()
@@ -82,7 +86,7 @@ public class YldWindow
         return windowG;
     }
 
-    public static class YldWindowG extends JPanel
+    public class YldWindowG extends JPanel
     {
 
         private GameHandler handler;
@@ -139,9 +143,12 @@ public class YldWindow
                 g1.drawImage(View.getActView().getImage(), 0, 0, getWidth(), getHeight(), this);
             }
             g.dispose();
+            if(sync) {
+                Toolkit.getDefaultToolkit().sync();
+            }
         }
 
-        public static void handleGraphics(Graphics g, YldGraphics graphics)
+        public void handleGraphics(Graphics g, YldGraphics graphics)
         {
             int i = 0, max = 0;
             for(int r = 0; r < graphics.shapeRends.size(); r++) {
