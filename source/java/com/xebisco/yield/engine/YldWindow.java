@@ -143,7 +143,6 @@ public class YldWindow
                 View.getActView().getImage().setAccelerationPriority(1);
                 g1.drawImage(View.getActView().getImage(), 0, 0, getWidth(), getHeight(), this);
             }
-            g.dispose();
             if(sync) {
                 Toolkit.getDefaultToolkit().sync();
             }
