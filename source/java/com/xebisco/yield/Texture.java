@@ -1,16 +1,18 @@
 package com.xebisco.yield;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Objects;
 
 public class Texture extends RelativeFile {
 
-    private Image image;
+    private BufferedImage image;
     public static int imageType = BufferedImage.TYPE_INT_ARGB;
 
-    public Texture(Image image) {
+    public Texture(BufferedImage image) {
         super("");
         this.image = image;
     }
@@ -31,14 +33,20 @@ public class Texture extends RelativeFile {
 
     public Texture(final String relativePath) {
         super(relativePath);
-        this.image = new ImageIcon(Objects.requireNonNull(Yld.class.getResource(relativePath))).getImage();
+        try
+        {
+            this.image = ImageIO.read(Objects.requireNonNull(Yld.class.getResource(relativePath)));
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
-    public Image getImage() {
+    public BufferedImage getImage() {
         return image;
     }
 
-    public void setImage(Image image) {
+    public void setImage(BufferedImage image) {
         this.image = image;
     }
 }

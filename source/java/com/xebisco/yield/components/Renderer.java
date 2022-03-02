@@ -11,12 +11,14 @@ public class Renderer extends Component {
     @Override
     public void update(float delta) {
         if (show) {
-            for (Obj obj : graphics.shapeRends) {
+            for(int i = 0; i < graphics.shapeRends.size(); i++) {
+                Obj obj = graphics.shapeRends.get(i);
                 if (!game.getScene().getGraphics().shapeRends.contains(obj))
                     game.getScene().getGraphics().shapeRends.add(obj);
             }
         } else {
-            for (Obj obj : graphics.shapeRends) {
+            for(int i = 0; i < graphics.shapeRends.size(); i++) {
+                Obj obj = graphics.shapeRends.get(i);
                 game.getScene().getGraphics().shapeRends.remove(obj);
             }
         }

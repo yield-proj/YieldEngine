@@ -1,6 +1,7 @@
 package com.xebisco.yield;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Obj {
     public int x, x2, y, y2, index, rotationV, rotationX, rotationY;
@@ -9,9 +10,9 @@ public class Obj {
     public Color color, drawColor;
     public String value;
     public Font font;
-    public Image image;
+    public BufferedImage image;
 
-    public Obj(int x, int x2, int y, int y2, ShapeType type, boolean filled, Color color, String value, Font font, Image image) {
+    public Obj(int x, int x2, int y, int y2, ShapeType type, boolean filled, Color color, String value, Font font, BufferedImage image) {
         this.x = x;
         this.x2 = x2;
         this.y = y;

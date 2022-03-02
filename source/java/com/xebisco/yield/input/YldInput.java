@@ -2,7 +2,11 @@ package com.xebisco.yield.input;
 
 import com.xebisco.yield.View;
 import com.xebisco.yield.engine.YldWindow;
+import com.xebisco.yield.slick.SlickGame;
 import com.xebisco.yield.utils.YldAction;
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Input;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -12,17 +16,37 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class YldInput implements KeyListener, MouseListener {
+public class YldInput implements KeyListener, MouseListener, org.newdawn.slick.KeyListener, org.newdawn.slick.MouseListener
+{
 
     private HashMap<Keys, YldAction> shortcuts = new HashMap<>();
     private ArrayList<Integer> pressing = new ArrayList<>();
     private boolean touching, clicking;
     private final YldWindow window;
+    private final GameContainer slickApp;
 
-    public YldInput(YldWindow window) {
+    public YldInput(YldWindow window, GameContainer slickApp) {
         this.window = window;
-        window.getFrame().addKeyListener(this);
-        window.getFrame().addMouseListener(this);
+        this.slickApp = slickApp;
+        if(window != null) {
+            window.getFrame().addKeyListener(this);
+            window.getFrame().addMouseListener(this);
+        } else if(slickApp != null) {
+            slickApp.getInput().addKeyListener(this);
+            slickApp.getInput().addMouseListener(this);
+        }
+    }
+
+    private void kp(int key) {
+        pressing.add(key);
+        Keys keys = new Keys(pressing.toArray(new Integer[0]));
+        if (shortcuts.containsKey(keys)) {
+            shortcuts.get(keys).onAction();
+        }
+    }
+
+    private void kr(int key) {
+        pressing.removeIf(s -> (s == key));
     }
 
     @Override
@@ -32,16 +56,12 @@ public class YldInput implements KeyListener, MouseListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        pressing.add(e.getKeyCode());
-        Keys keys = new Keys(pressing.toArray(new Integer[0]));
-        if (shortcuts.containsKey(keys)) {
-            shortcuts.get(keys).onAction();
-        }
+        kp(e.getKeyCode());
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        pressing.removeIf(s -> (s == e.getKeyCode()));
+        kr(e.getKeyCode());
     }
 
     @Override
@@ -162,5 +182,87 @@ public class YldInput implements KeyListener, MouseListener {
 
     public void setClicking(boolean clicking) {
         this.clicking = clicking;
+    }
+
+    public YldWindow getWindow()
+    {
+        return window;
+    }
+
+    public GameContainer getSlickApp()
+    {
+        return slickApp;
+    }
+
+    @Override
+    public void keyPressed(int i, char c)
+    {
+        kp(i);
+    }
+
+    @Override
+    public void keyReleased(int i, char c)
+    {
+        kr(i);
+    }
+
+    @Override
+    public void mouseWheelMoved(int i)
+    {
+
+    }
+
+    @Override
+    public void mouseClicked(int i, int i1, int i2, int i3)
+    {
+
+    }
+
+    @Override
+    public void mousePressed(int i, int i1, int i2)
+    {
+
+    }
+
+    @Override
+    public void mouseReleased(int i, int i1, int i2)
+    {
+
+    }
+
+    @Override
+    public void mouseMoved(int i, int i1, int i2, int i3)
+    {
+
+    }
+
+    @Override
+    public void mouseDragged(int i, int i1, int i2, int i3)
+    {
+
+    }
+
+    @Override
+    public void setInput(Input input)
+    {
+
+    }
+
+    @Override
+    public boolean isAcceptingInput()
+    {
+        return false;
+    }
+
+    @Override
+    public void inputEnded()
+    {
+
+    }
+
+    @Override
+    public void inputStarted()
+    {
+
     }
 }

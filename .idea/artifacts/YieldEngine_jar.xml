@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="YieldEngine:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/YieldEngine_jar</output-path>
+    <root id="archive" name="YieldEngine.jar">
+      <element id="module-output" name="YieldEngine" />
+    </root>
+  </artifact>
+</component>

@@ -5,11 +5,11 @@ import com.xebisco.yield.engine.GameHandler;
 public class YldTime
 {
     private float delta, fps;
-    private GameHandler gameHandler;
+    private YldGame game;
 
-    public YldTime(GameHandler gameHandler)
+    public YldTime(YldGame game)
     {
-        this.gameHandler = gameHandler;
+        this.game = game;
     }
 
     public float getDelta()
@@ -24,22 +24,30 @@ public class YldTime
 
     public float getTargetFPS()
     {
-        return gameHandler.getFps();
+        return game.getHandler().getFps();
     }
 
     public void setTargetFPS(float fps)
     {
-        gameHandler.setFps((int) fps);
+        game.getHandler().setFps((int) fps);
     }
 
-    public GameHandler getGameHandler()
+    public void setTargetDrawFPS(float fps)
     {
-        return gameHandler;
+        if (game.getSlickApp() != null)
+            game.getSlickApp().setTargetFrameRate((int) fps);
+        else
+            game.getHandler().setFps((int) fps);
     }
 
-    public void setGameHandler(GameHandler gameHandler)
+    public YldGame getGame()
     {
-        this.gameHandler = gameHandler;
+        return game;
+    }
+
+    public void setGame(YldGame game)
+    {
+        this.game = game;
     }
 
     public void setDelta(float delta)

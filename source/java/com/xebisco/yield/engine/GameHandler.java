@@ -1,5 +1,6 @@
 package com.xebisco.yield.engine;
 
+import com.xebisco.yield.Yld;
 import com.xebisco.yield.YldExtension;
 import com.xebisco.yield.YldGame;
 import com.xebisco.yield.utils.YldAction;
@@ -24,46 +25,9 @@ public class GameHandler extends Engine
     {
         setRunning(true);
         game.create();
-        long start, end = System.nanoTime();
         while (isRunning())
         {
-            start = System.nanoTime();
-            float delta = (start - end) / 1_000_000_000f;
-            if (!isIgnoreTodo())
-            {
-                for (int i = 0; i < getTodoList().size(); i++)
-                {
-                    YldEngineAction engineAction = getTodoList().get(i);
-                    if (engineAction.getToExec() <= 0)
-                    {
-                        engineAction.getAction().onAction();
-                        if (!engineAction.isRepeat())
-                            getTodoList().remove(engineAction);
-                        engineAction.setToExec(engineAction.getInitialToExec());
-                    }
-                    else
-                    {
-                        engineAction.setToExec(engineAction.getToExec() - (int) ((start - end) / 1_000_000));
-                    }
-
-                }
-            }
-            for (int i = 0; i < game.getExtensions().size(); i++)
-            {
-                YldExtension extension = game.getExtensions().get(i);
-                extension.update(delta);
-            }
-            game.setFrames(game.getFrames() + 1);
-            game.update(delta);
-            game.process(delta);
-            if (game.getScene() != null)
-                game.updateScene(delta);
-            game.getWindow().startGraphics();
-            game.getWindow().getWindowG().repaint();
-            if (game.getInput() != null)
-                game.getInput().setClicking(false);
-            end = System.nanoTime();
-
+            tick();
             if (game.getConfiguration().fpsLock)
             {
                 try
@@ -83,6 +47,53 @@ public class GameHandler extends Engine
             e.printStackTrace();
         }
     }
+
+    private long endTime;
+
+    public void tick()
+    {
+        long start = System.nanoTime();
+        float delta = (start - endTime) / 1_000_000_000f;
+        if (!isIgnoreTodo())
+        {
+            for (int i = 0; i < getTodoList().size(); i++)
+            {
+                YldEngineAction engineAction = getTodoList().get(i);
+                if (engineAction.getToExec() <= 0)
+                {
+                    engineAction.getAction().onAction();
+                    if (!engineAction.isRepeat())
+                        getTodoList().remove(engineAction);
+                    engineAction.setToExec(engineAction.getInitialToExec());
+                }
+                else
+                {
+                    engineAction.setToExec(engineAction.getToExec() - (int) ((start - endTime) / 1_000_000));
+                }
+
+            }
+        }
+        for (int i = 0; i < game.getExtensions().size(); i++)
+        {
+            YldExtension extension = game.getExtensions().get(i);
+            extension.update(delta);
+        }
+        game.setFrames(game.getFrames() + 1);
+        game.update(delta);
+        game.process(delta);
+        if (game.getScene() != null)
+            game.updateScene(delta);
+        if (game.getWindow() != null)
+        {
+            game.getWindow().startGraphics();
+            game.getWindow().getWindowG().repaint();
+        }
+        if (game.getInput() != null)
+            game.getInput().setClicking(false);
+        endTime = System.nanoTime();
+    }
+
+
 
     public YldGame getGame()
     {

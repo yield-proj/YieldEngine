@@ -34,12 +34,8 @@ public class FullscreenDetectorExtension extends YldExtension {
         return fullscreen;
     }
 
-    public void setFullscreen(boolean fullscreen) {
+    private void setFullscreen(boolean fullscreen) {
         this.fullscreen = fullscreen;
-        if(fullscreen) {
-            game.getWindow().toFullscreen(game.getConfiguration());
-        } else {
-            game.getWindow().toWindow(game.getConfiguration());
-        }
+        game.setFullscreen(!fullscreen);
     }
 }

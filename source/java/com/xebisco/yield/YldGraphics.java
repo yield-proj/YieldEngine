@@ -1,7 +1,10 @@
 package com.xebisco.yield;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -50,19 +53,34 @@ public class YldGraphics {
         return text(text, 0, 0);
     }
 
-    public Obj img(Image image, float x, float y, float width, float height) {
+    public Obj img(BufferedImage image, float x, float y, float width, float height) {
         Obj shape = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.RECT, false, color, null, null, image);
         shapeRends.add(shape);
         return shape;
     }
 
-    public Obj img(String internalPath, float x, float y, float width, float height) {
-        Image image = new ImageIcon(Objects.requireNonNull(YldGraphics.class.getResource(internalPath))).getImage();
+    public Obj img(String relativePath, float x, float y, float width, float height) {
+        BufferedImage image = null;
+        try
+        {
+            image = ImageIO.read(Objects.requireNonNull(Yld.class.getResource(relativePath)));
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
         return img(image, x, y, width, height);
     }
 
-    public Obj img(String internalPath, float x, float y) {
-        Image image = new ImageIcon(Objects.requireNonNull(YldGraphics.class.getResource(internalPath))).getImage();
+    public Obj img(String relativePath, float x, float y) {
+        BufferedImage image = null;
+        try
+        {
+            image = ImageIO.read(Objects.requireNonNull(Yld.class.getResource(relativePath)));
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        assert image != null;
         return img(image, x, y, image.getWidth(null), image.getHeight(null));
     }
 

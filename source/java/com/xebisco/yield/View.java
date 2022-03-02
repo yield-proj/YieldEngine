@@ -1,6 +1,15 @@
 package com.xebisco.yield;
 
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.util.BufferedImageUtil;
+
 import java.awt.image.BufferedImage;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public class View
 {
@@ -15,15 +24,6 @@ public class View
         actC();
         this.width = width;
         this.height = height;
-        image = new BufferedImage(width, height, standardImageType);
-    }
-
-    public View(int width, int height, Color bgColor)
-    {
-        actC();
-        this.width = width;
-        this.height = height;
-        this.bgColor = bgColor;
         image = new BufferedImage(width, height, standardImageType);
     }
 
@@ -60,9 +60,9 @@ public class View
         return standardImageType;
     }
 
-    public static void setActView(View actCamera)
+    public static void setActView(View view)
     {
-        View.actView = actCamera;
+        View.actView = view;
     }
 
     public static void setStandardImageType(int standardImageType)
