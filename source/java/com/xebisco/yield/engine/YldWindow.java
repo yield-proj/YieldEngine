@@ -140,6 +140,7 @@ public class YldWindow
 
             if (View.getActView() != null)
             {
+                View.getActView().getImage().setAccelerationPriority(1);
                 g1.drawImage(View.getActView().getImage(), 0, 0, getWidth(), getHeight(), this);
             }
             g.dispose();
@@ -159,7 +160,7 @@ public class YldWindow
             {
                 for(int r = 0; r < graphics.shapeRends.size(); r++) {
                     Obj rend = graphics.shapeRends.get(r);
-                    if (rend.active && i == rend.index)
+                    if (i == rend.index && rend.active && rend.color.getA() > 0)
                     {
                         Graphics2D g2 = (Graphics2D) g;
                         AffineTransform transform = g2.getTransform();
