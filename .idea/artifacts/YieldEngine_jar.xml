@@ -3,6 +3,9 @@
     <output-path>$PROJECT_DIR$/out/artifacts/YieldEngine_jar</output-path>
     <root id="archive" name="YieldEngine.jar">
       <element id="module-output" name="YieldEngine" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/slick2d-core-1.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/lwjgl-2.9.3/jar/lwjgl.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/lwjgl-2.9.3/jar/jinput.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

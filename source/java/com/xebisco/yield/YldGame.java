@@ -60,15 +60,18 @@ public class YldGame extends YldScene
         game.configuration = configuration;
         if (configuration.title == null)
             configuration.title = game.getClass().getSimpleName() + " (Yield " + Yld.VERSION + ")";
+
+        game.handler = new GameHandler(game);
+
         if (!configuration.hardwareAcceleration)
         {
             game.window = new YldWindow();
             game.window.getFrame().setTitle(configuration.title);
+            game.window.getWindowG().setHandler(game.handler);
             if (!configuration.fullscreen)
                 game.window.toWindow(configuration);
             else
                 game.window.toFullscreen(configuration);
-            game.window.getWindowG().setHandler(game.handler);
             game.setGraphics(game.window.getGraphics());
         } else {
             try
@@ -83,8 +86,6 @@ public class YldGame extends YldScene
                 e.printStackTrace();
             }
         }
-
-        game.handler = new GameHandler(game);
         game.addExtension(new YieldOverlay());
         game.addScene(game);
         game.setScene(game);
@@ -98,9 +99,9 @@ public class YldGame extends YldScene
                 e.printStackTrace();
             }
         } else {
+            game.input = new YldInput(game.window, null);
             game.handler.getThread().start();
         }
-        game.input = new YldInput(game.window, game.slickApp);
     }
 
     public final void updateScene(float delta)

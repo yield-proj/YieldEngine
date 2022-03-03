@@ -1,15 +1,13 @@
 package com.xebisco.yield.engine;
 
-import com.xebisco.yield.Obj;
-import com.xebisco.yield.View;
-import com.xebisco.yield.YldExtension;
-import com.xebisco.yield.YldGraphics;
+import com.xebisco.yield.*;
 import com.xebisco.yield.config.WindowConfiguration;
 import com.xebisco.yield.exceptions.RendException;
 
 import javax.swing.*;
 import javax.tools.Tool;
 import java.awt.*;
+import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.util.Objects;
 
@@ -41,7 +39,7 @@ public class YldWindow
                     new Point(0, 0),
                     null));
         frame.setAlwaysOnTop(configuration.alwaysOnTop);
-        frame.setIconImage(new ImageIcon(Objects.requireNonNull(YldWindow.class.getResource(configuration.internalIconPath))).getImage());
+        frame.setIconImage(new ImageIcon(Objects.requireNonNull(YldWindow.class.getResource(configuration.internalIconPath + ".png"))).getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         windowG.setDoubleBuffered(configuration.doubleBuffered);
         frame.setSize(configuration.width, configuration.height);
@@ -66,7 +64,10 @@ public class YldWindow
                     new Point(0, 0),
                     null));
         frame.setAlwaysOnTop(true);
-        frame.setIconImage(new ImageIcon(Objects.requireNonNull(YldWindow.class.getResource(configuration.internalIconPath))).getImage());
+        if (configuration.internalIconPath.split("\\.").length > 1)
+            frame.setIconImage(new ImageIcon(Objects.requireNonNull(YldWindow.class.getResource(configuration.internalIconPath))).getImage());
+        else
+            frame.setIconImage(new ImageIcon(Objects.requireNonNull(YldWindow.class.getResource(configuration.internalIconPath + ".png"))).getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         windowG.setDoubleBuffered(configuration.doubleBuffered);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -143,7 +144,8 @@ public class YldWindow
                 View.getActView().getImage().setAccelerationPriority(1);
                 g1.drawImage(View.getActView().getImage(), 0, 0, getWidth(), getHeight(), this);
             }
-            if(sync) {
+            if (sync)
+            {
                 Toolkit.getDefaultToolkit().sync();
             }
         }
@@ -151,13 +153,15 @@ public class YldWindow
         public void handleGraphics(Graphics g, YldGraphics graphics)
         {
             int i = 0, max = 0;
-            for(int r = 0; r < graphics.shapeRends.size(); r++) {
-                if(graphics.shapeRends.get(r).index > max)
+            for (int r = 0; r < graphics.shapeRends.size(); r++)
+            {
+                if (graphics.shapeRends.get(r).index > max)
                     max = graphics.shapeRends.get(r).index;
             }
             while (i <= max)
             {
-                for(int r = 0; r < graphics.shapeRends.size(); r++) {
+                for (int r = 0; r < graphics.shapeRends.size(); r++)
+                {
                     Obj rend = graphics.shapeRends.get(r);
                     if (i == rend.index && rend.active && rend.color.getA() > 0)
                     {
@@ -201,7 +205,10 @@ public class YldWindow
                                 else
                                     g.drawRect(x, y, x2 - x, y2 - y);
                             else
+                            {
                                 g.drawImage(rend.image, x, y, x2 - x, y2 - y, null);
+                                rend.slickImage = null;
+                            }
                         else if (rend.type == Obj.ShapeType.OVAL)
                             if (rend.filled)
                                 g.fillOval(x, y, x2 - x, y2 - y);

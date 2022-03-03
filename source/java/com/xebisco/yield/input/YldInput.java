@@ -4,6 +4,7 @@ import com.xebisco.yield.View;
 import com.xebisco.yield.engine.YldWindow;
 import com.xebisco.yield.slick.SlickGame;
 import com.xebisco.yield.utils.YldAction;
+import org.lwjgl.opengl.Display;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
@@ -25,75 +26,93 @@ public class YldInput implements KeyListener, MouseListener, org.newdawn.slick.K
     private final YldWindow window;
     private final GameContainer slickApp;
 
-    public YldInput(YldWindow window, GameContainer slickApp) {
+    public YldInput(YldWindow window, GameContainer slickApp)
+    {
         this.window = window;
         this.slickApp = slickApp;
-        if(window != null) {
+        if (window != null)
+        {
             window.getFrame().addKeyListener(this);
             window.getFrame().addMouseListener(this);
-        } else if(slickApp != null) {
+        }
+        else if (slickApp != null)
+        {
             slickApp.getInput().addKeyListener(this);
             slickApp.getInput().addMouseListener(this);
         }
     }
 
-    private void kp(int key) {
+    private void kp(int key)
+    {
         pressing.add(key);
         Keys keys = new Keys(pressing.toArray(new Integer[0]));
-        if (shortcuts.containsKey(keys)) {
+        if (shortcuts.containsKey(keys))
+        {
             shortcuts.get(keys).onAction();
         }
     }
 
-    private void kr(int key) {
+    private void kr(int key)
+    {
         pressing.removeIf(s -> (s == key));
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
+    public void keyTyped(KeyEvent e)
+    {
 
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(KeyEvent e)
+    {
         kp(e.getKeyCode());
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(KeyEvent e)
+    {
         kr(e.getKeyCode());
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(MouseEvent e)
+    {
         clicking = true;
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(MouseEvent e)
+    {
         touching = true;
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(MouseEvent e)
+    {
         touching = false;
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
+    public void mouseEntered(MouseEvent e)
+    {
 
     }
 
     @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseExited(MouseEvent e)
+    {
 
     }
 
-    public boolean isPressing(int...keyCode) {
+    public boolean isPressing(int... keyCode)
+    {
         int contains = 0;
         int i = 0;
-        while (i < keyCode.length) {
-            if (pressing.contains(keyCode[i])) {
+        while (i < keyCode.length)
+        {
+            if (pressing.contains(keyCode[i]))
+            {
                 contains++;
                 break;
             }
@@ -102,11 +121,14 @@ public class YldInput implements KeyListener, MouseListener, org.newdawn.slick.K
         return contains == keyCode.length;
     }
 
-    public boolean justPressed(int... keyCode) {
+    public boolean justPressed(int... keyCode)
+    {
         int contains = 0;
         int i = 0;
-        while (i < keyCode.length) {
-            if (pressing.contains(keyCode[i])) {
+        while (i < keyCode.length)
+        {
+            if (pressing.contains(keyCode[i]))
+            {
                 pressing.remove(new Integer(keyCode[i]));
                 contains++;
                 break;
@@ -116,71 +138,125 @@ public class YldInput implements KeyListener, MouseListener, org.newdawn.slick.K
         return contains == keyCode.length;
     }
 
-    public void addShortcut(Keys keys, YldAction action) {
+    public void addShortcut(Keys keys, YldAction action)
+    {
         shortcuts.put(keys, action);
     }
 
-    public HashMap<Keys, YldAction> getShortcuts() {
+    public HashMap<Keys, YldAction> getShortcuts()
+    {
         return shortcuts;
     }
 
-    public void setShortcuts(HashMap<Keys, YldAction> shortcuts) {
+    public void setShortcuts(HashMap<Keys, YldAction> shortcuts)
+    {
         this.shortcuts = shortcuts;
     }
 
-    public ArrayList<Integer> getPressing() {
+    public ArrayList<Integer> getPressing()
+    {
         return pressing;
     }
 
-    public void setPressing(ArrayList<Integer> pressing) {
+    public void setPressing(ArrayList<Integer> pressing)
+    {
         this.pressing = pressing;
     }
 
-    public int getX() {
+    public int getX()
+    {
         int p = MouseInfo.getPointerInfo().getLocation().x;
-        p -= window.getFrame().getX() + window.getFrame().getInsets().left;
-        if (View.getActView() == null) {
-            if (p > window.getWindowG().getWidth())
-                p = window.getWindowG().getWidth();
-        } else {
-            p = (int) ((p / (float) window.getWindowG().getWidth()) * View.getActView().getWidth());
-            if (p > View.getActView().getWidth())
-                p = View.getActView().getWidth();
+        if (window != null)
+        {
+            p -= window.getFrame().getX() + window.getFrame().getInsets().left;
+            if (View.getActView() == null)
+            {
+                if (p > window.getWindowG().getWidth())
+                    p = window.getWindowG().getWidth();
+            }
+            else
+            {
+                p = (int) ((p / (float) window.getWindowG().getWidth()) * View.getActView().getWidth());
+                if (p > View.getActView().getWidth())
+                    p = View.getActView().getWidth();
+            }
+        }
+        else
+        {
+            p -= Display.getX();
+            if (View.getActView() == null)
+            {
+                if (p > Display.getWidth())
+                    p = Display.getWidth();
+            }
+            else
+            {
+                p = (int) ((p / (float) Display.getWidth()) * View.getActView().getWidth());
+                if (p > View.getActView().getWidth())
+                    p = View.getActView().getWidth();
+            }
         }
         if (p < 0)
             p = 0;
         return p;
     }
 
-    public int getY() {
+    public int getY()
+    {
         int p = MouseInfo.getPointerInfo().getLocation().y;
-        p -= window.getFrame().getY() + window.getFrame().getInsets().top;
-        if (View.getActView() == null) {
-            if (p > window.getWindowG().getHeight())
-                p = window.getWindowG().getHeight();
-        } else {
-            p = (int) ((p / (float) window.getWindowG().getHeight()) * View.getActView().getHeight());
-            if (p > View.getActView().getHeight())
-                p = View.getActView().getHeight();
+        if (window != null)
+        {
+            p -= window.getFrame().getY() + window.getFrame().getInsets().top;
+            if (View.getActView() == null)
+            {
+                if (p > window.getWindowG().getHeight())
+                    p = window.getWindowG().getHeight();
+            }
+            else
+            {
+                p = (int) ((p / (float) window.getWindowG().getHeight()) * View.getActView().getHeight());
+                if (p > View.getActView().getHeight())
+                    p = View.getActView().getHeight();
+            }
+        }
+        else
+        {
+            p -= Display.getX();
+            if (View.getActView() == null)
+            {
+                if (p > Display.getHeight())
+                    p = Display.getHeight();
+            }
+            else
+            {
+                p = (int) ((p / (float) Display.getHeight()) * View.getActView().getHeight());
+                if (p > View.getActView().getHeight())
+                    p = View.getActView().getHeight();
+            }
         }
         if (p < 0)
             p = 0;
+
         return p;
     }
 
-    public boolean isTouching() {
+    public boolean isTouching()
+    {
         return touching;
     }
 
-    public void setTouching(boolean touching) {
+    public void setTouching(boolean touching)
+    {
         this.touching = touching;
     }
 
-    public boolean isClicking() {
+    public boolean isClicking()
+    {
         return clicking;
     }
 
-    public void setClicking(boolean clicking) {
+    public void setClicking(boolean clicking)
+    {
         this.clicking = clicking;
     }
 
@@ -197,13 +273,13 @@ public class YldInput implements KeyListener, MouseListener, org.newdawn.slick.K
     @Override
     public void keyPressed(int i, char c)
     {
-        kp(i);
+        kp(KeyEvent.getExtendedKeyCodeForChar(c));
     }
 
     @Override
     public void keyReleased(int i, char c)
     {
-        kr(i);
+        kr(KeyEvent.getExtendedKeyCodeForChar(c));
     }
 
     @Override
@@ -215,19 +291,19 @@ public class YldInput implements KeyListener, MouseListener, org.newdawn.slick.K
     @Override
     public void mouseClicked(int i, int i1, int i2, int i3)
     {
-
+        clicking = true;
     }
 
     @Override
     public void mousePressed(int i, int i1, int i2)
     {
-
+        touching = true;
     }
 
     @Override
     public void mouseReleased(int i, int i1, int i2)
     {
-
+        touching = false;
     }
 
     @Override
@@ -251,7 +327,7 @@ public class YldInput implements KeyListener, MouseListener, org.newdawn.slick.K
     @Override
     public boolean isAcceptingInput()
     {
-        return false;
+        return true;
     }
 
     @Override

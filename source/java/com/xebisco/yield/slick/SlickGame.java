@@ -2,7 +2,9 @@ package com.xebisco.yield.slick;
 
 import com.xebisco.yield.Obj;
 import com.xebisco.yield.View;
+import com.xebisco.yield.Yld;
 import com.xebisco.yield.YldGame;
+import com.xebisco.yield.input.YldInput;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -16,11 +18,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class SlickGame extends BasicGame
 {
@@ -28,7 +27,6 @@ public class SlickGame extends BasicGame
 
     private Image viewImage;
     private Color bgColor = Color.darkGray;
-    private final HashSet<Image> images = new HashSet<>();
 
     public SlickGame(YldGame game)
     {
@@ -39,6 +37,7 @@ public class SlickGame extends BasicGame
     @Override
     public void init(GameContainer gameContainer) throws SlickException
     {
+        game.setInput(new YldInput(null, gameContainer));
         viewImage = new Image(1280, 720);
         game.getHandler().getThread().start();
         Display.setResizable(game.getConfiguration().resizable);
@@ -143,8 +142,10 @@ public class SlickGame extends BasicGame
     @Override
     public void render(GameContainer gameContainer, Graphics g) throws SlickException
     {
+        g.setAntiAlias(false);
         Graphics g1 = g;
         g = viewImage.getGraphics();
+        bgColor = new Color(View.getActView().getBgColor().getR(), View.getActView().getBgColor().getG(), View.getActView().getBgColor().getB());
         g.setColor(bgColor);
         g.fillRect(0, 0, viewImage.getWidth(), viewImage.getHeight());
         int i = 0, max = 0;
@@ -160,40 +161,37 @@ public class SlickGame extends BasicGame
         }
         while (i <= max)
         {
-            for (Obj rend : game.getScene().getGraphics().shapeRends)
+            for (int i1 = 0; i1 < game.getScene().getGraphics().shapeRends.size(); i1++)
             {
+                Obj rend = game.getScene().getGraphics().shapeRends.get(i1);
                 int x = rend.x, y = rend.y, x2 = rend.x2 - x, y2 = rend.y2 - y;
                 g.setColor(new Color(rend.color.getR() * 255, rend.color.getG() * 255, rend.color.getB() * 255, rend.color.getA() * 255));
+                if (rend.font != null)
+                    g.setFont(new TrueTypeFont(rend.font, false, null));
                 g.resetTransform();
                 g.rotate(rend.rotationX, rend.rotationY, rend.rotationV);
                 if (rend.type == Obj.ShapeType.RECT)
-                    if (rend.image == null)
+                    if (rend.image == null && rend.slickImage == null)
                         if (rend.filled)
                             g.fillRect(x, y, x2, y2);
                         else
                             g.drawRect(x, y, x2, y2);
                     else
                     {
-                        if (rend.value == null)
-                        {
+                        if(rend.slickImage == null || rend.slickImage.getResourceReference().hashCode() != rend.value.hashCode()) {
+                            String v = rend.value;
+                            if(v.startsWith("/"))
+                                v = v.substring(1);
                             try
                             {
-                                rend.value = String.valueOf(images.size());
-                                images.add(new Image(BufferedImageUtil.getTexture(String.valueOf(images.size()), rend.image)));
+                                rend.slickImage = new Image(BufferedImageUtil.getTexture(v, rend.image));
                             } catch (IOException e)
                             {
                                 e.printStackTrace();
                             }
+                            rend.slickImage.setFilter(Image.FILTER_NEAREST);
                         }
-                        AtomicReference<Image> image = new AtomicReference<>();
-                        images.forEach(img ->
-                        {
-                            if (img.getTexture().getTextureRef().hashCode() == rend.value.hashCode())
-                            {
-                                image.set(img);
-                            }
-                        });
-                        g.drawImage(image.get(), x, y, rend.x2, rend.y2, 0, 0, rend.image.getWidth(), rend.image.getHeight());
+                        g.drawImage(rend.slickImage, x, y, rend.x2, rend.y2, 0, 0, rend.slickImage.getWidth(), rend.slickImage.getHeight());
                     }
                 else if (rend.type == Obj.ShapeType.OVAL)
                     if (rend.filled)
@@ -242,10 +240,5 @@ public class SlickGame extends BasicGame
     public void setBgColor(Color bgColor)
     {
         this.bgColor = bgColor;
-    }
-
-    public HashSet<Image> getImages()
-    {
-        return images;
     }
 }

@@ -1,8 +1,9 @@
 package com.xebisco.yield;
 
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
+
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
@@ -10,7 +11,7 @@ import java.util.Objects;
 public class Texture extends RelativeFile {
 
     private BufferedImage image;
-    public static int imageType = BufferedImage.TYPE_INT_ARGB;
+    private static int imageType = BufferedImage.TYPE_INT_ARGB;
 
     public Texture(BufferedImage image) {
         super("");
@@ -48,5 +49,15 @@ public class Texture extends RelativeFile {
 
     public void setImage(BufferedImage image) {
         this.image = image;
+    }
+
+    public static int getImageType()
+    {
+        return imageType;
+    }
+
+    public static void setImageType(int imageType)
+    {
+        Texture.imageType = imageType;
     }
 }

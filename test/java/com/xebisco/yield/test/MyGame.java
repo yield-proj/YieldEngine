@@ -4,31 +4,50 @@ import com.xebisco.yield.*;
 import com.xebisco.yield.components.Rectangle;
 import com.xebisco.yield.components.Sprite;
 import com.xebisco.yield.components.Square;
+import com.xebisco.yield.extensions.FullscreenDetectorExtension;
+import org.newdawn.slick.Input;
+
+import java.awt.event.KeyEvent;
 
 public class MyGame extends YldGame
 {
     @Override
     public void create()
     {
-        instantiate((e) -> {
-            e.addComponent(new Rectangle());
+        addExtension(new FullscreenDetectorExtension());
+        instantiate((e) ->
+        {
+            e.addComponent(new Sprite());
+            e.getMaterial().setTexture(new Texture("/com/xebisco/yield/assets/yieldlogo.png"));
             e.addComponent(new C());
         });
-        instantiate((e) -> {
+        instantiate((e) ->
+        {
             e.addComponent(new Rectangle());
             e.getComponent(Rectangle.class).setColor(Colors.WHITE);
             e.getSelfTransform().translate(200, 200);
         });
     }
 
+    @Override
+    public void update(float delta)
+    {
+        if (input.isPressing(Key.NUMBER_1))
+        {
+            Yld.log("test");
+        }
+    }
+
     public static void main(String[] args)
     {
         final GameConfiguration config = new GameConfiguration();
+        config.hardwareAcceleration = true;
         launch(new MyGame(), config);
     }
 }
 
-class C extends Component {
+class C extends Component
+{
 
     @Override
     public void start()

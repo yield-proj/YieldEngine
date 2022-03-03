@@ -1,5 +1,7 @@
 package com.xebisco.yield;
 
+import com.xebisco.yield.components.Text;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -20,31 +22,31 @@ public class YldGraphics {
     }
 
     public Obj rect(float x, float y, float width, float height, boolean filled) {
-        Obj shape = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.RECT, filled, color, null, null, null);
+        Obj shape = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.RECT, filled, color, null, null);
         shapeRends.add(shape);
         return shape;
     }
 
     public Obj oval(float x, float y, float width, float height, boolean filled) {
-        Obj shape = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.OVAL, filled, color, null, null, null);
+        Obj shape = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.OVAL, filled, color, null, null);
         shapeRends.add(shape);
         return shape;
     }
 
     public Obj tint(float x, float y) {
-        Obj shape = new Obj((int) x, 0, (int) y, 0, Obj.ShapeType.POINT, false, color, null, null, null);
+        Obj shape = new Obj((int) x, 0, (int) y, 0, Obj.ShapeType.POINT, false, color, null, null);
         shapeRends.add(shape);
         return shape;
     }
 
     public Obj line(float x1, float y1, float x2, float y2) {
-        Obj shape = new Obj((int) x1, (int) x2, (int) y1, (int) y2, Obj.ShapeType.LINE, false, color, null, null, null);
+        Obj shape = new Obj((int) x1, (int) x2, (int) y1, (int) y2, Obj.ShapeType.LINE, false, color, null, null);
         shapeRends.add(shape);
         return shape;
     }
 
     public Obj text(String text, float x, float y) {
-        Obj shape = new Obj((int) x, 0, (int) y, 0, Obj.ShapeType.TEXT, false, color, text, font, null);
+        Obj shape = new Obj((int) x, 0, (int) y, 0, Obj.ShapeType.TEXT, false, color, text, font);
         shapeRends.add(shape);
         return shape;
     }
@@ -53,35 +55,11 @@ public class YldGraphics {
         return text(text, 0, 0);
     }
 
-    public Obj img(BufferedImage image, float x, float y, float width, float height) {
-        Obj shape = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.RECT, false, color, null, null, image);
-        shapeRends.add(shape);
-        return shape;
-    }
-
-    public Obj img(String relativePath, float x, float y, float width, float height) {
-        BufferedImage image = null;
-        try
-        {
-            image = ImageIO.read(Objects.requireNonNull(Yld.class.getResource(relativePath)));
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return img(image, x, y, width, height);
-    }
-
-    public Obj img(String relativePath, float x, float y) {
-        BufferedImage image = null;
-        try
-        {
-            image = ImageIO.read(Objects.requireNonNull(Yld.class.getResource(relativePath)));
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        assert image != null;
-        return img(image, x, y, image.getWidth(null), image.getHeight(null));
+    public Obj img(Texture texture, float x, float y, float width, float height) {
+        BufferedImage image = texture.getImage();
+        Obj obj = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.RECT, true, Colors.BLACK, texture.getRelativePath(), null);
+        obj.image = image;
+        return obj;
     }
 
     public Obj rect(float x, float y, float width, float height) {
