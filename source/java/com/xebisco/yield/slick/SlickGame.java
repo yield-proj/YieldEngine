@@ -138,8 +138,6 @@ public class SlickGame extends BasicGame
             try
             {
                 toLoadTexture.setSlickImage(new Image(BufferedImageUtil.getTexture(ref, toLoadTexture.getImage())));
-                if (toLoadTexture.getSlickImage() != null)
-                    toLoadTexture.getSlickImage().setFilter(Image.FILTER_NEAREST);
             } catch (IOException e)
             {
                 e.printStackTrace();
@@ -193,6 +191,7 @@ public class SlickGame extends BasicGame
                                 g.drawRect(x, y, x2, y2);
                         else
                         {
+                            rend.slickImage.setFilter(Image.FILTER_NEAREST);
                             g.drawImage(rend.slickImage, x, y, rend.x2, rend.y2, 0, 0, rend.slickImage.getWidth(), rend.slickImage.getHeight());
                         }
                     else if (rend.type == Obj.ShapeType.OVAL)
