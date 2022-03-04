@@ -201,7 +201,7 @@ public class SlickGame extends BasicGame
                         else
                             g.drawOval(x, y, x2, y2);
                     else if (rend.type == Obj.ShapeType.TEXT)
-                        g.drawString(rend.value, x, y);
+                        g.drawString(rend.value, x, y + g.getFont().getHeight(rend.value));
                     else if (rend.type == Obj.ShapeType.LINE)
                         g.drawLine(x, y, x2, y2);
                     else if (rend.type == Obj.ShapeType.POINT)
