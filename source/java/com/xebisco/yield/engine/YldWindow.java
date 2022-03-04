@@ -3,6 +3,7 @@ package com.xebisco.yield.engine;
 import com.xebisco.yield.*;
 import com.xebisco.yield.config.WindowConfiguration;
 import com.xebisco.yield.exceptions.RendException;
+import com.xebisco.yield.graphics.AWTGraphics;
 
 import javax.swing.*;
 import javax.tools.Tool;
@@ -91,6 +92,7 @@ public class YldWindow
     {
 
         private GameHandler handler;
+        private AWTGraphics sampleGraphics = new AWTGraphics();
 
         private Graphics g;
         private Color bgColor = new Color(0xFF1E2D74);
@@ -114,8 +116,8 @@ public class YldWindow
                 {
                     g = View.getActView().getImage().getGraphics();
                     g.setColor(new Color((int) (View.getActView().getBgColor().getR() * 255), (int) (View.getActView().getBgColor().getG() * 255), (int) (View.getActView().getBgColor().getB() * 255), (int) (View.getActView().getBgColor().getA() * 255)));
-                    width = View.getActView().getImage().getWidth();
-                    height = View.getActView().getImage().getHeight();
+                    width = View.getActView().getWidth();
+                    height = View.getActView().getHeight();
                 }
 
             }
@@ -123,27 +125,22 @@ public class YldWindow
             {
                 g.setColor(bgColor);
             }
-            g.fillRect(0, 0, width, height);
             this.g = g;
+            g.fillRect(0, 0, width, height);
+            if (handler.getGame().getScene() != null)
+                handleGraphics(g, handler.getGame().getScene().getGraphics());
             if (handler.getGame().getExtensions() != null)
             {
                 for (int i = 0; i < handler.getGame().getExtensions().size(); i++)
                 {
                     YldExtension extension = handler.getGame().getExtensions().get(i);
-                    extension.render(g);
+                    sampleGraphics.setGraphics(g);
+                    extension.render(sampleGraphics);
                 }
             }
-            if (handler.getGame().getScene() != null)
-            {
-                handleGraphics(g, handler.getGame().getScene().getGraphics());
-            }
-            handleGraphics(g, handler.getGame().getGraphics());
-
             if (View.getActView() != null)
-            {
-                View.getActView().getImage().setAccelerationPriority(1);
                 g1.drawImage(View.getActView().getImage(), 0, 0, getWidth(), getHeight(), this);
-            }
+
             if (sync)
             {
                 Toolkit.getDefaultToolkit().sync();
@@ -231,6 +228,16 @@ public class YldWindow
 
                 i++;
             }
+        }
+
+        public AWTGraphics getSampleGraphics()
+        {
+            return sampleGraphics;
+        }
+
+        public void setSampleGraphics(AWTGraphics sampleGraphics)
+        {
+            this.sampleGraphics = sampleGraphics;
         }
 
         public Color getBgColor()

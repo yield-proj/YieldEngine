@@ -2,6 +2,8 @@ package com.xebisco.yield.graphics;
 
 import com.xebisco.yield.Color;
 import com.xebisco.yield.Texture;
+import com.xebisco.yield.slick.SlickGame;
+import com.xebisco.yield.slick.SlickTexture;
 
 import java.awt.*;
 import java.awt.image.ImageObserver;
@@ -36,7 +38,9 @@ public interface SampleGraphics
 
     void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle);
 
-    boolean drawTexture(Texture texture, int x, int y, int width, int height, ImageObserver observer);
+    void drawTexture(Texture texture, int x, int y, int width, int height);
+
+    void drawTexture(SlickTexture texture, int x, int y, int width, int height, SlickGame slick);
 
     void drawString(String str, int x, int y);
 }

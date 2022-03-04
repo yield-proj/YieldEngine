@@ -24,7 +24,7 @@ public class YldGame extends YldScene
     private final ArrayList<YldExtension> extensions = new ArrayList<>();
     protected ArrayList<YldScene> scenes = new ArrayList<>();
     protected YldScene scene;
-    private Game slickGame;
+    private SlickGame slickGame;
     private AppGameContainer slickApp;
 
     @Override
@@ -53,6 +53,9 @@ public class YldGame extends YldScene
     public static void launch(YldGame game, GameConfiguration configuration)
     {
         Locale.setDefault(Locale.US);
+        if(configuration.hardwareAcceleration) {
+            Yld.log("WARNING: hardware acceleration is a experimental feature!");
+        }
         game.game = game;
         if (game.started)
             throw new AlreadyStartedException();
@@ -288,12 +291,12 @@ public class YldGame extends YldScene
         this.window = window;
     }
 
-    public Game getSlickGame()
+    public SlickGame getSlickGame()
     {
         return slickGame;
     }
 
-    public void setSlickGame(Game slickGame)
+    public void setSlickGame(SlickGame slickGame)
     {
         this.slickGame = slickGame;
     }

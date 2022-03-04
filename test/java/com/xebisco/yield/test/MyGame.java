@@ -5,25 +5,30 @@ import com.xebisco.yield.components.Rectangle;
 import com.xebisco.yield.components.Sprite;
 import com.xebisco.yield.components.Square;
 import com.xebisco.yield.extensions.FullscreenDetectorExtension;
+import com.xebisco.yield.slick.SlickTexture;
 import org.newdawn.slick.Input;
 
 import java.awt.event.KeyEvent;
 
 public class MyGame extends YldGame
 {
+    Entity e;
+
     @Override
     public void create()
     {
+        Yld.message("Hello, World!");
         addExtension(new FullscreenDetectorExtension());
-        instantiate((e) ->
+        e = instantiate((e) ->
         {
             e.addComponent(new Sprite());
-            e.getMaterial().setTexture(new Texture("/com/xebisco/yield/assets/yieldlogo.png"));
+            e.getMaterial().setTexture(new SlickTexture("/com/xebisco/yield/assets/yieldlogo.png"));
             e.addComponent(new C());
         });
         instantiate((e) ->
         {
             e.addComponent(new Rectangle());
+            e.addComponent(new C());
             e.getComponent(Rectangle.class).setColor(Colors.WHITE);
             e.getSelfTransform().translate(200, 200);
         });
@@ -42,6 +47,7 @@ public class MyGame extends YldGame
     {
         final GameConfiguration config = new GameConfiguration();
         config.hardwareAcceleration = true;
+        config.resizable = true;
         launch(new MyGame(), config);
     }
 }

@@ -1,9 +1,6 @@
 package com.xebisco.yield.slick;
 
-import com.xebisco.yield.Obj;
-import com.xebisco.yield.View;
-import com.xebisco.yield.Yld;
-import com.xebisco.yield.YldGame;
+import com.xebisco.yield.*;
 import com.xebisco.yield.input.YldInput;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
@@ -18,15 +15,15 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.HashSet;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class SlickGame extends BasicGame
 {
     private final YldGame game;
 
+    private SlickGraphics sampleGraphics = new SlickGraphics();
     private Image viewImage;
     private Color bgColor = Color.darkGray;
+    public SlickTexture toLoadTexture;
 
     public SlickGame(YldGame game)
     {
@@ -133,6 +130,22 @@ public class SlickGame extends BasicGame
     @Override
     public void update(GameContainer gameContainer, int i) throws SlickException
     {
+        if (toLoadTexture != null)
+        {
+            String ref = toLoadTexture.getRelativePath();
+            if (ref.startsWith("/") || ref.startsWith("\\"))
+                ref = ref.substring(1);
+            try
+            {
+                toLoadTexture.setSlickImage(new Image(BufferedImageUtil.getTexture(ref, toLoadTexture.getImage())));
+                if (toLoadTexture.getSlickImage() != null)
+                    toLoadTexture.getSlickImage().setFilter(Image.FILTER_NEAREST);
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            toLoadTexture = null;
+        }
         if (!game.getHandler().isRunning())
         {
             gameContainer.exit();
@@ -164,48 +177,48 @@ public class SlickGame extends BasicGame
             for (int i1 = 0; i1 < game.getScene().getGraphics().shapeRends.size(); i1++)
             {
                 Obj rend = game.getScene().getGraphics().shapeRends.get(i1);
-                int x = rend.x, y = rend.y, x2 = rend.x2 - x, y2 = rend.y2 - y;
-                g.setColor(new Color(rend.color.getR() * 255, rend.color.getG() * 255, rend.color.getB() * 255, rend.color.getA() * 255));
-                if (rend.font != null)
-                    g.setFont(new TrueTypeFont(rend.font, false, null));
-                g.resetTransform();
-                g.rotate(rend.rotationX, rend.rotationY, rend.rotationV);
-                if (rend.type == Obj.ShapeType.RECT)
-                    if (rend.image == null && rend.slickImage == null)
-                        if (rend.filled)
-                            g.fillRect(x, y, x2, y2);
+                if (rend.index == i)
+                {
+                    int x = rend.x, y = rend.y, x2 = (rend.x2 - x), y2 = (rend.y2 - y);
+                    g.setColor(new Color(rend.color.getR(), rend.color.getG(), rend.color.getB(), rend.color.getA()));
+                    if (rend.font != null)
+                        g.setFont(new TrueTypeFont(rend.font, false, null));
+                    g.resetTransform();
+                    g.rotate(rend.rotationX, rend.rotationY, rend.rotationV);
+                    if (rend.type == Obj.ShapeType.RECT)
+                        if (rend.slickImage == null)
+                            if (rend.filled)
+                                g.fillRect(x, y, x2, y2);
+                            else
+                                g.drawRect(x, y, x2, y2);
                         else
-                            g.drawRect(x, y, x2, y2);
-                    else
-                    {
-                        if(rend.slickImage == null || rend.slickImage.getResourceReference().hashCode() != rend.value.hashCode()) {
-                            String v = rend.value;
-                            if(v.startsWith("/"))
-                                v = v.substring(1);
-                            try
-                            {
-                                rend.slickImage = new Image(BufferedImageUtil.getTexture(v, rend.image));
-                            } catch (IOException e)
-                            {
-                                e.printStackTrace();
-                            }
-                            rend.slickImage.setFilter(Image.FILTER_NEAREST);
+                        {
+                            g.drawImage(rend.slickImage, x, y, rend.x2, rend.y2, 0, 0, rend.slickImage.getWidth(), rend.slickImage.getHeight());
                         }
-                        g.drawImage(rend.slickImage, x, y, rend.x2, rend.y2, 0, 0, rend.slickImage.getWidth(), rend.slickImage.getHeight());
-                    }
-                else if (rend.type == Obj.ShapeType.OVAL)
-                    if (rend.filled)
-                        g.fillOval(x, y, x2, y2);
-                    else
-                        g.drawOval(x, y, x2, y2);
-                else if (rend.type == Obj.ShapeType.TEXT)
-                    g.drawString(rend.value, x, y);
-                else if (rend.type == Obj.ShapeType.LINE)
-                    g.drawLine(x, y, x2, y2);
-                else if (rend.type == Obj.ShapeType.POINT)
-                    g.fillRect(x, y, 1, 1);
+                    else if (rend.type == Obj.ShapeType.OVAL)
+                        if (rend.filled)
+                            g.fillOval(x, y, x2, y2);
+                        else
+                            g.drawOval(x, y, x2, y2);
+                    else if (rend.type == Obj.ShapeType.TEXT)
+                        g.drawString(rend.value, x, y);
+                    else if (rend.type == Obj.ShapeType.LINE)
+                        g.drawLine(x, y, x2, y2);
+                    else if (rend.type == Obj.ShapeType.POINT)
+                        g.fillRect(x, y, 1, 1);
+                }
             }
             i++;
+        }
+        g.resetTransform();
+        if (game.getExtensions() != null)
+        {
+            for (int i1 = 0; i1 < game.getExtensions().size(); i1++)
+            {
+                YldExtension extension = game.getExtensions().get(i1);
+                sampleGraphics.setGraphics(g);
+                extension.render(sampleGraphics);
+            }
         }
         g1.drawImage(viewImage, 0, 0, Display.getWidth(), Display.getHeight(), 0, 0, View.getActView().getWidth(), View.getActView().getHeight());
     }
@@ -215,6 +228,16 @@ public class SlickGame extends BasicGame
     {
         System.exit(0);
         return super.closeRequested();
+    }
+
+    public SlickGraphics getSampleGraphics()
+    {
+        return sampleGraphics;
+    }
+
+    public void setSampleGraphics(SlickGraphics sampleGraphics)
+    {
+        this.sampleGraphics = sampleGraphics;
     }
 
     public YldGame getGame()

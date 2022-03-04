@@ -3,10 +3,15 @@ package com.xebisco.yield.extensions;
 import com.xebisco.yield.View;
 import com.xebisco.yield.Yld;
 import com.xebisco.yield.YldExtension;
+import com.xebisco.yield.graphics.AWTGraphics;
+import com.xebisco.yield.graphics.SampleGraphics;
+import com.xebisco.yield.slick.SlickGraphics;
+import org.newdawn.slick.util.BufferedImageUtil;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Objects;
 
 public class YieldOverlay extends YldExtension
@@ -38,8 +43,9 @@ public class YieldOverlay extends YldExtension
                 w = game.getWindow().getWindowG().getWidth();
                 h = game.getWindow().getWindowG().getHeight();
             }
-            exitButtonSelected = game.getInput().getX() > w - ((w / 1280f) * 250) && game.getInput().getY() > h - ((h / 720f) * 100);
-            if (exitButtonSelected && game.getInput().isTouching())
+            //exitButtonSelected = game.getInput().getX() > w - ((w / 1280f) * 250) && game.getInput().getY() > h - ((h / 720f) * 100);
+            exitButtonSelected = true;
+            if (game.getInput().isTouching())
             {
                 show = false;
             }
@@ -47,7 +53,7 @@ public class YieldOverlay extends YldExtension
     }
 
     @Override
-    public void render(java.awt.Graphics graphics)
+    public void render(SampleGraphics graphics)
     {
         if (show)
         {
@@ -124,7 +130,21 @@ public class YieldOverlay extends YldExtension
             g.drawString("Close", 1100, 680);
 
             g.dispose();
-            graphics.drawImage(image, 0, offsetAnimation, w, h, null);
+            if (graphics instanceof AWTGraphics)
+            {
+                ((AWTGraphics) graphics).getGraphics().drawImage(image, 0, offsetAnimation, w, h, null);
+            }
+            else
+            {
+                try
+                {
+                    ((SlickGraphics) graphics).getGraphics().drawImage(new org.newdawn.slick.Image(BufferedImageUtil.getTexture("YieldOverlayImage", image)), 0, offsetAnimation, w, h, 0, 0, image.getWidth(), image.getHeight());
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
             offsetAnimation -= offsetAnimation / 4;
         }
     }

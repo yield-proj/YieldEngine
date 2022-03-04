@@ -8,31 +8,36 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
-public class Texture extends RelativeFile {
+public class Texture extends RelativeFile
+{
 
     private BufferedImage image;
     private static int imageType = BufferedImage.TYPE_INT_ARGB;
 
-    public Texture(BufferedImage image) {
+    public Texture(BufferedImage image)
+    {
         super("");
         this.image = image;
     }
 
-    public Texture(Texture texture, int x, int y, int width, int height) {
+    public Texture(Texture texture, int x, int y, int width, int height)
+    {
         super(texture.getRelativePath());
         final BufferedImage img = new BufferedImage(texture.getImage().getWidth(null), texture.getImage().getHeight(null), imageType);
         img.getGraphics().drawImage(texture.image, 0, 0, null);
         this.image = img.getSubimage(x, y, width, height);
     }
 
-    public Texture(Texture texture, int x, int y, int width, int height, int imageType) {
+    public Texture(Texture texture, int x, int y, int width, int height, int imageType)
+    {
         super(texture.getRelativePath());
         final BufferedImage img = new BufferedImage(image.getWidth(null), image.getHeight(null), imageType);
         img.getGraphics().drawImage(texture.image, 0, 0, null);
         this.image = img.getSubimage(x, y, width, height);
     }
 
-    public Texture(final String relativePath) {
+    public Texture(final String relativePath)
+    {
         super(relativePath);
         try
         {
@@ -43,11 +48,13 @@ public class Texture extends RelativeFile {
         }
     }
 
-    public BufferedImage getImage() {
+    public BufferedImage getImage()
+    {
         return image;
     }
 
-    public void setImage(BufferedImage image) {
+    public void setImage(BufferedImage image)
+    {
         this.image = image;
     }
 

@@ -1,6 +1,6 @@
 package com.xebisco.yield;
 
-import java.awt.*;
+import com.xebisco.yield.graphics.SampleGraphics;
 
 public class YldExtension extends YldB
 {
@@ -22,7 +22,7 @@ public class YldExtension extends YldB
 
     }
 
-    public void render(Graphics graphics)
+    public void render(SampleGraphics graphics)
     {
 
     }
