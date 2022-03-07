@@ -14,7 +14,7 @@ public class FullscreenDetectorExtension extends YldExtension
 
     private boolean fullscreen;
 
-    private int fullscreenKey1 = Key.ALT, fullscreenKey2 = Key.M;
+    private int fullscreenKey1 = Key.ALT, fullscreenKey2 = Key.F;
     private boolean importConfig = true;
 
     @Override

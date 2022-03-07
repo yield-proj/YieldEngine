@@ -1,6 +1,7 @@
 package com.xebisco.yield.slick;
 
 import com.xebisco.yield.*;
+import com.xebisco.yield.engine.YldEngineAction;
 import com.xebisco.yield.input.YldInput;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
@@ -15,6 +16,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public class SlickGame extends BasicGame
 {
@@ -36,7 +39,8 @@ public class SlickGame extends BasicGame
     {
         game.setInput(new YldInput(null, gameContainer));
         viewImage = new Image(1280, 720);
-        game.getHandler().getThread().start();
+        //game.getHandler().getThread().start();
+        game.getHandler().setRunning(true);
         Display.setResizable(game.getConfiguration().resizable);
         gameContainer.setShowFPS(game.getConfiguration().showFPS);
         String[] ICON_PATHS = new String[]{game.getConfiguration().internalIconPath + "16.png", game.getConfiguration().internalIconPath + "32.png",
@@ -55,7 +59,11 @@ public class SlickGame extends BasicGame
             e.printStackTrace();
         }
         Display.setIcon(icon_array);
-        new View(1280, 720);
+        if (View.getActView() == null)
+            new View(1280, 720);
+        glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);
+        game.create();
     }
 
     private static ByteBuffer loadIcon(String path) throws IOException
@@ -128,9 +136,46 @@ public class SlickGame extends BasicGame
     }
 
     @Override
-    public void update(GameContainer gameContainer, int i) throws SlickException
+    public void update(GameContainer gameContainer, int elapsed) throws SlickException
     {
-        if (toLoadTexture != null)
+        float delta = elapsed / 1000f;
+        if (!game.getHandler().isIgnoreTodo())
+        {
+            for (int i = 0; i < game.getHandler().getTodoList().size(); i++)
+            {
+                YldEngineAction engineAction = game.getHandler().getTodoList().get(i);
+                if (engineAction.getToExec() <= 0)
+                {
+                    engineAction.getAction().onAction();
+                    if (!engineAction.isRepeat())
+                        game.getHandler().getTodoList().remove(engineAction);
+                    engineAction.setToExec(engineAction.getInitialToExec());
+                }
+                else
+                {
+                    engineAction.setToExec(engineAction.getToExec() - elapsed);
+                }
+
+            }
+        }
+        for (int i = 0; i < game.getExtensions().size(); i++)
+        {
+            YldExtension extension = game.getExtensions().get(i);
+            extension.update(delta);
+        }
+        game.setFrames(game.getFrames() + 1);
+        game.update(delta);
+        game.process(delta);
+        if (game.getScene() != null)
+            game.updateScene(delta);
+        if (game.getWindow() != null)
+        {
+            game.getWindow().startGraphics();
+            game.getWindow().getWindowG().repaint();
+        }
+        if (game.getInput() != null)
+            game.getInput().setClicking(false);
+        /*if (toLoadTexture != null)
         {
             String ref = toLoadTexture.getRelativePath();
             if (ref.startsWith("/") || ref.startsWith("\\"))
@@ -143,6 +188,10 @@ public class SlickGame extends BasicGame
                 e.printStackTrace();
             }
             toLoadTexture = null;
+        }*/
+        if (viewImage.getWidth() != View.getActView().getWidth() || viewImage.getHeight() != View.getActView().getHeight())
+        {
+            viewImage = new Image(View.getActView().getWidth(), View.getActView().getHeight());
         }
         if (!game.getHandler().isRunning())
         {
@@ -153,9 +202,10 @@ public class SlickGame extends BasicGame
     @Override
     public void render(GameContainer gameContainer, Graphics g) throws SlickException
     {
-        g.setAntiAlias(false);
         Graphics g1 = g;
+        g1.setDrawMode(Graphics.MODE_NORMAL);
         g = viewImage.getGraphics();
+        g.setAntiAlias(false);
         bgColor = new Color(View.getActView().getBgColor().getR(), View.getActView().getBgColor().getG(), View.getActView().getBgColor().getB());
         g.setColor(bgColor);
         g.fillRect(0, 0, viewImage.getWidth(), viewImage.getHeight());
@@ -179,8 +229,6 @@ public class SlickGame extends BasicGame
                 {
                     int x = rend.x, y = rend.y, x2 = (rend.x2 - x), y2 = (rend.y2 - y);
                     g.setColor(new Color(rend.color.getR(), rend.color.getG(), rend.color.getB(), rend.color.getA()));
-                    if (rend.font != null)
-                        g.setFont(new TrueTypeFont(rend.font, false, null));
                     g.resetTransform();
                     g.rotate(rend.rotationX, rend.rotationY, rend.rotationV);
                     if (rend.type == Obj.ShapeType.RECT)
@@ -200,7 +248,13 @@ public class SlickGame extends BasicGame
                         else
                             g.drawOval(x, y, x2, y2);
                     else if (rend.type == Obj.ShapeType.TEXT)
-                        g.drawString(rend.value, x, y + g.getFont().getHeight(rend.value));
+                    {
+                        g.setFont(rend.slickFont);
+                        rend.x2 = g.getFont().getWidth(rend.value);
+                        rend.y2 = g.getFont().getLineHeight();
+                        g.drawString(rend.value, x - rend.x2 / 2f, y);
+                        g.resetFont();
+                    }
                     else if (rend.type == Obj.ShapeType.LINE)
                         g.drawLine(x, y, x2, y2);
                     else if (rend.type == Obj.ShapeType.POINT)

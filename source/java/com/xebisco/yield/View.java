@@ -29,10 +29,7 @@ public class View
 
     private void actC()
     {
-        if (actView == null)
-        {
-            actView = this;
-        }
+        actView = this;
     }
 
     public BufferedImage getImage()

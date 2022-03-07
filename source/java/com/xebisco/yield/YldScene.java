@@ -14,7 +14,7 @@ public class YldScene extends YldB
     private Entity masterEntity;
     private ArrayList<YldSystem> systems = new ArrayList<>();
     protected YldInput input;
-    private boolean callStart;
+    private boolean callStart = true;
     protected YldTime time;
 
     public YldScene()
@@ -62,6 +62,16 @@ public class YldScene extends YldB
         masterEntity.process(delta);
     }
 
+    public boolean isCallStart()
+    {
+        return callStart;
+    }
+
+    public void setCallStart(boolean callStart)
+    {
+        this.callStart = callStart;
+    }
+
     public YldGraphics getGraphics()
     {
         return graphics;
@@ -90,16 +100,6 @@ public class YldScene extends YldB
     public void setFrames(int frames)
     {
         this.frames = frames;
-    }
-
-    public boolean isCallStart()
-    {
-        return callStart;
-    }
-
-    public void setCallStart(boolean callStart)
-    {
-        this.callStart = callStart;
     }
 
     public Entity instantiate(Prefab prefab)

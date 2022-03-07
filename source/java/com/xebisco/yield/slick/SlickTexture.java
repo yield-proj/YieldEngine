@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
+@Deprecated
 public class SlickTexture extends Texture
 {
     private Image slickImage;

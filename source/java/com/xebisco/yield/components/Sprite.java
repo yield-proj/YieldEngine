@@ -30,6 +30,7 @@ public class Sprite extends Rectangle
         }
         else
         {
+            getObj().slickImage = getEntity().getMaterial().getTexture().getSlickImage();
             getObj().image = getEntity().getMaterial().getTexture().getImage();
         }
     }
@@ -40,8 +41,16 @@ public class Sprite extends Rectangle
         if (getEntity().getMaterial().getTexture() != null)
         {
             getObj().value = getEntity().getMaterial().getTexture().getRelativePath();
-            getObj().x2 = getEntity().getMaterial().getTexture().getImage().getWidth(null);
-            getObj().y2 = getEntity().getMaterial().getTexture().getImage().getHeight(null);
+            if (game.getSlickApp() == null)
+            {
+                getObj().x2 = getEntity().getMaterial().getTexture().getImage().getWidth(null);
+                getObj().y2 = getEntity().getMaterial().getTexture().getImage().getHeight(null);
+            }
+            else
+            {
+                getObj().x2 = getEntity().getMaterial().getTexture().getSlickImage().getWidth();
+                getObj().y2 = getEntity().getMaterial().getTexture().getSlickImage().getHeight();
+            }
         }
     }
 

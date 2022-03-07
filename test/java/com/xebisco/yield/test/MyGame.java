@@ -22,7 +22,7 @@ public class MyGame extends YldGame
         e = instantiate((e) ->
         {
             e.addComponent(new Sprite());
-            e.getMaterial().setTexture(new SlickTexture("/com/xebisco/yield/assets/yieldlogo.png"));
+            e.getMaterial().setTexture(new Texture("/com/xebisco/yield/assets/yieldlogo.png"));
             e.addComponent(new C());
         });
         instantiate((e) ->

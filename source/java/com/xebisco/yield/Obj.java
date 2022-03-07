@@ -1,9 +1,12 @@
 package com.xebisco.yield;
 
+import org.newdawn.slick.TrueTypeFont;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Obj {
+public class Obj
+{
     public int x, x2, y, y2, index, rotationV, rotationX, rotationY;
     public ShapeType type;
     public boolean filled, center, active = true;
@@ -12,8 +15,10 @@ public class Obj {
     public Font font;
     public BufferedImage image;
     public org.newdawn.slick.Image slickImage;
+    public org.newdawn.slick.Font slickFont;
 
-    public Obj(int x, int x2, int y, int y2, ShapeType type, boolean filled, Color color, String value, Font font) {
+    public Obj(int x, int x2, int y, int y2, ShapeType type, boolean filled, Color color, String value, Font font)
+    {
         this.x = x;
         this.x2 = x2;
         this.y = y;
@@ -23,17 +28,26 @@ public class Obj {
         this.color = color;
         this.value = value;
         this.font = font;
+        try
+        {
+            slickFont = new TrueTypeFont(font, false);
+        } catch (Exception ignore)
+        {
+        }
         drawColor = color;
     }
 
-    public void center() {
-        if(View.getActView() != null) {
+    public void center()
+    {
+        if (View.getActView() != null)
+        {
             x = View.getActView().getWidth() / 2 - x2 / 2;
             y = View.getActView().getHeight() / 2 - y2 / 2;
         }
     }
 
-    public enum ShapeType {
+    public enum ShapeType
+    {
         OVAL, RECT, LINE, POINT, TEXT
     }
 }

@@ -7,6 +7,9 @@ import com.xebisco.yield.extensions.YieldOverlay;
 import com.xebisco.yield.input.YldInput;
 import com.xebisco.yield.slick.SlickGame;
 import com.xebisco.yield.utils.ChangeScene;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Game;
 import org.newdawn.slick.SlickException;
@@ -28,22 +31,34 @@ public class YldGame extends YldScene
     private AppGameContainer slickApp;
 
     @Override
-    public final void start()
+    public void start()
     {
 
     }
 
-    public void setFullscreen(boolean fullscreen) {
-        if(window != null) {
-            if(!fullscreen)
+    public void setFullscreen(boolean fullscreen)
+    {
+        if (window != null)
+        {
+            if (!fullscreen)
                 window.toWindow(getConfiguration());
-            if(!fullscreen)
+            else
                 window.toFullscreen(getConfiguration());
-        } else {
+        }
+        else
+        {
             try
             {
-                getSlickApp().setFullscreen(fullscreen);
-            } catch (SlickException e)
+                if (fullscreen)
+                    Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+                else
+                {
+                    Display.setDisplayMode(new DisplayMode(
+                            configuration.width, configuration.height));
+                    Display.setFullscreen(false);
+                }
+
+            } catch (LWJGLException e)
             {
                 e.printStackTrace();
             }
@@ -53,7 +68,8 @@ public class YldGame extends YldScene
     public static void launch(YldGame game, GameConfiguration configuration)
     {
         Locale.setDefault(Locale.US);
-        if(configuration.hardwareAcceleration) {
+        if (configuration.hardwareAcceleration)
+        {
             Yld.log("WARNING: hardware acceleration is a experimental feature!");
         }
         game.game = game;
@@ -76,7 +92,9 @@ public class YldGame extends YldScene
             else
                 game.window.toFullscreen(configuration);
             game.setGraphics(game.window.getGraphics());
-        } else {
+        }
+        else
+        {
             try
             {
                 game.slickApp = new AppGameContainer(game.slickGame = new SlickGame(game));
@@ -92,7 +110,7 @@ public class YldGame extends YldScene
         game.addExtension(new YieldOverlay());
         game.addScene(game);
         game.setScene(game);
-        if(game.slickApp != null)
+        if (game.slickApp != null)
         {
             try
             {
@@ -101,7 +119,9 @@ public class YldGame extends YldScene
             {
                 e.printStackTrace();
             }
-        } else {
+        }
+        else
+        {
             game.input = new YldInput(game.window, null);
             game.handler.getThread().start();
         }
@@ -222,7 +242,6 @@ public class YldGame extends YldScene
 
     public void setScene(YldScene scene)
     {
-        scene.setCallStart(true);
         this.scene = scene;
     }
 

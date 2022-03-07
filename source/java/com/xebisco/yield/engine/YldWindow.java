@@ -219,7 +219,8 @@ public class YldWindow
                         {
                             rend.x2 = g.getFontMetrics().stringWidth(rend.value);
                             rend.y2 = g.getFontMetrics().getHeight();
-                            g.drawString(rend.value, x, y + y2);
+                            Yld.log(rend.x2 + ", " + rend.y2);
+                            g.drawString(rend.value, x - rend.x2 / 2, y + rend.y2 / 2);
                         }
 
                         g2.setTransform(transform);
