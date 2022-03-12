@@ -3,7 +3,6 @@ package com.xebisco.yield.graphics;
 import com.xebisco.yield.Color;
 import com.xebisco.yield.Texture;
 import com.xebisco.yield.slick.SlickGame;
-import com.xebisco.yield.slick.SlickTexture;
 
 import java.awt.*;
 
@@ -99,12 +98,6 @@ public class AWTGraphics implements SampleGraphics
     public void drawTexture(Texture texture, int x, int y, int width, int height)
     {
         graphics.drawImage(texture.getImage(), x, y, width, height, null);
-    }
-
-    @Override
-    public void drawTexture(SlickTexture texture, int x, int y, int width, int height, SlickGame slick)
-    {
-        drawTexture(texture, x, y, width, height);
     }
 
     @Override

@@ -2,10 +2,8 @@ package com.xebisco.yield.input;
 
 import com.xebisco.yield.View;
 import com.xebisco.yield.engine.YldWindow;
-import com.xebisco.yield.slick.SlickGame;
 import com.xebisco.yield.utils.YldAction;
 import org.lwjgl.opengl.Display;
-import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 

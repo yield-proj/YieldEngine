@@ -28,11 +28,9 @@ public class Obj
         this.color = color;
         this.value = value;
         this.font = font;
-        try
+        if (YldGame.lwjgl && font != null)
         {
             slickFont = new TrueTypeFont(font, false);
-        } catch (Exception ignore)
-        {
         }
         drawColor = color;
     }

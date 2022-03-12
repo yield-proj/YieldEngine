@@ -21,10 +21,17 @@ public class Texture extends RelativeFile
     {
         super("");
         textures++;
-        try
+        if (YldGame.lwjgl)
         {
-            slickImage = new Image(BufferedImageUtil.getTexture(Yld.RAND.nextLong() + "-" + textures, image));
-        } catch (Exception e)
+            try
+            {
+                slickImage = new Image(BufferedImageUtil.getTexture(Yld.RAND.nextLong() + "-" + textures, image));
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
         {
             this.image = image;
         }
@@ -34,12 +41,20 @@ public class Texture extends RelativeFile
     {
         super(texture.getRelativePath());
         textures++;
-        try
+        if (YldGame.lwjgl)
         {
-            final Image img = new Image(texture.getImage().getWidth(null), texture.getImage().getHeight(null));
-            img.getGraphics().drawImage(texture.slickImage, 0, 0, null);
-            this.slickImage = img.getSubImage(x, y, width, height);
-        } catch (Exception e)
+            final Image img;
+            try
+            {
+                img = new Image(texture.getImage().getWidth(null), texture.getImage().getHeight(null));
+                img.getGraphics().drawImage(texture.slickImage, 0, 0, null);
+                this.slickImage = img.getSubImage(x, y, width, height);
+            } catch (SlickException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
         {
             final BufferedImage img = new BufferedImage(texture.getImage().getWidth(null), texture.getImage().getHeight(null), imageType);
             img.getGraphics().drawImage(texture.image, 0, 0, null);
@@ -51,12 +66,20 @@ public class Texture extends RelativeFile
     {
         super(texture.getRelativePath());
         textures++;
-        try
+        if (YldGame.lwjgl)
         {
-            final Image img = new Image(texture.getImage().getWidth(null), texture.getImage().getHeight(null));
-            img.getGraphics().drawImage(texture.slickImage, 0, 0, null);
-            this.slickImage = img.getSubImage(x, y, width, height);
-        } catch (Exception e)
+            final Image img;
+            try
+            {
+                img = new Image(texture.getImage().getWidth(null), texture.getImage().getHeight(null));
+                img.getGraphics().drawImage(texture.slickImage, 0, 0, null);
+                this.slickImage = img.getSubImage(x, y, width, height);
+            } catch (SlickException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
         {
             final BufferedImage img = new BufferedImage(texture.getImage().getWidth(null), texture.getImage().getHeight(null), imageType);
             img.getGraphics().drawImage(texture.image, 0, 0, null);
@@ -68,10 +91,17 @@ public class Texture extends RelativeFile
     {
         super(relativePath);
         textures++;
-        try
+        if (YldGame.lwjgl)
         {
-            this.slickImage = new Image(Yld.class.getResourceAsStream(relativePath), Yld.RAND.nextLong() + "-" + textures, false, Image.FILTER_NEAREST);
-        } catch (Exception e)
+            try
+            {
+                this.slickImage = new Image(Yld.class.getResourceAsStream(relativePath), Yld.RAND.nextLong() + "-" + textures, false, Image.FILTER_NEAREST);
+            } catch (SlickException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
         {
             try
             {

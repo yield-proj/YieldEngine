@@ -24,15 +24,10 @@ public class YldTime
 
     public float getTargetFPS()
     {
-        return game.getHandler().getFps();
+        return game.getConfiguration().fps;
     }
 
     public void setTargetFPS(float fps)
-    {
-        game.getHandler().setFps((int) fps);
-    }
-
-    public void setTargetDrawFPS(float fps)
     {
         if (game.getSlickApp() != null)
             game.getSlickApp().setTargetFrameRate((int) fps);

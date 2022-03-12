@@ -39,7 +39,7 @@ public class Save
         }
         String appdataPath = System.getenv("APPDATA");
         File file = new File(appdataPath + "\\YieldGames\\" + config.appName + ".ylds");
-        if(!file.exists())
+        if (!file.exists())
             saveContents("", config, false);
         return load(file.getPath());
     }
@@ -93,18 +93,22 @@ public class Save
 
     private static String processSave(String saveContents)
     {
-        String[] saveC = saveContents.split(":");
-        StringBuilder chords = new StringBuilder();
-        for (int i = 1; i < saveC.length; i++)
+        if (saveContents != null && saveContents.hashCode() != "".hashCode())
         {
-            chords.append(saveC[i]);
-        }
-        char[] chars = chords.toString().toCharArray();
-        if (saveC[0].equals("y"))
-            for (int i = 0; i < chars.length; i++)
+            String[] saveC = saveContents.split(":");
+            StringBuilder chords = new StringBuilder();
+            for (int i = 1; i < saveC.length; i++)
             {
-                chars[i] = (char) ((int) chars[i] + 4);
+                chords.append(saveC[i]);
             }
-        return new String(chars);
+            char[] chars = chords.toString().toCharArray();
+            if (saveC[0].equals("y"))
+                for (int i = 0; i < chars.length; i++)
+                {
+                    chars[i] = (char) ((int) chars[i] + 4);
+                }
+            return new String(chars);
+        }
+        else return "";
     }
 }

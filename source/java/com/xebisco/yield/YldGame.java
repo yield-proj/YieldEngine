@@ -29,6 +29,7 @@ public class YldGame extends YldScene
     protected YldScene scene;
     private SlickGame slickGame;
     private AppGameContainer slickApp;
+    public static boolean lwjgl;
 
     @Override
     public void start()
@@ -95,13 +96,10 @@ public class YldGame extends YldScene
         }
         else
         {
+            lwjgl = true;
             try
             {
-                game.slickApp = new AppGameContainer(game.slickGame = new SlickGame(game));
-                game.slickApp.setDisplayMode(game.configuration.width, game.configuration.height, game.configuration.fullscreen);
-                game.slickApp.setTargetFrameRate(configuration.fps);
-                game.slickApp.setAlwaysRender(configuration.alwaysRender);
-                game.slickApp.setVSync(configuration.vSync);
+                game.slickApp = new AppGameContainer(game.slickGame = new SlickGame(game), game.configuration.width, game.configuration.height, game.configuration.fullscreen);
             } catch (SlickException e)
             {
                 e.printStackTrace();

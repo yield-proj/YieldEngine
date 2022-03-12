@@ -3,8 +3,6 @@ package com.xebisco.yield.slick;
 import com.xebisco.yield.Texture;
 import com.xebisco.yield.Yld;
 import com.xebisco.yield.graphics.SampleGraphics;
-import com.xebisco.yield.slick.SlickGame;
-import com.xebisco.yield.slick.SlickTexture;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
@@ -105,19 +103,6 @@ public class SlickGraphics implements SampleGraphics
     public void drawTexture(Texture texture, int x, int y, int width, int height)
     {
         Yld.log("SLICK GRAPHICS DOES NOT SUPPORT THE 'drawTexture(Texture texture, int x, int y, int width, int height)' METHOD");
-    }
-
-    @Override
-    public void drawTexture(SlickTexture texture, int x, int y, int width, int height, SlickGame slick)
-    {
-        if (texture.getSlickImage() == null)
-        {
-            slick.toLoadTexture = texture;
-        }
-        if (texture.getSlickImage() != null)
-        {
-            graphics.drawImage(texture.getSlickImage(), x, y, width, height, 0, 0, texture.getSlickImage().getWidth(), texture.getSlickImage().getHeight());
-        }
     }
 
     @Override

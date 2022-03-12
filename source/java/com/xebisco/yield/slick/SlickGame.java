@@ -3,7 +3,9 @@ package com.xebisco.yield.slick;
 import com.xebisco.yield.*;
 import com.xebisco.yield.engine.YldEngineAction;
 import com.xebisco.yield.input.YldInput;
+import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -26,7 +28,7 @@ public class SlickGame extends BasicGame
     private SlickGraphics sampleGraphics = new SlickGraphics();
     private Image viewImage;
     private Color bgColor = Color.darkGray;
-    public SlickTexture toLoadTexture;
+    private boolean started;
 
     public SlickGame(YldGame game)
     {
@@ -34,36 +36,50 @@ public class SlickGame extends BasicGame
         this.game = game;
     }
 
+
+    public void loadConfig(GameConfiguration configuration)
+    {
+        game.getSlickApp().setClearEachFrame(true);
+        game.getSlickApp().setTargetFrameRate(configuration.fps);
+        game.getSlickApp().setAlwaysRender(configuration.alwaysRender);
+        game.getSlickApp().setVSync(configuration.vSync);
+        Display.setResizable(configuration.resizable);
+    }
+
     @Override
     public void init(GameContainer gameContainer) throws SlickException
     {
-        game.setInput(new YldInput(null, gameContainer));
-        viewImage = new Image(1280, 720);
-        //game.getHandler().getThread().start();
-        game.getHandler().setRunning(true);
-        Display.setResizable(game.getConfiguration().resizable);
-        gameContainer.setShowFPS(game.getConfiguration().showFPS);
-        String[] ICON_PATHS = new String[]{game.getConfiguration().internalIconPath + "16.png", game.getConfiguration().internalIconPath + "32.png",
-                game.getConfiguration().internalIconPath + "64.png", game.getConfiguration().internalIconPath + "128.png"};
-        ByteBuffer[] icon_array = new ByteBuffer[ICON_PATHS.length];
-        try
+        loadConfig(game.getConfiguration());
+        if (!started)
         {
-            for (int i = 0; i < ICON_PATHS.length; i++)
+            game.setInput(new YldInput(null, gameContainer));
+            viewImage = new Image(1280, 720);
+            //game.getHandler().getThread().start();
+            game.getHandler().setRunning(true);
+            gameContainer.setShowFPS(game.getConfiguration().showFPS);
+            String[] ICON_PATHS = new String[]{game.getConfiguration().internalIconPath + "16.png", game.getConfiguration().internalIconPath + "32.png",
+                    game.getConfiguration().internalIconPath + "64.png", game.getConfiguration().internalIconPath + "128.png"};
+            ByteBuffer[] icon_array = new ByteBuffer[ICON_PATHS.length];
+            try
             {
-                icon_array[i] = ByteBuffer.allocateDirect(1);
-                String path = ICON_PATHS[i];
-                icon_array[i] = loadIcon(path);
+                for (int i = 0; i < ICON_PATHS.length; i++)
+                {
+                    icon_array[i] = ByteBuffer.allocateDirect(1);
+                    String path = ICON_PATHS[i];
+                    icon_array[i] = loadIcon(path);
+                }
+            } catch (IOException e)
+            {
+                e.printStackTrace();
             }
-        } catch (IOException e)
-        {
-            e.printStackTrace();
+            Display.setIcon(icon_array);
+            if (View.getActView() == null)
+                new View(1280, 720);
+            glLoadIdentity();
+            glMatrixMode(GL_MODELVIEW);
+            game.create();
         }
-        Display.setIcon(icon_array);
-        if (View.getActView() == null)
-            new View(1280, 720);
-        glLoadIdentity();
-        glMatrixMode(GL_MODELVIEW);
-        game.create();
+        started = true;
     }
 
     private static ByteBuffer loadIcon(String path) throws IOException
@@ -196,6 +212,7 @@ public class SlickGame extends BasicGame
         if (!game.getHandler().isRunning())
         {
             gameContainer.exit();
+
         }
     }
 
@@ -203,7 +220,7 @@ public class SlickGame extends BasicGame
     public void render(GameContainer gameContainer, Graphics g) throws SlickException
     {
         Graphics g1 = g;
-        g1.setDrawMode(Graphics.MODE_NORMAL);
+
         g = viewImage.getGraphics();
         g.setAntiAlias(false);
         bgColor = new Color(View.getActView().getBgColor().getR(), View.getActView().getBgColor().getG(), View.getActView().getBgColor().getB());
@@ -273,7 +290,8 @@ public class SlickGame extends BasicGame
                 extension.render(sampleGraphics);
             }
         }
-        g1.drawImage(viewImage, 0, 0, Display.getWidth(), Display.getHeight(), 0, 0, View.getActView().getWidth(), View.getActView().getHeight());
+        g1.drawImage(viewImage, 0, 0, gameContainer.getWidth(), gameContainer.getHeight(), 0, 0, View.getActView().getWidth(), View.getActView().getHeight());
+
     }
 
     @Override
@@ -282,6 +300,7 @@ public class SlickGame extends BasicGame
         System.exit(0);
         return super.closeRequested();
     }
+
 
     public SlickGraphics getSampleGraphics()
     {
