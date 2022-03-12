@@ -35,7 +35,6 @@ Latest Release: [GitHub Release](https://github.com/xebisco/YieldEngine/releases
 
 [![](https://jitpack.io/v/xebisco/YieldEngine.svg)](https://jitpack.io/#xebisco/YieldEngine)
 
-
 **Maven**
 ```xml
 <repositories>
@@ -46,8 +45,8 @@ Latest Release: [GitHub Release](https://github.com/xebisco/YieldEngine/releases
 </repositories>
 
 <dependency>
-	<groupId>com.github.synonware</groupId>
-		<artifactId>SIni4j</artifactId>
+	<groupId>com.github.xebisco</groupId>
+		<artifactId>YieldEngine</artifactId>
 	    <version>VERSION</version>
 	</dependency>
 <dependency>
@@ -65,7 +64,7 @@ allprojects
 
 dependencies 
 {
-	implementation 'com.github.synonware:SIni4j:VERSION'
+	implementation 'com.github.xebisco:YieldEngine:VERSION'
 }
 ```
 
