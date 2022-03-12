@@ -1,3 +1,19 @@
+/*
+ * Copyright [2022] [Xebisco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.xebisco.yield;
 
 import org.newdawn.slick.Image;
@@ -12,10 +28,11 @@ import java.util.Objects;
 public class Texture extends RelativeFile
 {
 
-    private BufferedImage image;
+    private BufferedImage image, cacheImage1, cacheImage2;
     private Image slickImage;
     private static int imageType = BufferedImage.TYPE_INT_ARGB;
     private static int textures;
+    private boolean flippedX, flippedY;
 
     public Texture(BufferedImage image)
     {
@@ -43,16 +60,7 @@ public class Texture extends RelativeFile
         textures++;
         if (YldGame.lwjgl)
         {
-            final Image img;
-            try
-            {
-                img = new Image(texture.getImage().getWidth(null), texture.getImage().getHeight(null));
-                img.getGraphics().drawImage(texture.slickImage, 0, 0, null);
-                this.slickImage = img.getSubImage(x, y, width, height);
-            } catch (SlickException e)
-            {
-                e.printStackTrace();
-            }
+            this.slickImage = texture.getSlickImage().getSubImage(x, y, width, height);
         }
         else
         {
@@ -68,16 +76,7 @@ public class Texture extends RelativeFile
         textures++;
         if (YldGame.lwjgl)
         {
-            final Image img;
-            try
-            {
-                img = new Image(texture.getImage().getWidth(null), texture.getImage().getHeight(null));
-                img.getGraphics().drawImage(texture.slickImage, 0, 0, null);
-                this.slickImage = img.getSubImage(x, y, width, height);
-            } catch (SlickException e)
-            {
-                e.printStackTrace();
-            }
+            this.slickImage = texture.getSlickImage().getSubImage(x, y, width, height);
         }
         else
         {
@@ -159,11 +158,61 @@ public class Texture extends RelativeFile
 
     public Image getSlickImage()
     {
-        return slickImage;
+        return slickImage.getFlippedCopy(flippedX, flippedY);
     }
 
     public void setSlickImage(Image slickImage)
     {
         this.slickImage = slickImage;
+    }
+
+    public static int getTextures()
+    {
+        return textures;
+    }
+
+    public static void setTextures(int textures)
+    {
+        Texture.textures = textures;
+    }
+
+    public boolean isFlippedX()
+    {
+        return flippedX;
+    }
+
+    public void setFlippedX(boolean flippedX)
+    {
+        this.flippedX = flippedX;
+    }
+
+    public boolean isFlippedY()
+    {
+        return flippedY;
+    }
+
+    public void setFlippedY(boolean flippedY)
+    {
+        this.flippedY = flippedY;
+    }
+
+    public BufferedImage getCacheImage1()
+    {
+        return cacheImage1;
+    }
+
+    public void setCacheImage1(BufferedImage cacheImage1)
+    {
+        this.cacheImage1 = cacheImage1;
+    }
+
+    public BufferedImage getCacheImage2()
+    {
+        return cacheImage2;
+    }
+
+    public void setCacheImage2(BufferedImage cacheImage2)
+    {
+        this.cacheImage2 = cacheImage2;
     }
 }
