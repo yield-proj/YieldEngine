@@ -19,15 +19,13 @@ package com.xebisco.yield.slick;
 import com.xebisco.yield.*;
 import com.xebisco.yield.engine.YldEngineAction;
 import com.xebisco.yield.input.YldInput;
-import org.lwjgl.LWJGLException;
+import com.xebisco.yield.utils.Conversions;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.*;
 import org.newdawn.slick.opengl.PNGDecoder;
-import org.newdawn.slick.util.BufferedImageUtil;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -239,7 +237,7 @@ public class SlickGame extends BasicGame
 
         g = viewImage.getGraphics();
         g.setAntiAlias(false);
-        bgColor = new Color(View.getActView().getBgColor().getR(), View.getActView().getBgColor().getG(), View.getActView().getBgColor().getB());
+        bgColor = Conversions.toSlickColor(View.getActView().getBgColor());
         g.setColor(bgColor);
         g.fillRect(0, 0, viewImage.getWidth(), viewImage.getHeight());
         int i = 0, max = 0;
@@ -261,7 +259,7 @@ public class SlickGame extends BasicGame
                 if (rend.index == i)
                 {
                     int x = rend.x, y = rend.y, x2 = (rend.x2 - x), y2 = (rend.y2 - y);
-                    g.setColor(new Color(rend.color.getR(), rend.color.getG(), rend.color.getB(), rend.color.getA()));
+                    g.setColor(Conversions.toSlickColor(rend.drawColor));
                     g.resetTransform();
                     g.rotate(rend.rotationX, rend.rotationY, rend.rotationV);
                     if (rend.type == Obj.ShapeType.RECT)

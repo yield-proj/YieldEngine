@@ -18,11 +18,10 @@ package com.xebisco.yield.engine;
 
 import com.xebisco.yield.*;
 import com.xebisco.yield.config.WindowConfiguration;
-import com.xebisco.yield.exceptions.RendException;
 import com.xebisco.yield.graphics.AWTGraphics;
+import com.xebisco.yield.utils.Conversions;
 
 import javax.swing.*;
-import javax.tools.Tool;
 import java.awt.*;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
@@ -131,7 +130,7 @@ public class YldWindow
                 if (View.getActView().getImage() != null)
                 {
                     g = View.getActView().getImage().getGraphics();
-                    g.setColor(new Color((int) (View.getActView().getBgColor().getR() * 255), (int) (View.getActView().getBgColor().getG() * 255), (int) (View.getActView().getBgColor().getB() * 255), (int) (View.getActView().getBgColor().getA() * 255)));
+                    g.setColor(Conversions.toAWTColor(View.getActView().getBgColor()));
                     width = View.getActView().getWidth();
                     height = View.getActView().getHeight();
                 }
@@ -192,7 +191,7 @@ public class YldWindow
                         {
                             graphics.getFilters().get(i2).process(rend);
                         }
-                        g.setColor(new Color((int) (rend.drawColor.getR() * 255), (int) (rend.drawColor.getG() * 255), (int) (rend.drawColor.getB() * 255), (int) (rend.drawColor.getA() * 255)));
+                        g.setColor(Conversions.toAWTColor(rend.drawColor));
                         g.setFont(rend.font);
                         int x = rend.x, x2 = rend.x2, y = rend.y, y2 = rend.y2;
                         if (rend.type != Obj.ShapeType.TEXT)

@@ -16,23 +16,23 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.utils.Conversions;
 import com.xebisco.yield.utils.Vector2;
-import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 
 public class YldWorld
 {
     private Vector2 gravity = new Vector2(0, 10);
-    private World world = new World(new Vec2(gravity.x, -gravity.y));
+    private World box2dWorld = new World(Conversions.toBox2dVec2(gravity));
 
-    public World getWorld()
+    public World getBox2dWorld()
     {
-        return world;
+        return box2dWorld;
     }
 
-    public void setWorld(World world)
+    public void setBox2dWorld(World box2dWorld)
     {
-        this.world = world;
+        this.box2dWorld = box2dWorld;
     }
 
     public Vector2 getGravity()
@@ -43,6 +43,6 @@ public class YldWorld
     public void setGravity(Vector2 gravity)
     {
         this.gravity = gravity;
-        world.setGravity(new Vec2(gravity.x, -gravity.y));
+        box2dWorld.setGravity(Conversions.toBox2dVec2(gravity));
     }
 }

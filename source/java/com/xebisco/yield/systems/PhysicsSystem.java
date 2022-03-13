@@ -18,24 +18,20 @@ package com.xebisco.yield.systems;
 
 import com.xebisco.yield.Component;
 import com.xebisco.yield.ProcessSystem;
+import com.xebisco.yield.UpdateSystem;
 import com.xebisco.yield.YldWorld;
 import com.xebisco.yield.components.PhysicsBody;
 
-public class PhysicsSystem extends ProcessSystem
+public class PhysicsSystem extends UpdateSystem
 {
     private int velocityIterations = 6, positionIterations = 2;
     private YldWorld world = new YldWorld();
 
     @Override
-    public String[] componentFilters()
+    public void update(float delta)
     {
-        return new String[] {"PhysicsBody"};
-    }
-
-    @Override
-    public void process(Component component, float delta)
-    {
-        PhysicsBody physicsBody = (PhysicsBody) component;
+        world.getBox2dWorld().step(1f / scene.getTime().getTargetFPS(), velocityIterations, positionIterations);
+        
     }
 
     public int getVelocityIterations()

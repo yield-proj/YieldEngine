@@ -62,7 +62,8 @@ public class YldScene extends YldB
 
     }
 
-    public final void destroyScene() {
+    public final void destroyScene()
+    {
         masterEntity.destroy();
         onDestroy();
     }
@@ -71,6 +72,20 @@ public class YldScene extends YldB
     public void update(float delta)
     {
 
+    }
+
+    public <S extends YldSystem> S getSystem(Class<S> system)
+    {
+        S system1 = null;
+        for (YldSystem system2 : systems)
+        {
+            if (system.getName().hashCode() == system2.getClass().getName().hashCode() && system.getName().equals(system2.getClass().getName()))
+            {
+                system1 = system.cast(system2);
+                break;
+            }
+        }
+        return system1;
     }
 
     public final void process(float delta)
@@ -128,7 +143,8 @@ public class YldScene extends YldB
         return masterEntity.instantiate();
     }
 
-    public <E extends Prefab> void destroy(Class<E> type) {
+    public <E extends Prefab> void destroy(Class<E> type)
+    {
         this.masterEntity.destroy(type);
     }
 
