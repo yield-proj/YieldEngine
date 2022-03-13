@@ -40,4 +40,15 @@ public final class Conversions
     {
         return new Vector2f(vector2.x, vector2.y);
     }
+
+    public static org.dyn4j.geometry.Vector2 toDyn4jVector2(final Vector2 vector2f)
+    {
+        return new org.dyn4j.geometry.Vector2(vector2f.x, -vector2f.y);
+    }
+
+    public static Vector2 toVector2(final org.dyn4j.geometry.Vector2 vector2)
+    {
+        return new Vector2((float) vector2.x, (float) -vector2.y);
+    }
+
 }

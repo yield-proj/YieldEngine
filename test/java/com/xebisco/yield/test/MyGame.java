@@ -17,6 +17,10 @@
 package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
+import com.xebisco.yield.colliders.RectCollider;
+import com.xebisco.yield.components.PhysicsBody;
+import com.xebisco.yield.components.Sprite;
+import com.xebisco.yield.utils.Vector2;
 
 public class MyGame extends YldGame
 {
@@ -24,23 +28,22 @@ public class MyGame extends YldGame
     @Override
     public void create()
     {
-        /*e = instantiate((e) ->
+        e = instantiate((e) ->
         {
             e.addComponent(new Sprite());
             e.addComponent(new PhysicsBody());
-            e.getComponent(PhysicsBody.class).addShape(new Collider(Collider.Shape.RECTANGLE));
-            e.getComponent(PhysicsBody.class).setVelocity(new Vector2(0, -1));
+            e.getComponent(PhysicsBody.class).setCollider(new RectCollider(64, 64));
+            e.getComponent(PhysicsBody.class).addForce(new Vector2(99999, 0));
             e.getMaterial().setTexture(new Texture("/com/xebisco/yield/assets/yieldlogo.png"));
         });
         e1 = instantiate((e) ->
         {
             e.addComponent(new Sprite());
             e.addComponent(new PhysicsBody());
-            e.getComponent(PhysicsBody.class).addShape(new Collider(Collider.Shape.RECTANGLE));
-            e.getComponent(PhysicsBody.class).setType(BodyType.STATIC);
+            e.getComponent(PhysicsBody.class).setCollider(new RectCollider(64, 64));
             e.getMaterial().setTexture(new Texture("/com/xebisco/yield/assets/yieldlogo.png"));
             e.getSelfTransform().translate(0, 100);
-        });*/
+        });
     }
 
     @Override
@@ -52,7 +55,7 @@ public class MyGame extends YldGame
     public static void main(String[] args)
     {
         new View(1280, 720);
-        View.getActView().setBgColor(Colors.WHITE);
+        //View.getActView().setBgColor(Colors.WHITE);
         final GameConfiguration config = new GameConfiguration();
         config.hardwareAcceleration = true;
         launch(new MyGame(), config);

@@ -18,6 +18,7 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.input.YldInput;
 import com.xebisco.yield.systems.MiddlePointSystem;
+import com.xebisco.yield.systems.PhysicsSystem;
 import com.xebisco.yield.systems.YldTimeSystem;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 public class YldScene extends YldB
 {
 
-    private int frames;
+    private int frames, ppm;
     protected YldGraphics graphics = new YldGraphics();
     private Entity masterEntity;
     private ArrayList<YldSystem> systems = new ArrayList<>();
@@ -37,6 +38,7 @@ public class YldScene extends YldB
     {
         addSystem(new YldTimeSystem());
         addSystem(new MiddlePointSystem());
+        addSystem(new PhysicsSystem());
     }
 
     @Override
@@ -182,5 +184,15 @@ public class YldScene extends YldB
     public void setTime(YldTime time)
     {
         this.time = time;
+    }
+
+    public int getPpm()
+    {
+        return ppm;
+    }
+
+    public void setPpm(int ppm)
+    {
+        this.ppm = ppm;
     }
 }
