@@ -20,8 +20,6 @@ import com.xebisco.yield.*;
 
 public class Sprite extends Rectangle
 {
-    private boolean flipped;
-
     @Override
     public void process(Obj obj)
     {
@@ -64,15 +62,5 @@ public class Sprite extends Rectangle
     public Color getColor()
     {
         return getEntity().getMaterial().getColor();
-    }
-
-    public boolean isFlipped()
-    {
-        return flipped;
-    }
-
-    public void setFlipped(boolean flipped)
-    {
-        this.flipped = flipped;
     }
 }

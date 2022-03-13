@@ -28,7 +28,8 @@ import java.util.Objects;
 public class Texture extends RelativeFile
 {
 
-    private BufferedImage image, cacheImage1, cacheImage2;
+    private BufferedImage image;
+    private java.awt.Image invX, invY, invXY;
     private Image slickImage;
     private static int imageType = BufferedImage.TYPE_INT_ARGB;
     private static int textures;
@@ -136,14 +137,24 @@ public class Texture extends RelativeFile
         }
     }
 
-    public BufferedImage getImage()
+    public java.awt.Image getImage()
     {
-        return image;
+        if (flippedX && flippedY)
+            return invXY;
+        else if (flippedX)
+            return invX;
+        else if (flippedY)
+            return invY;
+        else
+            return image;
     }
 
     public void setImage(BufferedImage image)
     {
         this.image = image;
+        this.invX = image.getScaledInstance(-image.getWidth(), image.getHeight(), java.awt.Image.SCALE_FAST);
+        this.invY = image.getScaledInstance(image.getWidth(), -image.getHeight(), java.awt.Image.SCALE_FAST);
+        this.invXY = image.getScaledInstance(-image.getWidth(), -image.getHeight(), java.awt.Image.SCALE_FAST);
     }
 
     public static int getImageType()
@@ -196,23 +207,33 @@ public class Texture extends RelativeFile
         this.flippedY = flippedY;
     }
 
-    public BufferedImage getCacheImage1()
+    public java.awt.Image getInvX()
     {
-        return cacheImage1;
+        return invX;
     }
 
-    public void setCacheImage1(BufferedImage cacheImage1)
+    public void setInvX(java.awt.Image invX)
     {
-        this.cacheImage1 = cacheImage1;
+        this.invX = invX;
     }
 
-    public BufferedImage getCacheImage2()
+    public java.awt.Image getInvY()
     {
-        return cacheImage2;
+        return invY;
     }
 
-    public void setCacheImage2(BufferedImage cacheImage2)
+    public void setInvY(java.awt.Image invY)
     {
-        this.cacheImage2 = cacheImage2;
+        this.invY = invY;
+    }
+
+    public java.awt.Image getInvXY()
+    {
+        return invXY;
+    }
+
+    public void setInvXY(java.awt.Image invXY)
+    {
+        this.invXY = invXY;
     }
 }

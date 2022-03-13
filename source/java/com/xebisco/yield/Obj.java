@@ -29,7 +29,7 @@ public class Obj
     public Color color, drawColor;
     public String value;
     public Font font;
-    public BufferedImage image;
+    public Image image;
     public org.newdawn.slick.Image slickImage;
     public org.newdawn.slick.Font slickFont;
 

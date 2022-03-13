@@ -72,7 +72,7 @@ public class YldGraphics {
     }
 
     public Obj img(Texture texture, float x, float y, float width, float height) {
-        BufferedImage image = texture.getImage();
+        Image image = texture.getImage();
         Obj obj = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.RECT, true, Colors.BLACK, texture.getRelativePath(), null);
         obj.image = image;
         return obj;
