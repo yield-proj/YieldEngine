@@ -17,37 +17,26 @@
 package com.xebisco.yield.utils;
 
 import com.xebisco.yield.Color;
-import org.jbox2d.common.Vec2;
 import org.newdawn.slick.geom.Vector2f;
 
 public final class Conversions
 {
-    public static java.awt.Color toAWTColor(Color color)
+    public static java.awt.Color toAWTColor(final Color color)
     {
         return new java.awt.Color((int) (color.getR() * 255), (int) (color.getG() * 255), (int) (color.getB() * 255), (int) (color.getA() * 255));
     }
 
-    public static org.newdawn.slick.Color toSlickColor(Color color)
+    public static org.newdawn.slick.Color toSlickColor(final Color color)
     {
         return new org.newdawn.slick.Color(color.getR(), color.getG(), color.getB(), color.getA());
     }
 
-    public static Vector2 toVector2(Vector2f vector2f)
+    public static Vector2 toVector2(final Vector2f vector2f)
     {
         return new Vector2(vector2f.x, vector2f.y);
     }
 
-    public static Vector2 toVector2(Vec2 vec2)
-    {
-        return new Vector2(vec2.x, -vec2.y);
-    }
-
-    public static Vec2 toBox2dVec2(Vector2 vector2)
-    {
-        return new Vec2(vector2.x, -vector2.y);
-    }
-
-    public static Vector2f toSlickVector2f(Vector2 vector2)
+    public static Vector2f toSlickVector2f(final Vector2 vector2)
     {
         return new Vector2f(vector2.x, vector2.y);
     }

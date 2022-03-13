@@ -17,19 +17,36 @@
 package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
-import com.xebisco.yield.components.Sprite;
 
 public class MyGame extends YldGame
 {
+    Entity e, e1;
     @Override
     public void create()
     {
-        instantiate((e) ->
+        /*e = instantiate((e) ->
         {
             e.addComponent(new Sprite());
-            e.addComponent(new RotateScript());
+            e.addComponent(new PhysicsBody());
+            e.getComponent(PhysicsBody.class).addShape(new Collider(Collider.Shape.RECTANGLE));
+            e.getComponent(PhysicsBody.class).setVelocity(new Vector2(0, -1));
             e.getMaterial().setTexture(new Texture("/com/xebisco/yield/assets/yieldlogo.png"));
         });
+        e1 = instantiate((e) ->
+        {
+            e.addComponent(new Sprite());
+            e.addComponent(new PhysicsBody());
+            e.getComponent(PhysicsBody.class).addShape(new Collider(Collider.Shape.RECTANGLE));
+            e.getComponent(PhysicsBody.class).setType(BodyType.STATIC);
+            e.getMaterial().setTexture(new Texture("/com/xebisco/yield/assets/yieldlogo.png"));
+            e.getSelfTransform().translate(0, 100);
+        });*/
+    }
+
+    @Override
+    public void update(float delta)
+    {
+
     }
 
     public static void main(String[] args)
@@ -39,21 +56,39 @@ public class MyGame extends YldGame
         final GameConfiguration config = new GameConfiguration();
         config.hardwareAcceleration = true;
         launch(new MyGame(), config);
-    }
-}
+        /*Vec2 gravity = new Vec2(0,-10);
+        World world = new World(gravity);
+        BodyDef groundBodyDef = new BodyDef();
+        groundBodyDef.position.set(0, -10);
+        Body groundBody = world.createBody(groundBodyDef);
+        PolygonShape groundBox = new PolygonShape();
+        groundBox.setAsBox(50, 10);
+        groundBody.createFixture(groundBox, 0);
 
-class RotateScript extends YldScript
-{
-    @Override
-    public void start()
-    {
-        transform.goTo(View.mid());
-    }
+        // Dynamic Body
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyType.DYNAMIC;
+        bodyDef.position.set(0, 4);
+        Body body = world.createBody(bodyDef);
+        PolygonShape dynamicBox = new PolygonShape();
+        dynamicBox.setAsBox(1, 1);
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = dynamicBox;
+        fixtureDef.density = 1;
+        fixtureDef.friction = 0.3f;
+        body.createFixture(fixtureDef);
 
-    @Override
-    public void update(float delta)
-    {
-        transform.rotate(100 * delta);
-        transform.scale(delta, delta);
+        // Setup world
+        float timeStep = 1.0f/60.0f;
+        int velocityIterations = 6;
+        int positionIterations = 2;
+
+        // Run loop
+        for (int i = 0; i < 99999999; ++i) {
+            world.step(timeStep, velocityIterations, positionIterations);
+            Vec2 position = body.getPosition();
+            float angle = body.getAngle();
+            System.out.printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
+        }*/
     }
 }
