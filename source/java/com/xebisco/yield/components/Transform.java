@@ -34,6 +34,11 @@ public class Transform extends Component {
         position.y += vector2.y;
     }
 
+    public void goTo(Vector2 vector2) {
+        position.x = vector2.x;
+        position.y = vector2.y;
+    }
+
     public void scale(Vector2 vector2) {
         scale.x += vector2.x;
         scale.y += vector2.y;
@@ -41,6 +46,10 @@ public class Transform extends Component {
 
     public void translate(float x, float y) {
         translate(new Vector2(x, y));
+    }
+
+    public void goTo(float x, float y) {
+        goTo(new Vector2(x, y));
     }
 
     public void scale(float x, float y) {

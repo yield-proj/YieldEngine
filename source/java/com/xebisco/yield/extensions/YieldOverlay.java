@@ -103,7 +103,7 @@ public class YieldOverlay extends YldExtension
             g.drawString("Target FPS: " + game.getScene().getTime().getTargetFPS(), x, 80 + 40);
             g.drawString("TS: " + game.getHandler().getThread().getState(), x, 80 + 40 * 2);
             g.drawString("Scene: " + game.getScene().getClass().getSimpleName(), x, 80 + 40 * 3);
-            g.drawString("JVM Memory: " + Yld.MEMORY + "/" + Yld.MAX_MEMORY + "MB", x, 80 + 40 * 4);
+            g.drawString("JVM Memory: " + Yld.MEMORY() + "/" + Yld.MAX_MEMORY() + "MB", x, 80 + 40 * 4);
             g.drawString("JRE Version: " + System.getProperty("java.version"), x, 80 + 40 * 5);
             g.drawString("Java Class Version: " + System.getProperty("java.class.version"), x, 80 + 40 * 6);
             g.drawString("Yield BUILD: " + Yld.BUILD, x, 80 + 40 * 7);

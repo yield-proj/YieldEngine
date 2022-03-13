@@ -28,8 +28,7 @@ import java.util.Objects;
 public class Texture extends RelativeFile
 {
 
-    private BufferedImage image;
-    private java.awt.Image invX, invY, invXY;
+    private BufferedImage image, invX, invY, invXY;
     private Image slickImage;
     private static int imageType = BufferedImage.TYPE_INT_ARGB;
     private static int textures;
@@ -67,7 +66,7 @@ public class Texture extends RelativeFile
         {
             final BufferedImage img = new BufferedImage(texture.getImage().getWidth(null), texture.getImage().getHeight(null), imageType);
             img.getGraphics().drawImage(texture.image, 0, 0, null);
-            this.image = img.getSubimage(x, y, width, height);
+            this.setImage(img.getSubimage(x, y, width, height));
         }
     }
 
@@ -83,11 +82,11 @@ public class Texture extends RelativeFile
         {
             final BufferedImage img = new BufferedImage(texture.getImage().getWidth(null), texture.getImage().getHeight(null), imageType);
             img.getGraphics().drawImage(texture.image, 0, 0, null);
-            this.image = img.getSubimage(x, y, width, height);
+            this.setImage(img.getSubimage(x, y, width, height));
         }
     }
 
-    public Texture(final String relativePath)
+    public Texture(String relativePath)
     {
         super(relativePath);
         textures++;
@@ -105,7 +104,7 @@ public class Texture extends RelativeFile
         {
             try
             {
-                this.image = ImageIO.read(Objects.requireNonNull(Yld.class.getResource(relativePath)));
+                this.setImage(ImageIO.read(Objects.requireNonNull(Yld.class.getResource(relativePath))));
             } catch (IOException e1)
             {
                 e1.printStackTrace();
@@ -152,9 +151,19 @@ public class Texture extends RelativeFile
     public void setImage(BufferedImage image)
     {
         this.image = image;
-        this.invX = image.getScaledInstance(-image.getWidth(), image.getHeight(), java.awt.Image.SCALE_FAST);
+        invX = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        invY = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        invXY = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        for(int y = 0; y < image.getHeight(); y++) {
+            for(int x = 0; x < image.getWidth(); x++) {
+                invX.setRGB((image.getWidth() - 1) - x, y, image.getRGB(x, y));
+                invY.setRGB(x, (image.getHeight() - 1) - y, image.getRGB(x, y));
+                invXY.setRGB((image.getWidth() - 1) - x, (image.getHeight() - 1) - y, image.getRGB(x, y));
+            }
+        }
+        /*this.invX = image.getScaledInstance(-image.getWidth(), image.getHeight(), java.awt.Image.SCALE_FAST);
         this.invY = image.getScaledInstance(image.getWidth(), -image.getHeight(), java.awt.Image.SCALE_FAST);
-        this.invXY = image.getScaledInstance(-image.getWidth(), -image.getHeight(), java.awt.Image.SCALE_FAST);
+        this.invXY = image.getScaledInstance(-image.getWidth(), -image.getHeight(), java.awt.Image.SCALE_FAST);*/
     }
 
     public static int getImageType()
@@ -169,7 +178,9 @@ public class Texture extends RelativeFile
 
     public Image getSlickImage()
     {
-        return slickImage.getFlippedCopy(flippedX, flippedY);
+        if (slickImage != null)
+            return slickImage.getFlippedCopy(flippedX, flippedY);
+        return null;
     }
 
     public void setSlickImage(Image slickImage)
@@ -207,32 +218,32 @@ public class Texture extends RelativeFile
         this.flippedY = flippedY;
     }
 
-    public java.awt.Image getInvX()
+    public BufferedImage getInvX()
     {
         return invX;
     }
 
-    public void setInvX(java.awt.Image invX)
+    public void setInvX(BufferedImage invX)
     {
         this.invX = invX;
     }
 
-    public java.awt.Image getInvY()
+    public BufferedImage getInvY()
     {
         return invY;
     }
 
-    public void setInvY(java.awt.Image invY)
+    public void setInvY(BufferedImage invY)
     {
         this.invY = invY;
     }
 
-    public java.awt.Image getInvXY()
+    public BufferedImage getInvXY()
     {
         return invXY;
     }
 
-    public void setInvXY(java.awt.Image invXY)
+    public void setInvXY(BufferedImage invXY)
     {
         this.invXY = invXY;
     }

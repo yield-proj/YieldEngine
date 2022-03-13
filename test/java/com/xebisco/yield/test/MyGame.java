@@ -16,15 +16,44 @@
 
 package com.xebisco.yield.test;
 
-import com.xebisco.yield.GameConfiguration;
-import com.xebisco.yield.YldGame;
+import com.xebisco.yield.*;
+import com.xebisco.yield.components.Sprite;
 
 public class MyGame extends YldGame
 {
+    @Override
+    public void create()
+    {
+        instantiate((e) ->
+        {
+            e.addComponent(new Sprite());
+            e.addComponent(new RotateScript());
+            e.getMaterial().setTexture(new Texture("/com/xebisco/yield/assets/yieldlogo.png"));
+        });
+    }
+
     public static void main(String[] args)
     {
+        new View(1280, 720);
+        View.getActView().setBgColor(Colors.WHITE);
         final GameConfiguration config = new GameConfiguration();
         config.hardwareAcceleration = true;
         launch(new MyGame(), config);
+    }
+}
+
+class RotateScript extends YldScript
+{
+    @Override
+    public void start()
+    {
+        transform.goTo(View.mid());
+    }
+
+    @Override
+    public void update(float delta)
+    {
+        transform.rotate(100 * delta);
+        transform.scale(delta, delta);
     }
 }

@@ -25,12 +25,21 @@ import java.util.Random;
 
 public final class Yld
 {
-    public static final String VERSION = "4 1.1";
+    public static final String VERSION = "4 1.1b";
     public static final ArrayList<String> MESSAGES = new ArrayList<>();
     public static final Random RAND = new Random();
     public static boolean debug;
-    public static final long BUILD = 13;
-    public static final int MEMORY = (int) ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024), MAX_MEMORY = (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
+    public static final long BUILD = 14;
+
+    public static int MEMORY()
+    {
+        return (int) ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024);
+    }
+
+    public static int MAX_MEMORY()
+    {
+        return (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
+    }
 
     public static void message(Object msg)
     {

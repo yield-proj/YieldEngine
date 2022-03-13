@@ -16,6 +16,7 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.utils.Vector2;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -41,6 +42,31 @@ public class View
         this.width = width;
         this.height = height;
         image = new BufferedImage(width, height, standardImageType);
+    }
+
+    public static Vector2 mid()
+    {
+        return new Vector2(View.getActView().getWidth() / 2f, View.getActView().getHeight() / 2f);
+    }
+
+    public static Vector2 leftUp()
+    {
+        return new Vector2(0, 0);
+    }
+
+    public static Vector2 leftDown()
+    {
+        return new Vector2(0, View.getActView().getHeight() / 2f);
+    }
+
+    public static Vector2 rightUp()
+    {
+        return new Vector2(View.getActView().getWidth() / 2f, 0);
+    }
+
+    public static Vector2 rightDown()
+    {
+        return new Vector2(View.getActView().getWidth() / 2f, View.getActView().getHeight() / 2f);
     }
 
     private void actC()
