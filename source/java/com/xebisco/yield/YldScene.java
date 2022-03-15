@@ -1,0 +1,198 @@
+/*
+ * Copyright [2022] [Xebisco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.xebisco.yield;
+
+import com.xebisco.yield.input.YldInput;
+import com.xebisco.yield.systems.MiddlePointSystem;
+import com.xebisco.yield.systems.PhysicsSystem;
+import com.xebisco.yield.systems.YldTimeSystem;
+
+import java.util.ArrayList;
+
+public class YldScene extends YldB
+{
+
+    private int frames, ppm;
+    protected YldGraphics graphics = new YldGraphics();
+    private Entity masterEntity;
+    private ArrayList<YldSystem> systems = new ArrayList<>();
+    protected YldInput input;
+    private boolean callStart = true;
+    protected YldTime time;
+
+    public YldScene()
+    {
+        addSystem(new YldTimeSystem());
+        addSystem(new MiddlePointSystem());
+        addSystem(new PhysicsSystem());
+    }
+
+    @Override
+    public void create()
+    {
+
+    }
+
+    public void start()
+    {
+
+    }
+
+    @Deprecated
+    public void exit()
+    {
+
+    }
+
+    @Override
+    public void onDestroy()
+    {
+
+    }
+
+    public final void destroyScene()
+    {
+        masterEntity.destroy();
+        onDestroy();
+    }
+
+    @Override
+    public void update(float delta)
+    {
+
+    }
+
+    public <S extends YldSystem> S getSystem(Class<S> system)
+    {
+        S system1 = null;
+        for (YldSystem system2 : systems)
+        {
+            if (system.getName().hashCode() == system2.getClass().getName().hashCode() && system.getName().equals(system2.getClass().getName()))
+            {
+                system1 = system.cast(system2);
+                break;
+            }
+        }
+        return system1;
+    }
+
+    public final void process(float delta)
+    {
+        masterEntity.process(delta);
+    }
+
+    public boolean isCallStart()
+    {
+        return callStart;
+    }
+
+    public void setCallStart(boolean callStart)
+    {
+        this.callStart = callStart;
+    }
+
+    public YldGraphics getGraphics()
+    {
+        return graphics;
+    }
+
+    public void setGraphics(YldGraphics graphics)
+    {
+        this.graphics = graphics;
+    }
+
+    public YldInput getInput()
+    {
+        return input;
+    }
+
+    public void setInput(YldInput input)
+    {
+        this.input = input;
+    }
+
+    public int getFrames()
+    {
+        return frames;
+    }
+
+    public void setFrames(int frames)
+    {
+        this.frames = frames;
+    }
+
+    public Entity instantiate(Prefab prefab)
+    {
+        return masterEntity.instantiate(prefab);
+    }
+
+    public Entity instantiate()
+    {
+        return masterEntity.instantiate();
+    }
+
+    public <E extends Prefab> void destroy(Class<E> type)
+    {
+        this.masterEntity.destroy(type);
+    }
+
+    public Entity getMasterEntity()
+    {
+        return masterEntity;
+    }
+
+    public void setMasterEntity(Entity masterEntity)
+    {
+        this.masterEntity = masterEntity;
+    }
+
+    public void addSystem(YldSystem system)
+    {
+        system.setScene(this);
+        systems.add(system);
+    }
+
+    public ArrayList<YldSystem> getSystems()
+    {
+        return systems;
+    }
+
+    public void setSystems(ArrayList<YldSystem> systems)
+    {
+        this.systems = systems;
+    }
+
+    public YldTime getTime()
+    {
+        return time;
+    }
+
+    public void setTime(YldTime time)
+    {
+        this.time = time;
+    }
+
+    public int getPpm()
+    {
+        return ppm;
+    }
+
+    public void setPpm(int ppm)
+    {
+        this.ppm = ppm;
+    }
+}

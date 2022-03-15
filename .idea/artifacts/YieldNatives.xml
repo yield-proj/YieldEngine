@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact name="YieldNatives">
+    <output-path>$PROJECT_DIR$/out/artifacts/YieldNatives</output-path>
+    <root id="root">
+      <element id="dir-copy" path="$PROJECT_DIR$/libs/lwjgl-2.9.3/native" />
+    </root>
+  </artifact>
+</component>
