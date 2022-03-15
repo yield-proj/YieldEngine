@@ -1,0 +1,403 @@
+/*
+ * Copyright [2022] [Xebisco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.xebisco.yield;
+
+import com.xebisco.yield.engine.GameHandler;
+import com.xebisco.yield.engine.YldWindow;
+import com.xebisco.yield.exceptions.AlreadyStartedException;
+import com.xebisco.yield.extensions.YieldOverlay;
+import com.xebisco.yield.input.YldInput;
+import com.xebisco.yield.slick.SlickGame;
+import com.xebisco.yield.utils.ChangeScene;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.LWJGLUtil;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.Game;
+import org.newdawn.slick.SlickException;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Objects;
+
+public class YldGame extends YldScene
+{
+
+    private GameConfiguration configuration;
+    private boolean started = false;
+    private YldWindow window;
+    private GameHandler handler;
+    private final ArrayList<YldExtension> extensions = new ArrayList<>();
+    protected ArrayList<YldScene> scenes = new ArrayList<>();
+    private ArrayList<YldShader> shaders = new ArrayList<>();
+    protected YldScene scene;
+    private SlickGame slickGame;
+    private AppGameContainer slickApp;
+    public static boolean lwjgl;
+
+    @Override
+    public void start()
+    {
+
+    }
+
+    public void setFullscreen(boolean fullscreen)
+    {
+        if (window != null)
+        {
+            if (!fullscreen)
+                window.toWindow(getConfiguration());
+            else
+                window.toFullscreen(getConfiguration());
+        }
+        else
+        {
+            try
+            {
+                if (fullscreen)
+                    Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
+                else
+                {
+                    Display.setDisplayMode(new DisplayMode(
+                            configuration.width, configuration.height));
+                    Display.setFullscreen(false);
+                }
+
+            } catch (LWJGLException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void launch(YldGame game, GameConfiguration configuration)
+    {
+        String lwjglNatives = "";
+        try
+        {
+            switch (LWJGLUtil.getPlatform())
+            {
+                case LWJGLUtil.PLATFORM_WINDOWS:
+                    lwjglNatives = new File(Objects.requireNonNull(YldGame.class.getResource("/com/xebisco/yield/native/windows")).toURI()).getAbsolutePath();
+                    break;
+                case LWJGLUtil.PLATFORM_MACOSX:
+                    lwjglNatives = new File(Objects.requireNonNull(YldGame.class.getResource("/com/xebisco/yield/native/macosx")).toURI()).getAbsolutePath();
+                    break;
+                case LWJGLUtil.PLATFORM_LINUX:
+                    lwjglNatives = new File(Objects.requireNonNull(YldGame.class.getResource("/com/xebisco/yield/native/linux")).toURI()).getAbsolutePath();
+                    break;
+            }
+        } catch (URISyntaxException e)
+        {
+            e.printStackTrace();
+        }
+        System.setProperty("org.lwjgl.librarypath", lwjglNatives);
+        System.setProperty("net.java.games.input.librarypath", lwjglNatives);
+        Locale.setDefault(Locale.US);
+        if (configuration.hardwareAcceleration)
+        {
+            Yld.log("WARNING: hardware acceleration is a experimental feature!");
+        }
+        game.game = game;
+        if (game.started)
+            throw new AlreadyStartedException();
+        game.started = true;
+        game.configuration = configuration;
+        if (configuration.title == null)
+            configuration.title = game.getClass().getSimpleName() + " (Yield " + Yld.VERSION + ")";
+
+        game.handler = new GameHandler(game);
+
+        if (!configuration.hardwareAcceleration)
+        {
+            game.window = new YldWindow();
+            game.window.getFrame().setTitle(configuration.title);
+            game.window.getWindowG().setHandler(game.handler);
+            if (!configuration.fullscreen)
+                game.window.toWindow(configuration);
+            else
+                game.window.toFullscreen(configuration);
+            game.setGraphics(game.window.getGraphics());
+        }
+        else
+        {
+            lwjgl = true;
+            try
+            {
+                game.slickApp = new AppGameContainer(game.slickGame = new SlickGame(game), game.configuration.width, game.configuration.height, game.configuration.fullscreen);
+            } catch (SlickException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        game.addExtension(new YieldOverlay());
+        game.addScene(game);
+        game.setScene(game);
+        if (game.slickApp != null)
+        {
+            try
+            {
+                game.slickApp.start();
+            } catch (SlickException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            game.input = new YldInput(game.window, null);
+            game.handler.getThread().start();
+        }
+    }
+
+    public final void updateScene(float delta)
+    {
+        if (scene.getFrames() == 0)
+            scene.create();
+        scene.setFrames(scene.getFrames() + 1);
+        if (scene.isCallStart())
+        {
+            scene.start();
+            scene.setCallStart(false);
+        }
+        scene.update(delta);
+        scene.process(delta);
+    }
+
+    public YldWindow getWindow()
+    {
+        return window;
+    }
+
+    public boolean isStarted()
+    {
+        return started;
+    }
+
+    public GameConfiguration getConfiguration()
+    {
+        return configuration;
+    }
+
+    public GameHandler getHandler()
+    {
+        return handler;
+    }
+
+    public void setHandler(GameHandler handler)
+    {
+        this.handler = handler;
+    }
+
+    public void addExtension(YldExtension extension)
+    {
+        extension.create();
+        extension.setGame(this);
+        extensions.add(extension);
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+    }
+
+    public <T extends YldExtension> YldExtension getExtension(Class<T> type)
+    {
+        YldExtension extension = null;
+        for (YldExtension e : extensions)
+        {
+            if (e.getClass().getName().hashCode() == type.getName().hashCode())
+            {
+                if (e.getClass().getName().equals(type.getName()))
+                {
+                    extension = e;
+                    break;
+                }
+            }
+        }
+        return extension;
+    }
+
+    public <T extends YldExtension> void removeExtension(Class<T> type)
+    {
+        for (YldExtension e : extensions)
+        {
+            if (e.getClass().getName().hashCode() == type.getName().hashCode())
+            {
+                if (e.getClass().getName().equals(type.getName()))
+                {
+                    extensions.remove(e);
+                    break;
+                }
+            }
+        }
+    }
+
+    public ArrayList<YldExtension> getExtensions()
+    {
+        return extensions;
+    }
+
+    public void addScene(YldScene scene)
+    {
+        scene.setInput(input);
+        scene.game = this;
+        scene.time = new YldTime(this);
+        scene.setMasterEntity(new Entity("MasterEntity", scene, null));
+        scenes.add(scene);
+    }
+
+    public ArrayList<YldScene> getScenes()
+    {
+        return scenes;
+    }
+
+    public void setScenes(ArrayList<YldScene> scenes)
+    {
+        this.scenes = scenes;
+    }
+
+    public YldScene getScene()
+    {
+        return scene;
+    }
+
+    public void setScene(YldScene scene)
+    {
+        this.scene = scene;
+    }
+
+    @Deprecated
+    public void setScene(String name)
+    {
+        YldScene scene = null;
+        int i = 0;
+        while (i < scenes.size())
+        {
+            if (scenes.get(i).getClass().getSimpleName().hashCode() == name.hashCode())
+            {
+                if (scenes.get(i).getClass().getSimpleName().equals(name))
+                {
+                    scene = scenes.get(i);
+                    break;
+                }
+            }
+            i++;
+        }
+        if (scene == null)
+            throw new NullPointerException("none scene with name: " + name);
+        setScene(scene);
+    }
+
+    public <T extends YldScene> void setScene(Class<T> type, ChangeScene how)
+    {
+        YldScene scene = null;
+        int i = 0;
+        while (i < scenes.size())
+        {
+            if (scenes.get(i).getClass().getName().hashCode() == type.getName().hashCode())
+            {
+                if (scenes.get(i).getClass().getName().equals(type.getName()))
+                {
+                    if (how == ChangeScene.DESTROY_LAST && getScene() != null)
+                        getScene().destroyScene();
+                    scene = scenes.get(i);
+                    break;
+                }
+            }
+            i++;
+        }
+        if (scene == null)
+            throw new NullPointerException("none scene with name: " + type.getName());
+        setScene(scene);
+    }
+
+    public <T extends YldScene> void setScene(Class<T> type)
+    {
+        setScene(type, ChangeScene.DESTROY_LAST);
+    }
+
+    public void setConfiguration(GameConfiguration configuration)
+    {
+        this.configuration = configuration;
+    }
+
+    public void setStarted(boolean started)
+    {
+        this.started = started;
+    }
+
+    public void setWindow(YldWindow window)
+    {
+        this.window = window;
+    }
+
+    public SlickGame getSlickGame()
+    {
+        return slickGame;
+    }
+
+    public void setSlickGame(SlickGame slickGame)
+    {
+        this.slickGame = slickGame;
+    }
+
+    public AppGameContainer getSlickApp()
+    {
+        return slickApp;
+    }
+
+    public void setSlickApp(AppGameContainer slickApp)
+    {
+        this.slickApp = slickApp;
+    }
+
+    public <S extends YldShader> S getShader(Class<S> shader)
+    {
+        S shader1 = null;
+        for (YldShader shader2 : shaders)
+        {
+            if (shader.getName().hashCode() == shader2.getClass().getName().hashCode() && shader.getName().equals(shader2.getClass().getName()))
+            {
+                shader1 = shader.cast(shader2);
+                break;
+            }
+        }
+        return shader1;
+    }
+
+    public YldShader addShader(YldShader shader)
+    {
+        shaders.add(shader);
+        return shader;
+    }
+
+    public ArrayList<YldShader> getShaders()
+    {
+        return shaders;
+    }
+
+    public void setShaders(ArrayList<YldShader> shaders)
+    {
+        this.shaders = shaders;
+    }
+}
