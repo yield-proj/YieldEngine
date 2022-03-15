@@ -16,13 +16,25 @@
 
 package com.xebisco.yield;
 
+/**
+ * This is the primitive class that is used in the YldScene to store all the different types of Systems. Example: ProcessSystem, UpdateSystem
+ */
 public class YldSystem {
+    /**
+     * The YldScene that have this system stored.
+     */
     protected YldScene scene;
 
+    /**
+     * Getter for the scene variable.
+     */
     public YldScene getScene() {
         return scene;
     }
 
+    /**
+     * Setter for the scene variable.
+     */
     public void setScene(YldScene scene) {
         this.scene = scene;
     }

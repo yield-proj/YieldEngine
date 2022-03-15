@@ -16,33 +16,50 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.engine.GameHandler;
-
+/**
+ * An instance of this class is made to contain the time information of a YldGame.
+ */
 public class YldTime
 {
     private float delta, fps;
     private YldGame game;
 
+    /**
+     * Creates a YldTime instance that will pick the time information of the passed YldGame
+     * @param game the game instance
+     */
     public YldTime(YldGame game)
     {
         this.game = game;
     }
 
+    /**
+     * @return The delta time of the current frame. This variable is updated in the YldTimeSystem.
+     */
     public float getDelta()
     {
         return delta;
     }
 
+    /**
+     * @return The fps since the last frame. This variable is updated in the YldTimeSystem.
+     */
     public float getFps()
     {
         return fps;
     }
 
+    /**
+     * @return The target fps of the YldGame GameConfiguration instance.
+     */
     public float getTargetFPS()
     {
         return game.getConfiguration().fps;
     }
 
+    /**
+     * Updates the fps in the YldGame GameHandler (if in CPU Mode) or in the YldGame SlickApp (if in GPU Mode).
+     */
     public void setTargetFPS(float fps)
     {
         if (game.getSlickApp() != null)
@@ -51,21 +68,33 @@ public class YldTime
             game.getHandler().setFps((int) fps);
     }
 
+    /**
+     * @return This YldTime YldGame instance.
+     */
     public YldGame getGame()
     {
         return game;
     }
 
+    /**
+     * Setter for the YldGame instance
+     */
     public void setGame(YldGame game)
     {
         this.game = game;
     }
 
+    /**
+     * Setter for the delta variable
+     */
     public void setDelta(float delta)
     {
         this.delta = delta;
     }
 
+    /**
+     * Setter for the fps variable
+     */
     public void setFps(float fps)
     {
         this.fps = fps;

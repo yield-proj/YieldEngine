@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * A simpler was to write a Component
+ */
 public abstract class YldScript extends Component
 {
 }

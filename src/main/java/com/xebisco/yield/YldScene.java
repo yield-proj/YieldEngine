@@ -23,15 +23,27 @@ import com.xebisco.yield.systems.YldTimeSystem;
 
 import java.util.ArrayList;
 
+/**
+ * A YldScene is the base of a Yield game, it contains the Entities, YldGraphics and the Systems, it's used to alternate between game moments.
+ */
 public class YldScene extends YldB
 {
 
     private int frames, ppm;
+    /**
+     * Contains all the graphic information about the scene.
+     */
     protected YldGraphics graphics = new YldGraphics();
     private Entity masterEntity;
     private ArrayList<YldSystem> systems = new ArrayList<>();
+    /**
+     * Contains all the input information about the scene.
+     */
     protected YldInput input;
     private boolean callStart = true;
+    /**
+     * Contains all the time information about the scene.
+     */
     protected YldTime time;
 
     public YldScene()
@@ -41,12 +53,18 @@ public class YldScene extends YldB
         addSystem(new PhysicsSystem());
     }
 
+    /**
+     * This method is the first method called when a YldScene instance is added to a YldGame instance.
+     */
     @Override
     public void create()
     {
 
     }
 
+    /**
+     * Called every time when the scene enters in place.
+     */
     public void start()
     {
 
@@ -58,24 +76,40 @@ public class YldScene extends YldB
 
     }
 
+    /**
+     * Called when the scene is destroyed.
+     */
     @Override
     public void onDestroy()
     {
 
     }
 
+    /**
+     * Destroy this YldScene masterEntity and call onDestroy().
+     */
     public final void destroyScene()
     {
         masterEntity.destroy();
         onDestroy();
     }
 
+    /**
+     * Called on every frame of the scene.
+     *
+     * @param delta The time variation between the last frame and the actual one in seconds.
+     */
     @Override
     public void update(float delta)
     {
 
     }
 
+    /**
+     * Search for all the YldSystem instances in this YldScene.
+     * @param system The class type of the system that's being searched.
+     * @return The system found (can be null)
+     */
     public <S extends YldSystem> S getSystem(Class<S> system)
     {
         S system1 = null;
@@ -90,6 +124,10 @@ public class YldScene extends YldB
         return system1;
     }
 
+    /**
+     * Calls process on this YldScene instance masterEntity.
+     * @param delta The time variation between the last frame and the actual one in seconds.
+     */
     public final void process(float delta)
     {
         masterEntity.process(delta);
@@ -105,82 +143,140 @@ public class YldScene extends YldB
         this.callStart = callStart;
     }
 
+    /**
+     * Getter for the graphics variable;
+     * @return the graphics variable.
+     */
     public YldGraphics getGraphics()
     {
         return graphics;
     }
 
+    /**
+     * Setter for the graphics variable;
+     */
     public void setGraphics(YldGraphics graphics)
     {
         this.graphics = graphics;
     }
 
+    /**
+     * Getter for the input variable;
+     * @return the input variable.
+     */
     public YldInput getInput()
     {
         return input;
     }
 
+    /**
+     * Setter for the input variable;
+     */
     public void setInput(YldInput input)
     {
         this.input = input;
     }
 
+    /**
+     * @return How many frames this scene is active.
+     */
     public int getFrames()
     {
         return frames;
     }
 
+    /**
+     * Setter for the frames variable;
+     */
     public void setFrames(int frames)
     {
         this.frames = frames;
     }
 
+    /**
+     * Instantiate an Entity instance based in the prefab passed.
+     * (Calls instantiate(prefab) on the masterEntity)
+     * @param prefab The prefab passed to the Entity.
+     */
     public Entity instantiate(Prefab prefab)
     {
         return masterEntity.instantiate(prefab);
     }
 
+    /**
+     * Create an empty Entity instance.
+     * (Calls instantiate() on the masterEntity)
+     */
     public Entity instantiate()
     {
         return masterEntity.instantiate();
     }
 
+    /**
+     * Removes an Entity that corresponds to the given type from its parent and calls onDestroy().
+     * @param type The Entity to be destroyed type.
+     */
     public <E extends Prefab> void destroy(Class<E> type)
     {
         this.masterEntity.destroy(type);
     }
 
+    /**
+     * Getter for the masterEntity variable;
+     * @return the masterEntity variable.
+     */
     public Entity getMasterEntity()
     {
         return masterEntity;
     }
 
+    /**
+     * Setter for the masterEntity variable;
+     */
     public void setMasterEntity(Entity masterEntity)
     {
         this.masterEntity = masterEntity;
     }
 
+    /**
+     * Sets the scene of the YldSystem as this instance and adds to the systems list.
+     * @param system The system to be added.
+     */
     public void addSystem(YldSystem system)
     {
         system.setScene(this);
         systems.add(system);
     }
 
+    /**
+     * Getter for the systems variable;
+     * @return the systems variable.
+     */
     public ArrayList<YldSystem> getSystems()
     {
         return systems;
     }
 
+    /**
+     * Setter for the masterEntity variable;
+     */
     public void setSystems(ArrayList<YldSystem> systems)
     {
         this.systems = systems;
     }
 
+    /**
+     * Getter for the time variable;
+     * @return the time variable.
+     */
     public YldTime getTime()
     {
         return time;
     }
 
+    /**
+     * Setter for the time variable;
+     */
     public void setTime(YldTime time)
     {
         this.time = time;
