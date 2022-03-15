@@ -16,13 +16,18 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.utils.Conversions;
+import com.xebisco.yield.utils.Vector2;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.util.BufferedImageUtil;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Texture extends RelativeFile
@@ -30,6 +35,7 @@ public class Texture extends RelativeFile
 
     private BufferedImage image, invX, invY, invXY;
     private Image slickImage;
+    private ArrayList<YldShader> shaders = new ArrayList<>();
     private static int imageType = BufferedImage.TYPE_INT_ARGB;
     private static int textures;
     private boolean flippedX, flippedY;
@@ -154,8 +160,10 @@ public class Texture extends RelativeFile
         invX = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
         invY = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
         invXY = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
-        for(int y = 0; y < image.getHeight(); y++) {
-            for(int x = 0; x < image.getWidth(); x++) {
+        for (int y = 0; y < image.getHeight(); y++)
+        {
+            for (int x = 0; x < image.getWidth(); x++)
+            {
                 invX.setRGB((image.getWidth() - 1) - x, y, image.getRGB(x, y));
                 invY.setRGB(x, (image.getHeight() - 1) - y, image.getRGB(x, y));
                 invXY.setRGB((image.getWidth() - 1) - x, (image.getHeight() - 1) - y, image.getRGB(x, y));
@@ -164,6 +172,90 @@ public class Texture extends RelativeFile
         /*this.invX = image.getScaledInstance(-image.getWidth(), image.getHeight(), java.awt.Image.SCALE_FAST);
         this.invY = image.getScaledInstance(image.getWidth(), -image.getHeight(), java.awt.Image.SCALE_FAST);
         this.invXY = image.getScaledInstance(-image.getWidth(), -image.getHeight(), java.awt.Image.SCALE_FAST);*/
+    }
+
+    public <S extends YldShader> S getShader(Class<S> shader)
+    {
+        S shader1 = null;
+        for (YldShader shader2 : shaders)
+        {
+            if (shader.getName().hashCode() == shader2.getClass().getName().hashCode() && shader.getName().equals(shader2.getClass().getName()))
+            {
+                shader1 = shader.cast(shader2);
+                break;
+            }
+        }
+        return shader1;
+    }
+
+    public void processShaders()
+    {
+        if (slickImage != null)
+        {
+            try
+            {
+                org.newdawn.slick.Graphics g = slickImage.getGraphics();
+                for (int x = 0; x < getWidth(); x++)
+                {
+                    for (int y = 0; y < getHeight(); y++)
+                    {
+                        for (YldShader shader : shaders)
+                        {
+                            Pixel pixel = new Pixel();
+                            pixel.setLocation(new Vector2(x, y));
+                            pixel.setColor(Conversions.toColor(slickImage.getColor(x, y)));
+                            shader.process(pixel);
+                            g.setColor(Conversions.toSlickColor(pixel.getColor()));
+                            g.fillRect((int) pixel.getLocation().x, (int) pixel.getLocation().y, 1, 1);
+                        }
+                    }
+                }
+                g.flush();
+            } catch (SlickException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            BufferedImage img = new BufferedImage(getWidth(), getHeight(), java.awt.Image.SCALE_FAST);
+            Graphics g = img.getGraphics();
+            for (int x = 0; x < getWidth(); x++)
+            {
+                for (int y = 0; y < getHeight(); y++)
+                {
+                    for (YldShader shader : shaders)
+                    {
+                        Pixel pixel = new Pixel();
+                        pixel.setLocation(new Vector2(x, y));
+                        pixel.setColor(Conversions.toColor(new Color(image.getRGB(x, y))));
+                        shader.process(pixel);
+                        g.setColor(Conversions.toAWTColor(pixel.getColor()));
+                        g.fillRect((int) pixel.getLocation().x, (int) pixel.getLocation().y, 1, 1);
+                    }
+                }
+            }
+            Graphics g1 = image.getGraphics();
+            g1.drawImage(img, 0, 0, null);
+            g.dispose();
+            g1.dispose();
+        }
+    }
+
+    public YldShader addShader(YldShader shader)
+    {
+        shaders.add(shader);
+        return shader;
+    }
+
+    public ArrayList<YldShader> getShaders()
+    {
+        return shaders;
+    }
+
+    public void setShaders(ArrayList<YldShader> shaders)
+    {
+        this.shaders = shaders;
     }
 
     public static int getImageType()

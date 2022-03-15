@@ -47,7 +47,6 @@ public class YldGame extends YldScene
     private GameHandler handler;
     private final ArrayList<YldExtension> extensions = new ArrayList<>();
     protected ArrayList<YldScene> scenes = new ArrayList<>();
-    private ArrayList<YldShader> shaders = new ArrayList<>();
     protected YldScene scene;
     private SlickGame slickGame;
     private AppGameContainer slickApp;
@@ -369,35 +368,5 @@ public class YldGame extends YldScene
     public void setSlickApp(AppGameContainer slickApp)
     {
         this.slickApp = slickApp;
-    }
-
-    public <S extends YldShader> S getShader(Class<S> shader)
-    {
-        S shader1 = null;
-        for (YldShader shader2 : shaders)
-        {
-            if (shader.getName().hashCode() == shader2.getClass().getName().hashCode() && shader.getName().equals(shader2.getClass().getName()))
-            {
-                shader1 = shader.cast(shader2);
-                break;
-            }
-        }
-        return shader1;
-    }
-
-    public YldShader addShader(YldShader shader)
-    {
-        shaders.add(shader);
-        return shader;
-    }
-
-    public ArrayList<YldShader> getShaders()
-    {
-        return shaders;
-    }
-
-    public void setShaders(ArrayList<YldShader> shaders)
-    {
-        this.shaders = shaders;
     }
 }

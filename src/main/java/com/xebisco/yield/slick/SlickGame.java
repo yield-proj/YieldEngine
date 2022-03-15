@@ -305,30 +305,7 @@ public class SlickGame extends BasicGame
                 extension.render(sampleGraphics);
             }
         }
-        if (game.getShaders().size() == 0)
-            g1.drawImage(viewImage, 0, 0, gameContainer.getWidth(), gameContainer.getHeight(), 0, 0, View.getActView().getWidth(), View.getActView().getHeight());
-        else
-        {
-            g1.setColor(bgColor);
-            g1.fillRect(0, 0, viewImage.getWidth(), viewImage.getHeight());
-        }
-        for (int x = 0; x < viewImage.getWidth(); x++)
-        {
-            for (int y = 0; y < viewImage.getHeight(); y++)
-            {
-                for (int i1 = 0; i1 < game.getShaders().size(); i1++)
-                {
-                    YldShader shader = game.getShaders().get(i1);
-                    Pixel pixel = new Pixel();
-                    pixel.setLocation(new Vector2(x, y));
-                    pixel.setColor(Conversions.toColor(viewImage.getColor(x, y)));
-                    shader.process(pixel);
-                    
-                    g1.setColor(Conversions.toSlickColor(pixel.getColor()));
-                    g1.fillRect((int) pixel.getLocation().x, (int) pixel.getLocation().y, 1, 1);
-                }
-            }
-        }
+        g1.drawImage(viewImage, 0, 0, gameContainer.getWidth(), gameContainer.getHeight(), 0, 0, View.getActView().getWidth(), View.getActView().getHeight());
         g.flush();
         g1.flush();
 

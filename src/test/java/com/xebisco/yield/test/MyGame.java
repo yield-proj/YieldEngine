@@ -28,7 +28,7 @@ public class MyGame extends YldGame
         {
             e.addComponent(new Sprite());
             e.addComponent(new RotateScript());
-            e.getMaterial().setTexture(new Texture("/com/xebisco/yield/assets/yieldlogo.png"));
+            e.setMaterial(new Material(new Texture("/com/xebisco/yield/assets/yieldlogo.png")));
         });
     }
 

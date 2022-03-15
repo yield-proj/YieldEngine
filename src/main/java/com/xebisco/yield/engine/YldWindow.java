@@ -159,28 +159,7 @@ public class YldWindow
             }
             if (View.getActView() != null)
             {
-                if (handler.getGame().getShaders().size() == 0)
-                    g1.drawImage(View.getActView().getImage(), 0, 0, getWidth(), getHeight(), this);
-                else
-                {
-                    g.dispose();
-                }
-                for (int x = 0; x < View.getActView().getWidth(); x++)
-                {
-                    for (int y = 0; y < View.getActView().getHeight(); y++)
-                    {
-                        for (int i = 0; i < handler.getGame().getShaders().size(); i++)
-                        {
-                            YldShader shader = handler.getGame().getShaders().get(i);
-                            Pixel pixel = new Pixel();
-                            pixel.setLocation(new Vector2(x, y));
-                            pixel.setColor(Conversions.toColor(new Color(View.getActView().getImage().getRGB(x, y))));
-                            shader.process(pixel);
-                            g1.setColor(Conversions.toAWTColor(pixel.getColor()));
-                            g1.fillRect((int) pixel.getLocation().x, (int) pixel.getLocation().y, 1, 1);
-                        }
-                    }
-                }
+                g1.drawImage(View.getActView().getImage(), 0, 0, getWidth(), getHeight(), this);
             }
 
             g1.dispose();
