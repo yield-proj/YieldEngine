@@ -89,31 +89,34 @@ public class YldGame extends YldScene
 
     public static void launch(YldGame game, GameConfiguration configuration)
     {
-        String lwjglNatives = "";
-        try
-        {
-            switch (LWJGLUtil.getPlatform())
-            {
-                case LWJGLUtil.PLATFORM_WINDOWS:
-                    lwjglNatives = new File(Objects.requireNonNull(YldGame.class.getResource("/com/xebisco/yield/native/windows")).toURI()).getAbsolutePath();
-                    break;
-                case LWJGLUtil.PLATFORM_MACOSX:
-                    lwjglNatives = new File(Objects.requireNonNull(YldGame.class.getResource("/com/xebisco/yield/native/macosx")).toURI()).getAbsolutePath();
-                    break;
-                case LWJGLUtil.PLATFORM_LINUX:
-                    lwjglNatives = new File(Objects.requireNonNull(YldGame.class.getResource("/com/xebisco/yield/native/linux")).toURI()).getAbsolutePath();
-                    break;
-            }
-        } catch (URISyntaxException e)
-        {
-            e.printStackTrace();
-        }
-        System.setProperty("org.lwjgl.librarypath", lwjglNatives);
-        System.setProperty("net.java.games.input.librarypath", lwjglNatives);
         Locale.setDefault(Locale.US);
         if (configuration.hardwareAcceleration)
         {
             Yld.log("WARNING: hardware acceleration is a experimental feature!");
+
+            if (configuration.autoNativesPath)
+            {
+                String lwjglNatives = "";
+                try
+                {
+                    switch (LWJGLUtil.getPlatform())
+                    {
+                        case LWJGLUtil.PLATFORM_WINDOWS:
+                            lwjglNatives = new File(Objects.requireNonNull(YldGame.class.getResource("/com/xebisco/yield/native/windows")).toURI()).getAbsolutePath();
+                            break;
+                        case LWJGLUtil.PLATFORM_MACOSX:
+                            lwjglNatives = new File(Objects.requireNonNull(YldGame.class.getResource("/com/xebisco/yield/native/macosx")).toURI()).getAbsolutePath();
+                            break;
+                        case LWJGLUtil.PLATFORM_LINUX:
+                            lwjglNatives = new File(Objects.requireNonNull(YldGame.class.getResource("/com/xebisco/yield/native/linux")).toURI()).getAbsolutePath();
+                            break;
+                    }
+                } catch (URISyntaxException ignore)
+                {
+                }
+                System.setProperty("org.lwjgl.librarypath", lwjglNatives);
+                System.setProperty("net.java.games.input.librarypath", lwjglNatives);
+            }
         }
         game.game = game;
         if (game.started)

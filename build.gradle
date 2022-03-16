@@ -1,9 +1,9 @@
-plugins {
-    id 'java'
-}
+apply plugin: 'java'
 
 group 'com.xebisco.yield'
 version '1.1.2'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()

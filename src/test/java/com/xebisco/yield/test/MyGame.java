@@ -37,7 +37,8 @@ public class MyGame extends YldGame
         new View(1280, 720);
         View.getActView().setBgColor(Colors.WHITE);
         final GameConfiguration config = new GameConfiguration();
-        config.hardwareAcceleration = true;
+        config.hardwareAcceleration = false;
+        config.autoNativesPath = true;
         launch(new MyGame(), config);
     }
 }
@@ -50,10 +51,37 @@ class RotateScript extends YldScript
         transform.goTo(View.mid());
     }
 
+    boolean dir, invert;
+    float speed = 1;
+
+    @Override
+    public void create()
+    {
+        transform.scale(10, 10);
+    }
+
     @Override
     public void update(float delta)
     {
-        transform.rotate(100 * delta);
-        transform.scale(delta, delta);
+        if (!dir)
+        {
+            transform.scale(-delta * speed, 0);
+        }
+        else
+        {
+            transform.scale(delta * speed, 0);
+        }
+        if (transform.scale.x <= 0)
+        {
+            dir = true;
+            if (!invert)
+                getMaterial().getTexture().setFlippedX(!getMaterial().getTexture().isFlippedX());
+            invert = true;
+        }
+        if (transform.scale.x >= 6)
+        {
+            dir = false;
+            invert = false;
+        }
     }
 }
