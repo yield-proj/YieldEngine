@@ -279,7 +279,7 @@ public class YldGame extends YldScene
      * Search for all the extensions in the extensions list.
      *
      * @param type The class type of the extension that's being searched.
-     * @return The extension found (can be null)
+     * @return The extension found (null if not found)
      */
     public <T extends YldExtension> YldExtension getExtension(Class<T> type)
     {

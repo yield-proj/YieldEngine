@@ -16,9 +16,20 @@
 
 package com.xebisco.yield;
 
+/**
+ * This is an implementation of YldSystem that process every Component in a YldScene instance.
+ */
 public abstract class ProcessSystem extends YldSystem
 {
+    /**
+     * What components will be processed in this system, if returns null, will process all of them.
+     */
     public abstract String[] componentFilters();
 
+    /**
+     * Process all the components of a YldScene instance on every frame.
+     * @param component The actual component to be processed.
+     * @param delta The time variation between the last frame and the actual one in seconds.
+     */
     public abstract void process(Component component, float delta);
 }

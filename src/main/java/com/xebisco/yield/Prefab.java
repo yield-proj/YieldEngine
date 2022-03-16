@@ -16,8 +16,15 @@
 
 package com.xebisco.yield;
 
+/**
+ * A simple interface made to create Entities.
+ */
 @FunctionalInterface
 public interface Prefab
 {
+    /**
+     * Called when instantiating an Entity.
+     * @param e Entity being instantiated.
+     */
     void create(Entity e);
 }

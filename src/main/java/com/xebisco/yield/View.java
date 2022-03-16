@@ -28,6 +28,9 @@ import java.awt.image.BufferedImage;
 
 import static org.lwjgl.opengl.GL11.*;
 
+/**
+ * The resolution of the actual Yield Game Engine.
+ */
 public class View
 {
     private final BufferedImage image;
@@ -36,6 +39,11 @@ public class View
     private final int width, height;
     private Color bgColor = new Color(.1176470588235294f, .1764705882352941f, .4549019607843137f);
 
+    /**
+     * Creates a View and set its width and height.
+     * @param width The width to be set.
+     * @param height The height to be set.
+     */
     public View(int width, int height)
     {
         actC();
@@ -44,26 +52,41 @@ public class View
         image = new BufferedImage(width, height, standardImageType);
     }
 
+    /**
+     * @return The middle point of the actual View.
+     */
     public static Vector2 mid()
     {
         return new Vector2(View.getActView().getWidth() / 2f, View.getActView().getHeight() / 2f);
     }
 
+    /**
+     * @return The upper left point of the actual View.
+     */
     public static Vector2 leftUp()
     {
         return new Vector2(0, 0);
     }
 
+    /**
+     * @return The downer left point of the actual View.
+     */
     public static Vector2 leftDown()
     {
         return new Vector2(0, View.getActView().getHeight() / 2f);
     }
 
+    /**
+     * @return The upper right point of the actual View.
+     */
     public static Vector2 rightUp()
     {
         return new Vector2(View.getActView().getWidth() / 2f, 0);
     }
 
+    /**
+     * @return The downer right point of the actual View.
+     */
     public static Vector2 rightDown()
     {
         return new Vector2(View.getActView().getWidth() / 2f, View.getActView().getHeight() / 2f);
@@ -74,21 +97,36 @@ public class View
         actView = this;
     }
 
+    /**
+     * Getter for the image variable.
+     * @return The image variable (null if in GPU mode).
+     */
     public BufferedImage getImage()
     {
         return image;
     }
 
+    /**
+     * Getter for the background color.
+     * @return The background color.
+     */
     public Color getBgColor()
     {
         return bgColor;
     }
 
+    /**
+     * Setter for the background color.
+     */
     public void setBgColor(Color bgColor)
     {
         this.bgColor = bgColor;
     }
 
+    /**
+     * Getter for the actual View.
+     * @return The actual View.
+     */
     public static View getActView()
     {
         return actView;
@@ -99,6 +137,9 @@ public class View
         return standardImageType;
     }
 
+    /**
+     * Setter for the actual View.
+     */
     public static void setActView(View view)
     {
         View.actView = view;
@@ -109,11 +150,19 @@ public class View
         View.standardImageType = standardImageType;
     }
 
+    /**
+     * Getter for the height of this View instance.
+     * @return The height.
+     */
     public int getHeight()
     {
         return height;
     }
 
+    /**
+     * Getter for the width of this View instance.
+     * @return The width.
+     */
     public int getWidth()
     {
         return width;

@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * A Texture is an image for a game, can be added to graphical objects to display images.
+ */
 public class Texture extends RelativeFile
 {
 
@@ -40,6 +43,10 @@ public class Texture extends RelativeFile
     private static int textures;
     private boolean flippedX, flippedY;
 
+    /**
+     * Creates a Texture instance based on the image variable passed.
+     * @param image The image variable.
+     */
     public Texture(BufferedImage image)
     {
         super("");
@@ -60,6 +67,14 @@ public class Texture extends RelativeFile
         }
     }
 
+    /**
+     * Creates a sub texture based on the arguments passed.
+     * @param texture The parent texture.
+     * @param x The x to start the sub texture.
+     * @param y The y to start the sub texture.
+     * @param width The width of the sub texture.
+     * @param height The height of the sub texture.
+     */
     public Texture(Texture texture, int x, int y, int width, int height)
     {
         super(texture.getRelativePath());
@@ -76,6 +91,15 @@ public class Texture extends RelativeFile
         }
     }
 
+    /**
+     * Creates a sub texture based on the arguments passed.
+     * @param texture The parent texture.
+     * @param x The x to start the sub texture.
+     * @param y The y to start the sub texture.
+     * @param width The width of the sub texture.
+     * @param height The height of the sub texture.
+     * @param imageType The image type for the texture (only in the CPU mode).
+     */
     public Texture(Texture texture, int x, int y, int width, int height, int imageType)
     {
         super(texture.getRelativePath());
@@ -92,6 +116,10 @@ public class Texture extends RelativeFile
         }
     }
 
+    /**
+     * Creates a Texture instance based on the relativePath variable passed.
+     * @param relativePath The relative path of the image.
+     */
     public Texture(String relativePath)
     {
         super(relativePath);
@@ -118,6 +146,10 @@ public class Texture extends RelativeFile
         }
     }
 
+    /**
+     * Getter for the Texture width.
+     * @return The Texture width.
+     */
     public int getWidth()
     {
         if (slickImage == null)
@@ -130,6 +162,10 @@ public class Texture extends RelativeFile
         }
     }
 
+    /**
+     * Getter for the Texture height.
+     * @return The Texture height.
+     */
     public int getHeight()
     {
         if (slickImage == null)
@@ -142,6 +178,10 @@ public class Texture extends RelativeFile
         }
     }
 
+    /**
+     * Getter for the AWT image.
+     * @return The AWT image. (null if in GPU mode)
+     */
     public java.awt.Image getImage()
     {
         if (flippedX && flippedY)
@@ -154,6 +194,9 @@ public class Texture extends RelativeFile
             return image;
     }
 
+    /**
+     * Setter for the AWT image.
+     */
     public void setImage(BufferedImage image)
     {
         this.image = image;
@@ -169,11 +212,13 @@ public class Texture extends RelativeFile
                 invXY.setRGB((image.getWidth() - 1) - x, (image.getHeight() - 1) - y, image.getRGB(x, y));
             }
         }
-        /*this.invX = image.getScaledInstance(-image.getWidth(), image.getHeight(), java.awt.Image.SCALE_FAST);
-        this.invY = image.getScaledInstance(image.getWidth(), -image.getHeight(), java.awt.Image.SCALE_FAST);
-        this.invXY = image.getScaledInstance(-image.getWidth(), -image.getHeight(), java.awt.Image.SCALE_FAST);*/
     }
 
+    /**
+     * Search for all the YldShader instances in this Texture.
+     * @param shader The class type of the shader that's being searched.
+     * @return The shader found (null if not found)
+     */
     public <S extends YldShader> S getShader(Class<S> shader)
     {
         S shader1 = null;
@@ -188,6 +233,9 @@ public class Texture extends RelativeFile
         return shader1;
     }
 
+    /**
+     * Updates all the shaders added in the shaders list. (Can be slow).
+     */
     public void processShaders()
     {
         if (slickImage != null)
@@ -242,17 +290,29 @@ public class Texture extends RelativeFile
         }
     }
 
+    /**
+     * Adds a shader to the shaders list.
+     * @param shader The shader to be added.
+     * @return The added shader.
+     */
     public YldShader addShader(YldShader shader)
     {
         shaders.add(shader);
         return shader;
     }
 
+    /**
+     * Getter for the shaders list.
+     * @return The shaders list.
+     */
     public ArrayList<YldShader> getShaders()
     {
         return shaders;
     }
 
+    /**
+     * Setter for the shaders list.
+     */
     public void setShaders(ArrayList<YldShader> shaders)
     {
         this.shaders = shaders;
@@ -268,6 +328,10 @@ public class Texture extends RelativeFile
         Texture.imageType = imageType;
     }
 
+    /**
+     * Getter for the slickImage variable.
+     * @return The slickImage variable. (null if in CPU mode)
+     */
     public Image getSlickImage()
     {
         if (slickImage != null)
@@ -275,11 +339,17 @@ public class Texture extends RelativeFile
         return null;
     }
 
+    /**
+     * Setter for the slickImage variable.
+     */
     public void setSlickImage(Image slickImage)
     {
         this.slickImage = slickImage;
     }
 
+    /**
+     * Counter for all the textures in this Yield Game Engine instance.
+     */
     public static int getTextures()
     {
         return textures;
@@ -290,21 +360,35 @@ public class Texture extends RelativeFile
         Texture.textures = textures;
     }
 
+    /**
+     * @return If the Texture is flipped in the x-axis.
+     */
     public boolean isFlippedX()
     {
         return flippedX;
     }
 
+    /**
+     * Sets if the Texture is flipped in the x-axis.
+     * @param flippedX If the is flipped in the x-axis.
+     */
     public void setFlippedX(boolean flippedX)
     {
         this.flippedX = flippedX;
     }
 
+    /**
+     * @return If the Texture is flipped in the y-axis.
+     */
     public boolean isFlippedY()
     {
         return flippedY;
     }
 
+    /**
+     * Sets if the Texture is flipped in the y-axis.
+     * @param flippedY If the is flipped in the y-axis.
+     */
     public void setFlippedY(boolean flippedY)
     {
         this.flippedY = flippedY;

@@ -16,6 +16,13 @@
 
 package com.xebisco.yield;
 
+/**
+ * This class is an implementation of YldSystem, is made to process on every update of a YldScene.
+ */
 public abstract class UpdateSystem extends YldSystem {
+    /**
+     * Called on every frame of a YldScene instance.
+     * @param delta The time variation between the last frame and the actual one in seconds.
+     */
     public abstract void update(float delta);
 }

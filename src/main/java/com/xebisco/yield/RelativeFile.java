@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+/**
+ * A primitive class for a relative file.
+ */
 public class RelativeFile {
     private URL url;
     private String path, relativePath;

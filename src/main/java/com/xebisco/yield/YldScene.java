@@ -110,7 +110,7 @@ public class YldScene extends YldB
     /**
      * Search for all the YldSystem instances in this YldScene.
      * @param system The class type of the system that's being searched.
-     * @return The system found (can be null)
+     * @return The system found (null if not found)
      */
     public <S extends YldSystem> S getSystem(Class<S> system)
     {
