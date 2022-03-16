@@ -17,7 +17,9 @@
 package com.xebisco.yield;
 
 /**
- * A simpler was to write a Component
+ * A simpler way to write a Component
+ * @since 4_1.1.1
+ * @author Xebisco
  */
 public abstract class YldScript extends Component
 {

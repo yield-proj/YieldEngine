@@ -18,6 +18,8 @@ package com.xebisco.yield;
 
 /**
  * This is the primitive class that is used in the YldScene to store all the different types of Systems. Example: ProcessSystem, UpdateSystem
+ * @since 4_beta1
+ * @author Xebisco
  */
 public class YldSystem {
     /**

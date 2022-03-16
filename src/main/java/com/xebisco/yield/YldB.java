@@ -22,6 +22,11 @@ import com.xebisco.yield.engine.YldEngineAction;
 import com.xebisco.yield.utils.MultiThread;
 import com.xebisco.yield.utils.YldAction;
 
+/**
+ * Sample methods for the majority of the Yield Game Engine classes.
+ * @since 4_alpha1
+ * @author Xebisco
+ */
 public abstract class YldB
 {
 
@@ -33,6 +38,11 @@ public abstract class YldB
 
     public abstract void onDestroy();
 
+    /**
+     * Executes a YldAction instance independently of others.
+     * @param action The action to be executed.
+     * @param multiThread The thread configuration.
+     */
     public final void concurrent(YldAction action, MultiThread multiThread)
     {
         if (multiThread == MultiThread.DEFAULT)
@@ -57,6 +67,13 @@ public abstract class YldB
         }
     }
 
+    /**
+     * Creates a timer.
+     * @param action The action to be performed on the end of the timer.
+     * @param time The time, in seconds to end the timer.
+     * @param repeat If the timer repeat after it ends.
+     * @param multiThread The thread configuration.
+     */
     public final void timer(YldAction action, float time, boolean repeat, MultiThread multiThread)
     {
         if (multiThread == MultiThread.DEFAULT)
@@ -81,11 +98,21 @@ public abstract class YldB
         }
     }
 
-    public final void timer(YldAction action, float time, boolean repeat) {
+    /**
+     * Creates a timer, on the on game thread.
+     * @param action The action to be performed on the end of the timer.
+     * @param time The time, in seconds to end the timer.
+     * @param repeat If the timer repeat after it ends.
+     */
+    public final void timer(YldAction action, float time, boolean repeat)
+    {
         timer(action, time, repeat, MultiThread.ON_GAME_THREAD);
     }
 
-
+    /**
+     * Executes a YldAction instance independently of others, on the default multi thread.
+     * @param action The action to be executed.
+     */
     public final void concurrent(YldAction action)
     {
         concurrent(action, MultiThread.DEFAULT);

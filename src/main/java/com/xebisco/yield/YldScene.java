@@ -25,6 +25,8 @@ import java.util.ArrayList;
 
 /**
  * A YldScene is the base of a Yield game, it contains the Entities, YldGraphics and the Systems, it's used to alternate between game moments.
+ * @since 4_alpha1
+ * @author Xebisco
  */
 public class YldScene extends YldB
 {

@@ -16,8 +16,16 @@
 
 package com.xebisco.yield;
 
+/**
+ * A simple interface to process all the objects in a YldGraphics instance.
+ * @author Xebisco
+ */
 public interface YldFilter {
 
+    /**
+     * Called on every graphical object on the YldGraphics instance.
+     * @param rend The graphical object.
+     */
     void process(Obj rend);
 
 }

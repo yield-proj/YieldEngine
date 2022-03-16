@@ -28,28 +28,45 @@ import org.lwjgl.LWJGLUtil;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.Game;
 import org.newdawn.slick.SlickException;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
 
+/**
+ * This class is the starting point for every Yield Game, it contains all the objects of the game.
+ * @since 4_alpha1
+ * @author Xebisco
+ */
 public class YldGame extends YldScene
 {
-
     private GameConfiguration configuration;
     private boolean started = false;
     private YldWindow window;
     private GameHandler handler;
     private final ArrayList<YldExtension> extensions = new ArrayList<>();
+    /**
+     * All the scenes that are in this YldGame instance.
+     *
+     * @since 4_alpha1
+     */
     protected ArrayList<YldScene> scenes = new ArrayList<>();
+    /**
+     * The actual scene that is displaying.
+     *
+     * @since 4_alpha1
+     */
     protected YldScene scene;
     private SlickGame slickGame;
     private AppGameContainer slickApp;
+    /**
+     * This variable tells if the last YldGame instance is hardware accelerated.
+     *
+     * @since 4_1.1
+     */
     public static boolean lwjgl;
 
     @Override
@@ -58,6 +75,12 @@ public class YldGame extends YldScene
 
     }
 
+    /**
+     * Sets the game window (YldWindow if CPU, Display if GPU) to fullscreen or windowed.
+     *
+     * @param fullscreen To set to fullscreen or windowed.
+     * @since 4_1.1
+     */
     public void setFullscreen(boolean fullscreen)
     {
         if (window != null)
@@ -87,6 +110,13 @@ public class YldGame extends YldScene
         }
     }
 
+    /**
+     * This is the method that will start an YldGame instance receiving a GameConfiguration variable, it will set all the game based in the GameConfiguration instance.
+     *
+     * @param game          The YldGame to be created.
+     * @param configuration The YldGame instance of the GameConfiguration class.
+     * @since 4_alpha1
+     */
     public static void launch(YldGame game, GameConfiguration configuration)
     {
         Locale.setDefault(Locale.US);
@@ -184,6 +214,11 @@ public class YldGame extends YldScene
         scene.process(delta);
     }
 
+    /**
+     * Getter for the window variable.
+     *
+     * @return The window variable (null if in GPU Mode).
+     */
     public YldWindow getWindow()
     {
         return window;
@@ -194,21 +229,39 @@ public class YldGame extends YldScene
         return started;
     }
 
+    /**
+     * Getter for the configuration variable.
+     *
+     * @return The configuration variable.
+     */
     public GameConfiguration getConfiguration()
     {
         return configuration;
     }
 
+    /**
+     * Getter for the handler variable.
+     *
+     * @return The handler variable.
+     */
     public GameHandler getHandler()
     {
         return handler;
     }
 
+    /**
+     * Setter for the handler variable.
+     */
     public void setHandler(GameHandler handler)
     {
         this.handler = handler;
     }
 
+    /**
+     * Adds and sets the passed extension to the extensions list.
+     *
+     * @param extension The extension to be added.
+     */
     public void addExtension(YldExtension extension)
     {
         extension.create();
@@ -222,6 +275,12 @@ public class YldGame extends YldScene
         super.onDestroy();
     }
 
+    /**
+     * Search for all the extensions in the extensions list.
+     *
+     * @param type The class type of the extension that's being searched.
+     * @return The extension found (can be null)
+     */
     public <T extends YldExtension> YldExtension getExtension(Class<T> type)
     {
         YldExtension extension = null;
@@ -239,6 +298,11 @@ public class YldGame extends YldScene
         return extension;
     }
 
+    /**
+     * Removes an extension of the given type in the extensions list.
+     *
+     * @param type The extension type to be removed.
+     */
     public <T extends YldExtension> void removeExtension(Class<T> type)
     {
         for (YldExtension e : extensions)
@@ -254,11 +318,21 @@ public class YldGame extends YldScene
         }
     }
 
+    /**
+     * Getter for the extensions list.
+     *
+     * @return The extensions list.
+     */
     public ArrayList<YldExtension> getExtensions()
     {
         return extensions;
     }
 
+    /**
+     * Adds and sets the passed scene to the scenes list.
+     *
+     * @param scene The scene to be added.
+     */
     public void addScene(YldScene scene)
     {
         scene.setInput(input);
@@ -268,21 +342,37 @@ public class YldGame extends YldScene
         scenes.add(scene);
     }
 
+    /**
+     * Getter for the scenes list.
+     *
+     * @return The scenes list.
+     */
     public ArrayList<YldScene> getScenes()
     {
         return scenes;
     }
 
+    /**
+     * Setter for the scenes list.
+     */
     public void setScenes(ArrayList<YldScene> scenes)
     {
         this.scenes = scenes;
     }
 
+    /**
+     * Getter for the actual scene.
+     *
+     * @return The actual scene.
+     */
     public YldScene getScene()
     {
         return scene;
     }
 
+    /**
+     * Setter for the actual scene.
+     */
     public void setScene(YldScene scene)
     {
         this.scene = scene;
@@ -310,6 +400,11 @@ public class YldGame extends YldScene
         setScene(scene);
     }
 
+    /**
+     * Method to instantiate a scene and set it as the actual scene.
+     * @param type The scene type to be instantiated.
+     * @param how What to do with last scene.
+     */
     public <T extends YldScene> void setScene(Class<T> type, ChangeScene how)
     {
         YldScene scene = null;
@@ -333,11 +428,18 @@ public class YldGame extends YldScene
         setScene(scene);
     }
 
+    /**
+     * Method to instantiate a scene and set it as the actual scene, destroying the last one.
+     * @param type The scene type to be instantiated.
+     */
     public <T extends YldScene> void setScene(Class<T> type)
     {
         setScene(type, ChangeScene.DESTROY_LAST);
     }
 
+    /**
+     * Setter for the configuration variable.
+     */
     public void setConfiguration(GameConfiguration configuration)
     {
         this.configuration = configuration;
@@ -348,26 +450,43 @@ public class YldGame extends YldScene
         this.started = started;
     }
 
+    /**
+     * Setter for the window variable.
+     */
     public void setWindow(YldWindow window)
     {
         this.window = window;
     }
 
+    /**
+     * Getter for the slickGame variable.
+     * @return The slickGame variable (null if in CPU mode)
+     */
     public SlickGame getSlickGame()
     {
         return slickGame;
     }
 
+    /**
+     * Setter for the slickGame variable.
+     */
     public void setSlickGame(SlickGame slickGame)
     {
         this.slickGame = slickGame;
     }
 
+    /**
+     * Getter for the slickApp variable.
+     * @return The slickApp variable (null if in CPU mode)
+     */
     public AppGameContainer getSlickApp()
     {
         return slickApp;
     }
 
+    /**
+     * Setter for the slickApp variable.
+     */
     public void setSlickApp(AppGameContainer slickApp)
     {
         this.slickApp = slickApp;

@@ -18,6 +18,8 @@ package com.xebisco.yield;
 
 /**
  * An instance of this class is made to contain the time information of a YldGame.
+ * @since 4_beta1
+ * @author Xebisco
  */
 public class YldTime
 {
@@ -35,6 +37,7 @@ public class YldTime
 
     /**
      * @return The delta time of the current frame. This variable is updated in the YldTimeSystem.
+     * @since 4_beta1
      */
     public float getDelta()
     {
@@ -43,6 +46,7 @@ public class YldTime
 
     /**
      * @return The fps since the last frame. This variable is updated in the YldTimeSystem.
+     * @since 4_beta1
      */
     public float getFps()
     {
@@ -51,6 +55,7 @@ public class YldTime
 
     /**
      * @return The target fps of the YldGame GameConfiguration instance.
+     * @since 4_1.1
      */
     public float getTargetFPS()
     {
@@ -59,6 +64,7 @@ public class YldTime
 
     /**
      * Updates the fps in the YldGame GameHandler (if in CPU Mode) or in the YldGame SlickApp (if in GPU Mode).
+     * @since 4_1.1
      */
     public void setTargetFPS(float fps)
     {

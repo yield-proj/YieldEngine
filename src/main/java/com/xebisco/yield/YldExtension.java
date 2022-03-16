@@ -18,26 +18,46 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.graphics.SampleGraphics;
 
+/**
+ * A YldExtension object have the purpose to add features, or 'extends' the Yield Game Engine functionalities.
+ * @since 4_alpha1
+ * @author Xebisco
+ */
 public class YldExtension extends YldB
 {
+    /**
+     * Called when the extension is created.
+     */
     @Override
     public void create()
     {
 
     }
 
+    /**
+     * Called on every frame of the application, before the YldGame.
+     *
+     * @param delta The time variation between the last frame and the actual one in seconds.
+     */
     @Override
     public void update(float delta)
     {
 
     }
 
+    /**
+     * Called when the extension is destroyed.
+     */
     @Override
     public final void onDestroy()
     {
 
     }
 
+    /**
+     * Called on every frame of the application, to render custom graphics on the screen.
+     * @param graphics Is a implementation of AWTGraphics(CPU Mode) or SlickGraphics(GPU Mode) with the same API to draw custom graphics onto the screen.
+     */
     public void render(SampleGraphics graphics)
     {
 

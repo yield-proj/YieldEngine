@@ -18,6 +18,8 @@ package com.xebisco.yield;
 
 /**
  * This class is used to manipulate Textures in game time.
+ * @since 4_1.1.2
+ * @author Xebisco
  */
 public interface YldShader
 {

@@ -16,20 +16,18 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.components.Text;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
 
+/**
+ * An instance of this class contains information about graphical objects.
+ * @since 4_alpha1
+ * @author Xebisco
+ */
 public class YldGraphics {
 
     /**
-     * The list of the actual graphic objects on this YldGraphics instance.
+     * The list of the actual graphical objects on this YldGraphics instance.
      */
     public final ArrayList<Obj> shapeRends = new ArrayList<>();
     private Color color = Colors.CYAN;
@@ -124,38 +122,81 @@ public class YldGraphics {
         return obj;
     }
 
+    /**
+     * Creates and adds a filled rectangle to the shapeRends list.
+     * @param x The x position of the rectangle
+     * @param y The y position of the rectangle
+     * @param width The width of the rectangle
+     * @param height The height of the rectangle
+     * @return The created rectangle.
+     */
     public Obj rect(float x, float y, float width, float height) {
         return rect(x, y, width, height, true);
     }
 
+    /**
+     * Creates and adds a filled oval to the shapeRends list.
+     * @param x The x position of the oval
+     * @param y The y position of the oval
+     * @param width The width of the oval
+     * @param height The height of the oval
+     * @return The created oval.
+     */
     public Obj oval(float x, float y, float width, float height) {
         return oval(x, y, width, height, true);
     }
 
+    /**
+     * Adds a filter to the filters list.
+     * @param filter The YldFilter instance to be added.
+     */
     public void addFilter(YldFilter filter) {
         filters.add(filter);
     }
 
+    /**
+     * Getter for the filters list.
+     * @return The filters list.
+     */
     public ArrayList<YldFilter> getFilters() {
         return filters;
     }
 
+    /**
+     * Setter for the filters list.
+     */
     public void setFilters(ArrayList<YldFilter> filters) {
         this.filters = filters;
     }
 
+    /**
+     * Getter for the actual color.
+     * @return The actual color.
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     * Setter for the actual color.
+     * This setter will determine all the next graphical objects color.
+     */
     public void setColor(Color color) {
         this.color = color;
     }
 
+    /**
+     * Getter for the actual font.
+     * @return The actual font.
+     */
     public Font getFont() {
         return font;
     }
 
+    /**
+     * Setter for the actual font.
+     * This setter will determine all the next graphical objects font.
+     */
     public void setFont(Font font) {
         this.font = font;
     }
