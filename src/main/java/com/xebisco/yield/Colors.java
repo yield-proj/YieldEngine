@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * A collection of some basic colors.
+ */
 public class Colors {
     public final static Color RED = new Color(1, 0, 0),
             CYAN = new Color(0, 1, 1),

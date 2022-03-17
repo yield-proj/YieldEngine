@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * A color stored in an separated RGB values.
+ */
 public class Color {
     private float r, g, b, a;
     public Color(float r, float g, float b) {

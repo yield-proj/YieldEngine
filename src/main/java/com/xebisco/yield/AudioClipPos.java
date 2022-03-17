@@ -16,23 +16,47 @@
 
 package com.xebisco.yield;
 
-public class AudioClipPos {
+/**
+ * This class servers the purpose of giving a time position to an audio clip in a audio player.
+ */
+public class AudioClipPos
+{
     private long position;
     private boolean microsecond;
 
-    public long getPosition() {
+    /**
+     * Getter of the position of this AudioClipPos.
+     *
+     * @return The position variable.
+     */
+    public long getPosition()
+    {
         return position;
     }
 
-    public void setPosition(long position) {
+    /**
+     * Setter of the position of this AudioClipPos.
+     */
+    public void setPosition(long position)
+    {
         this.position = position;
     }
 
-    public boolean isMicrosecond() {
+    /**
+     * Getter of the microsecond boolean of this AudioClipPos.
+     *
+     * @return The position variable.
+     */
+    public boolean isMicrosecond()
+    {
         return microsecond;
     }
 
-    public void setMicrosecond(boolean microsecond) {
+    /**
+     * Setter of the microsecond boolean of this AudioClipPos.
+     */
+    public void setMicrosecond(boolean microsecond)
+    {
         this.microsecond = microsecond;
     }
 }
