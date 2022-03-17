@@ -35,7 +35,7 @@ public final class Entity
     private Transform selfTransform;
     private Renderer renderer;
     private String name;
-    private Material material = defaultMaterial;
+    private Material material = new Material();
     private static Material defaultMaterial = new Material();
     private final YldScene scene;
     private boolean active = true;
@@ -56,6 +56,9 @@ public final class Entity
         this.parent = parent;
         addComponent(selfTransform = new Transform());
         addComponent(renderer = new Renderer());
+        material.setColor(defaultMaterial.getColor());
+        material.setTexture(defaultMaterial.getTexture());
+        material.setLined(defaultMaterial.isLined());
     }
 
     /**
@@ -530,6 +533,7 @@ public final class Entity
 
     /**
      * Getter of the material variable of this Entity.
+     *
      * @return the material variable.
      */
     public Material getMaterial()
@@ -547,6 +551,7 @@ public final class Entity
 
     /**
      * Getter of the default material.
+     *
      * @return the default material variable.
      */
     public static Material getDefaultMaterial()
@@ -564,6 +569,7 @@ public final class Entity
 
     /**
      * Getter of the active material.
+     *
      * @return the active material variable.
      */
     public boolean isActive()
