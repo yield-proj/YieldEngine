@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * An adapter for the YldFilter interface.
+ */
 public class FilterAdapter implements YldFilter {
     @Override
     public void process(Obj rend) {

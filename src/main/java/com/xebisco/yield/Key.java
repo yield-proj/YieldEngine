@@ -16,6 +16,11 @@
 
 package com.xebisco.yield;
 
+/**
+ * This class contains all the mapped keys that can be used in a game.
+ * @since 4_1.1
+ * @author Xebisco
+ */
 public class Key
 {
     public static final int ENTER = '\n';

@@ -21,6 +21,11 @@ import org.newdawn.slick.TrueTypeFont;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * A graphical object.
+ * @since 4_alpha1
+ * @author Xebisco
+ */
 public class Obj
 {
     public int x, x2, y, y2, index, rotationV, rotationX, rotationY;

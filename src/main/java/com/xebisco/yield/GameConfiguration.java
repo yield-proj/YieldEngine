@@ -18,6 +18,11 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.config.WindowConfiguration;
 
+/**
+ * This is the standard configuration class used to launch YldGames, all the properties can be modified.
+ * @since 4_alpha1
+ * @author Xebisco
+ */
 public class GameConfiguration extends WindowConfiguration
 {
     public int fps = 60;

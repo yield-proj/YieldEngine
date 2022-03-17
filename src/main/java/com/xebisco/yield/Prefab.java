@@ -17,7 +17,7 @@
 package com.xebisco.yield;
 
 /**
- * A simple interface made to create Entities.
+ * A preset that is used to create multiple entities.
  */
 @FunctionalInterface
 public interface Prefab

@@ -23,6 +23,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+/**
+ * An Entity is a combination of Components and other Entities(called children), can contain game logic and be displayed on the screen.
+ */
 public final class Entity
 {
     private ArrayList<Component> components = new ArrayList<>();
@@ -37,6 +40,13 @@ public final class Entity
     private final YldScene scene;
     private boolean active = true;
 
+    /**
+     * Creates an entity with a Transform component and a Renderer component.
+     *
+     * @param name   The name of this Entity.
+     * @param scene  The scene of this Entity.
+     * @param parent The parent Entity.
+     */
     public Entity(String name, YldScene scene, Entity parent)
     {
         if (name == null)
@@ -48,6 +58,11 @@ public final class Entity
         addComponent(renderer = new Renderer());
     }
 
+    /**
+     * Updates all the components of this Entity and all the systems in the scene of this Entity.
+     *
+     * @param delta The time variation between the last frame and the actual one in seconds.
+     */
     public void process(float delta)
     {
         if (active)
@@ -116,6 +131,11 @@ public final class Entity
         }
     }
 
+    /**
+     * Adds and setts a Component to this Entity.
+     *
+     * @param component The component to be added.
+     */
     public void addComponent(Component component)
     {
         component.transform = selfTransform;
@@ -129,6 +149,12 @@ public final class Entity
         components.add(component);
     }
 
+    /**
+     * Search for all the Components instances in this Entity.
+     *
+     * @param type The class type of the component that's being searched.
+     * @return The component found (null if not found)
+     */
     public <T extends Component> T getComponent(Class<T> type)
     {
         T component = null;
@@ -150,16 +176,34 @@ public final class Entity
         return component;
     }
 
+    /**
+     * Check if this Entity contains a Component with the specified class type.
+     *
+     * @param type The class type of the Component.
+     * @return If the Entity contains the Component.
+     */
     public <T extends Component> boolean containsComponent(Class<T> type)
     {
         return getComponent(type) != null;
     }
 
+    /**
+     * Check if this Entity parent contains a Component with the specified class type.
+     *
+     * @param type The class type of the Component.
+     * @return If the Entity parent contains the Component.
+     */
     public <T extends Component> T getComponentInParent(Class<T> type)
     {
         return parent.getComponent(type);
     }
 
+    /**
+     * Check if any of this Entity children contains a Component with the specified class type.
+     *
+     * @param type The class type of the Component.
+     * @return If contains the Component.
+     */
     public <T extends Component> T getComponentInChildren(Class<T> type)
     {
         T component = null;
@@ -174,6 +218,11 @@ public final class Entity
         return component;
     }
 
+    /**
+     * Gets the transform based on all of these parents.
+     *
+     * @return The global transform.
+     */
     public Transform getTransform()
     {
         Transform toReturn = new Transform();
@@ -189,69 +238,121 @@ public final class Entity
         return toReturn;
     }
 
+    /**
+     * Getter of the selfTransform variable of this Entity.
+     *
+     * @return The selfTransform variable.
+     */
     public Transform getSelfTransform()
     {
         return selfTransform;
     }
 
+    /**
+     * Setter of the selfTransform variable of this Entity.
+     */
     public void setSelfTransform(Transform selfTransform)
     {
         this.selfTransform = selfTransform;
     }
 
+    /**
+     * Getter of the components list of this Entity.
+     *
+     * @return The components list.
+     */
     public ArrayList<Component> getComponents()
     {
         return components;
     }
 
+    /**
+     * Setter of the components list of this Entity.
+     */
     public void setComponents(ArrayList<Component> components)
     {
         this.components = components;
     }
 
+    /**
+     * Getter of the renderer variable of this Entity.
+     *
+     * @return The renderer variable.
+     */
     public Renderer getRenderer()
     {
         return renderer;
     }
 
+    /**
+     * Setter of the renderer variable of this Entity.
+     */
     public void setRenderer(Renderer renderer)
     {
         this.renderer = renderer;
     }
 
+    /**
+     * Getter of the scene variable of this Entity.
+     *
+     * @return The scene variable.
+     */
     public YldScene getScene()
     {
         return scene;
     }
 
+    /**
+     * Getter of the name variable of this Entity.
+     *
+     * @return The name variable.
+     */
     public String getName()
     {
         return name;
     }
 
+    /**
+     * Setter of the name variable of this Entity.
+     */
     public void setName(String name)
     {
         this.name = name;
     }
 
+    /**
+     * Instantiates an entity based on the given Prefab, and adds it to this Entity children list.
+     *
+     * @param prefab The Prefab of the instantiated Entity.
+     * @return The instantiated Entity instance.
+     */
     public Entity instantiate(Prefab prefab)
     {
         String name = "Entity";
         if (prefab != null)
             name = prefab.getClass().getName();
         Entity entity = new Entity(name, scene, null);
-        entity.setParent(this);
-        children.add(entity);
+        addChild(entity);
         if (prefab != null)
             prefab.create(entity);
         return entity;
     }
 
+    /**
+     * Instantiates a null entity, and adds it to this Entity children list.
+     *
+     * @return The instantiated Entity instance.
+     */
     public Entity instantiate()
     {
         return instantiate(null);
     }
 
+    /**
+     * Destroys a child of this Entity based on the given class type.
+     *
+     * @param type The type of the entity that will be destroyed.
+     */
     public <E extends Prefab> void destroy(Class<E> type)
     {
         int i = 0;
@@ -270,6 +371,9 @@ public final class Entity
         }
     }
 
+    /**
+     * Destroys this Entity.
+     */
     public void destroy()
     {
         for (Entity e : children)
@@ -284,17 +388,42 @@ public final class Entity
             parent.getChildren().removeIf(e -> e == this);
     }
 
+    /**
+     * Getter of the children list of this Entity.
+     *
+     * @return The children list.
+     */
     public ArrayList<Entity> getChildren()
     {
         return children;
     }
 
+    @Deprecated
     public Entity addChildren(Entity e)
     {
         children.add(e);
         return e;
     }
 
+    /**
+     * Adds a Entity to the children list.
+     *
+     * @param child The Entity to be added.
+     * @return The added Entity.
+     */
+    public Entity addChild(Entity child)
+    {
+        child.setParent(this);
+        children.add(child);
+        return child;
+    }
+
+    /**
+     * Calls the specified method on all the components of this Entity.
+     *
+     * @param method    The name of the method.
+     * @param arguments The arguments of the method.
+     */
     public void transmit(String method, Object... arguments)
     {
         for (Component c : components)
@@ -314,6 +443,12 @@ public final class Entity
         }
     }
 
+    /**
+     * Calls the specified method on all the components on all the children of this Entity.
+     *
+     * @param method    The name of the method.
+     * @param arguments The arguments of the method.
+     */
     public void transmitToChildren(String method, Object... arguments)
     {
         for (Entity e : children)
@@ -322,21 +457,35 @@ public final class Entity
         }
     }
 
+    /**
+     * Setter of the children list of this Entity.
+     */
     public void setChildren(ArrayList<Entity> children)
     {
         this.children = children;
     }
 
+    /**
+     * Getter of the parent variable of this Entity.
+     *
+     * @return the parent variable.
+     */
     public Entity getParent()
     {
         return parent;
     }
 
+    /**
+     * Setter of the parent variable of this Entity.
+     */
     public void setParent(Entity parent)
     {
         this.parent = parent;
     }
 
+    /**
+     * @return The render index of this Entity. (not influenced by the parent Entity)
+     */
     public int getIndex()
     {
         if (parent != null && index == -1)
@@ -344,6 +493,9 @@ public final class Entity
         else return index;
     }
 
+    /**
+     * @return The render index of this Entity. (influenced by the parent Entity)
+     */
     public int getEntityIndex()
     {
         int index = getIndex(), max = 0;
@@ -368,36 +520,60 @@ public final class Entity
         return index + max;
     }
 
+    /**
+     * Setter of the index variable of this Entity.
+     */
     public void setIndex(int index)
     {
         this.index = index;
     }
 
+    /**
+     * Getter of the material variable of this Entity.
+     * @return the material variable.
+     */
     public Material getMaterial()
     {
         return material;
     }
 
+    /**
+     * Setter of the material variable of this Entity.
+     */
     public void setMaterial(Material material)
     {
         this.material = material;
     }
 
+    /**
+     * Getter of the default material.
+     * @return the default material variable.
+     */
     public static Material getDefaultMaterial()
     {
         return defaultMaterial;
     }
 
+    /**
+     * Setter of the default material.
+     */
     public static void setDefaultMaterial(Material defaultMaterial)
     {
         Entity.defaultMaterial = defaultMaterial;
     }
 
+    /**
+     * Getter of the active material.
+     * @return the active material variable.
+     */
     public boolean isActive()
     {
         return active;
     }
 
+    /**
+     * Setter of the active material.
+     */
     public void setActive(boolean active)
     {
         this.active = active;

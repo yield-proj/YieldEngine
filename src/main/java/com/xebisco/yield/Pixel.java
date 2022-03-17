@@ -18,26 +18,45 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.utils.Vector2;
 
+/**
+ * Simulation of a Pixel.
+ * @since 4_1.1.2
+ * @author Xebisco
+ */
 public class Pixel
 {
     private Vector2 location;
     private Color color;
 
+    /**
+     * Getter of the location variable.
+     * @return The location variable.
+     */
     public Vector2 getLocation()
     {
         return location;
     }
 
+    /**
+     * Setter of the location variable.
+     */
     public void setLocation(Vector2 location)
     {
         this.location = location;
     }
 
+    /**
+     * Getter of the color variable.
+     * @return The color variable.
+     */
     public Color getColor()
     {
         return color;
     }
 
+    /**
+     * Setter of the color variable.
+     */
     public void setColor(Color color)
     {
         this.color = color;
