@@ -46,10 +46,6 @@ public final class Yld
      * If Yield Game Engine is in debug mode ot not.
      */
     public static boolean debug;
-    /**
-     * The build of the Yield Game Engine.
-     */
-    public static final long BUILD = 14;
 
     /**
      * The memory in use in the actual Java Virtual Machine.
