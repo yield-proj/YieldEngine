@@ -88,7 +88,9 @@ public final class Yld
     public static void debug(YldAction action)
     {
         if (debug)
+        {
             action.onAction();
+        }
     }
 
     /**
