@@ -341,4 +341,21 @@ public abstract class Component extends YldB
     {
         this.graphics = graphics;
     }
+
+    /**
+     * Getter for the tag of this entity.
+     * @return The tag variable.
+     */
+    public String getTag()
+    {
+        return entity.getTag();
+    }
+
+    /**
+     * Setter for the tag of this entity.
+     */
+    public void setTag(String tag)
+    {
+        entity.setTag(tag);
+    }
 }

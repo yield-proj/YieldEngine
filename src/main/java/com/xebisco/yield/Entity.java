@@ -38,6 +38,7 @@ public final class Entity
     private Material material = new Material();
     private static Material defaultMaterial = new Material();
     private final YldScene scene;
+    private String tag = "default";
     private boolean active = true;
 
     /**
@@ -303,6 +304,23 @@ public final class Entity
     public YldScene getScene()
     {
         return scene;
+    }
+
+    /**
+     * Getter for the tag of this entity.
+     * @return The tag variable.
+     */
+    public String getTag()
+    {
+        return tag;
+    }
+
+    /**
+     * Setter for the tag of this entity.
+     */
+    public void setTag(String tag)
+    {
+        this.tag = tag;
     }
 
     /**

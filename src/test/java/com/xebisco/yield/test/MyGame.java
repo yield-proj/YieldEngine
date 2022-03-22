@@ -26,7 +26,7 @@ public class MyGame extends YldGame
     public void create()
     {
         Particle particle = new Particle(new Texture("/com/xebisco/yield/assets/yieldlogo.png"));
-        /*instantiate((e) ->
+        instantiate((e) ->
         {
             e.addComponent(new ParticleSpawner());
             e.getSelfTransform().goTo(View.getActView().getWidth(), View.getActView().getHeight() / 2f);
@@ -41,11 +41,6 @@ public class MyGame extends YldGame
             ParticleSpawner spawner = e.getComponent(ParticleSpawner.class);
             spawner.addParticle(particle);
             spawner.setEmitSpeed(new Vector2(4, -4));
-        });*/
-        instantiate((e) -> {
-           e.getSelfTransform().goTo(View.mid());
-           e.addComponent(new ParticleSpawner());
-           e.getComponent(ParticleSpawner.class).addParticleFromTexture(null);
         });
     }
 
