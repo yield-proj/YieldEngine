@@ -220,10 +220,13 @@ public class YldWindow
 
                         if (rend.type == Obj.ShapeType.RECT)
                             if (rend.image == null)
-                                if (rend.filled)
-                                    g.fillRect(x, y, x2 - x, y2 - y);
-                                else
-                                    g.drawRect(x, y, x2 - x, y2 - y);
+                            {
+                                if (rend.value.hashCode() == "\\imgobj".hashCode())
+                                    if (rend.filled)
+                                        g.fillRect(x, y, x2 - x, y2 - y);
+                                    else
+                                        g.drawRect(x, y, x2 - x, y2 - y);
+                            }
                             else
                             {
                                 g.drawImage(rend.image, x, y, x2 - x, y2 - y, null);

@@ -34,34 +34,66 @@ public class Color {
         this.a = a;
     }
 
+    /**
+     * Getter of the red value of this Color.
+     *
+     * @return The 'r' variable.
+     */
     public float getR() {
         return r;
     }
 
+    /**
+     * Setter of the red value of this Color.
+     */
     public void setR(float r) {
         this.r = r;
     }
 
+    /**
+     * Getter of the green value of this Color.
+     *
+     * @return The 'g' variable.
+     */
     public float getG() {
         return g;
     }
 
+    /**
+     * Setter of the green value of this Color.
+     */
     public void setG(float g) {
         this.g = g;
     }
 
+    /**
+     * Getter of the blue value of this Color.
+     *
+     * @return The 'b' variable.
+     */
     public float getB() {
         return b;
     }
 
+    /**
+     * Setter of the blue value of this Color.
+     */
     public void setB(float b) {
         this.b = b;
     }
 
+    /**
+     * Getter of the alpha value of this Color.
+     *
+     * @return The 'a' variable.
+     */
     public float getA() {
         return a;
     }
 
+    /**
+     * Setter of the alpha value of this Color.
+     */
     public void setA(float a) {
         this.a = a;
     }

@@ -52,7 +52,7 @@ public class YldGraphics {
      * @return The created rectangle.
      */
     public Obj rect(float x, float y, float width, float height, boolean filled) {
-        Obj shape = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.RECT, filled, color, null, null);
+        Obj shape = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.RECT, filled, color, "", null);
         shapeRends.add(shape);
         return shape;
     }
@@ -67,7 +67,7 @@ public class YldGraphics {
      * @return The created oval.
      */
     public Obj oval(float x, float y, float width, float height, boolean filled) {
-        Obj shape = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.OVAL, filled, color, null, null);
+        Obj shape = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.OVAL, filled, color, "", null);
         shapeRends.add(shape);
         return shape;
     }
@@ -79,7 +79,7 @@ public class YldGraphics {
      * @return The created pixel.
      */
     public Obj tint(float x, float y) {
-        Obj shape = new Obj((int) x, 0, (int) y, 0, Obj.ShapeType.POINT, false, color, null, null);
+        Obj shape = new Obj((int) x, 0, (int) y, 0, Obj.ShapeType.POINT, false, color, "", null);
         shapeRends.add(shape);
         return shape;
     }
@@ -93,7 +93,7 @@ public class YldGraphics {
      * @return The created line.
      */
     public Obj line(float x1, float y1, float x2, float y2) {
-        Obj shape = new Obj((int) x1, (int) x2, (int) y1, (int) y2, Obj.ShapeType.LINE, false, color, null, null);
+        Obj shape = new Obj((int) x1, (int) x2, (int) y1, (int) y2, Obj.ShapeType.LINE, false, color, "", null);
         shapeRends.add(shape);
         return shape;
     }
@@ -111,13 +111,28 @@ public class YldGraphics {
         return shape;
     }
 
+    /**
+     * Creates and adds a text graphical object to the shapeRends list.
+     * @param text The contents of the text.
+     * @return The created text.
+     */
     public Obj text(String text) {
         return text(text, 0, 0);
     }
 
+    /**
+     * Creates and adds an image graphical object to the shapeRends list.
+     * @param texture the texture of the image.
+     * @param x The x position of the rectangle
+     * @param y The y position of the rectangle
+     * @param width The width of the rectangle
+     * @param height The height of the rectangle
+     * @return The created rectangle.
+     */
     public Obj img(Texture texture, float x, float y, float width, float height) {
         Image image = texture.getImage();
         Obj obj = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.RECT, true, Colors.BLACK, texture.getRelativePath(), null);
+        obj.value = "\\imgobj";
         obj.image = image;
         return obj;
     }

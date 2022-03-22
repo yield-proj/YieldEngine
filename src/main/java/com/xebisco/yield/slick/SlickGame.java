@@ -54,10 +54,12 @@ public class SlickGame extends BasicGame
 
     public void loadConfig(GameConfiguration configuration)
     {
-        game.getSlickApp().setClearEachFrame(true);
+        game.getSlickApp().setClearEachFrame(false);
         game.getSlickApp().setTargetFrameRate(configuration.fps);
         game.getSlickApp().setAlwaysRender(configuration.alwaysRender);
         game.getSlickApp().setVSync(configuration.vSync);
+        game.getSlickApp().setMusicOn(false);
+        game.getSlickApp().setSoundOn(false);
         Display.setResizable(configuration.resizable);
     }
 
@@ -265,10 +267,13 @@ public class SlickGame extends BasicGame
                     g.rotate(rend.rotationX, rend.rotationY, rend.rotationV);
                     if (rend.type == Obj.ShapeType.RECT)
                         if (rend.slickImage == null)
-                            if (rend.filled)
-                                g.fillRect(x, y, x2, y2);
-                            else
-                                g.drawRect(x, y, x2, y2);
+                        {
+                            if (rend.value.hashCode() == "\\imgobj".hashCode())
+                                if (rend.filled)
+                                    g.fillRect(x, y, x2, y2);
+                                else
+                                    g.drawRect(x, y, x2, y2);
+                        }
                         else
                         {
                             rend.slickImage.setFilter(Image.FILTER_NEAREST);

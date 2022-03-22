@@ -68,6 +68,21 @@ public class Texture extends RelativeFile
     }
 
     /**
+     * Creates a texture with the same properties of the passed texture.
+     * @param texture The texture to be cloned.
+     */
+    public Texture(Texture texture) {
+        super(texture.getRelativePath());
+        if(texture.getImage() != null)
+        this.setImage((BufferedImage) texture.getImage());
+        this.setFlippedX(texture.isFlippedX());
+        this.setShaders(texture.getShaders());
+        this.setFlippedY(texture.isFlippedY());
+        if(texture.getSlickImage() != null)
+        this.setSlickImage(texture.getSlickImage());
+    }
+
+    /**
      * Creates a sub texture based on the arguments passed.
      * @param texture The parent texture.
      * @param x The x to start the sub texture.

@@ -16,19 +16,30 @@
 
 package com.xebisco.yield;
 
+/**
+ * This class is a list of Textures that can be used to make animated Sprites.
+ */
 public class Animation
 {
-
     private final Texture[] frames;
     private final String name;
     private int actFrame = 0, frameDelay = 0, microsecondDelay = 1667;
 
+    /**
+     * Create an Animation instance with predefined name and frames.
+     * @param name The name of this Animation.
+     * @param frames All the frames of this Animation.
+     */
     public Animation(String name, Texture... frames)
     {
         this.frames = frames;
         this.name = name;
     }
 
+    /**
+     * Create an Animation instance with predefined frames.
+     * @param frames All the frames of this Animation.
+     */
     public Animation(Texture... frames)
     {
         this.frames = frames;

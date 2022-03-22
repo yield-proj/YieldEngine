@@ -17,71 +17,45 @@
 package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
-import com.xebisco.yield.components.Sprite;
+import com.xebisco.yield.components.ParticleSpawner;
+import com.xebisco.yield.utils.Vector2;
 
 public class MyGame extends YldGame
 {
     @Override
     public void create()
     {
+        Particle particle = new Particle(new Texture("/com/xebisco/yield/assets/yieldlogo.png"));
+        /*instantiate((e) ->
+        {
+            e.addComponent(new ParticleSpawner());
+            e.getSelfTransform().goTo(View.getActView().getWidth(), View.getActView().getHeight() / 2f);
+            ParticleSpawner spawner = e.getComponent(ParticleSpawner.class);
+            spawner.addParticle(particle);
+            spawner.setEmitSpeed(new Vector2(-4, -4));
+        });
         instantiate((e) ->
         {
-            e.addComponent(new Sprite());
-            e.addComponent(new RotateScript());
-            e.setMaterial(new Material(new Texture("/com/xebisco/yield/assets/yieldlogo.png")));
+            e.addComponent(new ParticleSpawner());
+            e.getSelfTransform().goTo(0, View.getActView().getHeight() / 2f);
+            ParticleSpawner spawner = e.getComponent(ParticleSpawner.class);
+            spawner.addParticle(particle);
+            spawner.setEmitSpeed(new Vector2(4, -4));
+        });*/
+        instantiate((e) -> {
+           e.getSelfTransform().goTo(View.mid());
+           e.addComponent(new ParticleSpawner());
+           e.getComponent(ParticleSpawner.class).addParticleFromTexture(null);
         });
     }
 
     public static void main(String[] args)
     {
         new View(1280, 720);
-        View.getActView().setBgColor(Colors.WHITE);
+        View.getActView().setBgColor(Colors.MAGENTA);
         final GameConfiguration config = new GameConfiguration();
-        config.hardwareAcceleration = false;
+        config.hardwareAcceleration = true;
         config.autoNativesPath = true;
         launch(new MyGame(), config);
-    }
-}
-
-class RotateScript extends YldScript
-{
-    @Override
-    public void start()
-    {
-        transform.goTo(View.mid());
-    }
-
-    boolean dir, invert;
-    float speed = 1;
-
-    @Override
-    public void create()
-    {
-        transform.scale(10, 10);
-    }
-
-    @Override
-    public void update(float delta)
-    {
-        if (!dir)
-        {
-            transform.scale(-delta * speed, 0);
-        }
-        else
-        {
-            transform.scale(delta * speed, 0);
-        }
-        if (transform.scale.x <= 0)
-        {
-            dir = true;
-            if (!invert)
-                getMaterial().getTexture().setFlippedX(!getMaterial().getTexture().isFlippedX());
-            invert = true;
-        }
-        if (transform.scale.x >= 6)
-        {
-            dir = false;
-            invert = false;
-        }
     }
 }

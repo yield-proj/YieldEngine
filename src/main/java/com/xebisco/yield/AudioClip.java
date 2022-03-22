@@ -16,18 +16,33 @@
 
 package com.xebisco.yield;
 
+/**
+ * A instance of an audio file, an implementation of RelativePath.
+ */
 public class AudioClip extends RelativeFile {
 
     private AudioClipPos startPos = new AudioClipPos();
 
+    /**
+     * Creates a AudioClip from the given relative path.
+     * @param relativePath The relative path of the audio clip.
+     */
     public AudioClip(String relativePath) {
         super(relativePath);
     }
 
+    /**
+     * Getter of the startPos of this AudioClip.
+     *
+     * @return The startPos variable.
+     */
     public AudioClipPos getStartPos() {
         return startPos;
     }
 
+    /**
+     * Setter of the startPos of this AudioClip.
+     */
     public void setStartPos(AudioClipPos startPos) {
         this.startPos = startPos;
     }
