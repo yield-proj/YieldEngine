@@ -20,13 +20,10 @@ import com.xebisco.yield.*;
 import com.xebisco.yield.config.WindowConfiguration;
 import com.xebisco.yield.graphics.AWTGraphics;
 import com.xebisco.yield.utils.Conversions;
-import com.xebisco.yield.utils.Vector2;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 public class YldWindow
@@ -108,7 +105,11 @@ public class YldWindow
     public class YldWindowG extends JPanel
     {
 
-        private GameHandler handler;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 7057335725979402089L;
+		private GameHandler handler;
         private AWTGraphics sampleGraphics = new AWTGraphics();
 
         private Graphics g;

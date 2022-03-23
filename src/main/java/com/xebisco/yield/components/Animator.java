@@ -18,8 +18,6 @@ package com.xebisco.yield.components;
 
 import com.xebisco.yield.Animation;
 import com.xebisco.yield.Component;
-import com.xebisco.yield.Yld;
-
 import java.util.ArrayList;
 
 public class Animator extends Component

@@ -17,7 +17,12 @@
 package com.xebisco.yield.exceptions;
 
 public class RendException extends RuntimeException {
-    public RendException(String msg) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5258327793026265775L;
+
+	public RendException(String msg) {
         super(msg);
     }
 }

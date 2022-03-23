@@ -18,7 +18,6 @@ package com.xebisco.yield.systems;
 
 import com.xebisco.yield.Component;
 import com.xebisco.yield.ProcessSystem;
-import com.xebisco.yield.Yld;
 import com.xebisco.yield.components.Transform;
 
 public class MiddlePointSystem extends ProcessSystem

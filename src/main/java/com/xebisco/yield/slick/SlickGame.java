@@ -16,25 +16,33 @@
 
 package com.xebisco.yield.slick;
 
-import com.xebisco.yield.*;
-import com.xebisco.yield.engine.YldEngineAction;
-import com.xebisco.yield.input.YldInput;
-import com.xebisco.yield.utils.Conversions;
-import com.xebisco.yield.utils.Vector2;
-import org.lwjgl.opengl.Display;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.*;
-import org.newdawn.slick.opengl.PNGDecoder;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import static org.lwjgl.opengl.GL11.*;
+import org.lwjgl.opengl.Display;
+import org.newdawn.slick.BasicGame;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.PNGDecoder;
+
+import com.xebisco.yield.GameConfiguration;
+import com.xebisco.yield.Obj;
+import com.xebisco.yield.View;
+import com.xebisco.yield.YldExtension;
+import com.xebisco.yield.YldGame;
+import com.xebisco.yield.engine.YldEngineAction;
+import com.xebisco.yield.input.YldInput;
+import com.xebisco.yield.utils.Conversions;
 
 public class SlickGame extends BasicGame
 {
@@ -116,7 +124,9 @@ public class SlickGame extends BasicGame
         }
     }
 
-    private static ByteBuffer loadIconInstance(BufferedImage image, int dimension)
+    @SuppressWarnings("unused")
+	@Deprecated
+    private ByteBuffer loadIconInstance(BufferedImage image, int dimension)
     {
         BufferedImage scaledIcon = new BufferedImage(dimension, dimension, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = scaledIcon.createGraphics();

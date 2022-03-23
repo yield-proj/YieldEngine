@@ -17,16 +17,7 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.utils.Vector2;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.util.BufferedImageUtil;
-
 import java.awt.image.BufferedImage;
-
-import static org.lwjgl.opengl.GL11.*;
 
 /**
  * The resolution of the actual Yield Game Engine.

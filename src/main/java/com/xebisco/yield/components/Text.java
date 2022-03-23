@@ -17,11 +17,8 @@
 package com.xebisco.yield.components;
 
 import com.xebisco.yield.Obj;
-import com.xebisco.yield.Yld;
 import com.xebisco.yield.YldGraphics;
 import org.newdawn.slick.TrueTypeFont;
-import org.newdawn.slick.UnicodeFont;
-
 import java.awt.*;
 
 public class Text extends Shape

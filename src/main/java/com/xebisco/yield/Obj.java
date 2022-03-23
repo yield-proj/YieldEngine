@@ -19,7 +19,6 @@ package com.xebisco.yield;
 import org.newdawn.slick.TrueTypeFont;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 /**
  * A graphical object.

@@ -35,11 +35,11 @@ public class Save
         }
         String appdataPath = System.getenv("APPDATA");
         File dir = new File(appdataPath + "\\YieldGames\\");
-        boolean c = dir.mkdir();
+        dir.mkdir();
         File file = new File(appdataPath + "\\YieldGames\\" + config.appName + ".ylds");
         try
         {
-            boolean created = file.createNewFile();
+            file.createNewFile();
         } catch (IOException e)
         {
             e.printStackTrace();

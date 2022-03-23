@@ -17,13 +17,10 @@
 package com.xebisco.yield.extensions;
 
 import com.xebisco.yield.Key;
-import com.xebisco.yield.Yld;
 import com.xebisco.yield.YldExtension;
 import com.xebisco.yield.input.Keys;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
-
-import java.awt.event.KeyEvent;
 
 public class FullscreenDetectorExtension extends YldExtension
 {

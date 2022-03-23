@@ -18,7 +18,12 @@ package com.xebisco.yield.exceptions;
 
 public class AlreadyStartedException extends RuntimeException {
 
-    public AlreadyStartedException() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4393315162172263420L;
+
+	public AlreadyStartedException() {
         super();
     }
 

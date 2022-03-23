@@ -17,7 +17,12 @@
 package com.xebisco.yield.exceptions;
 
 public class AudioClipException extends RuntimeException {
-    public AudioClipException(String msg) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 9028466222420982742L;
+
+	public AudioClipException(String msg) {
         super(msg);
     }
 }

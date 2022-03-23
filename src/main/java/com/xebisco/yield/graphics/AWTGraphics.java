@@ -18,8 +18,6 @@ package com.xebisco.yield.graphics;
 
 import com.xebisco.yield.Color;
 import com.xebisco.yield.Texture;
-import com.xebisco.yield.slick.SlickGame;
-
 import java.awt.*;
 
 public class AWTGraphics implements SampleGraphics

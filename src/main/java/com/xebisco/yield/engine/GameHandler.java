@@ -16,10 +16,8 @@
 
 package com.xebisco.yield.engine;
 
-import com.xebisco.yield.Yld;
 import com.xebisco.yield.YldExtension;
 import com.xebisco.yield.YldGame;
-import com.xebisco.yield.utils.YldAction;
 
 public class GameHandler extends Engine
 {

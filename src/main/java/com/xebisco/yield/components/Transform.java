@@ -17,7 +17,6 @@
 package com.xebisco.yield.components;
 
 import com.xebisco.yield.Component;
-import com.xebisco.yield.Yld;
 import com.xebisco.yield.utils.TransformSave;
 import com.xebisco.yield.utils.Vector2;
 
