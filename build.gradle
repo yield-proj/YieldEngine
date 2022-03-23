@@ -7,6 +7,10 @@ targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    repositories 
+	{
+		maven { url 'https://jitpack.io' }
+	}
 }
 
 dependencies {
@@ -14,6 +18,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     implementation 'org.lwjgl.lwjgl:lwjgl:2.9.3'
     implementation 'org.slick2d:slick2d-core:1.0.2'
+    implementation 'com.github.synonware:SIni4j:1.0'
 }
 
 test {
