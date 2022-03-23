@@ -55,4 +55,6 @@ public interface SampleGraphics
     void drawTexture(Texture texture, int x, int y, int width, int height);
 
     void drawString(String str, int x, int y);
+
+    void dispose();
 }

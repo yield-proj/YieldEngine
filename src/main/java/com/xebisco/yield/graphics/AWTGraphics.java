@@ -131,4 +131,10 @@ public class AWTGraphics implements SampleGraphics
     {
         this.graphics = graphics;
     }
+
+    @Override
+    public void dispose()
+    {
+        graphics.dispose();
+    }
 }

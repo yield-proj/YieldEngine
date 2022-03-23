@@ -118,7 +118,7 @@ public class SlickGraphics implements SampleGraphics
     @Override
     public void drawTexture(Texture texture, int x, int y, int width, int height)
     {
-        Yld.log("SLICK GRAPHICS DOES NOT SUPPORT THE 'drawTexture(Texture texture, int x, int y, int width, int height)' METHOD");
+        graphics.drawImage(texture.getSlickImage(), x, y, width, height, 0, 0, texture.getWidth(), texture.getHeight());
     }
 
     @Override
@@ -135,5 +135,11 @@ public class SlickGraphics implements SampleGraphics
     public void setGraphics(Graphics graphics)
     {
         this.graphics = graphics;
+    }
+
+    @Override
+    public void dispose()
+    {
+        graphics.flush();
     }
 }
