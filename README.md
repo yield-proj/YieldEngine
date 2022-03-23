@@ -1,4 +1,4 @@
-<img align="right" src="https://lh4.googleusercontent.com/9AtcjYW4ZlW3Tf1UQJhda37m0dStoEcEa5g71AU-uVoLSjObZxtJckM4JTwDI4tbzMf2uTWbJjD7pL74LSsUeeM=w16383" height="100" width="100">
+<img align="right" src="assets/logo/logo.png" height="200" width="200">
 
 ![image](https://img.shields.io/github/license/xebisco/YieldEngine?style=flat-square)
 ![image](https://img.shields.io/github/languages/top/xebisco/YieldEngine?style=flat-square)
