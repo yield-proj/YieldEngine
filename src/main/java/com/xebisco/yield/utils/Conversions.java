@@ -17,6 +17,7 @@
 package com.xebisco.yield.utils;
 
 import com.xebisco.yield.Color;
+import com.xebisco.yield.Vector2;
 import org.newdawn.slick.geom.Vector2f;
 
 public final class Conversions

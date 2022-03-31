@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.components;
-
-import com.xebisco.yield.Component;
-import com.xebisco.yield.utils.Vector2;
+package com.xebisco.yield;
 
 public class RectCollider extends Component
 {

@@ -16,7 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.utils.Vector2;
 import java.awt.image.BufferedImage;
 
 /**

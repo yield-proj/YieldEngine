@@ -17,8 +17,6 @@
 package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
-import com.xebisco.yield.components.ParticleSpawner;
-import com.xebisco.yield.utils.Vector2;
 
 public class MyGame extends YldGame
 {

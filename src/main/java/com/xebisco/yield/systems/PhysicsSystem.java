@@ -18,7 +18,7 @@ package com.xebisco.yield.systems;
 
 import com.xebisco.yield.Component;
 import com.xebisco.yield.ProcessSystem;
-import com.xebisco.yield.components.RectCollider;
+import com.xebisco.yield.RectCollider;
 import java.util.ArrayList;
 
 public class PhysicsSystem extends ProcessSystem

@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.components;
+package com.xebisco.yield;
 
-import com.xebisco.yield.Component;
-import com.xebisco.yield.Particle;
-import com.xebisco.yield.YldGame;
 import com.xebisco.yield.utils.ParticleObj;
-import com.xebisco.yield.utils.Vector2;
 
 import java.util.ArrayList;
 

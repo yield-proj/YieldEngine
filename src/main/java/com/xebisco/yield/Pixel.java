@@ -16,8 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.utils.Vector2;
-
 /**
  * Simulation of a Pixel.
  * @since 4_1.1.2

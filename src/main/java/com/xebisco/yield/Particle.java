@@ -16,8 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.utils.Vector2;
-
 /**
  * A particle is a graphical object that can be used to enhance the player experience when playing a game.
  */

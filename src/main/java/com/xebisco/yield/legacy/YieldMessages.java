@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.components;
+package com.xebisco.yield.legacy;
 
 import com.xebisco.yield.*;
 import com.xebisco.yield.Color;

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,10 +14,22 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.utils;
+package com.xebisco.yield;
 
-public class TransformSave extends SaveFile {
-    public TransformSave(String relativePath) {
-        super(relativePath);
+public class Circle extends Oval {
+    private float radius = 64;
+    @Override
+    public void update(float delta) {
+        super.update(delta);
+        setWidth(radius);
+        setHeight(radius);
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
     }
 }

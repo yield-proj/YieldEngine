@@ -16,9 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.components.Renderer;
-import com.xebisco.yield.components.Transform;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;

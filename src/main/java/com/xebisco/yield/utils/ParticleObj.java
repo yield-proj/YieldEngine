@@ -18,6 +18,7 @@ package com.xebisco.yield.utils;
 
 import com.xebisco.yield.Obj;
 import com.xebisco.yield.Particle;
+import com.xebisco.yield.Vector2;
 
 public class ParticleObj
 {

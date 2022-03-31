@@ -5,6 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/YieldEngine.iml" filepath="$PROJECT_DIR$/.idea/modules/YieldEngine.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/YieldEngine.main.iml" filepath="$PROJECT_DIR$/.idea/modules/YieldEngine.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/YieldEngine.test.iml" filepath="$PROJECT_DIR$/.idea/modules/YieldEngine.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.xebisco.yield.YieldEngine.iml" filepath="$PROJECT_DIR$/.idea/modules/com.xebisco.yield.YieldEngine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.xebisco.yield.YieldEngine.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.xebisco.yield.YieldEngine.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.xebisco.yield.YieldEngine.test.iml" filepath="$PROJECT_DIR$/.idea/modules/com.xebisco.yield.YieldEngine.test.iml" />
     </modules>
   </component>
 </project>

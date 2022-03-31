@@ -17,7 +17,6 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.utils.Conversions;
-import com.xebisco.yield.utils.Vector2;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.util.BufferedImageUtil;
