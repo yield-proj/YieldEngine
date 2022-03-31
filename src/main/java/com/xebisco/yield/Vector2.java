@@ -46,6 +46,45 @@ public class Vector2
         return new Vector2(x * value, y * value);
     }
 
+    public Vector2 div(float value)
+    {
+        return new Vector2(x / value, y / value);
+    }
+
+    public Vector2 sum(float value)
+    {
+        return new Vector2(x + value, y + value);
+    }
+
+    public Vector2 subt(float value)
+    {
+        return new Vector2(x - value, y - value);
+    }
+
+    public Vector2 mul(Vector2 vector)
+    {
+        return new Vector2(x * vector.x, y * vector.y);
+    }
+
+    public Vector2 div(Vector2 vector)
+    {
+        return new Vector2(x / vector.x, y / vector.y);
+    }
+
+    public Vector2 sum(Vector2 vector)
+    {
+        return new Vector2(x + vector.x, y + vector.y);
+    }
+
+    public Vector2 subt(Vector2 vector)
+    {
+        return new Vector2(x - vector.x, y - vector.y);
+    }
+
+    public float distance(Vector2 other) {
+        return (float) (((x + other.x) / Math.sqrt(2)) + (y + other.y) / Math.sqrt(2));
+    }
+
     @Override
     public int hashCode()
     {
