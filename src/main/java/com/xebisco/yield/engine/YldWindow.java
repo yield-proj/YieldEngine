@@ -30,8 +30,8 @@ public class YldWindow
 {
     private final JFrame frame;
     private final YldWindowG windowG;
-    private final YldGraphics graphics = new YldGraphics();
-    private boolean sync;
+    private YldGraphics graphics;
+    private static boolean sync;
 
     public YldWindow()
     {
@@ -102,7 +102,7 @@ public class YldWindow
         return windowG;
     }
 
-    public class YldWindowG extends JPanel
+    public static class YldWindowG extends JPanel
     {
 
         /**
@@ -171,7 +171,7 @@ public class YldWindow
             }
         }
 
-        public void handleGraphics(Graphics g, YldGraphics graphics)
+        public static void handleGraphics(Graphics g, YldGraphics graphics)
         {
             int i = 0, max = 0;
             for (int r = 0; r < graphics.shapeRends.size(); r++)
@@ -302,5 +302,20 @@ public class YldWindow
     public YldGraphics getGraphics()
     {
         return graphics;
+    }
+
+    public void setGraphics(YldGraphics graphics)
+    {
+        this.graphics = graphics;
+    }
+
+    public static boolean isSync()
+    {
+        return sync;
+    }
+
+    public static void setSync(boolean sync)
+    {
+        YldWindow.sync = sync;
     }
 }

@@ -46,6 +46,9 @@ public class ParticleSystem extends Component
             po.getGraphicalObject().y += po.getSpeed().y;
             po.getGraphicalObject().x2 = (int) (po.getGraphicalObject().x + po.getParticle().getSize().x);
             po.getGraphicalObject().y2 = (int) (po.getGraphicalObject().y + po.getParticle().getSize().y);
+            po.getGraphicalObject().rotationV += po.getParticle().getRotationForce() * delta;
+            po.getGraphicalObject().rotationX = (int) ((po.getParticle().getSize().x) / 2) + po.getGraphicalObject().x;
+            po.getGraphicalObject().rotationY = (int) ((po.getParticle().getSize().y) / 2) + po.getGraphicalObject().y;
             po.setLife(po.getLife() - delta);
             if (po.getLife() <= 0)
             {

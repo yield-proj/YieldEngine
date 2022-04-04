@@ -120,6 +120,9 @@ public class YldGame extends YldScene
     public static void launch(YldGame game, GameConfiguration configuration)
     {
         Locale.setDefault(Locale.US);
+        if(View.getActView() == null) {
+            new View(1280, 720);
+        }
         if (configuration.hardwareAcceleration)
         {
             Yld.log("WARNING: hardware acceleration is a experimental feature!");
@@ -157,17 +160,19 @@ public class YldGame extends YldScene
             configuration.title = game.getClass().getSimpleName() + " (Yield " + Yld.VERSION + ")";
 
         game.handler = new GameHandler(game);
-
+        game.setGraphics(new YldGraphics());
         if (!configuration.hardwareAcceleration)
         {
-            game.window = new YldWindow();
-            game.window.getFrame().setTitle(configuration.title);
-            game.window.getWindowG().setHandler(game.handler);
-            if (!configuration.fullscreen)
-                game.window.toWindow(configuration);
-            else
-                game.window.toFullscreen(configuration);
-            game.setGraphics(game.window.getGraphics());
+            if(configuration.startYldWindow) {
+                game.window = new YldWindow();
+                game.window.getFrame().setTitle(configuration.title);
+                game.window.getWindowG().setHandler(game.handler);
+                if (!configuration.fullscreen)
+                    game.window.toWindow(configuration);
+                else
+                    game.window.toFullscreen(configuration);
+                game.window.setGraphics(game.getGraphics());
+            }
         }
         else
         {

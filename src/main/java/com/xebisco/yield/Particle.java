@@ -18,10 +18,12 @@ package com.xebisco.yield;
 
 /**
  * A particle is a graphical object that can be used to enhance the player experience when playing a game.
+ * @author Xebisco
  */
 public class Particle
 {
     private Vector2 position, size = new Vector2(100, 100);
+    private float rotationForce = 0;
     private Texture texture;
     private static Texture defaultTexture = new Texture("/com/xebisco/yield/assets/default-particle.png");
 
@@ -84,5 +86,15 @@ public class Particle
     public static void setDefaultTexture(Texture defaultTexture)
     {
         Particle.defaultTexture = defaultTexture;
+    }
+
+    public float getRotationForce()
+    {
+        return rotationForce;
+    }
+
+    public void setRotationForce(float rotationForce)
+    {
+        this.rotationForce = rotationForce;
     }
 }

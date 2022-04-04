@@ -27,6 +27,7 @@ import java.util.Scanner;
 public class Save
 {
 
+
     public static void saveContents(String contents, GameConfiguration config, boolean encrypted)
     {
         if (config.appName == null)

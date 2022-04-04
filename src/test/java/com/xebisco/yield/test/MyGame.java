@@ -17,6 +17,7 @@
 package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
+import io.github.synonware.sini4j.Ini;
 
 public class MyGame extends YldGame
 {
@@ -44,11 +45,6 @@ public class MyGame extends YldGame
 
     public static void main(String[] args)
     {
-        new View(1280, 720);
-        View.getActView().setBgColor(Colors.MAGENTA);
-        final GameConfiguration config = new GameConfiguration();
-        config.hardwareAcceleration = true;
-        config.autoNativesPath = true;
-        launch(new MyGame(), config);
+        launch(new MyGame(), GameConfiguration.iniConfig(new Ini(MyGame.class.getResourceAsStream("/yieldconfig/game.ini"))));
     }
 }

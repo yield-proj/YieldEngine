@@ -78,7 +78,7 @@ public class SlickGame extends BasicGame
         if (!started)
         {
             game.setInput(new YldInput(null, gameContainer));
-            viewImage = new Image(1280, 720);
+            viewImage = new Image(View.getActView().getWidth(), View.getActView().getHeight());
             //game.getHandler().getThread().start();
             game.getHandler().setRunning(true);
             gameContainer.setShowFPS(game.getConfiguration().showFPS);
@@ -98,8 +98,6 @@ public class SlickGame extends BasicGame
                 e.printStackTrace();
             }
             Display.setIcon(icon_array);
-            if (View.getActView() == null)
-                new View(1280, 720);
             glLoadIdentity();
             glMatrixMode(GL_MODELVIEW);
             game.create();

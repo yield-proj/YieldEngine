@@ -17,6 +17,10 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.config.WindowConfiguration;
+import io.github.synonware.sini4j.Ini;
+import io.github.synonware.sini4j.IniSection;
+
+import java.awt.*;
 
 /**
  * This is the standard configuration class used to launch YldGames, all the properties can be modified.
@@ -26,6 +30,31 @@ import com.xebisco.yield.config.WindowConfiguration;
 public class GameConfiguration extends WindowConfiguration
 {
     public int fps = 60;
-    public boolean fpsLock = true, hardwareAcceleration = false, vSync = false, alwaysRender = true, showFPS, autoNativesPath;
+    public boolean fpsLock = true, hardwareAcceleration = false, vSync = false, alwaysRender = true, showFPS, autoNativesPath, startYldWindow = true;
     public String appName;
+
+    public static GameConfiguration iniConfig(Ini ini) {
+        GameConfiguration config = new GameConfiguration();
+        IniSection configSection = ini.getSection("GameConfiguration");
+        config.fps = configSection.getInt("fps");
+        config.fpsLock = configSection.getBoolean("fpsLock");
+        config.hardwareAcceleration = configSection.getBoolean("hardwareAcceleration");
+        config.vSync = configSection.getBoolean("vSync");
+        config.alwaysRender = configSection.getBoolean("alwaysRender");
+        config.autoNativesPath = configSection.getBoolean("autoNativesPath");
+        config.internalIconPath = configSection.getString("internalIconPath");
+        config.appName = configSection.getString("appName");
+        config.sync = configSection.getBoolean("sync");
+        config.width = configSection.getInt("width");
+        config.height = configSection.getInt("height");
+        config.position = Enum.valueOf(WindowPos.class, configSection.getString("position"));
+        config.title = configSection.getString("title");
+        config.doubleBuffered = configSection.getBoolean("doubleBuffered");
+        config.resizable = configSection.getBoolean("resizable");
+        config.undecorated = configSection.getBoolean("undecorated");
+        config.fullscreen = configSection.getBoolean("fullscreen");
+        config.alwaysOnTop = configSection.getBoolean("alwaysOnTop");
+        config.hideMouse = configSection.getBoolean("hideMouse");
+        return config;
+    }
 }
