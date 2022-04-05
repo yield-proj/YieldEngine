@@ -16,7 +16,9 @@
 
 package com.xebisco.yield.input;
 
+import com.xebisco.yield.Key;
 import com.xebisco.yield.View;
+import com.xebisco.yield.Yld;
 import com.xebisco.yield.engine.YldWindow;
 import com.xebisco.yield.utils.YldAction;
 import org.lwjgl.opengl.Display;
@@ -287,13 +289,13 @@ public class YldInput implements KeyListener, MouseListener, org.newdawn.slick.K
     @Override
     public void keyPressed(int i, char c)
     {
-        kp(KeyEvent.getExtendedKeyCodeForChar(c));
+        kp(Key.toKey(i));
     }
 
     @Override
     public void keyReleased(int i, char c)
     {
-        kr(KeyEvent.getExtendedKeyCodeForChar(c));
+        kr(Key.toKey(i));
     }
 
     @Override

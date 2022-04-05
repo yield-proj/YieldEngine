@@ -102,8 +102,8 @@ public class YldGame extends YldScene
                             configuration.width, configuration.height));
                     Display.setFullscreen(false);
                 }
-
-            } catch (LWJGLException e)
+                slickApp.reinit();
+            } catch (LWJGLException | SlickException e)
             {
                 e.printStackTrace();
             }
@@ -193,6 +193,7 @@ public class YldGame extends YldScene
             try
             {
                 game.slickApp.start();
+                game.input = new YldInput(null, game.slickApp);
             } catch (SlickException e)
             {
                 e.printStackTrace();

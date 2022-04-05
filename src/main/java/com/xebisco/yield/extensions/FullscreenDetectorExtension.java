@@ -17,6 +17,7 @@
 package com.xebisco.yield.extensions;
 
 import com.xebisco.yield.Key;
+import com.xebisco.yield.Yld;
 import com.xebisco.yield.YldExtension;
 import com.xebisco.yield.input.Keys;
 import org.lwjgl.LWJGLException;
@@ -27,7 +28,7 @@ public class FullscreenDetectorExtension extends YldExtension
 
     private boolean fullscreen;
 
-    private int fullscreenKey1 = Key.ALT, fullscreenKey2 = Key.F;
+    private int fullscreenKey = Key.F11;
     private boolean importConfig = true;
 
     @Override
@@ -37,28 +38,22 @@ public class FullscreenDetectorExtension extends YldExtension
         {
             importConfig = false;
             fullscreen = game.getConfiguration().fullscreen;
-            game.getInput().addShortcut(new Keys(fullscreenKey1, fullscreenKey2), () -> setFullscreen(!fullscreen));
+            game.getInput().addShortcut(new Keys(fullscreenKey), () ->
+            {
+                setFullscreen(!fullscreen);
+                game.getInput().getPressing().removeIf(k -> true);
+            });
         }
     }
 
-    public int getFullscreenKey1()
+    public int getFullscreenKey()
     {
-        return fullscreenKey1;
+        return fullscreenKey;
     }
 
-    public void setFullscreenKey1(int fullscreenKey1)
+    public void setFullscreenKey(int fullscreenKey)
     {
-        this.fullscreenKey1 = fullscreenKey1;
-    }
-
-    public int getFullscreenKey2()
-    {
-        return fullscreenKey2;
-    }
-
-    public void setFullscreenKey2(int fullscreenKey2)
-    {
-        this.fullscreenKey2 = fullscreenKey2;
+        this.fullscreenKey = fullscreenKey;
     }
 
     public boolean isImportConfig()
@@ -78,12 +73,7 @@ public class FullscreenDetectorExtension extends YldExtension
 
     private void setFullscreen(boolean fullscreen)
     {
-        try
-        {
-            Display.setFullscreen(true);
-        } catch (LWJGLException e)
-        {
-            e.printStackTrace();
-        }
+        this.fullscreen = fullscreen;
+        game.setFullscreen(fullscreen);
     }
 }

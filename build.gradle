@@ -7,10 +7,7 @@ targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    repositories 
-	{
-		maven { url 'https://jitpack.io' }
-	}
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {

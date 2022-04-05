@@ -123,19 +123,37 @@ public class YldGraphics {
     /**
      * Creates and adds an image graphical object to the shapeRends list.
      * @param texture the texture of the image.
-     * @param x The x position of the rectangle
-     * @param y The y position of the rectangle
-     * @param width The width of the rectangle
-     * @param height The height of the rectangle
-     * @return The created rectangle.
+     * @param x The x position of the image.
+     * @param y The y position of the image.
+     * @param width The width of the image.
+     * @param height The height of the image.
+     * @return The created image.
      */
     public Obj img(Texture texture, float x, float y, float width, float height) {
         Image image = texture.getImage();
         Obj obj = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.RECT, true, Colors.BLACK, texture.getRelativePath(), null);
         obj.value = "\\imgobj";
         obj.image = image;
+        shapeRends.add(obj);
         return obj;
     }
+
+    /**
+     * Creates and adds an image graphical object to the shapeRends list.
+     * @param texture the texture of the image.
+     * @param x The x position of the image.
+     * @param y The y position of the image.
+     * @return The created image.
+     */
+    public Obj img(Texture texture, float x, float y) {
+        Image image = texture.getImage();
+        Obj obj = new Obj((int) x, texture.getWidth(), (int) y, texture.getHeight(), Obj.ShapeType.RECT, true, Colors.BLACK, texture.getRelativePath(), null);
+        obj.value = "\\imgobj";
+        obj.image = image;
+        shapeRends.add(obj);
+        return obj;
+    }
+
 
     /**
      * Creates and adds a filled rectangle to the shapeRends list.

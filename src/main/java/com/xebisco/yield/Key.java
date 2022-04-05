@@ -16,6 +16,10 @@
 
 package com.xebisco.yield;
 
+import org.newdawn.slick.Input;
+
+import java.awt.event.KeyEvent;
+
 /**
  * This class contains all the mapped keys that can be used in a game.
  * @since 4_1.1
@@ -213,4 +217,126 @@ public class Key
     public static final int BEGIN = 0xFF58;
     public static final int UNDEFINED = 0x0;
     public static final char CHAR_UNDEFINED = 0xFFFF;
+
+    /**
+     * Slick Input
+     */
+    public static int toKey(int i) {
+        if(i == Input.KEY_0) return NUMBER_0;
+        else if(i == Input.KEY_1) return NUMBER_1;
+        else if(i == Input.KEY_2) return NUMBER_2;
+        else if(i == Input.KEY_3) return NUMBER_3;
+        else if(i == Input.KEY_4) return NUMBER_4;
+        else if(i == Input.KEY_5) return NUMBER_5;
+        else if(i == Input.KEY_6) return NUMBER_6;
+        else if(i == Input.KEY_7) return NUMBER_7;
+        else if(i == Input.KEY_8) return NUMBER_8;
+        else if(i == Input.KEY_9) return NUMBER_9;
+        else if(i == Input.KEY_ESCAPE) return ESCAPE;
+        else if(i == Input.KEY_MINUS) return MINUS;
+        else if(i == Input.KEY_EQUALS) return EQUALS;
+        else if(i == Input.KEY_BACK) return BACK_SPACE;
+        else if(i == Input.KEY_TAB) return TAB;
+        else if(i == Input.KEY_Q) return Q;
+        else if(i == Input.KEY_W) return W;
+        else if(i == Input.KEY_E) return E;
+        else if(i == Input.KEY_R) return R;
+        else if(i == Input.KEY_T) return T;
+        else if(i == Input.KEY_Y) return Y;
+        else if(i == Input.KEY_U) return U;
+        else if(i == Input.KEY_I) return I;
+        else if(i == Input.KEY_O) return O;
+        else if(i == Input.KEY_P) return P;
+        else if(i == Input.KEY_A) return A;
+        else if(i == Input.KEY_S) return S;
+        else if(i == Input.KEY_D) return D;
+        else if(i == Input.KEY_F) return F;
+        else if(i == Input.KEY_G) return G;
+        else if(i == Input.KEY_H) return H;
+        else if(i == Input.KEY_J) return J;
+        else if(i == Input.KEY_K) return K;
+        else if(i == Input.KEY_L) return L;
+        else if(i == Input.KEY_Z) return Z;
+        else if(i == Input.KEY_X) return X;
+        else if(i == Input.KEY_C) return C;
+        else if(i == Input.KEY_V) return V;
+        else if(i == Input.KEY_B) return B;
+        else if(i == Input.KEY_N) return N;
+        else if(i == Input.KEY_M) return M;
+        else if(i == Input.KEY_ENTER) return ENTER;
+        else if(i == Input.KEY_LBRACKET) return OPEN_BRACKET;
+        else if(i == Input.KEY_RBRACKET) return CLOSE_BRACKET;
+        else if(i == Input.KEY_LCONTROL) return CONTROL;
+        else if(i == Input.KEY_SEMICOLON) return SEMICOLON;
+        else if(i == Input.KEY_APOSTROPHE) return QUOTE;
+        else if(i == Input.KEY_LSHIFT) return SHIFT;
+        else if(i == Input.KEY_BACKSLASH) return BACK_SLASH;
+        else if(i == Input.KEY_COMMA) return COMMA;
+        else if(i == Input.KEY_PERIOD) return PERIOD;
+        else if(i == Input.KEY_SLASH) return SLASH;
+        else if(i == Input.KEY_RSHIFT) return SHIFT;
+        else if(i == Input.KEY_MULTIPLY) return MULTIPLY;
+        else if(i == Input.KEY_LMENU) return ALT;
+        else if(i == Input.KEY_SPACE) return SPACE;
+        else if(i == Input.KEY_CAPITAL) return CONTROL;
+        else if(i == Input.KEY_F1) return F1;
+        else if(i == Input.KEY_F2) return F2;
+        else if(i == Input.KEY_F3) return F3;
+        else if(i == Input.KEY_F4) return F4;
+        else if(i == Input.KEY_F5) return F5;
+        else if(i == Input.KEY_F6) return F6;
+        else if(i == Input.KEY_F7) return F7;
+        else if(i == Input.KEY_F8) return F8;
+        else if(i == Input.KEY_F9) return F9;
+        else if(i == Input.KEY_F10) return F10;
+        else if(i == Input.KEY_F11) return F11;
+        else if(i == Input.KEY_F12) return F12;
+        else if(i == Input.KEY_F13) return F13;
+        else if(i == Input.KEY_F14) return F14;
+        else if(i == Input.KEY_F15) return F15;
+        else if(i == Input.KEY_NUMLOCK) return NUM_LOCK;
+        else if(i == Input.KEY_SCROLL) return SCROLL_LOCK;
+        else if(i == Input.KEY_NUMPAD0) return NUMPAD0;
+        else if(i == Input.KEY_NUMPAD1) return NUMPAD1;
+        else if(i == Input.KEY_NUMPAD2) return NUMPAD2;
+        else if(i == Input.KEY_NUMPAD3) return NUMPAD3;
+        else if(i == Input.KEY_NUMPAD4) return NUMPAD4;
+        else if(i == Input.KEY_NUMPAD5) return NUMPAD5;
+        else if(i == Input.KEY_NUMPAD6) return NUMPAD6;
+        else if(i == Input.KEY_NUMPAD7) return NUMPAD7;
+        else if(i == Input.KEY_NUMPAD8) return NUMPAD8;
+        else if(i == Input.KEY_NUMPAD9) return NUMPAD9;
+        else if(i == Input.KEY_ADD) return ADD;
+        else if(i == Input.KEY_SUBTRACT) return SUBTRACT;
+        else if(i == Input.KEY_DECIMAL) return DECIMAL;
+        else if(i == Input.KEY_KANA) return KANA;
+        else if(i == Input.KEY_CONVERT) return CONVERT;
+        else if(i == Input.KEY_NOCONVERT) return NONCONVERT;
+        else if(i == Input.KEY_NUMPADEQUALS) return EQUALS;
+        else if(i == Input.KEY_CIRCUMFLEX) return CIRCUMFLEX;
+        else if(i == Input.KEY_AT) return AT;
+        else if(i == Input.KEY_COLON) return COLON;
+        else if(i == Input.KEY_UNDERLINE) return UNDERSCORE;
+        else if(i == Input.KEY_KANJI) return KANJI;
+        else if(i == Input.KEY_STOP) return STOP;
+        else if(i == Input.KEY_NUMPADENTER) return ENTER;
+        else if(i == Input.KEY_RCONTROL) return CONTROL;
+        else if(i == Input.KEY_NUMPADCOMMA) return COMMA;
+        else if(i == Input.KEY_DIVIDE) return DIVIDE;
+        else if(i == Input.KEY_SYSRQ) return PRINTSCREEN;
+        else if(i == Input.KEY_RMENU) return ALT;
+        else if(i == Input.KEY_PAUSE) return PAUSE;
+        else if(i == Input.KEY_HOME) return HOME;
+        else if(i == Input.KEY_PRIOR) return PAGE_UP;
+        else if(i == Input.KEY_LEFT) return LEFT;
+        else if(i == Input.KEY_RIGHT) return RIGHT;
+        else if(i == Input.KEY_END) return END;
+        else if(i == Input.KEY_DOWN) return DOWN;
+        else if(i == Input.KEY_NEXT) return PAGE_DOWN;
+        else if(i == Input.KEY_INSERT) return INSERT;
+        else if(i == Input.KEY_DELETE) return DELETE;
+        else if(i == Input.KEY_LWIN) return WINDOWS;
+        else if(i == Input.KEY_RWIN) return WINDOWS;
+        else return UNDEFINED;
+    }
 }

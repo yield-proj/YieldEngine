@@ -17,6 +17,7 @@
 package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
+import com.xebisco.yield.extensions.FullscreenDetectorExtension;
 import io.github.synonware.sini4j.Ini;
 
 public class MyGame extends YldGame
@@ -24,6 +25,7 @@ public class MyGame extends YldGame
     @Override
     public void create()
     {
+        addExtension(new FullscreenDetectorExtension());
         Particle particle = new Particle(new Texture("/com/xebisco/yield/assets/yieldlogo.png"));
         instantiate((e) ->
         {
