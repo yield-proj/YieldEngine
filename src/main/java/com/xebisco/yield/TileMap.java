@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.utils.Conversions;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +34,20 @@ public class TileMap extends Component
         setActualTileSet(tileSet);
     }
 
+    public void loadMap(Texture map, Vector2 grid)
+    {
+        for (int y = 0; y < map.getHeight(); y++)
+        {
+            for (int x = 0; x < map.getWidth(); x++)
+            {
+                final TilePos tilePos = new TilePos();
+                tilePos.setPosition(new Vector2(x * grid.x, y * grid.y));
+                tilePos.setColor(map.getPixelColor(x, y));
+                tiles.add(tilePos);
+            }
+        }
+    }
+
     @Override
     public void update(float delta)
     {
@@ -43,8 +59,12 @@ public class TileMap extends Component
             for (TilePos tile : tiles)
             {
                 TileID toBe = null;
-                for(TileID tileID : actualTileSet.getTiles()) {
-
+                for (TileID tileID : actualTileSet.getTiles())
+                {
+                    if(tileID.getColor().hashCode() == tile.getColor().hashCode() && tileID.getColor().equals(tile.getColor())) {
+                        toBe = tileID;
+                        break;
+                    }
                 }
                 tile.setTileID(toBe);
                 Obj obj = graphics.img(tile.getTileID().getTile(), tile.getPosition().x, tile.getPosition().y);

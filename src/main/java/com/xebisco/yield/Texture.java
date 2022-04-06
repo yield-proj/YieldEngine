@@ -304,6 +304,14 @@ public class Texture extends RelativeFile
         }
     }
 
+    public com.xebisco.yield.Color getPixelColor(int x, int y) {
+        if(slickImage != null) {
+            return Conversions.toColor(slickImage.getColor(x, y));
+        } else {
+            return Conversions.toColor(new Color(image.getRGB(x, y)));
+        }
+    }
+
     /**
      * Adds a shader to the shaders list.
      * @param shader The shader to be added.

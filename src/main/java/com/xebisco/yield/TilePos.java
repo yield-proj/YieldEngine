@@ -19,6 +19,7 @@ package com.xebisco.yield;
 public class TilePos
 {
     private TileID tileID;
+    private Color color;
     private Vector2 position;
 
     public TileID getTileID()
@@ -39,5 +40,15 @@ public class TilePos
     public void setPosition(Vector2 position)
     {
         this.position = position;
+    }
+
+    public Color getColor()
+    {
+        return color;
+    }
+
+    public void setColor(Color color)
+    {
+        this.color = color;
     }
 }

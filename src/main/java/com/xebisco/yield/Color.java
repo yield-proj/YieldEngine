@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import java.util.Objects;
+
 /**
  * A color stored in an separated RGB values.
  */
@@ -96,5 +98,20 @@ public class Color {
      */
     public void setA(float a) {
         this.a = a;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Color color = (Color) o;
+        return Float.compare(color.r, r) == 0 && Float.compare(color.g, g) == 0 && Float.compare(color.b, b) == 0 && Float.compare(color.a, a) == 0;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(r, g, b, a);
     }
 }
