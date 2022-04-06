@@ -42,8 +42,10 @@ public class ParticleSystem extends Component
                 po.getGraphicalObject().image = po.getParticle().getTexture().getImage();
             po.getSpeed().x += gravityForce.x * delta;
             po.getSpeed().y += gravityForce.y * delta;
-            po.getGraphicalObject().x += po.getSpeed().x;
-            po.getGraphicalObject().y += po.getSpeed().y;
+            po.getPos().x += po.getSpeed().x * delta * 60f;
+            po.getPos().y += po.getSpeed().y * delta * 60f;
+            po.getGraphicalObject().x = (int) po.getPos().x;
+            po.getGraphicalObject().y = (int) po.getPos().y;
             po.getGraphicalObject().x2 = (int) (po.getGraphicalObject().x + po.getParticle().getSize().x);
             po.getGraphicalObject().y2 = (int) (po.getGraphicalObject().y + po.getParticle().getSize().y);
             po.getGraphicalObject().rotationV += po.getParticle().getRotationForce() * delta;
@@ -55,6 +57,7 @@ public class ParticleSystem extends Component
                 active.remove(po);
                 graphics.shapeRends.remove(po.getGraphicalObject());
             }
+            Yld.log(delta);
         }
     }
 
@@ -69,6 +72,8 @@ public class ParticleSystem extends Component
             po.getSpeed().y = emitSpeed.y;
             po.setGraphicalObject(graphics.rect(transform.position.x - particle.getSize().x / 2f, transform.position.y - particle.getSize().y / 2f, particle.getSize().x, particle.getSize().y));
             po.getGraphicalObject().index = particlesIndex;
+            po.getPos().x = po.getGraphicalObject().x;
+            po.getPos().y = po.getGraphicalObject().y;
             active.add(po);
         }
         toEmit.removeIf(p -> true);

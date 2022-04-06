@@ -23,7 +23,7 @@ import com.xebisco.yield.Vector2;
 public class ParticleObj
 {
     private final Particle particle;
-    private final Vector2 speed = new Vector2();
+    private final Vector2 speed = new Vector2(), pos = new Vector2();
     private float life;
     private Obj graphicalObject;
 
@@ -60,5 +60,10 @@ public class ParticleObj
     public void setLife(float life)
     {
         this.life = life;
+    }
+
+    public Vector2 getPos()
+    {
+        return pos;
     }
 }
