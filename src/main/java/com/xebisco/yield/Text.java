@@ -16,13 +16,14 @@
 
 package com.xebisco.yield;
 
-import org.newdawn.slick.TrueTypeFont;
 import java.awt.*;
 
 public class Text extends Shape
 {
     private String contents = "Sample Text";
     private static Font defaultFont = new Font("arial", Font.PLAIN, 30);
+    private Font font;
+    private boolean updateFont;
 
     public Text()
     {
@@ -42,13 +43,20 @@ public class Text extends Shape
     @Override
     public void previous(YldGraphics graphics)
     {
-        setFont(new Font(defaultFont.getFontName(), defaultFont.getStyle(), defaultFont.getSize()));
+        if (getFont() == null)
+            setFont(new Font(defaultFont.getFontName(), defaultFont.getStyle(), defaultFont.getSize()));
         getObj().type = Obj.ShapeType.TEXT;
     }
 
     @Override
     public void process(Obj obj)
     {
+        if (updateFont)
+        {
+            updateFont = false;
+            getObj().font = font;
+            getObj().updateSlickFont();
+        }
         obj.x = (int) (getEntity().getTransform().position.x);
         obj.y = (int) (getEntity().getTransform().position.y);
         obj.value = contents;
@@ -66,13 +74,13 @@ public class Text extends Shape
 
     public Font getFont()
     {
-        return getObj().font;
+        return font;
     }
 
     public void setFont(Font font)
     {
-        getObj().font = font;
-        getObj().updateSlickFont();
+        this.font = font;
+        updateFont = true;
     }
 
     public static Font getDefaultFont()

@@ -18,6 +18,8 @@ package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
 
+import java.awt.*;
+
 public class MyGame extends YldGame
 {
     Entity text;
@@ -26,6 +28,7 @@ public class MyGame extends YldGame
     {
         text = instantiate((e) -> {
             e.addComponent(new Text("Hello, Yield!"));
+            e.getComponent(Text.class).setFont(new Font("arial", Font.PLAIN, 40));
             e.getSelfTransform().goTo(View.mid());
         });
     }
