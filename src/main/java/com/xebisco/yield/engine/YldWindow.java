@@ -20,6 +20,7 @@ import com.xebisco.yield.*;
 import com.xebisco.yield.config.WindowConfiguration;
 import com.xebisco.yield.graphics.AWTGraphics;
 import com.xebisco.yield.utils.Conversions;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Color;
@@ -106,10 +107,10 @@ public class YldWindow
     {
 
         /**
-		 * 
-		 */
-		private static final long serialVersionUID = 7057335725979402089L;
-		private GameHandler handler;
+         *
+         */
+        private static final long serialVersionUID = 7057335725979402089L;
+        private GameHandler handler;
         private AWTGraphics sampleGraphics = new AWTGraphics();
 
         private Graphics g;
@@ -202,7 +203,9 @@ public class YldWindow
                         }
                         g.setColor(Conversions.toAWTColor(rend.drawColor));
                         g.setFont(rend.font);
-                        int x = rend.x, x2 = rend.x2, y = rend.y, y2 = rend.y2;
+                        int x = rend.x - (int) View.getActView().getCamera().getPosition().x, tx2 = rend.x2,
+                                y = rend.y - (int) View.getActView().getCamera().getPosition().y, ty2 = rend.y2,
+                                x2 = tx2 - (int) View.getActView().getCamera().getPosition().x, y2 = ty2 - (int) View.getActView().getCamera().getPosition().y;
                         if (rend.type != Obj.ShapeType.TEXT)
                         {
                             if (x2 < x)

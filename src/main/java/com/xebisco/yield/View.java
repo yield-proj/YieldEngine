@@ -27,11 +27,14 @@ public class View
     private static View actView;
     private static int standardImageType = BufferedImage.TYPE_INT_RGB;
     private final int width, height;
+    private static YldCamera defaultCamera = new YldCamera();
+    private YldCamera camera = YldCamera.clone(defaultCamera);
     private Color bgColor = new Color(.1176470588235294f, .1764705882352941f, .4549019607843137f);
 
     /**
      * Creates a View and set its width and height.
-     * @param width The width to be set.
+     *
+     * @param width  The width to be set.
      * @param height The height to be set.
      */
     public View(int width, int height)
@@ -89,6 +92,7 @@ public class View
 
     /**
      * Getter for the image variable.
+     *
      * @return The image variable (null if in GPU mode).
      */
     public BufferedImage getImage()
@@ -98,6 +102,7 @@ public class View
 
     /**
      * Getter for the background color.
+     *
      * @return The background color.
      */
     public Color getBgColor()
@@ -115,6 +120,7 @@ public class View
 
     /**
      * Getter for the actual View.
+     *
      * @return The actual View.
      */
     public static View getActView()
@@ -142,6 +148,7 @@ public class View
 
     /**
      * Getter for the height of this View instance.
+     *
      * @return The height.
      */
     public int getHeight()
@@ -151,10 +158,31 @@ public class View
 
     /**
      * Getter for the width of this View instance.
+     *
      * @return The width.
      */
     public int getWidth()
     {
         return width;
+    }
+
+    public static YldCamera getDefaultCamera()
+    {
+        return defaultCamera;
+    }
+
+    public static void setDefaultCamera(YldCamera defaultCamera)
+    {
+        View.defaultCamera = defaultCamera;
+    }
+
+    public YldCamera getCamera()
+    {
+        return camera;
+    }
+
+    public void setCamera(YldCamera camera)
+    {
+        this.camera = camera;
     }
 }
