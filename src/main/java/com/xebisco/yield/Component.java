@@ -164,6 +164,18 @@ public abstract class Component extends YldB
     }
 
     /**
+     * Search for all the Components instances in this Entity.
+     *
+     * @param type The class type of the component that's being searched.
+     * @param index The index of the component.
+     * @return The component found (null if not found)
+     */
+    public <T extends Component> T getComponent(Class<T> type, int index)
+    {
+        return entity.getComponent(type, index);
+    }
+
+    /**
      * Check if any of this Entity children contains a Component with the specified class type.
      *
      * @param type The class type of the Component.

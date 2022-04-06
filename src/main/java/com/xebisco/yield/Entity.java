@@ -158,10 +158,24 @@ public final class Entity
      */
     public <T extends Component> T getComponent(Class<T> type)
     {
+        return getComponent(type, 0);
+    }
+
+    /**
+     * Search for all the Components instances in this Entity.
+     *
+     * @param type The class type of the component that's being searched.
+     * @param index the index of this component.
+     * @return The component found (null if not found)
+     */
+    public <T extends Component> T getComponent(Class<T> type, int index)
+    {
         T component = null;
         int i = 0;
         while (i < components.size())
         {
+            if(i < index)
+                break;
             Component component1 = components.get(i);
             if (component1.getClass().getName().hashCode() == type.getName().hashCode())
             {
