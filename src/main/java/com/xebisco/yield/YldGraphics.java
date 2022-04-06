@@ -130,10 +130,10 @@ public class YldGraphics {
      * @return The created image.
      */
     public Obj img(Texture texture, float x, float y, float width, float height) {
-        Image image = texture.getImage();
         Obj obj = new Obj((int) x, (int) (width + x), (int) y, (int) (height + y), Obj.ShapeType.RECT, true, Colors.BLACK, texture.getRelativePath(), null);
         obj.value = "\\imgobj";
-        obj.image = image;
+        obj.image = texture.getImage();
+        obj.slickImage = texture.getSlickImage();
         shapeRends.add(obj);
         return obj;
     }
@@ -146,12 +146,7 @@ public class YldGraphics {
      * @return The created image.
      */
     public Obj img(Texture texture, float x, float y) {
-        Image image = texture.getImage();
-        Obj obj = new Obj((int) x, texture.getWidth(), (int) y, texture.getHeight(), Obj.ShapeType.RECT, true, Colors.BLACK, texture.getRelativePath(), null);
-        obj.value = "\\imgobj";
-        obj.image = image;
-        shapeRends.add(obj);
-        return obj;
+        return img(texture, x, y, texture.getWidth(), texture.getHeight());
     }
 
 

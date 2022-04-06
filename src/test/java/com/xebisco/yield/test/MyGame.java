@@ -47,7 +47,6 @@ public class MyGame extends YldGame
         if(input.isPressing(Key.UP)) {
             View.getActView().getCamera().getPosition().y--;
         }
-        Yld.log("aaaa");
     }
 
     public static void main(String[] args)

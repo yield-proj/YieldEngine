@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+import com.xebisco.yield.*;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
@@ -35,11 +36,6 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.PNGDecoder;
 
-import com.xebisco.yield.GameConfiguration;
-import com.xebisco.yield.Obj;
-import com.xebisco.yield.View;
-import com.xebisco.yield.YldExtension;
-import com.xebisco.yield.YldGame;
 import com.xebisco.yield.engine.YldEngineAction;
 import com.xebisco.yield.input.YldInput;
 import com.xebisco.yield.utils.Conversions;
@@ -269,8 +265,8 @@ public class SlickGame extends BasicGame
                 Obj rend = game.getScene().getGraphics().shapeRends.get(i1);
                 if (rend.index == i)
                 {
-                    int x = rend.x - (int) View.getActView().getCamera().getPosition().x, tx2 = (rend.x2 - x),
-                            y = rend.y - (int) View.getActView().getCamera().getPosition().y, ty2 = (rend.y2 - y),
+                    int x = rend.x - (int) View.getActView().getCamera().getPosition().x, tx2 = rend.x2,
+                            y = rend.y - (int) View.getActView().getCamera().getPosition().y, ty2 = rend.y2,
                             x2 = tx2 - (int) View.getActView().getCamera().getPosition().x, y2 = ty2 - (int) View.getActView().getCamera().getPosition().y;
                     g.setColor(Conversions.toSlickColor(rend.drawColor));
                     g.resetTransform();
@@ -297,7 +293,7 @@ public class SlickGame extends BasicGame
                         else
                         {
                             rend.slickImage.setFilter(Image.FILTER_NEAREST);
-                            g.drawImage(rend.slickImage, x, y, rend.x2, rend.y2, 0, 0, rend.slickImage.getWidth(), rend.slickImage.getHeight());
+                            g.drawImage(rend.slickImage, x, y, x2, y2, 0, 0, rend.slickImage.getWidth(), rend.slickImage.getHeight());
                         }
                     else if (rend.type == Obj.ShapeType.OVAL)
                         if (rend.filled)
