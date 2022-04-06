@@ -57,7 +57,6 @@ public class ParticleSystem extends Component
                 active.remove(po);
                 graphics.shapeRends.remove(po.getGraphicalObject());
             }
-            Yld.log(delta);
         }
     }
 
