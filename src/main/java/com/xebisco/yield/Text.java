@@ -22,9 +22,7 @@ import java.awt.*;
 public class Text extends Shape
 {
     private String contents = "Sample Text";
-    private Font font = defaultFont;
     private static Font defaultFont = new Font("arial", Font.PLAIN, 30);
-    private org.newdawn.slick.Font slickFont;
 
     public Text()
     {
@@ -44,7 +42,7 @@ public class Text extends Shape
     @Override
     public void previous(YldGraphics graphics)
     {
-        getObj().font = font;
+        setFont(new Font(defaultFont.getFontName(), defaultFont.getStyle(), defaultFont.getSize()));
         getObj().type = Obj.ShapeType.TEXT;
     }
 
@@ -54,7 +52,6 @@ public class Text extends Shape
         obj.x = (int) (getEntity().getTransform().position.x);
         obj.y = (int) (getEntity().getTransform().position.y);
         obj.value = contents;
-        obj.slickFont = slickFont;
     }
 
     public String getContents()
@@ -69,25 +66,13 @@ public class Text extends Shape
 
     public Font getFont()
     {
-        return font;
+        return getObj().font;
     }
 
     public void setFont(Font font)
     {
-        this.font = font;
-        if (game.getSlickApp() != null)
-            setSlickFont(new TrueTypeFont(font, false));
-    }
-
-    public org.newdawn.slick.Font getSlickFont()
-    {
-        return slickFont;
-    }
-
-    public void setSlickFont(org.newdawn.slick.Font slickFont)
-    {
-
-        this.slickFont = slickFont;
+        getObj().font = font;
+        getObj().updateSlickFont();
     }
 
     public static Font getDefaultFont()

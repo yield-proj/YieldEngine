@@ -20,10 +20,20 @@ import com.xebisco.yield.*;
 
 public class MyGame extends YldGame
 {
+    Entity text;
     @Override
     public void create()
     {
-        graphics.text("Hello, World!").center();
+        text = instantiate((e) -> {
+            e.addComponent(new Text("Hello, Yield!"));
+            e.getSelfTransform().goTo(View.mid());
+        });
+    }
+
+    @Override
+    public void update(float delta)
+    {
+        text.getSelfTransform().rotate(delta * 100);
     }
 
     public static void main(String[] args)

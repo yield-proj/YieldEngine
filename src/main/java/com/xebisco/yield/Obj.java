@@ -48,11 +48,15 @@ public class Obj
         this.color = color;
         this.value = value;
         this.font = font;
+        updateSlickFont();
+        drawColor = color;
+    }
+
+    public void updateSlickFont() {
         if (YldGame.lwjgl && font != null)
         {
             slickFont = new TrueTypeFont(font, false);
         }
-        drawColor = color;
     }
 
     public void center()
