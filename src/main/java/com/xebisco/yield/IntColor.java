@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.test;
+package com.xebisco.yield;
 
-import com.xebisco.yield.*;
-
-public class MyGame extends YldGame
+public class IntColor extends Color
 {
-    @Override
-    public void create()
+    public IntColor(int r, int g, int b)
     {
-        graphics.text("Hello, World!").center();
+        super(r / 255f, g / 255f, b / 255f);
     }
 
-    public static void main(String[] args)
+    public IntColor(int r, int g, int b, int a)
     {
-        launch(new MyGame());
+        super(r / 255f, g / 255f, b / 255f, a / 255f);
     }
 }

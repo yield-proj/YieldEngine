@@ -123,7 +123,7 @@ public class SlickGame extends BasicGame
     }
 
     @SuppressWarnings("unused")
-	@Deprecated
+    @Deprecated
     private ByteBuffer loadIconInstance(BufferedImage image, int dimension)
     {
         BufferedImage scaledIcon = new BufferedImage(dimension, dimension, BufferedImage.TYPE_INT_ARGB);
@@ -289,16 +289,18 @@ public class SlickGame extends BasicGame
                     if (rend.type == Obj.ShapeType.RECT)
                         if (rend.slickImage == null)
                         {
-                            if (rend.value.hashCode() == "\\imgobj".hashCode())
-                                if (rend.filled)
-                                    g.fillRect(x, y, x2, y2);
-                                else
-                                    g.drawRect(x, y, x2, y2);
+                            if (rend.filled)
+                                g.fillRect(x, y, x2, y2);
+                            else
+                                g.drawRect(x, y, x2, y2);
                         }
                         else
                         {
-                            rend.slickImage.setFilter(Image.FILTER_NEAREST);
-                            g.drawImage(rend.slickImage, x, y, rend.x2, rend.y2, 0, 0, rend.slickImage.getWidth(), rend.slickImage.getHeight());
+                            if (rend.value.hashCode() == "\\imgobj".hashCode())
+                            {
+                                rend.slickImage.setFilter(Image.FILTER_NEAREST);
+                                g.drawImage(rend.slickImage, x, y, rend.x2, rend.y2, 0, 0, rend.slickImage.getWidth(), rend.slickImage.getHeight());
+                            }
                         }
                     else if (rend.type == Obj.ShapeType.OVAL)
                         if (rend.filled)

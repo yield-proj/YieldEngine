@@ -225,16 +225,18 @@ public class YldWindow
                         if (rend.type == Obj.ShapeType.RECT)
                             if (rend.image == null)
                             {
-                                if (rend.value.hashCode() == "\\imgobj".hashCode())
-                                    if (rend.filled)
-                                        g.fillRect(x, y, x2 - x, y2 - y);
-                                    else
-                                        g.drawRect(x, y, x2 - x, y2 - y);
+                                if (rend.filled)
+                                    g.fillRect(x, y, x2 - x, y2 - y);
+                                else
+                                    g.drawRect(x, y, x2 - x, y2 - y);
                             }
                             else
                             {
-                                g.drawImage(rend.image, x, y, x2 - x, y2 - y, null);
-                                rend.slickImage = null;
+                                if (rend.value.hashCode() == "\\imgobj".hashCode())
+                                {
+                                    g.drawImage(rend.image, x, y, x2 - x, y2 - y, null);
+                                    rend.slickImage = null;
+                                }
                             }
                         else if (rend.type == Obj.ShapeType.OVAL)
                             if (rend.filled)
