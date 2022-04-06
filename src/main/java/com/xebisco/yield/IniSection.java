@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.test;
+package com.xebisco.yield;
 
-import com.xebisco.yield.*;
-
-public class MyGame extends YldGame
+public class IniSection extends io.github.synonware.sini4j.IniSection
 {
-    @Override
-    public void create()
-    {
-        graphics.text("Hello, World!").center = true;
-    }
 
-    public static void main(String[] args)
-    {
-        launch(new MyGame());
-    }
 }

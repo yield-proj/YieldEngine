@@ -59,8 +59,9 @@ public class Obj
     {
         if (View.getActView() != null)
         {
-            x = View.getActView().getWidth() / 2 - x2 / 2;
-            y = View.getActView().getHeight() / 2 - y2 / 2;
+            center = false;
+            x = View.getActView().getWidth() / 2;
+            y = View.getActView().getHeight() / 2;
         }
     }
 

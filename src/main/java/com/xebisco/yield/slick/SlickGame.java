@@ -275,6 +275,17 @@ public class SlickGame extends BasicGame
                     g.setColor(Conversions.toSlickColor(rend.drawColor));
                     g.resetTransform();
                     g.rotate(rend.rotationX, rend.rotationY, rend.rotationV);
+                    if (rend.center)
+                    {
+                        if (rend.x2 != 0 || rend.y2 != 0)
+                        {
+                            rend.center();
+                        }
+                    }
+                    for (int i2 = 0; i2 < game.getScene().getGraphics().getFilters().size(); i2++)
+                    {
+                        game.getScene().getGraphics().getFilters().get(i2).process(rend);
+                    }
                     if (rend.type == Obj.ShapeType.RECT)
                         if (rend.slickImage == null)
                         {

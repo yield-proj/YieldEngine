@@ -38,8 +38,9 @@ import java.util.Objects;
 
 /**
  * This class is the starting point for every Yield Game, it contains all the objects of the game.
- * @since 4_alpha1
+ *
  * @author Xebisco
+ * @since 4_alpha1
  */
 public class YldGame extends YldScene
 {
@@ -110,6 +111,11 @@ public class YldGame extends YldScene
         }
     }
 
+    public static void launch(YldGame game)
+    {
+        launch(game, GameConfiguration.iniConfig(new Ini(YldGame.class.getResourceAsStream("/yieldconfig/game.ini"))));
+    }
+
     /**
      * This is the method that will start an YldGame instance receiving a GameConfiguration variable, it will set all the game based in the GameConfiguration instance.
      *
@@ -120,7 +126,8 @@ public class YldGame extends YldScene
     public static void launch(YldGame game, GameConfiguration configuration)
     {
         Locale.setDefault(Locale.US);
-        if(View.getActView() == null) {
+        if (View.getActView() == null)
+        {
             new View(1280, 720);
         }
         if (configuration.hardwareAcceleration)
@@ -163,7 +170,8 @@ public class YldGame extends YldScene
         game.setGraphics(new YldGraphics());
         if (!configuration.hardwareAcceleration)
         {
-            if(configuration.startYldWindow) {
+            if (configuration.startYldWindow)
+            {
                 game.window = new YldWindow();
                 game.window.getFrame().setTitle(configuration.title);
                 game.window.getWindowG().setHandler(game.handler);
@@ -408,8 +416,9 @@ public class YldGame extends YldScene
 
     /**
      * Method to instantiate a scene and set it as the actual scene.
+     *
      * @param type The scene type to be instantiated.
-     * @param how What to do with last scene.
+     * @param how  What to do with last scene.
      */
     public <T extends YldScene> void setScene(Class<T> type, ChangeScene how)
     {
@@ -436,6 +445,7 @@ public class YldGame extends YldScene
 
     /**
      * Method to instantiate a scene and set it as the actual scene, destroying the last one.
+     *
      * @param type The scene type to be instantiated.
      */
     public <T extends YldScene> void setScene(Class<T> type)
@@ -466,6 +476,7 @@ public class YldGame extends YldScene
 
     /**
      * Getter for the slickGame variable.
+     *
      * @return The slickGame variable (null if in CPU mode)
      */
     public SlickGame getSlickGame()
@@ -483,6 +494,7 @@ public class YldGame extends YldScene
 
     /**
      * Getter for the slickApp variable.
+     *
      * @return The slickApp variable (null if in CPU mode)
      */
     public AppGameContainer getSlickApp()
