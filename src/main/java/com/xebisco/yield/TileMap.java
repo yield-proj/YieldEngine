@@ -26,7 +26,6 @@ public class TileMap extends Component
 {
     private boolean visible = true, smartProcessing = true;
     private ArrayList<TilePos> tiles = new ArrayList<>();
-    private HashSet<Obj> actObjs = new HashSet<>(), allObjs = new HashSet<>();
     private TileSet actualTileSet;
 
     public TileMap(TileSet tileSet)
@@ -36,6 +35,8 @@ public class TileMap extends Component
 
     public void loadMap(Texture map, Vector2 grid)
     {
+        while (!tiles.isEmpty())
+            tiles.clear();
         for (int y = 0; y < map.getHeight(); y++)
         {
             for (int x = 0; x < map.getWidth(); x++)
@@ -43,7 +44,20 @@ public class TileMap extends Component
                 final TilePos tilePos = new TilePos();
                 tilePos.setPosition(new Vector2(x * grid.x, y * grid.y));
                 tilePos.setColor(map.getPixelColor(x, y));
-                tiles.add(tilePos);
+                for (TileID tileID : actualTileSet.getTiles())
+                {
+                    if (tileID.getColor().hashCode() == tilePos.getColor().hashCode())
+                    {
+                        tilePos.setTileID(tileID);
+                        break;
+                    }
+                }
+                if (tilePos.getTileID() != null)
+                {
+                    tilePos.setGraphicalObject(graphics.img(tilePos.getTileID().getTile(), tilePos.getPosition().x, tilePos.getPosition().y));
+                    tilePos.getGraphicalObject().index = getEntity().getEntityIndex();
+                    tiles.add(tilePos);
+                }
             }
         }
     }
@@ -53,29 +67,28 @@ public class TileMap extends Component
     {
         if (actualTileSet != null && getEntity().isActive())
         {
-            graphics.shapeRends.removeAll(actObjs);
-            while (!actObjs.isEmpty())
-                actObjs.clear();
             for (TilePos tile : tiles)
             {
-                TileID toBe = null;
-                for (TileID tileID : actualTileSet.getTiles())
-                {
-                    if(tileID.getColor().hashCode() == tile.getColor().hashCode() && tileID.getColor().equals(tile.getColor())) {
-                        toBe = tileID;
-                        break;
-                    }
-                }
-                tile.setTileID(toBe);
-                Obj obj = graphics.img(tile.getTileID().getTile(), tile.getPosition().x, tile.getPosition().y);
-                actObjs.add(obj);
-                allObjs.add(obj);
+                tile.getGraphicalObject().x = (int) (tile.getPosition().x);
+                tile.getGraphicalObject().y = (int) (tile.getPosition().y);
+                tile.getGraphicalObject().x2 = tile.getGraphicalObject().x + tile.getTileID().getTile().getWidth();
+                tile.getGraphicalObject().y2 = tile.getGraphicalObject().y + tile.getTileID().getTile().getHeight();
                 getEntity().transmit("processTile", tile);
             }
         }
         else
         {
-            graphics.shapeRends.removeIf(allObjs::contains);
+            graphics.shapeRends.removeIf(o ->
+            {
+                for (TilePos tilePos : tiles)
+                {
+                    if (tilePos.getGraphicalObject().hashCode() == o.hashCode())
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            });
         }
     }
 
@@ -115,16 +128,6 @@ public class TileMap extends Component
         this.smartProcessing = smartProcessing;
     }
 
-    public HashSet<Obj> getAllObjs()
-    {
-        return allObjs;
-    }
-
-    public void setAllObjs(HashSet<Obj> allObjs)
-    {
-        this.allObjs = allObjs;
-    }
-
     public ArrayList<TilePos> getTiles()
     {
         return tiles;
@@ -133,15 +136,5 @@ public class TileMap extends Component
     public void setTiles(ArrayList<TilePos> tiles)
     {
         this.tiles = tiles;
-    }
-
-    public HashSet<Obj> getActObjs()
-    {
-        return actObjs;
-    }
-
-    public void setActObjs(HashSet<Obj> actObjs)
-    {
-        this.actObjs = actObjs;
     }
 }

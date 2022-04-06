@@ -131,7 +131,7 @@ public class YldGraphics {
      */
     public Obj img(Texture texture, float x, float y, float width, float height) {
         Image image = texture.getImage();
-        Obj obj = new Obj((int) x, (int) width, (int) y, (int) height, Obj.ShapeType.RECT, true, Colors.BLACK, texture.getRelativePath(), null);
+        Obj obj = new Obj((int) x, (int) (width + x), (int) y, (int) (height + y), Obj.ShapeType.RECT, true, Colors.BLACK, texture.getRelativePath(), null);
         obj.value = "\\imgobj";
         obj.image = image;
         shapeRends.add(obj);

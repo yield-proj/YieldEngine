@@ -18,25 +18,36 @@ package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
 
-import java.awt.*;
-
 public class MyGame extends YldGame
 {
-    Entity text;
     @Override
     public void create()
     {
-        text = instantiate((e) -> {
-            e.addComponent(new Text("Hello, Yield!"));
-            e.getComponent(Text.class).setFont(new Font("arial", Font.PLAIN, 40));
-            e.getSelfTransform().goTo(View.mid());
+        new View(427, 240);
+        Texture tileSetImage = new Texture("/com/xebisco/yield/test/assets/testtileset.png"), tileMapImage = new Texture("/com/xebisco/yield/test/assets/testmap.png");
+        TileSet tileSet = new TileSet(new TileID(new Tile(tileSetImage, 0, 0, 16, 16, 0), new IntColor(0, 0, 0)), new TileID(new Tile(tileSetImage, 0, 16, 16, 16, 1), new IntColor(255, 255, 255)));
+        instantiate((e) -> {
+            e.addComponent(new TileMap(tileSet));
+            e.getComponent(TileMap.class).loadMap(tileMapImage, new Vector2(16, 16));
         });
     }
 
     @Override
     public void update(float delta)
     {
-        text.getSelfTransform().rotate(delta * 100);
+        if(input.isPressing(Key.RIGHT)) {
+            View.getActView().getCamera().getPosition().x++;
+        }
+        if(input.isPressing(Key.LEFT)) {
+            View.getActView().getCamera().getPosition().x--;
+        }
+        if(input.isPressing(Key.DOWN)) {
+            View.getActView().getCamera().getPosition().y++;
+        }
+        if(input.isPressing(Key.UP)) {
+            View.getActView().getCamera().getPosition().y--;
+        }
+        Yld.log("aaaa");
     }
 
     public static void main(String[] args)

@@ -21,6 +21,7 @@ public class TilePos
     private TileID tileID;
     private Color color;
     private Vector2 position;
+    private Obj graphicalObject;
 
     public TileID getTileID()
     {
@@ -50,5 +51,15 @@ public class TilePos
     public void setColor(Color color)
     {
         this.color = color;
+    }
+
+    public Obj getGraphicalObject()
+    {
+        return graphicalObject;
+    }
+
+    public void setGraphicalObject(Obj graphicalObject)
+    {
+        this.graphicalObject = graphicalObject;
     }
 }

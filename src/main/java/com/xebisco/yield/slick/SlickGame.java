@@ -296,11 +296,8 @@ public class SlickGame extends BasicGame
                         }
                         else
                         {
-                            if (rend.value.hashCode() == "\\imgobj".hashCode())
-                            {
-                                rend.slickImage.setFilter(Image.FILTER_NEAREST);
-                                g.drawImage(rend.slickImage, x, y, rend.x2, rend.y2, 0, 0, rend.slickImage.getWidth(), rend.slickImage.getHeight());
-                            }
+                            rend.slickImage.setFilter(Image.FILTER_NEAREST);
+                            g.drawImage(rend.slickImage, x, y, rend.x2, rend.y2, 0, 0, rend.slickImage.getWidth(), rend.slickImage.getHeight());
                         }
                     else if (rend.type == Obj.ShapeType.OVAL)
                         if (rend.filled)

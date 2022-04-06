@@ -185,6 +185,7 @@ public class YldWindow
                 for (int r = 0; r < graphics.shapeRends.size(); r++)
                 {
                     Obj rend = graphics.shapeRends.get(r);
+                    if(rend != null)
                     if (i == rend.index && rend.active && rend.color.getA() > 0)
                     {
                         Graphics2D g2 = (Graphics2D) g;
@@ -232,11 +233,7 @@ public class YldWindow
                             }
                             else
                             {
-                                if (rend.value.hashCode() == "\\imgobj".hashCode())
-                                {
-                                    g.drawImage(rend.image, x, y, x2 - x, y2 - y, null);
-                                    rend.slickImage = null;
-                                }
+                                g.drawImage(rend.image, x, y, x2 - x, y2 - y, null);
                             }
                         else if (rend.type == Obj.ShapeType.OVAL)
                             if (rend.filled)
