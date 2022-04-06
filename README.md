@@ -6,7 +6,7 @@
 ![image](https://img.shields.io/github/contributors/xebisco/yieldengine?style=flat-square)
 
 # Yield
-**Yield** is a powerful scene-oriented JVM game engine, created with the objective of being a simple and efficient engine for creating 2d games in Java ☕
+**Yield** is a powerful scene-oriented JVM game framework, created with the objective of being a simple and efficient engine for creating 2d games in Java ☕
 
 ## Summary
 1. [Why Yield?](#why-yield)
