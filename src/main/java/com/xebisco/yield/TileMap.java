@@ -70,7 +70,7 @@ public class TileMap extends Component
                 Obj obj = graphics.img(tile.getTileID().getTile(), tile.getPosition().x, tile.getPosition().y);
                 actObjs.add(obj);
                 allObjs.add(obj);
-                getEntity().transmit("processTile", tile.getTileID().getTile().getLayer());
+                getEntity().transmit("processTile", tile);
             }
         }
         else
