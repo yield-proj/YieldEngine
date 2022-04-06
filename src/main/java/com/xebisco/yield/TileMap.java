@@ -69,11 +69,28 @@ public class TileMap extends Component
         {
             for (TilePos tile : tiles)
             {
+                boolean process = !smartProcessing;
+                if (!process)
+                {
+                    if (tile.getPosition().x - View.getActView().getCamera().getPosition().x + tile.getTileID().getTile().getWidth() > 0
+                            && tile.getPosition().x - View.getActView().getCamera().getPosition().x < View.getActView().getWidth()
+                            && tile.getPosition().y - View.getActView().getCamera().getPosition().y + tile.getTileID().getTile().getHeight() > 0
+                            && tile.getPosition().y - View.getActView().getCamera().getPosition().y < View.getActView().getHeight())
+                    {
+                        process = true;
+                    }
+                }
                 tile.getGraphicalObject().x = (int) (tile.getPosition().x);
                 tile.getGraphicalObject().y = (int) (tile.getPosition().y);
                 tile.getGraphicalObject().x2 = tile.getGraphicalObject().x + tile.getTileID().getTile().getWidth();
                 tile.getGraphicalObject().y2 = tile.getGraphicalObject().y + tile.getTileID().getTile().getHeight();
-                getEntity().transmit("processTile", tile);
+                if (process)
+                {
+                    tile.getGraphicalObject().active = getEntity().isActive();
+                    getEntity().transmit("processTile", tile);
+                } else {
+                    tile.getGraphicalObject().active = false;
+                }
             }
         }
         else

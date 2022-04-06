@@ -263,7 +263,7 @@ public class SlickGame extends BasicGame
             for (int i1 = 0; i1 < game.getScene().getGraphics().shapeRends.size(); i1++)
             {
                 Obj rend = game.getScene().getGraphics().shapeRends.get(i1);
-                if (rend.index == i)
+                if (rend.index == i && rend.active)
                 {
                     int x = rend.x - (int) View.getActView().getCamera().getPosition().x, tx2 = rend.x2,
                             y = rend.y - (int) View.getActView().getCamera().getPosition().y, ty2 = rend.y2,

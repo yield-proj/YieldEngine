@@ -328,6 +328,7 @@ public class Key
         else if(i == Input.KEY_PAUSE) return PAUSE;
         else if(i == Input.KEY_HOME) return HOME;
         else if(i == Input.KEY_PRIOR) return PAGE_UP;
+        else if(i == Input.KEY_UP) return UP;
         else if(i == Input.KEY_LEFT) return LEFT;
         else if(i == Input.KEY_RIGHT) return RIGHT;
         else if(i == Input.KEY_END) return END;
