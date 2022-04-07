@@ -32,5 +32,6 @@ public class Colors {
             LIME = new Color(.5f, 1, .5f),
             GRAY = new Color(.5f, .5f, .5f),
             LIGHT_GRAY = new Color(.8f, .8f, .8f),
-            DARK_GRAY = new Color(.2f, .2f, .2f);
+            DARK_GRAY = new Color(.2f, .2f, .2f),
+            TRANSPARENT = new Color(0, 0, 0, 0);
 }

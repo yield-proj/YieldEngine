@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import com.xebisco.yield.*;
+import com.xebisco.yield.extensions.YieldOverlay;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
@@ -73,6 +74,7 @@ public class SlickGame extends BasicGame
         loadConfig(game.getConfiguration());
         if (!started)
         {
+            game.addExtension(new YieldOverlay());
             game.setInput(new YldInput(null, gameContainer));
             viewImage = new Image(View.getActView().getWidth(), View.getActView().getHeight());
             //game.getHandler().getThread().start();

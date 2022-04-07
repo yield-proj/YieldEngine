@@ -16,12 +16,14 @@
 
 package com.xebisco.yield.extensions;
 
-import com.xebisco.yield.View;
-import com.xebisco.yield.Yld;
-import com.xebisco.yield.YldExtension;
+import com.xebisco.yield.*;
+import com.xebisco.yield.Color;
 import com.xebisco.yield.graphics.AWTGraphics;
+import com.xebisco.yield.graphics.AWTImage;
 import com.xebisco.yield.graphics.SampleGraphics;
+import com.xebisco.yield.graphics.SampleImage;
 import com.xebisco.yield.slick.SlickGraphics;
+import com.xebisco.yield.slick.SlickImage;
 import org.newdawn.slick.util.BufferedImageUtil;
 
 import javax.swing.*;
@@ -32,13 +34,12 @@ import java.util.Objects;
 
 public class YieldOverlay extends YldExtension
 {
-    private final Color bgColor = new Color(64, 64, 64),
-            buttonColor = new Color(67, 67, 67),
-            selectedButtonColor = new Color(106, 106, 106);
-    private final BufferedImage image = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_ARGB);
-    private final Image yieldImage = new ImageIcon(Objects.requireNonNull(YieldOverlay.class.getResource("/com/xebisco/yield/assets/yieldlogo.png"))).getImage();
+    private final Color bgColor = new IntColor(64, 64, 64),
+            buttonColor = new IntColor(67, 67, 67),
+            selectedButtonColor = new IntColor(106, 106, 106);
+    private SampleImage image;
+    private final Texture yieldImage = new Texture("/com/xebisco/yield/assets/yieldlogo.png");
     private final Font font1 = new Font("Verdana", Font.BOLD, 30), font2 = new Font("arial", Font.BOLD, 30);
-    private int w, h;
     private static int offsetAnimation;
     private final int arc = 40;
     private static boolean show;
@@ -49,16 +50,6 @@ public class YieldOverlay extends YldExtension
     {
         if (show)
         {
-            if (View.getActView() != null)
-            {
-                w = View.getActView().getWidth();
-                h = View.getActView().getHeight();
-            }
-            else
-            {
-                w = game.getWindow().getWindowG().getWidth();
-                h = game.getWindow().getWindowG().getHeight();
-            }
             //exitButtonSelected = game.getInput().getX() > w - ((w / 1280f) * 250) && game.getInput().getY() > h - ((h / 720f) * 100);
             exitButtonSelected = true;
             if (game.getInput().isTouching())
@@ -73,10 +64,17 @@ public class YieldOverlay extends YldExtension
     {
         if (show)
         {
-            Graphics2D g = image.createGraphics();
-            g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+            if (image == null)
+            {
+                if (graphics instanceof SlickGraphics)
+                    image = new SlickImage();
+                else image = new AWTImage();
+                image.init(1280, 720);
+            }
+            SampleGraphics g = image.getGraphics();
+            //g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
 
-            g.setBackground(new Color(255, 255, 255, 0));
+            g.setBackground(Colors.TRANSPARENT);
             g.clearRect(0, 0, image.getWidth(), image.getHeight());
             g.setColor(bgColor);
             //MAIN RECT
@@ -85,7 +83,7 @@ public class YieldOverlay extends YldExtension
             g.fillRoundRect(10, 120, image.getWidth() - 430, 500, arc, arc);
             //STATS RECT
             g.fillRoundRect(image.getWidth() - 410, 10, image.getWidth() - (image.getWidth() - 410) - 10, 610, arc, arc);
-            g.setColor(Color.BLACK);
+            g.setColor(Colors.BLACK);
             //MAIN RECT
             g.drawRoundRect(10, 10, image.getWidth() - 430, 100, arc, arc);
             //MESSAGES RECT
@@ -93,7 +91,7 @@ public class YieldOverlay extends YldExtension
             //STATS RECT
             g.drawRoundRect(image.getWidth() - 410, 10, image.getWidth() - (image.getWidth() - 410) - 10, 610, arc, arc);
 
-            g.setColor(Color.WHITE);
+            g.setColor(Colors.WHITE);
             g.setFont(font2);
 
             //STATS
@@ -108,7 +106,7 @@ public class YieldOverlay extends YldExtension
             g.drawString("Java Class Version: " + System.getProperty("java.class.version"), x, 80 + 40 * 6);
             g.drawString("Extensions Active: " + game.getExtensions().size(), x, 80 + 40 * 7);
             g.drawString("Architecture: " + System.getProperty("os.arch"), x, 80 + 40 * 8);
-            g.drawString("Act Resolution: " + w + "x" + h, x, 80 + 40 * 9);
+            g.drawString("Act Resolution: " + View.getActView().getWidth() + "x" + View.getActView().getHeight(), x, 80 + 40 * 9);
             g.drawString("Processors: " + Runtime.getRuntime().availableProcessors(), x, 80 + 40 * 10);
 
             //MESSAGES
@@ -121,7 +119,7 @@ public class YieldOverlay extends YldExtension
 
 
             //TITLE
-            g.drawImage(yieldImage, 30, 30, 60, 60, null);
+            g.drawTexture(yieldImage, 30, 30, 60, 60);
             g.drawString("Messages:", 20, 130 + font1.getSize());
             g.drawString("Yield " + Yld.VERSION + ", on " + System.getProperty("os.name"), 100, 60 + font1.getSize() / 2);
 
@@ -138,27 +136,14 @@ public class YieldOverlay extends YldExtension
             }
             g.fillRoundRect(1020, 630, 250, 80, arc, arc);
 
-            g.setColor(Color.BLACK);
+            g.setColor(Colors.BLACK);
             g.drawRoundRect(1020, 630, 250, 80, arc, arc);
 
-            g.setColor(Color.WHITE);
+            g.setColor(Colors.WHITE);
             g.drawString("Close", 1100, 680);
 
             g.dispose();
-            if (graphics instanceof AWTGraphics)
-            {
-                ((AWTGraphics) graphics).getGraphics().drawImage(image, 0, offsetAnimation, w, h, null);
-            }
-            else
-            {
-                try
-                {
-                    ((SlickGraphics) graphics).getGraphics().drawImage(new org.newdawn.slick.Image(BufferedImageUtil.getTexture("YieldOverlayImage", image)), 0, offsetAnimation, w, h, 0, 0, image.getWidth(), image.getHeight());
-                } catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
+            graphics.drawImage(image, 0, offsetAnimation, View.getActView().getWidth(), View.getActView().getHeight());
 
             offsetAnimation -= offsetAnimation / 4;
         }
@@ -169,14 +154,49 @@ public class YieldOverlay extends YldExtension
         return bgColor;
     }
 
-    public BufferedImage getImage()
+    public Color getButtonColor()
+    {
+        return buttonColor;
+    }
+
+    public Color getSelectedButtonColor()
+    {
+        return selectedButtonColor;
+    }
+
+    public SampleImage getImage()
     {
         return image;
     }
 
-    public Image getYieldImage()
+    public void setImage(SampleImage image)
+    {
+        this.image = image;
+    }
+
+    public Texture getYieldImage()
     {
         return yieldImage;
+    }
+
+    public static int getOffsetAnimation()
+    {
+        return offsetAnimation;
+    }
+
+    public static void setOffsetAnimation(int offsetAnimation)
+    {
+        YieldOverlay.offsetAnimation = offsetAnimation;
+    }
+
+    public boolean isExitButtonSelected()
+    {
+        return exitButtonSelected;
+    }
+
+    public void setExitButtonSelected(boolean exitButtonSelected)
+    {
+        this.exitButtonSelected = exitButtonSelected;
     }
 
     public Font getFont1()
@@ -187,26 +207,6 @@ public class YieldOverlay extends YldExtension
     public Font getFont2()
     {
         return font2;
-    }
-
-    public int getW()
-    {
-        return w;
-    }
-
-    public void setW(int w)
-    {
-        this.w = w;
-    }
-
-    public int getH()
-    {
-        return h;
-    }
-
-    public void setH(int h)
-    {
-        this.h = h;
     }
 
     public int getArc()

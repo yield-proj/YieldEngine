@@ -23,7 +23,8 @@ public class MyGame extends YldGame
     @Override
     public void create()
     {
-        new View(427, 240);
+        //new View(427, 240);
+        Yld.message("test");
         Texture tileSetImage = new Texture("/com/xebisco/yield/test/assets/testtileset.png"), tileMapImage = new Texture("/com/xebisco/yield/test/assets/testmap.png");
         TileSet tileSet = new TileSet(new TileID(new Tile(tileSetImage, 0, 0, 16, 16, 0), new IntColor(0, 0, 0)), new TileID(new Tile(tileSetImage, 0, 16, 16, 16, 1), new IntColor(255, 255, 255)));
         instantiate((e) -> {
@@ -47,6 +48,7 @@ public class MyGame extends YldGame
         if(input.isPressing(Key.UP)) {
             View.getActView().getCamera().getPosition().y--;
         }
+        System.out.println(time.getFps());
     }
 
     public static void main(String[] args)

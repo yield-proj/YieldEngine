@@ -193,7 +193,6 @@ public class YldGame extends YldScene
                 e.printStackTrace();
             }
         }
-        game.addExtension(new YieldOverlay());
         game.addScene(game);
         game.setScene(game);
         if (game.slickApp != null)
@@ -209,6 +208,7 @@ public class YldGame extends YldScene
         }
         else
         {
+            game.addExtension(new YieldOverlay());
             game.input = new YldInput(game.window, null);
             game.handler.getThread().start();
         }

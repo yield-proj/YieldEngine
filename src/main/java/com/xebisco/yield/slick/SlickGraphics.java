@@ -18,17 +18,22 @@ package com.xebisco.yield.slick;
 
 import com.xebisco.yield.Texture;
 import com.xebisco.yield.Yld;
+import com.xebisco.yield.graphics.AWTImage;
 import com.xebisco.yield.graphics.SampleGraphics;
+import com.xebisco.yield.graphics.SampleImage;
+import com.xebisco.yield.utils.Conversions;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
 
 import java.awt.*;
+import java.util.HashMap;
 
 public class SlickGraphics implements SampleGraphics
 {
     private Graphics graphics;
     private Font font;
+    private static HashMap<Integer, org.newdawn.slick.Font> fontHashMap = new HashMap<>();
 
     @Override
     public com.xebisco.yield.Color getColor()
@@ -52,7 +57,10 @@ public class SlickGraphics implements SampleGraphics
     public void setFont(Font font)
     {
         this.font = font;
-        graphics.setFont(new TrueTypeFont(font, false));
+        int h = font.hashCode();
+        if(!fontHashMap.containsKey(h))
+            fontHashMap.put(h, new TrueTypeFont(font, false));
+        graphics.setFont(fontHashMap.get(h));
     }
 
     @Override
@@ -76,7 +84,7 @@ public class SlickGraphics implements SampleGraphics
     @Override
     public void clearRect(int x, int y, int width, int height)
     {
-        Yld.log("SLICK GRAPHICS DOES NOT SUPPORT THE 'clearRect(int x, int y, int width, int height)' METHOD");
+        graphics.clear();
     }
 
     @Override
@@ -122,9 +130,33 @@ public class SlickGraphics implements SampleGraphics
     }
 
     @Override
+    public void drawTexture(Texture texture, int x, int y)
+    {
+        drawTexture(texture, x, y, texture.getWidth(), texture.getHeight());
+    }
+
+    @Override
+    public void drawImage(SampleImage image, int x, int y, int width, int height)
+    {
+        graphics.drawImage(((SlickImage) image).getSlickImage(), x, y, width, height + y, 0, 0, image.getWidth(), image.getHeight());
+    }
+
+    @Override
+    public void drawImage(SampleImage image, int x, int y)
+    {
+        drawImage(image, x, y, image.getWidth(), image.getHeight());
+    }
+
+    @Override
     public void drawString(String str, int x, int y)
     {
-        graphics.drawString(str, x, y + graphics.getFont().getHeight(str));
+        graphics.drawString(str, x, y - graphics.getFont().getHeight(str));
+    }
+
+    @Override
+    public void setBackground(com.xebisco.yield.Color color)
+    {
+        graphics.setBackground(Conversions.toSlickColor(color));
     }
 
     public Graphics getGraphics()
@@ -141,5 +173,15 @@ public class SlickGraphics implements SampleGraphics
     public void dispose()
     {
         graphics.flush();
+    }
+
+    public static HashMap<Integer, org.newdawn.slick.Font> getFontHashMap()
+    {
+        return fontHashMap;
+    }
+
+    public static void setFontHashMap(HashMap<Integer, org.newdawn.slick.Font> fontHashMap)
+    {
+        SlickGraphics.fontHashMap = fontHashMap;
     }
 }

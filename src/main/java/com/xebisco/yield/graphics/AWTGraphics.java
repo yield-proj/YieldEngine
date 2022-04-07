@@ -18,6 +18,8 @@ package com.xebisco.yield.graphics;
 
 import com.xebisco.yield.Color;
 import com.xebisco.yield.Texture;
+import com.xebisco.yield.utils.Conversions;
+
 import java.awt.*;
 
 public class AWTGraphics implements SampleGraphics
@@ -112,6 +114,31 @@ public class AWTGraphics implements SampleGraphics
     public void drawTexture(Texture texture, int x, int y, int width, int height)
     {
         graphics.drawImage(texture.getImage(), x, y, width, height, null);
+    }
+
+    @Override
+    public void drawTexture(Texture texture, int x, int y)
+    {
+        drawTexture(texture, x, y, texture.getWidth(), texture.getHeight());
+    }
+
+
+    @Override
+    public void drawImage(SampleImage image, int x, int y, int width, int height)
+    {
+        graphics.drawImage(((AWTImage) image).getImage(), x, y, width, height, null);
+    }
+
+    @Override
+    public void drawImage(SampleImage image, int x, int y)
+    {
+        drawImage(image, x, y, image.getWidth(), image.getHeight());
+    }
+
+    @Override
+    public void setBackground(Color color)
+    {
+        ((Graphics2D) graphics).setBackground(Conversions.toAWTColor(color));
     }
 
     @Override

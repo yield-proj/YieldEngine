@@ -18,6 +18,7 @@ package com.xebisco.yield.graphics;
 
 import com.xebisco.yield.Color;
 import com.xebisco.yield.Texture;
+
 import java.awt.*;
 
 public interface SampleGraphics
@@ -52,7 +53,15 @@ public interface SampleGraphics
 
     void drawTexture(Texture texture, int x, int y, int width, int height);
 
+    void drawTexture(Texture texture, int x, int y);
+
+    void drawImage(SampleImage image, int x, int y, int width, int height);
+
+    void drawImage(SampleImage image, int x, int y);
+
     void drawString(String str, int x, int y);
+
+    void setBackground(Color color);
 
     void dispose();
 }
