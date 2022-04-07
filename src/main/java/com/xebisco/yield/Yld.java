@@ -33,7 +33,7 @@ public final class Yld
     /**
      * The version of the Yield Game Engine.
      */
-    public static final String VERSION = "4 1.1.4";
+    public static final String VERSION = "4 - 1.1.5";
     /**
      * All the Yield Game Engine messages.
      */

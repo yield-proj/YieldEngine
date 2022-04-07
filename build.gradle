@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 group 'com.xebisco.yield'
-version '4 1.1.4'
+version '4_1.1.5'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
