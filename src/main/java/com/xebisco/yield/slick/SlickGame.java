@@ -272,7 +272,7 @@ public class SlickGame extends BasicGame
                             x2 = tx2 - (int) View.getActView().getCamera().getPosition().x, y2 = ty2 - (int) View.getActView().getCamera().getPosition().y;
                     g.setColor(Conversions.toSlickColor(rend.drawColor));
                     g.resetTransform();
-                    g.rotate(rend.rotationX, rend.rotationY, rend.rotationV);
+                    g.rotate(rend.rotationX + View.getActView().getCamera().getPosition().x, rend.rotationY + View.getActView().getCamera().getPosition().y, rend.rotationV);
                     if (rend.center)
                     {
                         if (rend.x2 != 0 || rend.y2 != 0)

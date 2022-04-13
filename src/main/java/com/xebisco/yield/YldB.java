@@ -24,8 +24,9 @@ import com.xebisco.yield.utils.YldAction;
 
 /**
  * Sample methods for the majority of the Yield Game Engine classes.
- * @since 4_alpha1
+ *
  * @author Xebisco
+ * @since 4_alpha1
  */
 public abstract class YldB
 {
@@ -40,82 +41,100 @@ public abstract class YldB
 
     /**
      * Executes a YldAction instance independently of others.
-     * @param action The action to be executed.
+     *
+     * @param action      The action to be executed.
      * @param multiThread The thread configuration.
      */
-    public final void concurrent(YldAction action, MultiThread multiThread)
+    public final long concurrent(YldAction action, MultiThread multiThread)
     {
+        long id = Yld.RAND.nextLong();
         if (multiThread == MultiThread.DEFAULT)
         {
-            game.getHandler().getDefaultConcurrentEngine().getTodoList().add(new YldEngineAction(action, 0, false));
+            game.getHandler().getDefaultConcurrentEngine().getTodoList().add(new YldEngineAction(action, 0, false, id));
         }
         else if (multiThread == MultiThread.ON_GAME_THREAD)
         {
-            game.getHandler().getTodoList().add(new YldEngineAction(action, 0, false));
+            game.getHandler().getTodoList().add(new YldEngineAction(action, 0, false, id));
         }
         else if (multiThread == MultiThread.EXCLUSIVE)
         {
             Engine engine = new Engine(null);
             engine.getThread().start();
-            engine.getTodoList().add(new YldEngineAction(action, 0, false));
+            engine.getTodoList().add(new YldEngineAction(action, 0, false, id));
             YldEngineAction action1 = new YldEngineAction(() ->
             {
                 engine.setStop(EngineStop.INTERRUPT_ON_END);
                 engine.setRunning(false);
-            }, 0, false);
+            }, 0, false, id);
             engine.getTodoList().add(action1);
         }
+        return id;
     }
 
     /**
      * Creates a timer.
-     * @param action The action to be performed on the end of the timer.
-     * @param time The time, in seconds to end the timer.
-     * @param repeat If the timer repeat after it ends.
+     *
+     * @param action      The action to be performed on the end of the timer.
+     * @param time        The time, in seconds to end the timer.
+     * @param repeat      If the timer repeat after it ends.
      * @param multiThread The thread configuration.
      */
-    public final void timer(YldAction action, float time, boolean repeat, MultiThread multiThread)
+    public final long timer(YldAction action, float time, boolean repeat, MultiThread multiThread)
     {
+        long id = Yld.RAND.nextLong();
         if (multiThread == MultiThread.DEFAULT)
         {
-            game.getHandler().getDefaultConcurrentEngine().getTodoList().add(new YldEngineAction(action, (int) (time * 1000), repeat));
+            game.getHandler().getDefaultConcurrentEngine().getTodoList().add(new YldEngineAction(action, (int) (time * 1000), repeat, id));
         }
         else if (multiThread == MultiThread.ON_GAME_THREAD)
         {
-            game.getHandler().getTodoList().add(new YldEngineAction(action, (int) (time * 1000), repeat));
+            game.getHandler().getTodoList().add(new YldEngineAction(action, (int) (time * 1000), repeat, id));
         }
         else if (multiThread == MultiThread.EXCLUSIVE)
         {
             Engine engine = new Engine(null);
             engine.getThread().start();
-            engine.getTodoList().add(new YldEngineAction(action, (int) (time * 1000), repeat));
+            engine.getTodoList().add(new YldEngineAction(action, (int) (time * 1000), repeat, id));
             YldEngineAction action1 = new YldEngineAction(() ->
             {
                 engine.setStop(EngineStop.INTERRUPT_ON_END);
                 engine.setRunning(false);
-            }, 0, false);
+            }, 0, false, id);
             engine.getTodoList().add(action1);
         }
+        return id;
     }
 
     /**
      * Creates a timer, on the on game thread.
+     *
      * @param action The action to be performed on the end of the timer.
-     * @param time The time, in seconds to end the timer.
+     * @param time   The time, in seconds to end the timer.
      * @param repeat If the timer repeat after it ends.
      */
-    public final void timer(YldAction action, float time, boolean repeat)
+    public final long timer(YldAction action, float time, boolean repeat)
     {
-        timer(action, time, repeat, MultiThread.ON_GAME_THREAD);
+        return timer(action, time, repeat, MultiThread.ON_GAME_THREAD);
     }
 
     /**
      * Executes a YldAction instance independently of others, on the default multi thread.
+     *
      * @param action The action to be executed.
      */
-    public final void concurrent(YldAction action)
+    public final long concurrent(YldAction action)
     {
-        concurrent(action, MultiThread.DEFAULT);
+        return concurrent(action, MultiThread.DEFAULT);
+    }
+
+    public final void remove(final long id, final MultiThread thread)
+    {
+        if (thread == MultiThread.EXCLUSIVE)
+            throw new IllegalArgumentException("MultiThread cannot be EXCLUSIVE");
+        if (thread == MultiThread.ON_GAME_THREAD)
+            game.getHandler().getTodoList().removeIf((a) -> a.getId() == id);
+        else if (thread == MultiThread.DEFAULT)
+            game.getHandler().getDefaultConcurrentEngine().getTodoList().removeIf((a) -> a.getId() == id);
     }
 
     public YldGame getGame()

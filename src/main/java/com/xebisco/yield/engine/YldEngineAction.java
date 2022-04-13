@@ -23,9 +23,10 @@ public class YldEngineAction
     private final YldAction action;
     private int toExec;
     private final int initialToExec;
+    private long id;
     private final boolean repeat;
 
-    public YldEngineAction(YldAction action, int toExec, boolean repeat)
+    public YldEngineAction(YldAction action, int toExec, boolean repeat, long id)
     {
         this.initialToExec = toExec;
         this.toExec = initialToExec;
@@ -56,5 +57,15 @@ public class YldEngineAction
     public boolean isRepeat()
     {
         return repeat;
+    }
+
+    public long getId()
+    {
+        return id;
+    }
+
+    public void setId(long id)
+    {
+        this.id = id;
     }
 }

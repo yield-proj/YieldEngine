@@ -72,18 +72,21 @@ public class TileMap extends Component
                 boolean process = !smartProcessing;
                 if (!process)
                 {
-                    if (tile.getPosition().x - View.getActView().getCamera().getPosition().x + tile.getTileID().getTile().getWidth() > 0
-                            && tile.getPosition().x - View.getActView().getCamera().getPosition().x < View.getActView().getWidth()
-                            && tile.getPosition().y - View.getActView().getCamera().getPosition().y + tile.getTileID().getTile().getHeight() > 0
-                            && tile.getPosition().y - View.getActView().getCamera().getPosition().y < View.getActView().getHeight())
+                    if (tile.getPosition().x * transform.scale.x - View.getActView().getCamera().getPosition().x + tile.getTileID().getTile().getWidth() * transform.scale.x > 0
+                            && tile.getPosition().x * transform.scale.x - View.getActView().getCamera().getPosition().x < View.getActView().getWidth()
+                            && tile.getPosition().y * transform.scale.y - View.getActView().getCamera().getPosition().y + tile.getTileID().getTile().getHeight() * transform.scale.y > 0
+                            && tile.getPosition().y * transform.scale.y - View.getActView().getCamera().getPosition().y < View.getActView().getHeight())
                     {
                         process = true;
                     }
                 }
-                tile.getGraphicalObject().x = (int) (tile.getPosition().x);
-                tile.getGraphicalObject().y = (int) (tile.getPosition().y);
-                tile.getGraphicalObject().x2 = tile.getGraphicalObject().x + tile.getTileID().getTile().getWidth();
-                tile.getGraphicalObject().y2 = tile.getGraphicalObject().y + tile.getTileID().getTile().getHeight();
+                tile.getGraphicalObject().x = (int) (tile.getPosition().x * transform.scale.x);
+                tile.getGraphicalObject().y = (int) (tile.getPosition().y * transform.scale.y);
+                tile.getGraphicalObject().x2 = (int) (tile.getGraphicalObject().x + tile.getTileID().getTile().getWidth() * transform.scale.x);
+                tile.getGraphicalObject().y2 = (int) (tile.getGraphicalObject().y + tile.getTileID().getTile().getHeight() * transform.scale.y);
+                tile.getGraphicalObject().rotationV = (int) transform.rotation;
+                tile.getGraphicalObject().rotationX = (int) (tile.getGraphicalObject().x + tile.getTileID().getTile().getWidth() * transform.scale.x / 2);
+                tile.getGraphicalObject().rotationY = (int) (tile.getGraphicalObject().y + tile.getTileID().getTile().getHeight() * transform.scale.y / 2);
                 if (process)
                 {
                     tile.getGraphicalObject().active = getEntity().isActive();

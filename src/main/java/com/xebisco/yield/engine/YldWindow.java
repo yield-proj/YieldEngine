@@ -190,7 +190,7 @@ public class YldWindow
                     {
                         Graphics2D g2 = (Graphics2D) g;
                         AffineTransform transform = g2.getTransform();
-                        g2.rotate(Math.toRadians(rend.rotationV), rend.rotationX, rend.rotationY);
+                        g2.rotate(Math.toRadians(rend.rotationV), rend.rotationX - (int) View.getActView().getCamera().getPosition().x, rend.rotationY - (int) View.getActView().getCamera().getPosition().y);
                         if (rend.center)
                         {
                             if (rend.x2 != 0 || rend.y2 != 0)

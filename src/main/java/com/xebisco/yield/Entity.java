@@ -164,7 +164,7 @@ public final class Entity
     /**
      * Search for all the Components instances in this Entity.
      *
-     * @param type The class type of the component that's being searched.
+     * @param type  The class type of the component that's being searched.
      * @param index the index of this component.
      * @return The component found (null if not found)
      */
@@ -174,7 +174,7 @@ public final class Entity
         int i = 0;
         while (i < components.size())
         {
-            if(i < index)
+            if (i < index)
                 break;
             Component component1 = components.get(i);
             if (component1.getClass().getName().hashCode() == type.getName().hashCode())
@@ -319,6 +319,7 @@ public final class Entity
 
     /**
      * Getter for the tag of this entity.
+     *
      * @return The tag variable.
      */
     public String getTag()
@@ -463,14 +464,18 @@ public final class Entity
             Method[] methods = c.getClass().getDeclaredMethods();
             for (Method m : methods)
             {
-                try
+                if (m.getName().hashCode() == method.hashCode() && m.getName().equals(method))
                 {
-                    if (m.getName().hashCode() == method.hashCode() && m.getName().equals(method))
+                    try
+                    {
                         m.invoke(c, arguments);
-                } catch (IllegalAccessException | InvocationTargetException e)
-                {
-                    e.printStackTrace();
+                    } catch (IllegalAccessException | InvocationTargetException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    break;
                 }
+
             }
         }
     }
