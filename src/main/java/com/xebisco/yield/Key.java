@@ -16,10 +16,6 @@
 
 package com.xebisco.yield;
 
-import org.newdawn.slick.Input;
-
-import java.awt.event.KeyEvent;
-
 /**
  * This class contains all the mapped keys that can be used in a game.
  * @since 4_1.1
@@ -104,8 +100,7 @@ public class Key
     public static final int NUMPAD9 = 0x69;
     public static final int MULTIPLY = 0x6A;
     public static final int ADD = 0x6B;
-    public static final int SEPARATER = 0x6C;
-    public static final int SEPARATOR = SEPARATER;
+    public static final int SEPARATOR = 0x6C;
     public static final int SUBTRACT = 0x6D;
     public static final int DECIMAL = 0x6E;
     public static final int DIVIDE = 0x6F;
@@ -218,9 +213,7 @@ public class Key
     public static final int UNDEFINED = 0x0;
     public static final char CHAR_UNDEFINED = 0xFFFF;
 
-    /**
-     * Slick Input
-     */
+    /*
     public static int toKey(int i) {
         if(i == Input.KEY_0) return NUMBER_0;
         else if(i == Input.KEY_1) return NUMBER_1;
@@ -339,5 +332,5 @@ public class Key
         else if(i == Input.KEY_LWIN) return WINDOWS;
         else if(i == Input.KEY_RWIN) return WINDOWS;
         else return UNDEFINED;
-    }
+    }*/
 }

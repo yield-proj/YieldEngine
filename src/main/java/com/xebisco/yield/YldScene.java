@@ -16,7 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.input.YldInput;
 import com.xebisco.yield.systems.MiddlePointSystem;
 import com.xebisco.yield.systems.PhysicsSystem;
 import com.xebisco.yield.systems.YldTimeSystem;
@@ -32,10 +31,6 @@ public class YldScene extends YldB
 {
 
     private int frames, ppm;
-    /**
-     * Contains all the graphic information about the scene.
-     */
-    protected YldGraphics graphics = new YldGraphics();
     private Entity masterEntity;
     private ArrayList<YldSystem> systems = new ArrayList<>();
     /**
@@ -130,9 +125,9 @@ public class YldScene extends YldB
      * Calls process on this YldScene instance masterEntity.
      * @param delta The time variation between the last frame and the actual one in seconds.
      */
-    public final void process(float delta)
+    public final void process(float delta, SampleGraphics graphics)
     {
-        masterEntity.process(delta);
+        masterEntity.process(delta, graphics);
     }
 
     public boolean isCallStart()
@@ -143,23 +138,6 @@ public class YldScene extends YldB
     public void setCallStart(boolean callStart)
     {
         this.callStart = callStart;
-    }
-
-    /**
-     * Getter for the graphics variable;
-     * @return the graphics variable.
-     */
-    public YldGraphics getGraphics()
-    {
-        return graphics;
-    }
-
-    /**
-     * Setter for the graphics variable;
-     */
-    public void setGraphics(YldGraphics graphics)
-    {
-        this.graphics = graphics;
     }
 
     /**

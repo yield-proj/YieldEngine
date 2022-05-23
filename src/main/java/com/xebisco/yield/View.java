@@ -23,9 +23,7 @@ import java.awt.image.BufferedImage;
  */
 public class View
 {
-    private final BufferedImage image;
     private static View actView;
-    private static int standardImageType = BufferedImage.TYPE_INT_RGB;
     private final int width, height;
     private static YldCamera defaultCamera = new YldCamera();
     private YldCamera camera = YldCamera.clone(defaultCamera);
@@ -42,7 +40,6 @@ public class View
         actC();
         this.width = width;
         this.height = height;
-        image = new BufferedImage(width, height, standardImageType);
     }
 
     /**
@@ -91,16 +88,6 @@ public class View
     }
 
     /**
-     * Getter for the image variable.
-     *
-     * @return The image variable (null if in GPU mode).
-     */
-    public BufferedImage getImage()
-    {
-        return image;
-    }
-
-    /**
      * Getter for the background color.
      *
      * @return The background color.
@@ -128,22 +115,12 @@ public class View
         return actView;
     }
 
-    public static int getStandardImageType()
-    {
-        return standardImageType;
-    }
-
     /**
      * Setter for the actual View.
      */
     public static void setActView(View view)
     {
         View.actView = view;
-    }
-
-    public static void setStandardImageType(int standardImageType)
-    {
-        View.standardImageType = standardImageType;
     }
 
     /**

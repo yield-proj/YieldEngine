@@ -68,10 +68,7 @@ public class YldTime
      */
     public void setTargetFPS(float fps)
     {
-        if (game.getSlickApp() != null)
-            game.getSlickApp().setTargetFrameRate((int) fps);
-        else
-            game.getHandler().setFps((int) fps);
+        game.getHandler().setFps((int) fps);
     }
 
     /**

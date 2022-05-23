@@ -17,20 +17,19 @@
 package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
-import com.xebisco.yield.extensions.YieldOverlay;
-import com.xebisco.yield.input.Keys;
 
 public class MyGame extends YldGame
 {
     @Override
-    public void create()
-    {
-        new View(427, 240);
-        input.addShortcut(new Keys(Key.ALT, Key.M), () -> YieldOverlay.setShow(!YieldOverlay.isShow()));
+    public void start() {
+
     }
 
     public static void main(String[] args)
     {
-        launch(new MyGame());
+        GameConfiguration config = new GameConfiguration();
+        config.resizable = true;
+        config.renderMasterName = "com.xebisco.yield.render.swing.SwingPanel";
+        launch(new MyGame(), config);
     }
 }

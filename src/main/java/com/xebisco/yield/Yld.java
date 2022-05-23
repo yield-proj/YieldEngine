@@ -16,11 +16,11 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.extensions.YieldOverlay;
 import com.xebisco.yield.utils.YldAction;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -33,10 +33,11 @@ public final class Yld
     /**
      * The version of the Yield Game Engine.
      */
-    public static final String VERSION = "4 - 1.1.5";
+    public static final String VERSION = "4 - 1.2 dev1";
     /**
      * All the Yield Game Engine messages.
      */
+
     public static final ArrayList<String> MESSAGES = new ArrayList<>();
     /**
      * The standard Random library instance.
@@ -71,7 +72,7 @@ public final class Yld
      */
     public static void message(Object msg)
     {
-        YieldOverlay.setShow(true);
+        //YieldOverlay.setShow(true);
         msg = "(" + new Date() + ") " + msg;
         MESSAGES.add(0, msg.toString());
         if (Yld.MESSAGES.size() > 9)

@@ -16,8 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.input.YldInput;
-
 import java.util.ArrayList;
 
 /**
@@ -43,10 +41,6 @@ public abstract class Component extends YldB
      * The input variable of the scene of this Component.
      */
     protected YldInput input;
-    /**
-     * The graphics variable of the scene of this Component.
-     */
-    protected YldGraphics graphics;
 
     /**
      * Called when this Component is added to an Entity.
@@ -82,6 +76,14 @@ public abstract class Component extends YldB
     @Override
     public void update(float delta)
     {
+
+    }
+
+    /**
+     * Called on every frame of the scene, after the update method.
+     * @param graphics SampleGraphics object
+     */
+    public void render(SampleGraphics graphics) {
 
     }
 
@@ -333,24 +335,6 @@ public abstract class Component extends YldB
     public void setTime(YldTime time)
     {
         this.time = time;
-    }
-
-    /**
-     * Getter of the graphics of this Component.
-     *
-     * @return The graphics variable.
-     */
-    public YldGraphics getGraphics()
-    {
-        return graphics;
-    }
-
-    /**
-     * Setter of the graphics of this Component.
-     */
-    public void setGraphics(YldGraphics graphics)
-    {
-        this.graphics = graphics;
     }
 
     /**

@@ -18,19 +18,18 @@ package com.xebisco.yield;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * An Entity is a combination of Components and other Entities(called children), can contain game logic and be displayed on the screen.
  */
-public final class Entity
+public final class Entity implements Comparable<Entity>
 {
     private ArrayList<Component> components = new ArrayList<>();
-    private ArrayList<Entity> children = new ArrayList<>();
+    private Set<Entity> children = new TreeSet<>();
     private int index = 0;
     private Entity parent;
     private Transform selfTransform;
-    private Renderer renderer;
     private String name;
     private Material material = new Material();
     private static Material defaultMaterial = new Material();
@@ -53,7 +52,6 @@ public final class Entity
         this.scene = scene;
         this.parent = parent;
         addComponent(selfTransform = new Transform());
-        addComponent(renderer = new Renderer());
         material.setColor(defaultMaterial.getColor());
         material.setTexture(defaultMaterial.getTexture());
         material.setLined(defaultMaterial.isLined());
@@ -64,8 +62,9 @@ public final class Entity
      *
      * @param delta The time variation between the last frame and the actual one in seconds.
      */
-    public void process(float delta)
+    public void process(float delta, SampleGraphics graphics)
     {
+        System.out.println(children);
         if (active)
         {
             int i = 0;
@@ -76,6 +75,7 @@ public final class Entity
                 if (component.getFrames() == 1)
                     component.start();
                 component.update(delta);
+                component.render(graphics);
                 i++;
             }
 
@@ -122,11 +122,12 @@ public final class Entity
 
                 i++;
             }
-            i = 0;
-            while (i < children.size())
-            {
-                children.get(i).process(delta);
-                i++;
+            for(Entity child: children) {
+                try {
+                    child.process(delta, graphics);
+                } catch (ConcurrentModificationException ignore) {
+
+                }
             }
             selfTransform.getTransformed().reset();
         }
@@ -144,7 +145,6 @@ public final class Entity
         component.setInput(scene.game.input);
         component.setEntity(this);
         component.setScene(scene);
-        component.setGraphics(scene.graphics);
         component.setTime(scene.time);
         component.create();
         components.add(component);
@@ -222,13 +222,10 @@ public final class Entity
     public <T extends Component> T getComponentInChildren(Class<T> type)
     {
         T component = null;
-        int i = 0;
-        while (i < children.size())
-        {
-            component = children.get(i).getComponent(type);
+        for(Entity child: children) {
+            component = child.getComponent(type);
             if (component != null)
                 break;
-            i++;
         }
         return component;
     }
@@ -290,24 +287,6 @@ public final class Entity
     }
 
     /**
-     * Getter of the renderer variable of this Entity.
-     *
-     * @return The renderer variable.
-     */
-    public Renderer getRenderer()
-    {
-        return renderer;
-    }
-
-    /**
-     * Setter of the renderer variable of this Entity.
-     */
-    public void setRenderer(Renderer renderer)
-    {
-        this.renderer = renderer;
-    }
-
-    /**
      * Getter of the scene variable of this Entity.
      *
      * @return The scene variable.
@@ -365,6 +344,7 @@ public final class Entity
         if (prefab != null)
             name = prefab.getClass().getName();
         Entity entity = new Entity(name, scene, null);
+        entity.setIndex(index + 1);
         addChild(entity);
         if (prefab != null)
             prefab.create(entity);
@@ -388,10 +368,7 @@ public final class Entity
      */
     public <E extends Prefab> void destroy(Class<E> type)
     {
-        int i = 0;
-        while (i < children.size())
-        {
-            Entity e = children.get(i);
+        for(Entity e: children) {
             if (e.getName().hashCode() == type.getName().hashCode())
             {
                 if (e.getName().equals(name))
@@ -400,7 +377,6 @@ public final class Entity
                     break;
                 }
             }
-            i++;
         }
     }
 
@@ -426,7 +402,7 @@ public final class Entity
      *
      * @return The children list.
      */
-    public ArrayList<Entity> getChildren()
+    public Set<Entity> getChildren()
     {
         return children;
     }
@@ -494,10 +470,19 @@ public final class Entity
         }
     }
 
+    @Override
+    public String toString() {
+        return "Entity{" +
+                "components=" + components +
+                ", children=" + children +
+                ", tag='" + tag + '\'' +
+                '}';
+    }
+
     /**
      * Setter of the children list of this Entity.
      */
-    public void setChildren(ArrayList<Entity> children)
+    public void setChildren(Set<Entity> children)
     {
         this.children = children;
     }
@@ -525,36 +510,7 @@ public final class Entity
      */
     public int getIndex()
     {
-        if (parent != null && index == -1)
-            return parent.getChildren().indexOf(this);
-        else return index;
-    }
-
-    /**
-     * @return The render index of this Entity. (influenced by the parent Entity)
-     */
-    public int getEntityIndex()
-    {
-        int index = getIndex(), max = 0;
-        if (parent != null && parent.getParent() != null)
-        {
-            for (int i = 0; i < index; i++)
-            {
-                Entity e = null;
-                try
-                {
-                    e = parent.getParent().getChildren().get(i);
-                } catch (IndexOutOfBoundsException ignore)
-                {
-                }
-
-                if (e != null)
-                    if (e.getEntityIndex() > max)
-                        max = e.getEntityIndex();
-
-            }
-        }
-        return index + max;
+        return index;
     }
 
     /**
@@ -618,4 +574,11 @@ public final class Entity
     {
         this.active = active;
     }
+
+    @Override
+    public int compareTo(Entity o) {
+        return Integer.compare(index, o.getIndex());
+    }
+
+
 }

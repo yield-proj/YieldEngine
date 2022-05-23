@@ -17,24 +17,9 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.engine.GameHandler;
-import com.xebisco.yield.engine.YldWindow;
-import com.xebisco.yield.exceptions.AlreadyStartedException;
-import com.xebisco.yield.extensions.YieldOverlay;
-import com.xebisco.yield.input.YldInput;
-import com.xebisco.yield.slick.SlickGame;
 import com.xebisco.yield.utils.ChangeScene;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.LWJGLUtil;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.SlickException;
 
-import java.io.File;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Objects;
 
 /**
  * This class is the starting point for every Yield Game, it contains all the objects of the game.
@@ -46,9 +31,10 @@ public class YldGame extends YldScene
 {
     private GameConfiguration configuration;
     private boolean started = false;
-    private YldWindow window;
+
+    private SampleWindow window;
+
     private GameHandler handler;
-    private final ArrayList<YldExtension> extensions = new ArrayList<>();
     /**
      * All the scenes that are in this YldGame instance.
      *
@@ -61,59 +47,11 @@ public class YldGame extends YldScene
      * @since 4_alpha1
      */
     protected YldScene scene;
-    private SlickGame slickGame;
-    private AppGameContainer slickApp;
-    /**
-     * This variable tells if the last YldGame instance is hardware accelerated.
-     *
-     * @since 4_1.1
-     */
-    public static boolean lwjgl;
 
     @Override
     public void start()
     {
 
-    }
-
-    /**
-     * Sets the game window (YldWindow if CPU, Display if GPU) to fullscreen or windowed.
-     *
-     * @param fullscreen To set to fullscreen or windowed.
-     * @since 4_1.1
-     */
-    public void setFullscreen(boolean fullscreen)
-    {
-        if (window != null)
-        {
-            if (!fullscreen)
-                window.toWindow(getConfiguration());
-            else
-                window.toFullscreen(getConfiguration());
-        }
-        else
-        {
-            try
-            {
-                if (fullscreen)
-                    Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
-                else
-                {
-                    Display.setDisplayMode(new DisplayMode(
-                            configuration.width, configuration.height));
-                    Display.setFullscreen(false);
-                }
-                slickApp.reinit();
-            } catch (LWJGLException | SlickException e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public static void launch(YldGame game)
-    {
-        launch(game, GameConfiguration.iniConfig(new Ini(YldGame.class.getResourceAsStream("/yieldconfig/game.ini"))));
     }
 
     /**
@@ -125,96 +63,15 @@ public class YldGame extends YldScene
      */
     public static void launch(YldGame game, GameConfiguration configuration)
     {
-        Locale.setDefault(Locale.US);
-        if (View.getActView() == null)
-        {
-            new View(1280, 720);
-        }
-        if (configuration.hardwareAcceleration)
-        {
-            Yld.log("WARNING: hardware acceleration is a experimental feature!");
-
-            if (configuration.autoNativesPath)
-            {
-                String lwjglNatives = "";
-                try
-                {
-                    switch (LWJGLUtil.getPlatform())
-                    {
-                        case LWJGLUtil.PLATFORM_WINDOWS:
-                            lwjglNatives = new File(Objects.requireNonNull(YldGame.class.getResource("/com/xebisco/yield/native/windows")).toURI()).getAbsolutePath();
-                            break;
-                        case LWJGLUtil.PLATFORM_MACOSX:
-                            lwjglNatives = new File(Objects.requireNonNull(YldGame.class.getResource("/com/xebisco/yield/native/macosx")).toURI()).getAbsolutePath();
-                            break;
-                        case LWJGLUtil.PLATFORM_LINUX:
-                            lwjglNatives = new File(Objects.requireNonNull(YldGame.class.getResource("/com/xebisco/yield/native/linux")).toURI()).getAbsolutePath();
-                            break;
-                    }
-                } catch (URISyntaxException ignore)
-                {
-                }
-                System.setProperty("org.lwjgl.librarypath", lwjglNatives);
-                System.setProperty("net.java.games.input.librarypath", lwjglNatives);
-            }
-        }
-        game.game = game;
-        if (game.started)
-            throw new AlreadyStartedException();
-        game.started = true;
-        game.configuration = configuration;
-        if (configuration.title == null)
-            configuration.title = game.getClass().getSimpleName() + " (Yield " + Yld.VERSION + ")";
-
-        game.handler = new GameHandler(game);
-        game.setGraphics(new YldGraphics());
-        if (!configuration.hardwareAcceleration)
-        {
-            if (configuration.startYldWindow)
-            {
-                game.window = new YldWindow();
-                game.window.getFrame().setTitle(configuration.title);
-                game.window.getWindowG().setHandler(game.handler);
-                if (!configuration.fullscreen)
-                    game.window.toWindow(configuration);
-                else
-                    game.window.toFullscreen(configuration);
-                game.window.setGraphics(game.getGraphics());
-            }
-        }
-        else
-        {
-            lwjgl = true;
-            try
-            {
-                game.slickApp = new AppGameContainer(game.slickGame = new SlickGame(game), game.configuration.width, game.configuration.height, game.configuration.fullscreen);
-            } catch (SlickException e)
-            {
-                e.printStackTrace();
-            }
-        }
+        new View(1280, 720);
+        game.setConfiguration(configuration);
         game.addScene(game);
         game.setScene(game);
-        if (game.slickApp != null)
-        {
-            try
-            {
-                game.slickApp.start();
-                game.input = new YldInput(null, game.slickApp);
-            } catch (SlickException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        else
-        {
-            game.addExtension(new YieldOverlay());
-            game.input = new YldInput(game.window, null);
-            game.handler.getThread().start();
-        }
+        game.setHandler(new GameHandler(game));
+        game.getHandler().getThread().start();
     }
 
-    public final void updateScene(float delta)
+    public final void updateScene(float delta, SampleGraphics graphics)
     {
         if (scene.getFrames() == 0)
             scene.create();
@@ -225,17 +82,7 @@ public class YldGame extends YldScene
             scene.setCallStart(false);
         }
         scene.update(delta);
-        scene.process(delta);
-    }
-
-    /**
-     * Getter for the window variable.
-     *
-     * @return The window variable (null if in GPU Mode).
-     */
-    public YldWindow getWindow()
-    {
-        return window;
+        scene.process(delta, graphics);
     }
 
     public boolean isStarted()
@@ -271,75 +118,10 @@ public class YldGame extends YldScene
         this.handler = handler;
     }
 
-    /**
-     * Adds and sets the passed extension to the extensions list.
-     *
-     * @param extension The extension to be added.
-     */
-    public void addExtension(YldExtension extension)
-    {
-        extension.create();
-        extension.setGame(this);
-        extensions.add(extension);
-    }
-
     @Override
     public void onDestroy()
     {
         super.onDestroy();
-    }
-
-    /**
-     * Search for all the extensions in the extensions list.
-     *
-     * @param type The class type of the extension that's being searched.
-     * @return The extension found (null if not found)
-     */
-    public <T extends YldExtension> YldExtension getExtension(Class<T> type)
-    {
-        YldExtension extension = null;
-        for (YldExtension e : extensions)
-        {
-            if (e.getClass().getName().hashCode() == type.getName().hashCode())
-            {
-                if (e.getClass().getName().equals(type.getName()))
-                {
-                    extension = e;
-                    break;
-                }
-            }
-        }
-        return extension;
-    }
-
-    /**
-     * Removes an extension of the given type in the extensions list.
-     *
-     * @param type The extension type to be removed.
-     */
-    public <T extends YldExtension> void removeExtension(Class<T> type)
-    {
-        for (YldExtension e : extensions)
-        {
-            if (e.getClass().getName().hashCode() == type.getName().hashCode())
-            {
-                if (e.getClass().getName().equals(type.getName()))
-                {
-                    extensions.remove(e);
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * Getter for the extensions list.
-     *
-     * @return The extensions list.
-     */
-    public ArrayList<YldExtension> getExtensions()
-    {
-        return extensions;
     }
 
     /**
@@ -390,6 +172,14 @@ public class YldGame extends YldScene
     public void setScene(YldScene scene)
     {
         this.scene = scene;
+    }
+
+    public SampleWindow getWindow() {
+        return window;
+    }
+
+    public void setWindow(SampleWindow window) {
+        this.window = window;
     }
 
     @Deprecated
@@ -464,49 +254,5 @@ public class YldGame extends YldScene
     public void setStarted(boolean started)
     {
         this.started = started;
-    }
-
-    /**
-     * Setter for the window variable.
-     */
-    public void setWindow(YldWindow window)
-    {
-        this.window = window;
-    }
-
-    /**
-     * Getter for the slickGame variable.
-     *
-     * @return The slickGame variable (null if in CPU mode)
-     */
-    public SlickGame getSlickGame()
-    {
-        return slickGame;
-    }
-
-    /**
-     * Setter for the slickGame variable.
-     */
-    public void setSlickGame(SlickGame slickGame)
-    {
-        this.slickGame = slickGame;
-    }
-
-    /**
-     * Getter for the slickApp variable.
-     *
-     * @return The slickApp variable (null if in CPU mode)
-     */
-    public AppGameContainer getSlickApp()
-    {
-        return slickApp;
-    }
-
-    /**
-     * Setter for the slickApp variable.
-     */
-    public void setSlickApp(AppGameContainer slickApp)
-    {
-        this.slickApp = slickApp;
     }
 }

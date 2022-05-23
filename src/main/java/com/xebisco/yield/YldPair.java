@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,16 +16,32 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.config.WindowConfiguration;
-
 /**
- * This is the standard configuration class used to launch YldGames, all the properties can be modified.
- * @since 4_alpha1
+ * @since 4-1.2
  * @author Xebisco
  */
-public class GameConfiguration extends WindowConfiguration
-{
-    public int fps = 60;
-    public boolean fpsLock = true;
-    public String appName, renderMasterName;
+public class YldPair<F, S> {
+    private F first;
+    private S second;
+
+    public YldPair(F first, S second) {
+        this.first = first;
+        this.second = second;
+    }
+
+    public F getFirst() {
+        return first;
+    }
+
+    public void setFirst(F first) {
+        this.first = first;
+    }
+
+    public S getSecond() {
+        return second;
+    }
+
+    public void setSecond(S second) {
+        this.second = second;
+    }
 }
