@@ -64,7 +64,6 @@ public final class Entity implements Comparable<Entity>
      */
     public void process(float delta, SampleGraphics graphics)
     {
-        System.out.println(children);
         if (active)
         {
             int i = 0;

@@ -16,20 +16,13 @@
 
 package com.xebisco.yield;
 
-public class Circle extends Oval {
-    private float radius = 64;
+public class Sprite extends Shape {
     @Override
-    public void update(float delta) {
-        super.update(delta);
-        setWidth(radius);
-        setHeight(radius);
-    }
-
-    public float getRadius() {
-        return radius;
-    }
-
-    public void setRadius(float radius) {
-        this.radius = radius;
+    public void render(SampleGraphics graphics) {
+        super.render(graphics);
+        if (getMaterial().getTexture() != null) {
+            graphics.drawTexture(getMaterial().getTexture(), transform.position, getSize().mul(transform.scale));}
+        else
+            graphics.drawTexture(game.getYieldLogo(), transform.position, getSize().mul(transform.scale));
     }
 }

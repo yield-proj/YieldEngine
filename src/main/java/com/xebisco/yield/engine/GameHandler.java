@@ -81,7 +81,7 @@ public class GameHandler extends Engine {
             renderMaster.frameStart();
             if (renderMaster.canStart())
                 game.updateScene(delta, sampleGraphics);
-            renderMaster.frameEnd();
+            renderMaster.frameEnd(game.getScene().getView());
 
             end = System.nanoTime();
             if (game.getConfiguration().fpsLock) {

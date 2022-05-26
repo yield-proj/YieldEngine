@@ -16,27 +16,26 @@
 
 package com.xebisco.yield;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
-/**
- * A primitive class for a relative file.
- */
 public class RelativeFile {
+    private InputStream inputStream;
     private URL url;
-    private String path, relativePath;
 
-    public RelativeFile(final String relativePath) {
-        this.relativePath = relativePath;
-        if(relativePath.hashCode() != "".hashCode()) {
-            try {
-                path = new File(".", relativePath).getCanonicalPath();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            url = getClass().getResource(relativePath);
-        }
+    public RelativeFile(String relativePath) {
+        if (!relativePath.startsWith("/"))
+            relativePath = "/" + relativePath;
+        inputStream = Yld.class.getResourceAsStream(relativePath);
+        url = Yld.class.getResource(relativePath);
+    }
+
+    public InputStream getInputStream() {
+        return inputStream;
+    }
+
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
     }
 
     public URL getUrl() {
@@ -45,21 +44,5 @@ public class RelativeFile {
 
     public void setUrl(URL url) {
         this.url = url;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getRelativePath() {
-        return relativePath;
-    }
-
-    public void setRelativePath(String relativePath) {
-        this.relativePath = relativePath;
     }
 }

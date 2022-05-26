@@ -45,4 +45,6 @@ public interface SampleGraphics
     float getStringHeight(String str);
 
     float getStringHeight(String str, String font);
+
+    void custom(String instruction, Object... args);
 }

@@ -23,6 +23,13 @@ package com.xebisco.yield;
  */
 public class Key
 {
+    public static final int MOUSE_1 = -2;
+    public static final int MOUSE_2 = -3;
+    public static final int MOUSE_3 = -4;
+    public static final int MOUSE_4 = -5;
+    public static final int MOUSE_5 = -6;
+    public static final int MOUSE_6 = -7;
+    public static final int MOUSE_7 = -8;
     public static final int ENTER = '\n';
     public static final int BACK_SPACE = '\b';
     public static final int TAB = '\t';

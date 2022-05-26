@@ -18,6 +18,7 @@ package com.xebisco.yield.render;
 
 import com.xebisco.yield.SampleGraphics;
 import com.xebisco.yield.SampleWindow;
+import com.xebisco.yield.View;
 import com.xebisco.yield.config.WindowConfiguration;
 
 import java.util.Set;
@@ -34,11 +35,15 @@ public interface RenderMaster extends VisualUtils {
 
     void frameStart();
 
-    void frameEnd();
+    void frameEnd(View view);
 
     boolean canStart();
 
     Set<Integer> pressing();
+
+    int mouseX();
+
+    int mouseY();
 
     void close();
 }

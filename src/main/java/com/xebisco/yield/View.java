@@ -23,6 +23,7 @@ import java.awt.image.BufferedImage;
  */
 public class View
 {
+    @Deprecated
     private static View actView;
     private final int width, height;
     private static YldCamera defaultCamera = new YldCamera();
@@ -45,15 +46,15 @@ public class View
     /**
      * @return The middle point of the actual View.
      */
-    public static Vector2 mid()
+    public Vector2 mid()
     {
-        return new Vector2(View.getActView().getWidth() / 2f, View.getActView().getHeight() / 2f);
+        return new Vector2(getWidth() / 2f, getHeight() / 2f);
     }
 
     /**
      * @return The upper left point of the actual View.
      */
-    public static Vector2 leftUp()
+    public Vector2 leftUp()
     {
         return new Vector2(0, 0);
     }
@@ -61,25 +62,25 @@ public class View
     /**
      * @return The downer left point of the actual View.
      */
-    public static Vector2 leftDown()
+    public Vector2 leftDown()
     {
-        return new Vector2(0, View.getActView().getHeight() / 2f);
+        return new Vector2(0, getHeight() / 2f);
     }
 
     /**
      * @return The upper right point of the actual View.
      */
-    public static Vector2 rightUp()
+    public Vector2 rightUp()
     {
-        return new Vector2(View.getActView().getWidth() / 2f, 0);
+        return new Vector2(getWidth() / 2f, 0);
     }
 
     /**
      * @return The downer right point of the actual View.
      */
-    public static Vector2 rightDown()
+    public Vector2 rightDown()
     {
-        return new Vector2(View.getActView().getWidth() / 2f, View.getActView().getHeight() / 2f);
+        return new Vector2(getWidth() / 2f, getHeight() / 2f);
     }
 
     private void actC()
@@ -110,6 +111,7 @@ public class View
      *
      * @return The actual View.
      */
+    @Deprecated
     public static View getActView()
     {
         return actView;
@@ -118,6 +120,7 @@ public class View
     /**
      * Setter for the actual View.
      */
+    @Deprecated
     public static void setActView(View view)
     {
         View.actView = view;

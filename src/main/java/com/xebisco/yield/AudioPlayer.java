@@ -16,9 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.AudioClip;
-import com.xebisco.yield.Component;
-
 import javax.sound.sampled.*;
 import java.io.IOException;
 

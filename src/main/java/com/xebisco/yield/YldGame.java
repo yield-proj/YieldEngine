@@ -19,6 +19,7 @@ package com.xebisco.yield;
 import com.xebisco.yield.engine.GameHandler;
 import com.xebisco.yield.utils.ChangeScene;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 /**
@@ -33,6 +34,8 @@ public class YldGame extends YldScene
     private boolean started = false;
 
     private SampleWindow window;
+
+    private Texture yieldLogo;
 
     private GameHandler handler;
     /**
@@ -63,11 +66,12 @@ public class YldGame extends YldScene
      */
     public static void launch(YldGame game, GameConfiguration configuration)
     {
-        new View(1280, 720);
         game.setConfiguration(configuration);
         game.addScene(game);
         game.setScene(game);
+        game.setInput(new YldInput(game));
         game.setHandler(new GameHandler(game));
+        game.load(game.yieldLogo = new Texture("com/xebisco/yield/assets/yieldlogo.png"));
         game.getHandler().getThread().start();
     }
 
@@ -204,6 +208,14 @@ public class YldGame extends YldScene
         setScene(scene);
     }
 
+    public void load(Texture texture) {
+        handler.getRenderMaster().loadTexture(texture);
+    }
+
+    public void unload(Texture texture) {
+        handler.getRenderMaster().unloadTexture(texture);
+    }
+
     /**
      * Method to instantiate a scene and set it as the actual scene.
      *
@@ -254,5 +266,9 @@ public class YldGame extends YldScene
     public void setStarted(boolean started)
     {
         this.started = started;
+    }
+
+    public Texture getYieldLogo() {
+        return yieldLogo;
     }
 }

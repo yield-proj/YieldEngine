@@ -16,10 +16,11 @@
 
 package com.xebisco.yield;
 
-public class Oval extends Rectangle {
+public class Oval extends Shape {
+
     @Override
-    public void process(Obj obj) {
-        super.process(obj);
-        obj.type = Obj.ShapeType.OVAL;
+    public void render(SampleGraphics graphics) {
+        super.render(graphics);
+        graphics.drawOval(transform.position, getSize().mul(transform.scale), getColor(), isFilled());
     }
 }

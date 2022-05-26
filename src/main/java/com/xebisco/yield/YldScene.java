@@ -32,6 +32,9 @@ public class YldScene extends YldB
 
     private int frames, ppm;
     private Entity masterEntity;
+
+    protected View view = new View(1280, 720);
+
     private ArrayList<YldSystem> systems = new ArrayList<>();
     /**
      * Contains all the input information about the scene.
@@ -270,5 +273,13 @@ public class YldScene extends YldB
     public void setPpm(int ppm)
     {
         this.ppm = ppm;
+    }
+
+    public View getView() {
+        return view;
+    }
+
+    public void setView(View view) {
+        this.view = view;
     }
 }

@@ -33,7 +33,7 @@ public final class Yld
     /**
      * The version of the Yield Game Engine.
      */
-    public static final String VERSION = "4 - 1.2 dev1";
+    public static final String VERSION = "4 - 1.2 dev";
     /**
      * All the Yield Game Engine messages.
      */
@@ -102,6 +102,16 @@ public final class Yld
     {
         if (!debug)
             action.onAction();
+    }
+
+    public static int clamp(int value, int min, int max) {
+        if(value > max) return max;
+        return Math.max(value, min);
+    }
+
+    public static float clamp(float value, float min, float max) {
+        if(value > max) return max;
+        return Math.max(value, min);
     }
 
     /**

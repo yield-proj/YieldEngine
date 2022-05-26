@@ -27,6 +27,8 @@ import java.io.InputStream;
  */
 public interface VisualUtils {
     void loadTexture(Texture texture);
+
+    void unloadTexture(Texture texture);
     void loadFont(String fontName, int fontSize, int fontStyle);
 
     void loadFont(String fontName, int fontFormat, InputStream inputStream);

@@ -16,5 +16,11 @@
 
 package com.xebisco.yield;
 
-public class Rectangle extends Component {
+public class Rectangle extends Shape
+{
+    @Override
+    public void render(SampleGraphics graphics) {
+        super.render(graphics);
+        graphics.drawRect(transform.position, getSize().mul(transform.scale), getColor(), isFilled());
+    }
 }

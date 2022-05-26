@@ -24,12 +24,16 @@ import com.xebisco.yield.render.RenderMaster;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -37,7 +41,7 @@ import java.util.Set;
  * @author Xebisco
  * @since 4-1.2
  */
-public class SwingPanel extends JPanel implements RenderMaster {
+public class SwingYield extends JPanel implements RenderMaster, KeyListener, MouseListener {
 
     private Graphics g;
 
@@ -49,8 +53,14 @@ public class SwingPanel extends JPanel implements RenderMaster {
 
     private BufferedImage image = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
 
+    private final Set<Integer> pressing = new HashSet<>();
+
     private HashMap<Integer, BufferedImage> images = new HashMap<>();
     private HashMap<String, Font> fonts = new HashMap<>();
+
+    private static BufferedImage yieldImage;
+
+    private View view;
 
     public static java.awt.Color toAWTColor(Color color) {
         return new java.awt.Color(color.getR(), color.getG(), color.getB(), color.getA());
@@ -157,21 +167,44 @@ public class SwingPanel extends JPanel implements RenderMaster {
             public float getStringHeight(String str, String font) {
                 return (float) g.getFontMetrics(fonts.get(font)).getStringBounds(str, g).getHeight();
             }
+
+            @Override
+            public void custom(String instruction, Object... args) {
+
+            }
         };
     }
 
     @Override
     public SampleWindow initWindow(WindowConfiguration configuration) {
         frame = new JFrame();
-        frame.setSize(configuration.width, configuration.height);
         frame.setResizable(configuration.resizable);
         frame.setAlwaysOnTop(configuration.alwaysOnTop);
         frame.setTitle(configuration.title);
         frame.setUndecorated(configuration.undecorated);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
         frame.add(this);
+        frame.setIconImage(new ImageIcon(Objects.requireNonNull(SwingYield.class.getResource(configuration.internalIconPath))).getImage());
         frame.setVisible(true);
+        frame.setSize(configuration.width + frame.getInsets().right + frame.getInsets().left, configuration.height + frame.getInsets().top + frame.getInsets().bottom);
+        frame.setLocationRelativeTo(null);
+        frame.addKeyListener(this);
+        frame.addMouseListener(this);
+        if (yieldImage == null) {
+            try {
+                yieldImage = ImageIO.read(Objects.requireNonNull(Yld.class.getResourceAsStream("assets/yieldlogo.png")));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (Yld.debug) {
+            repaint();
+            try {
+                Thread.sleep(600);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return new SampleWindow() {
             @Override
             public int getWidth() {
@@ -187,16 +220,27 @@ public class SwingPanel extends JPanel implements RenderMaster {
 
     @Override
     protected void paintComponent(Graphics g) {
-        if (defTransform == null)
-            defTransform = ((Graphics2D) g).getTransform();
-        if (image.getWidth() != View.getActView().getWidth() || image.getHeight() != View.getActView().getHeight()) {
-            image = new BufferedImage(View.getActView().getWidth(), View.getActView().getHeight(), BufferedImage.TYPE_INT_RGB);
+        if (view != null) {
+            if (defTransform == null)
+                defTransform = ((Graphics2D) g).getTransform();
+            if (image.getWidth() != view.getWidth() || image.getHeight() != view.getHeight()) {
+                image = new BufferedImage(view.getWidth(), view.getHeight(), BufferedImage.TYPE_INT_RGB);
+            }
+            this.g = image.getGraphics();
+            g.drawImage(image, 0, 0, frame.getWidth() - frame.getInsets().right - frame.getInsets().left, frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom, null);
+            this.g.setColor(toAWTColor(view.getBgColor()));
+            this.g.fillRect(0, 0, image.getWidth(), image.getHeight());
+            started = true;
+        } else {
+            if (yieldImage == null) {
+                g.setColor(java.awt.Color.BLACK);
+                g.fillRect(0, 0, getWidth(), getHeight());
+            } else {
+                g.setColor(java.awt.Color.WHITE);
+                g.fillRect(0, 0, getWidth(), getHeight());
+                g.drawImage(yieldImage, getWidth() / 2 - yieldImage.getWidth() / 2, getHeight() / 2 - yieldImage.getHeight() / 2, null);
+            }
         }
-        this.g = image.getGraphics();
-        g.drawImage(image, 0, 0, frame.getWidth(), frame.getHeight(), null);
-        this.g.setColor(toAWTColor(View.getActView().getBgColor()));
-        this.g.fillRect(0, 0, image.getWidth(), image.getHeight());
-        started = true;
     }
 
     @Override
@@ -205,7 +249,8 @@ public class SwingPanel extends JPanel implements RenderMaster {
     }
 
     @Override
-    public void frameEnd() {
+    public void frameEnd(View view) {
+        this.view = view;
         repaint();
     }
 
@@ -217,10 +262,15 @@ public class SwingPanel extends JPanel implements RenderMaster {
     @Override
     public void loadTexture(Texture texture) {
         try {
-            images.put(texture.getTextureID(), ImageIO.read(Objects.requireNonNull(SwingPanel.class.getResourceAsStream(texture.getRelativePath()))));
+            images.put(texture.getTextureID(), ImageIO.read(Objects.requireNonNull(texture.getInputStream())));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void unloadTexture(Texture texture) {
+        images.remove(texture.getTextureID());
     }
 
     @Override
@@ -239,7 +289,7 @@ public class SwingPanel extends JPanel implements RenderMaster {
 
     @Override
     public Set<Integer> pressing() {
-        return null;
+        return pressing;
     }
 
     @Override
@@ -250,6 +300,31 @@ public class SwingPanel extends JPanel implements RenderMaster {
     @Override
     public int getTextureHeight(int textureId) {
         return images.get(textureId).getHeight();
+    }
+
+    @Override
+    public int mouseX() {
+        return Yld.clamp((int) (((float) MouseInfo.getPointerInfo().getLocation().x - frame.getInsets().left - frame.getInsets().right - frame.getX()) / (float) getWidth() * (float) view.getWidth()), 0, view.getWidth());
+    }
+
+    @Override
+    public int mouseY() {
+        return Yld.clamp((int) (((float) MouseInfo.getPointerInfo().getLocation().y - frame.getInsets().top - frame.getInsets().bottom - frame.getY()) / (float) getHeight() * (float) view.getHeight()), 0, view.getHeight());
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        pressing.add(e.getKeyCode());
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        pressing.remove(e.getKeyCode());
     }
 
     @Override
@@ -279,5 +354,74 @@ public class SwingPanel extends JPanel implements RenderMaster {
 
     public void setFonts(HashMap<String, Font> fonts) {
         this.fonts = fonts;
+    }
+
+    public static BufferedImage getYieldImage() {
+        return yieldImage;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
+    }
+
+    public JFrame getFrame() {
+        return frame;
+    }
+
+    public void setFrame(JFrame frame) {
+        this.frame = frame;
+    }
+
+    public AffineTransform getDefTransform() {
+        return defTransform;
+    }
+
+    public void setDefTransform(AffineTransform defTransform) {
+        this.defTransform = defTransform;
+    }
+
+    public BufferedImage getImage() {
+        return image;
+    }
+
+    public void setImage(BufferedImage image) {
+        this.image = image;
+    }
+
+    public View getView() {
+        return view;
+    }
+
+    public void setView(View view) {
+        this.view = view;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        pressing.add(-e.getButton() - 1);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        pressing.remove(-e.getButton() - 1);
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }

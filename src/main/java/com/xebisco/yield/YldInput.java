@@ -16,5 +16,39 @@
 
 package com.xebisco.yield;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class YldInput {
+    private final YldGame game;
+    private final Set<Integer> pressing = new HashSet<>();
+
+    public YldInput(YldGame game) {
+        this.game = game;
+    }
+
+    public boolean isPressed(int key) {
+        return game.getHandler().getRenderMaster().pressing().contains(key);
+    }
+
+    public boolean isJustPressed(int key) {
+        boolean pressing = game.getHandler().getRenderMaster().pressing().contains(key);
+        if(pressing) {
+            if(!this.pressing.contains(key)) {
+                this.pressing.add(key);
+                return true;
+            }
+        } else {
+            this.pressing.remove(key);
+        }
+        return false;
+    }
+
+    public Vector2 getMouse() {
+        return new Vector2(game.getHandler().getRenderMaster().mouseX(), game.getHandler().getRenderMaster().mouseY());
+    }
+
+    public YldGame getGame() {
+        return game;
+    }
 }
