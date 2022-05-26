@@ -16,7 +16,7 @@
 
 package com.xebisco.yield;
 
-public class Sprite extends Shape {
+public class Sprite extends NonFillShape {
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);

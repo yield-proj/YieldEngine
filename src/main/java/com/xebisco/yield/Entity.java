@@ -19,6 +19,7 @@ package com.xebisco.yield;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * An Entity is a combination of Components and other Entities(called children), can contain game logic and be displayed on the screen.
@@ -26,7 +27,7 @@ import java.util.*;
 public final class Entity implements Comparable<Entity>
 {
     private ArrayList<Component> components = new ArrayList<>();
-    private Set<Entity> children = new TreeSet<>();
+    private Set<Entity> children = new HashSet<>();
     private int index = 0;
     private Entity parent;
     private Transform selfTransform;
@@ -342,12 +343,11 @@ public final class Entity implements Comparable<Entity>
         String name = "Entity";
         if (prefab != null)
             name = prefab.getClass().getName();
-        Entity entity = new Entity(name, scene, null);
+        Entity entity = new Entity(name, scene, this);
         entity.setIndex(index + 1);
-        addChild(entity);
         if (prefab != null)
             prefab.create(entity);
-        return entity;
+        return addChild(entity);
     }
 
     /**
@@ -414,7 +414,7 @@ public final class Entity implements Comparable<Entity>
     }
 
     /**
-     * Adds a Entity to the children list.
+     * Adds an Entity to the children list.
      *
      * @param child The Entity to be added.
      * @return The added Entity.
@@ -423,6 +423,11 @@ public final class Entity implements Comparable<Entity>
     {
         child.setParent(this);
         children.add(child);
+        ArrayList<Entity> temp = new ArrayList<>(children);
+        temp.sort(Entity::compareTo);
+        children = new HashSet<>(temp);
+        temp = null;
+        System.gc();
         return child;
     }
 
@@ -578,6 +583,4 @@ public final class Entity implements Comparable<Entity>
     public int compareTo(Entity o) {
         return Integer.compare(index, o.getIndex());
     }
-
-
 }

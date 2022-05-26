@@ -18,15 +18,21 @@ package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
 
-public class MyGame extends YldGame
-{
+public class MyGame extends YldGame {
+
+    Entity e;
     @Override
     public void start() {
-        graphics.text("Hello, World!").getSelfTransform().goTo(view.mid());
+        e = graphics.text("Hello, World!");
+        e.getSelfTransform().goTo(view.mid());
     }
 
-    public static void main(String[] args)
-    {
+    @Override
+    public void update(float delta) {
+        e.getComponent(Text.class).getSelfTransform().rotate(100 * delta);
+    }
+
+    public static void main(String[] args) {
         Yld.debug = true;
         GameConfiguration config = new GameConfiguration();
         config.renderMasterName = "com.xebisco.yield.render.swing.SwingYield";

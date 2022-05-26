@@ -16,20 +16,9 @@
 
 package com.xebisco.yield;
 
-public class Shape extends Component {
-    private boolean filled = true, forceAngle;
-    private Color color = Colors.CYAN;
+public class Shape extends NonFillShape {
+    private boolean filled = true;
     private Vector2 size = new Vector2(64, 64);
-
-    private float angle;
-
-    @Override
-    public void render(SampleGraphics graphics) {
-        float angle = transform.rotation + this.angle;
-        if(forceAngle)
-            angle = this.angle;
-        graphics.setRotation(transform.position, angle);
-    }
 
     public boolean isFilled() {
         return filled;
@@ -39,27 +28,13 @@ public class Shape extends Component {
         this.filled = filled;
     }
 
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
+    @Override
     public Vector2 getSize() {
         return size;
     }
 
+    @Override
     public void setSize(Vector2 size) {
         this.size = size;
-    }
-
-    public boolean isForceAngle() {
-        return forceAngle;
-    }
-
-    public void setForceAngle(boolean forceAngle) {
-        this.forceAngle = forceAngle;
     }
 }

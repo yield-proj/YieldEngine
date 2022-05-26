@@ -28,4 +28,6 @@ public class GameConfiguration extends WindowConfiguration
     public int fps = 60;
     public boolean fpsLock = true;
     public String appName, renderMasterName;
+
+    public int framesToGarbageCollection = 300;
 }

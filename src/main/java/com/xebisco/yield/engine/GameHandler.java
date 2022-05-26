@@ -30,6 +30,8 @@ public class GameHandler extends Engine {
     private int fps;
     private Engine defaultConcurrentEngine;
 
+    private int framesToGarbageCollectionCount;
+
     private boolean canRenderNext;
 
     public GameHandler(YldGame game) {
@@ -82,7 +84,13 @@ public class GameHandler extends Engine {
             if (renderMaster.canStart())
                 game.updateScene(delta, sampleGraphics);
             renderMaster.frameEnd(game.getScene().getView());
-
+            if(game.getConfiguration().framesToGarbageCollection >= 0) {
+                framesToGarbageCollectionCount++;
+                if(framesToGarbageCollectionCount - game.getConfiguration().framesToGarbageCollection >= 0) {
+                    System.gc();
+                    framesToGarbageCollectionCount = 0;
+                }
+            }
             end = System.nanoTime();
             if (game.getConfiguration().fpsLock) {
                 try {

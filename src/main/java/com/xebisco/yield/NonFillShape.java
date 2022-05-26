@@ -16,28 +16,32 @@
 
 package com.xebisco.yield;
 
-public class Text extends SimpleRenderable {
-    private String contents = "Sample Text", font = "arial";
+public class NonFillShape extends SimpleRenderable {
+    private boolean forceAngle;
+    private Color color = Colors.CYAN;
+    private Vector2 size = new Vector2(64, 64);
 
-    @Override
-    public void render(SampleGraphics graphics) {
-        super.render(graphics);
-        graphics.drawString(contents, getColor(), transform.position, font);
+    public Color getColor() {
+        return color;
     }
 
-    public String getContents() {
-        return contents;
+    public void setColor(Color color) {
+        this.color = color;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
+    public Vector2 getSize() {
+        return size;
     }
 
-    public String getFont() {
-        return font;
+    public void setSize(Vector2 size) {
+        this.size = size;
     }
 
-    public void setFont(String font) {
-        this.font = font;
+    public boolean isForceAngle() {
+        return forceAngle;
+    }
+
+    public void setForceAngle(boolean forceAngle) {
+        this.forceAngle = forceAngle;
     }
 }

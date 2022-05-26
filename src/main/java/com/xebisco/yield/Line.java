@@ -16,13 +16,12 @@
 
 package com.xebisco.yield;
 
-public class Line extends Component {
+public class Line extends SimpleRenderable {
     private Vector2 point2 = new Vector2(10, 10);
-    private Color color = Colors.CYAN;
 
     @Override
     public void render(SampleGraphics graphics) {
-        graphics.drawLine(transform.position, point2.mul(transform.scale), color);
+        graphics.drawLine(transform.position, point2.mul(transform.scale), getColor());
     }
 
     public Vector2 getPoint2() {
@@ -31,13 +30,5 @@ public class Line extends Component {
 
     public void setPoint2(Vector2 point2) {
         this.point2 = point2;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
     }
 }

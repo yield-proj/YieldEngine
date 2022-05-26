@@ -16,28 +16,41 @@
 
 package com.xebisco.yield;
 
-public class Text extends SimpleRenderable {
-    private String contents = "Sample Text", font = "arial";
+public class SimpleRenderable extends Component {
+    private boolean forceAngle;
+    private Color color = Colors.CYAN;
+
+    private float angle;
 
     @Override
     public void render(SampleGraphics graphics) {
-        super.render(graphics);
-        graphics.drawString(contents, getColor(), transform.position, font);
+        float angle = transform.rotation + this.angle;
+        if(forceAngle)
+            angle = this.angle;
+        graphics.setRotation(transform.position, angle);
     }
 
-    public String getContents() {
-        return contents;
+    public Color getColor() {
+        return color;
     }
 
-    public void setContents(String contents) {
-        this.contents = contents;
+    public void setColor(Color color) {
+        this.color = color;
     }
 
-    public String getFont() {
-        return font;
+    public boolean isForceAngle() {
+        return forceAngle;
     }
 
-    public void setFont(String font) {
-        this.font = font;
+    public void setForceAngle(boolean forceAngle) {
+        this.forceAngle = forceAngle;
+    }
+
+    public void setAngle(float angle) {
+        this.angle = angle;
+    }
+
+    public float getAngle() {
+        return angle;
     }
 }

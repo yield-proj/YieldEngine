@@ -147,7 +147,7 @@ public class YldGraphics {
      */
     public Entity img(Texture texture, float x, float y, float width, float height) {
         return e.instantiate((e) -> {
-            Shape r = new Sprite();
+            NonFillShape r = new Sprite();
             e.addComponent(r);
             r.setSize(new Vector2(width, height));
             r.setColor(color);
