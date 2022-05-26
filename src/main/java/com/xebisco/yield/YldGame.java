@@ -19,6 +19,7 @@ package com.xebisco.yield;
 import com.xebisco.yield.engine.GameHandler;
 import com.xebisco.yield.utils.ChangeScene;
 
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
@@ -71,7 +72,8 @@ public class YldGame extends YldScene
         game.setScene(game);
         game.setInput(new YldInput(game));
         game.setHandler(new GameHandler(game));
-        game.load(game.yieldLogo = new Texture("com/xebisco/yield/assets/yieldlogo.png"));
+        game.loadTexture(game.yieldLogo = new Texture("com/xebisco/yield/assets/yieldlogo.png"));
+        game.loadFont("arial", 30, 0);
         game.getHandler().getThread().start();
     }
 
@@ -139,6 +141,7 @@ public class YldGame extends YldScene
         scene.game = this;
         scene.time = new YldTime(this);
         scene.setMasterEntity(new Entity("MasterEntity", scene, null));
+        scene.setGraphics(new YldGraphics(scene.getMasterEntity()));
         scenes.add(scene);
     }
 
@@ -208,12 +211,24 @@ public class YldGame extends YldScene
         setScene(scene);
     }
 
-    public void load(Texture texture) {
+    public void loadTexture(Texture texture) {
         handler.getRenderMaster().loadTexture(texture);
     }
 
-    public void unload(Texture texture) {
+    public void unloadTexture(Texture texture) {
         handler.getRenderMaster().unloadTexture(texture);
+    }
+
+    public void loadFont(String fontName, int format, InputStream inputStream) {
+        handler.getRenderMaster().loadFont(fontName, format, inputStream);
+    }
+
+    public void loadFont(String fontName, int size, int style) {
+        handler.getRenderMaster().loadFont(fontName, size, style);
+    }
+
+    public void unloadFont(String fontName) {
+        handler.getRenderMaster().unloadFont(fontName);
     }
 
     /**

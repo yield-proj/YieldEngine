@@ -33,6 +33,8 @@ public class YldScene extends YldB
     private int frames, ppm;
     private Entity masterEntity;
 
+    protected YldGraphics graphics;
+
     protected View view = new View(1280, 720);
 
     private ArrayList<YldSystem> systems = new ArrayList<>();
@@ -281,5 +283,13 @@ public class YldScene extends YldB
 
     public void setView(View view) {
         this.view = view;
+    }
+
+    public YldGraphics getGraphics() {
+        return graphics;
+    }
+
+    public void setGraphics(YldGraphics graphics) {
+        this.graphics = graphics;
     }
 }

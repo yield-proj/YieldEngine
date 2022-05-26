@@ -14,24 +14,30 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.render;
+package com.xebisco.yield;
 
-import com.xebisco.yield.Texture;
+public class Line extends Component {
+    private Vector2 point2 = new Vector2(10, 10);
+    private Color color = Colors.CYAN;
 
-import java.io.File;
-import java.io.InputStream;
+    @Override
+    public void render(SampleGraphics graphics) {
+        graphics.drawLine(transform.position, point2.mul(transform.scale), color);
+    }
 
-/**
- * @since 4-1.2
- * @author Xebisco
- */
-public interface VisualUtils {
-    void loadTexture(Texture texture);
-    void unloadTexture(Texture texture);
-    void loadFont(String fontName, int fontSize, int fontStyle);
-    void loadFont(String fontName, int fontFormat, InputStream inputStream);
-    void unloadFont(String fontName);
+    public Vector2 getPoint2() {
+        return point2;
+    }
 
-    int getTextureWidth(int textureId);
-    int getTextureHeight(int textureId);
+    public void setPoint2(Vector2 point2) {
+        this.point2 = point2;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
 }

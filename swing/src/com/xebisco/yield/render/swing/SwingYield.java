@@ -123,9 +123,10 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             }
 
             @Override
-            public void drawString(String str, Color color, Vector2 pos) {
+            public void drawString(String str, Color color, Vector2 pos, String fontName) {
                 g.setColor(toAWTColor(color));
-                g.drawString(str, (int) (pos.y - getStringWidth(str) / 2), (int) (pos.y + getStringHeight(str) / 2));
+                setFont(fontName);
+                g.drawString(str, (int) (pos.x - getStringWidth(str) / 2), (int) (pos.y + getStringHeight(str) / 4));
             }
 
             @Override
@@ -178,6 +179,7 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
     @Override
     public SampleWindow initWindow(WindowConfiguration configuration) {
         frame = new JFrame();
+        frame.setSize(configuration.width, configuration.height);
         frame.setResizable(configuration.resizable);
         frame.setAlwaysOnTop(configuration.alwaysOnTop);
         frame.setTitle(configuration.title);
@@ -285,6 +287,11 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void unloadFont(String fontName) {
+        fonts.remove(fontName);
     }
 
     @Override
