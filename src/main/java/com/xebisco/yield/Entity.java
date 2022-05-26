@@ -427,7 +427,6 @@ public final class Entity implements Comparable<Entity>
         temp.sort(Entity::compareTo);
         children = new HashSet<>(temp);
         temp = null;
-        System.gc();
         return child;
     }
 
