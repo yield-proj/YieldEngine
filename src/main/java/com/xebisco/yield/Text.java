@@ -16,13 +16,15 @@
 
 package com.xebisco.yield;
 
-public class Text extends SimpleRenderable {
+public class Text extends NonFillShape {
     private String contents = "Sample Text", font = "arial";
 
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);
-        graphics.drawString(contents, getColor(), transform.position, font);
+        graphics.drawString(contents, getColor(), transform.position, transform.scale, font);
+        getSize().x = graphics.getStringWidth(contents, font);
+        getSize().y = graphics.getStringHeight(contents, font);
     }
 
     public String getContents() {

@@ -219,6 +219,22 @@ public class YldGame extends YldScene
         handler.getRenderMaster().unloadTexture(texture);
     }
 
+    public Texture cutTexture(Texture texture, Vector2 pos, Vector2 size) {
+        return handler.getRenderMaster().cutTexture(texture, (int) pos.x, (int) pos.y, (int) size.x, (int) size.y);
+    }
+
+    public Texture scaleTexture(Texture texture, Vector2 size) {
+        return handler.getRenderMaster().scaleTexture(texture, (int) size.x, (int) size.y);
+    }
+
+    public Color[][] getTextureColors(Texture texture) {
+        return handler.getRenderMaster().getTextureColors(texture);
+    }
+
+    public void setTexturePixels(Texture texture, Color[][] colors) {
+        handler.getRenderMaster().setTextureColors(texture, colors);
+    }
+
     public void loadFont(String fontName, int format, InputStream inputStream) {
         handler.getRenderMaster().loadFont(fontName, format, inputStream);
     }

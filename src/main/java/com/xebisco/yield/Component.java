@@ -353,4 +353,18 @@ public abstract class Component extends YldB
     {
         entity.setTag(tag);
     }
+
+    public void setVisible(boolean visible) {
+        entity.setVisible(visible);
+    }
+    public boolean isVisible() {
+        return entity.isVisible();
+    }
+
+    public void setActive(boolean active) {
+        entity.setActive(active);
+    }
+    public boolean isActive() {
+        return entity.isActive();
+    }
 }

@@ -30,7 +30,7 @@ public interface SampleGraphics
 
     void drawArc(Vector2 pos, Vector2 size, Color color, boolean filled, int startAngle, int arcAngle);
 
-    void drawString(String str, Color color, Vector2 pos, String fontName);
+    void drawString(String str, Color color, Vector2 pos, Vector2 scale, String fontName);
 
     void drawTexture(Texture texture, Vector2 pos, Vector2 size);
 

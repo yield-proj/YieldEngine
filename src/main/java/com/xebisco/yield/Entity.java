@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public final class Entity implements Comparable<Entity>
 {
     private ArrayList<Component> components = new ArrayList<>();
-    private Set<Entity> children = new HashSet<>();
+    private List<Entity> children = new ArrayList<>();
     private int index = 0;
     private Entity parent;
     private Transform selfTransform;
@@ -36,7 +36,7 @@ public final class Entity implements Comparable<Entity>
     private static Material defaultMaterial = new Material();
     private final YldScene scene;
     private String tag = "default";
-    private boolean active = true;
+    private boolean active = true, visible = true;
 
     /**
      * Creates an entity with a Transform component and a Renderer component.
@@ -75,7 +75,8 @@ public final class Entity implements Comparable<Entity>
                 if (component.getFrames() == 1)
                     component.start();
                 component.update(delta);
-                component.render(graphics);
+                if(graphics != null)
+                    component.render(graphics);
                 i++;
             }
 
@@ -122,11 +123,14 @@ public final class Entity implements Comparable<Entity>
 
                 i++;
             }
-            for(Entity child: children) {
+            for(i = 0; i < children.size(); i++) {
                 try {
-                    child.process(delta, graphics);
-                } catch (ConcurrentModificationException ignore) {
-
+                    Entity e = children.get(i);
+                    SampleGraphics g = graphics;
+                    if(!e.isVisible())
+                        g = null;
+                    e.process(delta, g);
+                } catch (IndexOutOfBoundsException ignore) {
                 }
             }
             selfTransform.getTransformed().reset();
@@ -384,13 +388,13 @@ public final class Entity implements Comparable<Entity>
      */
     public void destroy()
     {
-        for (Entity e : children)
+        for (int i = 0; i < children.size(); i++)
         {
-            e.destroy();
+            children.get(i).destroy();
         }
-        for (Component component : components)
+        for (int i = 0; i < components.size(); i++)
         {
-            component.onDestroy();
+            components.get(i).onDestroy();
         }
         if (parent != null)
             parent.getChildren().removeIf(e -> e == this);
@@ -401,7 +405,7 @@ public final class Entity implements Comparable<Entity>
      *
      * @return The children list.
      */
-    public Set<Entity> getChildren()
+    public List<Entity> getChildren()
     {
         return children;
     }
@@ -423,10 +427,7 @@ public final class Entity implements Comparable<Entity>
     {
         child.setParent(this);
         children.add(child);
-        ArrayList<Entity> temp = new ArrayList<>(children);
-        temp.sort(Entity::compareTo);
-        children = new HashSet<>(temp);
-        temp = null;
+        children.sort(Entity::compareTo);
         return child;
     }
 
@@ -485,7 +486,7 @@ public final class Entity implements Comparable<Entity>
     /**
      * Setter of the children list of this Entity.
      */
-    public void setChildren(Set<Entity> children)
+    public void setChildren(List<Entity> children)
     {
         this.children = children;
     }
@@ -581,5 +582,13 @@ public final class Entity implements Comparable<Entity>
     @Override
     public int compareTo(Entity o) {
         return Integer.compare(index, o.getIndex());
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    public boolean isVisible() {
+        return visible;
     }
 }

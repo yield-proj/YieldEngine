@@ -18,19 +18,45 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.render.VisualUtils;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A Texture is an image for a game, can be added to graphical objects to display images.
  */
-public class Texture extends RelativeFile
-{
+public class Texture extends RelativeFile {
     private static int textures;
-    private VisualUtils textureUtils;
+    private VisualUtils visualUtils;
     private final int textureID;
+    private Texture invertedX, invertedY, invertedXY;
+
+    private YldFilter filter;
 
     public Texture(String relativePath) {
         super(relativePath);
         textures++;
         textureID = textures;
+    }
+
+    public void processFilters() {
+        Color[][] colors = visualUtils.getTextureColors(this);
+        for (int x = 0; x < colors.length; x++) {
+            for (int y = 0; y < colors[0].length; y++) {
+                Pixel pixel = new Pixel();
+                pixel.setColor(colors[x][y]);
+                pixel.setLocation(new Vector2(x, y));
+                filter.process(pixel);
+                visualUtils.setPixel(this, pixel.getColor(), pixel.getLocation());
+            }
+        }
+    }
+
+    public YldFilter getFilter() {
+        return filter;
+    }
+
+    public void setFilter(YldFilter filter) {
+        this.filter = filter;
     }
 
     public static int getTextures() {
@@ -45,19 +71,46 @@ public class Texture extends RelativeFile
         return textureID;
     }
 
-    public VisualUtils getTextureUtils() {
-        return textureUtils;
+    public VisualUtils getVisualUtils() {
+        return visualUtils;
     }
 
-    public void setTextureUtils(VisualUtils textureUtils) {
-        this.textureUtils = textureUtils;
+    public void setVisualUtils(VisualUtils visualUtils) {
+        this.visualUtils = visualUtils;
     }
 
     public int getWidth() {
-        return textureUtils.getTextureWidth(textureID);
+        return visualUtils.getTextureWidth(textureID);
     }
 
     public int getHeight() {
-        return textureUtils.getTextureHeight(textureID);
+        return visualUtils.getTextureHeight(textureID);
+    }
+    public Vector2 getSize() {
+        return new Vector2(visualUtils.getTextureWidth(textureID), visualUtils.getTextureHeight(textureID));
+    }
+
+    public Texture getInvertedX() {
+        return invertedX;
+    }
+
+    public void setInvertedX(Texture invertedX) {
+        this.invertedX = invertedX;
+    }
+
+    public Texture getInvertedY() {
+        return invertedY;
+    }
+
+    public void setInvertedY(Texture invertedY) {
+        this.invertedY = invertedY;
+    }
+
+    public Texture getInvertedXY() {
+        return invertedXY;
+    }
+
+    public void setInvertedXY(Texture invertedXY) {
+        this.invertedXY = invertedXY;
     }
 }

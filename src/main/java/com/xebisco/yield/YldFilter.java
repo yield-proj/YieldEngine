@@ -16,14 +16,6 @@
 
 package com.xebisco.yield;
 
-public class NonFillShape extends SimpleRenderable {
-    private Vector2 size = new Vector2(64, 64);
-
-    public Vector2 getSize() {
-        return size;
-    }
-
-    public void setSize(Vector2 size) {
-        this.size = size;
-    }
+public interface YldFilter {
+    void process(Pixel pixel);
 }

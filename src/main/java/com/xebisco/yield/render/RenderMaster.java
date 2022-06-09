@@ -33,9 +33,9 @@ public interface RenderMaster extends VisualUtils {
 
     SampleWindow initWindow(WindowConfiguration configuration);
 
-    void frameStart();
+    void frameStart(SampleGraphics graphics, View view);
 
-    void frameEnd(View view);
+    void frameEnd();
 
     boolean canStart();
 

@@ -34,4 +34,8 @@ public class Colors {
             LIGHT_GRAY = new Color(.8f, .8f, .8f),
             DARK_GRAY = new Color(.2f, .2f, .2f),
             TRANSPARENT = new Color(0, 0, 0, 0);
+
+    public static Color random() {
+        return new Color(Yld.RAND.nextInt(255) / 255f, Yld.RAND.nextInt(255) / 255f, Yld.RAND.nextInt(255) / 255f, 1);
+    }
 }

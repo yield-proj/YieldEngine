@@ -20,22 +20,66 @@ import com.xebisco.yield.*;
 
 public class MyGame extends YldGame {
 
-    Entity e;
-    @Override
-    public void start() {
-        e = graphics.text("Hello, World!");
-        e.getSelfTransform().goTo(view.mid());
-    }
+    int index;
 
     @Override
-    public void update(float delta) {
-        e.getComponent(Text.class).getSelfTransform().rotate(100 * delta);
+    public void start() {
+        timer(() -> {
+            graphics.setColor(Colors.random());
+            Entity e = graphics.text("Hello, World!");
+            e.setVisible(false);
+            e.setIndex(index);
+            e.addComponent(new Move());
+            index--;
+        }, .05f, true);
     }
 
     public static void main(String[] args) {
         Yld.debug = true;
         GameConfiguration config = new GameConfiguration();
+        config.fps = 60;
         config.renderMasterName = "com.xebisco.yield.render.swing.SwingYield";
         launch(new MyGame(), config);
+    }
+}
+
+class Move extends YldScript {
+    NonFillShape s;
+
+    @Override
+    public void start() {
+        s = getComponent(Text.class);
+        setVisible(true);
+        transform.goTo(scene.getView().mid());
+    }
+
+    int vx = -1, vy = -1;
+
+    @Override
+    public void update(float delta) {
+        transform.rotate(2);
+
+        if (transform.position.x - s.getSize().x / 2 < 0) {
+            tick();
+            vx = 1;
+        }
+        if (transform.position.x + s.getSize().x / 2 > scene.getView().getWidth()) {
+            tick();
+            vx = -1;
+        }
+        if (transform.position.y - s.getSize().y / 2 < 0) {
+            tick();
+            vy = 1;
+        }
+        if (transform.position.y + s.getSize().y / 2 > scene.getView().getHeight()) {
+            tick();
+            vy = -1;
+        }
+
+        transform.translate(vx * 5, vy * 5);
+    }
+
+    public void tick() {
+        s.setColor(Colors.random());
     }
 }
