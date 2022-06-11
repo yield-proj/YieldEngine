@@ -27,7 +27,6 @@ public class GameHandler extends Engine {
     private SampleGraphics sampleGraphics;
     private RenderMaster renderMaster;
     private static RenderMaster sampleRenderMaster;
-    private int fps;
     private Engine defaultConcurrentEngine;
 
     private int framesToGarbageCollectionCount;
@@ -51,59 +50,29 @@ public class GameHandler extends Engine {
         }
         sampleGraphics = renderMaster.initGraphics();
         game.setWindow(renderMaster.initWindow(game.getConfiguration()));
-        fps = game.getConfiguration().fps;
+        setTargetTime(1000 / game.getConfiguration().fps);
+        setLock(game.getConfiguration().fpsLock);
         defaultConcurrentEngine = new Engine(null);
         defaultConcurrentEngine.getThread().start();
     }
 
-    @Override
-    public void run() {
-        setRunning(true);
-        long start, end = System.nanoTime();
-        boolean zeroDelta = true;
-        while (isRunning()) {
-            start = System.nanoTime();
-            float delta = (start - end) / 1_000_000_000f;
-            if (zeroDelta) delta = 0f;
-            zeroDelta = false;
-            if (!isIgnoreTodo()) {
-                for (int i = 0; i < getTodoList().size(); i++) {
-                    YldEngineAction engineAction = getTodoList().get(i);
-                    if (engineAction.getToExec() <= 0) {
-                        engineAction.getAction().onAction();
-                        if (!engineAction.isRepeat())
-                            getTodoList().remove(engineAction);
-                        engineAction.setToExec(engineAction.getInitialToExec());
-                    } else {
-                        engineAction.setToExec(engineAction.getToExec() - (int) ((start - end) / 1_000_000));
-                    }
+   private boolean zeroDelta = true;
 
-                }
+    @Override
+    public void update(long last, long actual) {
+        float delta = (actual - last) / 1_000f;
+        if (zeroDelta) delta = 0f;
+        zeroDelta = false;
+        renderMaster.frameStart(sampleGraphics, game.getScene().getView());
+        if (renderMaster.canStart())
+            game.updateScene(delta, sampleGraphics);
+        renderMaster.frameEnd();
+        if(game.getConfiguration().framesToGarbageCollection >= 0) {
+            framesToGarbageCollectionCount++;
+            if(framesToGarbageCollectionCount - game.getConfiguration().framesToGarbageCollection >= 0) {
+                System.gc();
+                framesToGarbageCollectionCount = 0;
             }
-            renderMaster.frameStart(sampleGraphics, game.getScene().getView());
-            if (renderMaster.canStart())
-                game.updateScene(delta, sampleGraphics);
-            renderMaster.frameEnd();
-            if(game.getConfiguration().framesToGarbageCollection >= 0) {
-                framesToGarbageCollectionCount++;
-                if(framesToGarbageCollectionCount - game.getConfiguration().framesToGarbageCollection >= 0) {
-                    System.gc();
-                    framesToGarbageCollectionCount = 0;
-                }
-            }
-            end = System.nanoTime();
-            if (game.getConfiguration().fpsLock) {
-                try {
-                    Thread.sleep(1000 / fps);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        try {
-            getThread().join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
@@ -115,14 +84,6 @@ public class GameHandler extends Engine {
 
     public YldGame getGame() {
         return game;
-    }
-
-    public int getFps() {
-        return fps;
-    }
-
-    public void setFps(int fps) {
-        this.fps = fps;
     }
 
     public Engine getDefaultConcurrentEngine() {

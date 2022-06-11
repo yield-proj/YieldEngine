@@ -68,7 +68,7 @@ public class YldTime
      */
     public void setTargetFPS(float fps)
     {
-        game.getHandler().setFps((int) fps);
+        game.getHandler().setTargetTime((int) (1000 / fps));
     }
 
     /**
@@ -101,5 +101,13 @@ public class YldTime
     public void setFps(float fps)
     {
         this.fps = fps;
+    }
+
+    /**
+     * Returns the fps of the RenderMaster of this game.
+     * @return The RenderMaster fps.
+     */
+    public float getRenderFps() {
+        return game.getHandler().getRenderMaster().fpsCount();
     }
 }

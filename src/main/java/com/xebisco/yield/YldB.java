@@ -19,7 +19,6 @@ package com.xebisco.yield;
 import com.xebisco.yield.engine.Engine;
 import com.xebisco.yield.engine.EngineStop;
 import com.xebisco.yield.engine.YldEngineAction;
-import com.xebisco.yield.utils.MultiThread;
 import com.xebisco.yield.utils.YldAction;
 
 /**
@@ -95,11 +94,8 @@ public abstract class YldB
             Engine engine = new Engine(null);
             engine.getThread().start();
             engine.getTodoList().add(new YldEngineAction(action, (int) (time * 1000), repeat, id));
-            YldEngineAction action1 = new YldEngineAction(() ->
-            {
-                engine.setStop(EngineStop.INTERRUPT_ON_END);
-                engine.setRunning(false);
-            }, 0, false, id);
+            engine.setStop(EngineStop.JOIN_ON_END);
+            YldEngineAction action1 = new YldEngineAction(action, 0, repeat, id);
             engine.getTodoList().add(action1);
         }
         return id;
@@ -114,7 +110,7 @@ public abstract class YldB
      */
     public final long timer(YldAction action, float time, boolean repeat)
     {
-        return timer(action, time, repeat, MultiThread.ON_GAME_THREAD);
+        return timer(action, time, repeat, MultiThread.DEFAULT);
     }
 
     /**

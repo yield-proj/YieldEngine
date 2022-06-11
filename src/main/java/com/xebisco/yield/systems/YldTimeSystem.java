@@ -17,6 +17,7 @@
 package com.xebisco.yield.systems;
 
 import com.xebisco.yield.UpdateSystem;
+import com.xebisco.yield.Yld;
 
 public class YldTimeSystem extends UpdateSystem {
     @Override

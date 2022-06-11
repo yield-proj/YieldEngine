@@ -19,6 +19,10 @@ package com.xebisco.yield;
 public class NonFillShape extends SimpleRenderable {
     private Vector2 size = new Vector2(64, 64);
 
+    public void setSizeAsTexture(Texture texture) {
+        size = texture.getSize().get();
+    }
+
     public Vector2 getSize() {
         return size;
     }

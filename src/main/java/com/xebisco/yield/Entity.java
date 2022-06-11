@@ -234,6 +234,10 @@ public final class Entity implements Comparable<Entity>
         return component;
     }
 
+    public void center() {
+        getSelfTransform().goTo(scene.getView().mid());
+    }
+
     /**
      * Gets the transform based on all of these parents.
      *
@@ -420,15 +424,15 @@ public final class Entity implements Comparable<Entity>
     /**
      * Adds an Entity to the children list.
      *
-     * @param child The Entity to be added.
+     * @param e The Entity to be added.
      * @return The added Entity.
      */
-    public Entity addChild(Entity child)
+    public Entity addChild(Entity e)
     {
-        child.setParent(this);
-        children.add(child);
+        e.setParent(this);
+        children.add(e);
         children.sort(Entity::compareTo);
-        return child;
+        return e;
     }
 
     /**

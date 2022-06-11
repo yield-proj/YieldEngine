@@ -23,9 +23,11 @@ public class Engine implements Runnable
     private final Thread thread = new Thread(this);
     private final EngineController controller;
     private final ArrayList<YldEngineAction> todoList = new ArrayList<>();
-    private int targetTime = 33;
+    private int targetTime = 33, oneSecCount, oneSecFrameCount, fpsCount;
     private EngineStop stop = EngineStop.NONE;
-    private boolean running, ignoreTodo;
+    private boolean running, ignoreTodo, lock = true;
+
+    private long last, actual;
 
     public Engine(EngineController controller)
     {
@@ -40,6 +42,7 @@ public class Engine implements Runnable
             controller.start();
         while (running)
         {
+            actual = System.currentTimeMillis();
             if (!ignoreTodo)
             {
                 for (int i = 0; i < todoList.size(); i++)
@@ -61,13 +64,23 @@ public class Engine implements Runnable
             }
             if (controller != null)
                 controller.tick();
-            try
-            {
-                Thread.sleep(targetTime);
-            } catch (InterruptedException e)
-            {
-                e.printStackTrace();
+            update(last, actual);
+            oneSecCount+=actual - last;
+            oneSecFrameCount++;
+            if(oneSecCount > 1000) {
+                fpsCount = oneSecFrameCount;
+                oneSecCount = 0;
+                oneSecFrameCount = 0;
             }
+            last = System.currentTimeMillis();
+            if(lock)
+                try
+                {
+                    Thread.sleep(targetTime);
+                } catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
         }
         if (stop == EngineStop.INTERRUPT_ON_END)
         {
@@ -83,6 +96,10 @@ public class Engine implements Runnable
                 e.printStackTrace();
             }
         }
+    }
+
+    public void update(long last, long actual) {
+
     }
 
     public boolean isRunning()
@@ -138,5 +155,53 @@ public class Engine implements Runnable
     public void setStop(EngineStop stop)
     {
         this.stop = stop;
+    }
+
+    public int getOneSecCount() {
+        return oneSecCount;
+    }
+
+    public void setOneSecCount(int oneSecCount) {
+        this.oneSecCount = oneSecCount;
+    }
+
+    public long getLast() {
+        return last;
+    }
+
+    public void setLast(long last) {
+        this.last = last;
+    }
+
+    public long getActual() {
+        return actual;
+    }
+
+    public void setActual(long actual) {
+        this.actual = actual;
+    }
+
+    public int getFpsCount() {
+        return fpsCount;
+    }
+
+    public void setFpsCount(int fpsCount) {
+        this.fpsCount = fpsCount;
+    }
+
+    public int getOneSecFrameCount() {
+        return oneSecFrameCount;
+    }
+
+    public void setOneSecFrameCount(int oneSecFrameCount) {
+        this.oneSecFrameCount = oneSecFrameCount;
+    }
+
+    public boolean isLock() {
+        return lock;
+    }
+
+    public void setLock(boolean lock) {
+        this.lock = lock;
     }
 }

@@ -21,34 +21,64 @@ import com.xebisco.yield.*;
 public class MyGame extends YldGame {
 
     int index;
+    Entity counter;
+
+    Texture t;
+
+    @Override
+    public void create() {
+        t = new Texture("com/xebisco/yield/assets/yieldlogo.png");
+        loadTexture(t);
+    }
 
     @Override
     public void start() {
+        counter = instantiate((e) -> {
+                e.instantiate((e1) -> {
+                    e.addComponent(new Rectangle());
+                    e.getComponent(Rectangle.class).setColor(Colors.BLACK);
+                    e.addComponent(new FPSCounter());
+                    e.getSelfTransform().goTo(new Vector2(30, 30));
+                });
+                e.instantiate((e1) -> {
+                    e.addComponent(new Text());
+                    e.addComponent(new FPSCounter());
+                    e.getSelfTransform().goTo(new Vector2(30, 30));
+                });
+        });
         timer(() -> {
             graphics.setColor(Colors.random());
-            Entity e = graphics.text("Hello, World!");
+            Entity e = graphics.img(t, 0, 0, 100, 100);
             e.setVisible(false);
             e.setIndex(index);
             e.addComponent(new Move());
             index--;
-        }, .05f, true);
+        }, .05f, true, MultiThread.DEFAULT);
+    }
+
+    @Override
+    public void update(float delta) {
+        Yld.log(Yld.MEMORY() + " - " + getMasterEntity().getChildren().size());
     }
 
     public static void main(String[] args) {
-        Yld.debug = true;
+        Yld.debug = false;
         GameConfiguration config = new GameConfiguration();
-        config.fps = 60;
         config.renderMasterName = "com.xebisco.yield.render.swing.SwingYield";
+        int fps = 60;
+        if(args.length > 0)
+            fps = Integer.parseInt(args[0]);
+        config.fps = fps;
         launch(new MyGame(), config);
     }
 }
 
-class Move extends YldScript {
+class Move extends Component {
     NonFillShape s;
 
     @Override
     public void start() {
-        s = getComponent(Text.class);
+        s = getComponent(Sprite.class);
         setVisible(true);
         transform.goTo(scene.getView().mid());
     }
@@ -57,7 +87,7 @@ class Move extends YldScript {
 
     @Override
     public void update(float delta) {
-        transform.rotate(2);
+        transform.rotate(90 * delta);
 
         if (transform.position.x - s.getSize().x / 2 < 0) {
             tick();
@@ -75,11 +105,30 @@ class Move extends YldScript {
             tick();
             vy = -1;
         }
+        transform.translate(vx * 150 * delta, vy * 150 * delta);
+    }
 
-        transform.translate(vx * 5, vy * 5);
+    @Override
+    public void render(SampleGraphics graphics) {
+        super.render(graphics);
     }
 
     public void tick() {
         s.setColor(Colors.random());
+    }
+}
+
+class FPSCounter extends YldScript {
+    Text text;
+
+    @Override
+    public void start() {
+        text = getComponent(Text.class);
+    }
+
+    @Override
+    public void update(float delta) {
+        text.setContents(String.format("%.0f", time.getRenderFps()));
+
     }
 }

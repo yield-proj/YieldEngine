@@ -143,7 +143,7 @@ public class YldGraphics {
      * @param y       The y position of the rectangle
      * @param width   The width of the rectangle
      * @param height  The height of the rectangle
-     * @return The created rectangle.
+     * @return The created image entity.
      */
     public Entity img(Texture texture, float x, float y, float width, float height) {
         return e.instantiate((e) -> {
@@ -153,6 +153,23 @@ public class YldGraphics {
             r.setColor(color);
             e.getMaterial().setTexture(texture);
             e.getSelfTransform().goTo(new Vector2(x, y));
+        });
+    }
+
+    /**
+     * Creates an image entity.
+     *
+     * @param texture the texture of the image.
+     * @return The created image entity.
+     */
+    public Entity img(Texture texture) {
+        return e.instantiate((e) -> {
+            NonFillShape r = new Sprite();
+            e.addComponent(r);
+            r.setSizeAsTexture(texture);
+            r.setColor(color);
+            e.getMaterial().setTexture(texture);
+            e.getSelfTransform().goTo(0, 0);
         });
     }
 

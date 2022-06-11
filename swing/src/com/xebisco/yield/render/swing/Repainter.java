@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,27 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.utils;
+package com.xebisco.yield.render.swing;
 
-public enum MultiThread
-{
-    EXCLUSIVE, DEFAULT, ON_GAME_THREAD
+import com.xebisco.yield.Yld;
+
+import javax.swing.*;
+
+public class Repainter extends SwingWorker<Object, Object> {
+
+    private final JPanel panel;
+
+    public Repainter(JPanel panel) {
+        this.panel = panel;
+    }
+
+    @Override
+    protected Object doInBackground() {
+        panel.repaint();
+        return null;
+    }
+
+    public JPanel getPanel() {
+        return panel;
+    }
 }

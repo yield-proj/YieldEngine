@@ -14,36 +14,9 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.render;
+package com.xebisco.yield;
 
-import com.xebisco.yield.*;
-import com.xebisco.yield.config.WindowConfiguration;
-
-import java.util.Set;
-
-
-/**
- * @since 4-1.2
- * @author Xebisco
- */
-public interface RenderMaster extends VisualUtils {
-    SampleGraphics initGraphics();
-
-    SampleWindow initWindow(WindowConfiguration configuration);
-
-    void frameStart(SampleGraphics graphics, View view);
-
-    void frameEnd();
-
-    boolean canStart();
-
-    float fpsCount();
-
-    Set<Integer> pressing();
-
-    int mouseX();
-
-    int mouseY();
-
-    void close();
+public enum MultiThread
+{
+    EXCLUSIVE, DEFAULT, ON_GAME_THREAD
 }
