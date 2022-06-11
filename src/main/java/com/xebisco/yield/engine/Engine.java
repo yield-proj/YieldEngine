@@ -24,8 +24,8 @@ public class Engine implements Runnable
     private final EngineController controller;
     private final ArrayList<YldEngineAction> todoList = new ArrayList<>();
     private int targetTime = 33, oneSecCount, oneSecFrameCount, fpsCount;
-    private EngineStop stop = EngineStop.NONE;
-    private boolean running, ignoreTodo, lock = true;
+    private EngineStop stop = EngineStop.JOIN_ON_END;
+    private boolean running, ignoreTodo, lock = true, stopOnNext;
 
     private long last, actual;
 
@@ -73,6 +73,10 @@ public class Engine implements Runnable
                 oneSecFrameCount = 0;
             }
             last = System.currentTimeMillis();
+            if(stopOnNext) {
+                running = false;
+                break;
+            }
             if(lock)
                 try
                 {
@@ -203,5 +207,13 @@ public class Engine implements Runnable
 
     public void setLock(boolean lock) {
         this.lock = lock;
+    }
+
+    public boolean isStopOnNext() {
+        return stopOnNext;
+    }
+
+    public void setStopOnNext(boolean stopOnNext) {
+        this.stopOnNext = stopOnNext;
     }
 }

@@ -56,7 +56,7 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
 
     private AffineTransform defTransform;
 
-    private VolatileImage image;
+    private Image image;
 
     private final Set<Integer> pressing = new HashSet<>();
 
@@ -218,13 +218,13 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
         frame.setUndecorated(configuration.undecorated);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.add(this);
-        if(configuration.fullscreen) {
+        if (configuration.fullscreen) {
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setUndecorated(true);
             frame.setAlwaysOnTop(true);
         }
         frame.setVisible(true);
-        if(!configuration.fullscreen) {
+        if (!configuration.fullscreen) {
             frame.setSize(configuration.width + frame.getInsets().right + frame.getInsets().left, configuration.height + frame.getInsets().top + frame.getInsets().bottom);
         }
         frame.setLocationRelativeTo(null);
@@ -279,7 +279,7 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
     @Override
     public void frameStart(SampleGraphics g, View view) {
         this.view = view;
-        if(image != null)
+        if (image != null)
             this.g = image.getGraphics();
         if (started)
             g.drawRect(new Vector2(view.getWidth() / 2f, view.getHeight() / 2f), new Vector2(view.getWidth(), view.getHeight()), view.getBgColor(), true);
@@ -289,8 +289,9 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
     public void frameEnd() {
         if (g != null)
             g.dispose();
-        if (image == null || image.getWidth() != view.getWidth() || image.getHeight() != view.getHeight()) {
+        if (image == null || image.getWidth(null) != view.getWidth() || image.getHeight(null) != view.getHeight()) {
             image = gc.createCompatibleVolatileImage(view.getWidth(), view.getHeight(), Transparency.TRANSLUCENT);
+            //image = new BufferedImage(view.getWidth(), view.getHeight(), BufferedImage.TYPE_INT_ARGB);
         }
         (new Repainter(this)).execute();
     }
@@ -341,10 +342,7 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
     @Override
     public void setPixel(Texture texture, Color color, Vector2 position) {
         try {
-            Graphics g = images.get(texture.getTextureID()).getGraphics();
-            g.setColor(toAWTColor(color));
-            g.drawRect((int) position.x, (int) position.y, 1, 1);
-            g.dispose();
+            ((BufferedImage) images.get(texture.getTextureID())).setRGB((int) position.x, (int) position.y, toAWTColor(color).getRGB());
         } catch (ArrayIndexOutOfBoundsException ignore) {
         }
     }
@@ -370,10 +368,7 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
 
     @Override
     public Texture cutTexture(Texture texture, int x, int y, int width, int height) {
-        VolatileImage img = gc.createCompatibleVolatileImage(width, height, Transparency.TRANSLUCENT);
-        Graphics g = img.getGraphics();
-        g.drawImage(images.get(texture.getTextureID()), -x, -y, null);
-        g.dispose();
+        BufferedImage img = ((BufferedImage) images.get(texture.getTextureID())).getSubimage(x, y, width, height);
         Texture tex = new Texture("");
         loadTexture(tex, img);
         return tex;
@@ -398,7 +393,7 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
         for (int x = 0; x < pixels.length; x++) {
             for (int y = 0; y < pixels[0].length; y++) {
                 int p = image1.getRGB(x, y);
-                pixels[x][y] = (new Color(((p>>16) & 0xff) / 255f, ((p>>8) & 0xff) / 255f, (p & 0xff) / 255f, ((p>>24) & 0xff) / 255f));
+                pixels[x][y] = (new Color(((p >> 16) & 0xff) / 255f, ((p >> 8) & 0xff) / 255f, (p & 0xff) / 255f, ((p >> 24) & 0xff) / 255f));
             }
         }
         return pixels;
@@ -516,11 +511,11 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
         this.defTransform = defTransform;
     }
 
-    public VolatileImage getImage() {
+    public Image getImage() {
         return image;
     }
 
-    public void setImage(VolatileImage image) {
+    public void setImage(Image image) {
         this.image = image;
     }
 

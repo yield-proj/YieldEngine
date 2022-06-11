@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.utils.YldAction;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -346,7 +348,7 @@ public final class Entity implements Comparable<Entity>
      * @param prefab The Prefab of the instantiated Entity.
      * @return The instantiated Entity instance.
      */
-    public Entity instantiate(Prefab prefab)
+    public Entity instantiate(Prefab prefab, YldB yldB)
     {
         String name = "Entity";
         if (prefab != null)
@@ -355,7 +357,18 @@ public final class Entity implements Comparable<Entity>
         entity.setIndex(index + 1);
         if (prefab != null)
             prefab.create(entity);
-        return addChild(entity);
+        return addChild(entity, yldB);
+    }
+
+    /**
+     * Instantiates an entity based on the given Prefab, and adds it to this Entity children list.
+     *
+     * @param prefab The Prefab of the instantiated Entity.
+     * @return The instantiated Entity instance.
+     */
+    public Entity instantiate(Prefab prefab)
+    {
+        return instantiate(prefab, null);
     }
 
     /**
@@ -427,11 +440,18 @@ public final class Entity implements Comparable<Entity>
      * @param e The Entity to be added.
      * @return The added Entity.
      */
-    public Entity addChild(Entity e)
+    public Entity addChild(Entity e, YldB yldB)
     {
         e.setParent(this);
-        children.add(e);
-        children.sort(Entity::compareTo);
+        YldAction a = () -> {
+            children.add(e);
+            children.sort(Entity::compareTo);
+        };
+        if(yldB != null) {
+            yldB.concurrent(a);
+        } else {
+            a.onAction();
+        }
         return e;
     }
 

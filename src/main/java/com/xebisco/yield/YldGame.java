@@ -141,7 +141,7 @@ public class YldGame extends YldScene
         scene.game = this;
         scene.time = new YldTime(this);
         scene.setMasterEntity(new Entity("MasterEntity", scene, null));
-        scene.setGraphics(new YldGraphics(scene.getMasterEntity()));
+        scene.setGraphics(new YldGraphics(scene.getMasterEntity(), this));
         scenes.add(scene);
     }
 

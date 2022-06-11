@@ -65,6 +65,7 @@ public class MyGame extends YldGame {
         Yld.debug = false;
         GameConfiguration config = new GameConfiguration();
         config.renderMasterName = "com.xebisco.yield.render.swing.SwingYield";
+        config.resizable = true;
         int fps = 60;
         if(args.length > 0)
             fps = Integer.parseInt(args[0]);

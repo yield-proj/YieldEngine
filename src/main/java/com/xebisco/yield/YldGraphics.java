@@ -19,10 +19,12 @@ package com.xebisco.yield;
 public class YldGraphics {
     private Entity e;
     private Color color = Colors.CYAN;
+    private YldB toConcurrent;
     private String font = "arial";
 
-    public YldGraphics(Entity e) {
+    public YldGraphics(Entity e, YldB yldB) {
         this.e = e;
+        this.toConcurrent = yldB;
     }
 
     /**
@@ -52,7 +54,7 @@ public class YldGraphics {
             r.setFilled(filled);
             r.setColor(color);
             e.getSelfTransform().goTo(new Vector2(x, y));
-        });
+        }, toConcurrent);
     }
 
     /**
@@ -73,7 +75,7 @@ public class YldGraphics {
             r.setFilled(filled);
             r.setColor(color);
             e.getSelfTransform().goTo(new Vector2(x, y));
-        });
+        }, toConcurrent);
     }
 
     /**
@@ -103,7 +105,7 @@ public class YldGraphics {
             e.addComponent(r);
             r.setColor(color);
             e.getSelfTransform().goTo(new Vector2(x2 / 2, y2 / 2));
-        });
+        }, toConcurrent);
     }
 
     /**
@@ -122,7 +124,7 @@ public class YldGraphics {
             r.setFont(font);
             r.setColor(color);
             e.getSelfTransform().goTo(new Vector2(x, y));
-        });
+        }, toConcurrent);
     }
 
     /**
@@ -153,7 +155,7 @@ public class YldGraphics {
             r.setColor(color);
             e.getMaterial().setTexture(texture);
             e.getSelfTransform().goTo(new Vector2(x, y));
-        });
+        }, toConcurrent);
     }
 
     /**
@@ -170,7 +172,7 @@ public class YldGraphics {
             r.setColor(color);
             e.getMaterial().setTexture(texture);
             e.getSelfTransform().goTo(0, 0);
-        });
+        }, toConcurrent);
     }
 
     /**
@@ -230,5 +232,13 @@ public class YldGraphics {
 
     public void setFont(String font) {
         this.font = font;
+    }
+
+    public YldB getToConcurrent() {
+        return toConcurrent;
+    }
+
+    public void setToConcurrent(YldB toConcurrent) {
+        this.toConcurrent = toConcurrent;
     }
 }
