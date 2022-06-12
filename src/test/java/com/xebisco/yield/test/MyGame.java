@@ -31,6 +31,7 @@ public class MyGame extends YldGame {
         loadTexture(t);
     }
 
+
     @Override
     public void start() {
         counter = instantiate((e) -> {

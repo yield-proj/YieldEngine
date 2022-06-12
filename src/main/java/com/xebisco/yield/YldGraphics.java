@@ -58,6 +58,69 @@ public class YldGraphics {
     }
 
     /**
+     * Creates a round rectangle entity.
+     *
+     * @param x      The x position of the rectangle
+     * @param y      The y position of the rectangle
+     * @param width  The width of the rectangle
+     * @param height The height of the rectangle
+     * @param filled If the rectangle is filled.
+     * @param arc The arc size of the rectangle.
+     * @return The created rectangle.
+     */
+    public Entity roundRect(float x, float y, float width, float height, boolean filled, Vector2 arc) {
+        return e.instantiate((e) -> {
+            RoundedRectangle r = new RoundedRectangle();
+            e.addComponent(r);
+            r.setArc(arc);
+            r.setSize(new Vector2(width, height));
+            r.setFilled(filled);
+            r.setColor(color);
+            e.getSelfTransform().goTo(new Vector2(x, y));
+        }, toConcurrent);
+    }
+
+    /**
+     * Creates a round rectangle entity.
+     *
+     * @param x      The x position of the rectangle
+     * @param y      The y position of the rectangle
+     * @param width  The width of the rectangle
+     * @param height The height of the rectangle
+     * @param arc The arc size of the rectangle.
+     * @return The created rectangle.
+     */
+    public Entity roundRect(float x, float y, float width, float height, Vector2 arc) {
+        return roundRect(x, y, width, height, true, arc);
+    }
+
+    /**
+     * Creates a round rectangle entity.
+     *
+     * @param x      The x position of the rectangle
+     * @param y      The y position of the rectangle
+     * @param width  The width of the rectangle
+     * @param height The height of the rectangle
+     * @return The created rectangle.
+     */
+    public Entity roundRect(float x, float y, float width, float height) {
+        return roundRect(x, y, width, height, true, new Vector2(20, 20));
+    }
+
+    /**
+     * Creates a round rectangle entity.
+     *
+     * @param x      The x position of the rectangle
+     * @param y      The y position of the rectangle
+     * @param width  The width of the rectangle
+     * @param height The height of the rectangle
+     * @return The created rectangle.
+     */
+    public Entity roundRect(float x, float y, float width, float height, boolean filled) {
+        return roundRect(x, y, width, height, filled, new Vector2(20, 20));
+    }
+
+    /**
      * Creates an oval entity.
      *
      * @param x      The x position of the oval
