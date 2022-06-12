@@ -43,7 +43,7 @@ public class Save
             file.createNewFile();
         } catch (IOException e)
         {
-            e.printStackTrace();
+            Yld.throwException(e);
         }
         save(contents, file.getPath(), encrypted);
     }
@@ -74,7 +74,7 @@ public class Save
             return processSave(contents.toString());
         } catch (FileNotFoundException e)
         {
-            e.printStackTrace();
+            Yld.throwException(e);
         }
         return null;
     }

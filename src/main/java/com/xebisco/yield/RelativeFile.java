@@ -23,7 +23,10 @@ public class RelativeFile {
     private InputStream inputStream;
     private URL url;
 
+    private final String cachedPath;
+
     public RelativeFile(String relativePath) {
+        cachedPath = relativePath;
         if (!relativePath.startsWith("/"))
             relativePath = "/" + relativePath;
         inputStream = Yld.class.getResourceAsStream(relativePath);
@@ -44,5 +47,9 @@ public class RelativeFile {
 
     public void setUrl(URL url) {
         this.url = url;
+    }
+
+    public String getCachedPath() {
+        return cachedPath;
     }
 }

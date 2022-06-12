@@ -16,8 +16,12 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.render.ExceptionThrower;
 import com.xebisco.yield.utils.YldAction;
+import jdk.nashorn.internal.scripts.JO;
 
+import javax.swing.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,11 +29,12 @@ import java.util.Random;
 
 /**
  * A class that hold global properties and methods of Yield Game Engine
- * @since 4_alpha1
+ *
  * @author Xebisco
+ * @since 4_alpha1
  */
-public final class Yld
-{
+public final class Yld {
+    private static ExceptionThrower exceptionThrower;
     /**
      * The version of the Yield Game Engine.
      */
@@ -50,33 +55,40 @@ public final class Yld
 
     /**
      * The memory in use in the actual Java Virtual Machine.
+     *
      * @return The memory in use.
      */
-    public static int MEMORY()
-    {
+    public static int MEMORY() {
         return (int) ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024);
     }
 
     /**
      * The free memory of the actual Java Virtual Machine.
+     *
      * @return The free memory.
      */
-    public static int MAX_MEMORY()
-    {
+    public static int MAX_MEMORY() {
         return (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
+    }
+
+    public static void throwException(Exception e) {
+        e.printStackTrace();
+        if (exceptionThrower != null)
+            exceptionThrower.throwException(e);
+        else
+            System.exit(1);
     }
 
     /**
      * Adds a message to the messages list, and logs to the standard output.
+     *
      * @param msg The message to be added.
      */
-    public static void message(Object msg)
-    {
+    public static void message(Object msg) {
         //YieldOverlay.setShow(true);
         msg = "(" + new Date() + ") " + msg;
         MESSAGES.add(0, msg.toString());
-        if (Yld.MESSAGES.size() > 9)
-        {
+        if (Yld.MESSAGES.size() > 9) {
             Yld.MESSAGES.remove(Yld.MESSAGES.size() - 1);
         }
         System.out.println(msg);
@@ -84,50 +96,60 @@ public final class Yld
 
     /**
      * Executes an instance of a YldAction if the debug variable is set to TRUE.
+     *
      * @param action The action to be performed.
      */
-    public static void debug(YldAction action)
-    {
-        if (debug)
-        {
+    public static void debug(YldAction action) {
+        if (debug) {
             action.onAction();
         }
     }
 
     /**
      * Executes an instance of a YldAction if the debug variable is set to FALSE.
+     *
      * @param action The action to be performed.
      */
-    public static void release(YldAction action)
-    {
+    public static void release(YldAction action) {
         if (!debug)
             action.onAction();
     }
 
     public static int clamp(int value, int min, int max) {
-        if(value > max) return max;
+        if (value > max) return max;
         return Math.max(value, min);
     }
 
     public static float clamp(float value, float min, float max) {
-        if(value > max) return max;
+        if (value > max) return max;
         return Math.max(value, min);
     }
 
     /**
      * Logs a Object to the standard output.
+     *
      * @param msg The message to be logged.
      */
-    public static void log(Object msg)
-    {
+    public static void log(Object msg) {
         System.out.println(msg);
     }
 
     /**
      * Closes the Java Virtual Machine.
      */
-    public static void exit()
-    {
+    public static void exit() {
         System.exit(0);
+    }
+
+    public static ExceptionThrower getExceptionThrower() {
+        return exceptionThrower;
+    }
+
+    public static void setExceptionThrower(ExceptionThrower exceptionThrower) {
+        Yld.exceptionThrower = exceptionThrower;
+    }
+
+    public static void loadExceptionThrower(String classPath) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        setExceptionThrower((ExceptionThrower) Class.forName(classPath).getDeclaredConstructor().newInstance());
     }
 }

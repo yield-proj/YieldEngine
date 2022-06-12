@@ -19,7 +19,10 @@ package com.xebisco.yield;
 import com.xebisco.yield.engine.GameHandler;
 import com.xebisco.yield.utils.ChangeScene;
 
+import javax.swing.*;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
@@ -29,8 +32,7 @@ import java.util.ArrayList;
  * @author Xebisco
  * @since 4_alpha1
  */
-public class YldGame extends YldScene
-{
+public class YldGame extends YldScene {
     private GameConfiguration configuration;
     private boolean started = false;
 
@@ -53,8 +55,7 @@ public class YldGame extends YldScene
     protected YldScene scene;
 
     @Override
-    public void start()
-    {
+    public void start() {
 
     }
 
@@ -65,8 +66,7 @@ public class YldGame extends YldScene
      * @param configuration The YldGame instance of the GameConfiguration class.
      * @since 4_alpha1
      */
-    public static void launch(YldGame game, GameConfiguration configuration)
-    {
+    public static void launch(YldGame game, GameConfiguration configuration) {
         game.setConfiguration(configuration);
         game.addScene(game);
         game.setScene(game);
@@ -77,13 +77,11 @@ public class YldGame extends YldScene
         game.getHandler().getThread().start();
     }
 
-    public final void updateScene(float delta, SampleGraphics graphics)
-    {
+    public final void updateScene(float delta, SampleGraphics graphics) {
         if (scene.getFrames() == 0)
             scene.create();
         scene.setFrames(scene.getFrames() + 1);
-        if (scene.isCallStart())
-        {
+        if (scene.isCallStart()) {
             scene.start();
             scene.setCallStart(false);
         }
@@ -91,8 +89,7 @@ public class YldGame extends YldScene
         scene.process(delta, graphics);
     }
 
-    public boolean isStarted()
-    {
+    public boolean isStarted() {
         return started;
     }
 
@@ -101,8 +98,7 @@ public class YldGame extends YldScene
      *
      * @return The configuration variable.
      */
-    public GameConfiguration getConfiguration()
-    {
+    public GameConfiguration getConfiguration() {
         return configuration;
     }
 
@@ -111,22 +107,19 @@ public class YldGame extends YldScene
      *
      * @return The handler variable.
      */
-    public GameHandler getHandler()
-    {
+    public GameHandler getHandler() {
         return handler;
     }
 
     /**
      * Setter for the handler variable.
      */
-    public void setHandler(GameHandler handler)
-    {
+    public void setHandler(GameHandler handler) {
         this.handler = handler;
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
     }
 
@@ -135,8 +128,7 @@ public class YldGame extends YldScene
      *
      * @param scene The scene to be added.
      */
-    public void addScene(YldScene scene)
-    {
+    public void addScene(YldScene scene) {
         scene.setInput(input);
         scene.game = this;
         scene.time = new YldTime(this);
@@ -150,16 +142,14 @@ public class YldGame extends YldScene
      *
      * @return The scenes list.
      */
-    public ArrayList<YldScene> getScenes()
-    {
+    public ArrayList<YldScene> getScenes() {
         return scenes;
     }
 
     /**
      * Setter for the scenes list.
      */
-    public void setScenes(ArrayList<YldScene> scenes)
-    {
+    public void setScenes(ArrayList<YldScene> scenes) {
         this.scenes = scenes;
     }
 
@@ -168,16 +158,14 @@ public class YldGame extends YldScene
      *
      * @return The actual scene.
      */
-    public YldScene getScene()
-    {
+    public YldScene getScene() {
         return scene;
     }
 
     /**
      * Setter for the actual scene.
      */
-    public void setScene(YldScene scene)
-    {
+    public void setScene(YldScene scene) {
         this.scene = scene;
     }
 
@@ -190,16 +178,12 @@ public class YldGame extends YldScene
     }
 
     @Deprecated
-    public void setScene(String name)
-    {
+    public void setScene(String name) {
         YldScene scene = null;
         int i = 0;
-        while (i < scenes.size())
-        {
-            if (scenes.get(i).getClass().getSimpleName().hashCode() == name.hashCode())
-            {
-                if (scenes.get(i).getClass().getSimpleName().equals(name))
-                {
+        while (i < scenes.size()) {
+            if (scenes.get(i).getClass().getSimpleName().hashCode() == name.hashCode()) {
+                if (scenes.get(i).getClass().getSimpleName().equals(name)) {
                     scene = scenes.get(i);
                     break;
                 }
@@ -253,16 +237,12 @@ public class YldGame extends YldScene
      * @param type The scene type to be instantiated.
      * @param how  What to do with last scene.
      */
-    public <T extends YldScene> void setScene(Class<T> type, ChangeScene how)
-    {
+    public <T extends YldScene> void setScene(Class<T> type, ChangeScene how) {
         YldScene scene = null;
         int i = 0;
-        while (i < scenes.size())
-        {
-            if (scenes.get(i).getClass().getName().hashCode() == type.getName().hashCode())
-            {
-                if (scenes.get(i).getClass().getName().equals(type.getName()))
-                {
+        while (i < scenes.size()) {
+            if (scenes.get(i).getClass().getName().hashCode() == type.getName().hashCode()) {
+                if (scenes.get(i).getClass().getName().equals(type.getName())) {
                     if (how == ChangeScene.DESTROY_LAST && getScene() != null)
                         getScene().destroyScene();
                     scene = scenes.get(i);
@@ -281,21 +261,18 @@ public class YldGame extends YldScene
      *
      * @param type The scene type to be instantiated.
      */
-    public <T extends YldScene> void setScene(Class<T> type)
-    {
+    public <T extends YldScene> void setScene(Class<T> type) {
         setScene(type, ChangeScene.DESTROY_LAST);
     }
 
     /**
      * Setter for the configuration variable.
      */
-    public void setConfiguration(GameConfiguration configuration)
-    {
+    public void setConfiguration(GameConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public void setStarted(boolean started)
-    {
+    public void setStarted(boolean started) {
         this.started = started;
     }
 

@@ -67,7 +67,7 @@ public class Transform extends Component {
             }
             processSave(contents.toString());
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Yld.throwException(e);
         }
     }
 
@@ -88,7 +88,7 @@ public class Transform extends Component {
             writer.print(toPrint);
             writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Yld.throwException(e);
         }
 
     }

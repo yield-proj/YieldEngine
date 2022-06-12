@@ -475,7 +475,7 @@ public final class Entity implements Comparable<Entity>
                         m.invoke(c, arguments);
                     } catch (IllegalAccessException | InvocationTargetException e)
                     {
-                        e.printStackTrace();
+                        Yld.throwException(e);
                     }
                     break;
                 }

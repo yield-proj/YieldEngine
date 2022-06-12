@@ -17,7 +17,9 @@
 package com.xebisco.yield.engine;
 
 import com.xebisco.yield.*;
+import com.xebisco.yield.exceptions.CannotLoadException;
 import com.xebisco.yield.exceptions.YieldEngineException;
+import com.xebisco.yield.render.ExceptionThrower;
 import com.xebisco.yield.render.RenderMaster;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,16 +42,23 @@ public class GameHandler extends Engine {
             try {
                 renderMaster = (RenderMaster) Class.forName(game.getConfiguration().renderMasterName).getDeclaredConstructor().newInstance();
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                     NoSuchMethodException | ClassNotFoundException e) {
-                e.printStackTrace();
+                     NoSuchMethodException e) {
+                Yld.throwException(e);
+            }
+            catch (ClassNotFoundException e) {
+                Yld.throwException(new CannotLoadException("Could not find render master: " + game.getConfiguration().renderMasterName + "."));
             }
         } else if (sampleRenderMaster != null) {
             renderMaster = sampleRenderMaster;
         } else {
-            throw new YieldEngineException("FATAL: Yield Engine needs a path to a RenderMaster implementation.");
+            Yld.throwException(new CannotLoadException("FATAL: Yield Engine needs a path to a RenderMaster implementation."));
         }
         sampleGraphics = renderMaster.initGraphics();
         game.setWindow(renderMaster.initWindow(game.getConfiguration()));
+        if(renderMaster instanceof ExceptionThrower) {
+            if(Yld.getExceptionThrower() == null)
+                Yld.setExceptionThrower((ExceptionThrower) renderMaster);
+        }
         setTargetTime(1000 / game.getConfiguration().fps);
         setLock(game.getConfiguration().fpsLock);
         defaultConcurrentEngine = new Engine(null);

@@ -34,7 +34,7 @@ public class AudioPlayer extends Component
             clip = AudioSystem.getClip();
         } catch (LineUnavailableException e)
         {
-            e.printStackTrace();
+            Yld.throwException(e);
         }
     }
 
@@ -46,7 +46,7 @@ public class AudioPlayer extends Component
             clip.open(inputStream);
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e)
         {
-            e.printStackTrace();
+            Yld.throwException(e);
         }
     }
 

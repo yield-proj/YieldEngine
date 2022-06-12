@@ -19,6 +19,8 @@ package com.xebisco.yield.render.swing;
 import com.xebisco.yield.Color;
 import com.xebisco.yield.*;
 import com.xebisco.yield.config.WindowConfiguration;
+import com.xebisco.yield.exceptions.CannotLoadException;
+import com.xebisco.yield.render.ExceptionThrower;
 import com.xebisco.yield.render.RenderMaster;
 
 import javax.imageio.ImageIO;
@@ -30,7 +32,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ import java.util.Set;
  * @author Xebisco
  * @since 4-1.2
  */
-public class SwingYield extends JPanel implements RenderMaster, KeyListener, MouseListener {
+public class SwingYield extends JPanel implements RenderMaster, KeyListener, MouseListener, ExceptionThrower {
 
     private Graphics g;
 
@@ -72,11 +73,17 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
     private GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
 
     static {
+        BufferedImage yieldImage1 = null;
         try {
-            yieldImage = ImageIO.read(Objects.requireNonNull(Yld.class.getResourceAsStream("assets/yieldlogo.png")));
+            yieldImage1 = ImageIO.read(Objects.requireNonNull(Yld.class.getResourceAsStream("assets/yieldlogo.png")));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Yld.throwException(e);
+            System.exit(1);
+        } catch (NullPointerException e) {
+            Yld.throwException(new CannotLoadException("Could not find yield image"));
+            System.exit(1);
         }
+        yieldImage = yieldImage1;
     }
 
     private View view;
@@ -311,7 +318,9 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
         try {
             loadTexture(texture, ImageIO.read(Objects.requireNonNull(texture.getInputStream())));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Yld.throwException(e);
+        } catch (NullPointerException e) {
+            Yld.throwException(new CannotLoadException("Could not find the texture: '" + texture.getCachedPath() + "'"));
         }
     }
 
@@ -437,6 +446,17 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
     @Override
     public int mouseY() {
         return Yld.clamp((int) (((float) MouseInfo.getPointerInfo().getLocation().y - frame.getInsets().top - frame.getInsets().bottom - frame.getY()) / (float) getHeight() * (float) view.getHeight()), 0, view.getHeight());
+    }
+
+    @Override
+    public void throwException(Exception e) {
+        if (JOptionPane.showOptionDialog(null,
+                e.getMessage() + "\nContinue execution? This can make the running game unstable.",
+                e.getClass().getSimpleName(), JOptionPane.YES_NO_OPTION,
+                JOptionPane.ERROR_MESSAGE, null, new String[]{"Yes", "No"},
+                "No") == 1) {
+            System.exit(1);
+        }
     }
 
     @Override
