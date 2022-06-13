@@ -25,6 +25,7 @@ import com.xebisco.yield.render.RenderMaster;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.tools.Tool;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -217,6 +218,7 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
 
     @Override
     public SampleWindow initWindow(WindowConfiguration configuration) {
+        Toolkit.getDefaultToolkit().setDynamicLayout(false);
         frame = new JFrame();
         frame.setSize(configuration.width, configuration.height);
         frame.setResizable(configuration.resizable);
