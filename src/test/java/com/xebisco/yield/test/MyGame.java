@@ -36,16 +36,14 @@ public class MyGame extends YldGame {
     public void start() {
         counter = instantiate((e) -> {
                 e.instantiate((e1) -> {
-                    e.addComponent(new Rectangle());
-                    e.getComponent(Rectangle.class).setColor(Colors.BLACK);
-                    e.addComponent(new FPSCounter());
-                    e.getSelfTransform().goTo(new Vector2(30, 30));
+                    e1.addComponent(new Rectangle());
+                    e1.getComponent(Rectangle.class).setColor(Colors.BLACK);
                 });
                 e.instantiate((e1) -> {
-                    e.addComponent(new Text());
-                    e.addComponent(new FPSCounter());
-                    e.getSelfTransform().goTo(new Vector2(30, 30));
+                    e1.addComponent(new Text());
+                    e1.addComponent(new FPSCounter());
                 });
+            e.getSelfTransform().goTo(new Vector2(30, 30));
         });
         timer(() -> {
             graphics.setColor(Colors.random());
@@ -54,7 +52,7 @@ public class MyGame extends YldGame {
             e.setIndex(index);
             e.addComponent(new Move());
             index--;
-        }, .05f, true, MultiThread.DEFAULT);
+        }, .05f, true);
     }
 
     @Override

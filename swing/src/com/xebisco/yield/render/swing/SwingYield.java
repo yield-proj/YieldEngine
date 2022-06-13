@@ -302,7 +302,7 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             image = gc.createCompatibleVolatileImage(view.getWidth(), view.getHeight(), Transparency.TRANSLUCENT);
             //image = new BufferedImage(view.getWidth(), view.getHeight(), BufferedImage.TYPE_INT_ARGB);
         }
-        (new Repainter(this)).execute();
+        SwingUtilities.invokeLater(this::repaint);
     }
 
     @Override

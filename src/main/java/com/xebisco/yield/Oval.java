@@ -21,6 +21,6 @@ public class Oval extends Shape {
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);
-        graphics.drawOval(transform.position, getSize().mul(transform.scale), getColor(), isFilled());
+        graphics.drawOval(getEntity().getTransform().position, getSize().mul(getEntity().getTransform().scale), getColor(), isFilled());
     }
 }

@@ -21,8 +21,8 @@ public class Sprite extends NonFillShape {
     public void render(SampleGraphics graphics) {
         super.render(graphics);
         if (getMaterial().getTexture() != null) {
-            graphics.drawTexture(getMaterial().getTexture(), transform.position, getSize().mul(transform.scale));}
+            graphics.drawTexture(getMaterial().getTexture(), getEntity().getTransform().position, getSize().mul(getEntity().getTransform().scale));}
         else
-            graphics.drawTexture(game.getYieldLogo(), transform.position, getSize().mul(transform.scale));
+            graphics.drawTexture(game.getYieldLogo(), getEntity().getTransform().position, getSize().mul(getEntity().getTransform().scale));
     }
 }

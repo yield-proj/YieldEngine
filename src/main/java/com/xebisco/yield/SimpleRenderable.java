@@ -24,10 +24,10 @@ public class SimpleRenderable extends Component {
 
     @Override
     public void render(SampleGraphics graphics) {
-        float angle = transform.rotation + this.angle;
+        float angle = getEntity().getTransform().rotation + this.angle;
         if(forceAngle)
             angle = this.angle;
-        graphics.setRotation(transform.position, angle);
+        graphics.setRotation(getEntity().getTransform().position, angle);
     }
 
     public Color getColor() {

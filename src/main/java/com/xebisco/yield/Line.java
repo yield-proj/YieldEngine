@@ -21,7 +21,7 @@ public class Line extends SimpleRenderable {
 
     @Override
     public void render(SampleGraphics graphics) {
-        graphics.drawLine(transform.position, point2.mul(transform.scale), getColor());
+        graphics.drawLine(getEntity().getTransform().position, getEntity().getTransform().position.sum(point2.mul(getEntity().getTransform().scale)), getColor());
     }
 
     public Vector2 getPoint2() {
