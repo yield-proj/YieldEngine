@@ -18,25 +18,12 @@ package com.xebisco.yield;
 
 public class RectCollider extends Component
 {
-    private Vector2 size = new Vector2(64, 64), upLeft = new Vector2(), off = new Vector2(), middle = new Vector2();
-    private boolean autoMid = true;
-    private int[] layers = new int[] {0};
-
-    @Override
-    public void update(float delta)
-    {
-        if (autoMid)
-        {
-            middle.x = size.x / 2f;
-            middle.y = size.y / 2f;
-        }
-        upLeft.x = getTransform().position.x - middle.x - off.x;
-        upLeft.y = getTransform().position.y - middle.y - off.y;
-    }
+    private Vector2 size = new Vector2(64, 64);
+    private String layer = "default";
 
     public Vector2 getSize()
     {
-        return size;
+        return size.mul(transform.scale);
     }
 
     public void setSize(Vector2 size)
@@ -44,53 +31,11 @@ public class RectCollider extends Component
         this.size = size;
     }
 
-    public Vector2 getUpLeft()
-    {
-        return upLeft;
+    public String getLayer() {
+        return layer;
     }
 
-    public void setUpLeft(Vector2 upLeft)
-    {
-        this.upLeft = upLeft;
-    }
-
-    public Vector2 getOff()
-    {
-        return off;
-    }
-
-    public void setOff(Vector2 off)
-    {
-        this.off = off;
-    }
-
-    public Vector2 getMiddle()
-    {
-        return middle;
-    }
-
-    public void setMiddle(Vector2 middle)
-    {
-        this.middle = middle;
-    }
-
-    public boolean isAutoMid()
-    {
-        return autoMid;
-    }
-
-    public void setAutoMid(boolean autoMid)
-    {
-        this.autoMid = autoMid;
-    }
-
-    public int[] getLayers()
-    {
-        return layers;
-    }
-
-    public void setLayers(int[] layers)
-    {
-        this.layers = layers;
+    public void setLayer(String layer) {
+        this.layer = layer;
     }
 }

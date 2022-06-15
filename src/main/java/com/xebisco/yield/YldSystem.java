@@ -21,11 +21,13 @@ package com.xebisco.yield;
  * @since 4_beta1
  * @author Xebisco
  */
-public class YldSystem {
+public abstract class YldSystem {
     /**
      * The YldScene that have this system stored.
      */
     protected YldScene scene;
+
+    public abstract void receive(Entity e, float delta);
 
     /**
      * Getter for the scene variable.

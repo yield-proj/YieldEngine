@@ -26,6 +26,36 @@ public abstract class ProcessSystem extends YldSystem
      */
     public abstract String[] componentFilters();
 
+    @Override
+    public final void receive(Entity e, float delta) {
+        for(int i = 0; i < e.getComponents().size(); i++)
+        {
+            Component component = e.getComponents().get(i);
+            boolean call = false;
+            if (componentFilters() != null)
+            {
+                for (int i4 = 0; i4 < componentFilters().length; i4++)
+                {
+                    if (component.getClass().getName().hashCode() == componentFilters()[i4].hashCode())
+                    {
+                        if (component.getClass().getName().equals(componentFilters()[i4]))
+                        {
+                            call = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                call = true;
+            }
+
+            if (call)
+                process(component, delta);
+        }
+    }
+
     /**
      * Process all the components of a YldScene instance on every frame.
      * @param component The actual component to be processed.

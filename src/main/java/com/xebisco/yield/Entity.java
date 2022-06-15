@@ -86,42 +86,7 @@ public final class Entity implements Comparable<Entity>
             while (i < scene.getSystems().size())
             {
                 YldSystem sys = scene.getSystems().get(i);
-                if (sys instanceof ProcessSystem)
-                {
-                    ProcessSystem system = (ProcessSystem) sys;
-                    int i1 = 0;
-                    while (i1 < components.size())
-                    {
-                        Component component = components.get(i1);
-                        boolean call = false;
-                        if (system.componentFilters() != null)
-                        {
-                            for (int i4 = 0; i4 < system.componentFilters().length; i4++)
-                            {
-                                if (component.getClass().getName().hashCode() == system.componentFilters()[i4].hashCode())
-                                {
-                                    if (component.getClass().getName().equals(system.componentFilters()[i4]))
-                                    {
-                                        call = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            call = true;
-                        }
-
-                        if (call)
-                            system.process(component, delta);
-                        i1++;
-                    }
-                }
-                else if (sys instanceof UpdateSystem)
-                {
-                    ((UpdateSystem) sys).update(delta);
-                }
+                sys.receive(this, delta);
 
                 i++;
             }

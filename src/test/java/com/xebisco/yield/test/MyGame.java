@@ -20,39 +20,27 @@ import com.xebisco.yield.*;
 
 public class MyGame extends YldGame {
 
-    int index;
-    Entity counter;
-
-    Texture t;
-
     @Override
     public void create() {
-        t = new Texture("com/xebisco/yield/assets/yieldlogo.png");
-        loadTexture(t);
+
     }
 
 
     @Override
     public void start() {
-        counter = instantiate((e) -> {
-                e.instantiate((e1) -> {
-                    e1.addComponent(new Rectangle());
-                    e1.getComponent(Rectangle.class).setColor(Colors.BLACK);
-                });
-                e.instantiate((e1) -> {
-                    e1.addComponent(new Text());
-                    e1.addComponent(new FPSCounter());
-                });
+        instantiate((e) -> {
+            e.instantiate((e1) -> {
+                e1.addComponent(new Rectangle());
+                e1.getComponent(Rectangle.class).setColor(Colors.BLACK);
+            });
+            e.instantiate((e1) -> {
+                e1.addComponent(new Text());
+                e1.addComponent(new FPSCounter());
+            });
             e.getSelfTransform().goTo(new Vector2(30, 30));
         });
-        timer(() -> {
-            graphics.setColor(Colors.random());
-            Entity e = graphics.img(t, 0, 0, 100, 100);
-            e.setVisible(false);
-            e.setIndex(index);
-            e.addComponent(new Move());
-            index--;
-        }, .05f, true);
+
+
     }
 
     @Override
@@ -70,51 +58,6 @@ public class MyGame extends YldGame {
             fps = Integer.parseInt(args[0]);
         config.fps = fps;
         launch(new MyGame(), config);
-    }
-}
-
-class Move extends Component {
-    NonFillShape s;
-
-    @Override
-    public void start() {
-        s = getComponent(Sprite.class);
-        setVisible(true);
-        transform.goTo(scene.getView().mid());
-    }
-
-    int vx = -1, vy = -1;
-
-    @Override
-    public void update(float delta) {
-        transform.rotate(90 * delta);
-
-        if (transform.position.x - s.getSize().x / 2 < 0) {
-            tick();
-            vx = 1;
-        }
-        if (transform.position.x + s.getSize().x / 2 > scene.getView().getWidth()) {
-            tick();
-            vx = -1;
-        }
-        if (transform.position.y - s.getSize().y / 2 < 0) {
-            tick();
-            vy = 1;
-        }
-        if (transform.position.y + s.getSize().y / 2 > scene.getView().getHeight()) {
-            tick();
-            vy = -1;
-        }
-        transform.translate(vx * 150 * delta, vy * 150 * delta);
-    }
-
-    @Override
-    public void render(SampleGraphics graphics) {
-        super.render(graphics);
-    }
-
-    public void tick() {
-        s.setColor(Colors.random());
     }
 }
 
