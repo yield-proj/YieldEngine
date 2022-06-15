@@ -43,6 +43,8 @@ public final class Yld {
      * All the Yield Game Engine messages.
      */
 
+    private static final long BUILD = 2015;
+
     public static final ArrayList<String> MESSAGES = new ArrayList<>();
     /**
      * The standard Random library instance.
