@@ -16,18 +16,6 @@
 
 package com.xebisco.yield;
 
-public abstract class NonFillShape extends SimpleRenderable implements Spacial {
-    private Vector2 size = new Vector2(64, 64);
-
-    public void setSizeAsTexture(Texture texture) {
-        size = texture.getSize().get();
-    }
-
-    public Vector2 getSize() {
-        return size;
-    }
-
-    public void setSize(Vector2 size) {
-        this.size = size;
-    }
+public interface Spacial {
+    boolean colliding(float x, float y);
 }

@@ -17,10 +17,15 @@
 package com.xebisco.yield;
 
 public class Oval extends Shape {
-
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);
         graphics.drawOval(getEntity().getTransform().position, getSize().mul(getEntity().getTransform().scale), getColor(), isFilled());
+    }
+
+    @Override
+    public boolean colliding(float x, float y) {
+        return x >= getTransform().position.x - getSize().x * getTransform().scale.x / 2f && x <= getTransform().position.x + getSize().x * getTransform().scale.y / 2f &&
+                y >= getTransform().position.y - getSize().y * getTransform().scale.y / 2f && y <= getTransform().position.y + getSize().y * getTransform().scale.y / 2f;
     }
 }

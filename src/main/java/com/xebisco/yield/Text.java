@@ -27,6 +27,12 @@ public class Text extends NonFillShape {
         getSize().y = graphics.getStringHeight(contents, font);
     }
 
+    @Override
+    public boolean colliding(float x, float y) {
+        return x >= getTransform().position.x - getSize().x * getTransform().scale.x / 2f && x <= getTransform().position.x + getSize().x * getTransform().scale.y / 2f &&
+                y >= getTransform().position.y - getSize().y * getTransform().scale.y / 2f && y <= getTransform().position.y + getSize().y * getTransform().scale.y / 2f;
+    }
+
     public String getContents() {
         return contents;
     }

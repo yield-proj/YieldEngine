@@ -26,6 +26,12 @@ public class RoundedRectangle extends Shape {
         graphics.drawRoundRect(getEntity().getTransform().position, getSize().mul(getEntity().getTransform().scale), getColor(), isFilled(), (int) arc.x, (int) arc.y);
     }
 
+    @Override
+    public boolean colliding(float x, float y) {
+        return x >= getTransform().position.x - getSize().x * getTransform().scale.x / 2f && x <= getTransform().position.x + getSize().x * getTransform().scale.y / 2f &&
+                y >= getTransform().position.y - getSize().y * getTransform().scale.y / 2f && y <= getTransform().position.y + getSize().y * getTransform().scale.y / 2f;
+    }
+
     public Vector2 getArc() {
         return arc;
     }

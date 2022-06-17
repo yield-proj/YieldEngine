@@ -25,4 +25,10 @@ public class Sprite extends NonFillShape {
         else
             graphics.drawTexture(game.getYieldLogo(), getEntity().getTransform().position, getSize().mul(getEntity().getTransform().scale));
     }
+
+    @Override
+    public boolean colliding(float x, float y) {
+        return x >= getTransform().position.x - getSize().x * getTransform().scale.x / 2f && x <= getTransform().position.x + getSize().x * getTransform().scale.y / 2f &&
+                y >= getTransform().position.y - getSize().y * getTransform().scale.y / 2f && y <= getTransform().position.y + getSize().y * getTransform().scale.y / 2f;
+    }
 }

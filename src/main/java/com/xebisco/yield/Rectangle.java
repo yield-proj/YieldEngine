@@ -23,4 +23,10 @@ public class Rectangle extends Shape
         super.render(graphics);
         graphics.drawRect(getEntity().getTransform().position, getSize().mul(getEntity().getTransform().scale), getColor(), isFilled());
     }
+
+    @Override
+    public boolean colliding(float x, float y) {
+        return x >= getTransform().position.x - getSize().x * getTransform().scale.x / 2f && x <= getTransform().position.x + getSize().x * getTransform().scale.y / 2f &&
+                y >= getTransform().position.y - getSize().y * getTransform().scale.y / 2f && y <= getTransform().position.y + getSize().y * getTransform().scale.y / 2f;
+    }
 }

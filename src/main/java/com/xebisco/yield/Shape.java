@@ -16,7 +16,7 @@
 
 package com.xebisco.yield;
 
-public class Shape extends NonFillShape {
+public abstract class Shape extends NonFillShape {
     private boolean filled = true;
     private Vector2 size = new Vector2(64, 64);
 

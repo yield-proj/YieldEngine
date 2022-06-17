@@ -20,48 +20,80 @@ import com.xebisco.yield.*;
 
 public class MyGame extends YldGame {
 
-    @Override
-    public void create() {
-        
-    }
-
+    static int count;
+    static boolean over;
 
     @Override
     public void start() {
+        view = new View(427, 240);
+        Texture t = new Texture("com/xebisco/yield/assets/yieldlogo.png");
+        loadTexture(t);
+
+        loadFont("arial", 12, 0);
+
         instantiate((e) -> {
-            e.instantiate((e1) -> {
-                e1.addComponent(new Rectangle());
-                e1.getComponent(Rectangle.class).setColor(Colors.BLACK);
-            });
-            e.instantiate((e1) -> {
-                e1.addComponent(new Text());
-                e1.addComponent(new FPSCounter());
-            });
-            e.getSelfTransform().goTo(new Vector2(30, 30));
+            e.addComponent(new Sprite());
+            e.addComponent(new Clickable());
+            e.getMaterial().setTexture(t);
+            e.center();
         });
 
+        instantiate((e) -> {
+            e.addComponent(new Text());
+            e.addComponent(new Counter());
+            e.getSelfTransform().goTo(view.getWidth() / 2f, 10);
+        });
 
     }
 
     @Override
     public void update(float delta) {
-        Yld.log(Yld.MEMORY() + " - " + getMasterEntity().getChildren().size());
+
     }
 
     public static void main(String[] args) {
-        Yld.debug = false;
+        Yld.debug = true;
         GameConfiguration config = new GameConfiguration();
         config.renderMasterName = "com.xebisco.yield.render.swing.SwingYield";
         config.resizable = true;
-        int fps = 60;
-        if(args.length > 0)
-            fps = Integer.parseInt(args[0]);
-        config.fps = fps;
         launch(new MyGame(), config);
     }
 }
 
-class FPSCounter extends YldScript {
+class Clickable extends YldScript {
+
+    Sprite sprite;
+    float scaleV, scaleR, addScale;
+
+    @Override
+    public void start() {
+        sprite = getComponent(Sprite.class);
+    }
+
+    @Override
+    public void update(float delta) {
+        transform.rotate(delta * 50);
+        MyGame.over = input.isTouching(sprite);
+        if (MyGame.over) {
+            scaleR = 1.5f;
+        } else {
+            scaleR = 1;
+        }
+        scaleV += (scaleR - scaleV) / 8f;
+        if (MyGame.over && (input.isJustPressed(Key.MOUSE_1) || input.isJustPressed(Key.MOUSE_3))) {
+            addScale += .2f;
+            MyGame.count++;
+        }
+        addScale -= addScale / 16;
+        if (addScale < 0)
+            addScale = 0;
+        transform.scale.x = scaleV + addScale;
+        transform.scale.y = scaleV + addScale;
+    }
+}
+
+class Counter extends YldScript {
+
     Text text;
 
     @Override
@@ -71,7 +103,6 @@ class FPSCounter extends YldScript {
 
     @Override
     public void update(float delta) {
-        text.setContents(String.format("%.0f", time.getRenderFps()));
-
+        text.setContents(String.valueOf(MyGame.count));
     }
 }

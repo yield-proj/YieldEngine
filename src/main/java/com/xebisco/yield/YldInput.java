@@ -44,6 +44,10 @@ public class YldInput {
         return false;
     }
 
+    public boolean isTouching(Spacial spacial) {
+        return spacial.colliding(getMouse().x, getMouse().y);
+    }
+
     public Vector2 getMouse() {
         return new Vector2(game.getHandler().getRenderMaster().mouseX(), game.getHandler().getRenderMaster().mouseY());
     }
