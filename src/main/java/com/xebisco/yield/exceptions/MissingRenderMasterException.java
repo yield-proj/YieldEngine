@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.render.swing;
+package com.xebisco.yield.exceptions;
 
-import javax.swing.*;
-
-public class Repainter extends SwingWorker<Object, Object> {
-
-    private final JPanel panel;
-
-    public Repainter(JPanel panel) {
-        this.panel = panel;
+public class MissingRenderMasterException extends CannotLoadException {
+    public MissingRenderMasterException() {
     }
 
-    @Override
-    protected Object doInBackground() {
-        panel.repaint();
-        return null;
-    }
-
-    public JPanel getPanel() {
-        return panel;
+    public MissingRenderMasterException(String s) {
+        super(s);
     }
 }

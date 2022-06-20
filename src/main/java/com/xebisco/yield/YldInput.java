@@ -16,6 +16,7 @@
 
 package com.xebisco.yield;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,18 +24,24 @@ public class YldInput {
     private final YldGame game;
     private final Set<Integer> pressing = new HashSet<>();
 
+    private final HashMap<String, YldPair<YldPair<Integer, Integer>, YldPair<Integer, Integer>>> axis = new HashMap<>();
+
     public YldInput(YldGame game) {
         this.game = game;
+        addAxis("Vertical", Key.UP, Key.W, Key.DOWN, Key.S);
+        addAxis("Horizontal", Key.LEFT, Key.A, Key.RIGHT, Key.D);
     }
 
-    public boolean isPressed(int key) {
+    public boolean isPressed(Integer key) {
+        if (key == null)
+            return false;
         return game.getHandler().getRenderMaster().pressing().contains(key);
     }
 
     public boolean isJustPressed(int key) {
         boolean pressing = game.getHandler().getRenderMaster().pressing().contains(key);
-        if(pressing) {
-            if(!this.pressing.contains(key)) {
+        if (pressing) {
+            if (!this.pressing.contains(key)) {
                 this.pressing.add(key);
                 return true;
             }
@@ -50,6 +57,34 @@ public class YldInput {
 
     public Vector2 getMouse() {
         return new Vector2(game.getHandler().getRenderMaster().mouseX(), game.getHandler().getRenderMaster().mouseY());
+    }
+
+    public Set<Integer> getPressing() {
+        return pressing;
+    }
+
+    public float getAxis(String axisName) {
+        float value = 0;
+        YldPair<YldPair<Integer, Integer>, YldPair<Integer, Integer>> axisPair = axis.get(axisName);
+        Integer primary = axisPair.getFirst().getFirst(), altPrimary = axisPair.getFirst().getSecond(), secondary = axisPair.getSecond().getFirst(), altSecondary = axisPair.getSecond().getSecond();
+        if (isPressed(primary) || isPressed(altPrimary)) {
+            value = -1;
+        } else if (isPressed(secondary) || isPressed(altSecondary)) {
+            value = 1;
+        }
+        return value;
+    }
+
+    public void addAxis(String name, int primaryKey, Integer altPrimaryKey, int secondaryKey, Integer altSecondaryKey) {
+        axis.put(name, new YldPair<>(new YldPair<>(primaryKey, altPrimaryKey), new YldPair<>(secondaryKey, altSecondaryKey)));
+    }
+
+    public void addAxis(String name, int primaryKey, int secondaryKey) {
+        addAxis(name, primaryKey, null, secondaryKey, null);
+    }
+
+    public HashMap<String, YldPair<YldPair<Integer, Integer>, YldPair<Integer, Integer>>> getAxis() {
+        return axis;
     }
 
     public YldGame getGame() {

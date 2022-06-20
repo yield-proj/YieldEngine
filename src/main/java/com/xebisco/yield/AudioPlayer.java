@@ -97,6 +97,10 @@ public class AudioPlayer extends Component
         clip.start();
     }
 
+    public boolean isRunning() {
+        return clip.isRunning();
+    }
+
     public void restart()
     {
         position = audioClip.getStartPos().getPosition();
@@ -176,5 +180,8 @@ public class AudioPlayer extends Component
     public void setAudioClip(AudioClip audioClip)
     {
         this.audioClip = audioClip;
+        if(!audioClip.isLoaded()) {
+            load(audioClip);
+        }
     }
 }

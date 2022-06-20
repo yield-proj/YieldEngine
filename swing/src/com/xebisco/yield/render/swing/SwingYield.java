@@ -70,9 +70,6 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
 
     private long last, actual;
 
-    private GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    private GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
-
     static {
         BufferedImage yieldImage1 = null;
         try {
@@ -95,6 +92,11 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
 
     public static Color toYieldColor(java.awt.Color color) {
         return new Color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+    }
+
+    @Override
+    public void before(YldGame game) {
+
     }
 
     @Override
@@ -288,8 +290,9 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
     @Override
     public void frameStart(SampleGraphics g, View view) {
         this.view = view;
-        if (image != null)
+        if (image != null) {
             this.g = image.getGraphics();
+        }
         if (started)
             g.drawRect(new Vector2(view.getWidth() / 2f, view.getHeight() / 2f), new Vector2(view.getWidth(), view.getHeight()), view.getBgColor(), true);
     }
@@ -299,7 +302,7 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
         if (g != null)
             g.dispose();
         if (image == null || image.getWidth(null) != view.getWidth() || image.getHeight(null) != view.getHeight()) {
-            image = gc.createCompatibleVolatileImage(view.getWidth(), view.getHeight(), Transparency.TRANSLUCENT);
+            image = createVolatileImage(view.getWidth(), view.getHeight());
             //image = new BufferedImage(view.getWidth(), view.getHeight(), BufferedImage.TYPE_INT_ARGB);
         }
         SwingUtilities.invokeLater(this::repaint);
@@ -616,21 +619,5 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
 
     public void setActual(long actual) {
         this.actual = actual;
-    }
-
-    public GraphicsEnvironment getGe() {
-        return ge;
-    }
-
-    public void setGe(GraphicsEnvironment ge) {
-        this.ge = ge;
-    }
-
-    public GraphicsConfiguration getGc() {
-        return gc;
-    }
-
-    public void setGc(GraphicsConfiguration gc) {
-        this.gc = gc;
     }
 }

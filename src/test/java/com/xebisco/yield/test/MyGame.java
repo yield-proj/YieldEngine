@@ -18,112 +18,26 @@ package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class MyGame extends YldGame {
 
-    static int count;
-    static boolean over;
-
-    static List<String> leaderBoard = new ArrayList<>();
-
-    static List<Integer> lb = new ArrayList<>();
-    static String pLeaderBoard = "";
+    Entity player;
 
     @Override
-    public void start() {
-        String s = Save.getContents(game.getConfiguration());
-        if(s != null) {
-            pLeaderBoard = s;
-            leaderBoard = Arrays.asList(pLeaderBoard.split("ç"));
-            Yld.log(leaderBoard);
-        }
-        for(String s1 : leaderBoard) {
-            lb.add(Integer.parseInt(s1));
-        }
-        view = new View(427, 240);
-        Texture t = new Texture("com/xebisco/yield/assets/yieldlogo.png");
-        loadTexture(t);
-
-        loadFont("arial", 12, 0);
-
-        instantiate((e) -> {
-            e.addComponent(new Sprite());
-            e.addComponent(new Clickable());
-            e.getMaterial().setTexture(t);
+    public void create() {
+        player = instantiate((e) -> {
+            e.addComponent(new Rectangle());
             e.center();
         });
-
-        instantiate((e) -> {
-            e.addComponent(new Text());
-            e.addComponent(new Counter());
-            e.getSelfTransform().goTo(view.getWidth() / 2f, 10);
-        });
-
     }
 
     @Override
     public void update(float delta) {
-
+        player.getSelfTransform().translate(new Vector2(input.getAxis("Horizontal"), input.getAxis("Vertical")).mul(delta * 150f));
     }
 
     public static void main(String[] args) {
-        Yld.debug = true;
         GameConfiguration config = new GameConfiguration();
         config.renderMasterName = "com.xebisco.yield.render.swing.SwingYield";
-        config.resizable = true;
-        config.appName = "YIELD_CLICKER";
-        config.title = "YIELD CLICKER";
         launch(new MyGame(), config);
-    }
-}
-
-class Clickable extends YldScript {
-
-    Sprite sprite;
-    float scaleV, scaleR, addScale;
-
-    @Override
-    public void start() {
-        sprite = getComponent(Sprite.class);
-    }
-
-    @Override
-    public void update(float delta) {
-        transform.rotate(delta * 50);
-        MyGame.over = input.isTouching(sprite);
-        if (MyGame.over) {
-            scaleR = 1.5f;
-        } else {
-            scaleR = 1;
-        }
-        scaleV += (scaleR - scaleV) / 8f;
-        if (MyGame.over && (input.isJustPressed(Key.MOUSE_1) || input.isJustPressed(Key.MOUSE_3))) {
-            addScale += .2f;
-            MyGame.count++;
-            Save.saveContents(MyGame.pLeaderBoard + "ç" + MyGame.count, game.getConfiguration(), true);
-        }
-        addScale -= addScale / 16;
-        if (addScale < 0)
-            addScale = 0;
-        transform.scale.x = scaleV + addScale;
-        transform.scale.y = scaleV + addScale;
-    }
-}
-
-class Counter extends YldScript {
-
-    Text text;
-
-    @Override
-    public void start() {
-        text = getComponent(Text.class);
-    }
-
-    @Override
-    public void update(float delta) {
-        text.setContents(String.valueOf(MyGame.count));
     }
 }

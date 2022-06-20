@@ -19,6 +19,7 @@ package com.xebisco.yield.engine;
 import com.xebisco.yield.Yld;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Engine implements Runnable {
     private final Thread thread = new Thread(this);
@@ -27,6 +28,8 @@ public class Engine implements Runnable {
     private int targetTime = 33, oneSecCount, oneSecFrameCount, fpsCount;
     private EngineStop stop = EngineStop.JOIN_ON_END;
     private boolean running, ignoreTodo, lock = true, stopOnNext;
+
+    private AtomicBoolean paused = new AtomicBoolean(false);
 
     private long last, actual;
 
@@ -41,42 +44,47 @@ public class Engine implements Runnable {
             controller.start();
         while (running) {
             try {
-                actual = System.currentTimeMillis();
-                if (!ignoreTodo) {
-                    for (int i = 0; i < todoList.size(); i++) {
-                        YldEngineAction engineAction = todoList.get(i);
-                        if (engineAction.getToExec() <= 0) {
-                            engineAction.getAction().onAction();
-                            if (!engineAction.isRepeat())
-                                todoList.remove(engineAction);
-                            engineAction.setToExec(engineAction.getInitialToExec());
-                        } else {
-                            engineAction.setToExec(engineAction.getToExec() - targetTime);
+                if (!paused.get()) {
+
+
+                    actual = System.currentTimeMillis();
+                    if (!ignoreTodo) {
+                        for (int i = 0; i < todoList.size(); i++) {
+                            YldEngineAction engineAction = todoList.get(i);
+                            if (engineAction.getToExec() <= 0) {
+                                engineAction.getAction().onAction();
+                                if (!engineAction.isRepeat())
+                                    todoList.remove(engineAction);
+                                engineAction.setToExec(engineAction.getInitialToExec());
+                            } else {
+                                engineAction.setToExec(engineAction.getToExec() - targetTime);
+                            }
+
+                        }
+                    }
+                    if (controller != null)
+                        controller.tick();
+                    update(last, actual);
+                    oneSecCount += actual - last;
+                    oneSecFrameCount++;
+                    if (oneSecCount > 1000) {
+                        fpsCount = oneSecFrameCount;
+                        oneSecCount = 0;
+                        oneSecFrameCount = 0;
+                    }
+                    last = System.currentTimeMillis();
+                    if (stopOnNext) {
+                        running = false;
+                        break;
+                    }
+                    if (lock)
+                        try {
+                            Thread.sleep(targetTime);
+                        } catch (InterruptedException e) {
+                            Yld.throwException(e);
                         }
 
-                    }
                 }
-                if (controller != null)
-                    controller.tick();
-                update(last, actual);
-                oneSecCount += actual - last;
-                oneSecFrameCount++;
-                if (oneSecCount > 1000) {
-                    fpsCount = oneSecFrameCount;
-                    oneSecCount = 0;
-                    oneSecFrameCount = 0;
-                }
-                last = System.currentTimeMillis();
-                if (stopOnNext) {
-                    running = false;
-                    break;
-                }
-                if (lock)
-                    try {
-                        Thread.sleep(targetTime);
-                    } catch (InterruptedException e) {
-                        Yld.throwException(e);
-                    }
             } catch (Exception e) {
                 Yld.throwException(e);
             }
@@ -194,5 +202,17 @@ public class Engine implements Runnable {
 
     public void setStopOnNext(boolean stopOnNext) {
         this.stopOnNext = stopOnNext;
+    }
+
+    public AtomicBoolean getPaused() {
+        return paused;
+    }
+
+    public void setPaused(AtomicBoolean paused) {
+        this.paused = paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused.set(paused);
     }
 }

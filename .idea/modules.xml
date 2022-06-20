@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.xebisco.yield.YieldEngine.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.xebisco.yield.YieldEngine.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.xebisco.yield.YieldEngine.test.iml" filepath="$PROJECT_DIR$/.idea/modules/com.xebisco.yield.YieldEngine.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/main/main.iml" filepath="$PROJECT_DIR$/src/main/main.iml" />
       <module fileurl="file://$PROJECT_DIR$/swing/swing.iml" filepath="$PROJECT_DIR$/swing/swing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/test/test.iml" filepath="$PROJECT_DIR$/src/test/test.iml" />
     </modules>
   </component>
 </project>
