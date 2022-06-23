@@ -154,6 +154,10 @@ public static Color HexToColor(String hex)
         return Float.compare(color.r, r) == 0 && Float.compare(color.g, g) == 0 && Float.compare(color.b, b) == 0 && Float.compare(color.a, a) == 0;
     }
 
+    public Color get() {
+        return new Color(getRGB(), getA());
+    }
+
     @Override
     public int hashCode()
     {

@@ -22,12 +22,14 @@ public class SimpleRenderable extends Component {
 
     private float angle;
 
+    private Vector2 addAnchorPoint = new Vector2();
+
     @Override
     public void render(SampleGraphics graphics) {
         float angle = getEntity().getTransform().rotation + this.angle;
         if(forceAngle)
             angle = this.angle;
-        graphics.setRotation(getEntity().getTransform().position.subt(scene.getView().getCamera().getPosition()), angle);
+        graphics.setRotation(getEntity().getTransform().position.subt(scene.getView().getCamera().getPosition()).sum(addAnchorPoint).mul(getTransform().scale), angle);
     }
 
     public Color getColor() {
@@ -52,5 +54,13 @@ public class SimpleRenderable extends Component {
 
     public float getAngle() {
         return angle;
+    }
+
+    public Vector2 getAddAnchorPoint() {
+        return addAnchorPoint;
+    }
+
+    public void setAddAnchorPoint(Vector2 addAnchorPoint) {
+        this.addAnchorPoint = addAnchorPoint;
     }
 }

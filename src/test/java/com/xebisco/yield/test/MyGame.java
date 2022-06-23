@@ -19,9 +19,28 @@ package com.xebisco.yield.test;
 import com.xebisco.yield.*;
 
 public class MyGame extends YldGame {
+    Entity e;
+
     @Override
     public void create() {
-        
+        Texture tileMapTexture = new Texture("com/xebisco/yield/test/assets/testmap.png");
+        Texture tileSetTexture = new Texture("com/xebisco/yield/test/assets/testtileset.png");
+        loadTexture(tileMapTexture);
+        loadTexture(tileSetTexture);
+        TileSet tileSet = new TileSet(
+                new YldPair<>(Colors.BLACK, new Tile(cutTexture(tileSetTexture, new Vector2(), new Vector2(16, 16)))),
+                new YldPair<>(Colors.WHITE, new Tile(cutTexture(tileSetTexture, new Vector2(0, 16), new Vector2(16, 16)))));
+        TileMap tileMap = TileMap.loadTileMap(getTextureColors(tileMapTexture), new TileMap(), tileSet);
+        e = instantiate((e) -> {
+            e.addComponent(tileMap);
+            e.center();
+        });
+    }
+
+    @Override
+    public void update(float delta) {
+        view.getCamera().getPosition().x += delta * 25f;
+        view.getCamera().getPosition().y += delta * 50f;
     }
 
     public static void main(String[] args) {

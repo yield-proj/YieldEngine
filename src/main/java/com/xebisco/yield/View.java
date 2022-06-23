@@ -27,8 +27,8 @@ public class View
     private static View actView;
     private final int width, height;
     private static YldCamera defaultCamera = new YldCamera();
-    private YldCamera camera = YldCamera.clone(defaultCamera);
-    private Color bgColor = new Color(.1176470588235294f, .1764705882352941f, .4549019607843137f);
+    private YldCamera camera = defaultCamera.get();
+    private Color bgColor = new Color(0xFF1E2D74);
 
     /**
      * Creates a View and set its width and height.

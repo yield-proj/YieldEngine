@@ -18,7 +18,16 @@ package com.xebisco.yield;
 
 public class Tile {
     private Texture texture;
+    private int layer = 0;
     private Vector2 size = new Vector2(32, 32), offSet = new Vector2();
+
+    public Tile() {
+
+    }
+
+    public Tile(Texture texture) {
+        this.texture = texture;
+    }
 
     public Texture getTexture() {
         return texture;
@@ -42,5 +51,13 @@ public class Tile {
 
     public void setOffSet(Vector2 offSet) {
         this.offSet = offSet;
+    }
+
+    public int getLayer() {
+        return layer;
+    }
+
+    public void setLayer(int layer) {
+        this.layer = layer;
     }
 }

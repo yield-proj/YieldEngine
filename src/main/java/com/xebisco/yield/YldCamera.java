@@ -30,6 +30,11 @@ public class YldCamera
         this.position = position;
     }
 
+    public YldCamera get() {
+        return new YldCamera(position.get());
+    }
+
+    @Deprecated
     public static YldCamera clone(YldCamera camera)
     {
         final YldCamera cam = new YldCamera();
