@@ -30,6 +30,9 @@ public class YldInput {
         this.game = game;
         addAxis("Vertical", Key.UP, Key.W, Key.DOWN, Key.S);
         addAxis("Horizontal", Key.LEFT, Key.A, Key.RIGHT, Key.D);
+        addAxis("Jump", null, Key.SPACE);
+        addAxis("Fire1", null, Key.MOUSE_1);
+        addAxis("Fire2", null, Key.SHIFT);
     }
 
     public boolean isPressed(Integer key) {
@@ -75,11 +78,11 @@ public class YldInput {
         return value;
     }
 
-    public void addAxis(String name, int primaryKey, Integer altPrimaryKey, int secondaryKey, Integer altSecondaryKey) {
+    public void addAxis(String name, Integer primaryKey, Integer altPrimaryKey, Integer secondaryKey, Integer altSecondaryKey) {
         axis.put(name, new YldPair<>(new YldPair<>(primaryKey, altPrimaryKey), new YldPair<>(secondaryKey, altSecondaryKey)));
     }
 
-    public void addAxis(String name, int primaryKey, int secondaryKey) {
+    public void addAxis(String name, Integer primaryKey, Integer secondaryKey) {
         addAxis(name, primaryKey, null, secondaryKey, null);
     }
 

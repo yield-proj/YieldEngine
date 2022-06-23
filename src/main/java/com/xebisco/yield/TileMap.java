@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,19 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.test;
+package com.xebisco.yield;
 
-import com.xebisco.yield.*;
-
-public class MyGame extends YldGame {
-    @Override
-    public void create() {
-        
-    }
-
-    public static void main(String[] args) {
-        GameConfiguration config = new GameConfiguration();
-        config.renderMasterName = "com.xebisco.yield.render.swing.SwingYield";
-        launch(new MyGame(), config);
-    }
+public class TileMap extends SimpleRenderable {
 }

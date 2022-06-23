@@ -21,6 +21,7 @@ public class Rectangle extends Shape
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);
+        Yld.log(getColor());
         graphics.drawRect(getEntity().getTransform().position, getSize().mul(getEntity().getTransform().scale), getColor(), isFilled());
     }
 

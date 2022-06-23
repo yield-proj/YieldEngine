@@ -40,7 +40,7 @@ public final class Yld {
      * All the Yield Game Engine messages.
      */
 
-    private static final long BUILD = 2016;
+    private static final long BUILD = 2017;
 
     public static final ArrayList<String> MESSAGES = new ArrayList<>();
     /**

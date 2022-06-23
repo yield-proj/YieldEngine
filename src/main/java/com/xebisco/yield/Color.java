@@ -22,7 +22,47 @@ import java.util.Objects;
  * A color stored in an separated RGB values.
  */
 public class Color {
+
+    /*
+String hex = String.format("#%02x%02x%02x", r, g, b);
+int hex = 0x123456;
+
+
+public static Color HexToColor(String hex)
+{
+    hex = hex.replace("#", "");
+    switch (hex.length()) {
+        case 6:
+            return new Color(
+                    Integer.valueOf(hex.substring(0, 2), 16),
+                    Integer.valueOf(hex.substring(2, 4), 16),
+                    Integer.valueOf(hex.substring(4, 6), 16));
+        case 8:
+            return new Color(
+                    Integer.valueOf(hex.substring(0, 2), 16),
+                    Integer.valueOf(hex.substring(2, 4), 16),
+                    Integer.valueOf(hex.substring(4, 6), 16),
+                    Integer.valueOf(hex.substring(6, 8), 16));
+    }
+    return null;
+}
+ */
     private float r, g, b, a;
+
+    public Color(int rgb) {
+        r = ((rgb & 0xFF0000) >> 16) / 255f;
+        g = ((rgb & 0xFF00) >> 8) / 255f;
+        b = (rgb & 0xFF) / 255f;
+        a = 1f;
+    }
+
+    public Color(int rgb, float alpha) {
+        r = ((rgb & 0xFF0000) >> 16) / 255f;
+        g = ((rgb & 0xFF00) >> 8) / 255f;
+        b = (rgb & 0xFF) / 255f;
+        a = Yld.clamp(alpha, 0f, 1f);
+    }
+
     public Color(float r, float g, float b) {
         this.r = r;
         this.g = g;
@@ -98,6 +138,11 @@ public class Color {
      */
     public void setA(float a) {
         this.a = a;
+    }
+
+    public int getRGB() {
+        String hex = String.format("%02X%02X%02X", (int) (r * 255), (int) (g * 255), (int) (b * 255));
+        return Integer.parseInt(hex, 16);
     }
 
     @Override

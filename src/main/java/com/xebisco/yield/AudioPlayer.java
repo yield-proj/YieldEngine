@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.exceptions.AudioClipException;
+
 import javax.sound.sampled.*;
 import java.io.IOException;
 
@@ -47,6 +49,8 @@ public class AudioPlayer extends Component
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e)
         {
             Yld.throwException(e);
+        } catch (NullPointerException e) {
+            Yld.throwException(new AudioClipException("Cannot find audio file: '" + audioClip.getCachedPath() + "'"));
         }
     }
 
