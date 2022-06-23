@@ -22,7 +22,7 @@ public class Rectangle extends Shape
     public void render(SampleGraphics graphics) {
         super.render(graphics);
         Yld.log(getColor());
-        graphics.drawRect(getEntity().getTransform().position, getSize().mul(getEntity().getTransform().scale), getColor(), isFilled());
+        graphics.drawRect(getEntity().getTransform().position.subt(scene.getView().getCamera().getPosition()), getSize().mul(getEntity().getTransform().scale), getColor(), isFilled());
     }
 
     @Override

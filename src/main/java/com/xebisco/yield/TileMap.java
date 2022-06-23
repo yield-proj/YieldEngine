@@ -17,4 +17,10 @@
 package com.xebisco.yield;
 
 public class TileMap extends SimpleRenderable {
+
+    @Override
+    public void render(SampleGraphics graphics) {
+        super.render(graphics);
+        //.subt(scene.getView().getCamera().getPosition())
+    }
 }

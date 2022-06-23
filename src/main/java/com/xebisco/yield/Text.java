@@ -22,7 +22,7 @@ public class Text extends NonFillShape {
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);
-        graphics.drawString(contents, getColor(), getEntity().getTransform().position, getEntity().getTransform().scale, font);
+        graphics.drawString(contents, getColor(), getEntity().getTransform().position.subt(scene.getView().getCamera().getPosition()), getEntity().getTransform().scale, font);
         getSize().x = graphics.getStringWidth(contents, font);
         getSize().y = graphics.getStringHeight(contents, font);
     }
