@@ -22,31 +22,7 @@ import java.util.Objects;
  * A color stored in an separated RGB values.
  */
 public class Color {
-
-    /*
-String hex = String.format("#%02x%02x%02x", r, g, b);
-int hex = 0x123456;
-
-
-public static Color HexToColor(String hex)
-{
-    hex = hex.replace("#", "");
-    switch (hex.length()) {
-        case 6:
-            return new Color(
-                    Integer.valueOf(hex.substring(0, 2), 16),
-                    Integer.valueOf(hex.substring(2, 4), 16),
-                    Integer.valueOf(hex.substring(4, 6), 16));
-        case 8:
-            return new Color(
-                    Integer.valueOf(hex.substring(0, 2), 16),
-                    Integer.valueOf(hex.substring(2, 4), 16),
-                    Integer.valueOf(hex.substring(4, 6), 16),
-                    Integer.valueOf(hex.substring(6, 8), 16));
-    }
-    return null;
-}
- */
+    
     private float r, g, b, a;
 
     public Color(int rgb) {
