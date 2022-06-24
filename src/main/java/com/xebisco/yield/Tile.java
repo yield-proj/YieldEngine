@@ -19,7 +19,7 @@ package com.xebisco.yield;
 public class Tile {
     private Texture texture;
     private int layer = 0;
-    private Vector2 size = new Vector2(32, 32), offSet = new Vector2();
+    private Vector2 size, offSet = new Vector2();
 
     public Tile() {
 

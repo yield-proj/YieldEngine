@@ -212,8 +212,7 @@ public final class Entity implements Comparable<Entity>
      */
     public Transform getTransform()
     {
-        Transform toReturn = new Transform();
-        Transform.setAs(toReturn, selfTransform);
+        Transform toReturn = selfTransform.get();
         if (parent != null)
         {
             toReturn.translate(parent.getTransform().position);

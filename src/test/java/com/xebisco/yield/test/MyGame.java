@@ -23,14 +23,15 @@ public class MyGame extends YldGame {
 
     @Override
     public void create() {
+        view = new View(1080 / 2, 720 / 2);
         Texture tileMapTexture = new Texture("com/xebisco/yield/test/assets/testmap.png");
         Texture tileSetTexture = new Texture("com/xebisco/yield/test/assets/testtileset.png");
         loadTexture(tileMapTexture);
         loadTexture(tileSetTexture);
-        TileSet tileSet = new TileSet(
+        TileSet tileSet = new TileSet(new Vector2(16, 16),
                 new YldPair<>(Colors.BLACK, new Tile(cutTexture(tileSetTexture, new Vector2(), new Vector2(16, 16)))),
                 new YldPair<>(Colors.WHITE, new Tile(cutTexture(tileSetTexture, new Vector2(0, 16), new Vector2(16, 16)))));
-        TileMap tileMap = TileMap.loadTileMap(getTextureColors(tileMapTexture), new TileMap(), tileSet);
+        TileMap tileMap = TileMap.loadTileMap(getTextureColors(tileMapTexture), new TileMap(), tileSet, new Vector2(16, 16));
         e = instantiate((e) -> {
             e.addComponent(tileMap);
             e.center();
@@ -41,6 +42,7 @@ public class MyGame extends YldGame {
     public void update(float delta) {
         view.getCamera().getPosition().x += delta * 25f;
         view.getCamera().getPosition().y += delta * 50f;
+        Yld.log(Yld.MEMORY());
     }
 
     public static void main(String[] args) {

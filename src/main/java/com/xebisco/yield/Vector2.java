@@ -81,6 +81,7 @@ public class Vector2
         return new Vector2(x - vector.x, y - vector.y);
     }
 
+    @Deprecated
     public float distance(Vector2 other) {
         return (float) (((x + other.x) / Math.sqrt(2)) + (y + other.y) / Math.sqrt(2));
     }

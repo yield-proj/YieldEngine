@@ -26,10 +26,13 @@ public class TileMap extends SimpleRenderable {
 
     private boolean dynamicProcessing = true;
 
-    private Vector2 grid = new Vector2(32, 32);
+    private float processTime = .05f, actualProcessTime;
 
-    public static TileMap loadTileMap(Color[][] colors, TileMap tileMap, TileSet tileSet) {
+    private Vector2 grid;
+
+    public static TileMap loadTileMap(Color[][] colors, TileMap tileMap, TileSet tileSet, Vector2 grid) {
         tileMap.tiles = new ArrayList<>();
+        tileMap.grid = grid.get();
         if (colors.length > 0) {
             for (int x = 0; x < colors.length; x++) {
                 for (int y = 0; y < colors[0].length; y++) {
@@ -40,15 +43,26 @@ public class TileMap extends SimpleRenderable {
         return tileMap;
     }
 
+    public static TileMap loadTileMap(Color[][] colors, TileMap tileMap, TileSet tileSet) {
+        return loadTileMap(colors, tileMap, tileSet, new Vector2(32, 32));
+    }
+
+    @Override
+    public void update(float delta) {
+        actualProcessTime -= delta;
+    }
+
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);
+        Vector2 cam = scene.getView().getCamera().getPosition().get();
+        Transform t = getTransform();
         for (int i = 0; i < tiles.size(); i++) {
             YldPair<Vector2, Tile> pair = tiles.get(i);
             Tile tile = pair.getSecond();
             if (tile != null) {
-                Vector2 pos = pair.getFirst().sum(getTransform().position).sum(tile.getOffSet()).subt(scene.getView().getCamera().getPosition()).subt(tile.getSize().mul(getTransform().scale).div(2f)),
-                        size = tile.getSize().mul(getTransform().scale);
+                Vector2 pos = pair.getFirst().sum(t.position).sum(tile.getOffSet()).subt(cam).subt(tile.getSize().mul(t.scale).div(2f)),
+                        size = tile.getSize().mul(t.scale);
                 boolean render = true;
                 if (dynamicProcessing && (transform.rotation % 360 == 0 || transform.rotation == 0)) {
                     if (!(pos.x + size.x / 2f >= 0 &&
@@ -60,9 +74,13 @@ public class TileMap extends SimpleRenderable {
                 }
                 if (render) {
                     graphics.drawTexture(tile.getTexture(), pos, size);
-                    getEntity().transmit("processTile", pos, tile.getLayer());
+                    if (actualProcessTime <= 0)
+                        getEntity().transmit("processTile", pos, tile.getLayer());
                 }
             }
+        }
+        if (actualProcessTime <= 0) {
+            actualProcessTime = processTime;
         }
     }
 
@@ -88,5 +106,21 @@ public class TileMap extends SimpleRenderable {
 
     public void setDynamicProcessing(boolean dynamicProcessing) {
         this.dynamicProcessing = dynamicProcessing;
+    }
+
+    public float getProcessTime() {
+        return processTime;
+    }
+
+    public void setProcessTime(float processTime) {
+        this.processTime = processTime;
+    }
+
+    public float getActualProcessTime() {
+        return actualProcessTime;
+    }
+
+    public void setActualProcessTime(float actualProcessTime) {
+        this.actualProcessTime = actualProcessTime;
     }
 }

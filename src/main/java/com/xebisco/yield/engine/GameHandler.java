@@ -73,7 +73,10 @@ public class GameHandler extends Engine {
     @Override
     public void update(long last, long actual) {
         float delta = (actual - last) / 1_000f;
-        if (zeroDelta) delta = 0f;
+        if (zeroDelta) {
+            delta = 0f;
+            System.gc();
+        }
         zeroDelta = false;
         renderMaster.frameStart(sampleGraphics, game.getScene().getView());
         if (renderMaster.canStart())

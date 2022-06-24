@@ -51,6 +51,7 @@ public class Engine implements Runnable {
                     if (!ignoreTodo) {
                         for (int i = 0; i < todoList.size(); i++) {
                             YldEngineAction engineAction = todoList.get(i);
+                            Yld.log(todoList);
                             if (engineAction.getToExec() <= 0) {
                                 engineAction.getAction().onAction();
                                 if (!engineAction.isRepeat())

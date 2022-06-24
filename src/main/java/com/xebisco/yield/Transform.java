@@ -131,6 +131,20 @@ public class Transform extends Component {
         }
     }
 
+    public Transform get() {
+        Transform t = new Transform();
+        t.position = position.get();
+        t.scale = scale.get();
+        if (middle != null)
+            t.middle = middle.get();
+        t.rotation = rotation;
+        t.middleRotation = middleRotation;
+        t.position = position.get();
+        t.transformed = transformed.get();
+        return t;
+    }
+
+    @Deprecated
     public static void setAs(Transform toSet, Transform transform) {
         toSet.position = transform.position.get();
         toSet.scale = transform.scale.get();
