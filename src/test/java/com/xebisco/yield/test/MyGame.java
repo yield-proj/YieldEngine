@@ -19,30 +19,34 @@ package com.xebisco.yield.test;
 import com.xebisco.yield.*;
 
 public class MyGame extends YldGame {
+
     Entity e;
 
     @Override
     public void create() {
-        view = new View(1080 / 2, 720 / 2);
-        Texture tileMapTexture = new Texture("com/xebisco/yield/test/assets/testmap.png");
-        Texture tileSetTexture = new Texture("com/xebisco/yield/test/assets/testtileset.png");
-        loadTexture(tileMapTexture);
-        loadTexture(tileSetTexture);
-        TileSet tileSet = new TileSet(new Vector2(16, 16),
-                new YldPair<>(Colors.BLACK, new Tile(cutTexture(tileSetTexture, new Vector2(), new Vector2(16, 16)))),
-                new YldPair<>(Colors.WHITE, new Tile(cutTexture(tileSetTexture, new Vector2(0, 16), new Vector2(16, 16)))));
-        TileMap tileMap = TileMap.loadTileMap(getTextureColors(tileMapTexture), new TileMap(), tileSet, new Vector2(16, 16));
-        e = instantiate((e) -> {
+        Texture map = new Texture("com/xebisco/yield/test/assets/testmap.png"),
+                set = new Texture("com/xebisco/yield/test/assets/testtileset.png");
+        loadTexture(map);
+        loadTexture(set);
+
+        TileSet tileSet = new TileSet(
+                new YldPair<>(Colors.BLACK, new Tile(cutTexture(set, new Vector2(), new Vector2(16, 16)))),
+                new YldPair<>(Colors.WHITE, new Tile(cutTexture(set, new Vector2(0, 16), new Vector2(16, 16))))
+        );
+
+        TileMap tileMap = TileMap.loadTileMap(getTextureColors(map), new TileMap(), tileSet);
+
+        e = instantiate(e -> {
             e.addComponent(tileMap);
             e.center();
         });
+        unloadTexture(map);
+        unloadTexture(set);
     }
 
     @Override
     public void update(float delta) {
-        view.getCamera().getPosition().x += delta * 25f;
-        view.getCamera().getPosition().y += delta * 50f;
-        Yld.log(Yld.MEMORY());
+        e.getSelfTransform().translate(-1, -1);
     }
 
     public static void main(String[] args) {

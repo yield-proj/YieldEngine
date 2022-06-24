@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TileSet {
-    private final Map<Color, Tile> tiles = new HashMap<>();
+    private final Map<Integer, Tile> tiles = new HashMap<>();
     private Vector2 defaultSize = new Vector2(32, 32);
 
     @SafeVarargs
@@ -42,11 +42,11 @@ public class TileSet {
         if (tile.getSize() == null) {
             tile.setSize(defaultSize.get());
         }
-        this.tiles.put(color, tile);
+        this.tiles.put(color.getRGB(), tile);
         return tile;
     }
 
-    public Map<Color, Tile> getTiles() {
+    public Map<Integer, Tile> getTiles() {
         return tiles;
     }
 }

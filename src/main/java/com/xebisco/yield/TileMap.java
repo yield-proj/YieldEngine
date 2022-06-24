@@ -17,9 +17,7 @@
 package com.xebisco.yield;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TileMap extends SimpleRenderable {
     private List<YldPair<Vector2, Tile>> tiles;
@@ -36,7 +34,7 @@ public class TileMap extends SimpleRenderable {
         if (colors.length > 0) {
             for (int x = 0; x < colors.length; x++) {
                 for (int y = 0; y < colors[0].length; y++) {
-                    tileMap.tiles.add(new YldPair<>(new Vector2(x * tileMap.grid.x, y * tileMap.grid.y), tileSet.getTiles().get(colors[x][y])));
+                    tileMap.tiles.add(new YldPair<>(new Vector2(x * tileMap.grid.x, y * tileMap.grid.y), tileSet.getTiles().get(colors[x][y].getRGB())));
                 }
             }
         }
