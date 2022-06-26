@@ -186,6 +186,11 @@ public class YldScene extends YldB
         return masterEntity.instantiate(prefab);
     }
 
+    public Entity instantiate(Prefab prefab, YldB yldB)
+    {
+        return masterEntity.instantiate(prefab, yldB);
+    }
+
     /**
      * Create an empty Entity instance.
      * (Calls instantiate() on the masterEntity)

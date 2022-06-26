@@ -39,14 +39,20 @@ public class Texture extends RelativeFile {
     }
 
     public void processFilters() {
+        processFilters(0, getWidth(), 0, getHeight());
+    }
+
+    public void processFilters(int minX, int maxX, int minY, int maxY) {
         Color[][] colors = visualUtils.getTextureColors(this);
         for (int x = 0; x < colors.length; x++) {
             for (int y = 0; y < colors[0].length; y++) {
-                Pixel pixel = new Pixel();
-                pixel.setColor(colors[x][y]);
-                pixel.setLocation(new Vector2(x, y));
-                filter.process(pixel);
-                visualUtils.setPixel(this, pixel.getColor(), pixel.getLocation());
+                if(x >= minX && x <= maxX && y >= minY && y <= maxY) {
+                    Pixel pixel = new Pixel();
+                    pixel.setColor(colors[x][y]);
+                    pixel.setLocation(new Vector2(x, y));
+                    filter.process(pixel);
+                    visualUtils.setPixel(this, pixel.getColor(), pixel.getLocation());
+                }
             }
         }
     }

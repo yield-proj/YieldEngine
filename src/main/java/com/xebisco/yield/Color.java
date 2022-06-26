@@ -65,7 +65,7 @@ public class Color {
      * Setter of the red value of this Color.
      */
     public void setR(float r) {
-        this.r = r;
+        this.r = Yld.clamp(r, 0f, 1f);
     }
 
     /**
@@ -81,7 +81,7 @@ public class Color {
      * Setter of the green value of this Color.
      */
     public void setG(float g) {
-        this.g = g;
+        this.g = Yld.clamp(g, 0f, 1f);
     }
 
     /**
@@ -97,7 +97,7 @@ public class Color {
      * Setter of the blue value of this Color.
      */
     public void setB(float b) {
-        this.b = b;
+        this.b = Yld.clamp(b, 0f, 1f);
     }
 
     /**
@@ -113,7 +113,7 @@ public class Color {
      * Setter of the alpha value of this Color.
      */
     public void setA(float a) {
-        this.a = a;
+        this.a = Yld.clamp(a, 0f, 1f);
     }
 
     public int getRGB() {

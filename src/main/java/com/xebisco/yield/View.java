@@ -26,6 +26,8 @@ public class View
     @Deprecated
     private static View actView;
     private final int width, height;
+
+    private float rotation;
     private static YldCamera defaultCamera = new YldCamera();
     private YldCamera camera = defaultCamera.get();
     private Color bgColor = new Color(0xFF1E2D74);
@@ -164,5 +166,13 @@ public class View
     public void setCamera(YldCamera camera)
     {
         this.camera = camera;
+    }
+
+    public float getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(float rotation) {
+        this.rotation = rotation;
     }
 }

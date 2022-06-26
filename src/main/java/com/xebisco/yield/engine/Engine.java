@@ -51,16 +51,18 @@ public class Engine implements Runnable {
                     if (!ignoreTodo) {
                         for (int i = 0; i < todoList.size(); i++) {
                             YldEngineAction engineAction = todoList.get(i);
-                            Yld.log(todoList);
                             if (engineAction.getToExec() <= 0) {
                                 engineAction.getAction().onAction();
-                                if (!engineAction.isRepeat())
-                                    todoList.remove(engineAction);
                                 engineAction.setToExec(engineAction.getInitialToExec());
                             } else {
                                 engineAction.setToExec(engineAction.getToExec() - targetTime);
                             }
 
+                        }
+                        for (int i = 0; i < todoList.size(); i++) {
+                            YldEngineAction engineAction = todoList.get(i);
+                            if (!engineAction.isRepeat())
+                                todoList.remove(engineAction);
                         }
                     }
                     if (controller != null)

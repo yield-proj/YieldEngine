@@ -120,41 +120,57 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             @Override
             public void drawRect(Vector2 pos, Vector2 size, Color color, boolean filled) {
                 g.setColor(toAWTColor(color));
-                if (filled) {
-                    g.fillRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
-                } else {
-                    g.drawRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
-                }
+                if (pos.x - size.x < view.getWidth() &&
+                        pos.x + size.x > 0 &&
+                        pos.y - size.y < view.getHeight() &&
+                        pos.y + size.y > 0)
+                    if (filled) {
+                        g.fillRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
+                    } else {
+                        g.drawRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
+                    }
             }
 
             @Override
             public void drawRoundRect(Vector2 pos, Vector2 size, Color color, boolean filled, int arcWidth, int arcHeight) {
                 g.setColor(toAWTColor(color));
-                if (filled) {
-                    g.fillRoundRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y, arcWidth, arcHeight);
-                } else {
-                    g.drawRoundRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y, arcWidth, arcHeight);
-                }
+                if (pos.x - size.x < view.getWidth() &&
+                        pos.x + size.x > 0 &&
+                        pos.y - size.y < view.getHeight() &&
+                        pos.y + size.y > 0)
+                    if (filled) {
+                        g.fillRoundRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y, arcWidth, arcHeight);
+                    } else {
+                        g.drawRoundRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y, arcWidth, arcHeight);
+                    }
             }
 
             @Override
             public void drawOval(Vector2 pos, Vector2 size, Color color, boolean filled) {
                 g.setColor(toAWTColor(color));
-                if (filled) {
-                    g.fillOval((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
-                } else {
-                    g.drawOval((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
-                }
+                if (pos.x - size.x < view.getWidth() &&
+                        pos.x + size.x > 0 &&
+                        pos.y - size.y < view.getHeight() &&
+                        pos.y + size.y > 0)
+                    if (filled) {
+                        g.fillOval((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
+                    } else {
+                        g.drawOval((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
+                    }
             }
 
             @Override
             public void drawArc(Vector2 pos, Vector2 size, Color color, boolean filled, int startAngle, int arcAngle) {
                 g.setColor(toAWTColor(color));
-                if (filled) {
-                    g.fillArc((int) pos.x, (int) pos.y, (int) size.x, (int) size.y, startAngle, arcAngle);
-                } else {
-                    g.drawArc((int) pos.x, (int) pos.y, (int) size.x, (int) size.y, startAngle, arcAngle);
-                }
+                if (pos.x - size.x < view.getWidth() &&
+                        pos.x + size.x > 0 &&
+                        pos.y - size.y < view.getHeight() &&
+                        pos.y + size.y > 0)
+                    if (filled) {
+                        g.fillArc((int) pos.x, (int) pos.y, (int) size.x, (int) size.y, startAngle, arcAngle);
+                    } else {
+                        g.drawArc((int) pos.x, (int) pos.y, (int) size.x, (int) size.y, startAngle, arcAngle);
+                    }
             }
 
             @Override
@@ -174,7 +190,11 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             @Override
             public void drawTexture(Texture texture, Vector2 pos, Vector2 size) {
                 Image image = images.get(texture.getTextureID());
-                g.drawImage(image, (int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y, null);
+                if (pos.x - size.x < view.getWidth() &&
+                        pos.x + size.x > 0 &&
+                        pos.y - size.y < view.getHeight() &&
+                        pos.y + size.y > 0)
+                    g.drawImage(image, (int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y, null);
             }
 
             @Override
@@ -271,7 +291,13 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             if (defTransform == null)
                 defTransform = ((Graphics2D) g).getTransform();
             started = true;
-            g.drawImage(image, 0, 0, frame.getWidth() - frame.getInsets().right - frame.getInsets().left, frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom, null);
+            Graphics2D g2 = (Graphics2D) g;
+            int w = frame.getWidth() - frame.getInsets().right - frame.getInsets().left,
+                    h = frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom;
+            g.setColor(java.awt.Color.BLACK);
+            g.fillRect(0, 0, w, h);
+            g2.rotate(Math.toRadians(view.getRotation()) * -1, w / 2f, h / 2f);
+            g.drawImage(image, 0, 0, w, h, null);
         } else {
             g.setColor(java.awt.Color.WHITE);
             g.fillRect(0, 0, getWidth(), getHeight());

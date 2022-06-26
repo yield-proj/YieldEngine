@@ -98,6 +98,11 @@ public abstract class Component extends YldB
         return entity.instantiate(prefab);
     }
 
+    public Entity instantiate(Prefab prefab, YldB yldB)
+    {
+        return entity.instantiate(prefab, yldB);
+    }
+
     /**
      * Instantiates a null entity, and adds it to this Entity children list.
      *

@@ -20,38 +20,46 @@ import com.xebisco.yield.*;
 
 public class MyGame extends YldGame {
 
-    Entity e;
+    Texture texture = new Texture("com/xebisco/yield/test/assets/fox.png");
+
+    Prefab block = e -> {
+        NonFillShape rect = new Sprite();
+        e.addComponent(rect);
+        e.addComponent(new Rotate());
+        e.getMaterial().setTexture(texture);
+        rect.setSize(new Vector2(1280, 720));
+        e.center();
+    };
 
     @Override
     public void create() {
-        Texture map = new Texture("com/xebisco/yield/test/assets/testmap.png"),
-                set = new Texture("com/xebisco/yield/test/assets/testtileset.png");
-        loadTexture(map);
-        loadTexture(set);
-
-        TileSet tileSet = new TileSet(
-                new YldPair<>(Colors.BLACK, new Tile(cutTexture(set, new Vector2(), new Vector2(16, 16)))),
-                new YldPair<>(Colors.WHITE, new Tile(cutTexture(set, new Vector2(0, 16), new Vector2(16, 16))))
-        );
-
-        TileMap tileMap = TileMap.loadTileMap(getTextureColors(map), new TileMap(), tileSet);
-
-        e = instantiate(e -> {
-            e.addComponent(tileMap);
-            e.center();
+        //view = new View(64, 36);
+        loadTexture(texture);
+        texture.setFilter(p -> {
+            p.getColor().setR(p.getColor().getR() + .05f);
+            p.getColor().setB(p.getColor().getB() + .05f);
         });
-        unloadTexture(map);
-        unloadTexture(set);
+        processFilters(texture);
+        instantiate(block);
     }
 
     @Override
     public void update(float delta) {
-        e.getSelfTransform().translate(-1, -1);
+        //Yld.log(Yld.MEMORY());
+        view.setRotation(view.getRotation() + 1);
     }
 
     public static void main(String[] args) {
         GameConfiguration config = new GameConfiguration();
         config.renderMasterName = "com.xebisco.yield.render.swing.SwingYield";
+        config.resizable = true;
         launch(new MyGame(), config);
+    }
+}
+
+class Rotate extends YldScript {
+    @Override
+    public void update(float delta) {
+        //transform.rotate(45 * delta);
     }
 }

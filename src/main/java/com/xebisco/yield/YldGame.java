@@ -16,8 +16,11 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.engine.Engine;
 import com.xebisco.yield.engine.GameHandler;
+import com.xebisco.yield.engine.YldEngineAction;
 import com.xebisco.yield.utils.ChangeScene;
+import com.xebisco.yield.utils.YldAction;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -25,6 +28,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 /**
  * This class is the starting point for every Yield Game, it contains all the objects of the game.
@@ -87,6 +92,64 @@ public class YldGame extends YldScene {
         }
         scene.update(delta);
         scene.process(delta, graphics);
+    }
+
+    public Engine processFilters(Texture texture, int fps, boolean stopAfterSame) {
+        /*int enginesSize = division * 6;
+        Engine[] engines = new Engine[enginesSize];
+        Yld.log("w - " + texture.getWidth() + ", h - " + texture.getHeight());
+        int i = 0;
+        for (int x = 0; x < enginesSize / 3; x++) {
+            int xm = texture.getWidth() / (enginesSize / 3) * x;
+            for (int y = 0; y < 3; y++) {
+                int ym = texture.getHeight() / (enginesSize / (3 + division - 1)) * y;
+                Yld.log(x + ", " + y);
+                engines[i] = new Engine(null);
+                engines[i].getThread().start();
+                engines[i].setTargetTime(1000 / fps);
+                engines[i].getTodoList().add(new YldEngineAction(() -> texture.processFilters(xm, xm + texture.getWidth() / (enginesSize / 3) - 1, ym, ym + texture.getHeight() / (enginesSize / (3 + division - 1)) - 1), 0, true, Yld.RAND.nextLong()));
+                i++;
+            }
+        }*/
+        Engine engine = new Engine(null);
+        engine.setTargetTime(1000 / fps);
+        engine.getTodoList().add(new YldEngineAction(texture::processFilters, 0, true, Yld.RAND.nextLong()));
+        engine.getThread().start();
+        if (stopAfterSame) {
+            Engine checkResults = new Engine(null);
+            checkResults.setTargetTime(60);
+            checkResults.getTodoList().add(new YldEngineAction(() -> {
+                if(checkTexToSTDColors(texture)) {
+                    engine.setStopOnNext(true);
+                    checkResults.setStopOnNext(true);
+                }
+            }, 0, true, Yld.RAND.nextLong()));
+            checkResults.getThread().start();
+        }
+        return engine;
+    }
+
+    private Color[][] processColorsSTD;
+
+    private boolean checkTexToSTDColors(Texture tex) {
+        boolean toReturn = false;
+        if(processColorsSTD != null) {
+            toReturn = equalsColors(getTextureColors(tex), processColorsSTD);
+        }
+        processColorsSTD = getTextureColors(tex);
+        return toReturn;
+    }
+
+    public boolean equalsTexture(Texture texture1, Texture texture2) {
+        return equalsColors(getTextureColors(texture1), getTextureColors(texture2));
+    }
+
+    public boolean equalsColors(Color[][] colors1, Color[][] colors2) {
+        return Arrays.deepHashCode(colors1) == Arrays.deepHashCode(colors2);
+    }
+
+    public Engine processFilters(Texture texture) {
+        return processFilters(texture, (int) time.getTargetFPS(), true);
     }
 
     public boolean isStarted() {

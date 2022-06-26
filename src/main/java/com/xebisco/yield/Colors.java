@@ -26,7 +26,7 @@ public class Colors {
             WHITE = new ImmutableColor(1, 1, 1),
             BLACK = new ImmutableColor(0, 0, 0),
             MAGENTA = new ImmutableColor(1, 0, 1),
-            YELLOW = new ImmutableColor(0, 1, 1),
+            YELLOW = new ImmutableColor(1, 1, 0),
             GREEN = new ImmutableColor(0, 1, 0),
             PINK = new ImmutableColor(1, .5f, .5f),
             LIME = new ImmutableColor(.5f, 1, .5f),
