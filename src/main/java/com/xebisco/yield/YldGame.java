@@ -19,17 +19,10 @@ package com.xebisco.yield;
 import com.xebisco.yield.engine.Engine;
 import com.xebisco.yield.engine.GameHandler;
 import com.xebisco.yield.engine.YldEngineAction;
-import com.xebisco.yield.utils.ChangeScene;
-import com.xebisco.yield.utils.YldAction;
 
-import javax.swing.*;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 
 /**
  * This class is the starting point for every Yield Game, it contains all the objects of the game.
@@ -119,7 +112,7 @@ public class YldGame extends YldScene {
             Engine checkResults = new Engine(null);
             checkResults.setTargetTime(60);
             checkResults.getTodoList().add(new YldEngineAction(() -> {
-                if(checkTexToSTDColors(texture)) {
+                if (checkTexToSTDColors(texture)) {
                     engine.setStopOnNext(true);
                     checkResults.setStopOnNext(true);
                 }
@@ -133,7 +126,7 @@ public class YldGame extends YldScene {
 
     private boolean checkTexToSTDColors(Texture tex) {
         boolean toReturn = false;
-        if(processColorsSTD != null) {
+        if (processColorsSTD != null) {
             toReturn = equalsColors(getTextureColors(tex), processColorsSTD);
         }
         processColorsSTD = getTextureColors(tex);
@@ -306,8 +299,14 @@ public class YldGame extends YldScene {
         while (i < scenes.size()) {
             if (scenes.get(i).getClass().getName().hashCode() == type.getName().hashCode()) {
                 if (scenes.get(i).getClass().getName().equals(type.getName())) {
-                    if (how == ChangeScene.DESTROY_LAST && getScene() != null)
-                        getScene().destroyScene();
+                    if(getScene() != null) {
+                        if (how == ChangeScene.DESTROY_LAST) {
+                            getScene().destroyScene();
+                            getScene().setMasterEntity(new Entity("MasterEntity", getScene(), null));
+                            getScene().setFrames(0);
+                            getScene().setCallStart(true);
+                        }
+                    }
                     scene = scenes.get(i);
                     break;
                 }

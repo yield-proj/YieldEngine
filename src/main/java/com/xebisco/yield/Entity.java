@@ -26,8 +26,7 @@ import java.util.stream.Collectors;
 /**
  * An Entity is a combination of Components and other Entities(called children), can contain game logic and be displayed on the screen.
  */
-public final class Entity implements Comparable<Entity>
-{
+public final class Entity implements Comparable<Entity> {
     private ArrayList<Component> components = new ArrayList<>();
     private List<Entity> children = new ArrayList<>();
     private int index = 0;
@@ -47,8 +46,7 @@ public final class Entity implements Comparable<Entity>
      * @param scene  The scene of this Entity.
      * @param parent The parent Entity.
      */
-    public Entity(String name, YldScene scene, Entity parent)
-    {
+    public Entity(String name, YldScene scene, Entity parent) {
         if (name == null)
             name = getClass().getSimpleName();
         this.name = name;
@@ -65,36 +63,32 @@ public final class Entity implements Comparable<Entity>
      *
      * @param delta The time variation between the last frame and the actual one in seconds.
      */
-    public void process(float delta, SampleGraphics graphics)
-    {
-        if (active)
-        {
+    public void process(float delta, SampleGraphics graphics) {
+        if (active) {
             int i = 0;
-            while (i < components.size())
-            {
+            while (i < components.size()) {
                 Component component = components.get(i);
                 component.setFrames(component.getFrames() + 1);
                 if (component.getFrames() == 1)
                     component.start();
                 component.update(delta);
-                if(graphics != null)
+                if (graphics != null)
                     component.render(graphics);
                 i++;
             }
 
             i = 0;
-            while (i < scene.getSystems().size())
-            {
+            while (i < scene.getSystems().size()) {
                 YldSystem sys = scene.getSystems().get(i);
                 sys.receive(this, delta);
 
                 i++;
             }
-            for(i = 0; i < children.size(); i++) {
+            for (i = 0; i < children.size(); i++) {
                 try {
                     Entity e = children.get(i);
                     SampleGraphics g = graphics;
-                    if(!e.isVisible())
+                    if (!e.isVisible())
                         g = null;
                     e.process(delta, g);
                 } catch (IndexOutOfBoundsException ignore) {
@@ -109,8 +103,7 @@ public final class Entity implements Comparable<Entity>
      *
      * @param component The component to be added.
      */
-    public void addComponent(Component component)
-    {
+    public void addComponent(Component component) {
         component.transform = selfTransform;
         component.setGame(scene.game);
         component.setInput(scene.game.input);
@@ -127,8 +120,7 @@ public final class Entity implements Comparable<Entity>
      * @param type The class type of the component that's being searched.
      * @return The component found (null if not found)
      */
-    public <T extends Component> T getComponent(Class<T> type)
-    {
+    public <T extends Component> T getComponent(Class<T> type) {
         return getComponent(type, 0);
     }
 
@@ -139,19 +131,15 @@ public final class Entity implements Comparable<Entity>
      * @param index the index of this component.
      * @return The component found (null if not found)
      */
-    public <T extends Component> T getComponent(Class<T> type, int index)
-    {
+    public <T extends Component> T getComponent(Class<T> type, int index) {
         T component = null;
         int i = 0;
-        while (i < components.size())
-        {
+        while (i < components.size()) {
             if (i < index)
                 break;
             Component component1 = components.get(i);
-            if (component1.getClass().getName().hashCode() == type.getName().hashCode())
-            {
-                if (component1.getClass().getName().equals(type.getName()))
-                {
+            if (component1.getClass().getName().hashCode() == type.getName().hashCode()) {
+                if (component1.getClass().getName().equals(type.getName())) {
                     component = type.cast(component1);
                     break;
                 }
@@ -168,8 +156,7 @@ public final class Entity implements Comparable<Entity>
      * @param type The class type of the Component.
      * @return If the Entity contains the Component.
      */
-    public <T extends Component> boolean containsComponent(Class<T> type)
-    {
+    public <T extends Component> boolean containsComponent(Class<T> type) {
         return getComponent(type) != null;
     }
 
@@ -179,8 +166,7 @@ public final class Entity implements Comparable<Entity>
      * @param type The class type of the Component.
      * @return If the Entity parent contains the Component.
      */
-    public <T extends Component> T getComponentInParent(Class<T> type)
-    {
+    public <T extends Component> T getComponentInParent(Class<T> type) {
         return parent.getComponent(type);
     }
 
@@ -190,10 +176,9 @@ public final class Entity implements Comparable<Entity>
      * @param type The class type of the Component.
      * @return If contains the Component.
      */
-    public <T extends Component> T getComponentInChildren(Class<T> type)
-    {
+    public <T extends Component> T getComponentInChildren(Class<T> type) {
         T component = null;
-        for(Entity child: children) {
+        for (Entity child : children) {
             component = child.getComponent(type);
             if (component != null)
                 break;
@@ -210,11 +195,9 @@ public final class Entity implements Comparable<Entity>
      *
      * @return The global transform.
      */
-    public Transform getTransform()
-    {
+    public Transform getTransform() {
         Transform toReturn = selfTransform.get();
-        if (parent != null)
-        {
+        if (parent != null) {
             toReturn.translate(parent.getTransform().position);
             toReturn.rotation += parent.getTransform().rotation;
             toReturn.scale.x *= parent.getTransform().scale.x;
@@ -229,16 +212,14 @@ public final class Entity implements Comparable<Entity>
      *
      * @return The selfTransform variable.
      */
-    public Transform getSelfTransform()
-    {
+    public Transform getSelfTransform() {
         return selfTransform;
     }
 
     /**
      * Setter of the selfTransform variable of this Entity.
      */
-    public void setSelfTransform(Transform selfTransform)
-    {
+    public void setSelfTransform(Transform selfTransform) {
         this.selfTransform = selfTransform;
     }
 
@@ -247,16 +228,14 @@ public final class Entity implements Comparable<Entity>
      *
      * @return The components list.
      */
-    public ArrayList<Component> getComponents()
-    {
+    public ArrayList<Component> getComponents() {
         return components;
     }
 
     /**
      * Setter of the components list of this Entity.
      */
-    public void setComponents(ArrayList<Component> components)
-    {
+    public void setComponents(ArrayList<Component> components) {
         this.components = components;
     }
 
@@ -265,8 +244,7 @@ public final class Entity implements Comparable<Entity>
      *
      * @return The scene variable.
      */
-    public YldScene getScene()
-    {
+    public YldScene getScene() {
         return scene;
     }
 
@@ -275,16 +253,14 @@ public final class Entity implements Comparable<Entity>
      *
      * @return The tag variable.
      */
-    public String getTag()
-    {
+    public String getTag() {
         return tag;
     }
 
     /**
      * Setter for the tag of this entity.
      */
-    public void setTag(String tag)
-    {
+    public void setTag(String tag) {
         this.tag = tag;
     }
 
@@ -293,16 +269,14 @@ public final class Entity implements Comparable<Entity>
      *
      * @return The name variable.
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     /**
      * Setter of the name variable of this Entity.
      */
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -312,8 +286,7 @@ public final class Entity implements Comparable<Entity>
      * @param prefab The Prefab of the instantiated Entity.
      * @return The instantiated Entity instance.
      */
-    public Entity instantiate(Prefab prefab, YldB yldB)
-    {
+    public Entity instantiate(Prefab prefab, YldB yldB) {
         String name = "Entity";
         if (prefab != null)
             name = prefab.getClass().getName();
@@ -330,8 +303,7 @@ public final class Entity implements Comparable<Entity>
      * @param prefab The Prefab of the instantiated Entity.
      * @return The instantiated Entity instance.
      */
-    public Entity instantiate(Prefab prefab)
-    {
+    public Entity instantiate(Prefab prefab) {
         return instantiate(prefab, null);
     }
 
@@ -340,8 +312,7 @@ public final class Entity implements Comparable<Entity>
      *
      * @return The instantiated Entity instance.
      */
-    public Entity instantiate()
-    {
+    public Entity instantiate() {
         return instantiate(null);
     }
 
@@ -350,13 +321,10 @@ public final class Entity implements Comparable<Entity>
      *
      * @param type The type of the entity that will be destroyed.
      */
-    public <E extends Prefab> void destroy(Class<E> type)
-    {
-        for(Entity e: children) {
-            if (e.getName().hashCode() == type.getName().hashCode())
-            {
-                if (e.getName().equals(name))
-                {
+    public <E extends Prefab> void destroy(Class<E> type) {
+        for (Entity e : children) {
+            if (e.getName().hashCode() == type.getName().hashCode()) {
+                if (e.getName().equals(name)) {
                     e.destroy();
                     break;
                 }
@@ -367,18 +335,17 @@ public final class Entity implements Comparable<Entity>
     /**
      * Destroys this Entity.
      */
-    public void destroy()
-    {
-        for (int i = 0; i < children.size(); i++)
-        {
+    public void destroy() {
+        for (int i = 0; i < children.size(); i++) {
             children.get(i).destroy();
         }
-        for (int i = 0; i < components.size(); i++)
-        {
+        for (int i = 0; i < components.size(); i++) {
             components.get(i).onDestroy();
         }
-        if (parent != null)
-            parent.getChildren().removeIf(e -> e == this);
+        Yld.log(getName());
+        if (parent != null) {
+            parent.getChildren().remove(this);
+        }
     }
 
     /**
@@ -386,14 +353,12 @@ public final class Entity implements Comparable<Entity>
      *
      * @return The children list.
      */
-    public List<Entity> getChildren()
-    {
+    public List<Entity> getChildren() {
         return children;
     }
 
     @Deprecated
-    public Entity addChildren(Entity e)
-    {
+    public Entity addChildren(Entity e) {
         children.add(e);
         return e;
     }
@@ -404,14 +369,13 @@ public final class Entity implements Comparable<Entity>
      * @param e The Entity to be added.
      * @return The added Entity.
      */
-    public Entity addChild(Entity e, YldB yldB)
-    {
+    public Entity addChild(Entity e, YldB yldB) {
         e.setParent(this);
         YldAction a = () -> {
             children.add(e);
             children.sort(Entity::compareTo);
         };
-        if(yldB != null) {
+        if (yldB != null) {
             yldB.concurrent(a);
         } else {
             a.onAction();
@@ -425,20 +389,14 @@ public final class Entity implements Comparable<Entity>
      * @param method    The name of the method.
      * @param arguments The arguments of the method.
      */
-    public void transmit(String method, Object... arguments)
-    {
-        for (Component c : components)
-        {
+    public void transmit(String method, Object... arguments) {
+        for (Component c : components) {
             Method[] methods = c.getClass().getDeclaredMethods();
-            for (Method m : methods)
-            {
-                if (m.getName().hashCode() == method.hashCode() && m.getName().equals(method))
-                {
-                    try
-                    {
+            for (Method m : methods) {
+                if (m.getName().hashCode() == method.hashCode() && m.getName().equals(method)) {
+                    try {
                         m.invoke(c, arguments);
-                    } catch (IllegalAccessException | InvocationTargetException e)
-                    {
+                    } catch (IllegalAccessException | InvocationTargetException e) {
                         Yld.throwException(e);
                     }
                     break;
@@ -454,10 +412,8 @@ public final class Entity implements Comparable<Entity>
      * @param method    The name of the method.
      * @param arguments The arguments of the method.
      */
-    public void transmitToChildren(String method, Object... arguments)
-    {
-        for (Entity e : children)
-        {
+    public void transmitToChildren(String method, Object... arguments) {
+        for (Entity e : children) {
             e.transmit(method, arguments);
         }
     }
@@ -474,8 +430,7 @@ public final class Entity implements Comparable<Entity>
     /**
      * Setter of the children list of this Entity.
      */
-    public void setChildren(List<Entity> children)
-    {
+    public void setChildren(List<Entity> children) {
         this.children = children;
     }
 
@@ -484,32 +439,28 @@ public final class Entity implements Comparable<Entity>
      *
      * @return the parent variable.
      */
-    public Entity getParent()
-    {
+    public Entity getParent() {
         return parent;
     }
 
     /**
      * Setter of the parent variable of this Entity.
      */
-    public void setParent(Entity parent)
-    {
+    public void setParent(Entity parent) {
         this.parent = parent;
     }
 
     /**
      * @return The render index of this Entity. (not influenced by the parent Entity)
      */
-    public int getIndex()
-    {
+    public int getIndex() {
         return index;
     }
 
     /**
      * Setter of the index variable of this Entity.
      */
-    public void setIndex(int index)
-    {
+    public void setIndex(int index) {
         this.index = index;
     }
 
@@ -518,16 +469,14 @@ public final class Entity implements Comparable<Entity>
      *
      * @return the material variable.
      */
-    public Material getMaterial()
-    {
+    public Material getMaterial() {
         return material;
     }
 
     /**
      * Setter of the material variable of this Entity.
      */
-    public void setMaterial(Material material)
-    {
+    public void setMaterial(Material material) {
         this.material = material;
     }
 
@@ -536,16 +485,14 @@ public final class Entity implements Comparable<Entity>
      *
      * @return the default material variable.
      */
-    public static Material getDefaultMaterial()
-    {
+    public static Material getDefaultMaterial() {
         return defaultMaterial;
     }
 
     /**
      * Setter of the default material.
      */
-    public static void setDefaultMaterial(Material defaultMaterial)
-    {
+    public static void setDefaultMaterial(Material defaultMaterial) {
         Entity.defaultMaterial = defaultMaterial;
     }
 
@@ -554,22 +501,20 @@ public final class Entity implements Comparable<Entity>
      *
      * @return the active material variable.
      */
-    public boolean isActive()
-    {
+    public boolean isActive() {
         return active;
     }
 
     /**
      * Setter of the active material.
      */
-    public void setActive(boolean active)
-    {
+    public void setActive(boolean active) {
         this.active = active;
     }
 
     @Override
     public int compareTo(Entity o) {
-        return Integer.compare(index, o.getIndex());
+        return Integer.compare(o.getIndex(), index);
     }
 
     public void setVisible(boolean visible) {
