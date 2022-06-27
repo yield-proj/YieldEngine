@@ -18,29 +18,28 @@ package com.xebisco.yield;
 
 /**
  * An instance of this class is made to contain the time information of a YldGame.
- * @since 4_beta1
+ *
  * @author Xebisco
+ * @since 4_beta1
  */
-public class YldTime
-{
-    private float delta, fps;
+public class YldTime {
+    private float delta, fps, targetFPS;
     private YldGame game;
 
     /**
      * Creates a YldTime instance that will pick the time information of the passed YldGame
+     *
      * @param game the game instance
      */
-    public YldTime(YldGame game)
-    {
-        this.game = game;
+    public YldTime(YldGame game) {
+        setGame(game);
     }
 
     /**
      * @return The delta time of the current frame. This variable is updated in the YldTimeSystem.
      * @since 4_beta1
      */
-    public float getDelta()
-    {
+    public float getDelta() {
         return delta;
     }
 
@@ -48,8 +47,7 @@ public class YldTime
      * @return The fps since the last frame. This variable is updated in the YldTimeSystem.
      * @since 4_beta1
      */
-    public float getFps()
-    {
+    public float getFps() {
         return fps;
     }
 
@@ -57,54 +55,48 @@ public class YldTime
      * @return The target fps of the YldGame GameConfiguration instance.
      * @since 4_1.1
      */
-    public float getTargetFPS()
-    {
-        return game.getConfiguration().fps;
+    public float getTargetFPS() {
+        return targetFPS;
     }
 
-    /**
-     * Updates the fps in the YldGame GameHandler (if in CPU Mode) or in the YldGame SlickApp (if in GPU Mode).
-     * @since 4_1.1
-     */
-    public void setTargetFPS(float fps)
-    {
+    public void setTargetFPS(float fps) {
+        if(fps <= 0) throw new IllegalArgumentException("TargetFPS needs to be mor than 0");
+        targetFPS = fps;
         game.getHandler().setTargetTime((int) (1000 / fps));
     }
 
     /**
      * @return This YldTime YldGame instance.
      */
-    public YldGame getGame()
-    {
+    public YldGame getGame() {
         return game;
     }
 
     /**
      * Setter for the YldGame instance
      */
-    public void setGame(YldGame game)
-    {
+    public void setGame(YldGame game) {
         this.game = game;
+        targetFPS = game.getConfiguration().fps;
     }
 
     /**
      * Setter for the delta variable
      */
-    public void setDelta(float delta)
-    {
+    public void setDelta(float delta) {
         this.delta = delta;
     }
 
     /**
      * Setter for the fps variable
      */
-    public void setFps(float fps)
-    {
+    public void setFps(float fps) {
         this.fps = fps;
     }
 
     /**
      * Returns the fps of the RenderMaster of this game.
+     *
      * @return The RenderMaster fps.
      */
     public float getRenderFps() {
