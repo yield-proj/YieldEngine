@@ -342,7 +342,6 @@ public final class Entity implements Comparable<Entity> {
         for (int i = 0; i < components.size(); i++) {
             components.get(i).onDestroy();
         }
-        Yld.log(getName());
         if (parent != null) {
             parent.getChildren().remove(this);
         }

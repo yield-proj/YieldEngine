@@ -468,7 +468,15 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
 
     @Override
     public Color[][] getTextureColors(Texture texture) {
-        BufferedImage image1 = (BufferedImage) images.get(texture.getTextureID());
+        BufferedImage image1;
+        try {
+            image1 = (BufferedImage) images.get(texture.getTextureID());
+        } catch (ClassCastException e) {
+            image1 = new BufferedImage(texture.getWidth(), texture.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics g = image1.getGraphics();
+            g.drawImage(images.get(texture.getTextureID()), 0, 0, null);
+            g.dispose();
+        }
         Color[][] pixels = new Color[image1.getWidth()][image1.getHeight()];
         for (int x = 0; x < pixels.length; x++) {
             for (int y = 0; y < pixels[0].length; y++) {
@@ -481,11 +489,23 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
 
     @Override
     public void setTextureColors(Texture texture, Color[][] colors) {
-        BufferedImage image1 = (BufferedImage) images.get(texture.getTextureID());
-        for (int x = 0; x < colors.length; x++) {
-            for (int y = 0; y < colors[0].length; y++) {
-                image1.setRGB(x, y, toAWTColor(colors[x][y]).getRGB());
+        try {
+            BufferedImage image1 = (BufferedImage) images.get(texture.getTextureID());
+            for (int x = 0; x < colors.length; x++) {
+                for (int y = 0; y < colors[0].length; y++) {
+                    image1.setRGB(x, y, toAWTColor(colors[x][y]).getRGB());
+                }
             }
+        } catch (ClassCastException e) {
+            Image image1 = images.get(texture.getTextureID());
+            Graphics g = image1.getGraphics();
+            for (int x = 0; x < colors.length; x++) {
+                for (int y = 0; y < colors[0].length; y++) {
+                    g.setColor(toAWTColor(colors[x][y]));
+                    g.drawRect(x, y, 1, 1);
+                }
+            }
+            g.dispose();
         }
     }
 
