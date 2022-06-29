@@ -27,10 +27,12 @@ public class RelativeFile {
 
     public RelativeFile(String relativePath) {
         cachedPath = relativePath;
-        if (!relativePath.startsWith("/"))
-            relativePath = "/" + relativePath;
-        inputStream = Yld.class.getResourceAsStream(relativePath);
-        url = Yld.class.getResource(relativePath);
+        if (relativePath != null) {
+            if (!relativePath.startsWith("/"))
+                relativePath = "/" + relativePath;
+            inputStream = Yld.class.getResourceAsStream(relativePath);
+            url = Yld.class.getResource(relativePath);
+        }
     }
 
     public InputStream getInputStream() {

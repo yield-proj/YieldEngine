@@ -20,8 +20,10 @@ import com.xebisco.yield.Color;
 import com.xebisco.yield.*;
 import com.xebisco.yield.config.WindowConfiguration;
 import com.xebisco.yield.exceptions.CannotLoadException;
+import com.xebisco.yield.exceptions.InvalidTextureTypeException;
 import com.xebisco.yield.render.ExceptionThrower;
 import com.xebisco.yield.render.RenderMaster;
+import com.xebisco.yield.render.swing.exceptions.NotCapableTextureException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -33,6 +35,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -189,6 +192,9 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
 
             @Override
             public void drawTexture(Texture texture, Vector2 pos, Vector2 size) {
+                if (texture instanceof NotCapableTexture) {
+                    throw new NotCapableTextureException();
+                }
                 Image image = images.get(texture.getTextureID());
                 if (pos.x - size.x < view.getWidth() &&
                         pos.x + size.x > 0 &&
@@ -347,35 +353,50 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
     @Override
     public void loadTexture(Texture texture) {
         try {
-            loadTexture(texture, ImageIO.read(Objects.requireNonNull(texture.getInputStream())));
+            InputStream in = texture.getInputStream();
+            if (in == null)
+                Yld.throwException(new CannotLoadException("Could not find the texture: '" + texture.getCachedPath() + "'"));
+            else
+                loadTexture(texture, ImageIO.read(in));
         } catch (IOException e) {
-            Yld.throwException(e);
-        } catch (NullPointerException e) {
-            Yld.throwException(new CannotLoadException("Could not find the texture: '" + texture.getCachedPath() + "'"));
+            e.printStackTrace();
         }
     }
 
     public void loadTexture(Texture texture, Image img) {
-        BufferedImage image = (BufferedImage) img;
-        images.put(texture.getTextureID(), image);
-        BufferedImage imageX = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB),
-                imageY = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB),
-                imageXY = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        Graphics gX = imageX.getGraphics();
-        for (int y = 0; y < image.getHeight(null); y++) {
-            for (int x = 0; x < image.getWidth(null); x++) {
-                imageX.setRGB((image.getWidth() - 1) - x, y, image.getRGB(x, y));
-                imageY.setRGB(x, (image.getHeight() - 1) - y, image.getRGB(x, y));
-                imageXY.setRGB((image.getWidth() - 1) - x, (image.getHeight() - 1) - y, image.getRGB(x, y));
+        Image image;
+        if (texture.getTextureType() == TexType.NATIVE) {
+            image = createVolatileImage(img.getWidth(null), img.getHeight(null));
+            Graphics g = image.getGraphics();
+            g.drawImage(img, 0, 0, null);
+            g.dispose();
+        } else if (texture.getTextureType() == TexType.SIMULATED) {
+            image = img;
+            BufferedImage buffImage = (BufferedImage) image;
+            BufferedImage imageX = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB),
+                    imageY = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB),
+                    imageXY = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+            for (int y = 0; y < image.getHeight(null); y++) {
+                for (int x = 0; x < image.getWidth(null); x++) {
+                    imageX.setRGB((image.getWidth(null) - 1) - x, y, buffImage.getRGB(x, y));
+                    imageY.setRGB(x, (image.getHeight(null) - 1) - y, buffImage.getRGB(x, y));
+                    imageXY.setRGB((image.getWidth(null) - 1) - x, (image.getHeight(null) - 1) - y, buffImage.getRGB(x, y));
+                }
             }
+            Texture invX = new Texture(""), invY = new Texture(""), invXY = new Texture("");
+            images.put(invX.getTextureID(), imageX);
+            images.put(invY.getTextureID(), imageY);
+            images.put(invXY.getTextureID(), imageXY);
+            texture.setInvertedX(invX);
+            texture.setInvertedY(invY);
+            texture.setInvertedXY(invXY);
+        } else {
+            throw new InvalidTextureTypeException(texture.getTextureType().toString());
         }
-        Texture invX = new Texture(""), invY = new Texture(""), invXY = new Texture("");
-        images.put(invX.getTextureID(), imageX);
-        images.put(invY.getTextureID(), imageY);
-        images.put(invXY.getTextureID(), imageXY);
-        texture.setInvertedX(invX);
-        texture.setInvertedY(invY);
-        texture.setInvertedXY(invXY);
+        images.put(texture.getTextureID(), image);
+        texture.setInvertedX(new NotCapableTexture());
+        texture.setInvertedY(new NotCapableTexture());
+        texture.setInvertedXY(new NotCapableTexture());
         texture.setVisualUtils(this);
     }
 
@@ -408,20 +429,39 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
 
     @Override
     public Texture cutTexture(Texture texture, int x, int y, int width, int height) {
-        BufferedImage img = ((BufferedImage) images.get(texture.getTextureID())).getSubimage(x, y, width, height);
-        Texture tex = new Texture("");
-        loadTexture(tex, img);
+        Texture tex;
+        Image img;
+        try {
+            img = ((BufferedImage) images.get(texture.getTextureID())).getSubimage(x, y, width, height);
+            tex = new Texture(null);
+            loadTexture(tex, img);
+        } catch (ClassCastException e) {
+            img = createVolatileImage(width, height);
+            Graphics g = img.getGraphics();
+            g.drawImage(images.get(texture.getTextureID()), -x, -y, null);
+            g.dispose();
+            tex = new Texture(null, TexType.NATIVE);
+            loadTexture(tex, img);
+        }
+
         return tex;
     }
 
     @Override
     public Texture scaleTexture(Texture texture, int width, int height) {
         Image img = images.get(texture.getTextureID());
-        BufferedImage image1 = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Image image1;
+        Texture tex;
+        if (img instanceof VolatileImage) {
+            image1 = createVolatileImage(width, height);
+            tex = new Texture(null, TexType.NATIVE);
+        } else {
+            image1 = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            tex = new Texture(null);
+        }
         Graphics g = image1.getGraphics();
         g.drawImage(img, 0, 0, width, height, null);
         g.dispose();
-        Texture tex = new Texture("");
         loadTexture(tex, image1);
         return tex;
     }

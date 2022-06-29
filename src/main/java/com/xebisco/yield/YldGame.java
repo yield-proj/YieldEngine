@@ -70,7 +70,8 @@ public class YldGame extends YldScene {
         game.setScene(game);
         game.setInput(new YldInput(game));
         new GameHandler(game);
-        game.loadTexture(game.yieldLogo = new Texture("com/xebisco/yield/assets/yieldlogo.png"));
+        game.yieldLogo = new Texture("com/xebisco/yield/assets/yieldlogo.png", TexType.NATIVE);
+        game.loadTexture(game.yieldLogo);
         game.loadFont("arial", 30, 0);
         game.getHandler().getThread().start();
     }
@@ -251,8 +252,9 @@ public class YldGame extends YldScene {
         setScene(scene);
     }
 
-    public void loadTexture(Texture texture) {
+    public Texture loadTexture(Texture texture) {
         handler.getRenderMaster().loadTexture(texture);
+        return texture;
     }
 
     public void unloadTexture(Texture texture) {

@@ -91,12 +91,6 @@ public class GameHandler extends Engine {
         }
     }
 
-    public Texture loadTexture(String path) {
-        Texture texture = new Texture(path);
-        renderMaster.loadTexture(texture);
-        return texture;
-    }
-
     public YldGame getGame() {
         return game;
     }

@@ -27,6 +27,8 @@ import java.util.Set;
 public class Texture extends RelativeFile {
     private static int textures;
     private VisualUtils visualUtils;
+
+    private final TexType textureType;
     private final int textureID;
     private Texture invertedX, invertedY, invertedXY;
 
@@ -34,6 +36,14 @@ public class Texture extends RelativeFile {
 
     public Texture(String relativePath) {
         super(relativePath);
+        textureType = TexType.SIMULATED;
+        textures++;
+        textureID = textures;
+    }
+
+    public Texture(String relativePath, TexType textureType) {
+        super(relativePath);
+        this.textureType = textureType;
         textures++;
         textureID = textures;
     }
@@ -118,5 +128,9 @@ public class Texture extends RelativeFile {
 
     public void setInvertedXY(Texture invertedXY) {
         this.invertedXY = invertedXY;
+    }
+
+    public TexType getTextureType() {
+        return textureType;
     }
 }

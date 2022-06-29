@@ -27,6 +27,7 @@ public class MyGame extends YldGame {
     Prefab prefab = e -> {
         e.addComponent(new Sprite());
         e.addComponent(new Move());
+        e.getMaterial().setTexture(scaleTexture(getYieldLogo(), new Vector2(10, 10)));
         e.center();
     };
 
