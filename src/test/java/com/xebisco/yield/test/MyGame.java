@@ -17,12 +17,12 @@
 package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
-import com.xebisco.yield.cfg.Interpreter;
+import com.xebisco.yield.ini.Interpreter;
 
 public class MyGame extends YldGame {
     public static void main(String[] args) {
         GameConfiguration config = new GameConfiguration();
-        Interpreter.file(new RelativeFile("com/xebisco/yield/test/assets/game.cfg"), config);
+        Interpreter.file(new RelativeFile("com/xebisco/yield/test/assets/game.ini"), config);
         launch(new MyGame(), config);
     }
 }
