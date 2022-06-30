@@ -16,15 +16,10 @@
 
 package com.xebisco.yield;
 
-/**
- * This class is used to manipulate Textures in game time.
- * @since 4_1.1.2
- * @author Xebisco
- */
-public interface YldShader
-{
-    /**
-     * Called on every pixel of the Texture, Texture Width * Height times.
-     */
-    void process(Pixel pixel);
+public class ESCExitSystem extends UpdateSystem {
+    @Override
+    public void update(float delta) {
+        if(scene.input.isJustPressed(Key.ESCAPE))
+            Yld.exit();
+    }
 }

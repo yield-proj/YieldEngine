@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.render.swing;
+package com.xebisco.swingyield;
 
 import javax.swing.*;
 

@@ -22,7 +22,26 @@ package com.xebisco.yield;
 public abstract class UpdateSystem extends YldSystem {
     /**
      * Called on every frame of a YldScene instance.
+     *
      * @param delta The time variation between the last frame and the actual one in seconds.
      */
     public abstract void update(float delta);
+
+    private int lastFrame = -1;
+
+    @Override
+    public void receive(Entity e, float delta) {
+        if (e.getScene().getFrames() != lastFrame) {
+            lastFrame = e.getScene().getFrames();
+            update(delta);
+        }
+    }
+
+    public int getLastFrame() {
+        return lastFrame;
+    }
+
+    public void setLastFrame(int lastFrame) {
+        this.lastFrame = lastFrame;
+    }
 }

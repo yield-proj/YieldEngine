@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.render.swing.exceptions;
+package com.xebisco.swingyield.exceptions;
 
 public class NotCapableTextureException extends RuntimeException {
 }

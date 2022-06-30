@@ -18,15 +18,12 @@ package com.xebisco.yield.systems;
 
 import com.xebisco.yield.Entity;
 import com.xebisco.yield.EntitySystem;
+import com.xebisco.yield.UpdateSystem;
+import com.xebisco.yield.Yld;
 
-public class YldTimeSystem extends EntitySystem {
+public class YldTimeSystem extends UpdateSystem {
     @Override
-    public Class<?>[] entityContains() {
-        return null;
-    }
-
-    @Override
-    public void process(Entity e, float delta) {
+    public void update(float delta) {
         scene.getTime().setDelta(delta);
         scene.getTime().setFps(1f / delta);
     }
