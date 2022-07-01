@@ -23,14 +23,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
 
-public class Interpreter {
+public class Ini {
 
     private final String[] contents;
     private final Object[] objects;
 
-    public Interpreter(String[] contents, Object... objects) {
+    public Ini(String[] contents, Object... objects) {
         this.contents = contents;
         this.objects = objects;
         Object actObject = null;
@@ -41,8 +40,9 @@ public class Interpreter {
                     String[] pcs = line.split("=");
                     for (int i1 = 0; i1 < pcs.length; i1++)
                         pcs[i1] = pcs[i1].trim();
+
                     if(!(pcs[0].startsWith("#") || pcs[0].startsWith(";"))) {
-                        if(!pcs[0].startsWith("[") && !pcs[0].endsWith("]")) {
+                        if(!pcs[0].startsWith("[")) {
                             if(actObject == null) {
                                 throw new Exception("Section is null!");
                             }
@@ -80,8 +80,15 @@ public class Interpreter {
                             }
                             actObject.getClass().getField(pcs[0]).set(actObject, obj);
                         } else {
+                            if(!pcs[0].contains("]"))
+                                throw new Exception("']' expected");
+                            String[] sub = pcs[0].substring(1).split("]");
+                            if(sub.length > 1)
+                                if(!(sub[1].trim().startsWith("#") || sub[1].trim().startsWith(";")))
+                                    throw new Exception("'#' or ';' expected");
+                            int subHash = sub[0].hashCode();
                             for(Object o : objects) {
-                                if(o.getClass().getSimpleName().hashCode() == pcs[0].substring(1, pcs[0].length() - 1).hashCode()) {
+                                if(o.getClass().getSimpleName().hashCode() == subHash) {
                                     actObject = o;
                                     break;
                                 }
@@ -103,7 +110,7 @@ public class Interpreter {
         return objects;
     }
 
-    public static Interpreter file(RelativeFile file, Object o) {
+    public static Ini file(RelativeFile file, Object o) {
         StringBuilder stringBuilder = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             String line;
@@ -113,6 +120,6 @@ public class Interpreter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new Interpreter(stringBuilder.toString().split("\n"), o);
+        return new Ini(stringBuilder.toString().split("\n"), o);
     }
 }

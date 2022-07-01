@@ -16,14 +16,17 @@
 
 package com.xebisco.yield.config;
 
+import com.xebisco.yield.RelativeFile;
+import com.xebisco.yield.Texture;
 import com.xebisco.yield.Yld;
 
 public class WindowConfiguration
 {
     public int width = 1280, height = 720;
     public WindowPos position = WindowPos.CENTER;
-    public String title = "Yield " + Yld.VERSION, internalIconPath = "/com/xebisco/yield/assets/icon.png";
-    public boolean doubleBuffered = true, resizable = false, undecorated = false, fullscreen = false, alwaysOnTop = false, hideMouse, sync = true;
+    public String title = "Yield " + Yld.VERSION;
+    public Texture icon = new Texture("com/xebisco/yield/assets/icon.png");
+    public boolean resizable = false, undecorated = false, fullscreen = false, alwaysOnTop = false, hideMouse, sync = true;
 
     public enum WindowPos
     {

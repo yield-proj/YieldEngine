@@ -56,7 +56,6 @@ public class GameHandler extends Engine {
             Yld.throwException(new MissingRenderMasterException("Yield Engine needs a path to a RenderMaster implementation."));
         }
         sampleGraphics = renderMaster.initGraphics();
-        game.setWindow(renderMaster.initWindow(game.getConfiguration()));
         if(renderMaster instanceof ExceptionThrower) {
             if(Yld.getExceptionThrower() == null)
                 Yld.setExceptionThrower((ExceptionThrower) renderMaster);

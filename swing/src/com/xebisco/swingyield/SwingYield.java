@@ -37,6 +37,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
@@ -238,9 +239,19 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
 
             @Override
             public void custom(String instruction, Object... args) {
-
+                Class<?>[] types = new Class<?>[args.length];
+                try {
+                    SwingYield.class.getDeclaredMethod(instruction, types).invoke(this, args);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
+    }
+
+    public void changeWindowIcon(Texture icon) {
+        Image i = images.get(icon.getTextureID());
+        frame.setIconImage(i);
     }
 
     @Override
@@ -267,7 +278,7 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
         repaint();
         frame.addKeyListener(this);
         frame.addMouseListener(this);
-        frame.setIconImage(new ImageIcon(Objects.requireNonNull(SwingYield.class.getResource(configuration.internalIconPath))).getImage());
+        changeWindowIcon(configuration.icon);
         if (Yld.debug) {
             try {
                 Thread.sleep(600);
