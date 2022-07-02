@@ -29,7 +29,7 @@ public class SimpleRenderable extends Component {
         float angle = getEntity().getTransform().rotation + this.angle;
         if(forceAngle)
             angle = this.angle;
-        graphics.setRotation(getEntity().getTransform().position.subt(scene.getView().getCamera().getPosition()).sum(addAnchorPoint).mul(getTransform().scale), angle);
+        graphics.setRotation(getEntity().getTransform().position.subt(scene.getView().getTransform().position).sum(addAnchorPoint).mul(getTransform().scale), angle);
     }
 
     public Color getColor() {

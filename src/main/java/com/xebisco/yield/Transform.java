@@ -54,6 +54,10 @@ public class Transform extends Component {
         scale(new Vector2(x, y));
     }
 
+    public void scale(float value) {
+        scale(value, value);
+    }
+
     public void rotate(float degrees) {
         rotation += degrees;
     }

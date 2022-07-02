@@ -26,7 +26,7 @@ public class WindowConfiguration
     public WindowPos position = WindowPos.CENTER;
     public String title = "Yield " + Yld.VERSION;
     public Texture icon = new Texture("com/xebisco/yield/assets/icon.png");
-    public boolean resizable = false, undecorated = false, fullscreen = false, alwaysOnTop = false, hideMouse, sync = true;
+    public boolean resizable = false, undecorated = false, fullscreen = false, alwaysOnTop = false, hideMouse = true;
 
     public enum WindowPos
     {

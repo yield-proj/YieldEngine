@@ -53,7 +53,7 @@ public class TileMap extends SimpleRenderable {
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);
-        Vector2 cam = scene.getView().getCamera().getPosition().get();
+        Vector2 cam = scene.getView().getTransform().position.get();
         Transform t = getTransform();
         for (int i = 0; i < tiles.size(); i++) {
             YldPair<Vector2, Tile> pair = tiles.get(i);

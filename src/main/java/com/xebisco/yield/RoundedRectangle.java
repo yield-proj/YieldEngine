@@ -23,7 +23,7 @@ public class RoundedRectangle extends Shape {
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);
-        graphics.drawRoundRect(getEntity().getTransform().position.subt(scene.getView().getCamera().getPosition()), getSize().mul(getEntity().getTransform().scale), getColor(), isFilled(), (int) arc.x, (int) arc.y);
+        graphics.drawRoundRect(getEntity().getTransform().position.subt(scene.getView().getTransform().position), getSize().mul(getEntity().getTransform().scale), getColor(), isFilled(), (int) arc.x, (int) arc.y);
     }
 
     @Override

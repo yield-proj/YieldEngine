@@ -26,10 +26,9 @@ public class View
     @Deprecated
     private static View actView;
     private final int width, height;
-
-    private float rotation;
-    private static YldCamera defaultCamera = new YldCamera();
-    private YldCamera camera = defaultCamera.get();
+    private static Transform defaultTransform = new Transform();
+    private Transform transform = defaultTransform.get();
+    private Vector2 position = new Vector2();
     private Color bgColor = new Color(0xFF1E2D74);
 
     /**
@@ -148,31 +147,27 @@ public class View
         return width;
     }
 
-    public static YldCamera getDefaultCamera()
-    {
-        return defaultCamera;
+    public static Transform getDefaultTransform() {
+        return defaultTransform;
     }
 
-    public static void setDefaultCamera(YldCamera defaultCamera)
-    {
-        View.defaultCamera = defaultCamera;
+    public static void setDefaultTransform(Transform defaultTransform) {
+        View.defaultTransform = defaultTransform;
     }
 
-    public YldCamera getCamera()
-    {
-        return camera;
+    public Transform getTransform() {
+        return transform;
     }
 
-    public void setCamera(YldCamera camera)
-    {
-        this.camera = camera;
+    public void setTransform(Transform transform) {
+        this.transform = transform;
     }
 
-    public float getRotation() {
-        return rotation;
+    public Vector2 getPosition() {
+        return position;
     }
 
-    public void setRotation(float rotation) {
-        this.rotation = rotation;
+    public void setPosition(Vector2 position) {
+        this.position = position;
     }
 }

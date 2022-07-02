@@ -17,9 +17,14 @@
 package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
-import com.xebisco.yield.ini.Ini;
 
 public class MyGame extends YldGame {
+
+    @Override
+    public void update(float delta) {
+        view.getTransform().rotate(1);
+    }
+
     public static void main(String[] args) {
         GameConfiguration config = new GameConfiguration();
         Ini.file(new RelativeFile("com/xebisco/yield/test/assets/game.ini"), config);

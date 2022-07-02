@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.ini;
-
-import com.xebisco.yield.RelativeFile;
-import com.xebisco.yield.Yld;
+package com.xebisco.yield;
 
 import java.io.BufferedReader;
 import java.io.IOException;

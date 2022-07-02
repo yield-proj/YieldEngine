@@ -21,9 +21,9 @@ public class Sprite extends NonFillShape {
     public void render(SampleGraphics graphics) {
         super.render(graphics);
         if (getMaterial().getTexture() != null) {
-            graphics.drawTexture(getMaterial().getTexture(), getEntity().getTransform().position.subt(scene.getView().getCamera().getPosition()), getSize().mul(getEntity().getTransform().scale));}
+            graphics.drawTexture(getMaterial().getTexture(), getEntity().getTransform().position.subt(scene.getView().getTransform().position), getSize().mul(getEntity().getTransform().scale));}
         else
-            graphics.drawTexture(game.getYieldLogo(), getEntity().getTransform().position.subt(scene.getView().getCamera().getPosition()), getSize().mul(getEntity().getTransform().scale));
+            graphics.drawTexture(game.getYieldLogo(), getEntity().getTransform().position.subt(scene.getView().getTransform().position), getSize().mul(getEntity().getTransform().scale));
     }
 
     @Override

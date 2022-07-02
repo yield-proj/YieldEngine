@@ -2,10 +2,9 @@
   <artifact type="jar" name="Test">
     <output-path>$PROJECT_DIR$/out/artifacts/Test</output-path>
     <root id="archive" name="Test.jar">
-      <element id="module-output" name="YieldEngine.main" />
-      <element id="module-test-output" name="YieldEngine.test" />
       <element id="module-output" name="swing" />
-      <element id="dir-copy" path="$PROJECT_DIR$/src/main/resources" />
+      <element id="module-output" name="main" />
+      <element id="module-test-output" name="test" />
     </root>
   </artifact>
 </component>

@@ -278,6 +278,10 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
         repaint();
         frame.addKeyListener(this);
         frame.addMouseListener(this);
+        if(configuration.hideMouse) {
+            Cursor cursor = Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon(Objects.requireNonNull(Yld.class.getResource("assets/none.png"))).getImage(), new Point(), "none");
+            frame.setCursor(cursor);
+        }
         changeWindowIcon(configuration.icon);
         if (Yld.debug) {
             try {
@@ -312,8 +316,8 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
                     h = frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom;
             g.setColor(java.awt.Color.BLACK);
             g.fillRect(0, 0, w, h);
-            g2.rotate(Math.toRadians(view.getRotation()) * -1, w / 2f, h / 2f);
-            g.drawImage(image, 0, 0, w, h, null);
+            g2.rotate(Math.toRadians(view.getTransform().rotation) * -1, w / 2f, h / 2f);
+            g.drawImage(image, (int) (w / 2 - w * view.getTransform().scale.x / 2), (int) ( h / 2 - h * view.getTransform().scale.y / 2), (int) (w * view.getTransform().scale.x), (int) (h * view.getTransform().scale.y), null);
         } else {
             g.setColor(java.awt.Color.WHITE);
             g.fillRect(0, 0, getWidth(), getHeight());
