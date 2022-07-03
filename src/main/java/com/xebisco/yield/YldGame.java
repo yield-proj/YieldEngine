@@ -83,8 +83,8 @@ public class YldGame extends YldScene {
             scene.create();
         scene.setFrames(scene.getFrames() + 1);
         if (scene.isCallStart()) {
-            scene.start();
             scene.setCallStart(false);
+            scene.start();
         }
         scene.update(delta);
         scene.process(delta, graphics);

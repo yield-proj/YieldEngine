@@ -317,7 +317,7 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             g.setColor(java.awt.Color.BLACK);
             g.fillRect(0, 0, w, h);
             g2.rotate(Math.toRadians(view.getTransform().rotation) * -1, w / 2f, h / 2f);
-            g.drawImage(image, (int) (w / 2 - w * view.getTransform().scale.x / 2), (int) ( h / 2 - h * view.getTransform().scale.y / 2), (int) (w * view.getTransform().scale.x), (int) (h * view.getTransform().scale.y), null);
+            g.drawImage(image, (int) (w / 2 - w * view.getTransform().scale.x / 2 + view.getPosition().x), (int) ( h / 2 - h * view.getTransform().scale.y / 2 + view.getPosition().y), (int) (w * view.getTransform().scale.x), (int) (h * view.getTransform().scale.y), null);
         } else {
             g.setColor(java.awt.Color.WHITE);
             g.fillRect(0, 0, getWidth(), getHeight());
