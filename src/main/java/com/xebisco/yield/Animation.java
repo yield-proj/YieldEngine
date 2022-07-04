@@ -36,6 +36,20 @@ public class Animation
         this.name = name;
     }
 
+    public Animation(int microsecondDelay, String name, Texture... frames)
+    {
+        this.microsecondDelay = microsecondDelay;
+        this.frames = frames;
+        this.name = name;
+    }
+
+    public Animation(int microsecondDelay, Texture... frames)
+    {
+        this.microsecondDelay = microsecondDelay;
+        this.frames = frames;
+        this.name = "default";
+    }
+
     /**
      * Create an Animation instance with predefined frames.
      * @param frames All the frames of this Animation.

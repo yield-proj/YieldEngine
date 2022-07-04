@@ -204,7 +204,6 @@ public class YldGame extends YldScene {
     public ArrayList<YldScene> getScenes() {
         return scenes;
     }
-
     /**
      * Setter for the scenes list.
      */
@@ -279,12 +278,19 @@ public class YldGame extends YldScene {
         handler.getRenderMaster().setTextureColors(texture, colors);
     }
 
-    public void loadFont(String fontName, int format, InputStream inputStream) {
-        handler.getRenderMaster().loadFont(fontName, format, inputStream);
+    public void loadFont(String fontName, float size, int format, InputStream inputStream) {
+        loadFont(fontName, size, size, format, inputStream);
+    }
+
+    public void loadFont(String fontName, float size, float sizeToLoad, int format, InputStream inputStream) {
+        handler.getRenderMaster().loadFont(fontName, size, sizeToLoad, format, inputStream);
     }
 
     public void loadFont(String fontName, int size, int style) {
-        handler.getRenderMaster().loadFont(fontName, size, style);
+        handler.getRenderMaster().loadFont(fontName, fontName, size, style);
+    }
+    public void loadFont(String saveName, String fontName, int size, int style) {
+        handler.getRenderMaster().loadFont(saveName, fontName, size, style);
     }
 
     public void unloadFont(String fontName) {

@@ -19,6 +19,18 @@ package com.xebisco.yield;
 public class Text extends NonFillShape {
     private String contents = "Sample Text", font = "arial";
 
+    public Text() {
+    }
+
+    public Text(String contents) {
+        this.contents = contents;
+    }
+
+    public Text(String contents, String font) {
+        this.contents = contents;
+        this.font = font;
+    }
+
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);

@@ -22,7 +22,7 @@ import java.util.List;
 public class TileMap extends SimpleRenderable {
     private List<YldPair<Vector2, Tile>> tiles;
 
-    private boolean dynamicProcessing = true;
+    private boolean dynamicProcessing = true, process = true;
 
     private float processTime = .05f, actualProcessTime;
 
@@ -34,7 +34,48 @@ public class TileMap extends SimpleRenderable {
         if (colors.length > 0) {
             for (int x = 0; x < colors.length; x++) {
                 for (int y = 0; y < colors[0].length; y++) {
-                    tileMap.tiles.add(new YldPair<>(new Vector2(x * tileMap.grid.x, y * tileMap.grid.y), tileSet.getTiles().get(colors[x][y].getRGB())));
+                    try {
+                        TileGen gen = tileSet.getTiles().get(colors[x][y].getRGB());
+                        MappedTiles mappedTiles = new MappedTiles(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                        try {
+                            mappedTiles.setBottom(tileSet.getTiles().get(colors[x][y + 1].getRGB()).getTile());
+                        } catch (ArrayIndexOutOfBoundsException ignore) {
+                        }
+                        try {
+                            mappedTiles.setLeft(tileSet.getTiles().get(colors[x - 1][y].getRGB()).getTile());
+                        } catch (ArrayIndexOutOfBoundsException ignore) {
+                        }
+                        try {
+                            mappedTiles.setTop(tileSet.getTiles().get(colors[x][y - 1].getRGB()).getTile());
+                        } catch (ArrayIndexOutOfBoundsException ignore) {
+                        }
+                        try {
+                            mappedTiles.setRight(tileSet.getTiles().get(colors[x + 1][y].getRGB()).getTile());
+                        } catch (ArrayIndexOutOfBoundsException ignore) {
+                        }
+
+                        try {
+                            mappedTiles.setOnlyRightBottom(tileSet.getTiles().get(colors[x + 1][y + 1].getRGB()).getTile());
+                        } catch (ArrayIndexOutOfBoundsException ignore) {
+                        }
+                        try {
+                            mappedTiles.setOnlyBottomLeft(tileSet.getTiles().get(colors[x - 1][y + 1].getRGB()).getTile());
+                        } catch (ArrayIndexOutOfBoundsException ignore) {
+                        }
+                        try {
+                            mappedTiles.setOnlyTopLeft(tileSet.getTiles().get(colors[x - 1][y - 1].getRGB()).getTile());
+                        } catch (ArrayIndexOutOfBoundsException ignore) {
+                        }
+                        try {
+                            mappedTiles.setOnlyTopRight(tileSet.getTiles().get(colors[x + 1][y - 1].getRGB()).getTile());
+                        } catch (ArrayIndexOutOfBoundsException ignore) {
+                        }
+                        gen.setComparingMapped(mappedTiles);
+                        tileMap.tiles.add(new YldPair<>(new Vector2(x * tileMap.grid.x, y * tileMap.grid.y), gen.getTile()));
+                        gen.setComparingMapped(null);
+                    } catch (NullPointerException ignore) {
+
+                    }
                 }
             }
         }
@@ -72,7 +113,7 @@ public class TileMap extends SimpleRenderable {
                 }
                 if (render) {
                     graphics.drawTexture(tile.getTexture(), pos, size);
-                    if (actualProcessTime <= 0)
+                    if (actualProcessTime <= 0 && process)
                         getEntity().transmit("processTile", pos, tile.getLayer());
                 }
             }
@@ -120,5 +161,13 @@ public class TileMap extends SimpleRenderable {
 
     public void setActualProcessTime(float actualProcessTime) {
         this.actualProcessTime = actualProcessTime;
+    }
+
+    public boolean isProcess() {
+        return process;
+    }
+
+    public void setProcess(boolean process) {
+        this.process = process;
     }
 }

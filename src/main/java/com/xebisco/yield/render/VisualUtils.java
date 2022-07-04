@@ -30,8 +30,8 @@ import java.io.InputStream;
 public interface VisualUtils {
     void loadTexture(Texture texture);
     void unloadTexture(Texture texture);
-    void loadFont(String fontName, int fontSize, int fontStyle);
-    void loadFont(String fontName, int fontFormat, InputStream inputStream);
+    void loadFont(String saveName, String fontName, int fontSize, int fontStyle);
+    void loadFont(String fontName, float size, float sizeToLoad, int fontFormat, InputStream inputStream);
     void unloadFont(String fontName);
     Color[][] getTextureColors(Texture texture);
     void setTextureColors(Texture texture, Color[][] colors);

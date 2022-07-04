@@ -278,7 +278,7 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
         repaint();
         frame.addKeyListener(this);
         frame.addMouseListener(this);
-        if(configuration.hideMouse) {
+        if (configuration.hideMouse) {
             Cursor cursor = Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon(Objects.requireNonNull(Yld.class.getResource("assets/none.png"))).getImage(), new Point(), "none");
             frame.setCursor(cursor);
         }
@@ -307,20 +307,20 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
     protected void paintComponent(Graphics g) {
         actual = System.currentTimeMillis();
         fps = 1000 / (float) (actual - last);
+        g.setColor(java.awt.Color.BLACK);
+        int w = frame.getWidth() - frame.getInsets().right - frame.getInsets().left,
+                h = frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom;
+        g.fillRect(0, 0, w, h);
         if (view != null) {
             if (defTransform == null)
                 defTransform = ((Graphics2D) g).getTransform();
             started = true;
             Graphics2D g2 = (Graphics2D) g;
-            int w = frame.getWidth() - frame.getInsets().right - frame.getInsets().left,
-                    h = frame.getHeight() - frame.getInsets().top - frame.getInsets().bottom;
-            g.setColor(java.awt.Color.BLACK);
-            g.fillRect(0, 0, w, h);
             g2.rotate(Math.toRadians(view.getTransform().rotation) * -1, w / 2f, h / 2f);
-            g.drawImage(image, (int) (w / 2 - w * view.getTransform().scale.x / 2 + view.getPosition().x), (int) ( h / 2 - h * view.getTransform().scale.y / 2 + view.getPosition().y), (int) (w * view.getTransform().scale.x), (int) (h * view.getTransform().scale.y), null);
+            g.drawImage(image, (int) (w / 2 - w * view.getTransform().scale.x / 2 + view.getPosition().x), (int) (h / 2 - h * view.getTransform().scale.y / 2 + view.getPosition().y), (int) (w * view.getTransform().scale.x), (int) (h * view.getTransform().scale.y), null);
         } else {
             g.setColor(java.awt.Color.WHITE);
-            g.fillRect(0, 0, getWidth(), getHeight());
+            g.fillRect(0, 0, w, h);
             g.drawImage(yieldImage, getWidth() / 2 - yieldImage.getWidth() / 2, getHeight() / 2 - yieldImage.getHeight() / 2, null);
         }
         g.dispose();
@@ -349,6 +349,10 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             g.dispose();
         if (image == null || image.getWidth(null) != view.getWidth() || image.getHeight(null) != view.getHeight()) {
             image = createVolatileImage(view.getWidth(), view.getHeight());
+            Graphics gi = image.getGraphics();
+            gi.setColor(java.awt.Color.BLACK);
+            gi.fillRect(0, 0, image.getWidth(null), image.getHeight(null));
+            gi.dispose();
             //image = new BufferedImage(view.getWidth(), view.getHeight(), BufferedImage.TYPE_INT_ARGB);
         }
         SwingUtilities.invokeLater(this::repaint);
@@ -428,14 +432,14 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
     }
 
     @Override
-    public void loadFont(String fontName, int fontSize, int fontStyle) {
-        fonts.put(fontName, new Font(fontName, fontStyle, fontSize));
+    public void loadFont(String saveName, String fontName, int fontSize, int fontStyle) {
+        fonts.put(saveName, new Font(fontName, fontStyle, fontSize));
     }
 
     @Override
-    public void loadFont(String fontName, int fontFormat, InputStream inputStream) {
+    public void loadFont(String fontName, float size, float sizeToLoad, int fontFormat, InputStream inputStream) {
         try {
-            fonts.put(fontName, Font.createFont(fontFormat, inputStream));
+            fonts.put(fontName, Font.createFont(fontFormat, inputStream).deriveFont(sizeToLoad).deriveFont(size));
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }

@@ -19,7 +19,9 @@ package com.xebisco.yield;
 public class Tile {
     private Texture texture;
     private int layer = 0;
-    private Vector2 size, offSet = new Vector2();
+    private Vector2 size = defaultSize.get(), offSet = new Vector2();
+
+    private static Vector2 defaultSize = new Vector2(32, 32);
 
     public Tile() {
 
@@ -59,5 +61,13 @@ public class Tile {
 
     public void setLayer(int layer) {
         this.layer = layer;
+    }
+
+    public static Vector2 getDefaultSize() {
+        return defaultSize;
+    }
+
+    public static void setDefaultSize(Vector2 defaultSize) {
+        Tile.defaultSize = defaultSize;
     }
 }

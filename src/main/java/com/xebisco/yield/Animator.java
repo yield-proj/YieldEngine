@@ -25,30 +25,43 @@ public class Animator extends Component
 
     private ArrayList<Animation> animations = new ArrayList<>();
     private Animation actAnim;
-    private int actAnimFrame;
+    private int actAnimFrame, overlayTime;
 
     @Override
     public void update(float delta)
     {
         if (actAnim != null)
         {
-            if (actAnim.getMicrosecondDelay() == 0)
-            {
-                actAnimFrame++;
-                if (actAnimFrame >= actAnim.getFrameDelay())
+            if(overlayTime == 0) {
+                if (actAnim.getMicrosecondDelay() == 0)
                 {
-                    actAnimFrame = 0;
-                    actAnim.setActFrame(actAnim.getActFrame() + 1);
-                    if (actAnim.getActFrame() >= actAnim.getFrames().length)
+                    actAnimFrame++;
+                    if (actAnimFrame >= actAnim.getFrameDelay())
                     {
-                        actAnim.setActFrame(0);
+                        actAnimFrame = 0;
+                        actAnim.setActFrame(actAnim.getActFrame() + 1);
+                        if (actAnim.getActFrame() >= actAnim.getFrames().length)
+                        {
+                            actAnim.setActFrame(0);
+                        }
                     }
                 }
-            }
-            else
-            {
+                else
+                {
+                    actAnimFrame += (delta * 1000f);
+                    if (actAnimFrame >= actAnim.getMicrosecondDelay())
+                    {
+                        actAnimFrame = 0;
+                        actAnim.setActFrame(actAnim.getActFrame() + 1);
+                        if (actAnim.getActFrame() >= actAnim.getFrames().length)
+                        {
+                            actAnim.setActFrame(0);
+                        }
+                    }
+                }
+            } else {
                 actAnimFrame += (delta * 1000f);
-                if (actAnimFrame >= actAnim.getMicrosecondDelay())
+                if (actAnimFrame >= overlayTime)
                 {
                     actAnimFrame = 0;
                     actAnim.setActFrame(actAnim.getActFrame() + 1);
@@ -118,5 +131,13 @@ public class Animator extends Component
     public void setActAnimFrame(int actAnimFrame)
     {
         this.actAnimFrame = actAnimFrame;
+    }
+
+    public int getOverlayTime() {
+        return overlayTime;
+    }
+
+    public void setOverlayTime(int overlayTime) {
+        this.overlayTime = overlayTime;
     }
 }

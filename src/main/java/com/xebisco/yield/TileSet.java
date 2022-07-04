@@ -20,33 +20,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TileSet {
-    private final Map<Integer, Tile> tiles = new HashMap<>();
-    private Vector2 defaultSize = new Vector2(32, 32);
+    private final Map<Integer, TileGen> tiles = new HashMap<>();
 
     @SafeVarargs
-    public TileSet(YldPair<Color, Tile>... tiles) {
-        for (YldPair<Color, Tile> tile : tiles) {
+    public TileSet(YldPair<Color, TileGen>... tiles) {
+        for (YldPair<Color, TileGen> tile : tiles) {
             addTile(tile.getFirst(), tile.getSecond());
         }
     }
 
-    @SafeVarargs
-    public TileSet(Vector2 defaultSize, YldPair<Color, Tile>... tiles) {
-        this.defaultSize = defaultSize;
-        for (YldPair<Color, Tile> tile : tiles) {
-            addTile(tile.getFirst(), tile.getSecond());
-        }
-    }
-
-    public Tile addTile(Color color, Tile tile) {
-        if (tile.getSize() == null) {
-            tile.setSize(defaultSize.get());
-        }
+    public void addTile(Color color, TileGen tile) {
         this.tiles.put(color.getRGB(), tile);
-        return tile;
     }
 
-    public Map<Integer, Tile> getTiles() {
+    public void addTile(Color color, Tile tile) {
+        addTile(color, new TileGen(tile));
+    }
+
+    public Map<Integer, TileGen> getTiles() {
         return tiles;
     }
 }
