@@ -48,6 +48,10 @@ public class Texture extends RelativeFile {
         textureID = textures;
     }
 
+    public Texture get() {
+        return visualUtils.duplicate(this);
+    }
+
     public void processFilters() {
         processFilters(0, getWidth(), 0, getHeight());
     }

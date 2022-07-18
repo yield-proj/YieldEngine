@@ -37,7 +37,8 @@ public interface VisualUtils {
     void setTextureColors(Texture texture, Color[][] colors);
     void setPixel(Texture texture, Color color, Vector2 position);
     Texture cutTexture(Texture texture, int x, int y, int width, int height);
-
+    Texture duplicate(Texture texture);
+    Texture overlayTexture(Texture tex1, Texture tex2, Vector2 pos1, Vector2 pos2);
     Texture scaleTexture(Texture texture, int width, int height);
 
     int getTextureWidth(int textureId);

@@ -35,6 +35,17 @@ public class YldInput {
         addAxis("Fire2", null, Key.SHIFT);
     }
 
+    public YldInput(YldGame game, YldInput input) {
+        this.game = game;
+        if (input != null)
+            input.getAxis().forEach((s, a) -> getAxis().put(s, a));
+        addAxis("Vertical", Key.UP, Key.W, Key.DOWN, Key.S);
+        addAxis("Horizontal", Key.LEFT, Key.A, Key.RIGHT, Key.D);
+        addAxis("Jump", null, Key.SPACE);
+        addAxis("Fire1", null, Key.MOUSE_1);
+        addAxis("Fire2", null, Key.SHIFT);
+    }
+
     public boolean isPressed(Integer key) {
         if (key == null)
             return false;
@@ -55,7 +66,7 @@ public class YldInput {
     }
 
     public boolean isTouching(Spacial spacial) {
-        return spacial.colliding(getMouse().x, getMouse().y);
+        return spacial.colliding(getMouse().x + game.getScene().getView().getTransform().position.x + game.getScene().getView().getPosition().x, getMouse().y + game.getScene().getView().getTransform().position.y + game.getScene().getView().getPosition().y);
     }
 
     public Vector2 getMouse() {

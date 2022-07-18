@@ -18,9 +18,13 @@ package com.xebisco.yield;
 
 public class MappedTiles {
 
-    private Tile target, middle, left, leftAndTop, onlyTopLeft, top, topAndRight, onlyTopRight, right, rightAndBottom, onlyRightBottom, bottom, bottomAndLeft, onlyBottomLeft, topAndDown, rightAndLeft, lessRight, lessTop, lessLeft, lessDown, all;
+    private TileGen target, middle, left, leftAndTop, onlyTopLeft, top, topAndRight, onlyTopRight, right, rightAndBottom, onlyRightBottom, bottom, bottomAndLeft, onlyBottomLeft, topAndDown, rightAndLeft, lessRight, lessTop, lessLeft, lessDown, all;
 
-    public MappedTiles(Tile target, Tile middle, Tile left, Tile leftAndTop, Tile onlyTopLeft, Tile top, Tile topAndRight, Tile onlyTopRight, Tile right, Tile rightAndBottom, Tile onlyRightBottom, Tile bottom, Tile bottomAndLeft, Tile onlyBottomLeft, Tile topAndDown, Tile rightAndLeft, Tile lessRight, Tile lessTop, Tile lessLeft, Tile lessDown, Tile all) {
+    private int targetLayer = -1;
+
+    public MappedTiles(Integer targetLayer, TileGen target, TileGen middle, TileGen left, TileGen leftAndTop, TileGen onlyTopLeft, TileGen top, TileGen topAndRight, TileGen onlyTopRight, TileGen right, TileGen rightAndBottom, TileGen onlyRightBottom, TileGen bottom, TileGen bottomAndLeft, TileGen onlyBottomLeft, TileGen topAndDown, TileGen rightAndLeft, TileGen lessRight, TileGen lessTop, TileGen lessLeft, TileGen lessDown, TileGen all) {
+        if(targetLayer != null)
+            this.targetLayer = targetLayer;
         this.target = target;
         this.middle = middle;
         this.left = left;
@@ -44,171 +48,179 @@ public class MappedTiles {
         this.all = all;
     }
 
-    public Tile getLeft() {
-        return left;
+    public int getTargetLayer() {
+        return targetLayer;
     }
 
-    public void setLeft(Tile left) {
-        this.left = left;
+    public void setTargetLayer(int targetLayer) {
+        this.targetLayer = targetLayer;
     }
 
-    public Tile getLeftAndTop() {
-        return leftAndTop;
-    }
-
-    public void setLeftAndTop(Tile leftAndTop) {
-        this.leftAndTop = leftAndTop;
-    }
-
-    public Tile getOnlyTopLeft() {
-        return onlyTopLeft;
-    }
-
-    public void setOnlyTopLeft(Tile onlyTopLeft) {
-        this.onlyTopLeft = onlyTopLeft;
-    }
-
-    public Tile getTop() {
-        return top;
-    }
-
-    public void setTop(Tile top) {
-        this.top = top;
-    }
-
-    public Tile getTopAndRight() {
-        return topAndRight;
-    }
-
-    public void setTopAndRight(Tile topAndRight) {
-        this.topAndRight = topAndRight;
-    }
-
-    public Tile getOnlyTopRight() {
-        return onlyTopRight;
-    }
-
-    public void setOnlyTopRight(Tile onlyTopRight) {
-        this.onlyTopRight = onlyTopRight;
-    }
-
-    public Tile getRight() {
-        return right;
-    }
-
-    public void setRight(Tile right) {
-        this.right = right;
-    }
-
-    public Tile getRightAndBottom() {
-        return rightAndBottom;
-    }
-
-    public void setRightAndBottom(Tile rightAndBottom) {
-        this.rightAndBottom = rightAndBottom;
-    }
-
-    public Tile getOnlyRightBottom() {
-        return onlyRightBottom;
-    }
-
-    public void setOnlyRightBottom(Tile onlyRightBottom) {
-        this.onlyRightBottom = onlyRightBottom;
-    }
-
-    public Tile getBottom() {
-        return bottom;
-    }
-
-    public void setBottom(Tile bottom) {
-        this.bottom = bottom;
-    }
-
-    public Tile getBottomAndLeft() {
-        return bottomAndLeft;
-    }
-
-    public void setBottomAndLeft(Tile bottomAndLeft) {
-        this.bottomAndLeft = bottomAndLeft;
-    }
-
-    public Tile getOnlyBottomLeft() {
-        return onlyBottomLeft;
-    }
-
-    public void setOnlyBottomLeft(Tile onlyBottomLeft) {
-        this.onlyBottomLeft = onlyBottomLeft;
-    }
-
-    public Tile getTarget() {
+    public TileGen getTarget() {
         return target;
     }
 
-    public void setTarget(Tile target) {
+    public void setTarget(TileGen target) {
         this.target = target;
     }
 
-    public Tile getMiddle() {
+    public TileGen getMiddle() {
         return middle;
     }
 
-    public void setMiddle(Tile middle) {
+    public void setMiddle(TileGen middle) {
         this.middle = middle;
     }
 
-    public Tile getTopAndDown() {
+    public TileGen getLeft() {
+        return left;
+    }
+
+    public void setLeft(TileGen left) {
+        this.left = left;
+    }
+
+    public TileGen getLeftAndTop() {
+        return leftAndTop;
+    }
+
+    public void setLeftAndTop(TileGen leftAndTop) {
+        this.leftAndTop = leftAndTop;
+    }
+
+    public TileGen getOnlyTopLeft() {
+        return onlyTopLeft;
+    }
+
+    public void setOnlyTopLeft(TileGen onlyTopLeft) {
+        this.onlyTopLeft = onlyTopLeft;
+    }
+
+    public TileGen getTop() {
+        return top;
+    }
+
+    public void setTop(TileGen top) {
+        this.top = top;
+    }
+
+    public TileGen getTopAndRight() {
+        return topAndRight;
+    }
+
+    public void setTopAndRight(TileGen topAndRight) {
+        this.topAndRight = topAndRight;
+    }
+
+    public TileGen getOnlyTopRight() {
+        return onlyTopRight;
+    }
+
+    public void setOnlyTopRight(TileGen onlyTopRight) {
+        this.onlyTopRight = onlyTopRight;
+    }
+
+    public TileGen getRight() {
+        return right;
+    }
+
+    public void setRight(TileGen right) {
+        this.right = right;
+    }
+
+    public TileGen getRightAndBottom() {
+        return rightAndBottom;
+    }
+
+    public void setRightAndBottom(TileGen rightAndBottom) {
+        this.rightAndBottom = rightAndBottom;
+    }
+
+    public TileGen getOnlyRightBottom() {
+        return onlyRightBottom;
+    }
+
+    public void setOnlyRightBottom(TileGen onlyRightBottom) {
+        this.onlyRightBottom = onlyRightBottom;
+    }
+
+    public TileGen getBottom() {
+        return bottom;
+    }
+
+    public void setBottom(TileGen bottom) {
+        this.bottom = bottom;
+    }
+
+    public TileGen getBottomAndLeft() {
+        return bottomAndLeft;
+    }
+
+    public void setBottomAndLeft(TileGen bottomAndLeft) {
+        this.bottomAndLeft = bottomAndLeft;
+    }
+
+    public TileGen getOnlyBottomLeft() {
+        return onlyBottomLeft;
+    }
+
+    public void setOnlyBottomLeft(TileGen onlyBottomLeft) {
+        this.onlyBottomLeft = onlyBottomLeft;
+    }
+
+    public TileGen getTopAndDown() {
         return topAndDown;
     }
 
-    public void setTopAndDown(Tile topAndDown) {
+    public void setTopAndDown(TileGen topAndDown) {
         this.topAndDown = topAndDown;
     }
 
-    public Tile getRightAndLeft() {
+    public TileGen getRightAndLeft() {
         return rightAndLeft;
     }
 
-    public void setRightAndLeft(Tile rightAndLeft) {
+    public void setRightAndLeft(TileGen rightAndLeft) {
         this.rightAndLeft = rightAndLeft;
     }
 
-    public Tile getLessRight() {
+    public TileGen getLessRight() {
         return lessRight;
     }
 
-    public void setLessRight(Tile lessRight) {
+    public void setLessRight(TileGen lessRight) {
         this.lessRight = lessRight;
     }
 
-    public Tile getLessTop() {
+    public TileGen getLessTop() {
         return lessTop;
     }
 
-    public void setLessTop(Tile lessTop) {
+    public void setLessTop(TileGen lessTop) {
         this.lessTop = lessTop;
     }
 
-    public Tile getLessLeft() {
+    public TileGen getLessLeft() {
         return lessLeft;
     }
 
-    public void setLessLeft(Tile lessLeft) {
+    public void setLessLeft(TileGen lessLeft) {
         this.lessLeft = lessLeft;
     }
 
-    public Tile getLessDown() {
+    public TileGen getLessDown() {
         return lessDown;
     }
 
-    public void setLessDown(Tile lessDown) {
+    public void setLessDown(TileGen lessDown) {
         this.lessDown = lessDown;
     }
 
-    public Tile getAll() {
+    public TileGen getAll() {
         return all;
     }
 
-    public void setAll(Tile all) {
+    public void setAll(TileGen all) {
         this.all = all;
     }
 }

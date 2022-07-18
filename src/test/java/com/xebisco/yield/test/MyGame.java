@@ -18,16 +18,10 @@ package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
 
-public class MyGame extends YldGame {
-
-    @Override
-    public void update(float delta) {
-        view.getTransform().rotate(1);
-    }
-
+class MyGame extends YldGame {
     public static void main(String[] args) {
         GameConfiguration config = new GameConfiguration();
-        Ini.file(new RelativeFile("com/xebisco/yield/test/assets/game.ini"), config);
+        config.renderMasterName = "com.xebisco.swingyield.SwingYield";
         launch(new MyGame(), config);
     }
 }

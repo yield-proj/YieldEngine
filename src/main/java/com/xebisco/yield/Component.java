@@ -95,6 +95,9 @@ public abstract class Component extends YldB
      */
     public Entity instantiate(Prefab prefab)
     {
+        if(prefab == null) {
+            Yld.log("prefab - " + entity);
+        }
         return entity.instantiate(prefab);
     }
 
@@ -110,7 +113,12 @@ public abstract class Component extends YldB
      */
     public Entity instantiate()
     {
-        return instantiate(null);
+        return instantiate((Prefab) null);
+    }
+
+    public Entity instantiate(Vector2 pos)
+    {
+        return entity.instantiate(null, null, pos);
     }
 
     /**

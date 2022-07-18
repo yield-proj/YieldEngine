@@ -40,16 +40,32 @@ public class Color {
     }
 
     public Color(float r, float g, float b) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
+        this.r = Yld.clamp(r, 0, 1);
+        this.g = Yld.clamp(g, 0, 1);
+        this.b = Yld.clamp(b, 0, 1);
         this.a = 1f;
     }
     public Color(float r, float g, float b, float a) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
+        this.r = Yld.clamp(r, 0, 1);
+        this.g = Yld.clamp(g, 0, 1);
+        this.b = Yld.clamp(b, 0, 1);
+        this.a = Yld.clamp(a, 0, 1);
+    }
+
+    public Color brighter(float value) {
+        return new Color(r + value, g + value, b + value, a);
+    }
+
+    public Color darker(float value) {
+        return brighter(-value);
+    }
+
+    public Color darker() {
+        return darker(.2f);
+    }
+
+    public Color brighter() {
+        return brighter(.2f);
     }
 
     /**

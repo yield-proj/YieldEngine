@@ -23,12 +23,23 @@ public class Tile {
 
     private static Vector2 defaultSize = new Vector2(32, 32);
 
+    private Prefab prefab;
+
     public Tile() {
 
     }
 
+    public Tile(Prefab prefab) {
+        this.prefab = prefab;
+    }
+
     public Tile(Texture texture) {
         this.texture = texture;
+    }
+
+    public Tile(Texture texture, Prefab prefab) {
+        this.texture = texture;
+        this.prefab = prefab;
     }
 
     public Texture getTexture() {
@@ -69,5 +80,13 @@ public class Tile {
 
     public static void setDefaultSize(Vector2 defaultSize) {
         Tile.defaultSize = defaultSize;
+    }
+
+    public Prefab getPrefab() {
+        return prefab;
+    }
+
+    public void setPrefab(Prefab prefab) {
+        this.prefab = prefab;
     }
 }

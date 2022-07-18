@@ -17,18 +17,53 @@
 package com.xebisco.yield;
 
 public class Sprite extends NonFillShape {
+
+    private boolean smartRender;
+    private boolean considerSelfTransform;
+
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);
-        if (getMaterial().getTexture() != null) {
-            graphics.drawTexture(getMaterial().getTexture(), getEntity().getTransform().position.subt(scene.getView().getTransform().position), getSize().mul(getEntity().getTransform().scale));}
-        else
-            graphics.drawTexture(game.getYieldLogo(), getEntity().getTransform().position.subt(scene.getView().getTransform().position), getSize().mul(getEntity().getTransform().scale));
+        Vector2 pos, size = getSize().mul(getEntity().getTransform().scale);
+
+        if (considerSelfTransform)
+            pos = getEntity().getSelfTransform().position.subt(scene.getView().getTransform().position);
+        else pos = getEntity().getTransform().position.subt(scene.getView().getTransform().position);
+
+        if (smartRender) {
+            if (pos.x + size.x / 2f >= 0 && pos.x - size.x / 2f <= scene.getView().getWidth() && pos.y + size.y / 2f >= 0 && pos.y - size.y / 2f <= scene.getView().getHeight()) {
+                Texture tex = getMaterial().getTexture();
+                if (tex == null)
+                    tex = game.getYieldLogo();
+                graphics.drawTexture(tex, pos, size);
+            }
+        } else {
+            Texture tex = getMaterial().getTexture();
+            if (tex == null)
+                tex = game.getYieldLogo();
+            graphics.drawTexture(tex, pos, size);
+        }
     }
 
     @Override
     public boolean colliding(float x, float y) {
         return x >= getTransform().position.x - getSize().x * getTransform().scale.x / 2f && x <= getTransform().position.x + getSize().x * getTransform().scale.y / 2f &&
                 y >= getTransform().position.y - getSize().y * getTransform().scale.y / 2f && y <= getTransform().position.y + getSize().y * getTransform().scale.y / 2f;
+    }
+
+    public boolean isConsiderSelfTransform() {
+        return considerSelfTransform;
+    }
+
+    public void setConsiderSelfTransform(boolean considerSelfTransform) {
+        this.considerSelfTransform = considerSelfTransform;
+    }
+
+    public boolean isSmartRender() {
+        return smartRender;
+    }
+
+    public void setSmartRender(boolean smartRender) {
+        this.smartRender = smartRender;
     }
 }

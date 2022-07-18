@@ -21,16 +21,41 @@ public class TileGen {
     private Tile tile;
     private Tile[] tiles;
 
-    private MappedTiles mappedTiles, comparingMapped;
+    private MappedTiles mappedTiles;
+
+    private TilesToCompare tilesToCompare;
 
     private Texture[] textures;
+
+    private int layer = -1;
+
+    private Prefab standardPrefab = null;
 
     public TileGen(MappedTiles mappedTiles) {
         this.mappedTiles = mappedTiles;
     }
 
+    public TileGen(MappedTiles mappedTiles, int layer) {
+        this.mappedTiles = mappedTiles;
+        this.layer = layer;
+    }
+
     public TileGen(Texture texture) {
         tile = new Tile(texture);
+    }
+
+    public TileGen(Texture texture, int layer) {
+        tile = new Tile(texture);
+        this.layer = layer;
+    }
+
+    public TileGen(Texture texture, Prefab prefab) {
+        tile = new Tile(texture, prefab);
+    }
+
+    public TileGen(Texture texture, Prefab prefab, int layer) {
+        tile = new Tile(texture, prefab);
+        this.layer = layer;
     }
 
     public TileGen(Tile tile) {
@@ -41,78 +66,189 @@ public class TileGen {
         this.textures = textures;
     }
 
+    public TileGen(Texture[] textures, int layer) {
+        this.textures = textures;
+        this.layer = layer;
+    }
+
+    public TileGen(Texture[] textures, Prefab standardPrefab) {
+        this.textures = textures;
+        this.standardPrefab = standardPrefab;
+    }
+
+    public TileGen(Texture[] textures, Prefab standardPrefab, int layer) {
+        this.textures = textures;
+        this.standardPrefab = standardPrefab;
+        this.layer = layer;
+    }
+
     public TileGen(Tile[] tiles) {
         this.tiles = tiles;
     }
 
+    public TileGen(Tile[] tiles, int layer) {
+        this.tiles = tiles;
+        this.layer = layer;
+    }
+
     public Tile getTile() {
+        Tile toReturn;
         if (mappedTiles == null) {
             if (tiles == null) {
                 if (textures == null)
-                    return tile;
+                    toReturn = tile;
                 else {
-                    return new Tile(textures[Yld.RAND.nextInt(textures.length)]);
+                    toReturn = new Tile(textures[Yld.RAND.nextInt(textures.length)]);
                 }
             } else {
-                return tiles[Yld.RAND.nextInt(tiles.length)];
+                toReturn = tiles[Yld.RAND.nextInt(tiles.length)];
             }
         } else {
-            if (comparingMapped != null) {
-                if (comparingMapped.getBottom() == mappedTiles.getTarget() && comparingMapped.getLeft() == mappedTiles.getTarget() && comparingMapped.getRight() == mappedTiles.getTarget() && comparingMapped.getTop() == mappedTiles.getTarget())
-                    return mappedTiles.getAll();
-                else if (comparingMapped.getBottom() == mappedTiles.getTarget() && comparingMapped.getLeft() == mappedTiles.getTarget() && comparingMapped.getRight() == mappedTiles.getTarget())
-                    return mappedTiles.getLessTop();
-                else if (comparingMapped.getBottom() == mappedTiles.getTarget() && comparingMapped.getTop() == mappedTiles.getTarget() && comparingMapped.getRight() == mappedTiles.getTarget())
-                    return mappedTiles.getLessLeft();
-                else if (comparingMapped.getBottom() == mappedTiles.getTarget() && comparingMapped.getTop() == mappedTiles.getTarget() && comparingMapped.getLeft() == mappedTiles.getTarget())
-                    return mappedTiles.getLessRight();
-                else if (comparingMapped.getRight() == mappedTiles.getTarget() && comparingMapped.getTop() == mappedTiles.getTarget() && comparingMapped.getLeft() == mappedTiles.getTarget())
-                    return mappedTiles.getLessDown();
-                else if (comparingMapped.getBottom() == mappedTiles.getTarget() && comparingMapped.getLeft() == mappedTiles.getTarget())
-                    return mappedTiles.getBottomAndLeft();
-                else if (comparingMapped.getTop() == mappedTiles.getTarget() && comparingMapped.getLeft() == mappedTiles.getTarget())
-                    return mappedTiles.getLeftAndTop();
-                else if (comparingMapped.getBottom() == mappedTiles.getTarget() && comparingMapped.getRight() == mappedTiles.getTarget())
-                    return mappedTiles.getRightAndBottom();
-                else if (comparingMapped.getTop() == mappedTiles.getTarget() && comparingMapped.getRight() == mappedTiles.getTarget())
-                    return mappedTiles.getTopAndRight();
-                else if (comparingMapped.getBottom() == mappedTiles.getTarget() && comparingMapped.getTop() == mappedTiles.getTarget())
-                    return mappedTiles.getTopAndDown();
-                else if (comparingMapped.getRight() == mappedTiles.getTarget() && comparingMapped.getLeft() == mappedTiles.getTarget())
-                    return mappedTiles.getRightAndLeft();
-                else if (comparingMapped.getBottom() == mappedTiles.getTarget())
-                    return mappedTiles.getBottom();
-                else if (comparingMapped.getLeft() == mappedTiles.getTarget())
-                    return mappedTiles.getLeft();
-                else if (comparingMapped.getRight() == mappedTiles.getTarget())
-                    return mappedTiles.getRight();
-                else if (comparingMapped.getTop() == mappedTiles.getTarget())
-                    return mappedTiles.getTop();
-                else if (comparingMapped.getOnlyTopLeft() == mappedTiles.getTarget())
-                    return mappedTiles.getOnlyTopLeft();
-                else if (comparingMapped.getOnlyTopRight() == mappedTiles.getTarget())
-                    return mappedTiles.getOnlyTopRight();
-                else if (comparingMapped.getOnlyBottomLeft() == mappedTiles.getTarget())
-                    return mappedTiles.getOnlyBottomLeft();
-                else if (comparingMapped.getOnlyRightBottom() == mappedTiles.getTarget())
-                    return mappedTiles.getOnlyRightBottom();
-                else
-                    return mappedTiles.getMiddle();
+            if (tilesToCompare != null) {
+                if (mappedTiles.getTargetLayer() == -1) {
+                    Tile target = mappedTiles.getTarget().getTile();
+                    if (tilesToCompare.getBottom().getTile() == target && tilesToCompare.getLeft().getTile() == target && tilesToCompare.getRight().getTile() == target && tilesToCompare.getTop().getTile() == target)
+                        toReturn = mappedTiles.getAll().getTile();
+                    else if (tilesToCompare.getBottom().getTile() == target && tilesToCompare.getLeft().getTile() == target && tilesToCompare.getRight().getTile() == target)
+                        toReturn = mappedTiles.getLessTop().getTile();
+                    else if (tilesToCompare.getBottom().getTile() == target && tilesToCompare.getTop().getTile() == target && tilesToCompare.getRight().getTile() == target)
+                        toReturn = mappedTiles.getLessLeft().getTile();
+                    else if (tilesToCompare.getBottom().getTile() == target && tilesToCompare.getTop().getTile() == target && tilesToCompare.getLeft().getTile() == target)
+                        toReturn = mappedTiles.getLessRight().getTile();
+                    else if (tilesToCompare.getRight().getTile() == target && tilesToCompare.getTop().getTile() == target && tilesToCompare.getLeft().getTile() == target)
+                        toReturn = mappedTiles.getLessDown().getTile();
+                    else if (tilesToCompare.getBottom().getTile() == target && tilesToCompare.getLeft().getTile() == target)
+                        toReturn = mappedTiles.getBottomAndLeft().getTile();
+                    else if (tilesToCompare.getTop().getTile() == target && tilesToCompare.getLeft().getTile() == target)
+                        toReturn = mappedTiles.getLeftAndTop().getTile();
+                    else if (tilesToCompare.getBottom().getTile() == target && tilesToCompare.getRight().getTile() == target)
+                        toReturn = mappedTiles.getRightAndBottom().getTile();
+                    else if (tilesToCompare.getTop().getTile() == target && tilesToCompare.getRight().getTile() == target)
+                        toReturn = mappedTiles.getTopAndRight().getTile();
+                    else if (tilesToCompare.getBottom().getTile() == target && tilesToCompare.getTop().getTile() == target)
+                        toReturn = mappedTiles.getTopAndDown().getTile();
+                    else if (tilesToCompare.getRight().getTile() == target && tilesToCompare.getLeft().getTile() == target)
+                        toReturn = mappedTiles.getRightAndLeft().getTile();
+                    else if (tilesToCompare.getBottom().getTile() == target)
+                        toReturn = mappedTiles.getBottom().getTile();
+                    else if (tilesToCompare.getLeft().getTile() == target)
+                        toReturn = mappedTiles.getLeft().getTile();
+                    else if (tilesToCompare.getRight().getTile() == target)
+                        toReturn = mappedTiles.getRight().getTile();
+                    else if (tilesToCompare.getTop().getTile() == target)
+                        toReturn = mappedTiles.getTop().getTile();
+                    else if (tilesToCompare.getOnlyTopLeft().getTile() == target)
+                        toReturn = mappedTiles.getOnlyTopLeft().getTile();
+                    else if (tilesToCompare.getOnlyTopRight().getTile() == target)
+                        toReturn = mappedTiles.getOnlyTopRight().getTile();
+                    else if (tilesToCompare.getOnlyBottomLeft().getTile() == target)
+                        toReturn = mappedTiles.getOnlyBottomLeft().getTile();
+                    else if (tilesToCompare.getOnlyRightBottom().getTile() == target)
+                        toReturn = mappedTiles.getOnlyRightBottom().getTile();
+                    else
+                        toReturn = mappedTiles.getMiddle().getTile();
+                } else {
+                    if (tilesToCompare.getBottom().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getLeft().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getRight().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getTop().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getAll().getTile();
+                    else if (tilesToCompare.getBottom().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getLeft().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getRight().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getLessTop().getTile();
+                    else if (tilesToCompare.getBottom().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getTop().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getRight().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getLessLeft().getTile();
+                    else if (tilesToCompare.getBottom().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getTop().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getLeft().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getLessRight().getTile();
+                    else if (tilesToCompare.getRight().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getTop().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getLeft().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getLessDown().getTile();
+                    else if (tilesToCompare.getBottom().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getLeft().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getBottomAndLeft().getTile();
+                    else if (tilesToCompare.getTop().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getLeft().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getLeftAndTop().getTile();
+                    else if (tilesToCompare.getBottom().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getRight().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getRightAndBottom().getTile();
+                    else if (tilesToCompare.getTop().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getRight().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getTopAndRight().getTile();
+                    else if (tilesToCompare.getBottom().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getTop().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getTopAndDown().getTile();
+                    else if (tilesToCompare.getRight().getTile().getLayer() == mappedTiles.getTargetLayer() && tilesToCompare.getLeft().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getRightAndLeft().getTile();
+                    else if (tilesToCompare.getBottom().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getBottom().getTile();
+                    else if (tilesToCompare.getLeft().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getLeft().getTile();
+                    else if (tilesToCompare.getRight().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getRight().getTile();
+                    else if (tilesToCompare.getTop().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getTop().getTile();
+                    else if (tilesToCompare.getOnlyTopLeft().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getOnlyTopLeft().getTile();
+                    else if (tilesToCompare.getOnlyTopRight().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getOnlyTopRight().getTile();
+                    else if (tilesToCompare.getOnlyBottomLeft().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getOnlyBottomLeft().getTile();
+                    else if (tilesToCompare.getOnlyRightBottom().getTile().getLayer() == mappedTiles.getTargetLayer())
+                        toReturn = mappedTiles.getOnlyRightBottom().getTile();
+                    else
+                        toReturn = mappedTiles.getMiddle().getTile();
+                }
             } else {
-                return mappedTiles.getMiddle();
+                toReturn = mappedTiles.getMiddle().getTile();
             }
         }
+        if (layer != -1)
+            toReturn.setLayer(layer);
+        if (standardPrefab != null && toReturn.getPrefab() == null)
+            toReturn.setPrefab(standardPrefab);
+        return toReturn;
+    }
+
+    public Tile[] getTiles() {
+        return tiles;
+    }
+
+    public void setTiles(Tile[] tiles) {
+        this.tiles = tiles;
+    }
+
+    public MappedTiles getMappedTiles() {
+        return mappedTiles;
+    }
+
+    public void setMappedTiles(MappedTiles mappedTiles) {
+        this.mappedTiles = mappedTiles;
+    }
+
+    public Texture[] getTextures() {
+        return textures;
+    }
+
+    public void setTextures(Texture[] textures) {
+        this.textures = textures;
+    }
+
+    public Prefab getStandardPrefab() {
+        return standardPrefab;
+    }
+
+    public void setStandardPrefab(Prefab standardPrefab) {
+        this.standardPrefab = standardPrefab;
     }
 
     public void setTile(Tile tile) {
         this.tile = tile;
     }
 
-    public MappedTiles getComparingMapped() {
-        return comparingMapped;
+    public TilesToCompare getTilesToCompare() {
+        return tilesToCompare;
     }
 
-    public void setComparingMapped(MappedTiles comparingMapped) {
-        this.comparingMapped = comparingMapped;
+    public void setTilesToCompare(TilesToCompare tilesToCompare) {
+        this.tilesToCompare = tilesToCompare;
+    }
+
+    public int getLayer() {
+        return layer;
+    }
+
+    public void setLayer(int layer) {
+        this.layer = layer;
     }
 }

@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import java.util.Objects;
+
 /**
  * @since 4-1.2
  * @author Xebisco
@@ -27,6 +29,27 @@ public class YldPair<F, S> {
     public YldPair(F first, S second) {
         this.first = first;
         this.second = second;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        YldPair<?, ?> pair = (YldPair<?, ?>) o;
+        return Objects.equals(first, pair.first) && Objects.equals(second, pair.second);
+    }
+
+    @Override
+    public String toString() {
+        return "YldPair{" +
+                "first=" + first +
+                ", second=" + second +
+                '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(first, second);
     }
 
     public F getFirst() {

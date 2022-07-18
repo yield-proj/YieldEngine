@@ -57,6 +57,8 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
 
     private double savedRotation;
 
+    private final SwingYield swingYield;
+
     private Vector2 savedRotationPoint = new Vector2();
 
     private AffineTransform defTransform;
@@ -87,6 +89,10 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
         yieldImage = yieldImage1;
     }
 
+    public SwingYield() {
+        swingYield = this;
+    }
+
     private View view;
 
     public static java.awt.Color toAWTColor(Color color) {
@@ -100,6 +106,10 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
     @Override
     public void before(YldGame game) {
 
+    }
+
+    public void rotate(Vector2 point, Float angle) {
+        ((Graphics2D) g).rotate(Math.toRadians(-angle), point.x, point.y);
     }
 
     @Override
@@ -240,8 +250,11 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             @Override
             public void custom(String instruction, Object... args) {
                 Class<?>[] types = new Class<?>[args.length];
+                for (int i = 0; i < types.length; i++) {
+                    types[i] = args[i].getClass();
+                }
                 try {
-                    SwingYield.class.getDeclaredMethod(instruction, types).invoke(this, args);
+                    SwingYield.class.getDeclaredMethod(instruction, types).invoke(swingYield, args);
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     throw new RuntimeException(e);
                 }
@@ -249,13 +262,50 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
         };
     }
 
+    @Override
+    public Texture duplicate(Texture texture) {
+        Texture t = new Texture(null);
+        t.setVisualUtils(texture.getVisualUtils());
+        t.setFilter(texture.getFilter());
+        t.setInvertedX(texture.getInvertedX());
+        t.setInvertedY(texture.getInvertedY());
+        t.setInvertedXY(texture.getInvertedXY());
+        t.setInputStream(texture.getInputStream());
+        t.setUrl(texture.getUrl());
+        images.put(t.getTextureID(), images.get(texture.getTextureID()));
+        return t;
+    }
+
+    @Override
+    public Texture overlayTexture(Texture tex1, Texture tex2, Vector2 pos1, Vector2 pos2) {
+        Image i1 = images.get(tex1.getTextureID()), i2 = images.get(tex2.getTextureID());
+        Texture tex = new Texture(null, tex1.getTextureType());
+        loadTexture(tex, i1, (int) pos1.x, (int) pos1.y);
+        Image i3 = images.get(tex.getTextureID());
+        Graphics g = i3.getGraphics();
+        g.drawImage(i2, (int) pos2.x, (int) pos2.y, null);
+        g.dispose();
+        return tex;
+    }
+
+    public void drawTexture(Texture texture, Vector2 pos, Vector2 size) {
+        if (texture instanceof NotCapableTexture) {
+            throw new NotCapableTextureException();
+        }
+        Image image = images.get(texture.getTextureID());
+        g.drawImage(image, (int) (pos.x), (int) (pos.y), (int) size.x, (int) size.y, null);
+    }
+
     public void changeWindowIcon(Texture icon) {
         Image i = images.get(icon.getTextureID());
         frame.setIconImage(i);
     }
 
+    private float renderMod;
+
     @Override
     public SampleWindow initWindow(WindowConfiguration configuration) {
+        renderMod = configuration.renderMod;
         Toolkit.getDefaultToolkit().setDynamicLayout(false);
         frame = new JFrame();
         frame.setSize(configuration.width, configuration.height);
@@ -336,12 +386,15 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
     @Override
     public void frameStart(SampleGraphics g, View view) {
         this.view = view;
+        intFrame++;
         if (image != null) {
             this.g = image.getGraphics();
         }
         if (started)
             g.drawRect(new Vector2(view.getWidth() / 2f, view.getHeight() / 2f), new Vector2(view.getWidth(), view.getHeight()), view.getBgColor(), true);
     }
+
+    private int intFrame;
 
     @Override
     public void frameEnd() {
@@ -355,7 +408,8 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             gi.dispose();
             //image = new BufferedImage(view.getWidth(), view.getHeight(), BufferedImage.TYPE_INT_ARGB);
         }
-        SwingUtilities.invokeLater(this::repaint);
+        if (intFrame % renderMod == 0)
+            SwingUtilities.invokeLater(this::repaint);
     }
 
     @Override
@@ -375,21 +429,24 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             if (in == null)
                 Yld.throwException(new CannotLoadException("Could not find the texture: '" + texture.getCachedPath() + "'"));
             else
-                loadTexture(texture, ImageIO.read(in));
+                loadTexture(texture, ImageIO.read(in), 0, 0);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void loadTexture(Texture texture, Image img) {
+    public void loadTexture(Texture texture, Image img, int ix, int iy) {
         Image image;
         if (texture.getTextureType() == TexType.NATIVE) {
             image = createVolatileImage(img.getWidth(null), img.getHeight(null));
             Graphics g = image.getGraphics();
-            g.drawImage(img, 0, 0, null);
+            g.drawImage(img, ix, iy, null);
             g.dispose();
         } else if (texture.getTextureType() == TexType.SIMULATED) {
-            image = img;
+            image = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+            Graphics g = image.getGraphics();
+            g.drawImage(img, ix, iy, null);
+            g.dispose();
             BufferedImage buffImage = (BufferedImage) image;
             BufferedImage imageX = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB),
                     imageY = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB),
@@ -405,6 +462,9 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             images.put(invX.getTextureID(), imageX);
             images.put(invY.getTextureID(), imageY);
             images.put(invXY.getTextureID(), imageXY);
+            invX.setVisualUtils(this);
+            invY.setVisualUtils(this);
+            invXY.setVisualUtils(this);
             texture.setInvertedX(invX);
             texture.setInvertedY(invY);
             texture.setInvertedXY(invXY);
@@ -412,9 +472,12 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             throw new InvalidTextureTypeException(texture.getTextureType().toString());
         }
         images.put(texture.getTextureID(), image);
-        texture.setInvertedX(new NotCapableTexture());
-        texture.setInvertedY(new NotCapableTexture());
-        texture.setInvertedXY(new NotCapableTexture());
+        if (texture.getInvertedX() == null)
+            texture.setInvertedX(new NotCapableTexture());
+        if (texture.getInvertedY() == null)
+            texture.setInvertedY(new NotCapableTexture());
+        if (texture.getInvertedXY() == null)
+            texture.setInvertedXY(new NotCapableTexture());
         texture.setVisualUtils(this);
     }
 
@@ -452,14 +515,14 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
         try {
             img = ((BufferedImage) images.get(texture.getTextureID())).getSubimage(x, y, width, height);
             tex = new Texture(null);
-            loadTexture(tex, img);
+            loadTexture(tex, img, 0, 0);
         } catch (ClassCastException e) {
             img = createVolatileImage(width, height);
             Graphics g = img.getGraphics();
             g.drawImage(images.get(texture.getTextureID()), -x, -y, null);
             g.dispose();
             tex = new Texture(null, TexType.NATIVE);
-            loadTexture(tex, img);
+            loadTexture(tex, img, 0, 0);
         }
 
         return tex;
@@ -480,7 +543,7 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
         Graphics g = image1.getGraphics();
         g.drawImage(img, 0, 0, width, height, null);
         g.dispose();
-        loadTexture(tex, image1);
+        loadTexture(tex, image1, 0, 0);
         return tex;
     }
 
@@ -525,6 +588,26 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             }
             g.dispose();
         }
+    }
+
+    public SwingYield getSwingYield() {
+        return swingYield;
+    }
+
+    public float getRenderMod() {
+        return renderMod;
+    }
+
+    public void setRenderMod(float renderMod) {
+        this.renderMod = renderMod;
+    }
+
+    public int getIntFrame() {
+        return intFrame;
+    }
+
+    public void setIntFrame(int intFrame) {
+        this.intFrame = intFrame;
     }
 
     @Override

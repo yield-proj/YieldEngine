@@ -125,6 +125,43 @@ public class YldGame extends YldScene {
         return engine;
     }
 
+    public Texture overlayTexture(Texture tex1, Texture tex2, Vector2 pos1, Vector2 pos2) {
+        return handler.getRenderMaster().overlayTexture(tex1, tex2, pos1, pos2);
+    }
+
+    public Texture overlayTexture(Texture tex1, Texture tex2, Vector2 pos) {
+        return overlayTexture(tex1, tex2, new Vector2(), pos);
+    }
+
+    public Texture overlayTexture(Texture tex1, Texture tex2) {
+        return overlayTexture(tex1, tex2, new Vector2(), new Vector2());
+    }
+
+    public Color predominantColor(Color[][] colors) {
+        Color color = new Color(0, 0, 0);
+        float r = 0, g = 0, b = 0;
+        float count = 0;
+        for (int x = 0; x < colors.length; x++) {
+            for (int y = 0; y < colors[0].length; y++) {
+                Color c = colors[x][y];
+                if (c != null && c.getA() != 0) {
+                    count += 1f;
+                    r += c.getR();
+                    g += c.getG();
+                    b += c.getB();
+                }
+            }
+        }
+        color.setR(r / count);
+        color.setG(g / count);
+        color.setB(b / count);
+        return color;
+    }
+
+    public Color predominantColor(Texture texture) {
+        return predominantColor(getTextureColors(texture));
+    }
+
     private Color[][] processColorsSTD;
 
     private boolean checkTexToSTDColors(Texture tex) {
@@ -204,6 +241,7 @@ public class YldGame extends YldScene {
     public ArrayList<YldScene> getScenes() {
         return scenes;
     }
+
     /**
      * Setter for the scenes list.
      */
@@ -258,6 +296,10 @@ public class YldGame extends YldScene {
         return texture;
     }
 
+    public Texture duplicateTexture(Texture texture) {
+        return game.getHandler().getRenderMaster().duplicate(texture);
+    }
+
     public void unloadTexture(Texture texture) {
         handler.getRenderMaster().unloadTexture(texture);
     }
@@ -289,6 +331,7 @@ public class YldGame extends YldScene {
     public void loadFont(String fontName, int size, int style) {
         handler.getRenderMaster().loadFont(fontName, fontName, size, style);
     }
+
     public void loadFont(String saveName, String fontName, int size, int style) {
         handler.getRenderMaster().loadFont(saveName, fontName, size, style);
     }
@@ -309,7 +352,7 @@ public class YldGame extends YldScene {
         while (i < scenes.size()) {
             if (scenes.get(i).getClass().getName().hashCode() == type.getName().hashCode()) {
                 if (scenes.get(i).getClass().getName().equals(type.getName())) {
-                    if(getScene() != null) {
+                    if (getScene() != null) {
                         if (how == ChangeScene.DESTROY_LAST) {
                             getScene().destroyScene();
                             getScene().setMasterEntity(new Entity("MasterEntity", getScene(), null));

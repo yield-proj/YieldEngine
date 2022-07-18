@@ -23,8 +23,6 @@ public class AudioClip extends RelativeFile {
 
     private AudioClipPos startPos = new AudioClipPos();
 
-    private boolean loaded;
-
     /**
      * Creates a AudioClip from the given relative path.
      * @param relativePath The relative path of the audio clip.
@@ -47,13 +45,5 @@ public class AudioClip extends RelativeFile {
      */
     public void setStartPos(AudioClipPos startPos) {
         this.startPos = startPos;
-    }
-
-    public boolean isLoaded() {
-        return loaded;
-    }
-
-    protected void setLoaded(boolean loaded) {
-        this.loaded = loaded;
     }
 }

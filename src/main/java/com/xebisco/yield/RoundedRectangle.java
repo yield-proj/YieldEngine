@@ -18,7 +18,7 @@ package com.xebisco.yield;
 
 public class RoundedRectangle extends Shape {
 
-    private Vector2 arc;
+    private Vector2 arc = new Vector2(5, 5);
 
     @Override
     public void render(SampleGraphics graphics) {

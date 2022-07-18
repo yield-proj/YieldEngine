@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.engine.Engine;
+import com.xebisco.yield.engine.YldEngineAction;
 import com.xebisco.yield.utils.YldAction;
 
 import java.lang.reflect.InvocationTargetException;
@@ -87,14 +89,17 @@ public final class Entity implements Comparable<Entity> {
             for (i = 0; i < children.size(); i++) {
                 try {
                     Entity e = children.get(i);
-                    SampleGraphics g = graphics;
-                    if (!e.isVisible())
-                        g = null;
-                    e.process(delta, g);
+                    if (e != null) {
+                        SampleGraphics g = graphics;
+                        if (!e.isVisible())
+                            g = null;
+                        e.process(delta, g);
+                    }
                 } catch (IndexOutOfBoundsException ignore) {
                 }
             }
             selfTransform.getTransformed().reset();
+            sortChildren();
         }
     }
 
@@ -106,7 +111,7 @@ public final class Entity implements Comparable<Entity> {
     public void addComponent(Component component) {
         component.transform = selfTransform;
         component.setGame(scene.game);
-        component.setInput(scene.game.input);
+        component.setInput(new YldInput(scene.game, scene.game.input));
         component.setEntity(this);
         component.setScene(scene);
         component.setTime(scene.time);
@@ -286,15 +291,62 @@ public final class Entity implements Comparable<Entity> {
      * @param prefab The Prefab of the instantiated Entity.
      * @return The instantiated Entity instance.
      */
-    public Entity instantiate(Prefab prefab, YldB yldB) {
+    public Entity instantiate(Prefab prefab, YldB yldB, MultiThread multiThread) {
+        return instantiate(prefab, yldB, null, multiThread);
+    }
+
+    public Entity instantiate(Prefab prefab, YldB yldB, Vector2 pos, MultiThread multiThread) {
         String name = "Entity";
         if (prefab != null)
             name = prefab.getClass().getName();
         Entity entity = new Entity(name, scene, this);
-        entity.setIndex(index + 1);
+        if (pos != null) {
+            entity.getSelfTransform().position = pos;
+        }
         if (prefab != null)
             prefab.create(entity);
-        return addChild(entity, yldB);
+        return addChild(entity, yldB, multiThread);
+    }
+
+    public Entity instantiate(Prefab prefab, Vector2 pos, Engine engine) {
+        String name = "Entity";
+        if (prefab != null)
+            name = prefab.getClass().getName();
+        Entity entity = new Entity(name, scene, this);
+        if (pos != null) {
+            entity.getSelfTransform().position = pos;
+        }
+        if (prefab != null)
+            prefab.create(entity);
+        return addChild(entity, engine);
+    }
+
+    public void sortChildren() {
+        try {
+            Collections.sort(children);
+        } catch (NullPointerException | ConcurrentModificationException e) {
+            ArrayList<Integer> toRemove = new ArrayList<>();
+            for(int i = 0; i < children.size(); i++) {
+                Entity e1 = children.get(i);
+                if(e1 == null) {
+                    toRemove.add(i);
+                }
+            }
+            for(int i : toRemove) {
+                try {
+                    children.remove(i);
+                } catch (IndexOutOfBoundsException ignore) {
+                }
+            }
+        }
+    }
+
+    public Entity instantiate(Prefab prefab, YldB yldB) {
+        return instantiate(prefab, yldB, MultiThread.DEFAULT);
+    }
+
+    public Entity instantiate(Prefab prefab, YldB yldB, Vector2 pos) {
+        return instantiate(prefab, yldB, pos, MultiThread.DEFAULT);
     }
 
     /**
@@ -337,7 +389,9 @@ public final class Entity implements Comparable<Entity> {
      */
     public void destroy() {
         for (int i = 0; i < children.size(); i++) {
-            children.get(i).destroy();
+            Entity e = children.get(i);
+            if (e != null)
+                e.destroy();
         }
         for (int i = 0; i < components.size(); i++) {
             components.get(i).onDestroy();
@@ -368,17 +422,25 @@ public final class Entity implements Comparable<Entity> {
      * @param e The Entity to be added.
      * @return The added Entity.
      */
-    public Entity addChild(Entity e, YldB yldB) {
+    public Entity addChild(Entity e, YldB yldB, MultiThread multiThread) {
         e.setParent(this);
         YldAction a = () -> {
             children.add(e);
-            children.sort(Entity::compareTo);
         };
         if (yldB != null) {
-            yldB.concurrent(a);
+            yldB.concurrent(a, multiThread);
         } else {
             a.onAction();
         }
+        return e;
+    }
+
+    public Entity addChild(Entity e, Engine engine) {
+        e.setParent(this);
+        YldAction a = () -> {
+            children.add(e);
+        };
+        engine.getTodoList().add(new YldEngineAction(a, 0, false, Yld.RAND.nextLong()));
         return e;
     }
 

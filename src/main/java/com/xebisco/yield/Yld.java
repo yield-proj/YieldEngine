@@ -74,8 +74,6 @@ public final class Yld {
         e.printStackTrace();
         if (exceptionThrower != null)
             exceptionThrower.throwException(e);
-        else
-            System.exit(1);
     }
 
     /**
