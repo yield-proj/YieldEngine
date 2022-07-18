@@ -23,10 +23,13 @@ public abstract class NonFillShape extends SimpleRenderable implements Spacial {
 
     @Override
     public void render(SampleGraphics graphics) {
-        drawPosition = getEntity().getTransform().position;
-        drawSize = getSize().mul(getEntity().getTransform().scale);
-        if(isIgnoreViewPosition()) {
-            drawPosition = drawPosition.subt(scene.getView().getTransform().position);
+        super.render(graphics);
+        Transform t = getEntity().getTransform();
+        drawSize = getSize().mul(t.scale);
+        if (isIgnoreViewPosition()) {
+            drawPosition = t.position;
+        } else {
+            drawPosition = t.position.subt(scene.getView().getTransform().position);
         }
     }
 

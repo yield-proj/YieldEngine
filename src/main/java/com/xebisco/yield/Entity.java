@@ -347,6 +347,7 @@ public final class Entity implements Comparable<Entity> {
             }
             if (e != null)
                 e.sortChildren();
+            else Yld.log("AAAA");
         }
     }
 

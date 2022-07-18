@@ -155,17 +155,31 @@ public class YldGraphics {
     }
 
     /**
-     * Creates an rectangle entity.
+     * Creates a rectangle entity.
      *
      * @param width  The width of the oval
      * @param height The height of the oval
-     * @return The created oval.
+     * @return The created rect.
      */
     public Entity rect(float width, float height) {
         Entity e = rect(0, 0, width, height);
         e.center();
         return e;
     }
+
+    /**
+     * Creates an image entity.
+     *
+     * @param width  The width of the oval
+     * @param height The height of the oval
+     * @return The created image.
+     */
+    public Entity img(Texture texture, float width, float height) {
+        Entity e = img(texture, 0, 0, width, height);
+        e.center();
+        return e;
+    }
+
 
     /**
      * Creates a pixel entity.

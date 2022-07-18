@@ -70,6 +70,10 @@ public abstract class YldB
         return id;
     }
 
+    public void log(Object x) {
+        Yld.log(x);
+    }
+
     /**
      * Creates a timer.
      *

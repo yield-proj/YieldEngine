@@ -24,7 +24,8 @@ public class Line extends NonFillShape {
 
     @Override
     public boolean colliding(float x, float y) {
-        return x >= drawPosition.x - drawSize.x / 2f && x <= drawSize.x / 2f &&
-                y >= drawPosition.y - drawSize.y / 2f && y <= drawPosition.y + drawSize.y / 2f;
+        Transform t = getTransform();
+        return x >= t.position.x - getSize().x * t.scale.x / 2f && x <= t.position.x + getSize().x * t.scale.y / 2f &&
+                y >= t.position.y - getSize().y * t.scale.y / 2f && y <= t.position.y + getSize().y * t.scale.y / 2f;
     }
 }

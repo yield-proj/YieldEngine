@@ -18,7 +18,7 @@ package com.xebisco.yield;
 
 public class Text extends NonFillShape {
     private String contents = "Sample Text", font = "arial";
-    private Vector2 textSize = new Vector2();
+    private Vector2 textScale = new Vector2(1, 1);
 
     public Text() {
     }
@@ -36,15 +36,16 @@ public class Text extends NonFillShape {
     public void render(SampleGraphics graphics) {
         super.render(graphics);
         Transform t = getEntity().getTransform();
-        graphics.drawString(contents, getColor(), drawPosition, textSize.mul(t.scale), font);
+        graphics.drawString(contents, getColor(), drawPosition, textScale.mul(t.scale), font);
         getSize().x = graphics.getStringWidth(contents, font) * t.scale.x;
         getSize().y = graphics.getStringHeight(contents, font) * t.scale.y;
     }
 
     @Override
     public boolean colliding(float x, float y) {
-        return x >= drawPosition.x - getSize().x / 2f && x <= getSize().x / 2f &&
-                y >= drawPosition.y - getSize().y / 2f && y <= drawPosition.y + getSize().y / 2f;
+        Transform t = getTransform();
+        return x >= t.position.x - getSize().x * t.scale.x / 2f && x <= t.position.x + getSize().x * t.scale.y / 2f &&
+                y >= t.position.y - getSize().y * t.scale.y / 2f && y <= t.position.y + getSize().y * t.scale.y / 2f;
     }
 
     public String getContents() {
@@ -63,11 +64,11 @@ public class Text extends NonFillShape {
         this.font = font;
     }
 
-    public Vector2 getTextSize() {
-        return textSize;
+    public Vector2 getTextScale() {
+        return textScale;
     }
 
-    public void setTextSize(Vector2 textSize) {
-        this.textSize = textSize;
+    public void setTextScale(Vector2 textScale) {
+        this.textScale = textScale;
     }
 }
