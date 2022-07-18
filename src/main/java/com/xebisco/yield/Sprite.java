@@ -19,44 +19,29 @@ package com.xebisco.yield;
 public class Sprite extends NonFillShape {
 
     private boolean smartRender;
-    private boolean considerSelfTransform;
 
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);
-        Vector2 pos, size = getSize().mul(getEntity().getTransform().scale);
-
-        if (considerSelfTransform)
-            pos = getEntity().getSelfTransform().position.subt(scene.getView().getTransform().position);
-        else pos = getEntity().getTransform().position.subt(scene.getView().getTransform().position);
-
         if (smartRender) {
-            if (pos.x + size.x / 2f >= 0 && pos.x - size.x / 2f <= scene.getView().getWidth() && pos.y + size.y / 2f >= 0 && pos.y - size.y / 2f <= scene.getView().getHeight()) {
+            if (drawPosition.x + drawSize.x / 2f >= 0 && drawPosition.x - drawSize.x / 2f <= scene.getView().getWidth() && drawPosition.y + drawSize.y / 2f >= 0 && drawPosition.y - drawSize.y / 2f <= scene.getView().getHeight()) {
                 Texture tex = getMaterial().getTexture();
                 if (tex == null)
                     tex = game.getYieldLogo();
-                graphics.drawTexture(tex, pos, size);
+                graphics.drawTexture(tex, drawPosition, drawSize);
             }
         } else {
             Texture tex = getMaterial().getTexture();
             if (tex == null)
                 tex = game.getYieldLogo();
-            graphics.drawTexture(tex, pos, size);
+            graphics.drawTexture(tex, drawPosition, drawSize);
         }
     }
 
     @Override
     public boolean colliding(float x, float y) {
-        return x >= getTransform().position.x - getSize().x * getTransform().scale.x / 2f && x <= getTransform().position.x + getSize().x * getTransform().scale.y / 2f &&
-                y >= getTransform().position.y - getSize().y * getTransform().scale.y / 2f && y <= getTransform().position.y + getSize().y * getTransform().scale.y / 2f;
-    }
-
-    public boolean isConsiderSelfTransform() {
-        return considerSelfTransform;
-    }
-
-    public void setConsiderSelfTransform(boolean considerSelfTransform) {
-        this.considerSelfTransform = considerSelfTransform;
+        return x >= drawPosition.x - drawSize.x / 2f && x <= drawSize.x / 2f &&
+                y >= drawPosition.y - drawSize.y / 2f && y <= drawPosition.y + drawSize.y / 2f;
     }
 
     public boolean isSmartRender() {

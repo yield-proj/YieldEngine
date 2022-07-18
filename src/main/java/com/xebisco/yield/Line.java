@@ -16,19 +16,15 @@
 
 package com.xebisco.yield;
 
-public class Line extends SimpleRenderable {
-    private Vector2 point2 = new Vector2(10, 10);
-
+public class Line extends NonFillShape {
     @Override
     public void render(SampleGraphics graphics) {
-        graphics.drawLine(getEntity().getTransform().position.subt(scene.getView().getTransform().position), getEntity().getTransform().position.subt(scene.getView().getTransform().position).sum(point2.mul(getEntity().getTransform().scale)), getColor());
+        graphics.drawLine(drawPosition, drawPosition.sum(drawSize), getColor());
     }
 
-    public Vector2 getPoint2() {
-        return point2;
-    }
-
-    public void setPoint2(Vector2 point2) {
-        this.point2 = point2;
+    @Override
+    public boolean colliding(float x, float y) {
+        return x >= drawPosition.x - drawSize.x / 2f && x <= drawSize.x / 2f &&
+                y >= drawPosition.y - drawSize.y / 2f && y <= drawPosition.y + drawSize.y / 2f;
     }
 }

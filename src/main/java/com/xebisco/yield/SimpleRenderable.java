@@ -24,12 +24,18 @@ public class SimpleRenderable extends Component {
 
     private Vector2 addAnchorPoint = new Vector2();
 
+    private boolean ignoreViewPosition;
+
     @Override
     public void render(SampleGraphics graphics) {
         float angle = getEntity().getTransform().rotation + this.angle;
-        if(forceAngle)
+        if (forceAngle)
             angle = this.angle;
-        graphics.setRotation(getEntity().getTransform().position.subt(scene.getView().getTransform().position).sum(addAnchorPoint).mul(getTransform().scale), angle);
+        Vector2 pos = getEntity().getTransform().position.sum(addAnchorPoint);
+        if (!ignoreViewPosition) {
+            pos = pos.subt(scene.getView().getTransform().position);
+        }
+        graphics.setRotation(pos, angle);
     }
 
     public Color getColor() {
@@ -62,5 +68,13 @@ public class SimpleRenderable extends Component {
 
     public void setAddAnchorPoint(Vector2 addAnchorPoint) {
         this.addAnchorPoint = addAnchorPoint;
+    }
+
+    public boolean isIgnoreViewPosition() {
+        return ignoreViewPosition;
+    }
+
+    public void setIgnoreViewPosition(boolean ignoreViewPosition) {
+        this.ignoreViewPosition = ignoreViewPosition;
     }
 }

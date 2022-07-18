@@ -20,6 +20,11 @@ public abstract class Shape extends NonFillShape {
     private boolean filled = true;
     private Vector2 size = new Vector2(64, 64);
 
+    @Override
+    public void render(SampleGraphics graphics) {
+        super.render(graphics);
+    }
+
     public boolean isFilled() {
         return filled;
     }

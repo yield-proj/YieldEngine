@@ -142,6 +142,32 @@ public class YldGraphics {
     }
 
     /**
+     * Creates an oval entity.
+     *
+     * @param width  The width of the oval
+     * @param height The height of the oval
+     * @return The created oval.
+     */
+    public Entity oval(float width, float height) {
+        Entity e = oval(0, 0, width, height);
+        e.center();
+        return e;
+    }
+
+    /**
+     * Creates an rectangle entity.
+     *
+     * @param width  The width of the oval
+     * @param height The height of the oval
+     * @return The created oval.
+     */
+    public Entity rect(float width, float height) {
+        Entity e = rect(0, 0, width, height);
+        e.center();
+        return e;
+    }
+
+    /**
      * Creates a pixel entity.
      *
      * @param x The x position of the pixel.
@@ -164,7 +190,7 @@ public class YldGraphics {
     public Entity line(float x1, float y1, float x2, float y2) {
         return e.instantiate((e) -> {
             Line r = new Line();
-            r.setPoint2(new Vector2(x2, y2));
+            r.setSize(new Vector2(x2, y2));
             e.addComponent(r);
             r.setColor(color);
             e.getSelfTransform().goTo(new Vector2(x2 / 2, y2 / 2));

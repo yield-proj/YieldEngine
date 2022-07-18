@@ -20,6 +20,7 @@ import com.xebisco.yield.engine.Engine;
 import com.xebisco.yield.engine.YldEngineAction;
 import com.xebisco.yield.utils.YldAction;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -99,7 +100,6 @@ public final class Entity implements Comparable<Entity> {
                 }
             }
             selfTransform.getTransformed().reset();
-            sortChildren();
         }
     }
 
@@ -326,18 +326,27 @@ public final class Entity implements Comparable<Entity> {
             Collections.sort(children);
         } catch (NullPointerException | ConcurrentModificationException e) {
             ArrayList<Integer> toRemove = new ArrayList<>();
-            for(int i = 0; i < children.size(); i++) {
+            for (int i = 0; i < children.size(); i++) {
                 Entity e1 = children.get(i);
-                if(e1 == null) {
+                if (e1 == null) {
                     toRemove.add(i);
                 }
             }
-            for(int i : toRemove) {
+            for (int i : toRemove) {
                 try {
                     children.remove(i);
                 } catch (IndexOutOfBoundsException ignore) {
                 }
             }
+        }
+        for (int i = 0; i < children.size(); i++) {
+            Entity e = null;
+            try {
+                e = children.get(i);
+            } catch (ArrayIndexOutOfBoundsException ignore) {
+            }
+            if (e != null)
+                e.sortChildren();
         }
     }
 
@@ -444,27 +453,30 @@ public final class Entity implements Comparable<Entity> {
         return e;
     }
 
+    private final ArrayList<Object> transmitReturn = new ArrayList<>();
+
     /**
      * Calls the specified method on all the components of this Entity.
      *
      * @param method    The name of the method.
      * @param arguments The arguments of the method.
      */
-    public void transmit(String method, Object... arguments) {
+    public Object[] transmit(String method, Object... arguments) {
+        transmitReturn.clear();
         for (Component c : components) {
-            Method[] methods = c.getClass().getDeclaredMethods();
+            Method[] methods = c.getClass().getMethods();
             for (Method m : methods) {
                 if (m.getName().hashCode() == method.hashCode() && m.getName().equals(method)) {
                     try {
-                        m.invoke(c, arguments);
+                        transmitReturn.add(m.invoke(c, arguments));
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         Yld.throwException(e);
                     }
                     break;
                 }
-
             }
         }
+        return transmitReturn.toArray(new Object[0]);
     }
 
     /**
@@ -584,5 +596,9 @@ public final class Entity implements Comparable<Entity> {
 
     public boolean isVisible() {
         return visible;
+    }
+
+    public ArrayList<Object> getTransmitReturn() {
+        return transmitReturn;
     }
 }

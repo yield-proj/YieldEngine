@@ -21,12 +21,12 @@ public class Rectangle extends Shape
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);
-        graphics.drawRect(getEntity().getTransform().position.subt(scene.getView().getTransform().position), getSize().mul(getEntity().getTransform().scale), getColor(), isFilled());
+        graphics.drawRect(drawPosition, drawSize, getColor(), isFilled());
     }
 
     @Override
     public boolean colliding(float x, float y) {
-        return x >= getTransform().position.x - getSize().x * getTransform().scale.x / 2f && x <= getTransform().position.x + getSize().x * getTransform().scale.y / 2f &&
-                y >= getTransform().position.y - getSize().y * getTransform().scale.y / 2f && y <= getTransform().position.y + getSize().y * getTransform().scale.y / 2f;
+        return x >= drawPosition.x - drawSize.x / 2f && x <= drawSize.x / 2f &&
+                y >= drawPosition.y - drawSize.y / 2f && y <= drawPosition.y + drawSize.y / 2f;
     }
 }

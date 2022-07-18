@@ -131,6 +131,7 @@ public class YldScene extends YldB
     public final void process(float delta, SampleGraphics graphics)
     {
         masterEntity.process(delta, graphics);
+        masterEntity.sortChildren();
     }
 
     public boolean isCallStart()

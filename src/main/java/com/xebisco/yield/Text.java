@@ -18,6 +18,7 @@ package com.xebisco.yield;
 
 public class Text extends NonFillShape {
     private String contents = "Sample Text", font = "arial";
+    private Vector2 textSize = new Vector2();
 
     public Text() {
     }
@@ -34,15 +35,16 @@ public class Text extends NonFillShape {
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);
-        graphics.drawString(contents, getColor(), getEntity().getTransform().position.subt(scene.getView().getTransform().position), getEntity().getTransform().scale, font);
-        getSize().x = graphics.getStringWidth(contents, font);
-        getSize().y = graphics.getStringHeight(contents, font);
+        Transform t = getEntity().getTransform();
+        graphics.drawString(contents, getColor(), drawPosition, textSize.mul(t.scale), font);
+        getSize().x = graphics.getStringWidth(contents, font) * t.scale.x;
+        getSize().y = graphics.getStringHeight(contents, font) * t.scale.y;
     }
 
     @Override
     public boolean colliding(float x, float y) {
-        return x >= getTransform().position.x - getSize().x * getTransform().scale.x / 2f && x <= getTransform().position.x + getSize().x * getTransform().scale.y / 2f &&
-                y >= getTransform().position.y - getSize().y * getTransform().scale.y / 2f && y <= getTransform().position.y + getSize().y * getTransform().scale.y / 2f;
+        return x >= drawPosition.x - getSize().x / 2f && x <= getSize().x / 2f &&
+                y >= drawPosition.y - getSize().y / 2f && y <= drawPosition.y + getSize().y / 2f;
     }
 
     public String getContents() {
@@ -59,5 +61,13 @@ public class Text extends NonFillShape {
 
     public void setFont(String font) {
         this.font = font;
+    }
+
+    public Vector2 getTextSize() {
+        return textSize;
+    }
+
+    public void setTextSize(Vector2 textSize) {
+        this.textSize = textSize;
     }
 }
