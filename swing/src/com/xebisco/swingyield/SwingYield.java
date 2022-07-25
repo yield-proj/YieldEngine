@@ -33,6 +33,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.io.IOException;
@@ -47,7 +48,7 @@ import java.util.Set;
  * @author Xebisco
  * @since 4-1.2
  */
-public class SwingYield extends JPanel implements RenderMaster, KeyListener, MouseListener, ExceptionThrower {
+public class SwingYield extends Canvas implements RenderMaster, KeyListener, MouseListener, ExceptionThrower {
 
     private Graphics g;
 
@@ -114,152 +115,158 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
 
     @Override
     public SampleGraphics initGraphics() {
-        return new SampleGraphics() {
+        return new SwingGraphics();
+    }
 
-            @Override
-            public void setRotation(Vector2 point, float angle) {
-                ((Graphics2D) g).setTransform(defTransform);
-                savedRotation = Math.toRadians(-angle);
-                savedRotationPoint = point;
-                ((Graphics2D) g).rotate(savedRotation, point.x, point.y);
-            }
+    public class SwingGraphics implements SampleGraphics {
+        @Override
+        public void setRotation(Vector2 point, float angle) {
+            ((Graphics2D) g).setTransform(defTransform);
+            savedRotation = Math.toRadians(-angle);
+            savedRotationPoint = point;
+            ((Graphics2D) g).rotate(savedRotation, point.x, point.y);
+        }
 
-            @Override
-            public void drawLine(Vector2 point1, Vector2 point2, Color color) {
-                g.setColor(toAWTColor(color));
-                g.drawLine((int) point1.x, (int) point1.y, (int) point2.x, (int) point2.y);
-            }
+        @Override
+        public void drawLine(Vector2 point1, Vector2 point2, Color color) {
+            g.setColor(toAWTColor(color));
+            g.drawLine((int) point1.x, (int) point1.y, (int) point2.x, (int) point2.y);
+        }
 
-            @Override
-            public void drawRect(Vector2 pos, Vector2 size, Color color, boolean filled) {
-                g.setColor(toAWTColor(color));
-                if (pos.x - size.x < view.getWidth() &&
-                        pos.x + size.x > 0 &&
-                        pos.y - size.y < view.getHeight() &&
-                        pos.y + size.y > 0)
-                    if (filled) {
-                        g.fillRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
-                    } else {
-                        g.drawRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
-                    }
-            }
-
-            @Override
-            public void drawRoundRect(Vector2 pos, Vector2 size, Color color, boolean filled, int arcWidth, int arcHeight) {
-                g.setColor(toAWTColor(color));
-                if (pos.x - size.x < view.getWidth() &&
-                        pos.x + size.x > 0 &&
-                        pos.y - size.y < view.getHeight() &&
-                        pos.y + size.y > 0)
-                    if (filled) {
-                        g.fillRoundRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y, arcWidth, arcHeight);
-                    } else {
-                        g.drawRoundRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y, arcWidth, arcHeight);
-                    }
-            }
-
-            @Override
-            public void drawOval(Vector2 pos, Vector2 size, Color color, boolean filled) {
-                g.setColor(toAWTColor(color));
-                if (pos.x - size.x < view.getWidth() &&
-                        pos.x + size.x > 0 &&
-                        pos.y - size.y < view.getHeight() &&
-                        pos.y + size.y > 0)
-                    if (filled) {
-                        g.fillOval((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
-                    } else {
-                        g.drawOval((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
-                    }
-            }
-
-            @Override
-            public void drawArc(Vector2 pos, Vector2 size, Color color, boolean filled, int startAngle, int arcAngle) {
-                g.setColor(toAWTColor(color));
-                if (pos.x - size.x < view.getWidth() &&
-                        pos.x + size.x > 0 &&
-                        pos.y - size.y < view.getHeight() &&
-                        pos.y + size.y > 0)
-                    if (filled) {
-                        g.fillArc((int) pos.x, (int) pos.y, (int) size.x, (int) size.y, startAngle, arcAngle);
-                    } else {
-                        g.drawArc((int) pos.x, (int) pos.y, (int) size.x, (int) size.y, startAngle, arcAngle);
-                    }
-            }
-
-            @Override
-            public void drawString(String str, Color color, Vector2 pos, Vector2 scale, String fontName) {
-                g.setColor(toAWTColor(color));
-                setFont(fontName);
-                AffineTransform af = new AffineTransform();
-                af.concatenate(AffineTransform.getScaleInstance(scale.x, scale.y));
-                ((Graphics2D) g).setTransform(af);
-                ((Graphics2D) g).rotate(savedRotation, savedRotationPoint.x, savedRotationPoint.y);
-                af = null;
-
-                g.drawString(str, (int) (pos.x - getStringWidth(str) / 2), (int) (pos.y + (getStringHeight(str) / 4)));
-                ((Graphics2D) g).setTransform(defTransform);
-            }
-
-            @Override
-            public void drawTexture(Texture texture, Vector2 pos, Vector2 size) {
-                if (texture instanceof NotCapableTexture) {
-                    throw new NotCapableTextureException();
+        @Override
+        public void drawRect(Vector2 pos, Vector2 size, Color color, boolean filled) {
+            g.setColor(toAWTColor(color));
+            if (pos.x - size.x < view.getWidth() &&
+                    pos.x + size.x > 0 &&
+                    pos.y - size.y < view.getHeight() &&
+                    pos.y + size.y > 0)
+                if (filled) {
+                    g.fillRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
+                } else {
+                    g.drawRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
                 }
-                Image image = images.get(texture.getTextureID());
-                if (pos.x - size.x < view.getWidth() &&
-                        pos.x + size.x > 0 &&
-                        pos.y - size.y < view.getHeight() &&
-                        pos.y + size.y > 0)
-                    g.drawImage(image, (int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y, null);
-            }
+        }
 
-            @Override
-            public void setFilter(Filter filter) {
-                if (filter == Filter.LINEAR) {
-                    ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                } else if (filter == Filter.NEAREST) {
-                    ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        @Override
+        public void drawRoundRect(Vector2 pos, Vector2 size, Color color, boolean filled, int arcWidth, int arcHeight) {
+            g.setColor(toAWTColor(color));
+            if (pos.x - size.x < view.getWidth() &&
+                    pos.x + size.x > 0 &&
+                    pos.y - size.y < view.getHeight() &&
+                    pos.y + size.y > 0)
+                if (filled) {
+                    g.fillRoundRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y, arcWidth, arcHeight);
+                } else {
+                    g.drawRoundRect((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y, arcWidth, arcHeight);
                 }
-            }
+        }
 
-            @Override
-            public void setFont(String fontName) {
-                g.setFont(fonts.get(fontName));
-            }
-
-            @Override
-            public float getStringWidth(String str) {
-                return g.getFontMetrics().stringWidth(str);
-            }
-
-            @Override
-            public float getStringWidth(String str, String font) {
-                return g.getFontMetrics(fonts.get(font)).stringWidth(str);
-            }
-
-            @Override
-            public float getStringHeight(String str) {
-                return (float) g.getFontMetrics().getStringBounds(str, g).getHeight();
-            }
-
-            @Override
-            public float getStringHeight(String str, String font) {
-                return (float) g.getFontMetrics(fonts.get(font)).getStringBounds(str, g).getHeight();
-            }
-
-            @Override
-            public void custom(String instruction, Object... args) {
-                Class<?>[] types = new Class<?>[args.length];
-                for (int i = 0; i < types.length; i++) {
-                    types[i] = args[i].getClass();
+        @Override
+        public void drawOval(Vector2 pos, Vector2 size, Color color, boolean filled) {
+            g.setColor(toAWTColor(color));
+            if (pos.x - size.x < view.getWidth() &&
+                    pos.x + size.x > 0 &&
+                    pos.y - size.y < view.getHeight() &&
+                    pos.y + size.y > 0)
+                if (filled) {
+                    g.fillOval((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
+                } else {
+                    g.drawOval((int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y);
                 }
-                try {
-                    SwingYield.class.getDeclaredMethod(instruction, types).invoke(swingYield, args);
-                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    throw new RuntimeException(e);
+        }
+
+        @Override
+        public void drawArc(Vector2 pos, Vector2 size, Color color, boolean filled, int startAngle, int arcAngle) {
+            g.setColor(toAWTColor(color));
+            if (pos.x - size.x < view.getWidth() &&
+                    pos.x + size.x > 0 &&
+                    pos.y - size.y < view.getHeight() &&
+                    pos.y + size.y > 0)
+                if (filled) {
+                    g.fillArc((int) pos.x, (int) pos.y, (int) size.x, (int) size.y, startAngle, arcAngle);
+                } else {
+                    g.drawArc((int) pos.x, (int) pos.y, (int) size.x, (int) size.y, startAngle, arcAngle);
                 }
+        }
+
+        @Override
+        public void drawString(String str, Color color, Vector2 pos, Vector2 scale, String fontName) {
+            g.setColor(toAWTColor(color));
+            setFont(fontName);
+            AffineTransform af = new AffineTransform();
+            af.concatenate(AffineTransform.getScaleInstance(scale.x, scale.y));
+            ((Graphics2D) g).setTransform(af);
+            ((Graphics2D) g).rotate(savedRotation, savedRotationPoint.x, savedRotationPoint.y);
+            af = null;
+
+            g.drawString(str, (int) (pos.x - getStringWidth(str) / 2), (int) (pos.y + (getStringHeight(str) / 4)));
+            ((Graphics2D) g).setTransform(defTransform);
+        }
+
+        @Override
+        public void drawTexture(Texture texture, Vector2 pos, Vector2 size) {
+            if (texture instanceof NotCapableTexture) {
+                throw new NotCapableTextureException();
             }
-        };
+            Image image = images.get(texture.getTextureID());
+            if (pos.x - size.x < view.getWidth() &&
+                    pos.x + size.x > 0 &&
+                    pos.y - size.y < view.getHeight() &&
+                    pos.y + size.y > 0)
+                g.drawImage(image, (int) (pos.x - size.x / 2), (int) (pos.y - size.y / 2), (int) size.x, (int) size.y, null);
+        }
+
+        @Override
+        public void setFilter(Filter filter) {
+            if (filter == Filter.LINEAR) {
+                ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            } else if (filter == Filter.NEAREST) {
+                ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            }
+        }
+
+        @Override
+        public void setFont(String fontName) {
+            g.setFont(fonts.get(fontName));
+        }
+
+        @Override
+        public float getStringWidth(String str) {
+            return g.getFontMetrics().stringWidth(str);
+        }
+
+        @Override
+        public float getStringWidth(String str, String font) {
+            return g.getFontMetrics(fonts.get(font)).stringWidth(str);
+        }
+
+        @Override
+        public float getStringHeight(String str) {
+            return (float) g.getFontMetrics().getStringBounds(str, g).getHeight();
+        }
+
+        @Override
+        public float getStringHeight(String str, String font) {
+            return (float) g.getFontMetrics(fonts.get(font)).getStringBounds(str, g).getHeight();
+        }
+
+        @Override
+        public void custom(String instruction, Object... args) {
+            Class<?>[] types = new Class<?>[args.length];
+            for (int i = 0; i < types.length; i++) {
+                types[i] = args[i].getClass();
+            }
+            try {
+                SwingYield.class.getDeclaredMethod(instruction, types).invoke(swingYield, args);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @Override
+    public SampleGraphics specificGraphics() {
+        return null;
     }
 
     @Override
@@ -325,21 +332,21 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             frame.setSize(configuration.width + frame.getInsets().right + frame.getInsets().left, configuration.height + frame.getInsets().top + frame.getInsets().bottom);
         }
         frame.setLocationRelativeTo(null);
-        repaint();
-        frame.addKeyListener(this);
-        frame.addMouseListener(this);
+        addKeyListener(this);
+        addMouseListener(this);
         if (configuration.hideMouse) {
             Cursor cursor = Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon(Objects.requireNonNull(Yld.class.getResource("assets/none.png"))).getImage(), new Point(), "none");
             frame.setCursor(cursor);
         }
         changeWindowIcon(configuration.icon);
-        if (Yld.debug) {
+        render();
+        /*if (Yld.debug) {
             try {
                 Thread.sleep(600);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-        }
+        }*/
         return new SampleWindow() {
             @Override
             public int getWidth() {
@@ -353,8 +360,12 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
         };
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
+    public void render() {
+        if(getBufferStrategy() == null) {
+            createBufferStrategy(3);
+        }
+        BufferStrategy bs = getBufferStrategy();
+        Graphics g = bs.getDrawGraphics();
         actual = System.currentTimeMillis();
         fps = 1000 / (float) (actual - last);
         g.setColor(java.awt.Color.BLACK);
@@ -368,20 +379,23 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             Graphics2D g2 = (Graphics2D) g;
             g2.rotate(Math.toRadians(view.getTransform().rotation) * -1, w / 2f, h / 2f);
             g.drawImage(image, (int) (w / 2 - w * view.getTransform().scale.x / 2 + view.getPosition().x), (int) (h / 2 - h * view.getTransform().scale.y / 2 + view.getPosition().y), (int) (w * view.getTransform().scale.x), (int) (h * view.getTransform().scale.y), null);
-        } else {
+        }
+       /* if(!started) {
             g.setColor(java.awt.Color.WHITE);
             g.fillRect(0, 0, w, h);
             g.drawImage(yieldImage, getWidth() / 2 - yieldImage.getWidth() / 2, getHeight() / 2 - yieldImage.getHeight() / 2, null);
-        }
+        }*/
         g.dispose();
+        bs.show();
+        requestFocus();
         Toolkit.getDefaultToolkit().sync();
         last = System.currentTimeMillis();
     }
-
+/*
     @Override
     public void update(Graphics g) {
         paintComponent(g);
-    }
+    }*/
 
     @Override
     public void frameStart(SampleGraphics g, View view) {
@@ -409,7 +423,9 @@ public class SwingYield extends JPanel implements RenderMaster, KeyListener, Mou
             //image = new BufferedImage(view.getWidth(), view.getHeight(), BufferedImage.TYPE_INT_ARGB);
         }
         if (intFrame % renderMod == 0)
-            SwingUtilities.invokeLater(this::repaint);
+            render();
+       /* if (intFrame % renderMod == 0)
+            SwingUtilities.invokeLater(this::repaint);*/
     }
 
     @Override

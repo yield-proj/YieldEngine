@@ -18,22 +18,19 @@ package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
 
-class MyGame extends YldGame {
+public class MyGame extends YldGame {
 
     Entity e;
 
     @Override
     public void create() {
-        e = graphics.rect(100, 100);
-        timer(() -> {
-            e.transmit("setColor", Colors.random());
-            view.setBgColor(Colors.random());
-        }, 1f, true);
+        
     }
 
     public static void main(String[] args) {
+        Yld.debug = true;
         GameConfiguration config = new GameConfiguration();
-        config.renderMasterName = "com.xebisco.swingyield.SwingYield";
+        Ini.file(new RelativeFile("com/xebisco/yield/test/assets/game.ini"), config);
         launch(new MyGame(), config);
     }
 }

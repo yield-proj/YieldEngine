@@ -29,6 +29,8 @@ import java.util.Set;
 public interface RenderMaster extends VisualUtils {
     SampleGraphics initGraphics();
 
+    SampleGraphics specificGraphics();
+
     void before(YldGame game);
 
     SampleWindow initWindow(WindowConfiguration configuration);
