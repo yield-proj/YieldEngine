@@ -58,6 +58,7 @@ public class Texture extends RelativeFile {
 
     public void processFilters(int minX, int maxX, int minY, int maxY) {
         Color[][] colors = visualUtils.getTextureColors(this);
+        visualUtils.clearTexture(this);
         for (int x = 0; x < colors.length; x++) {
             for (int y = 0; y < colors[0].length; y++) {
                 if(x >= minX && x <= maxX && y >= minY && y <= maxY) {

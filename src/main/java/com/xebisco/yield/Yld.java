@@ -35,12 +35,12 @@ public final class Yld {
     /**
      * The version of the Yield Game Engine.
      */
-    public static final String VERSION = "4 - 1.2 dev";
+    public static final String VERSION = "4 - 1.2";
     /**
      * All the Yield Game Engine messages.
      */
 
-    private static final long BUILD = 2017;
+    private static final long BUILD = 2018;
 
     public static final ArrayList<String> MESSAGES = new ArrayList<>();
     /**

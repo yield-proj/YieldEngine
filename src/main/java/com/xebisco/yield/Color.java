@@ -52,6 +52,10 @@ public class Color {
         this.a = Yld.clamp(a, 0, 1);
     }
 
+    public Color invert() {
+        return new Color(1 - r, 1 - g, 1 - b, a);
+    }
+
     public Color brighter(float value) {
         return new Color(r + value, g + value, b + value, a);
     }

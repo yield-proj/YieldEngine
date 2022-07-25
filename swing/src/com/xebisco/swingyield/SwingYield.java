@@ -361,7 +361,7 @@ public class SwingYield extends Canvas implements RenderMaster, KeyListener, Mou
     }
 
     public void render() {
-        if(getBufferStrategy() == null) {
+        if (getBufferStrategy() == null) {
             createBufferStrategy(3);
         }
         BufferStrategy bs = getBufferStrategy();
@@ -403,9 +403,9 @@ public class SwingYield extends Canvas implements RenderMaster, KeyListener, Mou
         intFrame++;
         if (image != null) {
             this.g = image.getGraphics();
+            this.g.setColor(toAWTColor(view.getBgColor()));
+            this.g.fillRect(0, 0, view.getWidth(), view.getHeight());
         }
-        if (started)
-            g.drawRect(new Vector2(view.getWidth() / 2f, view.getHeight() / 2f), new Vector2(view.getWidth(), view.getHeight()), view.getBgColor(), true);
     }
 
     private int intFrame;
@@ -508,6 +508,15 @@ public class SwingYield extends Canvas implements RenderMaster, KeyListener, Mou
     @Override
     public void unloadTexture(Texture texture) {
         images.remove(texture.getTextureID());
+    }
+
+    @Override
+    public void clearTexture(Texture texture) {
+        if (texture.getTextureType() == TexType.SIMULATED) {
+            images.replace(texture.getTextureID(), new BufferedImage(texture.getWidth(), texture.getHeight(), BufferedImage.TYPE_INT_ARGB));
+        } else {
+            images.replace(texture.getTextureID(), createVolatileImage(texture.getWidth(), texture.getHeight()));
+        }
     }
 
     @Override

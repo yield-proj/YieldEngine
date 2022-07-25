@@ -300,6 +300,11 @@ public class YldGame extends YldScene {
         return game.getHandler().getRenderMaster().duplicate(texture);
     }
 
+    public Texture clearTexture(Texture texture) {
+        game.getHandler().getRenderMaster().clearTexture(texture);
+        return texture;
+    }
+
     public void unloadTexture(Texture texture) {
         handler.getRenderMaster().unloadTexture(texture);
     }
