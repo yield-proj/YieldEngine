@@ -17,6 +17,12 @@
 package com.xebisco.yield;
 
 public class ESCExitSystem extends UpdateSystem {
+
+    @Override
+    public void destroy() {
+
+    }
+
     @Override
     public void update(float delta) {
         if(scene.input.isJustPressed(Key.ESCAPE))

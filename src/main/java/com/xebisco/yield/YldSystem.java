@@ -29,6 +29,8 @@ public abstract class YldSystem {
 
     public abstract void receive(Entity e, float delta);
 
+    public abstract void destroy();
+
     /**
      * Getter for the scene variable.
      */

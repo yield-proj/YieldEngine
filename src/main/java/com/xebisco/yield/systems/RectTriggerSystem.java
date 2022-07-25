@@ -32,6 +32,14 @@ public class RectTriggerSystem extends ProcessSystem {
         };
     }
 
+    @Override
+    public void destroy() {
+        while (!triggers.isEmpty())
+            triggers.clear();
+        while (!triggersTriggered.isEmpty())
+            triggersTriggered.clear();
+    }
+
     private final Set<RectTrigger> triggers = new HashSet<>();
     private final Set<RectTrigger> triggersTriggered = new HashSet<>();
 
@@ -51,7 +59,7 @@ public class RectTriggerSystem extends ProcessSystem {
             if (rectTrigger != trigger) {
                 Transform t = trigger.getTransform();
                 if (rectTrigger.colliding(t.position.sum(trigger.getOffset()), trigger.getSize(), t.scale)) {
-                    if (!triggersTriggered.contains(rectTrigger) || !triggersTriggered.contains(trigger)) {
+                    if (!triggersTriggered.contains(rectTrigger) && !triggersTriggered.contains(trigger)) {
                         if (rectTrigger.isTransmit())
                             rectTrigger.getEntity().transmit("triggerEnter", rectTrigger.getEntity().getTag());
                         if (trigger.isTransmit())

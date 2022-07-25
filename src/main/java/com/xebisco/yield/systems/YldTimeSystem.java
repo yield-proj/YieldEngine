@@ -22,6 +22,12 @@ import com.xebisco.yield.UpdateSystem;
 import com.xebisco.yield.Yld;
 
 public class YldTimeSystem extends UpdateSystem {
+
+    @Override
+    public void destroy() {
+
+    }
+
     @Override
     public void update(float delta) {
         scene.getTime().setDelta(delta);

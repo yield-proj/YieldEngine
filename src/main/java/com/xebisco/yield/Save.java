@@ -39,10 +39,13 @@ public class Save {
         File file = new File(appdataPath + "/.YieldGames/" + config.appName + ".ylds");
         try {
             file.createNewFile();
-            Files.setPosixFilePermissions(file.toPath(),
-                    EnumSet.of(OWNER_READ, OWNER_WRITE, OWNER_EXECUTE, GROUP_READ, GROUP_EXECUTE));
         } catch (IOException e) {
             Yld.throwException(e);
+        }
+        try {
+            Files.setPosixFilePermissions(file.toPath(),
+                    EnumSet.of(OWNER_READ, OWNER_WRITE, OWNER_EXECUTE, GROUP_READ, GROUP_EXECUTE));
+        } catch (UnsupportedOperationException | IOException ignore) {
         }
         save(contents, file.getPath(), encrypted);
     }

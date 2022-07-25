@@ -360,6 +360,9 @@ public class YldGame extends YldScene {
                     if (getScene() != null) {
                         if (how == ChangeScene.DESTROY_LAST) {
                             getScene().destroyScene();
+                            for(YldSystem system : getScene().getSystems()) {
+                                system.destroy();
+                            }
                             getScene().setMasterEntity(new Entity("MasterEntity", getScene(), null));
                             getScene().setFrames(0);
                             getScene().setCallStart(true);

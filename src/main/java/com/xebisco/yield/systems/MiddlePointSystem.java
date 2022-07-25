@@ -31,6 +31,11 @@ public class MiddlePointSystem extends ProcessSystem
     }
 
     @Override
+    public void destroy() {
+
+    }
+
+    @Override
     public void process(Component component, float delta)
     {
         Transform transform = (Transform) component;
