@@ -19,6 +19,7 @@ package com.xebisco.swingyield;
 import com.xebisco.yield.Color;
 import com.xebisco.yield.*;
 import com.xebisco.yield.config.WindowConfiguration;
+import com.xebisco.yield.exceptions.AudioClipException;
 import com.xebisco.yield.exceptions.CannotLoadException;
 import com.xebisco.yield.exceptions.InvalidTextureTypeException;
 import com.xebisco.yield.render.ExceptionThrower;
@@ -26,6 +27,7 @@ import com.xebisco.yield.render.RenderMaster;
 import com.xebisco.swingyield.exceptions.NotCapableTextureException;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -69,6 +71,7 @@ public class SwingYield extends Canvas implements RenderMaster, KeyListener, Mou
     private final Set<Integer> pressing = new HashSet<>();
 
     private HashMap<Integer, Image> images = new HashMap<>();
+    private HashMap<Integer, Clip> clips = new HashMap<>();
     private HashMap<String, Font> fonts = new HashMap<>();
 
     private final static BufferedImage yieldImage;
@@ -309,6 +312,139 @@ public class SwingYield extends Canvas implements RenderMaster, KeyListener, Mou
     }
 
     private float renderMod;
+
+    @Override
+    public void loadAudioPlayer(AudioPlayer player) {
+        try {
+            clips.put(player.getPlayerID(), AudioSystem.getClip());
+        } catch (LineUnavailableException e) {
+            Yld.throwException(e);
+        }
+    }
+
+    @Override
+    public void pausePlayer(AudioPlayer audioPlayer) {
+        Clip clip = clips.get(audioPlayer.getPlayerID());
+        if (clip.isOpen()) {
+            clip.stop();
+        }
+    }
+
+    @Override
+    public void resumePlayer(AudioPlayer audioPlayer) {
+        Clip clip = clips.get(audioPlayer.getPlayerID());
+        if (clip.isOpen()) {
+            clip.start();
+        }
+    }
+
+    @Override
+    public void setMicrosecondPosition(AudioPlayer audioPlayer, long pos) {
+        Clip clip = clips.get(audioPlayer.getPlayerID());
+        if (clip.isOpen()) {
+            clip.setMicrosecondPosition(pos);
+        }
+    }
+
+    @Override
+    public long getMicrosecondPosition(AudioPlayer audioPlayer) {
+        Clip clip = clips.get(audioPlayer.getPlayerID());
+        if (clip.isOpen()) {
+            return clip.getMicrosecondPosition();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public long getMicrosecondLength(AudioPlayer audioPlayer) {
+        Clip clip = clips.get(audioPlayer.getPlayerID());
+        if (clip.isOpen()) {
+            return clip.getMicrosecondLength();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public float getVolume(AudioPlayer audioPlayer) {
+        Clip clip = clips.get(audioPlayer.getPlayerID());
+        if (clip.isOpen()) {
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            return (float) Math.pow(10f, gainControl.getValue() / 20f);
+        } else return 0;
+    }
+
+    @Override
+    public void setVolume(AudioPlayer audioPlayer, float value) {
+        Clip clip = clips.get(audioPlayer.getPlayerID());
+        if (clip.isOpen()) {
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(20f * (float) Math.log10(value));
+        }
+    }
+
+    @Override
+    public void flushPlayer(AudioPlayer audioPlayer) {
+        Clip clip = clips.get(audioPlayer.getPlayerID());
+        if(clip.isOpen()) {
+            clip.close();
+            clips.remove(audioPlayer.getPlayerID());
+        }
+    }
+
+    @Override
+    public void setLoop(AudioPlayer audioPlayer, boolean loop) {
+        Clip clip = clips.get(audioPlayer.getPlayerID());
+        if (clip.isOpen()) {
+            if (loop) {
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            } else {
+                clip.loop(0);
+            }
+        }
+    }
+
+    @Override
+    public void setLoop(AudioPlayer audioPlayer, int count) {
+        Clip clip = clips.get(audioPlayer.getPlayerID());
+        if (clip.isOpen()) {
+            clip.loop(count);
+        }
+    }
+
+    @Override
+    public boolean isPlayerRunning(AudioPlayer audioPlayer) {
+        Clip clip = clips.get(audioPlayer.getPlayerID());
+        if (clip.isOpen()) {
+            return clip.isRunning();
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void loadAudioClip(AudioClip audioClip, AudioPlayer audioPlayer, MultiThread multiThread, YldB yldB) {
+        try {
+            Clip clip = clips.get(audioPlayer.getPlayerID());
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(audioClip.getUrl());
+            clip.close();
+            if (multiThread == null)
+                clip.open(inputStream);
+            else
+                yldB.concurrent(() -> {
+                    try {
+                        clip.open(inputStream);
+                    } catch (LineUnavailableException | IOException e) {
+                        Yld.throwException(e);
+                    }
+                }, multiThread);
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+            Yld.throwException(e);
+        } catch (NullPointerException e) {
+            Yld.throwException(new AudioClipException("Cannot find audio file: '" + audioClip.getCachedPath() + "'"));
+        }
+    }
 
     @Override
     public SampleWindow initWindow(WindowConfiguration configuration) {

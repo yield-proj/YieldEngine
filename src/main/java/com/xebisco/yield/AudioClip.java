@@ -22,6 +22,7 @@ package com.xebisco.yield;
 public class AudioClip extends RelativeFile {
 
     private AudioClipPos startPos = new AudioClipPos();
+    private String cache = "";
 
     /**
      * Creates a AudioClip from the given relative path.
@@ -45,5 +46,13 @@ public class AudioClip extends RelativeFile {
      */
     public void setStartPos(AudioClipPos startPos) {
         this.startPos = startPos;
+    }
+
+    public String getCache() {
+        return cache;
+    }
+
+    public void setCache(String cache) {
+        this.cache = cache;
     }
 }

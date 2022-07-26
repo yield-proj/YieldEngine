@@ -16,50 +16,25 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.exceptions.AudioClipException;
-
 import javax.sound.sampled.*;
-import java.io.IOException;
 
 public class AudioPlayer extends Component {
     private AudioClip audioClip;
-    private Clip clip;
-    private AudioInputStream audioInputStream;
-    private long position;
+    private int playerID;
+    private static int players;
     private boolean loop;
 
     public AudioPlayer() {
-        try {
-            clip = AudioSystem.getClip();
-        } catch (LineUnavailableException e) {
-            Yld.throwException(e);
-        }
+        playerID = players;
+        players++;
     }
 
     public void load(AudioClip audioClip, MultiThread multiThread) {
-        try {
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(audioClip.getUrl());
-            clip.close();
-            if (multiThread == null)
-                clip.open(inputStream);
-            else
-                concurrent(() -> {
-                    try {
-                        clip.open(inputStream);
-                    } catch (LineUnavailableException | IOException e) {
-                        Yld.throwException(e);
-                    }
-                }, multiThread);
-        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
-            Yld.throwException(e);
-        } catch (NullPointerException e) {
-            Yld.throwException(new AudioClipException("Cannot find audio file: '" + audioClip.getCachedPath() + "'"));
-        }
+        game.getHandler().getRenderMaster().loadAudioClip(audioClip, this, multiThread, this);
     }
 
     public float getVolume() {
-        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-        return (float) Math.pow(10f, gainControl.getValue() / 20f);
+        return game.getHandler().getRenderMaster().getVolume(this);
     }
 
     /**
@@ -67,9 +42,8 @@ public class AudioPlayer extends Component {
      */
     public void setVolume(float volume) {
         if (volume < 0f || volume > 1f)
-            throw new IllegalArgumentException("Volume not valid: " + volume);
-        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-        gainControl.setValue(20f * (float) Math.log10(volume));
+            throw new IllegalArgumentException("Volume is not valid: " + volume);
+        game.getHandler().getRenderMaster().setVolume(this, volume);
     }
 
     public void play() {
@@ -77,47 +51,33 @@ public class AudioPlayer extends Component {
         resume();
     }
 
-    public void setFramePosition(int frame) {
-        position = frame;
-        clip.setFramePosition(frame);
+    public void setMicrosecondPosition(long pos) {
+        game.getHandler().getRenderMaster().setMicrosecondPosition(this, pos);
     }
 
-    public void setMicrosecondPosition(long pos) {
-        position = pos;
-        clip.setMicrosecondPosition(pos);
+    public long getMicrosecondPosition() {
+        return game.getHandler().getRenderMaster().getMicrosecondPosition(this);
     }
 
     public void pause() {
-        position = clip.getFramePosition();
-        clip.stop();
+        game.getHandler().getRenderMaster().pausePlayer(this);
     }
 
     public void resume() {
-        if (clip.isOpen()) {
-            clip.setFramePosition((int) position);
-            clip.start();
-        }
+
     }
 
     public boolean isRunning() {
-        return clip.isRunning();
+        return game.getHandler().getRenderMaster().isPlayerRunning(this);
     }
 
     public void restart() {
-        position = audioClip.getStartPos().getPosition();
-        if (audioClip.getStartPos().isMicrosecond())
-            clip.setMicrosecondPosition(0);
-        else
-            clip.setFramePosition(0);
+        setMicrosecondPosition(0);
     }
 
     @Override
     public void onDestroy() {
-        if (clip != null) {
-            setLoop(false);
-            pause();
-            clip.close();
-        }
+        game.getHandler().getRenderMaster().flushPlayer(this);
     }
 
     public boolean isLoop() {
@@ -126,38 +86,14 @@ public class AudioPlayer extends Component {
 
     public void setLoop(boolean loop) {
         this.loop = loop;
-        if (loop) {
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-        } else {
-            clip.loop(0);
-        }
+        game.getHandler().getRenderMaster().setLoop(this, loop);
     }
 
     public void setLoop(int count) {
         if (count < 0)
             throw new IllegalArgumentException("count can't be less than 0");
         loop = count != 0;
-        clip.loop(count);
-    }
-
-    public Clip getClip() {
-        return clip;
-    }
-
-    public void setClip(Clip clip) {
-        this.clip = clip;
-    }
-
-    public AudioInputStream getAudioInputStream() {
-        return audioInputStream;
-    }
-
-    public void setAudioInputStream(AudioInputStream audioInputStream) {
-        this.audioInputStream = audioInputStream;
-    }
-
-    public long getPosition() {
-        return position;
+        game.getHandler().getRenderMaster().setLoop(this, count);
     }
 
     public AudioClip getAudioClip() {
@@ -171,5 +107,21 @@ public class AudioPlayer extends Component {
     public void setAudioClip(AudioClip audioClip, MultiThread multiThread) {
         this.audioClip = audioClip;
         load(audioClip, multiThread);
+    }
+
+    public int getPlayerID() {
+        return playerID;
+    }
+
+    public void setPlayerID(int playerID) {
+        this.playerID = playerID;
+    }
+
+    public static int getPlayers() {
+        return players;
+    }
+
+    public static void setPlayers(int players) {
+        AudioPlayer.players = players;
     }
 }

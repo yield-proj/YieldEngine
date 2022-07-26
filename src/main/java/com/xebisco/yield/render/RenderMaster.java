@@ -26,7 +26,7 @@ import java.util.Set;
  * @since 4-1.2
  * @author Xebisco
  */
-public interface RenderMaster extends VisualUtils {
+public interface RenderMaster extends VisualUtils, AudioUtils {
     SampleGraphics initGraphics();
 
     SampleGraphics specificGraphics();
