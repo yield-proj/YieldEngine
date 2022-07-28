@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="SwingYield">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../SwingYield/out/artifacts/SwingYield_jar/SwingYield.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

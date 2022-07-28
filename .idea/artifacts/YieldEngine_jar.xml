@@ -2,7 +2,6 @@
   <artifact type="jar" name="YieldEngine:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/YieldEngine_jar</output-path>
     <root id="archive" name="YieldEngine.jar">
-      <element id="dir-copy" path="$PROJECT_DIR$/src/main/resources" />
       <element id="module-output" name="main" />
     </root>
   </artifact>

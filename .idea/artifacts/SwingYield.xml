@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="SwingYield">
-    <output-path>$PROJECT_DIR$/out/artifacts/SwingYield</output-path>
-    <root id="archive" name="SwingYield.jar">
-      <element id="module-output" name="swing" />
-    </root>
-  </artifact>
-</component>
