@@ -16,11 +16,11 @@
 
 package com.xebisco.yield.exceptions;
 
-public class MissingRenderMasterException extends MissingException {
-    public MissingRenderMasterException() {
+public class MissingPhysicsSystemException extends MissingException {
+    public MissingPhysicsSystemException() {
     }
 
-    public MissingRenderMasterException(String s) {
+    public MissingPhysicsSystemException(String s) {
         super(s);
     }
 }

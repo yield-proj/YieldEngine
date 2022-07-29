@@ -155,6 +155,27 @@ public final class Entity implements Comparable<Entity> {
         return component;
     }
 
+    public <T extends Component> List<T> getComponentList(Class<T> type) {
+        List<T> components = new ArrayList<>();
+        int i = 0;
+        while (i < this.components.size()) {
+            if (i < index)
+                break;
+            Component component1 = this.components.get(i);
+            if (component1.getClass().getName().hashCode() == type.getName().hashCode()) {
+                if (component1.getClass().getName().equals(type.getName())) {
+                    components.add(type.cast(component1));
+                }
+            }
+            i++;
+        }
+        return components;
+    }
+
+    public <T extends Component> Component[] getComponents(Class<T> type) {
+        return getComponentList(type).toArray(new Component[0]);
+    }
+
     /**
      * Check if this Entity contains a Component with the specified class type.
      *

@@ -16,7 +16,13 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.exceptions.MissingPhysicsSystemException;
+import com.xebisco.yield.systems.PhysicsSystem;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.World;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class is a script for Entities, and is made to modify them.
@@ -66,6 +72,60 @@ public abstract class Component extends YldB
     public void onDestroy()
     {
 
+    }
+
+
+    public void onCollisionEnter(Entity colliding, Vector2 collisionNormal)
+    {
+
+    }
+
+    public void onCollisionEnter(Entity colliding)
+    {
+
+    }
+
+    public void onCollisionExit(Entity colliding, Vector2 collisionNormal)
+    {
+
+    }
+
+    public void onCollisionExit(Entity colliding)
+    {
+
+    }
+
+    public void preSolveCollision(Entity colliding, Vector2 collisionNormal)
+    {
+
+    }
+
+    public void preSolveCollision(Entity colliding)
+    {
+
+    }
+
+    public void postSolveCollision(Entity colliding, Vector2 collisionNormal)
+    {
+
+    }
+
+    public void postSolveCollision(Entity colliding)
+    {
+
+    }
+
+    public final RayCast rayCast(Entity requestingEntity, Vector2 point1, Vector2 point2) {
+        RayCast rayCastCallback = new RayCast();
+        rayCastCallback.setRequestEntity(requestingEntity);
+        PhysicsSystem physicsSystem = scene.getSystem(PhysicsSystem.class);
+        if(physicsSystem == null)
+            throw new MissingPhysicsSystemException();
+        else {
+            World world = physicsSystem.getBox2dWorld();
+            world.raycast(rayCastCallback, Yld.toVec2(point1), Yld.toVec2(point2));
+        }
+        return rayCastCallback;
     }
 
     /**
@@ -188,6 +248,16 @@ public abstract class Component extends YldB
     public <T extends Component> T getComponent(Class<T> type, int index)
     {
         return entity.getComponent(type, index);
+    }
+
+    public <T extends Component> List<T> getComponentList(Class<T> type)
+    {
+        return entity.getComponentList(type);
+    }
+
+    public <T extends Component> Component[] getComponents(Class<T> type)
+    {
+        return entity.getComponents(type);
     }
 
     /**

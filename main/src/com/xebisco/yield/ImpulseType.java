@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.exceptions;
+package com.xebisco.yield;
 
-public class MissingRenderMasterException extends MissingException {
-    public MissingRenderMasterException() {
-    }
-
-    public MissingRenderMasterException(String s) {
-        super(s);
-    }
+public enum ImpulseType {
+    LINEAR, FORCE
 }

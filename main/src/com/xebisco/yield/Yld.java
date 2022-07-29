@@ -18,6 +18,7 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.render.ExceptionThrower;
 import com.xebisco.yield.utils.YldAction;
+import org.jbox2d.common.Vec2;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -41,6 +42,14 @@ public final class Yld {
      */
 
     private static final long BUILD = 2018;
+
+    public static Vec2 toVec2(Vector2 vector2) {
+        return new Vec2(vector2.x, vector2.y);
+    }
+
+    public static Vector2 toVector2(Vec2 vector2) {
+        return new Vector2(vector2.x, vector2.y);
+    }
 
     public static final ArrayList<String> MESSAGES = new ArrayList<>();
     /**

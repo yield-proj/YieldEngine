@@ -16,11 +16,11 @@
 
 package com.xebisco.yield.exceptions;
 
-public class MissingRenderMasterException extends MissingException {
-    public MissingRenderMasterException() {
+public class MissingException extends CannotLoadException {
+    public MissingException() {
     }
 
-    public MissingRenderMasterException(String s) {
+    public MissingException(String s) {
         super(s);
     }
 }

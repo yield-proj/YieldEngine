@@ -58,7 +58,7 @@ public class YldGame extends YldScene {
     }
 
     /**
-     * This is the method that will start an YldGame instance receiving a GameConfiguration variable, it will set all the game based in the GameConfiguration instance.
+     * This is the method that will create an YldGame instance receiving a GameConfiguration variable, it will set all the game based in the GameConfiguration instance.
      *
      * @param game          The YldGame to be created.
      * @param configuration The YldGame instance of the GameConfiguration class.
@@ -79,8 +79,14 @@ public class YldGame extends YldScene {
     }
 
     public final void updateScene(float delta, SampleGraphics graphics) {
-        if (scene.getFrames() == 0)
+        if (scene.getFrames() == 0) {
+            for(YldSystem system : scene.getSystems()) {
+                if(system instanceof SystemCreateMethod) {
+                    ((SystemCreateMethod) system).create();
+                }
+            }
             scene.create();
+        }
         scene.setFrames(scene.getFrames() + 1);
         if (scene.isCallStart()) {
             scene.setCallStart(false);
@@ -101,7 +107,7 @@ public class YldGame extends YldScene {
                 int ym = texture.getHeight() / (enginesSize / (3 + division - 1)) * y;
                 Yld.log(x + ", " + y);
                 engines[i] = new Engine(null);
-                engines[i].getThread().start();
+                engines[i].getThread().create();
                 engines[i].setTargetTime(1000 / fps);
                 engines[i].getTodoList().add(new YldEngineAction(() -> texture.processFilters(xm, xm + texture.getWidth() / (enginesSize / 3) - 1, ym, ym + texture.getHeight() / (enginesSize / (3 + division - 1)) - 1), 0, true, Yld.RAND.nextLong()));
                 i++;
@@ -360,7 +366,7 @@ public class YldGame extends YldScene {
                     if (getScene() != null) {
                         if (how == ChangeScene.DESTROY_LAST) {
                             getScene().destroyScene();
-                            for(YldSystem system : getScene().getSystems()) {
+                            for (YldSystem system : getScene().getSystems()) {
                                 system.destroy();
                             }
                             getScene().setMasterEntity(new Entity("MasterEntity", getScene(), null));

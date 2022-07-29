@@ -17,7 +17,7 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.systems.MiddlePointSystem;
-import com.xebisco.yield.systems.RectTriggerSystem;
+import com.xebisco.yield.systems.PhysicsSystem;
 import com.xebisco.yield.systems.YldTimeSystem;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class YldScene extends YldB
     {
         addSystem(new YldTimeSystem());
         addSystem(new MiddlePointSystem());
-        addSystem(new RectTriggerSystem());
+        addSystem(new PhysicsSystem());
     }
 
     /**
@@ -237,6 +237,8 @@ public class YldScene extends YldB
     {
         system.setScene(this);
         systems.add(system);
+        if(system instanceof SystemCreateMethod && getFrames() > 0)
+            ((SystemCreateMethod) system).create();
     }
 
     /**

@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.exceptions;
+package com.xebisco.yield;
 
-public class MissingRenderMasterException extends MissingException {
-    public MissingRenderMasterException() {
+import org.jbox2d.collision.shapes.CircleShape;
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.collision.shapes.Shape;
+
+public class CircleCollider extends Collider {
+    private float radius = 32;
+    @Override
+    public Shape shape() {
+        CircleShape shape = new CircleShape();
+        shape.m_radius = radius;
+        return shape;
     }
 
-    public MissingRenderMasterException(String s) {
-        super(s);
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
     }
 }

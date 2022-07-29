@@ -23,6 +23,18 @@ public class Oval extends Shape {
         graphics.drawOval(drawPosition, drawSize, getColor(), isFilled());
     }
 
+    public Oval(Vector2 size) {
+        setSize(size);
+    }
+
+    public Oval(Vector2 size, Color color) {
+        setSize(size);
+        setColor(color);
+    }
+
+    public Oval() {
+    }
+
     @Override
     public boolean colliding(float x, float y) {
         Transform t = getTransform();

@@ -24,6 +24,18 @@ public class Rectangle extends Shape
         graphics.drawRect(drawPosition, drawSize, getColor(), isFilled());
     }
 
+    public Rectangle(Vector2 size) {
+        setSize(size);
+    }
+
+    public Rectangle(Vector2 size, Color color) {
+        setSize(size);
+        setColor(color);
+    }
+
+    public Rectangle() {
+    }
+
     @Override
     public boolean colliding(float x, float y) {
         Transform t = getTransform();

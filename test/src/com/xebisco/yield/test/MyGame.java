@@ -19,12 +19,13 @@ package com.xebisco.yield.test;
 import com.xebisco.yield.*;
 
 public class MyGame extends YldGame {
-
-    Entity e;
-
     @Override
     public void create() {
-        
+        instantiate( e -> {
+           e.center();
+           e.addComponent(new Rectangle(new Vector2(100, 100)));
+           e.addComponent(new PhysicsBody());
+        });
     }
 
     public static void main(String[] args) {
