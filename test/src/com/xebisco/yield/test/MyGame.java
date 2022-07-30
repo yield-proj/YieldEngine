@@ -21,10 +21,32 @@ import com.xebisco.yield.*;
 public class MyGame extends YldGame {
     @Override
     public void create() {
+        Texture t = new Texture("com/xebisco/yield/assets/yieldlogo.png");
+        loadTexture(t);
         instantiate( e -> {
-           e.center();
-           e.addComponent(new Rectangle(new Vector2(100, 100)));
-           e.addComponent(new PhysicsBody());
+            e.center();
+            e.addComponent(new Move());
+            e.addComponent(new Sprite(new Vector2(100, 100)));
+            e.addComponent(new PhysicsBody());
+           // e.getComponent(PhysicsBody.class).setFixedRotation(true);
+            e.getMaterial().setTexture(t);
+            e.addComponent(new RectCollider(new Vector2(100, 100)));
+        });
+        for(int i = 0; i < 20 ; i++)
+            instantiate( e -> {
+                e.center();
+                e.addComponent(new Sprite(new Vector2(100, 100)));
+                e.addComponent(new PhysicsBody());
+                e.getMaterial().setTexture(t);
+                e.addComponent(new RectCollider(new Vector2(100, 100)));
+            }, this);
+        instantiate( e -> {
+            e.center();
+            e.getSelfTransform().translate(0, 200);
+            e.addComponent(new Sprite(new Vector2(100, 100)));
+            e.getMaterial().setTexture(t);
+            e.addComponent(new PhysicsBody(PhysicsBodyType.STATIC));
+            e.addComponent(new RectCollider(new Vector2(100, 100)));
         });
     }
 
@@ -33,5 +55,27 @@ public class MyGame extends YldGame {
         GameConfiguration config = new GameConfiguration();
         Ini.file(new RelativeFile("com/xebisco/yield/test/assets/game.ini"), config);
         launch(new MyGame(), config);
+    }
+}
+
+class Move extends YldScript {
+    PhysicsBody body;
+
+    @Override
+    public void start() {
+        body = getComponent(PhysicsBody.class);
+    }
+
+    @Override
+    public void update(float delta) {
+        if(input.isPressed(Key.UP)) {
+            body.addLinearVelocity(new Vector2(0, -2000));
+        }
+        if(input.isPressed(Key.LEFT)) {
+            body.addLinearVelocity(new Vector2(-2000, 0));
+        }
+        if(input.isPressed(Key.RIGHT)) {
+            body.addLinearVelocity(new Vector2(2000, 0));
+        }
     }
 }

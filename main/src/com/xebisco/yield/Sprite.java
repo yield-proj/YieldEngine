@@ -20,6 +20,17 @@ public class Sprite extends NonFillShape {
 
     private boolean smartRender;
 
+    public Sprite() {
+    }
+
+    public Sprite(Vector2 size) {
+        setSize(size);
+    }
+
+    public Sprite(Texture size) {
+        setSizeAsTexture(size);
+    }
+
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);

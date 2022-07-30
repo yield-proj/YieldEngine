@@ -16,24 +16,14 @@
 
 package com.xebisco.yield;
 
-import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.collision.shapes.Shape;
-
-public class CircleCollider extends Collider {
-    private float radius = 32;
+public class SimpleSystem extends YldSystem {
     @Override
-    public Shape shape() {
-        CircleShape shape = new CircleShape();
-        shape.m_radius = radius / scene.getPpm();
-        return shape;
+    public void receive(Entity e, float delta) {
+
     }
 
-    public float getRadius() {
-        return radius;
-    }
+    @Override
+    public void destroy() {
 
-    public void setRadius(float radius) {
-        this.radius = radius;
     }
 }

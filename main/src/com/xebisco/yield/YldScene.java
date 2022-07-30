@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class YldScene extends YldB
 {
 
-    private int frames, ppm;
+    private int frames, ppm = 1;
     private Entity masterEntity;
 
     protected YldGraphics graphics;

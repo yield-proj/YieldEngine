@@ -6,6 +6,7 @@ import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PhysicsBody extends YldScript {
@@ -15,6 +16,14 @@ public class PhysicsBody extends YldScript {
     private boolean fixedRotation, continuousCollision = true;
     private Body box2dBody;
 
+    public PhysicsBody() {
+
+    }
+
+    public PhysicsBody(PhysicsBodyType physicsBodyType) {
+        this.physicsBodyType = physicsBodyType;
+    }
+
     @Override
     public void start() {
         PhysicsSystem physicsSystem = scene.getSystem(PhysicsSystem.class);
@@ -22,6 +31,7 @@ public class PhysicsBody extends YldScript {
             throw new MissingPhysicsSystemException();
         else {
             reloadObject();
+            resetColliders();
         }
     }
 
@@ -43,16 +53,26 @@ public class PhysicsBody extends YldScript {
         bodyDef.angle = angle;
         bodyDef.angularVelocity = angularVelocity;
         box2dBody = world.createBody(bodyDef);
+        if (box2dBody == null)
+            reloadObject();
     }
 
-    public void resetColliders(List<Collider> colliders) {
+    public void resetColliders() {
+        if (box2dBody == null)
+            return;
+        List<Collider> colliders = new ArrayList<>();
+        for (Component c : getComponents()) {
+            if (c instanceof Collider) {
+                colliders.add((Collider) c);
+            }
+        }
         int size = 0;
         Fixture fixture = box2dBody.getFixtureList();
         while (fixture != null) {
             size++;
             fixture = fixture.m_next;
         }
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             box2dBody.destroyFixture(box2dBody.getFixtureList());
         }
 
@@ -73,9 +93,12 @@ public class PhysicsBody extends YldScript {
         if (box2dBody != null) {
             linearVelocity = Yld.toVector2(box2dBody.getLinearVelocity());
             transform.goTo(box2dBody.getPosition().x, box2dBody.getPosition().y);
-            transform.rotation = (float) Math.toDegrees(box2dBody.getAngle());
+            transform.rotation = (float) -Math.toDegrees(box2dBody.getAngle());
         }
-        Yld.log(transform.position);
+    }
+
+    public void goTo(Vector2 location) {
+        box2dBody.getPosition().set(Yld.toVec2(location));
     }
 
     public void addImpulse(Vector2 value, ImpulseType impulseType) {
@@ -89,16 +112,20 @@ public class PhysicsBody extends YldScript {
         }
     }
 
+    public void addLinearVelocity(Vector2 value) {
+        box2dBody.setLinearVelocity(box2dBody.m_linearVelocity.add(Yld.toVec2(value)));
+    }
+
     public void setAngularVelocity(float angularVelocity) {
         this.angularVelocity = angularVelocity;
-        if(box2dBody != null) {
+        if (box2dBody != null) {
             box2dBody.setAngularVelocity(angularVelocity);
         }
     }
 
     public void setLinearVelocity(Vector2 linearVelocity) {
         this.linearVelocity = linearVelocity;
-        if(box2dBody != null) {
+        if (box2dBody != null) {
             box2dBody.setLinearVelocity(Yld.toVec2(linearVelocity));
         }
     }
@@ -108,7 +135,10 @@ public class PhysicsBody extends YldScript {
     }
 
     public Vector2 getLinearVelocity() {
-        return linearVelocity;
+        if (box2dBody != null)
+            return Yld.toVector2(box2dBody.getLinearVelocity());
+        else
+            return linearVelocity;
     }
 
     public float getAngularDamping() {
