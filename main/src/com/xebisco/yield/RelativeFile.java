@@ -39,10 +39,12 @@ public class RelativeFile {
     }
 
     public void flush() {
-        try {
-            getInputStream().close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (getInputStream() != null) {
+            try {
+                getInputStream().close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         setInputStream(null);
         setUrl(null);
