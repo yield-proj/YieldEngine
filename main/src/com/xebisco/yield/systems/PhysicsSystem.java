@@ -35,7 +35,11 @@ public class PhysicsSystem extends SimpleSystem implements SystemCreateMethod {
         physicsTime += delta;
         if(physicsTime >= 0) {
             physicsTime -= physicsTimeStep;
-            box2dWorld.step(physicsTimeStep, velocityIterations, positionIterations);
+            try {
+                box2dWorld.step(physicsTimeStep, velocityIterations, positionIterations);
+            } catch (NullPointerException ignore) {
+
+            }
         }
     }
 

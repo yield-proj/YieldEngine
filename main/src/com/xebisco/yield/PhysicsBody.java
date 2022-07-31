@@ -15,6 +15,7 @@ public class PhysicsBody extends YldScript {
     private PhysicsBodyType physicsBodyType = PhysicsBodyType.DYNAMIC;
     private boolean fixedRotation, continuousCollision = true;
     private Body box2dBody;
+    private PhysicsSystem physicsSystem;
 
     public PhysicsBody() {
 
@@ -26,7 +27,7 @@ public class PhysicsBody extends YldScript {
 
     @Override
     public void start() {
-        PhysicsSystem physicsSystem = scene.getSystem(PhysicsSystem.class);
+        physicsSystem = scene.getSystem(PhysicsSystem.class);
         if (physicsSystem == null)
             throw new MissingPhysicsSystemException();
         else {
@@ -36,7 +37,7 @@ public class PhysicsBody extends YldScript {
     }
 
     public void reloadObject() {
-        World world = scene.getSystem(PhysicsSystem.class).getBox2dWorld();
+        World world = physicsSystem.getBox2dWorld();
         if (box2dBody != null)
             world.destroyBody(box2dBody);
         BodyDef bodyDef = new BodyDef();
@@ -46,15 +47,27 @@ public class PhysicsBody extends YldScript {
         bodyDef.linearDamping = linearDamping;
         bodyDef.fixedRotation = fixedRotation;
         bodyDef.bullet = continuousCollision;
-        bodyDef.type = BodyType.valueOf(physicsBodyType.name());
+        switch (physicsBodyType) {
+            case STATIC:
+                bodyDef.type = BodyType.STATIC;
+                break;
+            case DYNAMIC:
+                bodyDef.type = BodyType.DYNAMIC;
+                break;
+            case KINEMATIC:
+                bodyDef.type = BodyType.KINEMATIC;
+                break;
+            default:
+                Yld.throwException(new IllegalArgumentException("'" + physicsBodyType.name() + "'"));
+        }
         bodyDef.linearVelocity = Yld.toVec2(linearVelocity);
         bodyDef.userData = getEntity();
         bodyDef.inertiaScale = inertiaScale;
         bodyDef.angle = angle;
         bodyDef.angularVelocity = angularVelocity;
-        box2dBody = world.createBody(bodyDef);
-        if (box2dBody == null)
-            reloadObject();
+        while (box2dBody == null) {
+            box2dBody = world.createBody(bodyDef);
+        }
     }
 
     public void resetColliders() {

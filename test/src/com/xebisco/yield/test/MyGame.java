@@ -20,7 +20,7 @@ import com.xebisco.yield.*;
 
 public class MyGame extends YldGame {
     @Override
-    public void create() {
+    public void start() {
         Texture t = new Texture("com/xebisco/yield/assets/yieldlogo.png");
         loadTexture(t);
         instantiate( e -> {
@@ -32,21 +32,22 @@ public class MyGame extends YldGame {
             e.getMaterial().setTexture(t);
             e.addComponent(new RectCollider(new Vector2(100, 100)));
         });
-        for(int i = 0; i < 20 ; i++)
-            instantiate( e -> {
-                e.center();
+        for(int i = 0; i < 100 ; i++) {
+            int finalI = i;
+            instantiate(e -> {
+                e.getSelfTransform().goTo(Yld.RAND.nextInt(view.getWidth()), -finalI * 100);
                 e.addComponent(new Sprite(new Vector2(100, 100)));
                 e.addComponent(new PhysicsBody());
                 e.getMaterial().setTexture(t);
                 e.addComponent(new RectCollider(new Vector2(100, 100)));
-            }, this);
+            });}
         instantiate( e -> {
             e.center();
             e.getSelfTransform().translate(0, 200);
-            e.addComponent(new Sprite(new Vector2(100, 100)));
+            e.addComponent(new Sprite(new Vector2(view.getWidth(), 100)));
             e.getMaterial().setTexture(t);
             e.addComponent(new PhysicsBody(PhysicsBodyType.STATIC));
-            e.addComponent(new RectCollider(new Vector2(100, 100)));
+            e.addComponent(new RectCollider(new Vector2(view.getWidth(), 100)));
         });
     }
 
