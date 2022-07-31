@@ -16,12 +16,15 @@
 
 package com.xebisco.yield;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
 public class RelativeFile {
     private InputStream inputStream;
     private URL url;
+
+    private boolean flushAfterLoad = true;
 
     private final String cachedPath;
 
@@ -33,6 +36,16 @@ public class RelativeFile {
             inputStream = Yld.class.getResourceAsStream(relativePath);
             url = Yld.class.getResource(relativePath);
         }
+    }
+
+    public void flush() {
+        try {
+            getInputStream().close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        setInputStream(null);
+        setUrl(null);
     }
 
     public InputStream getInputStream() {
@@ -53,5 +66,13 @@ public class RelativeFile {
 
     public String getCachedPath() {
         return cachedPath;
+    }
+
+    public boolean isFlushAfterLoad() {
+        return flushAfterLoad;
+    }
+
+    public void setFlushAfterLoad(boolean flushAfterLoad) {
+        this.flushAfterLoad = flushAfterLoad;
     }
 }
