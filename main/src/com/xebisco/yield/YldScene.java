@@ -16,9 +16,11 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.exceptions.MissingPhysicsSystemException;
 import com.xebisco.yield.systems.MiddlePointSystem;
 import com.xebisco.yield.systems.PhysicsSystem;
 import com.xebisco.yield.systems.YldTimeSystem;
+import org.jbox2d.dynamics.World;
 
 import java.util.ArrayList;
 
@@ -134,6 +136,19 @@ public class YldScene extends YldB
     {
         masterEntity.process(delta, graphics);
         masterEntity.sortChildren();
+    }
+
+    public final RayCast rayCast(Entity requestingEntity, Vector2 point1, Vector2 point2) {
+        RayCast rayCastCallback = new RayCast();
+        rayCastCallback.setRequestEntity(requestingEntity);
+        PhysicsSystem physicsSystem = getSystem(PhysicsSystem.class);
+        if(physicsSystem == null)
+            throw new MissingPhysicsSystemException();
+        else {
+            World world = physicsSystem.getBox2dWorld();
+            world.raycast(rayCastCallback, Yld.toVec2(point1), Yld.toVec2(point2));
+        }
+        return rayCastCallback;
     }
 
     public boolean isCallStart()

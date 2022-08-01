@@ -115,17 +115,8 @@ public abstract class Component extends YldB
 
     }
 
-    public final RayCast rayCast(Entity requestingEntity, Vector2 point1, Vector2 point2) {
-        RayCast rayCastCallback = new RayCast();
-        rayCastCallback.setRequestEntity(requestingEntity);
-        PhysicsSystem physicsSystem = scene.getSystem(PhysicsSystem.class);
-        if(physicsSystem == null)
-            throw new MissingPhysicsSystemException();
-        else {
-            World world = physicsSystem.getBox2dWorld();
-            world.raycast(rayCastCallback, Yld.toVec2(point1), Yld.toVec2(point2));
-        }
-        return rayCastCallback;
+    public RayCast rayCast(Entity requestEntity, Vector2 point1, Vector2 point2) {
+        return scene.rayCast(requestEntity, point1, point2);
     }
 
     /**

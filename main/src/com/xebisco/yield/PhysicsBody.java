@@ -13,7 +13,7 @@ public class PhysicsBody extends YldScript {
     private Vector2 linearVelocity = new Vector2();
     private float angularDamping = .8f, linearDamping = .9f, inertiaScale = 1f, angle, angularVelocity, mass = 1f;
     private PhysicsBodyType physicsBodyType = PhysicsBodyType.DYNAMIC;
-    private boolean fixedRotation, continuousCollision;
+    private boolean fixedRotation, continuousCollision, allowSleep;
     private Body box2dBody;
     private PhysicsSystem physicsSystem;
 
@@ -47,6 +47,7 @@ public class PhysicsBody extends YldScript {
         bodyDef.linearDamping = linearDamping;
         bodyDef.fixedRotation = fixedRotation;
         bodyDef.bullet = continuousCollision;
+        bodyDef.allowSleep = allowSleep;
         switch (physicsBodyType) {
             case STATIC:
                 bodyDef.type = BodyType.STATIC;
@@ -71,7 +72,7 @@ public class PhysicsBody extends YldScript {
 
     public void resetColliders() {
         if (box2dBody == null)
-            reloadObject();
+            Yld.throwException(new IllegalStateException());
         List<Collider> colliders = new ArrayList<>();
         for (Component c : getComponents()) {
             if (c instanceof Collider) {
@@ -128,6 +129,14 @@ public class PhysicsBody extends YldScript {
                 box2dBody.applyLinearImpulse(Yld.toVec2(value), box2dBody.getPosition());
                 break;
         }
+    }
+
+    public boolean isAllowSleep() {
+        return allowSleep;
+    }
+
+    public void setAllowSleep(boolean allowSleep) {
+        this.allowSleep = allowSleep;
     }
 
     public float getAngularVelocity() {

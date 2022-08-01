@@ -16,25 +16,37 @@
 
 package com.xebisco.yield;
 
-import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 
-public class CircleCollider extends Collider {
-    private float radius = 32;
+public class EdgeCollider extends Collider {
+    private Vector2 point1, point2;
+
+    public EdgeCollider(Vector2 point1, Vector2 point2) {
+        this.point1 = point1;
+        this.point2 = point2;
+    }
+
     @Override
     public Shape shape() {
-        CircleShape shape = new CircleShape();
-        shape.m_radius = radius / scene.getPpm();
-        shape.m_p.set(Yld.toVec2(getOffset()));
+        PolygonShape shape = new PolygonShape();
+        shape.setAsEdge(Yld.toVec2(point1.div(scene.getPpm())), Yld.toVec2(point2.div(scene.getPpm())));
         return shape;
     }
 
-    public float getRadius() {
-        return radius;
+    public Vector2 getPoint1() {
+        return point1;
     }
 
-    public void setRadius(float radius) {
-        this.radius = radius;
+    public void setPoint1(Vector2 point1) {
+        this.point1 = point1;
+    }
+
+    public Vector2 getPoint2() {
+        return point2;
+    }
+
+    public void setPoint2(Vector2 point2) {
+        this.point2 = point2;
     }
 }

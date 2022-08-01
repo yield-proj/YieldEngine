@@ -18,7 +18,7 @@ package com.xebisco.yield;
 
 public class Sprite extends NonFillShape {
 
-    private boolean smartRender;
+    private boolean smartRender = true;
 
     public Sprite() {
     }

@@ -28,27 +28,32 @@ public class MyGame extends YldGame {
             e.addComponent(new Move());
             e.addComponent(new Sprite(new Vector2(100, 100)));
             e.addComponent(new PhysicsBody());
+            e.getComponent(PhysicsBody.class).setContinuousCollision(true);
            // e.getComponent(PhysicsBody.class).setFixedRotation(true);
             e.getMaterial().setTexture(t);
             e.addComponent(new RectCollider(new Vector2(100, 100)));
         });
-        for(int i = 0; i < 100 ; i++) {
+        /*for(int i = 0; i < 100; i++) {
             int finalI = i;
             instantiate(e -> {
-                e.getSelfTransform().goTo(Yld.RAND.nextInt(view.getWidth()), -finalI * 100);
+                e.getSelfTransform().goTo(Yld.RAND.nextInt(view.getWidth()), -finalI * 50);
                 e.addComponent(new Sprite(new Vector2(100, 100)));
                 e.addComponent(new PhysicsBody());
                 e.getMaterial().setTexture(t);
                 e.addComponent(new RectCollider(new Vector2(100, 100)));
-            });}
+            });}*/
         instantiate( e -> {
             e.center();
             e.getSelfTransform().translate(0, 200);
-            e.addComponent(new Sprite(new Vector2(view.getWidth(), 100)));
-            e.getMaterial().setTexture(t);
+            e.addComponent(new Rectangle(new Vector2(view.getWidth() - 160, 100)));
             e.addComponent(new PhysicsBody(PhysicsBodyType.STATIC));
-            e.addComponent(new RectCollider(new Vector2(view.getWidth(), 100)));
+            e.addComponent(new RectOffEdges(new Vector2(view.getWidth() - 160, 100)));
         });
+    }
+
+    @Override
+    public void update(float delta) {
+        Yld.log(Yld.MEMORY());
     }
 
     public static void main(String[] args) {
