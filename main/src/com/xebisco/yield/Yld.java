@@ -41,7 +41,7 @@ public final class Yld {
      * All the Yield Game Engine messages.
      */
 
-    private static final long BUILD = 2018;
+    private static final long BUILD = 2019;
 
     public static Vec2 toVec2(Vector2 vector2) {
         return new Vec2(vector2.x, vector2.y);
