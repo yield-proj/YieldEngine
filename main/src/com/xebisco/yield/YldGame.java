@@ -331,6 +331,16 @@ public class YldGame extends YldScene {
         handler.getRenderMaster().setTextureColors(texture, colors);
     }
 
+    public void loadFont(String fontName, float size, int format, RelativeFile fontFile) {
+        loadFont(fontName, size, size, format, fontFile.getInputStream());
+        fontFile.flush();
+    }
+
+    public void loadFont(String fontName, float size, float sizeToLoad, int format, RelativeFile fontFile) {
+        handler.getRenderMaster().loadFont(fontName, size, sizeToLoad, format, fontFile.getInputStream());
+        fontFile.flush();
+    }
+
     public void loadFont(String fontName, float size, int format, InputStream inputStream) {
         loadFont(fontName, size, size, format, inputStream);
     }
