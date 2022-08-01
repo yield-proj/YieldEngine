@@ -8,7 +8,7 @@ import org.jbox2d.dynamics.World;
 
 public class PhysicsSystem extends SimpleSystem implements SystemCreateMethod {
 
-    private Vector2 gravity = new Vector2(0, 600);
+    private Vector2 gravity = new Vector2(0, 10);
     private World box2dWorld;
     private float physicsTime, physicsTimeStep;
     private int velocityIterations = 8, positionIterations = 3;
@@ -19,10 +19,9 @@ public class PhysicsSystem extends SimpleSystem implements SystemCreateMethod {
     public void create() {
         box2dWorld = new World(Yld.toVec2(gravity), true);
         box2dWorld.setContactListener(new PhysicsContactListener());
-        box2dWorld.setAutoClearForces(true);
         physicsEngine = new Engine(null);
         physicsEngine.setStop(EngineStop.INTERRUPT_ON_END);
-        physicsEngine.setTargetTime(8);
+        physicsEngine.setTargetTime(16);
         physicsEngine.getThread().start();
         physicsEngine.getTodoList().add(new YldEngineAction(() -> {
             updateWorld((physicsEngine.getActual() - physicsEngine.getLast()) / 1000f);
@@ -37,6 +36,7 @@ public class PhysicsSystem extends SimpleSystem implements SystemCreateMethod {
             physicsTime -= physicsTimeStep;
             try {
                 box2dWorld.step(physicsTimeStep, velocityIterations, positionIterations);
+               // box2dWorld.clearForces();
             } catch (NullPointerException ignore) {
 
             }
@@ -109,5 +109,13 @@ public class PhysicsSystem extends SimpleSystem implements SystemCreateMethod {
 
     public void setPositionIterations(int positionIterations) {
         this.positionIterations = positionIterations;
+    }
+
+    public Engine getPhysicsEngine() {
+        return physicsEngine;
+    }
+
+    public void setPhysicsEngine(Engine physicsEngine) {
+        this.physicsEngine = physicsEngine;
     }
 }

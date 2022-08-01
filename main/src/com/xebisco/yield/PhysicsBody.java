@@ -1,9 +1,9 @@
 package com.xebisco.yield;
 
+import com.xebisco.yield.engine.YldEngineAction;
 import com.xebisco.yield.exceptions.MissingPhysicsSystemException;
 import com.xebisco.yield.systems.PhysicsSystem;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 
 import java.util.ArrayList;
@@ -11,9 +11,9 @@ import java.util.List;
 
 public class PhysicsBody extends YldScript {
     private Vector2 linearVelocity = new Vector2();
-    private float angularDamping = .8f, linearDamping = .9f, inertiaScale = 1f, angle, angularVelocity;
+    private float angularDamping = .8f, linearDamping = .9f, inertiaScale = 1f, angle, angularVelocity, mass = 1f;
     private PhysicsBodyType physicsBodyType = PhysicsBodyType.DYNAMIC;
-    private boolean fixedRotation, continuousCollision = true;
+    private boolean fixedRotation, continuousCollision;
     private Body box2dBody;
     private PhysicsSystem physicsSystem;
 
@@ -42,7 +42,7 @@ public class PhysicsBody extends YldScript {
             world.destroyBody(box2dBody);
         BodyDef bodyDef = new BodyDef();
         bodyDef.angle = transform.rotation;
-        bodyDef.position.set(Yld.toVec2(transform.position));
+        bodyDef.position.set(Yld.toVec2(transform.position.div(scene.getPpm())));
         bodyDef.angularDamping = angularDamping;
         bodyDef.linearDamping = linearDamping;
         bodyDef.fixedRotation = fixedRotation;
@@ -65,14 +65,13 @@ public class PhysicsBody extends YldScript {
         bodyDef.inertiaScale = inertiaScale;
         bodyDef.angle = angle;
         bodyDef.angularVelocity = angularVelocity;
-        while (box2dBody == null) {
+        while (box2dBody == null)
             box2dBody = world.createBody(bodyDef);
-        }
     }
 
     public void resetColliders() {
         if (box2dBody == null)
-            return;
+            reloadObject();
         List<Collider> colliders = new ArrayList<>();
         for (Component c : getComponents()) {
             if (c instanceof Collider) {
@@ -92,41 +91,70 @@ public class PhysicsBody extends YldScript {
         for (Collider collider : colliders) {
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape = collider.shape();
-            fixtureDef.density = collider.getMass();
+            fixtureDef.density = collider.getDensity();
             fixtureDef.friction = collider.getFriction();
             fixtureDef.isSensor = collider.isSensor();
             fixtureDef.userData = collider.getEntity();
             box2dBody.createFixture(fixtureDef);
         }
-        box2dBody.resetMassData();
     }
 
     @Override
     public void update(float delta) {
         if (box2dBody != null) {
+            box2dBody.m_mass = mass;
             linearVelocity = Yld.toVector2(box2dBody.getLinearVelocity());
-            transform.goTo(box2dBody.getPosition().x, box2dBody.getPosition().y);
+            transform.goTo(box2dBody.getPosition().x * scene.getPpm(), box2dBody.getPosition().y * scene.getPpm());
             transform.rotation = (float) -Math.toDegrees(box2dBody.getAngle());
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (box2dBody != null)
+            physicsSystem.getBox2dWorld().destroyBody(box2dBody);
     }
 
     public void goTo(Vector2 location) {
         box2dBody.getPosition().set(Yld.toVec2(location));
     }
 
-    public void addImpulse(Vector2 value, ImpulseType impulseType) {
+    public void applyImpulse(Vector2 value, ImpulseType impulseType) {
         switch (impulseType) {
             case FORCE:
-                box2dBody.applyForce(Yld.toVec2(value), box2dBody.getWorldCenter());
+                box2dBody.applyForce(Yld.toVec2(value), box2dBody.getPosition());
                 break;
             case LINEAR:
-                box2dBody.applyLinearImpulse(Yld.toVec2(value), box2dBody.getWorldCenter());
+                box2dBody.applyLinearImpulse(Yld.toVec2(value), box2dBody.getPosition());
                 break;
         }
     }
 
+    public float getAngularVelocity() {
+        return angularVelocity;
+    }
+
+    public float getMass() {
+        return mass;
+    }
+
+    public void setMass(float mass) {
+        this.mass = mass;
+        if (box2dBody != null) {
+            box2dBody.m_mass = mass;
+        }
+    }
+
+    public PhysicsSystem getPhysicsSystem() {
+        return physicsSystem;
+    }
+
+    public void setPhysicsSystem(PhysicsSystem physicsSystem) {
+        this.physicsSystem = physicsSystem;
+    }
+
     public void addLinearVelocity(Vector2 value) {
-        box2dBody.setLinearVelocity(box2dBody.m_linearVelocity.add(Yld.toVec2(value)));
+        box2dBody.m_linearVelocity.set(box2dBody.m_linearVelocity.add(Yld.toVec2(value)));
     }
 
     public void setAngularVelocity(float angularVelocity) {
@@ -143,8 +171,8 @@ public class PhysicsBody extends YldScript {
         }
     }
 
-    public void addImpulse(Vector2 value) {
-        addImpulse(value, ImpulseType.LINEAR);
+    public void applyImpulse(Vector2 value) {
+        applyImpulse(value, ImpulseType.LINEAR);
     }
 
     public Vector2 getLinearVelocity() {

@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class YldScene extends YldB
 {
 
-    private int frames, ppm = 1;
+    private int frames;
     private Entity masterEntity;
 
     protected YldGraphics graphics;
@@ -277,12 +277,7 @@ public class YldScene extends YldB
 
     public int getPpm()
     {
-        return ppm;
-    }
-
-    public void setPpm(int ppm)
-    {
-        this.ppm = ppm;
+        return getGame().getConfiguration().ppm;
     }
 
     public View getView() {

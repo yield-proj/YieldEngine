@@ -16,13 +16,12 @@
 
 package com.xebisco.yield;
 
-import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 
 public abstract class Collider extends YldScript {
     private Vector2 offset = new Vector2();
     private boolean sensor;
-    private float mass = 1f, friction = 1f;
+    private float density = 1f, friction = 1f;
 
     public abstract Shape shape();
 
@@ -42,12 +41,12 @@ public abstract class Collider extends YldScript {
         this.sensor = sensor;
     }
 
-    public float getMass() {
-        return mass;
+    public float getDensity() {
+        return density;
     }
 
-    public void setMass(float mass) {
-        this.mass = mass;
+    public void setDensity(float density) {
+        this.density = density;
     }
 
     public float getFriction() {

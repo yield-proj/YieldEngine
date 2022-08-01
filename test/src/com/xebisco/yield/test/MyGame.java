@@ -69,14 +69,17 @@ class Move extends YldScript {
 
     @Override
     public void update(float delta) {
-        if(input.isPressed(Key.UP)) {
-            body.addLinearVelocity(new Vector2(0, -2000));
+        if(input.isJustPressed(Key.UP)) {
+            body.addLinearVelocity(new Vector2(0, -20));
         }
-        if(input.isPressed(Key.LEFT)) {
-            body.addLinearVelocity(new Vector2(-2000, 0));
+        if(input.isJustPressed(Key.DOWN)) {
+            body.addLinearVelocity(new Vector2(0, 20));
         }
-        if(input.isPressed(Key.RIGHT)) {
-            body.addLinearVelocity(new Vector2(2000, 0));
+        if(input.isJustPressed(Key.LEFT)) {
+            body.addLinearVelocity(new Vector2(-20, 0));
+        }
+        if(input.isJustPressed(Key.RIGHT)) {
+            body.addLinearVelocity(new Vector2(20, 0));
         }
     }
 }
