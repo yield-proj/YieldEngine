@@ -32,7 +32,7 @@ public class RectOffEdges extends YldScript {
         addComponent(new EdgeCollider(new Vector2(size.x / 2f, -size.y / 2f), new Vector2(-size.x / 2f, -size.y / 2f)));
         addComponent(new EdgeCollider(new Vector2(-size.x / 2f, size.y / 2f), new Vector2(-size.x / 2f, -size.y / 2f)));
         addComponent(new EdgeCollider(new Vector2(size.x / 2f, size.y / 2f), new Vector2(size.x / 2f, -size.y / 2f)));
-        destroy();
+        //destroy();
     }
 
     public Vector2 getSize() {

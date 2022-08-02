@@ -6,31 +6,27 @@ import com.xebisco.yield.engine.EngineStop;
 import com.xebisco.yield.engine.YldEngineAction;
 import org.jbox2d.dynamics.World;
 
-public class PhysicsSystem extends SimpleSystem implements SystemCreateMethod {
+public class PhysicsSystem extends UpdateSystem implements SystemCreateMethod {
 
     private Vector2 gravity = new Vector2(0, 10);
     private World box2dWorld;
     private float physicsTime, physicsTimeStep;
     private int velocityIterations = 8, positionIterations = 3;
 
-    private Engine physicsEngine;
-
     @Override
     public void create() {
         box2dWorld = new World(Yld.toVec2(gravity), true);
         box2dWorld.setContactListener(new PhysicsContactListener());
-        physicsEngine = new Engine(null);
-        physicsEngine.setStop(EngineStop.INTERRUPT_ON_END);
-        physicsEngine.setTargetTime(16);
-        physicsEngine.getThread().start();
-        physicsEngine.getTodoList().add(new YldEngineAction(() -> {
-            updateWorld((physicsEngine.getActual() - physicsEngine.getLast()) / 1000f);
-        }, 0, true, Yld.RAND.nextLong()));
         updateWorld(0);
     }
 
+    @Override
+    public void update(float delta) {
+        updateWorld(delta);
+    }
+
     public void updateWorld(float delta) {
-        physicsTimeStep = 1f / getTargetFps();
+        physicsTimeStep = 1f / scene.getTime().getTargetFPS();
         physicsTime += delta;
         if(physicsTime >= 0) {
             physicsTime -= physicsTimeStep;
@@ -45,7 +41,7 @@ public class PhysicsSystem extends SimpleSystem implements SystemCreateMethod {
 
     @Override
     public void destroy() {
-        physicsEngine.setRunning(false);
+        box2dWorld = null;
     }
 
     public Vector2 getGravity() {
@@ -61,18 +57,6 @@ public class PhysicsSystem extends SimpleSystem implements SystemCreateMethod {
 
     public World getBox2dWorld() {
         return box2dWorld;
-    }
-
-    public void setTargetFps(int fps) {
-        physicsEngine.setTargetTime(1000 / fps);
-    }
-
-    public int getFps() {
-        return physicsEngine.getFpsCount();
-    }
-
-    public int getTargetFps() {
-        return 1000 / physicsEngine.getTargetTime();
     }
 
     public void setBox2dWorld(World box2dWorld) {
@@ -109,13 +93,5 @@ public class PhysicsSystem extends SimpleSystem implements SystemCreateMethod {
 
     public void setPositionIterations(int positionIterations) {
         this.positionIterations = positionIterations;
-    }
-
-    public Engine getPhysicsEngine() {
-        return physicsEngine;
-    }
-
-    public void setPhysicsEngine(Engine physicsEngine) {
-        this.physicsEngine = physicsEngine;
     }
 }

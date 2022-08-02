@@ -253,5 +253,7 @@ public class PhysicsBody extends YldScript {
 
     public void setAngle(float angle) {
         this.angle = angle;
+        if(box2dBody != null)
+            box2dBody.getTransform().set(box2dBody.getPosition(), angle);
     }
 }
