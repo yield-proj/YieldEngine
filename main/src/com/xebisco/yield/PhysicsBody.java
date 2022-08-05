@@ -13,7 +13,7 @@ public class PhysicsBody extends YldScript {
     private Vector2 linearVelocity = new Vector2();
     private float angularDamping = .8f, linearDamping = .9f, angle, angularVelocity, mass = 1f, gravityScale = 1f;
     private PhysicsBodyType physicsBodyType = PhysicsBodyType.DYNAMIC;
-    private boolean fixedRotation, continuousCollision, allowSleep;
+    private boolean fixedRotation, continuousCollision, allowSleep, rotateEntity = true;
     private Body box2dBody;
     private PhysicsSystem physicsSystem;
 
@@ -107,7 +107,8 @@ public class PhysicsBody extends YldScript {
             box2dBody.m_mass = mass;
             linearVelocity = Yld.toVector2(box2dBody.getLinearVelocity());
             transform.goTo(box2dBody.getPosition().x * scene.getPpm(), box2dBody.getPosition().y * scene.getPpm());
-            transform.rotation = (float) -Math.toDegrees(box2dBody.getAngle());
+            if (rotateEntity)
+                transform.rotation = (float) -Math.toDegrees(box2dBody.getAngle());
         }
     }
 
@@ -222,7 +223,7 @@ public class PhysicsBody extends YldScript {
 
     public void setFixedRotation(boolean fixedRotation) {
         this.fixedRotation = fixedRotation;
-        if(box2dBody != null)
+        if (box2dBody != null)
             box2dBody.setFixedRotation(fixedRotation);
     }
 
@@ -248,7 +249,7 @@ public class PhysicsBody extends YldScript {
 
     public void setGravityScale(float gravityScale) {
         this.gravityScale = gravityScale;
-        if(box2dBody != null)
+        if (box2dBody != null)
             box2dBody.setGravityScale(gravityScale);
     }
 
@@ -258,7 +259,15 @@ public class PhysicsBody extends YldScript {
 
     public void setAngle(float angle) {
         this.angle = angle;
-        if(box2dBody != null)
-            box2dBody.getTransform().set(box2dBody.getPosition(), angle);
+        if (box2dBody != null)
+            box2dBody.setTransform(box2dBody.getPosition(), (float) Math.toRadians(-angle));
+    }
+
+    public boolean isRotateEntity() {
+        return rotateEntity;
+    }
+
+    public void setRotateEntity(boolean rotateEntity) {
+        this.rotateEntity = rotateEntity;
     }
 }
