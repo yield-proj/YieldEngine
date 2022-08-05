@@ -21,7 +21,9 @@ import com.xebisco.yield.*;
 public class MyGame extends YldGame {
     @Override
     public void start() {
-        graphics.text("Hello, World").center();
+        Entity e = graphics.text("Hello, World");
+        e.center();
+        e.addComponent(new PhysicsBody());
     }
 
     public static void main(String[] args) {

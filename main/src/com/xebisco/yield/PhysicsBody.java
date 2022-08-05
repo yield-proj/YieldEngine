@@ -11,7 +11,7 @@ import java.util.List;
 
 public class PhysicsBody extends YldScript {
     private Vector2 linearVelocity = new Vector2();
-    private float angularDamping = .8f, linearDamping = .9f, inertiaScale = 1f, angle, angularVelocity, mass = 1f;
+    private float angularDamping = .8f, linearDamping = .9f, angle, angularVelocity, mass = 1f, gravityScale = 1f;
     private PhysicsBodyType physicsBodyType = PhysicsBodyType.DYNAMIC;
     private boolean fixedRotation, continuousCollision, allowSleep;
     private Body box2dBody;
@@ -48,6 +48,7 @@ public class PhysicsBody extends YldScript {
         bodyDef.fixedRotation = fixedRotation;
         bodyDef.bullet = continuousCollision;
         bodyDef.allowSleep = allowSleep;
+        bodyDef.gravityScale = gravityScale;
         switch (physicsBodyType) {
             case STATIC:
                 bodyDef.type = BodyType.STATIC;
@@ -63,7 +64,7 @@ public class PhysicsBody extends YldScript {
         }
         bodyDef.linearVelocity = Yld.toVec2(linearVelocity);
         bodyDef.userData = getEntity();
-        bodyDef.inertiaScale = inertiaScale;
+        bodyDef.gravityScale = gravityScale;
         bodyDef.angle = angle;
         bodyDef.angularVelocity = angularVelocity;
         while (box2dBody == null)
@@ -221,6 +222,8 @@ public class PhysicsBody extends YldScript {
 
     public void setFixedRotation(boolean fixedRotation) {
         this.fixedRotation = fixedRotation;
+        if(box2dBody != null)
+            box2dBody.setFixedRotation(fixedRotation);
     }
 
     public boolean isContinuousCollision() {
@@ -239,12 +242,14 @@ public class PhysicsBody extends YldScript {
         this.box2dBody = box2dBody;
     }
 
-    public float getInertiaScale() {
-        return inertiaScale;
+    public float getGravityScale() {
+        return gravityScale;
     }
 
-    public void setInertiaScale(float inertiaScale) {
-        this.inertiaScale = inertiaScale;
+    public void setGravityScale(float gravityScale) {
+        this.gravityScale = gravityScale;
+        if(box2dBody != null)
+            box2dBody.setGravityScale(gravityScale);
     }
 
     public float getAngle() {

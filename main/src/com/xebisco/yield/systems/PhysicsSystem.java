@@ -15,9 +15,9 @@ public class PhysicsSystem extends UpdateSystem implements SystemCreateMethod {
 
     @Override
     public void create() {
-        box2dWorld = new World(Yld.toVec2(gravity), true);
+        box2dWorld = new World(Yld.toVec2(gravity));
         box2dWorld.setContactListener(new PhysicsContactListener());
-        updateWorld(0);
+        updateWorld(1000f / scene.getFrames());
     }
 
     @Override
@@ -30,18 +30,14 @@ public class PhysicsSystem extends UpdateSystem implements SystemCreateMethod {
         physicsTime += delta;
         if(physicsTime >= 0) {
             physicsTime -= physicsTimeStep;
-            try {
-                box2dWorld.step(physicsTimeStep, velocityIterations, positionIterations);
-               // box2dWorld.clearForces();
-            } catch (NullPointerException ignore) {
-
-            }
+            box2dWorld.step(physicsTimeStep, velocityIterations, positionIterations);
+            box2dWorld.clearForces();
         }
     }
 
     @Override
     public void destroy() {
-        box2dWorld = null;
+        //box2dWorld = null;
     }
 
     public Vector2 getGravity() {

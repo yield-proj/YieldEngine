@@ -3,6 +3,9 @@
     <output-path>$PROJECT_DIR$/out/artifacts/YieldEngine_jar</output-path>
     <root id="archive" name="YieldEngine.jar">
       <element id="module-output" name="main" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/slf4j-api-1.7.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/slf4j-nop-1.7.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/jbox2d-library-2.2.1.1.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

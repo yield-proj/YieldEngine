@@ -16,6 +16,7 @@
 
 package com.xebisco.yield;
 
+import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 
@@ -29,8 +30,8 @@ public class EdgeCollider extends Collider {
 
     @Override
     public Shape shape() {
-        PolygonShape shape = new PolygonShape();
-        shape.setAsEdge(Yld.toVec2(point1.div(scene.getPpm())), Yld.toVec2(point2.div(scene.getPpm())));
+        EdgeShape shape = new EdgeShape();
+        shape.set(Yld.toVec2(point1.div(scene.getPpm())), Yld.toVec2(point2.div(scene.getPpm())));
         return shape;
     }
 

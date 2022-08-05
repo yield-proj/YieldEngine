@@ -18,9 +18,6 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.render.VisualUtils;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * A Texture is an image for a game, can be added to graphical objects to display images.
  */
@@ -52,13 +49,37 @@ public class Texture extends RelativeFile {
         return visualUtils.duplicate(this);
     }
 
+    public void clear() {
+        visualUtils.clearTexture(this);
+    }
+
     public void processFilters() {
         processFilters(0, getWidth(), 0, getHeight());
     }
 
+    public void setColor(Color color, Vector2 pos) {
+        visualUtils.setPixel(this, color, pos);
+    }
+
+    public Color getColor(Vector2 pos) {
+        return getColors()[(int) pos.x][(int) pos.y];
+    }
+
+    public Color[][] getColors() {
+        return visualUtils.getTextureColors(this);
+    }
+
+    public Texture cut(Vector2 pos, Vector2 size) {
+        return visualUtils.cutTexture(this, (int) pos.x, (int) pos.y, (int) size.x, (int) size.y);
+    }
+
+    public Texture scale(Vector2 size) {
+        return visualUtils.scaleTexture(this, (int) size.x, (int) size.y);
+    }
+
     public void processFilters(int minX, int maxX, int minY, int maxY) {
         Color[][] colors = visualUtils.getTextureColors(this);
-        visualUtils.clearTexture(this);
+        clear();
         for (int x = 0; x < colors.length; x++) {
             for (int y = 0; y < colors[0].length; y++) {
                 if(x >= minX && x <= maxX && y >= minY && y <= maxY) {
@@ -66,7 +87,7 @@ public class Texture extends RelativeFile {
                     pixel.setColor(colors[x][y]);
                     pixel.setLocation(new Vector2(x, y));
                     filter.process(pixel);
-                    visualUtils.setPixel(this, pixel.getColor(), pixel.getLocation());
+                    setColor(pixel.getColor(), pixel.getLocation());
                 }
             }
         }

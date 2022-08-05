@@ -19,6 +19,9 @@ package com.xebisco.yield;
 import com.xebisco.yield.engine.Engine;
 import com.xebisco.yield.engine.GameHandler;
 import com.xebisco.yield.engine.YldEngineAction;
+import com.xebisco.yield.systems.MiddlePointSystem;
+import com.xebisco.yield.systems.PhysicsSystem;
+import com.xebisco.yield.systems.YldTimeSystem;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -269,6 +272,7 @@ public class YldGame extends YldScene {
      */
     public void setScene(YldScene scene) {
         this.scene = scene;
+        scene.defaultSystems();
     }
 
     public SampleWindow getWindow() {
