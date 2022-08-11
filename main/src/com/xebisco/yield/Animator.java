@@ -18,72 +18,60 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.Animation;
 import com.xebisco.yield.Component;
+
 import java.util.ArrayList;
 
-public class Animator extends Component
-{
+public class Animator extends Component {
 
     private ArrayList<Animation> animations = new ArrayList<>();
     private Animation actAnim;
+    private boolean autoReplay = true, finished, resetAnimation;
     private int actAnimFrame, overlayTime;
 
     @Override
-    public void update(float delta)
-    {
-        if (actAnim != null)
-        {
-            if(overlayTime == 0) {
-                if (actAnim.getMicrosecondDelay() == 0)
-                {
+    public void update(float delta) {
+        if (actAnim != null && !finished) {
+            if (overlayTime == 0) {
+                if (actAnim.getMicrosecondDelay() == 0) {
                     actAnimFrame++;
-                    if (actAnimFrame >= actAnim.getFrameDelay())
-                    {
+                    if (actAnimFrame >= actAnim.getFrameDelay()) {
                         actAnimFrame = 0;
                         actAnim.setActFrame(actAnim.getActFrame() + 1);
-                        if (actAnim.getActFrame() >= actAnim.getFrames().length)
-                        {
-                            actAnim.setActFrame(0);
-                        }
                     }
-                }
-                else
-                {
+                } else {
                     actAnimFrame += (delta * 1000f);
-                    if (actAnimFrame >= actAnim.getMicrosecondDelay())
-                    {
+                    if (actAnimFrame >= actAnim.getMicrosecondDelay()) {
                         actAnimFrame = 0;
                         actAnim.setActFrame(actAnim.getActFrame() + 1);
-                        if (actAnim.getActFrame() >= actAnim.getFrames().length)
-                        {
-                            actAnim.setActFrame(0);
-                        }
                     }
                 }
             } else {
                 actAnimFrame += (delta * 1000f);
-                if (actAnimFrame >= overlayTime)
-                {
+                if (actAnimFrame >= overlayTime) {
                     actAnimFrame = 0;
                     actAnim.setActFrame(actAnim.getActFrame() + 1);
-                    if (actAnim.getActFrame() >= actAnim.getFrames().length)
-                    {
-                        actAnim.setActFrame(0);
-                    }
+                }
+            }
+            if (actAnim.getActFrame() >= actAnim.getFrames().length) {
+                if (!autoReplay) {
+                    finished = true;
+                } else {
+                    actAnim.setActFrame(0);
+                    finished = false;
                 }
             }
             getMaterial().setTexture(actAnim.getFrames()[actAnim.getActFrame()]);
         }
     }
 
-    public void setAnimation(String animName)
-    {
+    public void setAnimation(String animName) {
         boolean finded = false;
-        for (Animation animation : animations)
-        {
-            if (animation.getName().hashCode() == animName.hashCode() && animation.getName().equals(animName))
-            {
+        for (Animation animation : animations) {
+            if (animation.getName().hashCode() == animName.hashCode() && animation.getName().equals(animName)) {
                 finded = true;
                 setActAnim(animation);
+                if(resetAnimation)
+                    getActAnim().setActFrame(0);
                 actAnimFrame = 0;
                 break;
             }
@@ -92,44 +80,37 @@ public class Animator extends Component
             throw new IllegalArgumentException("'" + animName + "' is not a animation");
     }
 
-    public void setAnimation(Animation anim)
-    {
+    public void setAnimation(Animation anim) {
         setActAnim(anim);
         actAnimFrame = 0;
     }
 
-    public void addAnimation(Animation animation)
-    {
+    public void addAnimation(Animation animation) {
         animations.add(animation);
     }
 
-    public Animation getActAnim()
-    {
+    public Animation getActAnim() {
         return actAnim;
     }
 
-    public void setActAnim(Animation actAnim)
-    {
+    public void setActAnim(Animation actAnim) {
+        finished = false;
         this.actAnim = actAnim;
     }
 
-    public ArrayList<Animation> getAnimations()
-    {
+    public ArrayList<Animation> getAnimations() {
         return animations;
     }
 
-    public void setAnimations(ArrayList<Animation> animations)
-    {
+    public void setAnimations(ArrayList<Animation> animations) {
         this.animations = animations;
     }
 
-    public int getActAnimFrame()
-    {
+    public int getActAnimFrame() {
         return actAnimFrame;
     }
 
-    public void setActAnimFrame(int actAnimFrame)
-    {
+    public void setActAnimFrame(int actAnimFrame) {
         this.actAnimFrame = actAnimFrame;
     }
 
@@ -139,5 +120,31 @@ public class Animator extends Component
 
     public void setOverlayTime(int overlayTime) {
         this.overlayTime = overlayTime;
+    }
+
+    public boolean isAutoReplay() {
+        return autoReplay;
+    }
+
+    public void setAutoReplay(boolean autoReplay) {
+        if (autoReplay)
+            finished = false;
+        this.autoReplay = autoReplay;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public boolean isResetAnimation() {
+        return resetAnimation;
+    }
+
+    public void setResetAnimation(boolean resetAnimation) {
+        this.resetAnimation = resetAnimation;
     }
 }

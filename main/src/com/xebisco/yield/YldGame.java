@@ -238,7 +238,6 @@ public class YldGame extends YldScene {
         scene.game = this;
         scene.time = new YldTime(this);
         scene.setMasterEntity(new Entity("MasterEntity", scene, null));
-        scene.setGraphics(new YldGraphics(scene.getMasterEntity(), this));
         scenes.add(scene);
     }
 
@@ -272,6 +271,7 @@ public class YldGame extends YldScene {
      */
     public void setScene(YldScene scene) {
         this.scene = scene;
+        scene.setGraphics(new YldGraphics(scene.getMasterEntity(), this));
         scene.defaultSystems();
     }
 

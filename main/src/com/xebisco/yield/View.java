@@ -16,8 +16,6 @@
 
 package com.xebisco.yield;
 
-import java.awt.image.BufferedImage;
-
 /**
  * The resolution of the actual Yield Game Engine.
  */
@@ -29,7 +27,8 @@ public class View
     private static Transform defaultTransform = new Transform();
     private Transform transform = defaultTransform.get();
     private Vector2 position = new Vector2();
-    private Color bgColor = new Color(0xFF1E2D74);
+    private static Color standardBgColor = new Color(0xFF1E2D74);
+    private Color bgColor = standardBgColor.get();
 
     /**
      * Creates a View and set its width and height.
@@ -169,5 +168,13 @@ public class View
 
     public void setPosition(Vector2 position) {
         this.position = position;
+    }
+
+    public static Color getStandardBgColor() {
+        return standardBgColor;
+    }
+
+    public static void setStandardBgColor(Color standardBgColor) {
+        View.standardBgColor = standardBgColor;
     }
 }

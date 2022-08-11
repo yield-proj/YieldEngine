@@ -1,9 +1,7 @@
 package com.xebisco.yield;
 
-import com.xebisco.yield.engine.YldEngineAction;
 import com.xebisco.yield.exceptions.MissingPhysicsSystemException;
 import com.xebisco.yield.systems.PhysicsSystem;
-import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 
 import java.util.ArrayList;
@@ -31,18 +29,18 @@ public class PhysicsBody extends YldScript {
         if (physicsSystem == null)
             throw new MissingPhysicsSystemException();
         else {
-            reloadObject();
+            resetBody();
             resetColliders();
         }
     }
 
-    public void reloadObject() {
+    public void resetBody() {
         World world = physicsSystem.getBox2dWorld();
         if (box2dBody != null)
             world.destroyBody(box2dBody);
         BodyDef bodyDef = new BodyDef();
         bodyDef.angle = transform.rotation;
-        bodyDef.position.set(Yld.toVec2(transform.position.div(scene.getPpm())));
+        bodyDef.position.set(Yld.toVec2(getTransform().position.div(scene.getPpm())));
         bodyDef.angularDamping = angularDamping;
         bodyDef.linearDamping = linearDamping;
         bodyDef.fixedRotation = fixedRotation;
@@ -71,15 +69,7 @@ public class PhysicsBody extends YldScript {
             box2dBody = world.createBody(bodyDef);
     }
 
-    public void resetColliders() {
-        if (box2dBody == null)
-            Yld.throwException(new IllegalStateException());
-        List<Collider> colliders = new ArrayList<>();
-        for (Component c : getComponents()) {
-            if (c instanceof Collider) {
-                colliders.add((Collider) c);
-            }
-        }
+    public void destroyFixtures() {
         int size = 0;
         Fixture fixture = box2dBody.getFixtureList();
         while (fixture != null) {
@@ -89,6 +79,18 @@ public class PhysicsBody extends YldScript {
         for (int i = 0; i < size; i++) {
             box2dBody.destroyFixture(box2dBody.getFixtureList());
         }
+    }
+
+    public void resetColliders() {
+        if (box2dBody == null)
+            Yld.throwException(new IllegalStateException());
+        List<Collider> colliders = new ArrayList<>();
+        for (Component c : getComponents()) {
+            if (c instanceof Collider) {
+                colliders.add((Collider) c);
+            }
+        }
+        destroyFixtures();
 
         for (Collider collider : colliders) {
             FixtureDef fixtureDef = new FixtureDef();
@@ -105,6 +107,7 @@ public class PhysicsBody extends YldScript {
     public void update(float delta) {
         if (box2dBody != null) {
             box2dBody.m_mass = mass;
+            angle = (float) (360f - Math.toDegrees(box2dBody.getAngle()));
             linearVelocity = Yld.toVector2(box2dBody.getLinearVelocity());
             transform.goTo(box2dBody.getPosition().x * scene.getPpm(), box2dBody.getPosition().y * scene.getPpm());
             if (rotateEntity)
@@ -114,12 +117,26 @@ public class PhysicsBody extends YldScript {
 
     @Override
     public void onDestroy() {
-        if (box2dBody != null)
+        if (box2dBody != null) {
+            destroyFixtures();
             physicsSystem.getBox2dWorld().destroyBody(box2dBody);
+        }
     }
 
     public void goTo(Vector2 location) {
-        box2dBody.getPosition().set(Yld.toVec2(location));
+        if (box2dBody != null)
+            box2dBody.setTransform(Yld.toVec2(location.div(scene.getPpm())), box2dBody.getAngle());
+        else transform.goTo(location);
+    }
+
+    public Vector2 position() {
+        return Yld.toVector2(box2dBody.getPosition()).mul(scene.getPpm());
+    }
+
+    public void translate(Vector2 location) {
+        if (box2dBody != null)
+            box2dBody.setTransform(Yld.toVec2(location.subt(transform.position)), getAngle());
+        else transform.translate(location);
     }
 
     public void applyImpulse(Vector2 value, ImpulseType impulseType) {

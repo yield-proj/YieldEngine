@@ -27,9 +27,20 @@ public class Text extends NonFillShape {
         this.contents = contents;
     }
 
+    public Text(String contents, Color color) {
+        this.contents = contents;
+        setColor(color);
+    }
+
     public Text(String contents, String font) {
         this.contents = contents;
         this.font = font;
+    }
+
+    public Text(String contents, String font, Color color) {
+        this.contents = contents;
+        this.font = font;
+        setColor(color);
     }
 
     @Override

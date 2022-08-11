@@ -17,15 +17,22 @@
 package com.xebisco.yield;
 
 import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 
 public class CircleCollider extends Collider {
     private float radius = 32;
+
+    public CircleCollider(float radius) {
+        this.radius = radius;
+    }
+
+    public CircleCollider() {
+    }
+
     @Override
     public Shape shape() {
         CircleShape shape = new CircleShape();
-        shape.m_radius = radius / scene.getPpm();
+        shape.setRadius(radius / scene.getPpm());
         shape.m_p.set(Yld.toVec2(getOffset()));
         return shape;
     }
