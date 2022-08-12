@@ -20,10 +20,22 @@ import java.io.*;
 import java.util.Scanner;
 
 public class Transform extends Component {
-    public Vector2 position = new Vector2(), scale = new Vector2(1, 1), middle = new Vector2(0, 0);
+    public Vector2 position, scale, middle;
     public float rotation = 0;
-    public boolean middleRotation = true;
-    private Vector2 transformed = new Vector2();
+    public boolean middleRotation;
+    private Vector2 transformed;
+
+    public void reset() {
+        scale = new Vector2(1, 1);
+        position = new Vector2();
+        middle = new Vector2(0, 0);
+        middleRotation = true;
+        transformed = new Vector2();
+    }
+
+    public Transform() {
+        reset();
+    }
 
     public void translate(Vector2 vector2) {
         position.x += vector2.x;
@@ -160,8 +172,7 @@ public class Transform extends Component {
         toSet.transformed = transform.transformed.get();
     }
 
-    public Vector2 getTransformed()
-    {
+    public Vector2 getTransformed() {
         return transformed;
     }
 }

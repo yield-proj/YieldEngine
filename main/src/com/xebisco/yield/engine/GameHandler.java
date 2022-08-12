@@ -71,6 +71,7 @@ public class GameHandler extends Engine {
 
     @Override
     public void update(long last, long actual) {
+        Yld.log(Yld.MEMORY());
         float delta = (actual - last) / 1_000f;
         if (zeroDelta) {
             delta = 0f;

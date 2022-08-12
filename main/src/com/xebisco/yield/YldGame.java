@@ -357,6 +357,10 @@ public class YldGame extends YldScene {
         handler.getRenderMaster().loadFont(fontName, fontName, size, style);
     }
 
+    public void unloadAllTextures() {
+        handler.getRenderMaster().unloadAllTextures();
+    }
+
     public void loadFont(String saveName, String fontName, int size, int style) {
         handler.getRenderMaster().loadFont(saveName, fontName, size, style);
     }

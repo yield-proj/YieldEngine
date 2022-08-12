@@ -88,6 +88,8 @@ public class YldScene extends YldB {
      * Destroy this YldScene masterEntity and call onDestroy().
      */
     public final void destroyScene() {
+        view.getTransform().reset();
+        view.setPosition(new Vector2());
         masterEntity.destroy();
         onDestroy();
     }
