@@ -26,13 +26,8 @@ public class PhysicsSystem extends UpdateSystem implements SystemCreateMethod {
     }
 
     public void updateWorld(float delta) {
-        physicsTimeStep = 1f / scene.getTime().getTargetFPS();
-        physicsTime += delta;
-        if(physicsTime >= 0) {
-            physicsTime -= physicsTimeStep;
-            box2dWorld.step(physicsTimeStep, velocityIterations, positionIterations);
-            box2dWorld.clearForces();
-        }
+        box2dWorld.step(delta, velocityIterations, positionIterations);
+        box2dWorld.clearForces();
     }
 
     @Override

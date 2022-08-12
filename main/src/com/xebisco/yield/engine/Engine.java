@@ -31,7 +31,7 @@ public class Engine implements Runnable {
 
     private AtomicBoolean paused = new AtomicBoolean(false);
 
-    private long last, actual;
+    private long last, actual, skipped;
 
     public Engine(EngineController controller) {
         this.controller = controller;
@@ -45,9 +45,8 @@ public class Engine implements Runnable {
         while (running) {
             try {
                 if (!paused.get()) {
-
-
                     actual = System.currentTimeMillis();
+                    skipped = System.currentTimeMillis();
                     if (!ignoreTodo) {
                         for (int i = 0; i < todoList.size(); i++) {
                             YldEngineAction engineAction = todoList.get(i);
@@ -79,11 +78,12 @@ public class Engine implements Runnable {
                         oneSecCount = 0;
                         oneSecFrameCount = 0;
                     }
-                    last = System.currentTimeMillis();
                     if (stopOnNext) {
                         running = false;
                         break;
                     }
+                    skipped = System.currentTimeMillis() - skipped;
+                    last = System.currentTimeMillis() - skipped;
                     if (lock)
                         try {
                             Thread.sleep(targetTime);
