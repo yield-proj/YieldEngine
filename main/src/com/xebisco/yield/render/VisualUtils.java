@@ -16,10 +16,7 @@
 
 package com.xebisco.yield.render;
 
-import com.xebisco.yield.Color;
-import com.xebisco.yield.Pixel;
-import com.xebisco.yield.Texture;
-import com.xebisco.yield.Vector2;
+import com.xebisco.yield.*;
 
 import java.io.InputStream;
 
@@ -32,8 +29,8 @@ public interface VisualUtils {
     void unloadTexture(Texture texture);
     void unloadAllTextures();
     void clearTexture(Texture texture);
-    void loadFont(String saveName, String fontName, int fontSize, int fontStyle);
-    void loadFont(String fontName, float size, float sizeToLoad, int fontFormat, InputStream inputStream);
+    void loadFont(String saveName, String fontName, float fontSize, int fontStyle);
+    void loadFont(String fontName, float size, float sizeToLoad, int fontFormat, RelativeFile relativeFile);
     void unloadFont(String fontName);
     Color[][] getTextureColors(Texture texture);
     void setTextureColors(Texture texture, Color[][] colors);

@@ -77,7 +77,7 @@ public class YldGame extends YldScene {
         game.setWindow(game.getHandler().getRenderMaster().initWindow(game.getConfiguration()));
         game.yieldLogo = new Texture("com/xebisco/yield/assets/yieldlogo.png", TexType.NATIVE);
         game.loadTexture(game.yieldLogo);
-        game.loadFont("arial", 30, 0);
+        game.loadFont("arial", 30, 0, new RelativeFile("com/xebisco/yield/assets/ArialNormal.ttf"));
         game.getHandler().getThread().start();
     }
 
@@ -336,24 +336,17 @@ public class YldGame extends YldScene {
     }
 
     public void loadFont(String fontName, float size, int format, RelativeFile fontFile) {
-        loadFont(fontName, size, size, format, fontFile.getInputStream());
+        loadFont(fontName, size, size, format, fontFile);
         fontFile.flush();
     }
 
     public void loadFont(String fontName, float size, float sizeToLoad, int format, RelativeFile fontFile) {
-        handler.getRenderMaster().loadFont(fontName, size, sizeToLoad, format, fontFile.getInputStream());
+        handler.getRenderMaster().loadFont(fontName, size, sizeToLoad, format, fontFile);
         fontFile.flush();
     }
 
-    public void loadFont(String fontName, float size, int format, InputStream inputStream) {
-        loadFont(fontName, size, size, format, inputStream);
-    }
 
-    public void loadFont(String fontName, float size, float sizeToLoad, int format, InputStream inputStream) {
-        handler.getRenderMaster().loadFont(fontName, size, sizeToLoad, format, inputStream);
-    }
-
-    public void loadFont(String fontName, int size, int style) {
+    public void loadFont(String fontName, float size, int style) {
         handler.getRenderMaster().loadFont(fontName, fontName, size, style);
     }
 
@@ -361,7 +354,7 @@ public class YldGame extends YldScene {
         handler.getRenderMaster().unloadAllTextures();
     }
 
-    public void loadFont(String saveName, String fontName, int size, int style) {
+    public void loadFont(String saveName, String fontName, float size, int style) {
         handler.getRenderMaster().loadFont(saveName, fontName, size, style);
     }
 

@@ -24,6 +24,8 @@ public class YldInput {
     private final YldGame game;
     private final Set<Integer> pressing = new HashSet<>();
 
+    private final Set<YldPair<Float, Float>> pointers = new HashSet<>();
+
     private final HashMap<String, YldPair<YldPair<Integer, Integer>, YldPair<Integer, Integer>>> axis = new HashMap<>();
 
     public YldInput(YldGame game) {
@@ -103,5 +105,9 @@ public class YldInput {
 
     public YldGame getGame() {
         return game;
+    }
+
+    public Set<YldPair<Float, Float>> getPointers() {
+        return pointers;
     }
 }

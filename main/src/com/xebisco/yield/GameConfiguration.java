@@ -17,6 +17,7 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.config.WindowConfiguration;
+import com.xebisco.yield.render.RenderMaster;
 
 /**
  * This is the standard configuration class used to launch YldGames, all the properties can be modified.
@@ -29,5 +30,6 @@ public class GameConfiguration extends WindowConfiguration
     public boolean fpsLock = true;
     public String appName, renderMasterName;
 
+    public RenderMaster renderMaster;
     public int framesToGarbageCollection = 300;
 }

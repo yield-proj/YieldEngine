@@ -40,20 +40,24 @@ public class GameHandler extends Engine {
         super(null);
         game.setHandler(this);
         this.game = game;
-        if (game.getConfiguration().renderMasterName != null) {
-            try {
-                renderMaster = (RenderMaster) Class.forName(game.getConfiguration().renderMasterName).getDeclaredConstructor().newInstance();
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                     NoSuchMethodException e) {
-                Yld.throwException(e);
+        if(game.getConfiguration().renderMaster == null) {
+            if (game.getConfiguration().renderMasterName != null) {
+                try {
+                    renderMaster = (RenderMaster) Class.forName(game.getConfiguration().renderMasterName).getDeclaredConstructor().newInstance();
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                         NoSuchMethodException e) {
+                    Yld.throwException(e);
+                }
+                catch (ClassNotFoundException e) {
+                    Yld.throwException(new MissingRenderMasterException("Could not find render master: '" + game.getConfiguration().renderMasterName + "'."));
+                }
+            } else if (sampleRenderMaster != null) {
+                renderMaster = sampleRenderMaster;
+            } else {
+                Yld.throwException(new MissingRenderMasterException("Yield Engine needs a path to a RenderMaster implementation."));
             }
-            catch (ClassNotFoundException e) {
-                Yld.throwException(new MissingRenderMasterException("Could not find render master: '" + game.getConfiguration().renderMasterName + "'."));
-            }
-        } else if (sampleRenderMaster != null) {
-            renderMaster = sampleRenderMaster;
         } else {
-            Yld.throwException(new MissingRenderMasterException("Yield Engine needs a path to a RenderMaster implementation."));
+            renderMaster = game.getConfiguration().renderMaster;
         }
         sampleGraphics = renderMaster.initGraphics();
         if(renderMaster instanceof ExceptionThrower) {
