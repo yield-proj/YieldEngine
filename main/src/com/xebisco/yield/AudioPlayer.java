@@ -64,7 +64,7 @@ public class AudioPlayer extends Component {
     }
 
     public void resume() {
-
+        game.getHandler().getRenderMaster().resumePlayer(this);
     }
 
     public boolean isRunning() {
@@ -101,7 +101,7 @@ public class AudioPlayer extends Component {
     }
 
     public void setAudioClip(AudioClip audioClip) {
-        setAudioClip(audioClip, MultiThread.EXCLUSIVE);
+        setAudioClip(audioClip, null);
     }
 
     public void setAudioClip(AudioClip audioClip, MultiThread multiThread) {
@@ -123,5 +123,13 @@ public class AudioPlayer extends Component {
 
     public static void setPlayers(int players) {
         AudioPlayer.players = players;
+    }
+
+    @Override
+    public void setGame(YldGame game) {
+        if(this.game == null) {
+            game.getHandler().getRenderMaster().loadAudioPlayer(this);
+        }
+        super.setGame(game);
     }
 }

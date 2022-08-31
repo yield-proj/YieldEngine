@@ -16,38 +16,10 @@
 
 package com.xebisco.yield.render;
 
-import com.xebisco.yield.*;
-import com.xebisco.yield.config.WindowConfiguration;
+import com.xebisco.yield.RelativeFile;
 
-import java.util.Set;
-
-
-/**
- * @since 4-1.2
- * @author Xebisco
- */
-public interface RenderMaster extends VisualUtils, AudioUtils, FileUtils {
-    SampleGraphics initGraphics();
-
-    SampleGraphics specificGraphics();
-
-    void before(YldGame game);
-
-    SampleWindow initWindow(WindowConfiguration configuration);
-
-    void frameStart(SampleGraphics graphics, View view);
-
-    void frameEnd();
-
-    boolean canStart();
-
-    float fpsCount();
-
-    Set<Integer> pressing();
-
-    int mouseX();
-
-    int mouseY();
-
-    void close();
+public interface FileUtils {
+    default RelativeFile relativeFile(RelativeFile relativeFile) {
+        return relativeFile;
+    }
 }

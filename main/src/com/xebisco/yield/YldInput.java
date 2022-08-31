@@ -24,6 +24,8 @@ public class YldInput {
     private final YldGame game;
     private final Set<Integer> pressing = new HashSet<>();
 
+    private final Vector2 mouse = new Vector2();
+
     private final Set<YldPair<Float, Float>> pointers = new HashSet<>();
 
     private final HashMap<String, YldPair<YldPair<Integer, Integer>, YldPair<Integer, Integer>>> axis = new HashMap<>();
@@ -72,7 +74,9 @@ public class YldInput {
     }
 
     public Vector2 getMouse() {
-        return new Vector2(game.getHandler().getRenderMaster().mouseX(), game.getHandler().getRenderMaster().mouseY());
+        mouse.x = game.getHandler().getRenderMaster().mouseX();
+        mouse.y = game.getHandler().getRenderMaster().mouseY();
+        return mouse;
     }
 
     public Set<Integer> getPressing() {

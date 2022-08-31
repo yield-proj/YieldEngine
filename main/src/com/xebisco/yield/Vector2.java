@@ -86,6 +86,14 @@ public class Vector2
         return (float) (((x + other.x) / Math.sqrt(2)) + (y + other.y) / Math.sqrt(2));
     }
 
+    public float dist(Vector2 other) {
+        return (float) Math.sqrt(Math.pow(Yld.mod(other.x - x), 2) + Math.pow(Yld.mod(other.y - y), 2));
+    }
+
+    public float angle(Vector2 other) {
+        return (float) Math.toDegrees(Math.atan2(other.y - y, other.x - x));
+    }
+
     @Override
     public int hashCode()
     {

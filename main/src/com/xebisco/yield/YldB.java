@@ -137,6 +137,10 @@ public abstract class YldB
             game.getHandler().getDefaultConcurrentEngine().getTodoList().removeIf((a) -> a.getId() == id);
     }
 
+    public final RelativeFile relativeFile(RelativeFile relativeFile) {
+        return game.getHandler().getRenderMaster().relativeFile(relativeFile);
+    }
+
     public YldGame getGame()
     {
         return game;

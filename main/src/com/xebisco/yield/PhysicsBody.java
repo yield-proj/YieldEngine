@@ -11,7 +11,7 @@ public class PhysicsBody extends YldScript {
     private Vector2 linearVelocity = new Vector2();
     private float angularDamping = .8f, linearDamping = .9f, angle, angularVelocity, mass = 1f, gravityScale = 1f;
     private PhysicsBodyType physicsBodyType = PhysicsBodyType.DYNAMIC;
-    private boolean fixedRotation, continuousCollision, allowSleep, rotateEntity = true;
+    private boolean fixedRotation, continuousCollision, allowSleep, rotateEntity = true, intValuePosition, autoUpdateEntity = true;
     private Body box2dBody;
     private PhysicsSystem physicsSystem;
 
@@ -105,11 +105,18 @@ public class PhysicsBody extends YldScript {
 
     @Override
     public void update(float delta) {
+        if(autoUpdateEntity)
+            updateEntity();
+    }
+
+    public void updateEntity() {
         if (box2dBody != null) {
             box2dBody.m_mass = mass;
             angle = (float) (360f - Math.toDegrees(box2dBody.getAngle()));
             linearVelocity = Yld.toVector2(box2dBody.getLinearVelocity());
-            transform.goTo(box2dBody.getPosition().x * scene.getPpm(), box2dBody.getPosition().y * scene.getPpm());
+            if (!intValuePosition)
+                transform.goTo(box2dBody.getPosition().x * scene.getPpm(), box2dBody.getPosition().y * scene.getPpm());
+            else transform.goTo((int) (box2dBody.getPosition().x * scene.getPpm()), (int) (box2dBody.getPosition().y * scene.getPpm()));
             if (rotateEntity)
                 transform.rotation = (float) -Math.toDegrees(box2dBody.getAngle());
         }
@@ -286,5 +293,21 @@ public class PhysicsBody extends YldScript {
 
     public void setRotateEntity(boolean rotateEntity) {
         this.rotateEntity = rotateEntity;
+    }
+
+    public boolean isIntValuePosition() {
+        return intValuePosition;
+    }
+
+    public void setIntValuePosition(boolean intValuePosition) {
+        this.intValuePosition = intValuePosition;
+    }
+
+    public boolean isAutoUpdateEntity() {
+        return autoUpdateEntity;
+    }
+
+    public void setAutoUpdateEntity(boolean autoUpdateEntity) {
+        this.autoUpdateEntity = autoUpdateEntity;
     }
 }

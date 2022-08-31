@@ -76,37 +76,31 @@ public class Transform extends Component {
 
     public void load(TransformSave save) {
         try {
-            Scanner sc = new Scanner(new File(save.getUrl().getPath()));
+            // Reading the file.
+            Scanner sc = new Scanner(save.getInputStream());
             StringBuilder contents = new StringBuilder();
             while (sc.hasNextLine()) {
                 contents.append(sc.nextLine());
             }
             processSave(contents.toString());
-        } catch (FileNotFoundException e) {
+        } catch (NullPointerException e) {
             Yld.throwException(e);
         }
     }
 
-    public void saveTo(TransformSave saveFile) {
+    public String save(TransformSave saveFile) {
         PrintWriter writer;
-        try {
-            writer = new PrintWriter(saveFile.getUrl().getPath(), "UTF-8");
-            String toPrint = "";
-            toPrint += ":";
-            String chords = "";
-            chords += "x,=," + position.x + ",y,=," + position.y + ",w,=," + scale.x + ",h,=," + scale.y + ",r,=," + rotation;
-            char[] chars = chords.toCharArray();
-            for (int i = 0; i < chars.length; i++) {
-                chars[i] = (char) ((int) chars[i] - 4);
-            }
-            chords = new String(chars);
-            toPrint += chords;
-            writer.print(toPrint);
-            writer.close();
-        } catch (IOException e) {
-            Yld.throwException(e);
+        String toPrint = "";
+        toPrint += ":";
+        String chords = "";
+        chords += "x,=," + position.x + ",y,=," + position.y + ",w,=," + scale.x + ",h,=," + scale.y + ",r,=," + rotation;
+        char[] chars = chords.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            chars[i] = (char) ((int) chars[i] - 4);
         }
-
+        chords = new String(chars);
+        toPrint += chords;
+        return toPrint;
     }
 
     private void processSave(String saveContents) {

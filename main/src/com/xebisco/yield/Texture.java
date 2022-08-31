@@ -45,6 +45,24 @@ public class Texture extends RelativeFile {
         textureID = textures;
     }
 
+    public Texture(RelativeFile relativeFile, TexType textureType) {
+        super(relativeFile.getCachedPath());
+        textures++;
+        textureID = textures;
+        setInputStream(relativeFile.getInputStream());
+        setFlushAfterLoad(relativeFile.isFlushAfterLoad());
+        this.textureType = textureType;
+    }
+
+    public Texture(RelativeFile relativeFile) {
+        super(relativeFile.getCachedPath());
+        textures++;
+        textureID = textures;
+        setInputStream(relativeFile.getInputStream());
+        setFlushAfterLoad(relativeFile.isFlushAfterLoad());
+        textureType = TexType.SIMULATED;
+    }
+
     public Texture get() {
         return visualUtils.duplicate(this);
     }

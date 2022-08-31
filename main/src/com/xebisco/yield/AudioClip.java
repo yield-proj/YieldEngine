@@ -32,6 +32,12 @@ public class AudioClip extends RelativeFile {
         super(relativePath);
     }
 
+    public AudioClip(RelativeFile relativeFile) {
+        super(relativeFile.getCachedPath());
+        setInputStream(relativeFile.getInputStream());
+        setFlushAfterLoad(relativeFile.isFlushAfterLoad());
+    }
+
     /**
      * Getter of the startPos of this AudioClip.
      *

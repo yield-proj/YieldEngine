@@ -43,57 +43,53 @@ public class Engine implements Runnable {
         if (controller != null)
             controller.start();
         while (running) {
-            try {
-                if (!paused.get()) {
-                    actual = System.currentTimeMillis();
-                    skipped = System.currentTimeMillis();
-                    if (!ignoreTodo) {
-                        for (int i = 0; i < todoList.size(); i++) {
-                            YldEngineAction engineAction = todoList.get(i);
-                            if (engineAction != null) {
-                                if (engineAction.getToExec() <= 0) {
-                                    engineAction.getAction().onAction();
-                                    engineAction.setToExec(engineAction.getInitialToExec());
-                                } else {
-                                    engineAction.setToExec(engineAction.getToExec() - targetTime);
-                                }
-                            }
-
-                        }
-                        for (int i = 0; i < todoList.size(); i++) {
-                            YldEngineAction engineAction = todoList.get(i);
-                            if (engineAction != null) {
-                                if (!engineAction.isRepeat())
-                                    todoList.remove(engineAction);
+            if (!paused.get()) {
+                actual = System.currentTimeMillis();
+                skipped = System.currentTimeMillis();
+                if (!ignoreTodo) {
+                    for (int i = 0; i < todoList.size(); i++) {
+                        YldEngineAction engineAction = todoList.get(i);
+                        if (engineAction != null) {
+                            if (engineAction.getToExec() <= 0) {
+                                engineAction.getAction().onAction();
+                                engineAction.setToExec(engineAction.getInitialToExec());
+                            } else {
+                                engineAction.setToExec(engineAction.getToExec() - targetTime);
                             }
                         }
-                    }
-                    if (controller != null)
-                        controller.tick();
-                    update(last, actual);
-                    oneSecCount += actual - last;
-                    oneSecFrameCount++;
-                    if (oneSecCount > 1000) {
-                        fpsCount = oneSecFrameCount;
-                        oneSecCount = 0;
-                        oneSecFrameCount = 0;
-                    }
-                    if (stopOnNext) {
-                        running = false;
-                        break;
-                    }
-                    skipped = System.currentTimeMillis() - skipped;
-                    last = System.currentTimeMillis() - skipped;
-                    if (lock)
-                        try {
-                            Thread.sleep(targetTime);
-                        } catch (InterruptedException e) {
-                            Yld.throwException(e);
-                        }
 
+                    }
+                    for (int i = 0; i < todoList.size(); i++) {
+                        YldEngineAction engineAction = todoList.get(i);
+                        if (engineAction != null) {
+                            if (!engineAction.isRepeat())
+                                todoList.remove(engineAction);
+                        }
+                    }
                 }
-            } catch (Exception e) {
-                Yld.throwException(e);
+                if (controller != null)
+                    controller.tick();
+                update(last, actual);
+                oneSecCount += actual - last;
+                oneSecFrameCount++;
+                if (oneSecCount > 1000) {
+                    fpsCount = oneSecFrameCount;
+                    oneSecCount = 0;
+                    oneSecFrameCount = 0;
+                }
+                if (stopOnNext) {
+                    running = false;
+                    break;
+                }
+                skipped = System.currentTimeMillis() - skipped;
+                last = System.currentTimeMillis() - skipped;
+                if (lock)
+                    try {
+                        Thread.sleep(targetTime);
+                    } catch (InterruptedException e) {
+                        Yld.throwException(e);
+                    }
+
             }
         }
         if (stop == EngineStop.INTERRUPT_ON_END) {
@@ -221,5 +217,13 @@ public class Engine implements Runnable {
 
     public void setPaused(boolean paused) {
         this.paused.set(paused);
+    }
+
+    public long getSkipped() {
+        return skipped;
+    }
+
+    public void setSkipped(long skipped) {
+        this.skipped = skipped;
     }
 }

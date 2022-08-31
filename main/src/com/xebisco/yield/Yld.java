@@ -131,6 +131,18 @@ public final class Yld {
         return Math.max(value, min);
     }
 
+    public static float mod(float value) {
+        if(value < 0)
+            return -value;
+        else return value;
+    }
+
+    public static int mod(int value) {
+        if(value < 0)
+            return -value;
+        else return value;
+    }
+
     /**
      * Logs a Object to the standard output.
      *

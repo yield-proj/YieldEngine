@@ -22,7 +22,6 @@ import java.net.URL;
 
 public class RelativeFile {
     private InputStream inputStream;
-    private URL url;
 
     private boolean flushAfterLoad = true;
 
@@ -34,7 +33,6 @@ public class RelativeFile {
             if (!relativePath.startsWith("/"))
                 relativePath = "/" + relativePath;
             inputStream = Yld.class.getResourceAsStream(relativePath);
-            url = Yld.class.getResource(relativePath);
         }
     }
 
@@ -47,7 +45,6 @@ public class RelativeFile {
             }
         }
         setInputStream(null);
-        setUrl(null);
     }
 
     public InputStream getInputStream() {
@@ -56,14 +53,6 @@ public class RelativeFile {
 
     public void setInputStream(InputStream inputStream) {
         this.inputStream = inputStream;
-    }
-
-    public URL getUrl() {
-        return url;
-    }
-
-    public void setUrl(URL url) {
-        this.url = url;
     }
 
     public String getCachedPath() {

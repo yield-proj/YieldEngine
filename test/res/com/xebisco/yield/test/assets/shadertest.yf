@@ -1,0 +1,3 @@
+get vec2 pos
+get vec4 color
+drawPixel(pos, color)

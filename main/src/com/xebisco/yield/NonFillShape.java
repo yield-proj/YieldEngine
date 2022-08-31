@@ -19,7 +19,7 @@ package com.xebisco.yield;
 public abstract class NonFillShape extends SimpleRenderable implements Spacial {
     private Vector2 size = new Vector2(64, 64);
 
-    protected Vector2 drawPosition, drawSize;
+    protected Vector2 drawPosition, drawSize, offset = new Vector2();
 
     @Override
     public void render(SampleGraphics graphics) {
@@ -31,6 +31,7 @@ public abstract class NonFillShape extends SimpleRenderable implements Spacial {
         } else {
             drawPosition = t.position.subt(scene.getView().getTransform().position);
         }
+        drawPosition = drawPosition.sum(offset);
     }
 
     public void setSizeAsTexture(Texture texture) {
@@ -59,5 +60,13 @@ public abstract class NonFillShape extends SimpleRenderable implements Spacial {
 
     public void setDrawSize(Vector2 drawSize) {
         this.drawSize = drawSize;
+    }
+
+    public Vector2 getOffset() {
+        return offset;
+    }
+
+    public void setOffset(Vector2 offset) {
+        this.offset = offset;
     }
 }
