@@ -303,6 +303,7 @@ public class YldGame extends YldScene {
 
     public Texture loadTexture(Texture texture) {
         handler.getRenderMaster().loadTexture(texture);
+        texture.onLoad();
         return texture;
     }
 

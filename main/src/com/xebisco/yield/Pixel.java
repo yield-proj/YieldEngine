@@ -23,8 +23,9 @@ package com.xebisco.yield;
  */
 public class Pixel
 {
-    private Vector2 location;
-    private Color color;
+    private String cache;
+    private Vector2 textureLocation, location;
+    private Color textureColor, color;
 
     /**
      * Getter of the location variable.
@@ -44,19 +45,43 @@ public class Pixel
     }
 
     /**
-     * Getter of the color variable.
-     * @return The color variable.
+     * Getter of the textureColor variable.
+     * @return The textureColor variable.
      */
-    public Color getColor()
+    public Color getTextureColor()
     {
-        return color;
+        return textureColor;
     }
 
     /**
-     * Setter of the color variable.
+     * Setter of the textureColor variable.
      */
-    public void setColor(Color color)
+    public void setTextureColor(Color textureColor)
     {
+        this.textureColor = textureColor;
+    }
+
+    public String getCache() {
+        return cache;
+    }
+
+    public void setCache(String cache) {
+        this.cache = cache;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
         this.color = color;
+    }
+
+    public Vector2 getTextureLocation() {
+        return textureLocation;
+    }
+
+    public void setTextureLocation(Vector2 textureLocation) {
+        this.textureLocation = textureLocation;
     }
 }

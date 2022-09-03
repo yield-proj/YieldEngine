@@ -85,7 +85,7 @@ public class Engine implements Runnable {
                 last = System.currentTimeMillis() - skipped;
                 if (lock)
                     try {
-                        Thread.sleep(targetTime);
+                        Thread.sleep(Yld.clamp(targetTime - skipped, 0, targetTime));
                     } catch (InterruptedException e) {
                         Yld.throwException(e);
                     }

@@ -19,7 +19,7 @@ package com.xebisco.yield;
 import java.util.Objects;
 
 /**
- * A color stored in an separated RGB values.
+ * A color stored in a separated RGB values.
  */
 public class Color {
     

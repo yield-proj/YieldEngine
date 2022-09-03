@@ -21,6 +21,8 @@ import com.xebisco.yield.utils.YldAction;
 import org.jbox2d.common.Vec2;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
@@ -42,6 +44,9 @@ public final class Yld {
      */
 
     private static final long BUILD = 2020;
+
+    public final static MathContext roundDownContext = new MathContext(2, RoundingMode.DOWN);
+    public final static MathContext roundUpContext = new MathContext(2, RoundingMode.UP);
 
     public static Vec2 toVec2(Vector2 vector2) {
         return new Vec2(vector2.x, vector2.y);
@@ -126,6 +131,16 @@ public final class Yld {
         return Math.max(value, min);
     }
 
+    public static long clamp(long value, long min, long max) {
+        if (value > max) return max;
+        return Math.max(value, min);
+    }
+
+    public static double clamp(double value, double min, double max) {
+        if (value > max) return max;
+        return Math.max(value, min);
+    }
+
     public static float clamp(float value, float min, float max) {
         if (value > max) return max;
         return Math.max(value, min);
@@ -138,6 +153,18 @@ public final class Yld {
     }
 
     public static int mod(int value) {
+        if(value < 0)
+            return -value;
+        else return value;
+    }
+
+    public static long mod(long value) {
+        if(value < 0)
+            return -value;
+        else return value;
+    }
+
+    public static double mod(double value) {
         if(value < 0)
             return -value;
         else return value;

@@ -24,7 +24,7 @@ import com.xebisco.yield.render.VisualUtils;
 public class Texture extends RelativeFile {
     private static int textures;
     private VisualUtils visualUtils;
-
+    private Pixel[][] pixels;
     private final TexType textureType;
     private final int textureID;
     private Texture invertedX, invertedY, invertedXY;
@@ -67,16 +67,34 @@ public class Texture extends RelativeFile {
         return visualUtils.duplicate(this);
     }
 
+    public void onLoad() {
+        updatePixels();
+    }
+
+    public void updatePixels() {
+        Color[][] colors = visualUtils.getTextureColors(this);
+        pixels = new Pixel[colors.length][colors[0].length];
+        for (int x = 0; x < colors.length; x++)
+            for (int y = 0; y < colors[0].length; y++) {
+                Pixel pixel = new Pixel();
+                pixel.setColor(colors[x][y]);
+                pixel.setTextureColor(Colors.TRANSPARENT.get());
+                pixel.setTextureLocation(new Vector2(x, y));
+                pixel.setLocation(new Vector2(x, y));
+                pixels[x][y] = pixel;
+            }
+    }
+
     public void clear() {
         visualUtils.clearTexture(this);
     }
 
-    public void processFilters() {
-        processFilters(0, getWidth(), 0, getHeight());
-    }
-
     public void setColor(Color color, Vector2 pos) {
         visualUtils.setPixel(this, color, pos);
+    }
+
+    public void setColors(Color[][] colors) {
+        visualUtils.setTextureColors(this, colors);
     }
 
     public Color getColor(Vector2 pos) {
@@ -95,20 +113,25 @@ public class Texture extends RelativeFile {
         return visualUtils.scaleTexture(this, (int) size.x, (int) size.y);
     }
 
-    public void processFilters(int minX, int maxX, int minY, int maxY) {
-        Color[][] colors = visualUtils.getTextureColors(this);
-        clear();
-        for (int x = 0; x < colors.length; x++) {
-            for (int y = 0; y < colors[0].length; y++) {
-                if(x >= minX && x <= maxX && y >= minY && y <= maxY) {
-                    Pixel pixel = new Pixel();
-                    pixel.setColor(colors[x][y]);
-                    pixel.setLocation(new Vector2(x, y));
+    public void processFilters() {
+        //clear();
+        int width = getWidth() - 1, height = getHeight() - 1;
+        for (int x = 0; x < pixels.length; x++) {
+            for (int y = 0; y < pixels[0].length; y++) {
+                    Pixel pixel = pixels[x][y];
                     filter.process(pixel);
-                    setColor(pixel.getColor(), pixel.getLocation());
-                }
+                    while (pixel.getTextureLocation().x > width)
+                        pixel.getTextureLocation().x -= width + 1;
+                    while (pixel.getTextureLocation().x < 0)
+                        pixel.getTextureLocation().x += width + 1;
+                    while (pixel.getTextureLocation().y > height)
+                        pixel.getTextureLocation().y -= height + 1;
+                    while (pixel.getTextureLocation().y < 0)
+                        pixel.getTextureLocation().y += height + 1;
+                    setColor(pixel.getTextureColor(), pixel.getTextureLocation());
             }
         }
+        //setColors(colors);
     }
 
     public YldFilter getFilter() {
@@ -146,6 +169,7 @@ public class Texture extends RelativeFile {
     public int getHeight() {
         return visualUtils.getTextureHeight(textureID);
     }
+
     public Vector2 getSize() {
         return new Vector2(visualUtils.getTextureWidth(textureID), visualUtils.getTextureHeight(textureID));
     }
@@ -176,5 +200,13 @@ public class Texture extends RelativeFile {
 
     public TexType getTextureType() {
         return textureType;
+    }
+
+    public Pixel[][] getPixels() {
+        return pixels;
+    }
+
+    public void setPixels(Pixel[][] pixels) {
+        this.pixels = pixels;
     }
 }

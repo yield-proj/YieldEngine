@@ -19,15 +19,32 @@ package com.xebisco.yield.test;
 import com.xebisco.yield.*;
 
 public class MyGame extends YldGame {
+    Texture texture;
     @Override
     public void start() {
-        Entity e = graphics.text("Hello, World");
-        e.center();
-        e.addComponent(new PhysicsBody());
+        texture = new Texture("com/xebisco/yield/assets/yieldlogo.png", TexType.SIMULATED);
+        loadTexture(texture);
+        texture.setFilter(p -> {
+            p.getColor().setR(0);
+            p.setTextureColor(p.getColor());
+        });
+        texture.processFilters();
+        texture.updatePixels();
+        texture.setFilter(p -> {
+            p.setLocation(p.getLocation().sum(10));
+            p.setTextureLocation(p.getLocation());
+            p.setTextureColor(p.getColor());
+        });
+        graphics.img(texture).center();
+    }
+
+    @Override
+    public void update(float delta) {
+        texture.processFilters();
+        Yld.log(time.getFps());
     }
 
     public static void main(String[] args) {
-        Yld.debug = true;
         GameConfiguration config = new GameConfiguration();
         Ini.file(new RelativeFile("com/xebisco/yield/test/assets/game.ini"), config);
         launch(new MyGame(), config);
