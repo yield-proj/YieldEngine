@@ -71,6 +71,10 @@ public class YldScene extends YldB {
 
     }
 
+    public void afterRender(float delta) {
+
+    }
+
     @Deprecated
     public void exit() {
 

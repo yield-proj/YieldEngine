@@ -17,8 +17,10 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.engine.Engine;
+import com.xebisco.yield.engine.EngineStop;
 import com.xebisco.yield.engine.GameHandler;
 import com.xebisco.yield.engine.YldEngineAction;
+import com.xebisco.yield.exceptions.MissingWindowPrintException;
 import com.xebisco.yield.systems.MiddlePointSystem;
 import com.xebisco.yield.systems.PhysicsSystem;
 import com.xebisco.yield.systems.YldTimeSystem;
@@ -279,6 +281,26 @@ public class YldGame extends YldScene {
         return window;
     }
 
+    public final Engine getEngine(MultiThread multiThread, EngineStop engineStop) {
+        if (multiThread == MultiThread.DEFAULT)
+        {
+            return getHandler().getDefaultConcurrentEngine();
+        }
+        else if (multiThread == MultiThread.ON_GAME_THREAD)
+        {
+            return getHandler();
+        }
+        else if (multiThread == MultiThread.EXCLUSIVE)
+        {
+            Engine engine = new Engine(null);
+            engine.getThread().start();
+            engine.setStop(engineStop);
+            return engine;
+        }
+        Yld.throwException(new IllegalArgumentException(multiThread.name()));
+        return null;
+    }
+
     public void setWindow(SampleWindow window) {
         this.window = window;
     }
@@ -305,6 +327,14 @@ public class YldGame extends YldScene {
         handler.getRenderMaster().loadTexture(texture);
         texture.onLoad();
         return texture;
+    }
+
+    public Texture print(Vector2 pos, Vector2 size) {
+        if(getHandler().getWindowPrint() == null)
+            Yld.throwException(new MissingWindowPrintException());
+        Texture tex = getHandler().getWindowPrint().print(pos, size);
+        tex.onLoad();
+        return tex;
     }
 
     public Texture duplicateTexture(Texture texture) {

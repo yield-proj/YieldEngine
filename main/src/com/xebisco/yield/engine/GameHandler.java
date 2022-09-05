@@ -22,6 +22,7 @@ import com.xebisco.yield.exceptions.MissingRenderMasterException;
 import com.xebisco.yield.exceptions.YieldEngineException;
 import com.xebisco.yield.render.ExceptionThrower;
 import com.xebisco.yield.render.RenderMaster;
+import com.xebisco.yield.render.WindowPrint;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -30,6 +31,7 @@ public class GameHandler extends Engine {
     private SampleGraphics sampleGraphics;
     private RenderMaster renderMaster;
     private static RenderMaster sampleRenderMaster;
+    private WindowPrint windowPrint;
     private Engine defaultConcurrentEngine;
 
     private int framesToGarbageCollectionCount;
@@ -59,6 +61,8 @@ public class GameHandler extends Engine {
         } else {
             renderMaster = game.getConfiguration().renderMaster;
         }
+        if(renderMaster instanceof WindowPrint)
+            windowPrint = (WindowPrint) renderMaster;
         sampleGraphics = renderMaster.initGraphics();
         if(renderMaster instanceof ExceptionThrower) {
             if(Yld.getExceptionThrower() == null)
@@ -85,6 +89,7 @@ public class GameHandler extends Engine {
         if (renderMaster.canStart())
             game.updateScene(delta, sampleGraphics);
         renderMaster.frameEnd();
+        game.afterRender(delta);
         if(game.getConfiguration().framesToGarbageCollection >= 0) {
             framesToGarbageCollectionCount++;
             if(framesToGarbageCollectionCount - game.getConfiguration().framesToGarbageCollection >= 0) {
@@ -136,5 +141,29 @@ public class GameHandler extends Engine {
 
     public void setCanRenderNext(boolean canRenderNext) {
         this.canRenderNext = canRenderNext;
+    }
+
+    public WindowPrint getWindowPrint() {
+        return windowPrint;
+    }
+
+    public void setWindowPrint(WindowPrint windowPrint) {
+        this.windowPrint = windowPrint;
+    }
+
+    public int getFramesToGarbageCollectionCount() {
+        return framesToGarbageCollectionCount;
+    }
+
+    public void setFramesToGarbageCollectionCount(int framesToGarbageCollectionCount) {
+        this.framesToGarbageCollectionCount = framesToGarbageCollectionCount;
+    }
+
+    public boolean isZeroDelta() {
+        return zeroDelta;
+    }
+
+    public void setZeroDelta(boolean zeroDelta) {
+        this.zeroDelta = zeroDelta;
     }
 }

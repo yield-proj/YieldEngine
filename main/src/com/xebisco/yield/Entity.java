@@ -18,13 +18,10 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.engine.Engine;
 import com.xebisco.yield.engine.YldEngineAction;
-import com.xebisco.yield.utils.YldAction;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * An Entity is a combination of Components and other Entities(called children), can contain game logic and be displayed on the screen.
@@ -455,9 +452,7 @@ public final class Entity implements Comparable<Entity> {
      */
     public Entity addChild(Entity e, YldB yldB, MultiThread multiThread) {
         e.setParent(this);
-        YldAction a = () -> {
-            children.add(e);
-        };
+        YldAction a = () -> children.add(e);
         if (yldB != null) {
             yldB.concurrent(a, multiThread);
         } else {
@@ -468,9 +463,7 @@ public final class Entity implements Comparable<Entity> {
 
     public Entity addChild(Entity e, Engine engine) {
         e.setParent(this);
-        YldAction a = () -> {
-            children.add(e);
-        };
+        YldAction a = () -> children.add(e);
         engine.getTodoList().add(new YldEngineAction(a, 0, false, Yld.RAND.nextLong()));
         return e;
     }

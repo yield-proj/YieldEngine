@@ -20,28 +20,39 @@ import com.xebisco.yield.*;
 
 public class MyGame extends YldGame {
     Texture texture;
+    int sclState;
+    Entity e;
+    Text text;
+
     @Override
     public void start() {
-        texture = new Texture("com/xebisco/yield/assets/yieldlogo.png", TexType.SIMULATED);
+        texture = new Texture("com/xebisco/yield/assets/yieldlogo.png");
         loadTexture(texture);
+        float xv = 1f / texture.getWidth(), yv = 1f / texture.getHeight();
         texture.setFilter(p -> {
-            p.getColor().setR(0);
-            p.setTextureColor(p.getColor());
+            p.setOutColor(p.getColor().darker((p.getIndexX() * xv + p.getIndexY() * yv) / 2f * (1 - (e.getSelfTransform().scale.x + 1.2f))));
+            p.setOutLocation(p.getLocation());
         });
-        texture.processFilters();
-        texture.updatePixels();
-        texture.setFilter(p -> {
-            p.setLocation(p.getLocation().sum(10));
-            p.setTextureLocation(p.getLocation());
-            p.setTextureColor(p.getColor());
+        e = graphics.img(texture);
+        e.center();
+        Entity t = instantiate(e -> {
+            e.addComponent(text = new Text());
+            e.setIndex(-1);
+            e.center();
+            e.getSelfTransform().position.y = 20;
         });
-        graphics.img(texture).center();
     }
 
     @Override
     public void update(float delta) {
+        text.setContents(String.format("%.0f", time.getFps()));
+        if (sclState == 0)
+            e.getSelfTransform().scale.x = Yld.cos(getFrames() / time.getTargetFPS());
+        if (e.getSelfTransform().scale.x > 1)
+            sclState = 0;
+        else if (e.getSelfTransform().scale.x < -1)
+            sclState = 1;
         texture.processFilters();
-        Yld.log(time.getFps());
     }
 
     public static void main(String[] args) {

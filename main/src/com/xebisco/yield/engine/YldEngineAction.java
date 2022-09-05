@@ -16,7 +16,7 @@
 
 package com.xebisco.yield.engine;
 
-import com.xebisco.yield.utils.YldAction;
+import com.xebisco.yield.YldAction;
 
 public class YldEngineAction
 {
@@ -24,7 +24,7 @@ public class YldEngineAction
     private int toExec;
     private final int initialToExec;
     private long id;
-    private final boolean repeat;
+    private boolean repeat;
 
     public YldEngineAction(YldAction action, int toExec, boolean repeat, long id)
     {
@@ -57,6 +57,10 @@ public class YldEngineAction
     public boolean isRepeat()
     {
         return repeat;
+    }
+
+    public void setRepeat(boolean repeat) {
+        this.repeat = repeat;
     }
 
     public long getId()

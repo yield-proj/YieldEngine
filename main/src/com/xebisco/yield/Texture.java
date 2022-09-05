@@ -72,14 +72,15 @@ public class Texture extends RelativeFile {
     }
 
     public void updatePixels() {
-        Color[][] colors = visualUtils.getTextureColors(this);
+        final Color[][] colors = visualUtils.getTextureColors(this);
         pixels = new Pixel[colors.length][colors[0].length];
+        final PixelGrid pixelGrid = new PixelGrid(pixels);
         for (int x = 0; x < colors.length; x++)
             for (int y = 0; y < colors[0].length; y++) {
-                Pixel pixel = new Pixel();
+                Pixel pixel = new Pixel(x, y, pixelGrid);
                 pixel.setColor(colors[x][y]);
-                pixel.setTextureColor(Colors.TRANSPARENT.get());
-                pixel.setTextureLocation(new Vector2(x, y));
+                pixel.setOutColor(Colors.TRANSPARENT.get());
+                pixel.setOutLocation(new Vector2(x, y));
                 pixel.setLocation(new Vector2(x, y));
                 pixels[x][y] = pixel;
             }
@@ -120,15 +121,15 @@ public class Texture extends RelativeFile {
             for (int y = 0; y < pixels[0].length; y++) {
                     Pixel pixel = pixels[x][y];
                     filter.process(pixel);
-                    while (pixel.getTextureLocation().x > width)
-                        pixel.getTextureLocation().x -= width + 1;
-                    while (pixel.getTextureLocation().x < 0)
-                        pixel.getTextureLocation().x += width + 1;
-                    while (pixel.getTextureLocation().y > height)
-                        pixel.getTextureLocation().y -= height + 1;
-                    while (pixel.getTextureLocation().y < 0)
-                        pixel.getTextureLocation().y += height + 1;
-                    setColor(pixel.getTextureColor(), pixel.getTextureLocation());
+                    while (pixel.getOutLocation().x > width)
+                        pixel.getOutLocation().x -= width + 1;
+                    while (pixel.getOutLocation().x < 0)
+                        pixel.getOutLocation().x += width + 1;
+                    while (pixel.getOutLocation().y > height)
+                        pixel.getOutLocation().y -= height + 1;
+                    while (pixel.getOutLocation().y < 0)
+                        pixel.getOutLocation().y += height + 1;
+                    setColor(pixel.getOutColor(), pixel.getOutLocation());
             }
         }
         //setColors(colors);

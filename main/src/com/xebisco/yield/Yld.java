@@ -17,7 +17,6 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.render.ExceptionThrower;
-import com.xebisco.yield.utils.YldAction;
 import org.jbox2d.common.Vec2;
 
 import java.lang.reflect.InvocationTargetException;
@@ -38,12 +37,12 @@ public final class Yld {
     /**
      * The version of the Yield Game Engine.
      */
-    public static final String VERSION = "4 - 1.2";
+    public static final String VERSION = "4 - 1.2.2";
     /**
      * All the Yield Game Engine messages.
      */
 
-    private static final long BUILD = 2020;
+    private static final long BUILD = 2021;
 
     public final static MathContext roundDownContext = new MathContext(2, RoundingMode.DOWN);
     public final static MathContext roundUpContext = new MathContext(2, RoundingMode.UP);
@@ -168,6 +167,21 @@ public final class Yld {
         if(value < 0)
             return -value;
         else return value;
+    }
+
+    public static float cos(float value) {
+        return (float) Math.cos(value);
+    }
+
+    public static int cos(int value) {
+        return (int) Math.cos(value);
+    }
+
+    public static long cos(long value) {
+        return (long) Math.cos(value);
+    }
+    public static double cos(double value) {
+        return Math.cos(value);
     }
 
     /**

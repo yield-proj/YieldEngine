@@ -19,7 +19,6 @@ package com.xebisco.yield;
 import com.xebisco.yield.engine.Engine;
 import com.xebisco.yield.engine.EngineStop;
 import com.xebisco.yield.engine.YldEngineAction;
-import com.xebisco.yield.utils.YldAction;
 
 /**
  * Sample methods for the majority of the Yield Game Engine classes.
@@ -59,15 +58,34 @@ public abstract class YldB
         {
             Engine engine = new Engine(null);
             engine.getThread().start();
-            engine.getTodoList().add(new YldEngineAction(action, 0, false, id));
             YldEngineAction action1 = new YldEngineAction(() ->
             {
+                action.onAction();
                 engine.setStop(EngineStop.INTERRUPT_ON_END);
                 engine.setRunning(false);
             }, 0, false, id);
             engine.getTodoList().add(action1);
         }
         return id;
+    }
+
+    public final void doWhen(YldAction action, Condition condition, MultiThread execAction, MultiThread checkCondition) {
+        Engine check = game.getEngine(checkCondition, EngineStop.INTERRUPT_ON_END), exec = game.getEngine(execAction, EngineStop.INTERRUPT_ON_END);
+        assert check != null;
+        assert exec != null;
+        long checkId = Yld.RAND.nextLong();
+        check.getTodoList().add(new YldEngineAction(() -> {
+            if(condition.is()) {
+                exec.getTodoList().add(new YldEngineAction(() -> {
+                    check.getTodoList().removeIf(a -> a.getId() == checkId);
+                    action.onAction();
+                }, 0, false, Yld.RAND.nextLong()));
+            }
+        }, 0, true, checkId));
+    }
+
+    public final void doWhen(YldAction action, Condition condition) {
+        doWhen(action, condition, MultiThread.ON_GAME_THREAD, MultiThread.DEFAULT);
     }
 
     public void log(Object x) {

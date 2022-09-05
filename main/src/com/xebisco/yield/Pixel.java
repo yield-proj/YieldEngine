@@ -24,8 +24,18 @@ package com.xebisco.yield;
 public class Pixel
 {
     private String cache;
-    private Vector2 textureLocation, location;
-    private Color textureColor, color;
+    private Vector2 outLocation, location;
+    private Color outColor, color;
+
+    private final int indexX, indexY;
+
+    private final PixelGrid pixelGrid;
+
+    public Pixel(int indexX, int indexY, PixelGrid pixelGrid) {
+        this.pixelGrid = pixelGrid;
+        this.indexX = indexX;
+        this.indexY = indexY;
+    }
 
     /**
      * Getter of the location variable.
@@ -45,20 +55,20 @@ public class Pixel
     }
 
     /**
-     * Getter of the textureColor variable.
-     * @return The textureColor variable.
+     * Getter of the outColor variable.
+     * @return The outColor variable.
      */
-    public Color getTextureColor()
+    public Color getOutColor()
     {
-        return textureColor;
+        return outColor;
     }
 
     /**
-     * Setter of the textureColor variable.
+     * Setter of the outColor variable.
      */
-    public void setTextureColor(Color textureColor)
+    public void setOutColor(Color outColor)
     {
-        this.textureColor = textureColor;
+        this.outColor = outColor;
     }
 
     public String getCache() {
@@ -77,11 +87,23 @@ public class Pixel
         this.color = color;
     }
 
-    public Vector2 getTextureLocation() {
-        return textureLocation;
+    public Vector2 getOutLocation() {
+        return outLocation;
     }
 
-    public void setTextureLocation(Vector2 textureLocation) {
-        this.textureLocation = textureLocation;
+    public void setOutLocation(Vector2 outLocation) {
+        this.outLocation = outLocation;
+    }
+
+    public int getIndexX() {
+        return indexX;
+    }
+
+    public int getIndexY() {
+        return indexY;
+    }
+
+    public PixelGrid getPixelGrid() {
+        return pixelGrid;
     }
 }
