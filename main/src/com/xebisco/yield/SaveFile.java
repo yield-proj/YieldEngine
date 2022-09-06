@@ -16,8 +16,9 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.RelativeFile;
-
+/**
+ * It's a subclass of RelativeFile that represents a save file
+ */
 public class SaveFile extends RelativeFile {
     public SaveFile(String relativePath) {
         super(relativePath + ".ylds");

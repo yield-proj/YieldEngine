@@ -22,11 +22,29 @@ import com.xebisco.yield.Yld;
 
 public class WindowConfiguration
 {
+    /**
+     * Window size.
+      */
     public int width = 1280, height = 720;
+    /**
+     * Standard position for the window.
+     */
     public WindowPos position = WindowPos.CENTER;
+    /**
+     * Delay frames in render.
+     */
     public float renderMod = 1;
+    /**
+     * Window title.
+     */
     public String title = "Yield " + Yld.VERSION;
+    /**
+     * Icon for the window.
+     */
     public Texture icon = new Texture("com/xebisco/yield/assets/icon.png");
+    /**
+     * Window configuration
+     */
     public boolean resizable = false, undecorated = false, fullscreen = false, alwaysOnTop = false, hideMouse = true;
 
     public enum WindowPos

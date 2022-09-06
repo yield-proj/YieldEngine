@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * If the user presses the escape key, exit the game.
+ */
 public class ESCExitSystem extends UpdateSystem {
 
     @Override

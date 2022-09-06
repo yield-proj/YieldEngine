@@ -27,8 +27,16 @@ public abstract class YldSystem {
      */
     protected YldScene scene;
 
+    /**
+     *
+     * @param e The entity.
+     * @param delta The time in seconds since the last frame.
+     */
     public abstract void receive(Entity e, float delta);
 
+    /**
+     * This function is called when the system is destroyed.
+     */
     public abstract void destroy();
 
     /**

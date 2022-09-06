@@ -26,6 +26,9 @@ import com.xebisco.yield.render.WindowPrint;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * It's the class that handles the game loop
+ */
 public class GameHandler extends Engine {
     private final YldGame game;
     private SampleGraphics sampleGraphics;
@@ -99,66 +102,146 @@ public class GameHandler extends Engine {
         }
     }
 
+    /**
+     * This function returns the game object.
+     *
+     * @return The game object.
+     */
     public YldGame getGame() {
         return game;
     }
 
+    /**
+     * This function returns the default concurrent engine.
+     *
+     * @return The default concurrent engine.
+     */
     public Engine getDefaultConcurrentEngine() {
         return defaultConcurrentEngine;
     }
 
+    /**
+     * Sets the default concurrent engine
+     *
+     * @param defaultConcurrentEngine The default engine to use for concurrent requests.
+     */
     public void setDefaultConcurrentEngine(Engine defaultConcurrentEngine) {
         this.defaultConcurrentEngine = defaultConcurrentEngine;
     }
 
+    /**
+     * This function returns the renderMaster object.
+     *
+     * @return The renderMaster object.
+     */
     public RenderMaster getRenderMaster() {
         return renderMaster;
     }
 
+    /**
+     * This function sets the renderMaster variable to the renderMaster parameter.
+     *
+     * @param renderMaster The RenderMaster object that will be used to render the game.
+     */
     public void setRenderMaster(RenderMaster renderMaster) {
         this.renderMaster = renderMaster;
     }
 
+    /**
+     * This function returns the sampleGraphics object.
+     *
+     * @return The sampleGraphics object.
+     */
     public SampleGraphics getSampleGraphics() {
         return sampleGraphics;
     }
 
+    /**
+     * This function sets the sampleGraphics variable to the sampleGraphics parameter.
+     *
+     * @param sampleGraphics The SampleGraphics object that will be used to draw the graphics.
+     */
     public void setSampleGraphics(SampleGraphics sampleGraphics) {
         this.sampleGraphics = sampleGraphics;
     }
 
+    /**
+     * This function returns the sampleRenderMaster variable.
+     *
+     * @return The sampleRenderMaster object.
+     */
     public static RenderMaster getSampleRenderMaster() {
         return sampleRenderMaster;
     }
 
+    /**
+     * It sets the sampleRenderMaster to the sampleRenderMaster that is passed in
+     *
+     * @param sampleRenderMaster The sample render master.
+     */
     public static void setSampleRenderMaster(RenderMaster sampleRenderMaster) {
         GameHandler.sampleRenderMaster = sampleRenderMaster;
     }
 
+    /**
+     * > Returns whether the next frame can be rendered
+     *
+     * @return The value of the canRenderNext variable.
+     */
     public boolean isCanRenderNext() {
         return canRenderNext;
     }
 
+    /**
+     * This function sets the value of the canRenderNext variable to the value of the canRenderNext parameter.
+     *
+     * @param canRenderNext This is a boolean that tells the renderer whether it can render the next frame.
+     */
     public void setCanRenderNext(boolean canRenderNext) {
         this.canRenderNext = canRenderNext;
     }
 
+    /**
+     * This function returns the windowPrint object.
+     *
+     * @return The windowPrint object.
+     */
     public WindowPrint getWindowPrint() {
         return windowPrint;
     }
 
+    /**
+     * This function sets the windowPrint variable to the windowPrint parameter.
+     *
+     * @param windowPrint The WindowPrint object that will be used to print the window.
+     */
     public void setWindowPrint(WindowPrint windowPrint) {
         this.windowPrint = windowPrint;
     }
 
+    /**
+     * Returns the number of frames to garbage collection count.
+     *
+     * @return The number of frames until garbage collection.
+     */
     public int getFramesToGarbageCollectionCount() {
         return framesToGarbageCollectionCount;
     }
 
+    /**
+     * This function sets the number of frames to garbage collection count
+     *
+     * @param framesToGarbageCollectionCount The number of frames to wait before garbage collection.
+     */
     public void setFramesToGarbageCollectionCount(int framesToGarbageCollectionCount) {
         this.framesToGarbageCollectionCount = framesToGarbageCollectionCount;
     }
 
+    /**
+     * Returns true if the delta is zero
+     *
+     * @return The boolean value of the variable zeroDelta.
+     */
     public boolean isZeroDelta() {
         return zeroDelta;
     }

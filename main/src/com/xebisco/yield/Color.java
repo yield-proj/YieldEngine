@@ -54,22 +54,50 @@ public class Color {
         this.a = Yld.clamp(a, 0, 1);
     }
 
+    /**
+     * Invert the color by subtracting each component from 1.
+     *
+     * @return A new Color object with the inverted values of the original Color object.
+     */
     public Color invert() {
         return new Color(1 - r, 1 - g, 1 - b, a);
     }
 
+    /**
+     * Returns a new color with the same hue and saturation, but with a brighter value.
+     *
+     * @param value The amount to brighten the color by.
+     * @return A new color with the same alpha value but with the red, green, and blue values increased by the value
+     * parameter.
+     */
     public Color brighter(float value) {
         return new Color(r + value, g + value, b + value, a);
     }
 
+    /**
+     * If the color is already black, return black.
+     *
+     * @param value The amount to brighten or darken the color.
+     * @return A new Color object with the same RGB values as the original, but with the brightness adjusted by the value.
+     */
     public Color darker(float value) {
         return brighter(-value);
     }
 
+    /**
+     * Returns a new Color object that is a darker version of this Color object.
+     *
+     * @return A new Color object with the same RGB values as the original, but with the brightness reduced by 20%.
+     */
     public Color darker() {
         return darker(.2f);
     }
 
+    /**
+     * Returns a new Color object that is a lighter version of this Color object.
+     *
+     * @return A new Color object with the same RGB values as the original, but with the brightness increased by 20%.
+     */
     public Color brighter() {
         return brighter(.2f);
     }
@@ -138,6 +166,11 @@ public class Color {
         this.a = Yld.clamp(a, 0f, 1f);
     }
 
+    /**
+     * It converts the RGB values of a color to a hexadecimal value, then converts that hexadecimal value to an integer
+     *
+     * @return The RGB value of the color.
+     */
     public int getRGB() {
         String hex = String.format("%02X%02X%02X", (int) (r * 255), (int) (g * 255), (int) (b * 255));
         return Integer.parseInt(hex, 16);
@@ -152,6 +185,11 @@ public class Color {
         return Float.compare(color.r, r) == 0 && Float.compare(color.g, g) == 0 && Float.compare(color.b, b) == 0 && Float.compare(color.a, a) == 0;
     }
 
+    /**
+     * This function returns a new Color object with the same RGB and alpha values as this Color object.
+     *
+     * @return A new Color object with the same RGB and alpha values as the original.
+     */
     public Color get() {
         return new Color(getRGB(), getA());
     }

@@ -16,13 +16,19 @@
 
 package com.xebisco.yield;
 
-/**
- * @since 4-1.2
- * @author Xebisco
- */
 public interface SampleWindow {
 
+    /**
+     * Returns the width of the window.
+     *
+     * @return The width of the window.
+     */
     int getWidth();
+    /**
+     * Returns the height of the window.
+     *
+     * @return The height of the window.
+     */
     int getHeight();
 
 }

@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * It's a Vector2 from a module and an angle.
+ */
 public class Vector extends Vector2 {
 
     private final float module, angle;
@@ -30,10 +33,20 @@ public class Vector extends Vector2 {
         y = (float) -Math.sin(rad) * module;
     }
 
+    /**
+     * This function returns the module of the vector.
+     *
+     * @return The module of the vector.
+     */
     public float getModule() {
         return module;
     }
 
+    /**
+     * This function returns the angle of the object.
+     *
+     * @return The angle of the object.
+     */
     public float getAngle() {
         return angle;
     }

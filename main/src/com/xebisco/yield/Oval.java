@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * It's a shape that draws an oval
+ */
 public class Oval extends Shape {
     @Override
     public void render(SampleGraphics graphics) {

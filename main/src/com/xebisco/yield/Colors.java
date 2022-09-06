@@ -37,6 +37,11 @@ public class Colors {
             BROWN = new ImmutableColor(.5f, .3f, .1f),
             TRANSPARENT = new ImmutableColor(0, 0, 0, 0);
 
+    /**
+     * Returns a random color.
+     *
+     * @return A new color object with random values for red, green, and blue.
+     */
     public static Color random() {
         return new Color(Yld.RAND.nextInt(255) / 255f, Yld.RAND.nextInt(255) / 255f, Yld.RAND.nextInt(255) / 255f, 1);
     }

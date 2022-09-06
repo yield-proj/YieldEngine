@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * It's a shape that can't be filled.
+ */
 public abstract class NonFillShape extends SimpleRenderable implements Spacial {
     private Vector2 size = new Vector2(64, 64);
 
@@ -34,38 +37,83 @@ public abstract class NonFillShape extends SimpleRenderable implements Spacial {
         drawPosition = drawPosition.sum(offset);
     }
 
+    /**
+     * Sets the size of the object to the size of the texture.
+     *
+     * @param texture The texture to use for the sprite.
+     */
     public void setSizeAsTexture(Texture texture) {
         size = texture.getSize().get();
     }
 
+    /**
+     * This function returns the size of the object.
+     *
+     * @return The size of the object.
+     */
     public Vector2 getSize() {
         return size;
     }
 
+    /**
+     * This function sets the size of the object to the size passed in.
+     *
+     * @param size The size of the object.
+     */
     public void setSize(Vector2 size) {
         this.size = size;
     }
 
+    /**
+     * This function returns the drawPosition variable.
+     *
+     * @return The drawPosition variable.
+     */
     public Vector2 getDrawPosition() {
         return drawPosition;
     }
 
+    /**
+     * This function sets the draw position of the object to the given draw position.
+     *
+     * @param drawPosition The position of the object on the screen.
+     */
     public void setDrawPosition(Vector2 drawPosition) {
         this.drawPosition = drawPosition;
     }
 
+    /**
+     * This function returns the size of the object when it is drawn on the screen.
+     *
+     * @return The drawSize variable is being returned.
+     */
     public Vector2 getDrawSize() {
         return drawSize;
     }
 
+    /**
+     * This function sets the draw size of the object to the given draw size.
+     *
+     * @param drawSize The size of the object to be drawn.
+     */
     public void setDrawSize(Vector2 drawSize) {
         this.drawSize = drawSize;
     }
 
+    /**
+     * This function returns the offset of the current object.
+     *
+     * @return The offset of the camera.
+     */
     public Vector2 getOffset() {
         return offset;
     }
 
+    /**
+     * This function sets the offset of the sprite.
+     *
+     * @param offset The offset of the sprite from the center of the entity.
+     */
     public void setOffset(Vector2 offset) {
         this.offset = offset;
     }

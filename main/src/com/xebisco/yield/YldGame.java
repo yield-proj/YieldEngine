@@ -83,10 +83,19 @@ public class YldGame extends YldScene {
         game.getHandler().getThread().start();
     }
 
+    /**
+     * Update the scene, and if it's the first frame, call the create() method on all systems and the scene itself.
+     * The first thing we do is check if the scene has been updated before. If it hasn't, we call the create() method on
+     * all systems and the scene itself. This is done by checking if the system implements the SystemCreateMethod
+     * interface, and if it does, we call the create() method on it.
+     *
+     * @param delta    The time in seconds since the last frame.
+     * @param graphics The graphics object that is used to draw the scene.
+     */
     public final void updateScene(float delta, SampleGraphics graphics) {
         if (scene.getFrames() == 0) {
-            for(YldSystem system : scene.getSystems()) {
-                if(system instanceof SystemCreateMethod) {
+            for (YldSystem system : scene.getSystems()) {
+                if (system instanceof SystemCreateMethod) {
                     ((SystemCreateMethod) system).create();
                 }
             }
@@ -101,23 +110,15 @@ public class YldGame extends YldScene {
         scene.process(delta, graphics);
     }
 
+    /**
+     * It creates an engine that processes the filters on a texture
+     *
+     * @param texture       The texture to process
+     * @param fps           The frames per second of the engine.
+     * @param stopAfterSame If true, the engine will stop after the texture is the same as the past colors.
+     * @return An engine that processes the filters on the texture.
+     */
     public Engine processFilters(Texture texture, int fps, boolean stopAfterSame) {
-        /*int enginesSize = division * 6;
-        Engine[] engines = new Engine[enginesSize];
-        Yld.log("w - " + texture.getWidth() + ", h - " + texture.getHeight());
-        int i = 0;
-        for (int x = 0; x < enginesSize / 3; x++) {
-            int xm = texture.getWidth() / (enginesSize / 3) * x;
-            for (int y = 0; y < 3; y++) {
-                int ym = texture.getHeight() / (enginesSize / (3 + division - 1)) * y;
-                Yld.log(x + ", " + y);
-                engines[i] = new Engine(null);
-                engines[i].getThread().create();
-                engines[i].setTargetTime(1000 / fps);
-                engines[i].getTodoList().add(new YldEngineAction(() -> texture.processFilters(xm, xm + texture.getWidth() / (enginesSize / 3) - 1, ym, ym + texture.getHeight() / (enginesSize / (3 + division - 1)) - 1), 0, true, Yld.RAND.nextLong()));
-                i++;
-            }
-        }*/
         Engine engine = new Engine(null);
         engine.setTargetTime(1000 / fps);
         engine.getTodoList().add(new YldEngineAction(texture::processFilters, 0, true, Yld.RAND.nextLong()));
@@ -136,18 +137,49 @@ public class YldGame extends YldScene {
         return engine;
     }
 
+    /**
+     * It overlays two textures on top of each other
+     *
+     * @param tex1 The first texture to be overlayed.
+     * @param tex2 The texture to overlay
+     * @param pos1 The position of the first texture.
+     * @param pos2 The position of the second texture.
+     * @return A texture.
+     */
     public Texture overlayTexture(Texture tex1, Texture tex2, Vector2 pos1, Vector2 pos2) {
         return handler.getRenderMaster().overlayTexture(tex1, tex2, pos1, pos2);
     }
 
+    /**
+     * It overlays two textures on top of each other
+     *
+     * @param tex1 The first texture to be overlayed.
+     * @param tex2 The texture to overlay
+     * @param pos  The position of the second texture.
+     * @return A texture.
+     */
     public Texture overlayTexture(Texture tex1, Texture tex2, Vector2 pos) {
         return overlayTexture(tex1, tex2, new Vector2(), pos);
     }
 
+    /**
+     * It overlays two textures on top of each other
+     *
+     * @param tex1 The first texture to be overlayed.
+     * @param tex2 The texture to overlay
+     * @return A texture.
+     */
     public Texture overlayTexture(Texture tex1, Texture tex2) {
         return overlayTexture(tex1, tex2, new Vector2(), new Vector2());
     }
 
+    /**
+     * It takes a 2D array of colors, and returns the average color of all the non-null, non-transparent colors in the
+     * array
+     *
+     * @param colors The array of colors to get the predominant color from.
+     * @return The average color of the 2D array.
+     */
     public Color predominantColor(Color[][] colors) {
         Color color = new Color(0, 0, 0);
         float r = 0, g = 0, b = 0;
@@ -169,12 +201,24 @@ public class YldGame extends YldScene {
         return color;
     }
 
+    /**
+     * It takes a texture and returns the predominant color of that texture
+     *
+     * @param texture The texture to get the predominant color from.
+     * @return The predominant color of the texture.
+     */
     public Color predominantColor(Texture texture) {
         return predominantColor(getTextureColors(texture));
     }
 
     private Color[][] processColorsSTD;
 
+    /**
+     * It checks if the colors of the texture are the same as the colors of the last texture processed
+     *
+     * @param tex The texture to check
+     * @return The boolean value of the checkTexToSTDColors method.
+     */
     private boolean checkTexToSTDColors(Texture tex) {
         boolean toReturn = false;
         if (processColorsSTD != null) {
@@ -184,18 +228,43 @@ public class YldGame extends YldScene {
         return toReturn;
     }
 
+    /**
+     * It compares two textures by comparing the colors of the pixels in the textures
+     *
+     * @param texture1 The first texture to compare.
+     * @param texture2 The texture to compare to.
+     * @return A boolean value.
+     */
     public boolean equalsTexture(Texture texture1, Texture texture2) {
         return equalsColors(getTextureColors(texture1), getTextureColors(texture2));
     }
 
+    /**
+     * It returns true if the two arrays are equal, and false otherwise
+     *
+     * @param colors1 The first color array to compare.
+     * @param colors2 The colors to compare to.
+     * @return The hash code of the array.
+     */
     public boolean equalsColors(Color[][] colors1, Color[][] colors2) {
         return Arrays.deepHashCode(colors1) == Arrays.deepHashCode(colors2);
     }
 
+    /**
+     * It creates an engine that processes the filters on a texture
+     *
+     * @param texture The texture to process
+     * @return An engine that processes the filters on the texture.
+     */
     public Engine processFilters(Texture texture) {
         return processFilters(texture, (int) time.getTargetFPS(), true);
     }
 
+    /**
+     * Returns true if the game is started, false otherwise.
+     *
+     * @return The boolean value of the variable started.
+     */
     public boolean isStarted() {
         return started;
     }
@@ -277,21 +346,21 @@ public class YldGame extends YldScene {
         scene.defaultSystems();
     }
 
+    /**
+     * This function returns the window object.
+     *
+     * @return The window object.
+     */
     public SampleWindow getWindow() {
         return window;
     }
 
     public final Engine getEngine(MultiThread multiThread, EngineStop engineStop) {
-        if (multiThread == MultiThread.DEFAULT)
-        {
+        if (multiThread == MultiThread.DEFAULT) {
             return getHandler().getDefaultConcurrentEngine();
-        }
-        else if (multiThread == MultiThread.ON_GAME_THREAD)
-        {
+        } else if (multiThread == MultiThread.ON_GAME_THREAD) {
             return getHandler();
-        }
-        else if (multiThread == MultiThread.EXCLUSIVE)
-        {
+        } else if (multiThread == MultiThread.EXCLUSIVE) {
             Engine engine = new Engine(null);
             engine.getThread().start();
             engine.setStop(engineStop);
@@ -301,6 +370,11 @@ public class YldGame extends YldScene {
         return null;
     }
 
+    /**
+     * This function sets the window variable to the window that is passed in.
+     *
+     * @param window The window value to set.
+     */
     public void setWindow(SampleWindow window) {
         this.window = window;
     }
@@ -323,72 +397,173 @@ public class YldGame extends YldScene {
         setScene(scene);
     }
 
+    /**
+     * It loads a texture into memory and then calls the onLoad() function of the texture
+     *
+     * @param texture The texture to load.
+     * @return The texture that was loaded.
+     */
     public Texture loadTexture(Texture texture) {
         handler.getRenderMaster().loadTexture(texture);
         texture.onLoad();
         return texture;
     }
 
+    /**
+     * It prints the window into a texture
+     *
+     * @param pos  The middle position of the crop of the window.
+     * @param size The size of the crop to be created.
+     * @return A texture.
+     */
     public Texture print(Vector2 pos, Vector2 size) {
-        if(getHandler().getWindowPrint() == null)
+        if (getHandler().getWindowPrint() == null)
             Yld.throwException(new MissingWindowPrintException());
         Texture tex = getHandler().getWindowPrint().print(pos, size);
         tex.onLoad();
         return tex;
     }
 
+    /**
+     * It duplicates a texture
+     *
+     * @param texture The texture to duplicate.
+     * @return A new texture object.
+     */
     public Texture duplicateTexture(Texture texture) {
         return game.getHandler().getRenderMaster().duplicate(texture);
     }
 
+    /**
+     * Clears the specified texture.
+     *
+     * @param texture The texture to clear.
+     * @return The texture that was cleared.
+     */
     public Texture clearTexture(Texture texture) {
         game.getHandler().getRenderMaster().clearTexture(texture);
         return texture;
     }
 
+    /**
+     * Unloads a texture from the memory.
+     *
+     * @param texture The texture to unload.
+     */
     public void unloadTexture(Texture texture) {
         handler.getRenderMaster().unloadTexture(texture);
     }
 
+    /**
+     * It cuts a texture into a new texture
+     *
+     * @param texture The texture to cut from
+     * @param pos     The position of the texture to cut from.
+     * @param size    The size of the texture you want to cut out.
+     * @return A Texture object.
+     */
     public Texture cutTexture(Texture texture, Vector2 pos, Vector2 size) {
         return handler.getRenderMaster().cutTexture(texture, (int) pos.x, (int) pos.y, (int) size.x, (int) size.y);
     }
 
+    /**
+     * This function takes a texture and returns a new texture that is the same as the original texture, but scaled to the
+     * specified size.
+     *
+     * @param texture The texture to scale
+     * @param size    The size of the texture to be scaled.
+     * @return A texture.
+     */
     public Texture scaleTexture(Texture texture, Vector2 size) {
         return handler.getRenderMaster().scaleTexture(texture, (int) size.x, (int) size.y);
     }
 
+    /**
+     * It returns a 2D array of colors that represent the texture
+     *
+     * @param texture The texture to get the colors from.
+     * @return A 2D array of colors.
+     */
     public Color[][] getTextureColors(Texture texture) {
         return handler.getRenderMaster().getTextureColors(texture);
     }
 
+    /**
+     * Sets the colors of the pixels of the given texture to the given colors.
+     *
+     * @param texture The texture to set the pixels of.
+     * @param colors  A 2D array of colors. The first dimension is the x coordinate, the second is the y coordinate.
+     */
     public void setTexturePixels(Texture texture, Color[][] colors) {
         handler.getRenderMaster().setTextureColors(texture, colors);
     }
 
+    /**
+     * Loads a font from a file, and if the file is marked to be flushed after load, flush it.
+     *
+     * @param fontName The name of the font.
+     * @param size The size of the font.
+     * @param format 0 = Bitmap, 1 = Vector.
+     * @param fontFile The file that contains the font.
+     */
     public void loadFont(String fontName, float size, int format, RelativeFile fontFile) {
         loadFont(fontName, size, size, format, fontFile);
-        fontFile.flush();
+        if (fontFile.isFlushAfterLoad())
+            fontFile.flush();
     }
 
+
+    /**
+     * Loads a font from a file, and if the file is marked to be flushed after load, flush it.
+     *
+     * @param fontName The name of the font.
+     * @param size The size of the font to be loaded.
+     * @param sizeToLoad The size of the font to load.
+     * @param format The format of the font file. This can be one of the following:
+     * @param fontFile The file to load the font from.
+     */
     public void loadFont(String fontName, float size, float sizeToLoad, int format, RelativeFile fontFile) {
         handler.getRenderMaster().loadFont(fontName, size, sizeToLoad, format, fontFile);
-        fontFile.flush();
+        if (fontFile.isFlushAfterLoad())
+            fontFile.flush();
     }
 
 
+    /**
+     * Loads a font with the given name, size, and style
+     *
+     * @param fontName The name of the font.
+     * @param size The size of the font.
+     * @param style Font.PLAIN, Font.BOLD, Font.ITALIC, Font.BOLD + Font.ITALIC
+     */
     public void loadFont(String fontName, float size, int style) {
         handler.getRenderMaster().loadFont(fontName, fontName, size, style);
     }
 
+    /**
+     * Unloads all textures from the memory.
+     */
     public void unloadAllTextures() {
         handler.getRenderMaster().unloadAllTextures();
     }
 
+    /**
+     * Loads a font with the given name, size, and style.
+     *
+     * @param fontName The name of the font.
+     * @param saveName The font name to be saved.
+     * @param size The size of the font.
+     * @param style Font.PLAIN, Font.BOLD, Font.ITALIC, Font.BOLD + Font.ITALIC
+     */
     public void loadFont(String saveName, String fontName, float size, int style) {
         handler.getRenderMaster().loadFont(saveName, fontName, size, style);
     }
 
+    /**
+     * Unloads a font from the font cache.
+     *
+     * @param fontName The name of the font to unload.
+     */
     public void unloadFont(String fontName) {
         handler.getRenderMaster().unloadFont(fontName);
     }
@@ -443,10 +618,20 @@ public class YldGame extends YldScene {
         this.configuration = configuration;
     }
 
+    /**
+     * This function sets the value of the variable started to the value of the parameter started.
+     *
+     * @param started This is a boolean value that indicates whether the game has started or not.
+     */
     public void setStarted(boolean started) {
         this.started = started;
     }
 
+    /**
+     * This function returns the yieldLogo variable.
+     *
+     * @return The yieldLogo variable is being returned.
+     */
     public Texture getYieldLogo() {
         return yieldLogo;
     }

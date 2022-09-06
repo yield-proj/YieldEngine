@@ -3,6 +3,9 @@ package com.xebisco.yield;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 
+/**
+ * It's a rectangle collider
+ */
 public class RectCollider extends Collider {
     private Vector2 size = new Vector2(32, 32);
 
@@ -20,10 +23,20 @@ public class RectCollider extends Collider {
         return shape;
     }
 
+    /**
+     * This function returns the size of the object.
+     *
+     * @return The size of the object.
+     */
     public Vector2 getSize() {
         return size;
     }
 
+    /**
+     * This function sets the size of the object to the size passed in.
+     *
+     * @param size The size of the object.
+     */
     public void setSize(Vector2 size) {
         this.size = size;
     }

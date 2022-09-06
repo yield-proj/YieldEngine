@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * It's a class that helps you create graphical objects
+ */
 public class YldGraphics {
     private Entity e;
     private Color color = Colors.CYAN;
@@ -321,26 +324,56 @@ public class YldGraphics {
         this.color = color;
     }
 
+    /**
+     * This function returns the value of the variable e.
+     *
+     * @return The entity e.
+     */
     public Entity getE() {
         return e;
     }
 
+    /**
+     * This function sets the value of the variable e to the value of the parameter e.
+     *
+     * @param e The entity value to set.
+     */
     public void setE(Entity e) {
         this.e = e;
     }
 
+    /**
+     * This function returns the font of the text.
+     *
+     * @return The font of the text.
+     */
     public String getFont() {
         return font;
     }
 
+    /**
+     * This function sets the font of the text.
+     *
+     * @param font The font to use for the text.
+     */
     public void setFont(String font) {
         this.font = font;
     }
 
+    /**
+     * Returns the value of the toConcurrent field.
+     *
+     * @return The toConcurrent variable is being returned.
+     */
     public YldB getToConcurrent() {
         return toConcurrent;
     }
 
+    /**
+     * This function sets the value of the variable `toConcurrent` to the value of the variable `toConcurrent`
+     *
+     * @param toConcurrent The YldB object that will be used to create the concurrent YldB object.
+     */
     public void setToConcurrent(YldB toConcurrent) {
         this.toConcurrent = toConcurrent;
     }

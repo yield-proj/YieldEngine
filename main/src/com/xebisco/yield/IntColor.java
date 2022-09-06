@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * It's a Color class that takes integer values for the red, green, blue, and alpha components
+ */
 public class IntColor extends Color
 {
     public IntColor(int r, int g, int b)

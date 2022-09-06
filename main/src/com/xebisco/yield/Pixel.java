@@ -17,9 +17,7 @@
 package com.xebisco.yield;
 
 /**
- * Simulation of a Pixel.
- * @since 4_1.1.2
- * @author Xebisco
+ * It's a class that represents a pixel
  */
 public class Pixel
 {
@@ -71,38 +69,83 @@ public class Pixel
         this.outColor = outColor;
     }
 
+    /**
+     * This function returns the cache
+     *
+     * @return The cache variable is being returned.
+     */
     public String getCache() {
         return cache;
     }
 
+    /**
+     * This function sets the cache variable to the value of the cache parameter.
+     *
+     * @param cache The cache value to set.
+     */
     public void setCache(String cache) {
         this.cache = cache;
     }
 
+    /**
+     * This function returns the color of the object.
+     *
+     * @return The color of the car.
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     * This function sets the color of the object to the color passed in as a parameter.
+     *
+     * @param color The color of the text.
+     */
     public void setColor(Color color) {
         this.color = color;
     }
 
+    /**
+     * This function returns the location of the outLocation variable
+     *
+     * @return The outLocation variable is being returned.
+     */
     public Vector2 getOutLocation() {
         return outLocation;
     }
 
+    /**
+     * This function sets the outLocation variable to the value of the outLocation parameter
+     *
+     * @param outLocation The location of the output.
+     */
     public void setOutLocation(Vector2 outLocation) {
         this.outLocation = outLocation;
     }
 
+    /**
+     * This function returns the indexX variable.
+     *
+     * @return The indexX variable is being returned.
+     */
     public int getIndexX() {
         return indexX;
     }
 
+    /**
+     * This function returns the indexY variable.
+     *
+     * @return The indexY variable is being returned.
+     */
     public int getIndexY() {
         return indexY;
     }
 
+    /**
+     * This function returns the pixel grid.
+     *
+     * @return The pixelGrid object.
+     */
     public PixelGrid getPixelGrid() {
         return pixelGrid;
     }

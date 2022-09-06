@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * It's a rectangle that can be drawn on the screen.
+ */
 public class Rectangle extends Shape
 {
     @Override

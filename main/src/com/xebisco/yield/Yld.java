@@ -47,10 +47,22 @@ public final class Yld {
     public final static MathContext roundDownContext = new MathContext(2, RoundingMode.DOWN);
     public final static MathContext roundUpContext = new MathContext(2, RoundingMode.UP);
 
+    /**
+     * Converts a Vector2 to a Box2D Vec2.
+     *
+     * @param vector2 The vector2 to convert to a Vec2.
+     * @return A new Vec2 object with the x and y values of the Vector2 object.
+     */
     public static Vec2 toVec2(Vector2 vector2) {
         return new Vec2(vector2.x, vector2.y);
     }
 
+    /**
+     * Converts a Box2D Vec2 to a Vector2.
+     *
+     * @param vector2 The vector2 to convert to a Vector2.
+     * @return A new Vector2 object.
+     */
     public static Vector2 toVector2(Vec2 vector2) {
         return new Vector2(vector2.x, vector2.y);
     }
@@ -83,6 +95,11 @@ public final class Yld {
         return (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
     }
 
+    /**
+     * If there's an exceptionThrower, throw the exception. Otherwise, print the stack trace
+     *
+     * @param e The exception to throw.
+     */
     public static void throwException(Exception e) {
         e.printStackTrace();
         if (exceptionThrower != null)
@@ -125,67 +142,148 @@ public final class Yld {
             action.onAction();
     }
 
+    /**
+     * If the value is greater than the max, return the max, otherwise return the greatest of the value and the min.
+     *
+     * @param value The value to clamp.
+     * @param min The minimum value that the returned value can be.
+     * @param max The maximum value that the returned value can be.
+     * @return The max value of the two values.
+     */
     public static int clamp(int value, int min, int max) {
         if (value > max) return max;
         return Math.max(value, min);
     }
 
+    /**
+     * If the value is greater than the max, return the max, otherwise return the greatest of the value and the min.
+     *
+     * @param value The value to clamp.
+     * @param min The minimum value that the returned value can be.
+     * @param max The maximum value that the returned value can be.
+     * @return The max value of the two values.
+     */
     public static long clamp(long value, long min, long max) {
         if (value > max) return max;
         return Math.max(value, min);
     }
 
+    /**
+     * If the value is greater than the max, return the max, otherwise return the greatest of the value and the min.
+     *
+     * @param value The value to clamp.
+     * @param min The minimum value that the returned value can be.
+     * @param max The maximum value that the returned value can be.
+     * @return The max value of the two values.
+     */
     public static double clamp(double value, double min, double max) {
         if (value > max) return max;
         return Math.max(value, min);
     }
 
+    /**
+     * If the value is greater than the max, return the max, otherwise return the greatest of the value and the min.
+     *
+     * @param value The value to clamp.
+     * @param min The minimum value that the returned value can be.
+     * @param max The maximum value that the returned value can be.
+     * @return The max value of the two values.
+     */
     public static float clamp(float value, float min, float max) {
         if (value > max) return max;
         return Math.max(value, min);
     }
 
+    /**
+     * If the value is less than zero, return the negative of the value, otherwise return the value.
+     *
+     * @param value The value to be modified.
+     * @return The absolute value of the input.
+     */
     public static float mod(float value) {
         if(value < 0)
             return -value;
         else return value;
     }
 
+    /**
+     * If the value is less than zero, return the negative of the value, otherwise return the value.
+     *
+     * @param value The value to be modified.
+     * @return The absolute value of the input.
+     */
     public static int mod(int value) {
         if(value < 0)
             return -value;
         else return value;
     }
 
+    /**
+     * If the value is less than zero, return the negative of the value, otherwise return the value.
+     *
+     * @param value The value to be modified.
+     * @return The absolute value of the input.
+     */
     public static long mod(long value) {
         if(value < 0)
             return -value;
         else return value;
     }
 
+    /**
+     * If the value is less than zero, return the negative of the value, otherwise return the value.
+     *
+     * @param value The value to be modified.
+     * @return The absolute value of the input.
+     */
     public static double mod(double value) {
         if(value < 0)
             return -value;
         else return value;
     }
 
+    /**
+     * Returns the trigonometric cosine of an angle.
+     *
+     * @param value The value to calculate the cosine of.
+     * @return The cosine of the value.
+     */
     public static float cos(float value) {
         return (float) Math.cos(value);
     }
 
+    /**
+     * Returns the trigonometric cosine of an angle.
+     *
+     * @param value The value to calculate the cosine of.
+     * @return The cosine of the value.
+     */
     public static int cos(int value) {
         return (int) Math.cos(value);
     }
 
+    /**
+     * Returns the trigonometric cosine of an angle.
+     *
+     * @param value The value to calculate the cosine of.
+     * @return The cosine of the value.
+     */
     public static long cos(long value) {
         return (long) Math.cos(value);
     }
+
+    /**
+     * Returns the trigonometric cosine of an angle.
+     *
+     * @param value The value to calculate the cosine of.
+     * @return The cosine of the value.
+     */
     public static double cos(double value) {
         return Math.cos(value);
     }
 
     /**
-     * Logs a Object to the standard output.
+     * Logs an Object to the standard output.
      *
      * @param msg The message to be logged.
      */
@@ -200,14 +298,29 @@ public final class Yld {
         System.exit(0);
     }
 
+    /**
+     * This function returns an object that can throw exceptions.
+     *
+     * @return The exceptionThrower object.
+     */
     public static ExceptionThrower getExceptionThrower() {
         return exceptionThrower;
     }
 
+    /**
+     * Sets the ExceptionThrower that will be used to throw exceptions
+     *
+     * @param exceptionThrower This is the class that will be used to throw exceptions.
+     */
     public static void setExceptionThrower(ExceptionThrower exceptionThrower) {
         Yld.exceptionThrower = exceptionThrower;
     }
 
+    /**
+     * It loads a class from a string, instantiates it, and sets it as the exception thrower
+     *
+     * @param classPath The path to the class that implements the ExceptionThrower interface.
+     */
     public static void loadExceptionThrower(String classPath) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         setExceptionThrower((ExceptionThrower) Class.forName(classPath).getDeclaredConstructor().newInstance());
     }

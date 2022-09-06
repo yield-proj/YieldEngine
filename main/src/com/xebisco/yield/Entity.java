@@ -152,6 +152,12 @@ public final class Entity implements Comparable<Entity> {
         return component;
     }
 
+    /**
+     * > This function returns a list of components of the specified type
+     *
+     * @param type The type of component you want to get.
+     * @return A list of components of the specified type.
+     */
     public <T extends Component> List<T> getComponentList(Class<T> type) {
         List<T> components = new ArrayList<>();
         int i = 0;
@@ -313,6 +319,16 @@ public final class Entity implements Comparable<Entity> {
         return instantiate(prefab, yldB, null, multiThread);
     }
 
+    /**
+     * It creates an entity, sets its position, and then adds it to the children list.
+     *
+     * @param prefab The prefab to instantiate.
+     * @param yldB The YldB that contains concurrent information.
+     * @param pos The position of the entity.
+     * @param multiThread This is a boolean that determines whether the entity should be added to the scene in a
+     * separate thread.
+     * @return The entity that was just created.
+     */
     public Entity instantiate(Prefab prefab, YldB yldB, Vector2 pos, MultiThread multiThread) {
         String name = "Entity";
         if (prefab != null)
@@ -326,6 +342,14 @@ public final class Entity implements Comparable<Entity> {
         return addChild(entity, yldB, multiThread);
     }
 
+    /**
+     * It creates an entity, sets its position, and then adds it to the children list.
+     *
+     * @param prefab The prefab to instantiate.
+     * @param pos The position of the entity.
+     * @param engine The engine that will be used to create this entity.
+     * @return The entity that was just created.
+     */
     public Entity instantiate(Prefab prefab, Vector2 pos, Engine engine) {
         String name = "Entity";
         if (prefab != null)
@@ -339,6 +363,9 @@ public final class Entity implements Comparable<Entity> {
         return addChild(entity, engine);
     }
 
+    /**
+     * Sorts the children of this entity and calls 'sortChildren()' on all of his children.
+     */
     public void sortChildren() {
         try {
             Collections.sort(children);
@@ -365,10 +392,18 @@ public final class Entity implements Comparable<Entity> {
             }
             if (e != null)
                 e.sortChildren();
-            else Yld.log("AAAA");
         }
     }
 
+    /**
+     * This function creates a new entity from a prefab, and returns it.
+     * The first parameter is the prefab to instantiate. The second parameter is the YldB to instantiate the entity in. The
+     * third parameter is the MultiThread to use
+     *
+     * @param prefab The prefab to instantiate.
+     * @param yldB The YldB that contains concurrent information.
+     * @return An Entity
+     */
     public Entity instantiate(Prefab prefab, YldB yldB) {
         return instantiate(prefab, yldB, MultiThread.DEFAULT);
     }
@@ -605,14 +640,29 @@ public final class Entity implements Comparable<Entity> {
         return Integer.compare(o.getIndex(), index);
     }
 
+    /**
+     * This function sets the visibility of the object to the value of the parameter.
+     *
+     * @param visible This is a boolean value that determines whether the object is visible or not.
+     */
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
+    /**
+     * Returns true if the object is visible, false otherwise.
+     *
+     * @return The value of the variable visible.
+     */
     public boolean isVisible() {
         return visible;
     }
 
+    /**
+     * This function returns the transmitReturn ArrayList
+     *
+     * @return An ArrayList of Objects.
+     */
     public ArrayList<Object> getTransmitReturn() {
         return transmitReturn;
     }

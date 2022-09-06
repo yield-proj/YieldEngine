@@ -54,10 +54,20 @@ public class AudioClip extends RelativeFile {
         this.startPos = startPos;
     }
 
+    /**
+     * This function returns the cache
+     *
+     * @return The cache variable is being returned.
+     */
     public String getCache() {
         return cache;
     }
 
+    /**
+     * This function sets the cache variable to the value of the cache parameter.
+     *
+     * @param cache The cache value to set.
+     */
     public void setCache(String cache) {
         this.cache = cache;
     }

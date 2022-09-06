@@ -75,46 +75,100 @@ public abstract class Component extends YldB
     }
 
 
+    /**
+     * This function is called when this entity collides with another entity.
+     *
+     * @param colliding The entity that is colliding with this entity.
+     * @param collisionNormal The normal of the collision.
+     */
     public void onCollisionEnter(Entity colliding, Vector2 collisionNormal)
     {
 
     }
 
+    /**
+     * This function is called when this entity collides with another entity.
+     *
+     * @param colliding The entity that is colliding with this entity.
+     */
     public void onCollisionEnter(Entity colliding)
     {
 
     }
 
+    /**
+     * This function is called when the entity stops colliding with another entity
+     *
+     * @param colliding The entity that is colliding with this entity.
+     * @param collisionNormal The normal of the collision.
+     */
     public void onCollisionExit(Entity colliding, Vector2 collisionNormal)
     {
 
     }
 
+    /**
+     * This function is called when the entity stops colliding with another entity
+     *
+     * @param colliding The entity that is colliding with this entity.
+     */
     public void onCollisionExit(Entity colliding)
     {
 
     }
 
+    /**
+     * This function is called when two entities collide, but before the collision is resolved
+     *
+     * @param colliding The entity that is colliding with this entity.
+     * @param collisionNormal The normal of the collision.
+     */
     public void preSolveCollision(Entity colliding, Vector2 collisionNormal)
     {
 
     }
 
+    /**
+     * This function is called when two entities collide, but before the collision is resolved
+     *
+     * @param colliding The entity that is colliding with this entity.
+     */
     public void preSolveCollision(Entity colliding)
     {
 
     }
 
+    /**
+     * This function is called after the collision has been resolved
+     *
+     * @param colliding The entity that is colliding with this entity.
+     * @param collisionNormal The normal of the collision.
+     */
     public void postSolveCollision(Entity colliding, Vector2 collisionNormal)
     {
 
     }
 
+    /**
+     * This function is called after the collision has been resolved
+     *
+     * @param colliding The entity that is colliding with this entity.
+     */
     public void postSolveCollision(Entity colliding)
     {
 
     }
 
+    /**
+     * > This function returns a RayCast object that contains information about the first entity that was hit by a ray cast
+     * from point1 to point2
+     *
+     * @param requestEntity The entity that is requesting the raycast. This is used to determine if the raycast should hit
+     * the entity that is requesting it.
+     * @param point1 The starting point of the ray.
+     * @param point2 The end point of the ray.
+     * @return A RayCast object.
+     */
     public RayCast rayCast(Entity requestEntity, Vector2 point1, Vector2 point2) {
         return scene.rayCast(requestEntity, point1, point2);
     }
@@ -167,6 +221,12 @@ public abstract class Component extends YldB
         return instantiate((Prefab) null);
     }
 
+    /**
+     * Create a new instance of an entity as a child of this entity object at the given position.
+     *
+     * @param pos The position to instantiate the entity at.
+     * @return An entity.
+     */
     public Entity instantiate(Vector2 pos)
     {
         return entity.instantiate(null, null, pos);
@@ -428,16 +488,36 @@ public abstract class Component extends YldB
         entity.setTag(tag);
     }
 
+    /**
+     * Sets the visibility of the entity.
+     *
+     * @param visible Whether the entity is visible.
+     */
     public void setVisible(boolean visible) {
         entity.setVisible(visible);
     }
+    /**
+     * Returns true if the entity is visible.
+     *
+     * @return The visibility of the entity.
+     */
     public boolean isVisible() {
         return entity.isVisible();
     }
 
+    /**
+     * Sets the active state of the entity.
+     *
+     * @param active This is a boolean value that determines whether the entity is active or not.
+     */
     public void setActive(boolean active) {
         entity.setActive(active);
     }
+    /**
+     * Returns true if the entity is active
+     *
+     * @return A boolean value.
+     */
     public boolean isActive() {
         return entity.isActive();
     }

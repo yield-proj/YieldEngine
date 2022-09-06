@@ -20,6 +20,9 @@ import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 
+/**
+ * It's a collider that represents a line
+ */
 public class EdgeCollider extends Collider {
     private Vector2 point1, point2;
 
@@ -35,18 +38,38 @@ public class EdgeCollider extends Collider {
         return shape;
     }
 
+    /**
+     * This function returns the value of the point1 variable.
+     *
+     * @return The first point of the line.
+     */
     public Vector2 getPoint1() {
         return point1;
     }
 
+    /**
+     * This function sets the value of the point1 variable to the value of the point1 parameter.
+     *
+     * @param point1 The first point of the line.
+     */
     public void setPoint1(Vector2 point1) {
         this.point1 = point1;
     }
 
+    /**
+     * This function returns the value of the point2 variable.
+     *
+     * @return The second point of the line.
+     */
     public Vector2 getPoint2() {
         return point2;
     }
 
+    /**
+     * This function sets the value of the point2 variable to the value of the point2 parameter.
+     *
+     * @param point2 The second point of the line.
+     */
     public void setPoint2(Vector2 point2) {
         this.point2 = point2;
     }

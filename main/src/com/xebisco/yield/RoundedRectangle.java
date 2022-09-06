@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * It's a rectangle with rounded corners
+ */
 public class RoundedRectangle extends Shape {
 
     private Vector2 arc = new Vector2(5, 5);
@@ -32,10 +35,20 @@ public class RoundedRectangle extends Shape {
                 y >= drawPosition.y - drawSize.y / 2f && y <= drawPosition.y + drawSize.y / 2f;
     }
 
+    /**
+     * Returns the arc of the current object.
+     *
+     * @return The arc of the rounded rectangle.
+     */
     public Vector2 getArc() {
         return arc;
     }
 
+    /**
+     * This function sets the arc of the rounded rectangle.
+     *
+     * @param arc The arc of the rounded rectangle.
+     */
     public void setArc(Vector2 arc) {
         this.arc = arc;
     }

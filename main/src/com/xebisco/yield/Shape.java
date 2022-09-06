@@ -16,30 +16,32 @@
 
 package com.xebisco.yield;
 
+/**
+ * Shape is a NonFillShape that can be filled.
+ */
 public abstract class Shape extends NonFillShape {
     private boolean filled = true;
-    private Vector2 size = new Vector2(64, 64);
 
     @Override
     public void render(SampleGraphics graphics) {
         super.render(graphics);
     }
 
+    /**
+     * This function returns the value of the filled variable.
+     *
+     * @return The boolean value of the filled variable.
+     */
     public boolean isFilled() {
         return filled;
     }
 
+    /**
+     * This function sets the value of the filled variable to the value of the filled parameter.
+     *
+     * @param filled a boolean value that determines whether the shape is filled or not.
+     */
     public void setFilled(boolean filled) {
         this.filled = filled;
-    }
-
-    @Override
-    public Vector2 getSize() {
-        return size;
-    }
-
-    @Override
-    public void setSize(Vector2 size) {
-        this.size = size;
     }
 }

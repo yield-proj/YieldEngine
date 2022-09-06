@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * It draws a line from the top left corner of the shape to the bottom right corner of the shape
+ */
 public class Line extends NonFillShape {
     @Override
     public void render(SampleGraphics graphics) {

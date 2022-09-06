@@ -16,8 +16,9 @@
 
 package com.xebisco.yield;
 
-import org.jbox2d.collision.shapes.Shape;
-
+/**
+ * It creates a rectangle collider that is made of lines.
+ */
 public class RectOffEdges extends YldScript {
 
     private Vector2 size;
@@ -35,10 +36,20 @@ public class RectOffEdges extends YldScript {
         //destroy();
     }
 
+    /**
+     * This function returns the size of the object.
+     *
+     * @return The size of the object.
+     */
     public Vector2 getSize() {
         return size;
     }
 
+    /**
+     * This function sets the size of the object to the size passed in.
+     *
+     * @param size The size of the object.
+     */
     public void setSize(Vector2 size) {
         this.size = size;
     }

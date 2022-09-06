@@ -17,5 +17,10 @@
 package com.xebisco.yield;
 
 public interface YldFilter {
+    /**
+     * The process function takes a Pixel object as input and returns nothing.
+     *
+     * @param pixel The pixel that is being processed.
+     */
     void process(Pixel pixel);
 }

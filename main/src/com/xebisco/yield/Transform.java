@@ -20,11 +20,31 @@ import java.io.*;
 import java.util.Scanner;
 
 public class Transform extends Component {
-    public Vector2 position, scale, middle;
+    /**
+     * The center point of an entity.
+     */
+    public Vector2 position;
+    /**
+     * The scale of an entity. (normal is (1, 1)).
+     */
+    public Vector2 scale;
+    /**
+     * The rotation center of an entity
+     */
+    public Vector2 middle;
+    /**
+     * Rotation value in degrees of a entity.
+     */
     public float rotation = 0;
+    /**
+     * If the entity rotate from the middle or not.
+     */
     public boolean middleRotation;
     private Vector2 transformed;
 
+    /**
+     * Reset the transform to its default state.
+     */
     public void reset() {
         scale = new Vector2(1, 1);
         position = new Vector2();
@@ -37,6 +57,11 @@ public class Transform extends Component {
         reset();
     }
 
+    /**
+     * Adds the given vector to the position and transformed vectors.
+     *
+     * @param vector2 The vector to translate the position by.
+     */
     public void translate(Vector2 vector2) {
         position.x += vector2.x;
         position.y += vector2.y;
@@ -44,39 +69,81 @@ public class Transform extends Component {
         transformed.y += vector2.y;
     }
 
+    /**
+     * This function sets the position of the object to the position of the vector2.
+     *
+     * @param vector2 The position to go to.
+     */
     public void goTo(Vector2 vector2) {
         position.x = vector2.x;
         position.y = vector2.y;
     }
 
+    /**
+     * This function adds the x and y values of the vector2 parameter to the x and y values of the scale variable.
+     *
+     * @param vector2 The vector to scale the object by.
+     */
     public void scale(Vector2 vector2) {
         scale.x += vector2.x;
         scale.y += vector2.y;
     }
 
+    /**
+     * Translate the object by the given vector.
+     *
+     * @param x The x-coordinate of the translation.
+     * @param y The y-coordinate of the translation.
+     */
     public void translate(float x, float y) {
         translate(new Vector2(x, y));
     }
 
+    /**
+     * This function takes in a Vector2 and calls the goTo function that takes in two floats.
+     *
+     * @param x The x coordinate of the destination.
+     * @param y The y coordinate of the destination.
+     */
     public void goTo(float x, float y) {
         goTo(new Vector2(x, y));
     }
 
+    /**
+     * Scale the object by the given amount.
+     *
+     * @param x The x-axis scale factor.
+     * @param y The y-axis scale factor.
+     */
     public void scale(float x, float y) {
         scale(new Vector2(x, y));
     }
 
+    /**
+     * This function scales the entity by the given value.
+     *
+     * @param value The value to scale the entity by.
+     */
     public void scale(float value) {
         scale(value, value);
     }
 
+    /**
+     * Rotate() adds the parameter to the rotation variable.
+     *
+     * @param degrees The amount of degrees to rotate the entity.
+     */
     public void rotate(float degrees) {
         rotation += degrees;
     }
 
+    /**
+     * Read the file, and then process the file. Applying its value to the current Transform object.
+     *
+     * @param save The TransformSave object that was passed to the load method.
+     */
     public void load(TransformSave save) {
         try {
-            // Reading the file.
             Scanner sc = new Scanner(save.getInputStream());
             StringBuilder contents = new StringBuilder();
             while (sc.hasNextLine()) {
@@ -88,6 +155,12 @@ public class Transform extends Component {
         }
     }
 
+    /**
+     * It takes the position, scale, and rotation of the object and converts it into a string that can be saved to a file.
+     *
+     * @param saveFile The save file that the object is being saved to.
+     * @return A string of the transform's position, scale, and rotation.
+     */
     public String save(TransformSave saveFile) {
         PrintWriter writer;
         String toPrint = "";
@@ -103,6 +176,11 @@ public class Transform extends Component {
         return toPrint;
     }
 
+    /**
+     * It takes a string, and apply its values to the current Transform object.
+     *
+     * @param saveContents The string that is passed to the method.
+     */
     private void processSave(String saveContents) {
         String[] saveC = saveContents.split(":");
         StringBuilder chords = new StringBuilder();
@@ -141,6 +219,11 @@ public class Transform extends Component {
         }
     }
 
+    /**
+     * This function returns a copy of the Transform object.
+     *
+     * @return A copy of the transform object.
+     */
     public Transform get() {
         Transform t = new Transform();
         t.position = position.get();
@@ -166,6 +249,11 @@ public class Transform extends Component {
         toSet.transformed = transform.transformed.get();
     }
 
+    /**
+     * This function returns the transformed vector.
+     *
+     * @return The transformed vector.
+     */
     public Vector2 getTransformed() {
         return transformed;
     }

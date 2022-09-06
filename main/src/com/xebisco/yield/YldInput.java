@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * It's a class that handles input
+ */
 public class YldInput {
     private final YldGame game;
     private final Set<Integer> pressing = new HashSet<>();
@@ -50,12 +53,24 @@ public class YldInput {
         addAxis("Fire2", null, Key.SHIFT);
     }
 
+    /**
+     * If the key is null, return false. Otherwise, return whether the key is being pressed.
+     *
+     * @param key The key you want to check if it's pressed.
+     * @return A boolean value.
+     */
     public boolean isPressed(Integer key) {
         if (key == null)
             return false;
         return game.getHandler().getRenderMaster().pressing().contains(key);
     }
 
+    /**
+     * If the key is being pressed, and it wasn't pressed last frame, then return true
+     *
+     * @param key The key you want to check.
+     * @return A boolean value.
+     */
     public boolean isJustPressed(int key) {
         boolean pressing = game.getHandler().getRenderMaster().pressing().contains(key);
         if (pressing) {
@@ -69,20 +84,45 @@ public class YldInput {
         return false;
     }
 
+    /**
+     * Is the pointer touching the spacial?
+     * The function isTouching() takes a Spacial as a parameter. It then returns a boolean value. The boolean value is true
+     * if the pointer is touching the spacial, and false if it is not.
+     *
+     * @param spacial The spacial you want to check if the pointer is touching.
+     * @return A boolean value.
+     */
     public boolean isTouching(Spacial spacial) {
         return spacial.colliding(getMouse().x + game.getScene().getView().getTransform().position.x + game.getScene().getView().getPosition().x, getMouse().y + game.getScene().getView().getTransform().position.y + game.getScene().getView().getPosition().y);
     }
 
+    /**
+     * Get the mouse position and return it as a Vector2.
+     *
+     * @return The mouse position.
+     */
     public Vector2 getMouse() {
         mouse.x = game.getHandler().getRenderMaster().mouseX();
         mouse.y = game.getHandler().getRenderMaster().mouseY();
         return mouse;
     }
 
+    /**
+     * Returns a set of integers representing the keys that are currently being pressed.
+     *
+     * @return A set of integers.
+     */
     public Set<Integer> getPressing() {
         return pressing;
     }
 
+    /**
+     * If the primary key is pressed, return -1. If the secondary key is pressed, return 1. If neither are pressed, return
+     * 0
+     *
+     * @param axisName The name of the axis you want to get the value of.
+     * @return A float value.
+     */
     public float getAxis(String axisName) {
         float value = 0;
         YldPair<YldPair<Integer, Integer>, YldPair<Integer, Integer>> axisPair = axis.get(axisName);
@@ -95,22 +135,57 @@ public class YldInput {
         return value;
     }
 
+    /**
+     * Add an axis to the list of axes.
+     * The first parameter is the name of the axis. The next four parameters are the primary and secondary keys for the
+     * axis.
+     *
+     * @param name The name of the axis.
+     * @param primaryKey The key that is used to move the axis in the negative direction.
+     * @param altPrimaryKey The key that is used when the primary key is not pressed.
+     * @param secondaryKey The key that is used to move the axis in the positive direction.
+     * @param altSecondaryKey The key that is used when the secondary key is not pressed.
+     */
     public void addAxis(String name, Integer primaryKey, Integer altPrimaryKey, Integer secondaryKey, Integer altSecondaryKey) {
         axis.put(name, new YldPair<>(new YldPair<>(primaryKey, altPrimaryKey), new YldPair<>(secondaryKey, altSecondaryKey)));
     }
 
+    /**
+     * Add an axis to the list of axes.
+     * The first parameter is the name of the axis. The next two parameters are the primary and secondary keys for the
+     * axis.
+     *
+     * @param name The name of the axis.
+     * @param primaryKey The key that is used to move the axis in the negative direction.
+     * @param secondaryKey The key that is used to move the axis in the positive direction.
+     */
     public void addAxis(String name, Integer primaryKey, Integer secondaryKey) {
         addAxis(name, primaryKey, null, secondaryKey, null);
     }
 
+    /**
+     * Getter for the axes list.
+     *
+     * @return A HashMap of String, YldPair<YldPair<Integer, Integer>, YldPair<Integer, Integer>>
+     */
     public HashMap<String, YldPair<YldPair<Integer, Integer>, YldPair<Integer, Integer>>> getAxis() {
         return axis;
     }
 
+    /**
+     * This function returns the game object.
+     *
+     * @return The game object.
+     */
     public YldGame getGame() {
         return game;
     }
 
+    /**
+     * Returns the set of pointers.
+     *
+     * @return A set of YldPair<Float, Float> objects.
+     */
     public Set<YldPair<Float, Float>> getPointers() {
         return pointers;
     }

@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * A Sprite is a NonFillShape that renders a texture
+ */
 public class Sprite extends NonFillShape {
 
     private boolean smartRender = true;
@@ -56,10 +59,20 @@ public class Sprite extends NonFillShape {
                 y >= t.position.y - getSize().y * t.scale.y / 2f && y <= t.position.y + getSize().y * t.scale.y / 2f;
     }
 
+    /**
+     * > Returns whether the smart render feature is enabled
+     *
+     * @return The value of the smartRender variable.
+     */
     public boolean isSmartRender() {
         return smartRender;
     }
 
+    /**
+     * > Sets the smartRender property
+     *
+     * @param smartRender The smartRender value to set.
+     */
     public void setSmartRender(boolean smartRender) {
         this.smartRender = smartRender;
     }

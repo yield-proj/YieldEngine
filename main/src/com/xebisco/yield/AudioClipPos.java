@@ -17,7 +17,7 @@
 package com.xebisco.yield;
 
 /**
- * This class servers the purpose of giving a time position to an audio clip in a audio player.
+ * This class servers the purpose of giving a time position to an audio clip in an audio player.
  */
 public class AudioClipPos
 {

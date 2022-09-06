@@ -19,8 +19,9 @@ package com.xebisco.yield;
 import java.util.Objects;
 
 /**
- * @since 4-1.2
+ * It's a generic class that holds two objects of any type
  * @author Xebisco
+ * @since 4-1.2
  */
 public class YldPair<F, S> {
     private F first;
@@ -52,18 +53,38 @@ public class YldPair<F, S> {
         return Objects.hash(first, second);
     }
 
+    /**
+     * Returns the first element of the pair.
+     *
+     * @return The first element of the pair.
+     */
     public F getFirst() {
         return first;
     }
 
+    /**
+     * This function sets the first element of the pair to the value of the first parameter.
+     *
+     * @param first The first element of the pair.
+     */
     public void setFirst(F first) {
         this.first = first;
     }
 
+    /**
+     * Returns the second element of the pair.
+     *
+     * @return The second element of the pair.
+     */
     public S getSecond() {
         return second;
     }
 
+    /**
+     * This function sets the second element of the pair to the value of the second parameter.
+     *
+     * @param second The second value of the pair.
+     */
     public void setSecond(S second) {
         this.second = second;
     }

@@ -18,6 +18,9 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.exceptions.ImmutableBreakException;
 
+/**
+ * It's a color that can't be changed.
+ */
 public class ImmutableColor extends Color {
     public ImmutableColor(int rgb) {
         super(rgb);

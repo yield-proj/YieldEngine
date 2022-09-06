@@ -17,5 +17,12 @@
 package com.xebisco.yield;
 
 public interface Spacial {
+    /**
+     * Returns true if the given point is inside the spacial.
+     *
+     * @param x The x coordinate of the point to check.
+     * @param y The y coordinate of the point to check.
+     * @return A boolean value.
+     */
     boolean colliding(float x, float y);
 }

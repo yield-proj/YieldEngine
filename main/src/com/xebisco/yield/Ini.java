@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 
+/**
+ * It reads an ini file and sets the values of the given object
+ */
 public class Ini {
 
     private final String[] contents;
@@ -99,14 +102,31 @@ public class Ini {
         }
     }
 
+    /**
+     * This function returns the ini file lines.
+     *
+     * @return The contents of the array.
+     */
     public String[] getContents() {
         return contents;
     }
 
+    /**
+     * This function returns an array of objects.
+     *
+     * @return The array of objects.
+     */
     public Object[] getObjects() {
         return objects;
     }
 
+    /**
+     * It reads a file and returns an Ini object
+     *
+     * @param file The file to read from.
+     * @param o The object that the ini file is being loaded into.
+     * @return A new Ini object
+     */
     public static Ini file(RelativeFile file, Object o) {
         StringBuilder stringBuilder = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {

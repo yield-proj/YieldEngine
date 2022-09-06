@@ -146,34 +146,74 @@ public class View
         return width;
     }
 
+    /**
+     * Returns the default transform.
+     *
+     * @return The defaultTransform variable is being returned.
+     */
     public static Transform getDefaultTransform() {
         return defaultTransform;
     }
 
+    /**
+     * Sets the default transform to be used by the view.
+     *
+     * @param defaultTransform The default transform to use for all views.
+     */
     public static void setDefaultTransform(Transform defaultTransform) {
         View.defaultTransform = defaultTransform;
     }
 
+    /**
+     * This function returns the transform of the object.
+     *
+     * @return The transform of the object.
+     */
     public Transform getTransform() {
         return transform;
     }
 
+    /**
+     * This function sets the transform of the object to the transform passed in.
+     *
+     * @param transform The transform of the object.
+     */
     public void setTransform(Transform transform) {
         this.transform = transform;
     }
 
+    /**
+     * This function returns the position of the view.
+     *
+     * @return The position of the view.
+     */
     public Vector2 getPosition() {
         return position;
     }
 
+    /**
+     * This function sets the position of the view to the position passed in as a parameter.
+     *
+     * @param position The position of the view.
+     */
     public void setPosition(Vector2 position) {
         this.position = position;
     }
 
+    /**
+     * This function returns the standard background color.
+     *
+     * @return The standardBgColor variable.
+     */
     public static Color getStandardBgColor() {
         return standardBgColor;
     }
 
+    /**
+     * This function sets the standard background color for all views.
+     *
+     * @param standardBgColor The background color of the view.
+     */
     public static void setStandardBgColor(Color standardBgColor) {
         View.standardBgColor = standardBgColor;
     }

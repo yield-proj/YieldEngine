@@ -21,15 +21,41 @@ import com.xebisco.yield.render.RenderMaster;
 
 /**
  * This is the standard configuration class used to launch YldGames, all the properties can be modified.
- * @since 4_alpha1
+ *
  * @author Xebisco
+ * @since 4_alpha1
  */
-public class GameConfiguration extends WindowConfiguration
-{
-    public int fps = 60, ppm = 16;
-    public boolean fpsLock = true;
-    public String appName, renderMasterName;
+public class GameConfiguration extends WindowConfiguration {
+    /**
+     * Frames per second for the game handler.
+     */
+    public int fps = 60;
+    /**
+     * Pixels per meter.
+     */
+    public int ppm = 16;
 
+    /**
+     * Fps lock for the game handler.
+     */
+    public boolean fpsLock = true;
+
+    /**
+     * App name for saving files.
+     */
+    public String appName;
+    /**
+     * A class path to a render master implementation.
+     */
+    public String renderMasterName;
+
+    /**
+     * A render master implementation.
+     */
     public RenderMaster renderMaster;
+
+    /**
+     * The number of frames before the garbage collector is called.
+     */
     public int framesToGarbageCollection = 300;
 }

@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * It's a 2D array of pixels that wraps around the edges
+ */
 public class PixelGrid {
     private final Pixel[][] pixels;
 
@@ -23,6 +26,14 @@ public class PixelGrid {
         this.pixels = pixels;
     }
 
+    /**
+     * If the x or y value is outside the bounds of the array, then subtract or add the length of the array until it is
+     * within the bounds.
+     *
+     * @param x The x coordinate of the pixel you want to get.
+     * @param y The y coordinate of the pixel
+     * @return A pixel from the array of pixels.
+     */
     public Pixel pixelFromIndex(int x, int y) {
         while (x > pixels.length - 1)
             x -= pixels.length;
@@ -35,16 +46,38 @@ public class PixelGrid {
         return pixels[x][y];
     }
 
+    /**
+     * Given a pixel index, return the pixel at that index.
+     *
+     * @param px The x coordinate of the pixel in the image.
+     * @param py The y coordinate of the pixel in the image
+     * @param x The x coordinate of the pixel to get.
+     * @param y The y coordinate of the pixel to get.
+     * @return A pixel from the image.
+     */
     public Pixel pixelFromIndex(int px, int py, int x, int y) {
         return pixelFromIndex(px + x, py + y);
     }
 
+    /**
+     * Given a pixel, return the pixel at the given x and y offset from that pixel.
+     *
+     * @param pixel The pixel to start from
+     * @param x The x index of the pixel
+     * @param y The y index of the pixel
+     * @return A pixel object.
+     */
     public Pixel pixelFromIndex(Pixel pixel, int x, int y) {
         return pixelFromIndex(pixel.getIndexX(), pixel.getIndexY(), x, y);
     }
 
 
 
+    /**
+     * This function returns the pixels array.
+     *
+     * @return The pixels array.
+     */
     public Pixel[][] getPixels() {
         return pixels;
     }

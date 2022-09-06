@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * It's a class that generates tiles
+ */
 public class TileGen {
 
     private Tile tile;
@@ -91,6 +94,12 @@ public class TileGen {
         this.layer = layer;
     }
 
+    /**
+     * If the tile is a mapped tile, then it will return a tile based on the surrounding tiles. If it's not a mapped tile,
+     * then it will return a random tile from the tiles array
+     *
+     * @return A tile.
+     */
     public Tile getTile() {
         Tile toReturn;
         if (mappedTiles == null) {
@@ -200,54 +209,120 @@ public class TileGen {
         return toReturn;
     }
 
+    /**
+     * This function returns the tiles array.
+     *
+     * @return The tiles array.
+     */
     public Tile[] getTiles() {
         return tiles;
     }
 
+    /**
+     * This function sets the tiles to the tiles passed in as a parameter.
+     *
+     * @param tiles The tiles that make up the tile generator.
+     */
     public void setTiles(Tile[] tiles) {
         this.tiles = tiles;
     }
 
+    /**
+     * This function returns the MappedTiles object that is stored in the variable mappedTiles.
+     *
+     * @return The mappedTiles object.
+     */
     public MappedTiles getMappedTiles() {
         return mappedTiles;
     }
 
+    /**
+     * This function sets the value of the variable `mappedTiles` to the value of the variable `mappedTiles` that is
+     * passed in as a parameter
+     *
+     * @param mappedTiles This is the MappedTiles object that contains the tiles that are mapped to the map.
+     */
     public void setMappedTiles(MappedTiles mappedTiles) {
         this.mappedTiles = mappedTiles;
     }
 
+    /**
+     * This function returns the textures array.
+     *
+     * @return The textures array.
+     */
     public Texture[] getTextures() {
         return textures;
     }
 
+    /**
+     * This function sets the textures of the object to the textures passed in.
+     *
+     * @param textures The array of textures to be used for the tile generation.
+     */
     public void setTextures(Texture[] textures) {
         this.textures = textures;
     }
 
+    /**
+     * This function returns the standard prefab.
+     *
+     * @return The standardPrefab variable is being returned.
+     */
     public Prefab getStandardPrefab() {
         return standardPrefab;
     }
 
+    /**
+     * This function sets the standardPrefab variable to the value of the standardPrefab parameter.
+     *
+     * @param standardPrefab The prefab that will be used to generate the tiles if the tile prefab is null.
+     */
     public void setStandardPrefab(Prefab standardPrefab) {
         this.standardPrefab = standardPrefab;
     }
 
+    /**
+     * This function sets the tile object to the tile passed in as a parameter.
+     *
+     * @param tile The tile value to set.
+     */
     public void setTile(Tile tile) {
         this.tile = tile;
     }
 
+    /**
+     * > This function returns the tilesToCompare variable
+     *
+     * @return The tilesToCompare object.
+     */
     public TilesToCompare getTilesToCompare() {
         return tilesToCompare;
     }
 
+    /**
+     * This function sets the tilesToCompare variable to the tilesToCompare parameter
+     *
+     * @param tilesToCompare This is the object that contains the tiles to compare.
+     */
     public void setTilesToCompare(TilesToCompare tilesToCompare) {
         this.tilesToCompare = tilesToCompare;
     }
 
+    /**
+     * This function returns the layer of the tile generator.
+     *
+     * @return The layer of the tile generator.
+     */
     public int getLayer() {
         return layer;
     }
 
+    /**
+     * Sets the layer of the tile generator.
+     *
+     * @param layer The layer value to set.
+     */
     public void setLayer(int layer) {
         this.layer = layer;
     }

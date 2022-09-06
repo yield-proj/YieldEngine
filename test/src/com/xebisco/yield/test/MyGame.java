@@ -24,6 +24,8 @@ public class MyGame extends YldGame {
     Entity e;
     Text text;
 
+    Condition condition = new Condition();
+
     @Override
     public void start() {
         texture = new Texture("com/xebisco/yield/assets/yieldlogo.png");
@@ -40,11 +42,14 @@ public class MyGame extends YldGame {
             e.setIndex(-1);
             e.center();
             e.getSelfTransform().position.y = 20;
+            e.setVisible(false);
         });
+        doWhen(() -> t.setVisible(true), condition);
     }
 
     @Override
     public void update(float delta) {
+        if(getFrames() == 100) condition.set(true);
         text.setContents(String.format("%.0f", time.getFps()));
         if (sclState == 0)
             e.getSelfTransform().scale.x = Yld.cos(getFrames() / time.getTargetFPS());

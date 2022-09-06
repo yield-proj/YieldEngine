@@ -17,5 +17,10 @@
 package com.xebisco.yield.render;
 
 public interface ExceptionThrower {
+    /**
+     * This function throws an exception.
+     *
+     * @param e The exception to throw.
+     */
     void throwException(Exception e);
 }

@@ -19,6 +19,12 @@ package com.xebisco.yield.render;
 import com.xebisco.yield.RelativeFile;
 
 public interface FileUtils {
+    /**
+     * Loads the relativeFile.
+     *
+     * @param relativeFile The file to be read.
+     * @return The RelativeFile object.
+     */
     default RelativeFile relativeFile(RelativeFile relativeFile) {
         return relativeFile;
     }

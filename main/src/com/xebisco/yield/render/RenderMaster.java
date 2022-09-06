@@ -23,31 +23,88 @@ import java.util.Set;
 
 
 /**
+ * This is an interface to handle rendering, audio and files.
  * @since 4-1.2
  * @author Xebisco
  */
 public interface RenderMaster extends VisualUtils, AudioUtils, FileUtils {
+    /**
+     * This function returns a SampleGraphics object.
+     *
+     * @return A SampleGraphics object.
+     */
     SampleGraphics initGraphics();
 
+    /**
+     * Returns a SampleGraphics object that contains the graphics for this sample.
+     *
+     * @return The specificGraphics method is being returned.
+     */
     SampleGraphics specificGraphics();
 
+    /**
+     * This function is called before the game starts
+     *
+     * @param game The game object.
+     */
     void before(YldGame game);
 
+    /**
+     * It creates a window
+     *
+     * @param configuration The configuration of the window.
+     * @return A SampleWindow object.
+     */
     SampleWindow initWindow(WindowConfiguration configuration);
 
+    /**
+     * "This function is called once per frame, before the frame is rendered."
+     * The `graphics` parameter is a `SampleGraphics` object that you can use to draw things on the screen. The `view`
+     * parameter is a `View` object that you can use to get information about the current view
+     *
+     * @param graphics The graphics object that you can use to draw to the screen.
+     * @param view The view object.
+     */
     void frameStart(SampleGraphics graphics, View view);
 
+    /**
+     * This function is called at the end of each frame, to the RenderMaster render the game.
+     */
     void frameEnd();
 
+    /**
+     * Returns true if the game can start.
+     *
+     * @return A boolean value.
+     */
     boolean canStart();
 
+    /**
+     * It returns the current FPS count.
+     *
+     * @return the number of frames per second.
+     */
     float fpsCount();
 
+    /**
+     * Return a set of integers representing the keys that are currently being pressed.
+     *
+     * @return A set of integers.
+     */
     Set<Integer> pressing();
 
+    /**
+     * Returns the current x-coordinate of the mouse.
+     *
+     * @return The x coordinate of the mouse.
+     */
     int mouseX();
 
+    /**
+     * Returns the y-coordinate of the mouse
+     *
+     * @return The mouseY() function returns the y-coordinate of the mouse.
+     */
     int mouseY();
-
     void close();
 }

@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * This class is a SaveFile that saves a Transform.
+ */
 public class TransformSave extends SaveFile {
     public TransformSave(String relativePath) {
         super(relativePath);

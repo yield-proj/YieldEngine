@@ -18,6 +18,13 @@ package com.xebisco.yield.engine;
 
 public interface EngineController
 {
+    /**
+     * Called on every update on an engine.
+     */
     void tick();
+
+    /**
+     * Called when an engine instance linked to this controller starts.
+     */
     void start();
 }

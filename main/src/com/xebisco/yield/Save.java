@@ -26,9 +26,19 @@ import java.util.Scanner;
 
 import static java.nio.file.attribute.PosixFilePermission.*;
 
+/**
+ * It saves and loads data
+ */
 public class Save {
 
 
+    /**
+     * It creates a file in the user's home directory, and saves the contents to it
+     *
+     * @param contents The contents of the file.
+     * @param config The GameConfiguration object that you created in the previous step.
+     * @param encrypted If true, the contents will be encrypted using AES-256.
+     */
     public static void saveContents(String contents, GameConfiguration config, boolean encrypted) {
         if (config.appName == null) {
             throw new NullPointerException("GameConfiguration.appName can't be null!");
@@ -50,6 +60,12 @@ public class Save {
         save(contents, file.getPath(), encrypted);
     }
 
+    /**
+     * If the file exists, return its contents, otherwise return null.
+     *
+     * @param config The GameConfiguration object that you passed to the YieldGames.init() method.
+     * @return The contents of the file.
+     */
     public static String getContents(GameConfiguration config) {
         if (config.appName == null) {
             throw new NullPointerException("GameConfiguration.appName can't be null!");
@@ -61,6 +77,12 @@ public class Save {
         return load(file.getPath());
     }
 
+    /**
+     * It reads the contents of a file and returns it as a string
+     *
+     * @param savePath The path to the save file.
+     * @return The contents of the file.
+     */
     public static String load(String savePath) {
         try {
             Scanner sc = new Scanner(new File(savePath));
@@ -74,6 +96,14 @@ public class Save {
         }
     }
 
+    /**
+     * It takes a string, a file path, and a boolean, and writes the string to the file path, and if the boolean is true,
+     * it encrypts the string before writing it.
+     *
+     * @param contents The contents of the file
+     * @param savePath The path to the file you want to save to.
+     * @param encrypted Whether the file will be encrypted.
+     */
     public static void save(String contents, String savePath, boolean encrypted) {
         PrintWriter writer;
         try {
@@ -99,6 +129,12 @@ public class Save {
 
     }
 
+    /**
+     * It decrypts a file if is encrypted.
+     *
+     * @param saveContents The contents of the save file.
+     * @return The saveContents are being returned.
+     */
     private static String processSave(String saveContents) {
         if (saveContents != null && saveContents.hashCode() != "".hashCode()) {
             String[] saveC = saveContents.split(":");

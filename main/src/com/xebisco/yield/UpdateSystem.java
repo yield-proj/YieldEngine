@@ -37,10 +37,20 @@ public abstract class UpdateSystem extends YldSystem {
         }
     }
 
+    /**
+     * This function returns the last frame of the game.
+     *
+     * @return The last frame of the game.
+     */
     public int getLastFrame() {
         return lastFrame;
     }
 
+    /**
+     * This function sets the last frame of the game.
+     *
+     * @param lastFrame The last frame of the game.
+     */
     public void setLastFrame(int lastFrame) {
         this.lastFrame = lastFrame;
     }

@@ -19,6 +19,9 @@ package com.xebisco.yield;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.Shape;
 
+/**
+ * It's a circle collider that extends the Collider class
+ */
 public class CircleCollider extends Collider {
     private float radius = 32;
 
@@ -37,10 +40,20 @@ public class CircleCollider extends Collider {
         return shape;
     }
 
+    /**
+     * This function returns the radius of the circle.
+     *
+     * @return The radius of the circle.
+     */
     public float getRadius() {
         return radius;
     }
 
+    /**
+     * This function sets the radius of the circle to the value of the parameter radius.
+     *
+     * @param radius The radius of the circle.
+     */
     public void setRadius(float radius) {
         this.radius = radius;
     }

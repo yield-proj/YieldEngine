@@ -50,6 +50,9 @@ public class YldScene extends YldB {
      */
     protected YldTime time;
 
+    /**
+     * Replace the default systems.
+     */
     public void defaultSystems() {
         replaceSystem(new YldTimeSystem());
         replaceSystem(new MiddlePointSystem());
@@ -71,6 +74,11 @@ public class YldScene extends YldB {
 
     }
 
+    /**
+     * This function is called after the render function is called in the game handler.
+     *
+     * @param delta The time in seconds since the last frame.
+     */
     public void afterRender(float delta) {
 
     }
@@ -135,6 +143,14 @@ public class YldScene extends YldB {
         masterEntity.sortChildren();
     }
 
+    /**
+     * Raycast from point1 to point2 and return the closest hit.
+     *
+     * @param requestingEntity The entity that is requesting the raycast.
+     * @param point1           The starting point of the raycast.
+     * @param point2           The end point of the ray.
+     * @return A RayCast object.
+     */
     public final RayCast rayCast(Entity requestingEntity, Vector2 point1, Vector2 point2) {
         RayCast rayCastCallback = new RayCast();
         rayCastCallback.setRequestEntity(requestingEntity);
@@ -148,10 +164,20 @@ public class YldScene extends YldB {
         return rayCastCallback;
     }
 
+    /**
+     * This function returns a boolean value that indicates whether the start method has been called or not
+     *
+     * @return The value of the callStart variable.
+     */
     public boolean isCallStart() {
         return callStart;
     }
 
+    /**
+     * This function sets the callStart variable to the value of the callStart parameter.
+     *
+     * @param callStart This is a boolean value that indicates whether the start method has been called or not
+     */
     public void setCallStart(boolean callStart) {
         this.callStart = callStart;
     }
@@ -196,6 +222,13 @@ public class YldScene extends YldB {
         return masterEntity.instantiate(prefab);
     }
 
+    /**
+     * Instantiate an Entity instance based in the prefab passed.
+     * (Calls instantiate(prefab) on the masterEntity)
+     *
+     * @param prefab The prefab passed to the Entity.
+     * @param yldB   The YldB instance that contains concurrent information.
+     */
     public Entity instantiate(Prefab prefab, YldB yldB) {
         return masterEntity.instantiate(prefab, yldB);
     }
@@ -246,6 +279,11 @@ public class YldScene extends YldB {
         }
     }
 
+    /**
+     * Remove all systems that have the same class name as the system passed in, then add the system passed in.
+     *
+     * @param system The system to be added.
+     */
     public void replaceSystem(final YldSystem system) {
         systems.removeIf(s -> s.getClass().getName().hashCode() == system.getClass().getName().hashCode());
         addSystem(system);
@@ -283,22 +321,47 @@ public class YldScene extends YldB {
         this.time = time;
     }
 
+    /**
+     * Get the pixels per meter value from the game's configuration.
+     *
+     * @return The PPM value from the game's configuration.
+     */
     public int getPpm() {
         return getGame().getConfiguration().ppm;
     }
 
+    /**
+     * This function returns the view.
+     *
+     * @return The view.
+     */
     public View getView() {
         return view;
     }
 
+    /**
+     * This function sets the view to the view passed in.
+     *
+     * @param view The view value to set.
+     */
     public void setView(View view) {
         this.view = view;
     }
 
+    /**
+     * Returns the graphics object for this scene.
+     *
+     * @return The graphics object.
+     */
     public YldGraphics getGraphics() {
         return graphics;
     }
 
+    /**
+     * This function sets the graphics object to the graphics object passed in.
+     *
+     * @param graphics The graphics object value to set.
+     */
     public void setGraphics(YldGraphics graphics) {
         this.graphics = graphics;
     }
