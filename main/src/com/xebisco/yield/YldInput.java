@@ -165,8 +165,6 @@ public class YldInput {
 
     /**
      * Getter for the axes list.
-     *
-     * @return A HashMap of String, YldPair<YldPair<Integer, Integer>, YldPair<Integer, Integer>>
      */
     public HashMap<String, YldPair<YldPair<Integer, Integer>, YldPair<Integer, Integer>>> getAxis() {
         return axis;
@@ -183,8 +181,6 @@ public class YldInput {
 
     /**
      * Returns the set of pointers.
-     *
-     * @return A set of YldPair<Float, Float> objects.
      */
     public Set<YldPair<Float, Float>> getPointers() {
         return pointers;
