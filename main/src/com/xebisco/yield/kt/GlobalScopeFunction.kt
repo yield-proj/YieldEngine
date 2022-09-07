@@ -114,7 +114,7 @@ fun toBox2DVec2(vector2: Vector2): Vec2 {
 /**
  * Converts a Box2D Vec2 to a Vector2.
  *
- * @param vector2 The vector2 to convert to a Vector2.
+ * @param vec2 The vector2 to convert to a Vector2.
  * @return A new Vector2 object.
  */
 fun toYieldVector2(vec2: Vec2): Vector2 {
