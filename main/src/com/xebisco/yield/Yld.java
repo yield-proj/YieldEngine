@@ -16,6 +16,7 @@
 
 package com.xebisco.yield;
 
+import com.google.gson.Gson;
 import com.xebisco.yield.render.ExceptionThrower;
 import org.jbox2d.common.Vec2;
 
@@ -34,6 +35,9 @@ import java.util.Random;
  */
 public final class Yld {
     private static ExceptionThrower exceptionThrower;
+
+    private static Gson gson = new Gson();
+
     /**
      * The version of the Yield Game Engine.
      */
@@ -323,5 +327,23 @@ public final class Yld {
      */
     public static void loadExceptionThrower(String classPath) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         setExceptionThrower((ExceptionThrower) Class.forName(classPath).getDeclaredConstructor().newInstance());
+    }
+
+    /**
+     * This function returns the Gson object that was created in the static block.
+     *
+     * @return The Gson object.
+     */
+    public static Gson getGson() {
+        return gson;
+    }
+
+    /**
+     * > Sets the Gson object to be used by the Yld library
+     *
+     * @param gson The Gson object to use for serialization and deserialization of json files.
+     */
+    public static void setGson(Gson gson) {
+        Yld.gson = gson;
     }
 }

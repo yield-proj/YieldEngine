@@ -78,18 +78,29 @@ public final class Assets {
                         case WAV:
                             c = Class.forName("com.xebisco.yield.AudioClip");
                             break;
-                        case TXT:
-                            c = Class.forName("com.xebisco.yield.TextFile");
-                            break;
                         case INI:
                             c = Class.forName("com.xebisco.yield.IniFileWrapper");
                             break;
+                        case JSON:
+                            c = Class.forName("com.xebisco.yield.JsonFileWrapper");
+                            break;
+                        default:
+                            c = Class.forName("com.xebisco.yield.TextFile");
+                            break;
                     }
                 }
-                RelativeFile r = (RelativeFile) c.getConstructor(String.class).newInstance(f.getPath().replace(removePath, ""));
+                RelativeFile r;
+                String name = f.getName().replace(removeFromName, ""), path = f.getPath().replace(removePath, "");
+                if (f.getName().contains("@")) {
+                    String type = name.split("@")[1].split("\\.")[0];
+                    r = (RelativeFile) c.getConstructor(String.class, Class.class).newInstance(path, Class.forName(type.replace("-", ".")));
+                    name = name.replace("@" + type, "");
+                } else {
+                    r = (RelativeFile) c.getConstructor(String.class).newInstance(path);
+                }
                 if (r instanceof Texture)
                     game.loadTexture((Texture) r);
-                files.put(f.getName().replace(removeFromName, ""), r);
+                files.put(name, r);
             } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
                      IllegalAccessException | NoSuchMethodException e) {
                 Yld.throwException(new RuntimeException(e));
@@ -156,6 +167,16 @@ public final class Assets {
      */
     public IniFileWrapper getIniFile(String name) {
         return get(name, IniFileWrapper.class);
+    }
+
+    /**
+     * Get the json file with the given name.
+     *
+     * @param name The name of the file.
+     * @return A JsonFileWrapper object
+     */
+    public <T> JsonFileWrapper getJsonFile(String name, Class<T> type) {
+        return get(name, JsonFileWrapper.class);
     }
 
     /**

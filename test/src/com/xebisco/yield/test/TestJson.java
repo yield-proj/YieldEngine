@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield;
+package com.xebisco.yield.test;
 
-public enum Extension {
-    INI, MP3, WAV, PNG, JPG, JPEG, TXT, JSON, JCL
+public class TestJson {
+    public String arg;
 }

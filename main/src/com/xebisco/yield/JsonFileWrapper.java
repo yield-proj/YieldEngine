@@ -16,6 +16,26 @@
 
 package com.xebisco.yield;
 
-public enum Extension {
-    INI, MP3, WAV, PNG, JPG, JPEG, TXT, JSON, JCL
+import com.google.gson.stream.JsonReader;
+
+import java.io.InputStreamReader;
+
+public class JsonFileWrapper extends RelativeFile {
+
+    private final Object object;
+    private final Class<?> type;
+
+    public JsonFileWrapper(String relativePath, Class<?> type) {
+        super(relativePath);
+        this.type = type;
+        object = Yld.getGson().fromJson(new JsonReader(new InputStreamReader(getInputStream())), type);
+    }
+
+    public Object getObject() {
+        return type.cast(object);
+    }
+
+    public Class<?> getType() {
+        return type;
+    }
 }

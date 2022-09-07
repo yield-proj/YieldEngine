@@ -27,7 +27,7 @@ public class Test2 extends YldGame {
         graphics.img(getAssets().getTexture("yield.png")).center();
         addScene(new Test());
         addScene(new Loading());
-
+        Yld.log(((TestJson) getAssets().getJsonFile("test.json", TestJson.class).getObject()).arg);
     }
 
     @Override
