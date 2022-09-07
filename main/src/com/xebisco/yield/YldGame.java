@@ -74,6 +74,7 @@ public class YldGame extends YldScene {
      * @since 4_alpha1
      */
     public static void launch(YldGame game, GameConfiguration configuration) {
+        if(configuration == null) configuration = (GameConfiguration) new JsonFileWrapper("com/xebisco/yield/assets/stdlaunchconfig.json", GameConfiguration.class).getObject();
         game.setConfiguration(configuration);
         game.addScene(game);
         game.setScene(game);
@@ -86,6 +87,15 @@ public class YldGame extends YldScene {
         game.loadFont("arial", 30, 0, new RelativeFile("com/xebisco/yield/assets/ArialNormal.ttf"));
         game.loadSceneAssets(game.scene, null);
         game.getHandler().getThread().start();
+    }
+
+    /**
+     * This function launches the game.
+     *
+     * @param game The game object.
+     */
+    public static void launch(YldGame game) {
+        launch(game, null);
     }
 
     /**

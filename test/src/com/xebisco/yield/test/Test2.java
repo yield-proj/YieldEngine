@@ -38,9 +38,7 @@ public class Test2 extends YldGame {
     }
 
     public static void main(String[] args) {
-        GameConfiguration config = new GameConfiguration();
-        Ini.file(new RelativeFile("game.ini"), config);
-        launch(new Test2(), config);
+        launch(new Test2());
     }
 }
 
