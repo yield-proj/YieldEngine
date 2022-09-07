@@ -36,7 +36,7 @@ fun <T : RelativeFile> Assets.get(name: String, type: KClass<T>) {
  * @param system The class type of the system that's being searched.
  * @return The system found (null if not found)
  */
-fun <S : YldSystem> YldScene.getSystem(system: KClass<S>): S {
+fun <S : YldSystem> YldScene.getSystem(system: KClass<S>): S? {
     return this.getSystem(system.java)
 }
 
@@ -65,7 +65,7 @@ fun <E : Prefab> YldScript.destroy(type: KClass<E>) {
  * @param type The class type of the component that's being searched.
  * @return The component found (null if not found)
  */
-fun <T : Component> YldScript.getComponent(type: KClass<T>): T {
+fun <T : Component> YldScript.getComponent(type: KClass<T>): T? {
     return this.getComponent(type.java)
 }
 
@@ -76,7 +76,7 @@ fun <T : Component> YldScript.getComponent(type: KClass<T>): T {
  * @return If contains the Component.
  */
 
-fun <T : Component> YldScript.getComponentInChildren(type: KClass<T>): T {
+fun <T : Component> YldScript.getComponentInChildren(type: KClass<T>): T? {
     return this.getComponentInChildren(type.java)
 }
 
@@ -87,7 +87,7 @@ fun <T : Component> YldScript.getComponentInChildren(type: KClass<T>): T {
  * @return If the Entity parent contains the Component.
  */
 
-fun <T : Component> YldScript.getComponentInParent(type: KClass<T>): T {
+fun <T : Component> YldScript.getComponentInParent(type: KClass<T>): T? {
     return this.getComponentInParent(type.java)
 }
 
@@ -98,7 +98,7 @@ fun <T : Component> YldScript.getComponentInParent(type: KClass<T>): T {
  * @param index The index of the component.
  * @return The component found (null if not found)
  */
-fun <T : Component> YldScript.getComponent(type: KClass<T>, index: Int): T {
+fun <T : Component> YldScript.getComponent(type: KClass<T>, index: Int): T? {
     return this.getComponent(type.java, index)
 }
 
@@ -120,7 +120,7 @@ fun <T : Component> YldScript.containsComponent(type: KClass<T>): Boolean {
  * @param type The class type of the component that's being searched.
  * @return The component found (null if not found)
  */
-fun <T : Component> Component.getComponent(type: KClass<T>): T {
+fun <T : Component> Component.getComponent(type: KClass<T>): T? {
     return this.getComponent(type.java)
 }
 
@@ -131,7 +131,7 @@ fun <T : Component> Component.getComponent(type: KClass<T>): T {
  * @param index The index of the component.
  * @return The component found (null if not found)
  */
-fun <T : Component> Component.getComponent(type: KClass<T>, index: Int): T {
+fun <T : Component> Component.getComponent(type: KClass<T>, index: Int): T? {
     return this.getComponent(type.java, index)
 }
 
@@ -151,7 +151,7 @@ fun <T : Component> Component.getComponents(type: KClass<T>): Array<out Componen
  * @return If contains the Component.
  */
 
-fun <T : Component> Component.getComponentInChildren(type: KClass<T>): T {
+fun <T : Component> Component.getComponentInChildren(type: KClass<T>): T? {
     return this.getComponentInChildren(type.java)
 }
 
@@ -162,7 +162,7 @@ fun <T : Component> Component.getComponentInChildren(type: KClass<T>): T {
  * @return If the Entity parent contains the Component.
  */
 
-fun <T : Component> Component.getComponentInParent(type: KClass<T>): T {
+fun <T : Component> Component.getComponentInParent(type: KClass<T>): T? {
     return this.getComponentInParent(type.java)
 }
 
@@ -183,7 +183,7 @@ fun <T : Component> Component.containsComponent(type: KClass<T>): Boolean {
  * @param type The class type of the component that's being searched.
  * @return The component found (null if not found)
  */
-fun <T : Component> Entity.getComponent(type: KClass<T>): T {
+fun <T : Component> Entity.getComponent(type: KClass<T>): T? {
     return this.getComponent(type.java)
 }
 
@@ -194,7 +194,7 @@ fun <T : Component> Entity.getComponent(type: KClass<T>): T {
  * @param index the index of this component.
  * @return The component found (null if not found)
  */
-fun <T : Component> Entity.getComponent(type: KClass<T>, index: Int): T {
+fun <T : Component> Entity.getComponent(type: KClass<T>, index: Int): T? {
     return this.getComponent(type.java, index)
 }
 
@@ -229,7 +229,7 @@ fun <T : Component> Entity.containsComponent(type: KClass<T>): Boolean {
  * @param type The class type of the Component.
  * @return If the Entity parent contains the Component.
  */
-fun <T : Component> Entity.getComponentInParent(type: KClass<T>): T {
+fun <T : Component> Entity.getComponentInParent(type: KClass<T>): T? {
     return this.getComponentInParent(type.java)
 }
 
@@ -239,7 +239,7 @@ fun <T : Component> Entity.getComponentInParent(type: KClass<T>): T {
  * @param type The class type of the Component.
  * @return If contains the Component.
  */
-fun <T : Component> Entity.getComponentInChildren(type: KClass<T>): T {
+fun <T : Component> Entity.getComponentInChildren(type: KClass<T>): T? {
     return this.getComponentInChildren(type.java)
 }
 
@@ -269,7 +269,7 @@ fun <T : YldScene> YldGame.setScene(type: KClass<T>, how: ChangeScene) {
  * @param type The class of the scene you want to get.
  * @return The scene that matches the type.
  */
-fun <T : YldScene> YldGame.getScene(type: KClass<T>): YldScene {
+fun <T : YldScene> YldGame.getScene(type: KClass<T>): YldScene? {
     return this.getScene(type.java)
 }
 
