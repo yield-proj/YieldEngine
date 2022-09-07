@@ -97,38 +97,90 @@ public final class Assets {
         }
     }
 
+    /**
+     * Get the file with the given name.
+     *
+     * @param name The name of the file.
+     * @return A file object
+     */
     public RelativeFile get(String name) {
         return files.get(name);
     }
 
+    /**
+     * Get the file with the given name, and cast it to the given type.
+     *
+     * @param name The name of the file.
+     * @param type The type of the file you want to get.
+     * @return A file of the specified type.
+     */
     public <T extends RelativeFile> T get(String name, Class<T> type) {
         return type.cast(files.get(name));
     }
 
+    /**
+     * Get the texture with the given name.
+     *
+     * @param name The name of the resource.
+     * @return A Texture object
+     */
     public Texture getTexture(String name) {
         return get(name, Texture.class);
     }
 
+    /**
+     * Get the audio clip with the given name.
+     *
+     * @param name The name of the resource.
+     * @return An AudioClip object
+     */
     public AudioClip getAudioClip(String name) {
         return get(name, AudioClip.class);
     }
 
+    /**
+     * Get the text file with the given name.
+     *
+     * @param name The name of the file.
+     * @return A TextFile object
+     */
     public TextFile getTextFile(String name) {
         return get(name, TextFile.class);
     }
 
+    /**
+     * Get the ini file with the given name.
+     *
+     * @param name The name of the file.
+     * @return A IniFileWrapper object
+     */
     public IniFileWrapper getIniFile(String name) {
         return get(name, IniFileWrapper.class);
     }
 
+    /**
+     * This function returns a map of all the files in the assets of the scene.
+     *
+     * @return A map of relative files.
+     */
     public Map<String, RelativeFile> getFiles() {
         return files;
     }
 
+    /**
+     * This function sets the files variable to the files variable passed in.
+     *
+     * @param files A map of file names to RelativeFile objects.
+     */
     public void setFiles(Map<String, RelativeFile> files) {
         this.files = files;
     }
 
+    /**
+     * This function returns the game object.
+     *
+     * @return The game object.
+     */
     public YldGame getGame() {
         return game;
     }

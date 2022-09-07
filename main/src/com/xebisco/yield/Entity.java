@@ -153,7 +153,7 @@ public final class Entity implements Comparable<Entity> {
     }
 
     /**
-     * > This function returns a list of components of the specified type
+     * This function returns a list of components of the specified type
      *
      * @param type The type of component you want to get.
      * @return A list of components of the specified type.

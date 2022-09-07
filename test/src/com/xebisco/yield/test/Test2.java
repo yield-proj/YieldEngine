@@ -27,6 +27,7 @@ public class Test2 extends YldGame {
         graphics.img(getAssets().getTexture("yield.png")).center();
         addScene(new Test());
         addScene(new Loading());
+
     }
 
     @Override

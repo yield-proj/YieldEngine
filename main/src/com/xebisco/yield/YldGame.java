@@ -595,9 +595,9 @@ public class YldGame extends YldScene {
     }
 
     /**
-     * Method to instantiate a scene and set it as the actual scene.
+     * Method to set a scene from the type specified as the actual scene.
      *
-     * @param type The scene type to be instantiated.
+     * @param type The scene type.
      * @param how  What to do with last scene.
      */
     public <T extends YldScene> void setScene(Class<T> type, ChangeScene how) {
@@ -662,6 +662,12 @@ public class YldGame extends YldScene {
         }, MultiThread.EXCLUSIVE);
     }
 
+    /**
+     * Set the scene to the given type, using the given progress scene, and destroy the last scene.
+     *
+     * @param type The class of the scene you want to change to.
+     * @param progressScene The class of the progress scene to be displayed while the scene is loading.
+     */
     public <T extends YldScene, P extends YldProgressScene> void setScene(Class<T> type, Class<P> progressScene) {
         setScene(type, progressScene, ChangeScene.DESTROY_LAST);
     }
