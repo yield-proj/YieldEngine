@@ -37,6 +37,9 @@ public class Colors {
             BROWN = new ImmutableColor(.5f, .3f, .1f),
             TRANSPARENT = new ImmutableColor(0, 0, 0, 0);
 
+    private Colors() {
+    }
+
     /**
      * Returns a random color.
      *

@@ -1,0 +1,135 @@
+/*
+ * Copyright [2022] [Xebisco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.xebisco.yield;
+
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * It loads all the files in a from directory and its subdirectories and stores them in a map
+ */
+public final class Assets {
+    private Map<String, RelativeFile> files = new HashMap<>();
+    private final YldGame game;
+
+    public Assets(File file, Class<? extends YldScene> scene, YldProgressScene progressScene, YldGame game) {
+        this.game = game;
+        if (file != null)
+            addFile(file, file.getParent(), scene.getSimpleName(), progressScene);
+        URL shared = scene.getResource("/shared");
+        if (shared != null) {
+            try {
+                File sharedFile = new File(shared.toURI());
+                addFile(sharedFile, sharedFile.getParent(), "", null);
+            } catch (URISyntaxException e) {
+                Yld.throwException(new RuntimeException(e));
+            }
+        }
+    }
+
+    /**
+     * It adds a file to the game's file manager
+     *
+     * @param f              The file to add
+     * @param removePath     The path to remove from the file name.
+     * @param removeFromName This is the path that will be removed from the saved file name.
+     */
+    public void addFile(File f, String removePath, String removeFromName, YldProgressScene progressScene) {
+        if (f.isDirectory()) {
+            File[] fs = Objects.requireNonNull(f.listFiles());
+            float progress = 1f / (fs.length - 1);
+            for (int i = 0; i < fs.length; i++) {
+                File f1 = fs[i];
+                if (progressScene != null)
+                    progressScene.setProgress(progress * i);
+                addFile(f1, removePath, removeFromName, null);
+            }
+        } else {
+            try {
+                Class<?> c = Class.forName("com.xebisco.yield.RelativeFile");
+                if (f.getName().contains(".")) {
+                    Extension extension = Extension.valueOf(f.getName().split("\\.")[1].toUpperCase());
+                    switch (extension) {
+                        case JPG:
+                        case PNG:
+                        case JPEG:
+                            c = Class.forName("com.xebisco.yield.Texture");
+                            break;
+                        case MP3:
+                        case WAV:
+                            c = Class.forName("com.xebisco.yield.AudioClip");
+                            break;
+                        case TXT:
+                            c = Class.forName("com.xebisco.yield.TextFile");
+                            break;
+                        case INI:
+                            c = Class.forName("com.xebisco.yield.IniFileWrapper");
+                            break;
+                    }
+                }
+                RelativeFile r = (RelativeFile) c.getConstructor(String.class).newInstance(f.getPath().replace(removePath, ""));
+                if (r instanceof Texture)
+                    game.loadTexture((Texture) r);
+                files.put(f.getName().replace(removeFromName, ""), r);
+            } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
+                     IllegalAccessException | NoSuchMethodException e) {
+                Yld.throwException(new RuntimeException(e));
+            }
+        }
+    }
+
+    public RelativeFile get(String name) {
+        return files.get(name);
+    }
+
+    public <T extends RelativeFile> T get(String name, Class<T> type) {
+        return type.cast(files.get(name));
+    }
+
+    public Texture getTexture(String name) {
+        return get(name, Texture.class);
+    }
+
+    public AudioClip getAudioClip(String name) {
+        return get(name, AudioClip.class);
+    }
+
+    public TextFile getTextFile(String name) {
+        return get(name, TextFile.class);
+    }
+
+    public IniFileWrapper getIniFile(String name) {
+        return get(name, IniFileWrapper.class);
+    }
+
+    public Map<String, RelativeFile> getFiles() {
+        return files;
+    }
+
+    public void setFiles(Map<String, RelativeFile> files) {
+        this.files = files;
+    }
+
+    public YldGame getGame() {
+        return game;
+    }
+}

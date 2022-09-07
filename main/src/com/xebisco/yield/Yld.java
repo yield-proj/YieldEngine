@@ -37,12 +37,12 @@ public final class Yld {
     /**
      * The version of the Yield Game Engine.
      */
-    public static final String VERSION = "4 - 1.2.2";
+    public static final String VERSION = "4 - 1.2.2.1 test";
     /**
      * All the Yield Game Engine messages.
      */
 
-    private static final long BUILD = 2021;
+    private static final long BUILD = 2022;
 
     public final static MathContext roundDownContext = new MathContext(2, RoundingMode.DOWN);
     public final static MathContext roundUpContext = new MathContext(2, RoundingMode.UP);

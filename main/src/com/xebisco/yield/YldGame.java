@@ -25,9 +25,13 @@ import com.xebisco.yield.systems.MiddlePointSystem;
 import com.xebisco.yield.systems.PhysicsSystem;
 import com.xebisco.yield.systems.YldTimeSystem;
 
+import java.io.File;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * This class is the starting point for every Yield Game, it contains all the objects of the game.
@@ -80,6 +84,7 @@ public class YldGame extends YldScene {
         game.yieldLogo = new Texture("com/xebisco/yield/assets/yieldlogo.png", TexType.NATIVE);
         game.loadTexture(game.yieldLogo);
         game.loadFont("arial", 30, 0, new RelativeFile("com/xebisco/yield/assets/ArialNormal.ttf"));
+        game.loadSceneAssets(game.scene, null);
         game.getHandler().getThread().start();
     }
 
@@ -107,7 +112,17 @@ public class YldGame extends YldScene {
             scene.start();
         }
         scene.update(delta);
+        globalUpdate(delta);
         scene.process(delta, graphics);
+    }
+
+    /**
+     * This function is called every frame, not mattering what scene the game is on.
+     *
+     * @param delta The time in seconds since the last update.
+     */
+    public void globalUpdate(float delta) {
+
     }
 
     /**
@@ -346,6 +361,17 @@ public class YldGame extends YldScene {
         scene.defaultSystems();
     }
 
+    public void loadSceneAssets(YldScene scene, YldProgressScene progressScene) {
+        try {
+            URL url = YldGame.class.getResource("/" + scene.getClass().getSimpleName());
+            File file = null;
+            if (url != null) file = new File(url.toURI());
+            scene.setAssets(new Assets(file, scene.getClass(), progressScene, this));
+        } catch (URISyntaxException e) {
+            Yld.throwException(new RuntimeException(e));
+        }
+    }
+
     /**
      * This function returns the window object.
      *
@@ -502,8 +528,8 @@ public class YldGame extends YldScene {
      * Loads a font from a file, and if the file is marked to be flushed after load, flush it.
      *
      * @param fontName The name of the font.
-     * @param size The size of the font.
-     * @param format 0 = Bitmap, 1 = Vector.
+     * @param size     The size of the font.
+     * @param format   0 = Bitmap, 1 = Vector.
      * @param fontFile The file that contains the font.
      */
     public void loadFont(String fontName, float size, int format, RelativeFile fontFile) {
@@ -516,11 +542,11 @@ public class YldGame extends YldScene {
     /**
      * Loads a font from a file, and if the file is marked to be flushed after load, flush it.
      *
-     * @param fontName The name of the font.
-     * @param size The size of the font to be loaded.
+     * @param fontName   The name of the font.
+     * @param size       The size of the font to be loaded.
      * @param sizeToLoad The size of the font to load.
-     * @param format The format of the font file. This can be one of the following:
-     * @param fontFile The file to load the font from.
+     * @param format     The format of the font file. This can be one of the following:
+     * @param fontFile   The file to load the font from.
      */
     public void loadFont(String fontName, float size, float sizeToLoad, int format, RelativeFile fontFile) {
         handler.getRenderMaster().loadFont(fontName, size, sizeToLoad, format, fontFile);
@@ -533,8 +559,8 @@ public class YldGame extends YldScene {
      * Loads a font with the given name, size, and style
      *
      * @param fontName The name of the font.
-     * @param size The size of the font.
-     * @param style Font.PLAIN, Font.BOLD, Font.ITALIC, Font.BOLD + Font.ITALIC
+     * @param size     The size of the font.
+     * @param style    Font.PLAIN, Font.BOLD, Font.ITALIC, Font.BOLD + Font.ITALIC
      */
     public void loadFont(String fontName, float size, int style) {
         handler.getRenderMaster().loadFont(fontName, fontName, size, style);
@@ -552,8 +578,8 @@ public class YldGame extends YldScene {
      *
      * @param fontName The name of the font.
      * @param saveName The font name to be saved.
-     * @param size The size of the font.
-     * @param style Font.PLAIN, Font.BOLD, Font.ITALIC, Font.BOLD + Font.ITALIC
+     * @param size     The size of the font.
+     * @param style    Font.PLAIN, Font.BOLD, Font.ITALIC, Font.BOLD + Font.ITALIC
      */
     public void loadFont(String saveName, String fontName, float size, int style) {
         handler.getRenderMaster().loadFont(saveName, fontName, size, style);
@@ -575,31 +601,69 @@ public class YldGame extends YldScene {
      * @param how  What to do with last scene.
      */
     public <T extends YldScene> void setScene(Class<T> type, ChangeScene how) {
-        YldScene scene = null;
+        YldScene scene = getScene(type);
+        if (scene == null)
+            throw new NullPointerException("none scene with name: " + type.getName());
+        else {
+            if (getScene() != null) {
+                if (configuration.unloadAllTexturesWhenChangeScene)
+                    unloadAllTextures();
+                if (how == ChangeScene.DESTROY_LAST) {
+                    getScene().destroyScene();
+                    for (YldSystem system : getScene().getSystems()) {
+                        system.destroy();
+                    }
+                    getScene().setMasterEntity(new Entity("MasterEntity", getScene(), null));
+                    getScene().setFrames(0);
+                    getScene().setCallStart(true);
+                }
+            }
+        }
+        setScene(scene);
+        loadSceneAssets(scene, null);
+    }
+
+    /**
+     * If the hashcode and name of the class of the scene at index i is equal to the hashcode and name of the class of the
+     * type parameter, return the scene at index i.
+     *
+     * @param type The class of the scene you want to get.
+     * @return The scene that matches the type.
+     */
+    public YldScene getScene(Class<? extends YldScene> type) {
         int i = 0;
         while (i < scenes.size()) {
-            if (scenes.get(i).getClass().getName().hashCode() == type.getName().hashCode()) {
-                if (scenes.get(i).getClass().getName().equals(type.getName())) {
-                    if (getScene() != null) {
-                        if (how == ChangeScene.DESTROY_LAST) {
-                            getScene().destroyScene();
-                            for (YldSystem system : getScene().getSystems()) {
-                                system.destroy();
-                            }
-                            getScene().setMasterEntity(new Entity("MasterEntity", getScene(), null));
-                            getScene().setFrames(0);
-                            getScene().setCallStart(true);
-                        }
-                    }
-                    scene = scenes.get(i);
-                    break;
-                }
+            if (scenes.get(i).getClass().getName().hashCode() == type.getName().hashCode() && scenes.get(i).getClass().getName().equals(type.getName())) {
+                return scenes.get(i);
             }
             i++;
         }
-        if (scene == null)
-            throw new NullPointerException("none scene with name: " + type.getName());
-        setScene(scene);
+        return null;
+    }
+
+    /**
+     * Set the scene to the given type, and use the given progress scene to load it.
+     *
+     * @param type          The scene to change to.
+     * @param progressScene The scene that will be displayed while the assets are being loaded.
+     * @param how           What to do with last scene.
+     */
+    public <T extends YldScene, P extends YldProgressScene> void setScene(Class<T> type, Class<P> progressScene, ChangeScene how) {
+        if (configuration.unloadAllTexturesWhenChangeToProcessScene)
+            unloadAllTextures();
+        setScene(progressScene, how);
+        YldProgressScene ps = (YldProgressScene) scene;
+        ps.setToChangeScene(type);
+        loadSceneAssets(ps, null);
+        ps.setToChangeScene(type);
+        concurrent(() -> {
+            loadSceneAssets(getScene(type), (YldProgressScene) scene);
+            ps.change();
+        }, MultiThread.EXCLUSIVE);
+    }
+
+    public <T extends YldScene, P extends YldProgressScene> void setScene(Class<T> type, Class<P> progressScene) {
+        setScene(type, progressScene, ChangeScene.DESTROY_LAST);
     }
 
     /**

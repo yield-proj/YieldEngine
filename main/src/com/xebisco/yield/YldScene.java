@@ -37,6 +37,8 @@ public class YldScene extends YldB {
 
     protected YldGraphics graphics;
 
+    private Assets assets;
+
     protected View view = new View(1280, 720);
 
     private ArrayList<YldSystem> systems = new ArrayList<>();
@@ -364,5 +366,13 @@ public class YldScene extends YldB {
      */
     public void setGraphics(YldGraphics graphics) {
         this.graphics = graphics;
+    }
+
+    public Assets getAssets() {
+        return assets;
+    }
+
+    public void setAssets(Assets assets) {
+        this.assets = assets;
     }
 }

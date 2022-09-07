@@ -55,6 +55,16 @@ public class GameConfiguration extends WindowConfiguration {
     public RenderMaster renderMaster;
 
     /**
+     * A flag to unload all textures from memory when changing scene.
+     */
+    public boolean unloadAllTexturesWhenChangeScene = false;
+
+    /**
+     * A flag to unload all textures from memory when changing to a process scene.
+     */
+    public boolean unloadAllTexturesWhenChangeToProcessScene = false;
+
+    /**
      * The number of frames before the garbage collector is called.
      */
     public int framesToGarbageCollection = 300;
