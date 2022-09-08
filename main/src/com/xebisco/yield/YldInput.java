@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.render.MultipleFingerPointers;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +31,7 @@ public class YldInput {
 
     private final Vector2 mouse = new Vector2();
 
-    private final Set<YldPair<Float, Float>> pointers = new HashSet<>();
+    private final Set<Vector3> nonTouchableGamePointers = new HashSet<>();
 
     private final HashMap<String, YldPair<YldPair<Integer, Integer>, YldPair<Integer, Integer>>> axis = new HashMap<>();
 
@@ -140,10 +142,10 @@ public class YldInput {
      * The first parameter is the name of the axis. The next four parameters are the primary and secondary keys for the
      * axis.
      *
-     * @param name The name of the axis.
-     * @param primaryKey The key that is used to move the axis in the negative direction.
-     * @param altPrimaryKey The key that is used when the primary key is not pressed.
-     * @param secondaryKey The key that is used to move the axis in the positive direction.
+     * @param name            The name of the axis.
+     * @param primaryKey      The key that is used to move the axis in the negative direction.
+     * @param altPrimaryKey   The key that is used when the primary key is not pressed.
+     * @param secondaryKey    The key that is used to move the axis in the positive direction.
      * @param altSecondaryKey The key that is used when the secondary key is not pressed.
      */
     public void addAxis(String name, Integer primaryKey, Integer altPrimaryKey, Integer secondaryKey, Integer altSecondaryKey) {
@@ -155,8 +157,8 @@ public class YldInput {
      * The first parameter is the name of the axis. The next two parameters are the primary and secondary keys for the
      * axis.
      *
-     * @param name The name of the axis.
-     * @param primaryKey The key that is used to move the axis in the negative direction.
+     * @param name         The name of the axis.
+     * @param primaryKey   The key that is used to move the axis in the negative direction.
      * @param secondaryKey The key that is used to move the axis in the positive direction.
      */
     public void addAxis(String name, Integer primaryKey, Integer secondaryKey) {
@@ -180,9 +182,17 @@ public class YldInput {
     }
 
     /**
-     * Returns the set of pointers.
+     * If the game is touchable, return the touch points, otherwise return the mouse position
+     *
+     * @return A set of Vector3 objects.
      */
-    public Set<YldPair<Float, Float>> getPointers() {
-        return pointers;
+    public Set<Vector3> getPointers() {
+        if (game.getHandler().getRenderMaster() instanceof MultipleFingerPointers)
+            return ((MultipleFingerPointers) game.getHandler().getRenderMaster()).fingerPointers();
+        else {
+            nonTouchableGamePointers.clear();
+            nonTouchableGamePointers.add(new Vector3(getMouse()));
+            return nonTouchableGamePointers;
+        }
     }
 }

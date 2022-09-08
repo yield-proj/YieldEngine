@@ -6,6 +6,7 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/slf4j-api-1.7.9.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/slf4j-nop-1.7.9.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/jbox2d-library-2.2.1.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/gson-2.9.1.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
