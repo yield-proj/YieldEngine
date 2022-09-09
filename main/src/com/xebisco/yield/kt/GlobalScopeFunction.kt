@@ -29,6 +29,15 @@ fun launch(game: YldGame, configuration: GameConfiguration) {
     YldGame.launch(game, configuration)
 }
 
+/**
+ * It launches the game
+ *
+ * @param game The game class that extends YldGame.
+ */
+fun launch(game: YldGame) {
+    YldGame.launch(game)
+}
+
 const val YIELD_VERSION = Yld.VERSION
 
 fun log(o: Any) {
