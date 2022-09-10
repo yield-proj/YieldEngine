@@ -30,6 +30,7 @@ public class Animator extends Component {
     private Animation actAnim;
     private boolean autoReplay = true, finished, resetAnimation;
     private int actAnimFrame, overlayTime;
+    private boolean updateSpriteSize;
 
     @Override
     public void update(float delta) {
@@ -64,6 +65,10 @@ public class Animator extends Component {
                 }
             }
             getMaterial().setTexture(actAnim.getFrames()[actAnim.getActFrame()]);
+            Sprite sprite = getComponent(Sprite.class);
+            if(sprite != null && updateSpriteSize) {
+                sprite.setSizeAsTexture(getMaterial().getTexture());
+            }
         }
     }
 
@@ -234,5 +239,23 @@ public class Animator extends Component {
      */
     public void setResetAnimation(boolean resetAnimation) {
         this.resetAnimation = resetAnimation;
+    }
+
+    /**
+     * Returns whether the sprite size should be updated
+     *
+     * @return The value of the updateSpriteSize variable.
+     */
+    public boolean isUpdateSpriteSize() {
+        return updateSpriteSize;
+    }
+
+    /**
+     * This function sets the updateSpriteSize variable to the value of the parameter passed in
+     *
+     * @param updateSpriteSize If true, the sprite's size will be updated to match the size of the actual animation frame.
+     */
+    public void setUpdateSpriteSize(boolean updateSpriteSize) {
+        this.updateSpriteSize = updateSpriteSize;
     }
 }
