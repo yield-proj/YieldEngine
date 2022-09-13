@@ -74,7 +74,8 @@ public class YldGame extends YldScene {
      * @since 4_alpha1
      */
     public static void launch(YldGame game, GameConfiguration configuration) {
-        if(configuration == null) configuration = (GameConfiguration) new JsonFileWrapper("com/xebisco/yield/assets/stdlaunchconfig.json", GameConfiguration.class).getObject();
+        if (configuration == null)
+            configuration = (GameConfiguration) new JsonFileWrapper("com/xebisco/yield/assets/stdlaunchconfig.json", GameConfiguration.class).getObject();
         game.setConfiguration(configuration);
         game.addScene(game);
         game.setScene(game);
@@ -630,7 +631,9 @@ public class YldGame extends YldScene {
             }
         }
         setScene(scene);
-        loadSceneAssets(scene, null);
+        if (!scene.isHadProgressScene())
+            loadSceneAssets(scene, null);
+        scene.setHadProgressScene(false);
     }
 
     /**
@@ -664,10 +667,11 @@ public class YldGame extends YldScene {
         setScene(progressScene, how);
         YldProgressScene ps = (YldProgressScene) scene;
         ps.setToChangeScene(type);
-        loadSceneAssets(ps, null);
         ps.setToChangeScene(type);
+        YldScene toChangeScene = getScene(type);
+        toChangeScene.setHadProgressScene(true);
         concurrent(() -> {
-            loadSceneAssets(getScene(type), (YldProgressScene) scene);
+            loadSceneAssets(toChangeScene, ps);
             ps.change();
         }, MultiThread.EXCLUSIVE);
     }
@@ -675,7 +679,7 @@ public class YldGame extends YldScene {
     /**
      * Set the scene to the given type, using the given progress scene, and destroy the last scene.
      *
-     * @param type The class of the scene you want to change to.
+     * @param type          The class of the scene you want to change to.
      * @param progressScene The class of the progress scene to be displayed while the scene is loading.
      */
     public <T extends YldScene, P extends YldProgressScene> void setScene(Class<T> type, Class<P> progressScene) {

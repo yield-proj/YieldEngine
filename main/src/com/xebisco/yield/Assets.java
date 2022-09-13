@@ -39,7 +39,7 @@ public final class Assets {
         if (shared != null) {
             try {
                 File sharedFile = new File(shared.toURI());
-                addFile(sharedFile, sharedFile.getParent(), "", null);
+                addFile(sharedFile, sharedFile.getParent(), "shared", null);
             } catch (URISyntaxException e) {
                 Yld.throwException(new RuntimeException(e));
             }
@@ -100,6 +100,7 @@ public final class Assets {
                 }
                 if (r instanceof Texture)
                     game.loadTexture((Texture) r);
+                Yld.log(path.replace("\\" + removeFromName + "\\", "").replace(f.getName(), "").replace("\\", "/").concat(name));
                 files.put(name, r);
             } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
                      IllegalAccessException | NoSuchMethodException e) {

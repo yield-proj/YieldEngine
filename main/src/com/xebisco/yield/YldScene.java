@@ -37,6 +37,8 @@ public class YldScene extends YldB {
 
     protected YldGraphics graphics;
 
+    private boolean hadProgressScene;
+
     private Assets assets;
 
     protected View view = new View(1280, 720);
@@ -368,11 +370,29 @@ public class YldScene extends YldB {
         this.graphics = graphics;
     }
 
+    /**
+     * Returns an Asset instance for the game's package.
+     *
+     * @return The assets object.
+     */
     public Assets getAssets() {
         return assets;
     }
 
+    /**
+     * This function sets the assets variable to the assets variable passed in.
+     *
+     * @param assets The assets object that contains the asset information.
+     */
     public void setAssets(Assets assets) {
         this.assets = assets;
+    }
+
+    public boolean isHadProgressScene() {
+        return hadProgressScene;
+    }
+
+    public void setHadProgressScene(boolean hadProgressScene) {
+        this.hadProgressScene = hadProgressScene;
     }
 }
