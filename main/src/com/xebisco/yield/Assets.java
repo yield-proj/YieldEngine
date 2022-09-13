@@ -100,7 +100,7 @@ public final class Assets {
                 }
                 if (r instanceof Texture)
                     game.loadTexture((Texture) r);
-                Yld.log(path.replace("\\" + removeFromName + "\\", "").replace(f.getName(), "").replace("\\", "/").concat(name));
+                name = path.replace("\\" + removeFromName + "\\", "").replace(f.getName(), "").replace("\\", "/").concat(name);
                 files.put(name, r);
             } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
                      IllegalAccessException | NoSuchMethodException e) {
