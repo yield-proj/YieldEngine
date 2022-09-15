@@ -37,7 +37,7 @@ public class TileMap extends SimpleRenderable {
      * @param colors The colors of the tiles in the tilemap.
      * @param tileMap The tilemap you want to load the tiles into.
      * @param tileSet The tileset to use
-     * @param grid The size of the tiles.
+     * @param grid The size of the tiles' placement.
      * @param entity The entity that the tilemap will be attached to.
      * @param concurrent The YldB instance that contains concurrent information.
      * @return A TileMap
