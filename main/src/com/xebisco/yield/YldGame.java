@@ -27,6 +27,7 @@ import com.xebisco.yield.systems.YldTimeSystem;
 
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -613,6 +614,15 @@ public class YldGame extends YldScene {
      */
     public <T extends YldScene> void setScene(Class<T> type, ChangeScene how) {
         YldScene scene = getScene(type);
+        if(scene == null) {
+            try {
+                addScene(type.getConstructor().newInstance());
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException e) {
+                Yld.throwException(new RuntimeException(e));
+            }
+            setScene(type, how);
+        }
         if (scene == null)
             throw new NullPointerException("none scene with name: " + type.getName());
         else {
