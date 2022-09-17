@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.kt
+package com.xebisco.yield.kotlin
 
 import com.xebisco.yield.*
 import kotlin.reflect.KClass
