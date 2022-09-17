@@ -43,6 +43,11 @@ public class TileGen {
         this.layer = layer;
     }
 
+    public TileGen(MappedTiles mappedTiles, Prefab standardPrefab) {
+        this.mappedTiles = mappedTiles;
+        this.standardPrefab = standardPrefab;
+    }
+
     public TileGen(Texture texture) {
         tile = new Tile(texture);
     }

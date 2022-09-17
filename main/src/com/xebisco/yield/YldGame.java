@@ -630,6 +630,7 @@ public class YldGame extends YldScene {
                 if (configuration.unloadAllTexturesWhenChangeScene)
                     unloadAllTextures();
                 if (how == ChangeScene.DESTROY_LAST) {
+                    log("DESTROY");
                     getScene().destroyScene();
                     for (YldSystem system : getScene().getSystems()) {
                         system.destroy();

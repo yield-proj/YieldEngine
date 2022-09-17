@@ -29,16 +29,16 @@ public class TileMap extends SimpleRenderable {
 
     private float processTime = .05f, actualProcessTime;
 
-    private Vector2 grid;
+    private Vector2 grid, addedView = new Vector2();
 
     /**
      * It loads a tile map from a 2D array of colors
      *
-     * @param colors The colors of the tiles in the tilemap.
-     * @param tileMap The tilemap you want to load the tiles into.
-     * @param tileSet The tileset to use
-     * @param grid The size of the tiles' placement.
-     * @param entity The entity that the tilemap will be attached to.
+     * @param colors     The colors of the tiles in the tilemap.
+     * @param tileMap    The tilemap you want to load the tiles into.
+     * @param tileSet    The tileset to use
+     * @param grid       The size of the tiles' placement.
+     * @param entity     The entity that the tilemap will be attached to.
      * @param concurrent The YldB instance that contains concurrent information.
      * @return A TileMap
      */
@@ -88,7 +88,11 @@ public class TileMap extends SimpleRenderable {
                         Vector2 pos = new Vector2(x * tileMap.grid.x, y * tileMap.grid.y);
                         Tile tile = gen.getTile();
                         if (tile.getPrefab() != null) {
-                            Entity e = entity.instantiate(tile.getPrefab(), concurrent, pos.get());
+                            try {
+                                entity.instantiate(tile.getPrefab(), concurrent, pos.get());
+                            } catch (NullPointerException e) {
+                                Yld.throwException(new NullPointerException("entity parameter is null!"));
+                            }
                         }
                         tileMap.tiles.add(new YldPair<>(pos, new YldPair<>(tile, false)));
                         gen.setTilesToCompare(null);
@@ -103,7 +107,8 @@ public class TileMap extends SimpleRenderable {
 
     /**
      * Loads a tile map from a 2D array of colors.
-     * @param colors The 2D array of colors that you want to load into the tile map.
+     *
+     * @param colors  The 2D array of colors that you want to load into the tile map.
      * @param tileMap The tile map to load the colors into.
      * @param tileSet The TileSet to use for the TileMap.
      * @return A TileMap object.
@@ -115,10 +120,10 @@ public class TileMap extends SimpleRenderable {
     /**
      * It takes a 2D array of colors
      *
-     * @param colors The 2D array of colors that you want to load.
+     * @param colors  The 2D array of colors that you want to load.
      * @param tileMap The tilemap to load the colors into.
      * @param tileSet The TileSet to use for the TileMap.
-     * @param entity The entity that the tilemap will be attached to.
+     * @param entity  The entity that the tilemap will be attached to.
      * @return A TileMap object.
      */
     public static TileMap loadTileMap(Color[][] colors, TileMap tileMap, TileSet tileSet, Entity entity) {
@@ -143,10 +148,10 @@ public class TileMap extends SimpleRenderable {
                             size = tile.getSize().mul(t.scale);
                     boolean render = true;
                     if (dynamicProcessing && (transform.rotation % 360 == 0 || transform.rotation == 0)) {
-                        if (!(pos.x + size.x / 2f >= 0 &&
-                                pos.x - size.x / 2f < scene.getView().getWidth() &&
-                                pos.y + size.y / 2f >= 0 &&
-                                pos.y - size.y / 2f < scene.getView().getHeight())) {
+                        if (!(pos.x + addedView.x + size.x / 2f >= 0 &&
+                                pos.x - addedView.x - size.x / 2f < scene.getView().getWidth() &&
+                                pos.y + addedView.y + size.y / 2f >= 0 &&
+                                pos.y - addedView.y - size.y / 2f < scene.getView().getHeight())) {
                             render = false;
                         }
                     }
@@ -190,7 +195,7 @@ public class TileMap extends SimpleRenderable {
      * This function sets the tiles of the map.
      *
      * @param tiles A list of YldPairs. The first element of the YldPair is a Vector2, which is the position of the tile.
-     * The second element of the YldPair is another YldPair, which contains the Tile object and a boolean.
+     *              The second element of the YldPair is another YldPair, which contains the Tile object and a boolean.
      */
     public void setTiles(List<YldPair<Vector2, YldPair<Tile, Boolean>>> tiles) {
         this.tiles = tiles;
@@ -284,5 +289,23 @@ public class TileMap extends SimpleRenderable {
      */
     public void setProcess(boolean process) {
         this.process = process;
+    }
+
+    /**
+     * This function returns the addedView vector2
+     *
+     * @return The addedView vector2.
+     */
+    public Vector2 getAddedView() {
+        return addedView;
+    }
+
+    /**
+     * This function sets the addedView variable to the value of the addedView parameter.
+     *
+     * @param addedView The amount of pixels to add to the dynamic process view.
+     */
+    public void setAddedView(Vector2 addedView) {
+        this.addedView = addedView;
     }
 }

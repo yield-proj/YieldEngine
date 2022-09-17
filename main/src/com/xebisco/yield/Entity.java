@@ -322,11 +322,11 @@ public final class Entity implements Comparable<Entity> {
     /**
      * It creates an entity, sets its position, and then adds it to the children list.
      *
-     * @param prefab The prefab to instantiate.
-     * @param yldB The YldB that contains concurrent information.
-     * @param pos The position of the entity.
+     * @param prefab      The prefab to instantiate.
+     * @param yldB        The YldB that contains concurrent information.
+     * @param pos         The position of the entity.
      * @param multiThread This is a boolean that determines whether the entity should be added to the scene in a
-     * separate thread.
+     *                    separate thread.
      * @return The entity that was just created.
      */
     public Entity instantiate(Prefab prefab, YldB yldB, Vector2 pos, MultiThread multiThread) {
@@ -346,7 +346,7 @@ public final class Entity implements Comparable<Entity> {
      * It creates an entity, sets its position, and then adds it to the children list.
      *
      * @param prefab The prefab to instantiate.
-     * @param pos The position of the entity.
+     * @param pos    The position of the entity.
      * @param engine The engine that will be used to create this entity.
      * @return The entity that was just created.
      */
@@ -401,7 +401,7 @@ public final class Entity implements Comparable<Entity> {
      * third parameter is the MultiThread to use
      *
      * @param prefab The prefab to instantiate.
-     * @param yldB The YldB that contains concurrent information.
+     * @param yldB   The YldB that contains concurrent information.
      * @return An Entity
      */
     public Entity instantiate(Prefab prefab, YldB yldB) {
@@ -453,10 +453,14 @@ public final class Entity implements Comparable<Entity> {
     public void destroy() {
         for (int i = 0; i < children.size(); i++) {
             Entity e = children.get(i);
-            if (e != null)
+            if (e != null) {
+                Yld.debug(() -> Yld.log("Destroyed entity: " + e.name));
                 e.destroy();
+            }
         }
         for (int i = 0; i < components.size(); i++) {
+            int finalI = i;
+            Yld.debug(() -> Yld.log("Called onDestroy on component: " + components.get(finalI).getClass().getSimpleName()));
             components.get(i).onDestroy();
         }
         if (parent != null) {
