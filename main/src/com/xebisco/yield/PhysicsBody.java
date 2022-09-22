@@ -142,8 +142,10 @@ public class PhysicsBody extends YldScript {
     @Override
     public void onDestroy() {
         if (box2dBody != null) {
+            Yld.debug(() -> Yld.log(this + " destroyed."));
             destroyFixtures();
             physicsSystem.getBox2dWorld().destroyBody(box2dBody);
+            box2dBody = null;
         }
     }
 

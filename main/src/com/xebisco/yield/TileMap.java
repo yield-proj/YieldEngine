@@ -94,7 +94,8 @@ public class TileMap extends SimpleRenderable {
                                 Yld.throwException(new NullPointerException("entity parameter is null!"));
                             }
                         }
-                        tileMap.tiles.add(new YldPair<>(pos, new YldPair<>(tile, false)));
+                        if (tile.getTexture() != null)
+                            tileMap.tiles.add(new YldPair<>(pos, new YldPair<>(tile, false)));
                         gen.setTilesToCompare(null);
                     } catch (NullPointerException ignore) {
 

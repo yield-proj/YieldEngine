@@ -296,6 +296,15 @@ public final class Yld {
     }
 
     /**
+     * Logs an Object to the standard error output.
+     *
+     * @param msg The error message to be logged.
+     */
+    public static void err(Object msg) {
+        System.err.println(msg);
+    }
+
+    /**
      * Closes the Java Virtual Machine.
      */
     public static void exit() {

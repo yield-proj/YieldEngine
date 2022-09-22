@@ -30,6 +30,7 @@ public class GameConfiguration extends WindowConfiguration {
      * Frames per second for the game handler.
      */
     public int fps = 60;
+
     /**
      * Pixels per meter.
      */
@@ -57,12 +58,16 @@ public class GameConfiguration extends WindowConfiguration {
     /**
      * A flag to unload all textures from memory when changing scene.
      */
-    public boolean unloadAllTexturesWhenChangeScene = false;
+    public boolean unloadAllTexturesWhenChangeScene = true;
 
     /**
      * A flag to unload all textures from memory when changing to a process scene.
      */
-    public boolean unloadAllTexturesWhenChangeToProcessScene = false;
+    public boolean unloadAllTexturesWhenChangeToProcessScene = true;
+    /**
+     * A flag to unload all audio players when changing scene.
+     */
+    public boolean unloadAllAudioPlayersWhenChangeScene = true;
 
     /**
      * The number of frames before the garbage collector is called.

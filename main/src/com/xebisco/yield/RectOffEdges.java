@@ -21,18 +21,39 @@ package com.xebisco.yield;
  */
 public class RectOffEdges extends YldScript {
 
-    private Vector2 size;
+    private final Vector2 size;
+    private final float friction1, friction2, friction3, friction4;
 
     public RectOffEdges(Vector2 size) {
         this.size = size;
+        this.friction1 = 1f;
+        this.friction2 = 1f;
+        this.friction3 = 1f;
+        this.friction4 = 1f;
+    }
+
+    public RectOffEdges(Vector2 size, float friction) {
+        this.size = size;
+        this.friction1 = friction;
+        this.friction2 = friction;
+        this.friction3 = friction;
+        this.friction4 = friction;
+    }
+
+    public RectOffEdges(Vector2 size, float friction1, float friction2, float friction3, float friction4) {
+        this.size = size;
+        this.friction1 = friction1;
+        this.friction2 = friction2;
+        this.friction3 = friction3;
+        this.friction4 = friction4;
     }
 
     @Override
     public void create() {
-        addComponent(new EdgeCollider(new Vector2(size.x / 2f, size.y / 2f), new Vector2(-size.x / 2f, size.y / 2f)));
-        addComponent(new EdgeCollider(new Vector2(size.x / 2f, -size.y / 2f), new Vector2(-size.x / 2f, -size.y / 2f)));
-        addComponent(new EdgeCollider(new Vector2(-size.x / 2f, size.y / 2f), new Vector2(-size.x / 2f, -size.y / 2f)));
-        addComponent(new EdgeCollider(new Vector2(size.x / 2f, size.y / 2f), new Vector2(size.x / 2f, -size.y / 2f)));
+        addComponent(new EdgeCollider(new Vector2(size.x / 2f, size.y / 2f), new Vector2(-size.x / 2f, size.y / 2f), friction1));
+        addComponent(new EdgeCollider(new Vector2(size.x / 2f, -size.y / 2f), new Vector2(-size.x / 2f, -size.y / 2f), friction2));
+        addComponent(new EdgeCollider(new Vector2(-size.x / 2f, size.y / 2f), new Vector2(-size.x / 2f, -size.y / 2f), friction3));
+        addComponent(new EdgeCollider(new Vector2(size.x / 2f, size.y / 2f), new Vector2(size.x / 2f, -size.y / 2f), friction4));
         //destroy();
     }
 
@@ -43,14 +64,5 @@ public class RectOffEdges extends YldScript {
      */
     public Vector2 getSize() {
         return size;
-    }
-
-    /**
-     * This function sets the size of the object to the size passed in.
-     *
-     * @param size The size of the object.
-     */
-    public void setSize(Vector2 size) {
-        this.size = size;
     }
 }

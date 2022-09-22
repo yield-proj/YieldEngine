@@ -41,7 +41,7 @@ public class YldScene extends YldB {
 
     private Assets assets;
 
-    protected View view = new View(1280, 720);
+    private View view = new View(1280, 720);
 
     private ArrayList<YldSystem> systems = new ArrayList<>();
     /**
@@ -350,6 +350,8 @@ public class YldScene extends YldB {
      */
     public void setView(View view) {
         this.view = view;
+        game.getHandler().getRenderMaster().onResize(view.getWidth(), view.getHeight());
+        Yld.debug(() -> Yld.log("Resized scene '" + this.getClass().getSimpleName() + "' to " + view.getWidth() + "x" + view.getHeight()));
     }
 
     /**

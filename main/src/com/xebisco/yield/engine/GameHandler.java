@@ -88,10 +88,10 @@ public class GameHandler extends Engine {
             System.gc();
         }
         zeroDelta = false;
-        renderMaster.frameStart(sampleGraphics, game.getScene().getView());
+        renderMaster.frameStart(sampleGraphics);
         if (renderMaster.canStart())
             game.updateScene(delta, sampleGraphics);
-        renderMaster.frameEnd();
+        renderMaster.frameEnd(game.getScene().getView());
         game.afterRender(delta);
         if(game.getConfiguration().framesToGarbageCollection >= 0) {
             framesToGarbageCollectionCount++;

@@ -21,18 +21,13 @@ import com.xebisco.yield.engine.EngineStop;
 import com.xebisco.yield.engine.GameHandler;
 import com.xebisco.yield.engine.YldEngineAction;
 import com.xebisco.yield.exceptions.MissingWindowPrintException;
-import com.xebisco.yield.systems.MiddlePointSystem;
-import com.xebisco.yield.systems.PhysicsSystem;
-import com.xebisco.yield.systems.YldTimeSystem;
 
 import java.io.File;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * This class is the starting point for every Yield Game, it contains all the objects of the game.
@@ -75,6 +70,7 @@ public class YldGame extends YldScene {
      * @since 4_alpha1
      */
     public static void launch(YldGame game, GameConfiguration configuration) {
+        Yld.debug(() -> Yld.log("Starting game '" + game.getClass().getSimpleName() + "'."));
         if (configuration == null)
             configuration = (GameConfiguration) new JsonFileWrapper("com/xebisco/yield/assets/stdlaunchconfig.json", GameConfiguration.class).getObject();
         game.setConfiguration(configuration);
@@ -84,11 +80,12 @@ public class YldGame extends YldScene {
         new GameHandler(game);
         game.loadTexture(configuration.icon);
         game.setWindow(game.getHandler().getRenderMaster().initWindow(game.getConfiguration()));
-        game.yieldLogo = new Texture("com/xebisco/yield/assets/yieldlogo.png", TexType.NATIVE);
+        game.yieldLogo = new Texture("com/xebisco/yield/assets/yieldlogo.png");
         game.loadTexture(game.yieldLogo);
         game.loadFont("arial", 30, 0, new RelativeFile("com/xebisco/yield/assets/ArialNormal.ttf"));
         game.loadSceneAssets(game.scene, null);
         game.getHandler().getThread().start();
+        Yld.debug(() -> Yld.log("Game '" + game.getClass().getSimpleName() + "' started."));
     }
 
     /**
@@ -111,6 +108,7 @@ public class YldGame extends YldScene {
      */
     public final void updateScene(float delta, SampleGraphics graphics) {
         if (scene.getFrames() == 0) {
+            scene.setView(new View(1280, 720));
             for (YldSystem system : scene.getSystems()) {
                 if (system instanceof SystemCreateMethod) {
                     ((SystemCreateMethod) system).create();
@@ -122,10 +120,40 @@ public class YldGame extends YldScene {
         if (scene.isCallStart()) {
             scene.setCallStart(false);
             scene.start();
+            System.gc();
         }
         scene.update(delta);
         globalUpdate(delta);
         scene.process(delta, graphics);
+    }
+
+    /**
+     * It sets the value of a field in the render master
+     *
+     * @param property The name of the field you want to set.
+     * @param value    The value to set the field to.
+     */
+    public void setRenderProperty(String property, Object value) {
+        try {
+            handler.getRenderMaster().getClass().getField(property).set(handler.getRenderMaster(), value);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            Yld.debug(() -> Yld.err("Could not find '" + property + "' in " + handler.getRenderMaster().getClass().getSimpleName() + " render master."));
+        }
+    }
+
+    /**
+     * It gets a property from the render master
+     *
+     * @param property The name of the property you want to get.
+     * @return The value of the field with the passed property name.
+     */
+    public Object getRenderProperty(String property) {
+        try {
+            return handler.getRenderMaster().getClass().getField(property).get(handler.getRenderMaster());
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            Yld.debug(() -> Yld.err("Could not find '" + property + "' in " + handler.getRenderMaster().getClass().getSimpleName() + " render master."));
+        }
+        return null;
     }
 
     /**
@@ -586,6 +614,13 @@ public class YldGame extends YldScene {
     }
 
     /**
+     * Unloads all audio players
+     */
+    public void unloadAllAudioPlayers() {
+        handler.getRenderMaster().unloadAllPlayers();
+    }
+
+    /**
      * Loads a font with the given name, size, and style.
      *
      * @param fontName The name of the font.
@@ -614,7 +649,7 @@ public class YldGame extends YldScene {
      */
     public <T extends YldScene> void setScene(Class<T> type, ChangeScene how) {
         YldScene scene = getScene(type);
-        if(scene == null) {
+        if (scene == null) {
             try {
                 addScene(type.getConstructor().newInstance());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
@@ -627,10 +662,13 @@ public class YldGame extends YldScene {
             throw new NullPointerException("none scene with name: " + type.getName());
         else {
             if (getScene() != null) {
-                if (configuration.unloadAllTexturesWhenChangeScene)
-                    unloadAllTextures();
+                if(!(getScene() instanceof YldProgressScene)) {
+                    if (configuration.unloadAllTexturesWhenChangeScene)
+                        unloadAllTextures();
+                    if (configuration.unloadAllAudioPlayersWhenChangeScene)
+                        unloadAllAudioPlayers();
+                }
                 if (how == ChangeScene.DESTROY_LAST) {
-                    log("DESTROY");
                     getScene().destroyScene();
                     for (YldSystem system : getScene().getSystems()) {
                         system.destroy();
@@ -645,6 +683,7 @@ public class YldGame extends YldScene {
         if (!scene.isHadProgressScene())
             loadSceneAssets(scene, null);
         scene.setHadProgressScene(false);
+        Yld.debug(() -> Yld.log("Changed to scene: " + type.getSimpleName()));
     }
 
     /**

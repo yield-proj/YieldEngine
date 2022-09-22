@@ -1,19 +1,3 @@
-/*
- * Copyright [2022] [Xebisco]
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
@@ -27,7 +11,7 @@ public class Test2 extends YldGame {
         graphics.img(getAssets().getTexture("yield.png")).center();
         addScene(new Test());
         addScene(new Loading());
-        Yld.log(((TestJson) getAssets().getJsonFile("test.json", TestJson.class).getObject()).arg);
+
     }
 
     @Override
@@ -38,7 +22,9 @@ public class Test2 extends YldGame {
     }
 
     public static void main(String[] args) {
-        launch(new Test2());
+        GameConfiguration config = new GameConfiguration();
+        Ini.file(new RelativeFile("game.ini"), config);
+        launch(new Test2(), config);
     }
 }
 
@@ -58,7 +44,7 @@ class Loading extends YldProgressScene {
 
     @Override
     public void update(float delta) {
-        w = getProgress() * view.getWidth();
+        w = getProgress() * getView().getWidth();
         t.getSize().x += (w - t.getSize().x) / 8f;
     }
 }
@@ -70,7 +56,7 @@ class Test extends YldScene {
         graphics.img(getAssets().getTexture("img.png")).center();
         graphics.img(getAssets().getTexture("yield.png")).center();
         log(Arrays.toString(getAssets().getTextFile("test2.txt").getContents()));
-        log(Arrays.toString(getAssets().getTextFile("test.txt").getContents()));
+        log(Arrays.toString(getAssets().getTextFile("aa/test.txt").getContents()));
         log(Arrays.toString(getAssets().getTextFile("test3.txt").getContents()));
     }
 }

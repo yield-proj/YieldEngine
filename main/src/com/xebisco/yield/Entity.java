@@ -458,6 +458,9 @@ public final class Entity implements Comparable<Entity> {
                 e.destroy();
             }
         }
+        while (!children.isEmpty()) {
+            children.clear();
+        }
         for (int i = 0; i < components.size(); i++) {
             int finalI = i;
             Yld.debug(() -> Yld.log("Called onDestroy on component: " + components.get(finalI).getClass().getSimpleName()));

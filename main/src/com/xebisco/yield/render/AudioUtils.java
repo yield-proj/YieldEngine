@@ -84,11 +84,16 @@ public interface AudioUtils {
     void resumePlayer(AudioPlayer audioPlayer);
 
     /**
-     * Flushes the audio player
+     * Unloads the audio player
      *
      * @param audioPlayer The audio player to flush.
      */
-    void flushPlayer(AudioPlayer audioPlayer);
+    void unloadPlayer(AudioPlayer audioPlayer);
+
+    /**
+     * Unloads all audio players
+     */
+    void unloadAllPlayers();
 
     /**
      * Sets whether the audio player should loop or not

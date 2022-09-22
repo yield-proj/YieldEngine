@@ -120,7 +120,7 @@ public class AudioPlayer extends Component {
     @Override
     public void onDestroy() {
         pause();
-        game.getHandler().getRenderMaster().flushPlayer(this);
+        game.getHandler().getRenderMaster().unloadPlayer(this);
     }
 
     /**

@@ -19,13 +19,12 @@ package com.xebisco.yield;
 import com.xebisco.yield.render.VisualUtils;
 
 /**
- * A Texture is an image for a game, can be added to graphical objects to display images.
+ * A Texture is an image for a game, can be added to entities to display images with a help of the sprite component.
  */
 public class Texture extends RelativeFile {
     private static int textures;
     private VisualUtils visualUtils;
     private Pixel[][] pixels;
-    private final TexType textureType;
     private final int textureID;
     private Texture invertedX, invertedY, invertedXY;
 
@@ -33,25 +32,8 @@ public class Texture extends RelativeFile {
 
     public Texture(String relativePath) {
         super(relativePath);
-        textureType = TexType.SIMULATED;
         textures++;
         textureID = textures;
-    }
-
-    public Texture(String relativePath, TexType textureType) {
-        super(relativePath);
-        this.textureType = textureType;
-        textures++;
-        textureID = textures;
-    }
-
-    public Texture(RelativeFile relativeFile, TexType textureType) {
-        super(relativeFile.getCachedPath());
-        textures++;
-        textureID = textures;
-        setInputStream(relativeFile.getInputStream());
-        setFlushAfterLoad(relativeFile.isFlushAfterLoad());
-        this.textureType = textureType;
     }
 
     public Texture(RelativeFile relativeFile) {
@@ -60,7 +42,6 @@ public class Texture extends RelativeFile {
         textureID = textures;
         setInputStream(relativeFile.getInputStream());
         setFlushAfterLoad(relativeFile.isFlushAfterLoad());
-        textureType = TexType.SIMULATED;
     }
 
     /**
@@ -329,15 +310,6 @@ public class Texture extends RelativeFile {
      */
     public void setInvertedXY(Texture invertedXY) {
         this.invertedXY = invertedXY;
-    }
-
-    /**
-     * This function returns the texture type of the current object.
-     *
-     * @return The texture type.
-     */
-    public TexType getTextureType() {
-        return textureType;
     }
 
     /**

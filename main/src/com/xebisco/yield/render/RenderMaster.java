@@ -24,8 +24,9 @@ import java.util.Set;
 
 /**
  * This is an interface to handle rendering, audio and files.
- * @since 4-1.2
+ *
  * @author Xebisco
+ * @since 4-1.2
  */
 public interface RenderMaster extends VisualUtils, AudioUtils, FileUtils {
     /**
@@ -59,18 +60,28 @@ public interface RenderMaster extends VisualUtils, AudioUtils, FileUtils {
 
     /**
      * "This function is called once per frame, before the frame is rendered."
-     * The `graphics` parameter is a `SampleGraphics` object that you can use to draw things on the screen. The `view`
-     * parameter is a `View` object that you can use to get information about the current view
+     * The `graphics` parameter is a `SampleGraphics` object that you can use to draw things on the screen.
      *
      * @param graphics The graphics object that you can use to draw to the screen.
-     * @param view The view object.
      */
-    void frameStart(SampleGraphics graphics, View view);
+    void frameStart(SampleGraphics graphics);
 
     /**
-     * This function is called at the end of each frame, to the RenderMaster render the game.
+     * This function is called at the end of each frame, to the RenderMaster render the game. The `view`
+     * parameter is a `View` object that you can use to get information about the current view
+     *
+     * @param view The view object.
      */
-    void frameEnd();
+    void frameEnd(View view);
+
+    /**
+     * This function is called when the game is resized.
+     * The first parameter is the new width of the game. The second parameter is the new height of the game
+     *
+     * @param width The width of the game
+     * @param height The height of the game
+     */
+    void onResize(int width, int height);
 
     /**
      * Returns true if the game can start.
@@ -106,5 +117,6 @@ public interface RenderMaster extends VisualUtils, AudioUtils, FileUtils {
      * @return The mouseY() function returns the y-coordinate of the mouse.
      */
     int mouseY();
+
     void close();
 }

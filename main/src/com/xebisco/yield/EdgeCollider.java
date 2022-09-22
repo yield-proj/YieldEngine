@@ -31,6 +31,12 @@ public class EdgeCollider extends Collider {
         this.point2 = point2;
     }
 
+    public EdgeCollider(Vector2 point1, Vector2 point2, float friction) {
+        this.point1 = point1;
+        this.point2 = point2;
+        setFriction(friction);
+    }
+
     @Override
     public Shape shape() {
         EdgeShape shape = new EdgeShape();
