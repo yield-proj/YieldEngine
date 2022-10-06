@@ -75,15 +75,17 @@ public class YldGame extends YldScene {
             configuration = (GameConfiguration) new JsonFileWrapper("com/xebisco/yield/assets/stdlaunchconfig.json", GameConfiguration.class).getObject();
         game.setConfiguration(configuration);
         game.addScene(game);
-        game.setScene(game);
         game.setInput(new YldInput(game));
         new GameHandler(game);
-        game.loadTexture(configuration.icon);
+        if (configuration.icon != null)
+            game.loadTexture(configuration.icon);
         game.setWindow(game.getHandler().getRenderMaster().initWindow(game.getConfiguration()));
-        game.yieldLogo = new Texture("com/xebisco/yield/assets/yieldlogo.png");
-        game.loadTexture(game.yieldLogo);
+        if (configuration.loadYieldLogo) {
+            game.yieldLogo = new Texture("com/xebisco/yield/assets/yieldlogo.png");
+            game.loadTexture(game.yieldLogo);
+        }
         game.loadFont("arial", 30, 0, new RelativeFile("com/xebisco/yield/assets/ArialNormal.ttf"));
-        game.loadSceneAssets(game.scene, null);
+        game.setScene(game.getClass());
         game.getHandler().getThread().start();
         Yld.debug(() -> Yld.log("Game '" + game.getClass().getSimpleName() + "' started."));
     }
@@ -662,7 +664,7 @@ public class YldGame extends YldScene {
             throw new NullPointerException("none scene with name: " + type.getName());
         else {
             if (getScene() != null) {
-                if(!(getScene() instanceof YldProgressScene)) {
+                if (!(getScene() instanceof YldProgressScene)) {
                     if (configuration.unloadAllTexturesWhenChangeScene)
                         unloadAllTextures();
                     if (configuration.unloadAllAudioPlayersWhenChangeScene)

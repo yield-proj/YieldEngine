@@ -37,6 +37,11 @@ public class GameConfiguration extends WindowConfiguration {
     public int ppm = 16;
 
     /**
+     * A flag to load the Yield logo when the game is launched.
+     */
+    public boolean loadYieldLogo = true;
+
+    /**
      * Fps lock for the game handler.
      */
     public boolean fpsLock = true;

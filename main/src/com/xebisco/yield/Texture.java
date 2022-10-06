@@ -16,6 +16,7 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.swingyield.exceptions.NotCapableTextureException;
 import com.xebisco.yield.render.VisualUtils;
 
 /**
@@ -57,7 +58,11 @@ public class Texture extends RelativeFile {
      * When the texture loads, update the pixels.
      */
     public void onLoad() {
-        updatePixels();
+        try {
+            updatePixels();
+        } catch (Exception ignore) {
+
+        }
     }
 
     /**
@@ -89,7 +94,7 @@ public class Texture extends RelativeFile {
      * Set the color of the pixel at the given position to the given color.
      *
      * @param color The color you want to set the pixel to.
-     * @param pos The position of the pixel to set.
+     * @param pos   The position of the pixel to set.
      */
     public void setColor(Color color, Vector2 pos) {
         visualUtils.setPixel(this, color, pos);
@@ -126,7 +131,7 @@ public class Texture extends RelativeFile {
     /**
      * This function cuts a part of the current texture and returns it as a new texture.
      *
-     * @param pos The position of the top left corner of the texture to cut out.
+     * @param pos  The position of the top left corner of the texture to cut out.
      * @param size The size of the texture to be cut.
      * @return A new Texture object.
      */
@@ -152,17 +157,17 @@ public class Texture extends RelativeFile {
         int width = getWidth() - 1, height = getHeight() - 1;
         for (int x = 0; x < pixels.length; x++) {
             for (int y = 0; y < pixels[0].length; y++) {
-                    Pixel pixel = pixels[x][y];
-                    filter.process(pixel);
-                    while (pixel.getOutLocation().x > width)
-                        pixel.getOutLocation().x -= width + 1;
-                    while (pixel.getOutLocation().x < 0)
-                        pixel.getOutLocation().x += width + 1;
-                    while (pixel.getOutLocation().y > height)
-                        pixel.getOutLocation().y -= height + 1;
-                    while (pixel.getOutLocation().y < 0)
-                        pixel.getOutLocation().y += height + 1;
-                    setColor(pixel.getOutColor(), pixel.getOutLocation());
+                Pixel pixel = pixels[x][y];
+                filter.process(pixel);
+                while (pixel.getOutLocation().x > width)
+                    pixel.getOutLocation().x -= width + 1;
+                while (pixel.getOutLocation().x < 0)
+                    pixel.getOutLocation().x += width + 1;
+                while (pixel.getOutLocation().y > height)
+                    pixel.getOutLocation().y -= height + 1;
+                while (pixel.getOutLocation().y < 0)
+                    pixel.getOutLocation().y += height + 1;
+                setColor(pixel.getOutColor(), pixel.getOutLocation());
             }
         }
         //setColors(colors);
