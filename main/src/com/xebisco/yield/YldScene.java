@@ -60,7 +60,8 @@ public class YldScene extends YldB {
     public void defaultSystems() {
         replaceSystem(new YldTimeSystem());
         replaceSystem(new MiddlePointSystem());
-        replaceSystem(new PhysicsSystem());
+        if (game.getConfiguration().startPhysicsSystem)
+            replaceSystem(new PhysicsSystem());
     }
 
     /**
