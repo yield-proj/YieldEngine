@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield;
+package com.xebisco.yield.exceptions;
 
-public abstract class KeyListener extends YldScript {
-    @Override
-    public void update(float delta) {
-        for(int key : game.getHandler().getRenderMaster().pressing()) {
-            if(input.isJustPressed(key)) {
-                onKeyPressed(key);
-            }
-        }
+public class NotSupportedOperationException extends RuntimeException {
+    public NotSupportedOperationException() {
+        super();
     }
 
-    public abstract void onKeyPressed(int key);
+    public NotSupportedOperationException(String message) {
+        super(message);
+    }
 }

@@ -571,7 +571,7 @@ public class YldGame extends YldScene {
      *
      * @param fontName The name of the font.
      * @param size     The size of the font.
-     * @param format   0 = Bitmap, 1 = Vector.
+     * @param format   0 = Vector, 1 = Bitmap.
      * @param fontFile The file that contains the font.
      */
     public void loadFont(String fontName, float size, int format, RelativeFile fontFile) {

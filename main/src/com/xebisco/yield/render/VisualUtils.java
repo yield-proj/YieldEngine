@@ -62,7 +62,7 @@ public interface VisualUtils {
      * @param fontName The name of the font.
      * @param size The size of the font you want to load.
      * @param sizeToLoad The size of the font to load.
-     * @param fontFormat 0 = Bitmap, 1 = Vector
+     * @param fontFormat 0 = Vector, 1 = Bitmap
      * @param relativeFile The file to load the font from.
      */
     void loadFont(String fontName, float size, float sizeToLoad, int fontFormat, RelativeFile relativeFile);

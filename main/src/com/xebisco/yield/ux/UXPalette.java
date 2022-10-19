@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield;
+package com.xebisco.yield.ux;
 
-public abstract class KeyListener extends YldScript {
-    @Override
-    public void update(float delta) {
-        for(int key : game.getHandler().getRenderMaster().pressing()) {
-            if(input.isJustPressed(key)) {
-                onKeyPressed(key);
-            }
-        }
-    }
+import com.xebisco.yield.Color;
 
-    public abstract void onKeyPressed(int key);
+public class UXPalette {
+    public Color foreground1 = new Color(0xd6e4fb), foreground2 = new Color(0x2f3135), foreground3 = new Color(0x407fa9), background1 = new Color(0x1a1c20), text1 = new Color(0xcce0f0), text2 = new Color(0x191c29);
+    public String font1 = "roboto", font2 = "roboto-title";
 }

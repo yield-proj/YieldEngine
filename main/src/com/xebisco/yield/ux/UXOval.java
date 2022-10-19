@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield;
+package com.xebisco.yield.ux;
 
-public abstract class KeyListener extends YldScript {
-    @Override
-    public void update(float delta) {
-        for(int key : game.getHandler().getRenderMaster().pressing()) {
-            if(input.isJustPressed(key)) {
-                onKeyPressed(key);
-            }
-        }
+import com.xebisco.yield.SampleGraphics;
+import com.xebisco.yield.Vector2;
+
+public class UXOval extends UXRect {
+    public UXOval(Vector2 position, Vector2 size, UXMain uxMain) {
+        super(position, size, uxMain);
     }
 
-    public abstract void onKeyPressed(int key);
+    @Override
+    public void render(SampleGraphics graphics, float delta) {
+        graphics.drawOval(getPosition().sum(getSize().div(2f)), getSize(), getBackground(), isFilled());
+    }
 }

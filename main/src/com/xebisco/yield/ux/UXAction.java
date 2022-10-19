@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield;
+package com.xebisco.yield.ux;
 
-public abstract class KeyListener extends YldScript {
-    @Override
-    public void update(float delta) {
-        for(int key : game.getHandler().getRenderMaster().pressing()) {
-            if(input.isJustPressed(key)) {
-                onKeyPressed(key);
-            }
-        }
-    }
+import com.xebisco.yield.YldAction;
 
-    public abstract void onKeyPressed(int key);
+public interface UXAction extends YldAction {
+    String name();
 }

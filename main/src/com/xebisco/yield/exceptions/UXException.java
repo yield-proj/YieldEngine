@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield;
+package com.xebisco.yield.exceptions;
 
-public abstract class KeyListener extends YldScript {
-    @Override
-    public void update(float delta) {
-        for(int key : game.getHandler().getRenderMaster().pressing()) {
-            if(input.isJustPressed(key)) {
-                onKeyPressed(key);
-            }
-        }
+public class UXException extends RuntimeException {
+    public UXException() {
+        super();
     }
 
-    public abstract void onKeyPressed(int key);
+    public UXException(String message) {
+        super(message);
+    }
 }

@@ -75,6 +75,7 @@ public class GameHandler extends Engine {
         setLock(game.getConfiguration().fpsLock);
         renderMaster.before(game);
         defaultConcurrentEngine = new Engine(null);
+        defaultConcurrentEngine.setTargetTime(1);
         defaultConcurrentEngine.getThread().start();
     }
 

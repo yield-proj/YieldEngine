@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/YieldEngine.iml" filepath="$PROJECT_DIR$/YieldEngine.iml" />
       <module fileurl="file://$PROJECT_DIR$/main/main.iml" filepath="$PROJECT_DIR$/main/main.iml" />
       <module fileurl="file://$PROJECT_DIR$/test/test.iml" filepath="$PROJECT_DIR$/test/test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/uxtest/uxtest.iml" filepath="$PROJECT_DIR$/uxtest/uxtest.iml" />
     </modules>
   </component>
 </project>
