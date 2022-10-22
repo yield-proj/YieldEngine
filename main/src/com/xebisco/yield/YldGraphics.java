@@ -22,12 +22,10 @@ package com.xebisco.yield;
 public class YldGraphics {
     private Entity e;
     private Color color = Colors.CYAN;
-    private YldB toConcurrent;
     private String font = "arial";
 
-    public YldGraphics(Entity e, YldB yldB) {
+    public YldGraphics(Entity e) {
         this.e = e;
-        this.toConcurrent = yldB;
     }
 
     /**
@@ -57,7 +55,7 @@ public class YldGraphics {
             r.setFilled(filled);
             r.setColor(color);
             e.getSelfTransform().goTo(new Vector2(x, y));
-        }, toConcurrent);
+        });
     }
 
     /**
@@ -80,7 +78,7 @@ public class YldGraphics {
             r.setFilled(filled);
             r.setColor(color);
             e.getSelfTransform().goTo(new Vector2(x, y));
-        }, toConcurrent);
+        });
     }
 
     /**
@@ -141,7 +139,7 @@ public class YldGraphics {
             r.setFilled(filled);
             r.setColor(color);
             e.getSelfTransform().goTo(new Vector2(x, y));
-        }, toConcurrent);
+        });
     }
 
     /**
@@ -211,7 +209,7 @@ public class YldGraphics {
             e.addComponent(r);
             r.setColor(color);
             e.getSelfTransform().goTo(new Vector2(x2 / 2, y2 / 2));
-        }, toConcurrent);
+        });
     }
 
     /**
@@ -230,7 +228,7 @@ public class YldGraphics {
             r.setFont(font);
             r.setColor(color);
             e.getSelfTransform().goTo(new Vector2(x, y));
-        }, toConcurrent);
+        });
     }
 
     /**
@@ -261,7 +259,7 @@ public class YldGraphics {
             r.setColor(color);
             e.getMaterial().setTexture(texture);
             e.getSelfTransform().goTo(new Vector2(x, y));
-        }, toConcurrent);
+        });
     }
 
     /**
@@ -278,7 +276,7 @@ public class YldGraphics {
             r.setColor(color);
             e.getMaterial().setTexture(texture);
             e.getSelfTransform().goTo(0, 0);
-        }, toConcurrent);
+        });
     }
 
     /**
@@ -358,23 +356,5 @@ public class YldGraphics {
      */
     public void setFont(String font) {
         this.font = font;
-    }
-
-    /**
-     * Returns the value of the toConcurrent field.
-     *
-     * @return The toConcurrent variable is being returned.
-     */
-    public YldB getToConcurrent() {
-        return toConcurrent;
-    }
-
-    /**
-     * This function sets the value of the variable `toConcurrent` to the value of the variable `toConcurrent`
-     *
-     * @param toConcurrent The YldB object that will be used to create the concurrent YldB object.
-     */
-    public void setToConcurrent(YldB toConcurrent) {
-        this.toConcurrent = toConcurrent;
     }
 }

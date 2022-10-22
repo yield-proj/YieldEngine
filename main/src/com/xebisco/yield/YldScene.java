@@ -228,25 +228,6 @@ public class YldScene extends YldB {
     }
 
     /**
-     * Instantiate an Entity instance based in the prefab passed.
-     * (Calls instantiate(prefab) on the masterEntity)
-     *
-     * @param prefab The prefab passed to the Entity.
-     * @param yldB   The YldB instance that contains concurrent information.
-     */
-    public Entity instantiate(Prefab prefab, YldB yldB) {
-        return masterEntity.instantiate(prefab, yldB);
-    }
-
-    /**
-     * Create an empty Entity instance.
-     * (Calls instantiate() on the masterEntity)
-     */
-    public Entity instantiate() {
-        return masterEntity.instantiate();
-    }
-
-    /**
      * Removes an Entity that corresponds to the given type from its parent and calls onDestroy().
      *
      * @param type The Entity to be destroyed type.

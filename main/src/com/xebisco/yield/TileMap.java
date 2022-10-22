@@ -89,7 +89,7 @@ public class TileMap extends SimpleRenderable {
                         Tile tile = gen.getTile();
                         if (tile.getPrefab() != null) {
                             try {
-                                entity.instantiate(tile.getPrefab(), concurrent, pos.get());
+                                entity.instantiate(tile.getPrefab(), pos.get());
                             } catch (NullPointerException e) {
                                 Yld.throwException(new NullPointerException("entity parameter is null!"));
                             }
@@ -138,7 +138,7 @@ public class TileMap extends SimpleRenderable {
 
     @Override
     public void create() {
-        timer(() -> {
+        getTime().addTask(() -> {
             Vector2 cam = scene.getView().getTransform().position.get();
             Transform t = getTransform();
             for (int i = 0; i < tiles.size(); i++) {
@@ -159,7 +159,7 @@ public class TileMap extends SimpleRenderable {
                     pair.getSecond().setSecond(render);
                 }
             }
-        }, .2f, true, MultiThread.EXCLUSIVE);
+        }, .2f);
     }
 
     @Override

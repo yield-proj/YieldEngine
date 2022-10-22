@@ -310,26 +310,13 @@ public final class Entity implements Comparable<Entity> {
     }
 
     /**
-     * Instantiates an entity based on the given Prefab, and adds it to this Entity children list.
-     *
-     * @param prefab The Prefab of the instantiated Entity.
-     * @return The instantiated Entity instance.
-     */
-    public Entity instantiate(Prefab prefab, YldB yldB, MultiThread multiThread) {
-        return instantiate(prefab, yldB, null, multiThread);
-    }
-
-    /**
      * It creates an entity, sets its position, and then adds it to the children list.
      *
-     * @param prefab      The prefab to instantiate.
-     * @param yldB        The YldB that contains concurrent information.
-     * @param pos         The position of the entity.
-     * @param multiThread This is a boolean that determines whether the entity should be added to the scene in a
-     *                    separate thread.
+     * @param prefab The prefab to instantiate.
+     * @param pos    The position of the entity.
      * @return The entity that was just created.
      */
-    public Entity instantiate(Prefab prefab, YldB yldB, Vector2 pos, MultiThread multiThread) {
+    public Entity instantiate(Prefab prefab, Vector2 pos) {
         String name = "Entity";
         if (prefab != null)
             name = prefab.getClass().getName();
@@ -338,29 +325,18 @@ public final class Entity implements Comparable<Entity> {
             entity.getSelfTransform().position = pos;
         }
         if (prefab != null)
-            prefab.create(entity);
-        return addChild(entity, yldB, multiThread);
+            YldConcurrency.runTask(() -> prefab.create(entity));
+        return addChild(entity);
     }
 
     /**
      * It creates an entity, sets its position, and then adds it to the children list.
      *
      * @param prefab The prefab to instantiate.
-     * @param pos    The position of the entity.
-     * @param engine The engine that will be used to create this entity.
      * @return The entity that was just created.
      */
-    public Entity instantiate(Prefab prefab, Vector2 pos, Engine engine) {
-        String name = "Entity";
-        if (prefab != null)
-            name = prefab.getClass().getName();
-        Entity entity = new Entity(name, scene, this);
-        if (pos != null) {
-            entity.getSelfTransform().position = pos;
-        }
-        if (prefab != null)
-            prefab.create(entity);
-        return addChild(entity, engine);
+    public Entity instantiate(Prefab prefab) {
+        return instantiate(prefab, null);
     }
 
     /**
@@ -393,42 +369,6 @@ public final class Entity implements Comparable<Entity> {
             if (e != null)
                 e.sortChildren();
         }
-    }
-
-    /**
-     * This function creates a new entity from a prefab, and returns it.
-     * The first parameter is the prefab to instantiate. The second parameter is the YldB to instantiate the entity in. The
-     * third parameter is the MultiThread to use
-     *
-     * @param prefab The prefab to instantiate.
-     * @param yldB   The YldB that contains concurrent information.
-     * @return An Entity
-     */
-    public Entity instantiate(Prefab prefab, YldB yldB) {
-        return instantiate(prefab, yldB, MultiThread.DEFAULT);
-    }
-
-    public Entity instantiate(Prefab prefab, YldB yldB, Vector2 pos) {
-        return instantiate(prefab, yldB, pos, MultiThread.DEFAULT);
-    }
-
-    /**
-     * Instantiates an entity based on the given Prefab, and adds it to this Entity children list.
-     *
-     * @param prefab The Prefab of the instantiated Entity.
-     * @return The instantiated Entity instance.
-     */
-    public Entity instantiate(Prefab prefab) {
-        return instantiate(prefab, null);
-    }
-
-    /**
-     * Instantiates a null entity, and adds it to this Entity children list.
-     *
-     * @return The instantiated Entity instance.
-     */
-    public Entity instantiate() {
-        return instantiate(null);
     }
 
     /**
@@ -492,21 +432,10 @@ public final class Entity implements Comparable<Entity> {
      * @param e The Entity to be added.
      * @return The added Entity.
      */
-    public Entity addChild(Entity e, YldB yldB, MultiThread multiThread) {
+    public Entity addChild(Entity e) {
         e.setParent(this);
         YldAction a = () -> children.add(e);
-        if (yldB != null) {
-            yldB.concurrent(a, multiThread);
-        } else {
-            a.onAction();
-        }
-        return e;
-    }
-
-    public Entity addChild(Entity e, Engine engine) {
-        e.setParent(this);
-        YldAction a = () -> children.add(e);
-        engine.getTodoList().add(new YldEngineAction(a, 0, false, Yld.RAND.nextLong()));
+        a.onAction();
         return e;
     }
 

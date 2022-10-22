@@ -201,14 +201,9 @@ public abstract class Component extends YldB
     public Entity instantiate(Prefab prefab)
     {
         if(prefab == null) {
-            Yld.log("prefab - " + entity);
+            Yld.getDebugLogger().log("prefab - " + entity);
         }
         return entity.instantiate(prefab);
-    }
-
-    public Entity instantiate(Prefab prefab, YldB yldB)
-    {
-        return entity.instantiate(prefab, yldB);
     }
 
     /**
@@ -219,17 +214,6 @@ public abstract class Component extends YldB
     public Entity instantiate()
     {
         return instantiate((Prefab) null);
-    }
-
-    /**
-     * Create a new instance of an entity as a child of this entity object at the given position.
-     *
-     * @param pos The position to instantiate the entity at.
-     * @return An entity.
-     */
-    public Entity instantiate(Vector2 pos)
-    {
-        return entity.instantiate(null, null, pos);
     }
 
     /**

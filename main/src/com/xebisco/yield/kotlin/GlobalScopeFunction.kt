@@ -44,10 +44,6 @@ fun log(o: Any) {
     Yld.log(o)
 }
 
-fun message(o: Any) {
-    Yld.message(o)
-}
-
 /**
  * The memory in use in the actual Java Virtual Machine.
  *
@@ -77,19 +73,19 @@ fun throwException(e: Exception) {
 
 
 /**
- * `debug` sets the `debug` property of the `Yld` object to the value passed in
+ * `debug` sets the `debug` property of the `Yld` class to the value passed in
  *
  * @param value The value to be set.
  */
 fun debug(value: Boolean) {
-    Yld.debug = value
+    Yld.setDebug(value)
 }
 
 /**
  * If Yield Game Engine is in debug mode ot not.
  */
 fun debug(): Boolean {
-    return Yld.debug
+    return Yld.isDebug()
 }
 
 /**

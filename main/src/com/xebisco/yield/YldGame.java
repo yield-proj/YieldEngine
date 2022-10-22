@@ -399,7 +399,7 @@ public class YldGame extends YldScene {
      */
     public void setScene(YldScene scene) {
         this.scene = scene;
-        scene.setGraphics(new YldGraphics(scene.getMasterEntity(), this));
+        scene.setGraphics(new YldGraphics(scene.getMasterEntity()));
         scene.defaultSystems();
     }
 
@@ -421,21 +421,6 @@ public class YldGame extends YldScene {
      */
     public SampleWindow getWindow() {
         return window;
-    }
-
-    public final Engine getEngine(MultiThread multiThread, EngineStop engineStop) {
-        if (multiThread == MultiThread.DEFAULT) {
-            return getHandler().getDefaultConcurrentEngine();
-        } else if (multiThread == MultiThread.ON_GAME_THREAD) {
-            return getHandler();
-        } else if (multiThread == MultiThread.EXCLUSIVE) {
-            Engine engine = new Engine(null);
-            engine.getThread().start();
-            engine.setStop(engineStop);
-            return engine;
-        }
-        Yld.throwException(new IllegalArgumentException(multiThread.name()));
-        return null;
     }
 
     /**
@@ -722,10 +707,10 @@ public class YldGame extends YldScene {
         ps.setToChangeScene(type);
         YldScene toChangeScene = getScene(type);
         toChangeScene.setHadProgressScene(true);
-        concurrent(() -> {
+        YldConcurrency.runTask(() -> {
             loadSceneAssets(toChangeScene, ps);
             ps.change();
-        }, MultiThread.EXCLUSIVE);
+        });
     }
 
     /**

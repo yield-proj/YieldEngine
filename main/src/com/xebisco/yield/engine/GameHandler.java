@@ -35,7 +35,6 @@ public class GameHandler extends Engine {
     private RenderMaster renderMaster;
     private static RenderMaster sampleRenderMaster;
     private WindowPrint windowPrint;
-    private Engine defaultConcurrentEngine;
 
     private int framesToGarbageCollectionCount;
 
@@ -74,9 +73,6 @@ public class GameHandler extends Engine {
         setTargetTime(1000 / game.getConfiguration().fps);
         setLock(game.getConfiguration().fpsLock);
         renderMaster.before(game);
-        defaultConcurrentEngine = new Engine(null);
-        defaultConcurrentEngine.setTargetTime(1);
-        defaultConcurrentEngine.getThread().start();
     }
 
    private boolean zeroDelta = true;
@@ -110,24 +106,6 @@ public class GameHandler extends Engine {
      */
     public YldGame getGame() {
         return game;
-    }
-
-    /**
-     * This function returns the default concurrent engine.
-     *
-     * @return The default concurrent engine.
-     */
-    public Engine getDefaultConcurrentEngine() {
-        return defaultConcurrentEngine;
-    }
-
-    /**
-     * Sets the default concurrent engine
-     *
-     * @param defaultConcurrentEngine The default engine to use for concurrent requests.
-     */
-    public void setDefaultConcurrentEngine(Engine defaultConcurrentEngine) {
-        this.defaultConcurrentEngine = defaultConcurrentEngine;
     }
 
     /**

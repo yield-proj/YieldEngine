@@ -35,18 +35,14 @@ import java.util.Random;
  */
 public final class Yld {
     private static ExceptionThrower exceptionThrower;
+    private final static YldLogger standardLogger = System.out::println, errorLogger = System.err::println, debugLogger = (x) -> {if(isDebug()) standardLogger.log("(" + new Date() + ") " + x);};
 
     private static Gson gson = new Gson();
 
     /**
      * The version of the Yield Game Engine.
      */
-    public static final String VERSION = "4 - 1.2.2.1 test";
-    /**
-     * All the Yield Game Engine messages.
-     */
-
-    private static final long BUILD = 2022;
+    public static final String VERSION = "4 - 1.3";
 
     public final static MathContext roundDownContext = new MathContext(2, RoundingMode.DOWN);
     public final static MathContext roundUpContext = new MathContext(2, RoundingMode.UP);
@@ -70,8 +66,6 @@ public final class Yld {
     public static Vector2 toVector2(Vec2 vector2) {
         return new Vector2(vector2.x, vector2.y);
     }
-
-    public static final ArrayList<String> MESSAGES = new ArrayList<>();
     /**
      * The standard Random library instance.
      */
@@ -79,7 +73,7 @@ public final class Yld {
     /**
      * If Yield Game Engine is in debug mode ot not.
      */
-    public static boolean debug;
+    private static boolean debug;
 
     /**
      * The memory in use in the actual Java Virtual Machine.
@@ -108,21 +102,6 @@ public final class Yld {
         e.printStackTrace();
         if (exceptionThrower != null)
             exceptionThrower.throwException(e);
-    }
-
-    /**
-     * Adds a message to the messages list, and logs to the standard output.
-     *
-     * @param msg The message to be added.
-     */
-    public static void message(Object msg) {
-        //YieldOverlay.setShow(true);
-        msg = "(" + new Date() + ") " + msg;
-        MESSAGES.add(0, msg.toString());
-        if (Yld.MESSAGES.size() > 9) {
-            Yld.MESSAGES.remove(Yld.MESSAGES.size() - 1);
-        }
-        System.out.println(msg);
     }
 
     /**
@@ -292,7 +271,7 @@ public final class Yld {
      * @param msg The message to be logged.
      */
     public static void log(Object msg) {
-        System.out.println(msg);
+        standardLogger.log(msg);
     }
 
     /**
@@ -301,7 +280,7 @@ public final class Yld {
      * @param msg The error message to be logged.
      */
     public static void err(Object msg) {
-        System.err.println(msg);
+        errorLogger.log(msg);
     }
 
     /**
@@ -354,5 +333,50 @@ public final class Yld {
      */
     public static void setGson(Gson gson) {
         Yld.gson = gson;
+    }
+
+    /**
+     * If the debug variable is true, return true, otherwise return false.
+     *
+     * @return The value of the debug variable.
+     */
+    public static boolean isDebug() {
+        return debug;
+    }
+
+    /**
+     * Sets the debug mode of the library
+     *
+     * @param debug The debug value to set.
+     */
+    public static void setDebug(boolean debug) {
+        Yld.debug = debug;
+    }
+
+    /**
+     * This function returns the debugLogger object.
+     *
+     * @return The debugLogger object.
+     */
+    public static YldLogger getDebugLogger() {
+        return debugLogger;
+    }
+
+    /**
+     * This function returns the errorLogger object.
+     *
+     * @return The errorLogger object.
+     */
+    public static YldLogger getErrorLogger() {
+        return errorLogger;
+    }
+
+    /**
+     * Returns the standard logger.
+     *
+     * @return The standardLogger object.
+     */
+    public static YldLogger getStandardLogger() {
+        return standardLogger;
     }
 }
