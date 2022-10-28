@@ -17,6 +17,7 @@
 package com.xebisco.yield;
 
 import com.xebisco.swingyield.exceptions.NotCapableTextureException;
+import com.xebisco.yield.render.Renderable;
 import com.xebisco.yield.render.VisualUtils;
 
 /**
@@ -28,6 +29,8 @@ public class Texture extends RelativeFile {
     private Pixel[][] pixels;
     private final int textureID;
     private Texture invertedX, invertedY, invertedXY;
+    private int width, height;
+    private Object specificImage;
 
     private YldFilter filter;
 
@@ -52,17 +55,6 @@ public class Texture extends RelativeFile {
      */
     public Texture get() {
         return visualUtils.duplicate(this);
-    }
-
-    /**
-     * When the texture loads, update the pixels.
-     */
-    public void onLoad() {
-        try {
-            updatePixels();
-        } catch (Exception ignore) {
-
-        }
     }
 
     /**
@@ -154,6 +146,8 @@ public class Texture extends RelativeFile {
      * For each pixel, apply the filter, then make sure the pixel's new location is within the bounds of the image.
      */
     public void processFilters() {
+        if (pixels == null)
+            updatePixels();
         int width = getWidth() - 1, height = getHeight() - 1;
         for (int x = 0; x < pixels.length; x++) {
             for (int y = 0; y < pixels[0].length; y++) {
@@ -242,7 +236,11 @@ public class Texture extends RelativeFile {
      * @return The width of the texture.
      */
     public int getWidth() {
-        return visualUtils.getTextureWidth(textureID);
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
     }
 
     /**
@@ -251,7 +249,11 @@ public class Texture extends RelativeFile {
      * @return The height of the texture.
      */
     public int getHeight() {
-        return visualUtils.getTextureHeight(textureID);
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     /**
@@ -260,7 +262,7 @@ public class Texture extends RelativeFile {
      * @return A new Vector2 object with the width and height of the texture.
      */
     public Vector2 getSize() {
-        return new Vector2(visualUtils.getTextureWidth(textureID), visualUtils.getTextureHeight(textureID));
+        return new Vector2(getWidth(), getHeight());
     }
 
     /**
@@ -333,5 +335,13 @@ public class Texture extends RelativeFile {
      */
     public void setPixels(Pixel[][] pixels) {
         this.pixels = pixels;
+    }
+
+    public Object getSpecificImage() {
+        return specificImage;
+    }
+
+    public void setSpecificImage(Object specificImage) {
+        this.specificImage = specificImage;
     }
 }

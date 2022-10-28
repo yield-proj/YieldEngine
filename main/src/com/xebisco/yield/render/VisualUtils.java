@@ -131,19 +131,4 @@ public interface VisualUtils {
      * @return A texture.
      */
     Texture scaleTexture(Texture texture, int width, int height);
-
-    /**
-     * Returns the width of the texture with the given ID
-     *
-     * @param textureId The id of the texture to get the width of.
-     * @return The width of the texture.
-     */
-    int getTextureWidth(int textureId);
-    /**
-     * Returns the height of the texture with the given ID
-     *
-     * @param textureId The id of the texture to get the width of.
-     * @return The height of the texture.
-     */
-    int getTextureHeight(int textureId);
 }

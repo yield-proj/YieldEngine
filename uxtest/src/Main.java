@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-import com.xebisco.yield.Vector2;
-import com.xebisco.yield.Yld;
-import com.xebisco.yield.YldGame;
-import com.xebisco.yield.ux.*;
+import com.xebisco.yield.*;
 
 public class Main extends YldGame {
 
+    Text text;
+
     @Override
-    public void start() {
+    public void create() {
         instantiate(e -> {
+            e.addComponent(new Rectangle(new Vector2(1000, 1000)));
+        });
+
+
+        //text = graphics.text("AAA").getComponent(Text.class);
+        /*instantiate(e -> {
             UXMain main = new UXMain(new Vector2(getView().getWidth(), getView().getHeight()), new UXPalette());
             UXPanel panel = main.getMainPanel();
             UXButton button = panel.add(UXButton.class, false, "Ok", new Vector2(-50, -50), new Vector2(150, 70));
@@ -35,10 +40,22 @@ public class Main extends YldGame {
             button2.setAction(() -> Yld.log("Cancel"));
             //panel.getComponents().forEach(s -> {if(s instanceof UXRect) ((UXRect) s).setBackground(main.getPalette().foreground2);});
             e.addComponent(main);
-        });
+        });*/
+    }
+
+    @Override
+    public void update(float delta) {
+        Yld.log(delta);
+       /* if (text != null) {
+            text.getEntity().center();
+            text.setContents(String.valueOf(getFrames()));
+        }
+        if (getFrames() == 300)
+            setScene(Main.class);*/
     }
 
     public static void main(String[] args) {
+        System.setProperty("sun.java2d.opengl", "True");
         launch(new Main());
     }
 }

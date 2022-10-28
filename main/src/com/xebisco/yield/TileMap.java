@@ -16,8 +16,11 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.render.Renderable;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  * It's a class that renders a tile map
@@ -163,8 +166,8 @@ public class TileMap extends SimpleRenderable {
     }
 
     @Override
-    public void render(SampleGraphics graphics) {
-        super.render(graphics);
+    public void render(TreeSet<Renderable> renderables) {
+        super.render(renderables);
         Vector2 cam = scene.getView().getTransform().position.get();
         Transform t = getTransform();
         for (int i = 0; i < tiles.size(); i++) {
@@ -173,7 +176,12 @@ public class TileMap extends SimpleRenderable {
             if (tile != null && pair.getSecond().getSecond()) {
                 Vector2 pos = pair.getFirst().sum(t.position).sum(tile.getOffSet()).subt(cam).subt(tile.getSize().mul(t.scale).div(2f)),
                         size = tile.getSize().mul(t.scale);
-                graphics.drawTexture(tile.getTexture(), pos, size);
+                Renderable renderable = new Renderable();
+                renderable.setSpecific(tile.getTexture().getSpecificImage());
+                renderable.setX((int) pos.x);
+                renderable.setY((int) pos.y);
+                renderable.setWidth((int) size.x);
+                renderable.setHeight((int) size.y);
                 if (actualProcessTime <= 0 && process)
                     getEntity().transmit("processTile", pos, tile.getLayer());
             }

@@ -17,12 +17,14 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.exceptions.MissingPhysicsSystemException;
+import com.xebisco.yield.render.Renderable;
 import com.xebisco.yield.systems.PhysicsSystem;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  * This class is a script for Entities, and is made to modify them.
@@ -54,6 +56,13 @@ public abstract class Component extends YldB
     @Override
     public void create()
     {
+
+    }
+
+    /**
+     * Called asynchronously when this Component is added to an Entity.
+     */
+    public void async() {
 
     }
 
@@ -183,12 +192,13 @@ public abstract class Component extends YldB
     {
 
     }
-
+    
     /**
      * Called on every frame of the scene, after the update method.
-     * @param graphics SampleGraphics object
+     *
+     * @param renderables A TreeSet of Renderable objects. This is a set of all the objects that need to be rendered.
      */
-    public void render(SampleGraphics graphics) {
+    public void render(TreeSet<Renderable> renderables) {
 
     }
 

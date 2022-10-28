@@ -18,20 +18,23 @@ package com.xebisco.yield.engine;
 
 import com.xebisco.yield.*;
 import com.xebisco.yield.exceptions.CannotLoadException;
+import com.xebisco.yield.exceptions.IncompatibleException;
 import com.xebisco.yield.exceptions.MissingRenderMasterException;
 import com.xebisco.yield.exceptions.YieldEngineException;
 import com.xebisco.yield.render.ExceptionThrower;
 import com.xebisco.yield.render.RenderMaster;
+import com.xebisco.yield.render.Renderable;
 import com.xebisco.yield.render.WindowPrint;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.TreeSet;
 
 /**
  * It's the class that handles the game loop
  */
 public class GameHandler extends Engine {
     private final YldGame game;
-    private SampleGraphics sampleGraphics;
+    private TreeSet<Renderable> renderables, updateRenderables;
     private RenderMaster renderMaster;
     private static RenderMaster sampleRenderMaster;
     private WindowPrint windowPrint;
@@ -39,20 +42,20 @@ public class GameHandler extends Engine {
     private int framesToGarbageCollectionCount;
 
     private boolean canRenderNext;
+    private FinalObjectWrapper threadObjectWrapper;
 
     public GameHandler(YldGame game) {
         super(null);
         game.setHandler(this);
         this.game = game;
-        if(game.getConfiguration().renderMaster == null) {
+        if (game.getConfiguration().renderMaster == null) {
             if (game.getConfiguration().renderMasterName != null) {
                 try {
                     renderMaster = (RenderMaster) Class.forName(game.getConfiguration().renderMasterName).getDeclaredConstructor().newInstance();
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                          NoSuchMethodException e) {
                     Yld.throwException(e);
-                }
-                catch (ClassNotFoundException e) {
+                } catch (ClassNotFoundException e) {
                     Yld.throwException(new MissingRenderMasterException("Could not find render master: '" + game.getConfiguration().renderMasterName + "'."));
                 }
             } else if (sampleRenderMaster != null) {
@@ -63,36 +66,65 @@ public class GameHandler extends Engine {
         } else {
             renderMaster = game.getConfiguration().renderMaster;
         }
-        if(renderMaster instanceof WindowPrint)
+        if (renderMaster instanceof WindowPrint)
             windowPrint = (WindowPrint) renderMaster;
-        sampleGraphics = renderMaster.initGraphics();
-        if(renderMaster instanceof ExceptionThrower) {
-            if(Yld.getExceptionThrower() == null)
+        if (renderMaster instanceof ExceptionThrower) {
+            if (Yld.getExceptionThrower() == null)
                 Yld.setExceptionThrower((ExceptionThrower) renderMaster);
+        }
+        try {
+            renderMaster.setThreadTask(() -> {
+                if (threadObjectWrapper != null) {
+                    synchronized (threadObjectWrapper.getObject()) {
+                        threadObjectWrapper.getObject().notify();
+                    }
+                }
+            });
+        } catch (AbstractMethodError e) {
+            Yld.throwException(new IncompatibleException(e.getMessage()));
         }
         setTargetTime(1000 / game.getConfiguration().fps);
         setLock(game.getConfiguration().fpsLock);
-        renderMaster.before(game);
+        renderables = new TreeSet<>();
+        updateRenderables = new TreeSet<>();
+        renderMaster.start(renderables);
     }
 
-   private boolean zeroDelta = true;
+    private boolean zeroDelta = true;
 
     @Override
     public void update(long last, long actual) {
+        if (threadObjectWrapper == null) threadObjectWrapper = new FinalObjectWrapper(new Object());
         float delta = (actual - last) / 1_000f;
         if (zeroDelta) {
             delta = 0f;
-            System.gc();
         }
         zeroDelta = false;
-        renderMaster.frameStart(sampleGraphics);
-        if (renderMaster.canStart())
-            game.updateScene(delta, sampleGraphics);
-        renderMaster.frameEnd(game.getScene().getView());
+        updateRenderables.clear();
+        try {
+            if (renderMaster.canStart())
+                game.updateScene(delta, updateRenderables);
+        } catch (AbstractMethodError e) {
+            Yld.throwException(new IncompatibleException(e.getMessage()));
+        }
+        renderables.clear();
+        renderables.addAll(updateRenderables);
+        try {
+            renderMaster.frameEnd(game.getScene().getView().getBgColor());
+        } catch (AbstractMethodError e) {
+            Yld.throwException(new IncompatibleException(e.getMessage()));
+        }
+        try {
+            synchronized (threadObjectWrapper.getObject()) {
+                threadObjectWrapper.getObject().wait();
+            }
+        } catch (InterruptedException e) {
+            Yld.throwException(e);
+        }
         game.afterRender(delta);
-        if(game.getConfiguration().framesToGarbageCollection >= 0) {
+        if (game.getConfiguration().framesToGarbageCollection >= 0) {
             framesToGarbageCollectionCount++;
-            if(framesToGarbageCollectionCount - game.getConfiguration().framesToGarbageCollection >= 0) {
+            if (framesToGarbageCollectionCount - game.getConfiguration().framesToGarbageCollection >= 0) {
                 System.gc();
                 framesToGarbageCollectionCount = 0;
             }
@@ -126,22 +158,12 @@ public class GameHandler extends Engine {
         this.renderMaster = renderMaster;
     }
 
-    /**
-     * This function returns the sampleGraphics object.
-     *
-     * @return The sampleGraphics object.
-     */
-    public SampleGraphics getSampleGraphics() {
-        return sampleGraphics;
+    public TreeSet<Renderable> getRenderables() {
+        return renderables;
     }
 
-    /**
-     * This function sets the sampleGraphics variable to the sampleGraphics parameter.
-     *
-     * @param sampleGraphics The SampleGraphics object that will be used to draw the graphics.
-     */
-    public void setSampleGraphics(SampleGraphics sampleGraphics) {
-        this.sampleGraphics = sampleGraphics;
+    public void setRenderables(TreeSet<Renderable> renderables) {
+        this.renderables = renderables;
     }
 
     /**

@@ -17,12 +17,14 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.exceptions.MissingPhysicsSystemException;
+import com.xebisco.yield.render.Renderable;
 import com.xebisco.yield.systems.MiddlePointSystem;
 import com.xebisco.yield.systems.PhysicsSystem;
 import com.xebisco.yield.systems.YldTimeSystem;
 import org.jbox2d.dynamics.World;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 /**
  * A YldScene is the base of a Yield game, it contains the Entities, YldGraphics and the Systems, it's used to alternate between game moments.
@@ -143,8 +145,8 @@ public class YldScene extends YldB {
      *
      * @param delta The time variation between the last frame and the actual one in seconds.
      */
-    public final void process(float delta, SampleGraphics graphics) {
-        masterEntity.process(delta, graphics);
+    public final void process(float delta, TreeSet<Renderable> renderables) {
+        masterEntity.process(delta, renderables);
         masterEntity.sortChildren();
     }
 

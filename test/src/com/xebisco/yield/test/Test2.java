@@ -55,8 +55,8 @@ class Test extends YldScene {
     public void start() {
         graphics.img(getAssets().getTexture("img.png")).center();
         graphics.img(getAssets().getTexture("yield.png")).center();
-        log(Arrays.toString(getAssets().getTextFile("test2.txt").getContents()));
+        /*log(Arrays.toString(getAssets().getTextFile("test2.txt").getContents()));
         log(Arrays.toString(getAssets().getTextFile("aa/test.txt").getContents()));
-        log(Arrays.toString(getAssets().getTextFile("test3.txt").getContents()));
+        log(Arrays.toString(getAssets().getTextFile("test3.txt").getContents()));*/
     }
 }

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield;
+package com.xebisco.yield.render;
 
-public enum MultiThread
-{
-    EXCLUSIVE, DEFAULT, ON_GAME_THREAD
+public enum RenderableType {
+    RECTANGLE, OVAL, ROUNDED_RECTANGLE, LINE, IMAGE, TEXT
 }

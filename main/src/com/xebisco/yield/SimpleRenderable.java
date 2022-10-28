@@ -16,12 +16,17 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.render.Renderable;
+
+import java.util.TreeSet;
+
 /**
  * It renders the entity with a rotation and a color
  */
 public class SimpleRenderable extends Component {
     private boolean forceAngle;
     private Color color = Colors.CYAN;
+    private Renderable renderable = new Renderable();
 
     private float angle;
 
@@ -30,7 +35,8 @@ public class SimpleRenderable extends Component {
     private boolean ignoreViewPosition;
 
     @Override
-    public void render(SampleGraphics graphics) {
+    public void render(TreeSet<Renderable> renderables) {
+        renderables.add(renderable);
         float angle = getEntity().getTransform().rotation + this.angle;
         if (forceAngle)
             angle = this.angle;
@@ -38,7 +44,10 @@ public class SimpleRenderable extends Component {
         if (!ignoreViewPosition) {
             pos = pos.subt(scene.getView().getTransform().position);
         }
-        graphics.setRotation(pos, angle);
+        renderable.setRotation((int) angle);
+        renderable.setX((int) pos.x);
+        renderable.setY((int) pos.y);
+        getRenderable().setzIndex(getEntity().getIndex());
     }
 
     /**
@@ -130,5 +139,13 @@ public class SimpleRenderable extends Component {
      */
     public void setIgnoreViewPosition(boolean ignoreViewPosition) {
         this.ignoreViewPosition = ignoreViewPosition;
+    }
+
+    public Renderable getRenderable() {
+        return renderable;
+    }
+
+    public void setRenderable(Renderable renderable) {
+        this.renderable = renderable;
     }
 }

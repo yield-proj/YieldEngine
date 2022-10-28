@@ -16,15 +16,21 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.render.Renderable;
+import com.xebisco.yield.render.RenderableType;
+
+import java.util.TreeSet;
+
 /**
  * It's a rectangle that can be drawn on the screen.
  */
 public class Rectangle extends Shape
 {
     @Override
-    public void render(SampleGraphics graphics) {
-        super.render(graphics);
-        graphics.drawRect(drawPosition, drawSize, getColor(), isFilled());
+    public void render(TreeSet<Renderable> renderables) {
+        Yld.log(renderables);
+        super.render(renderables);
+        getRenderable().setType(RenderableType.RECTANGLE);
     }
 
     public Rectangle(Vector2 size) {

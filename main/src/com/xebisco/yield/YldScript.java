@@ -16,7 +16,10 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.render.Renderable;
+
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 /**
  * A simpler way to write a Component
@@ -25,7 +28,7 @@ import java.util.ArrayList;
  */
 public abstract class YldScript extends Component {
     @Override
-    public final void render(SampleGraphics graphics) {
+    public final void render(TreeSet<Renderable> renderables) {
     }
 
     @Override

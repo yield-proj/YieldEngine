@@ -18,6 +18,7 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.engine.Engine;
 import com.xebisco.yield.engine.YldEngineAction;
+import com.xebisco.yield.render.Renderable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -63,7 +64,7 @@ public final class Entity implements Comparable<Entity> {
      *
      * @param delta The time variation between the last frame and the actual one in seconds.
      */
-    public void process(float delta, SampleGraphics graphics) {
+    public void process(float delta, TreeSet<Renderable> renderables) {
         if (active) {
             int i = 0;
             while (i < components.size()) {
@@ -72,8 +73,7 @@ public final class Entity implements Comparable<Entity> {
                 if (component.getFrames() == 1)
                     component.start();
                 component.update(delta);
-                if (graphics != null)
-                    component.render(graphics);
+                component.render(renderables);
                 i++;
             }
 
@@ -88,10 +88,10 @@ public final class Entity implements Comparable<Entity> {
                 try {
                     Entity e = children.get(i);
                     if (e != null) {
-                        SampleGraphics g = graphics;
+                        TreeSet<Renderable> renderables1 = renderables;
                         if (!e.isVisible())
-                            g = null;
-                        e.process(delta, g);
+                            renderables1 = null;
+                        e.process(delta, renderables);
                     }
                 } catch (IndexOutOfBoundsException ignore) {
                 }
@@ -112,6 +112,7 @@ public final class Entity implements Comparable<Entity> {
         component.setEntity(this);
         component.setScene(scene);
         component.setTime(scene.time);
+        YldConcurrency.runTask(component::async);
         component.create();
         components.add(component);
     }
@@ -325,7 +326,7 @@ public final class Entity implements Comparable<Entity> {
             entity.getSelfTransform().position = pos;
         }
         if (prefab != null)
-            YldConcurrency.runTask(() -> prefab.create(entity));
+            prefab.create(entity);
         return addChild(entity);
     }
 
@@ -434,8 +435,7 @@ public final class Entity implements Comparable<Entity> {
      */
     public Entity addChild(Entity e) {
         e.setParent(this);
-        YldAction a = () -> children.add(e);
-        a.onAction();
+        children.add(e);
         return e;
     }
 

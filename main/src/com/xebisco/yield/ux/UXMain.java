@@ -38,7 +38,7 @@ public class UXMain extends Component {
         game.loadFont("roboto-title", 130f, 0, new RelativeFile("/com/xebisco/yield/assets/Roboto-Medium.ttf"));
     }
 
-    @Override
+    /*@Override
     public void render(SampleGraphics graphics) {
         mainPanel.setPosition(transform.position);
         mouse = input.getMouse();
@@ -93,7 +93,7 @@ public class UXMain extends Component {
         justPressedMiddleMouse = false;
         justPressedLeftMouse = false;
         pressingLeftMouse = false;
-    }
+    }*/
 
     public UXPanel getMainPanel() {
         return mainPanel;

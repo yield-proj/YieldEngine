@@ -21,6 +21,7 @@ import com.xebisco.yield.engine.EngineStop;
 import com.xebisco.yield.engine.GameHandler;
 import com.xebisco.yield.engine.YldEngineAction;
 import com.xebisco.yield.exceptions.MissingWindowPrintException;
+import com.xebisco.yield.render.Renderable;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -28,6 +29,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.TreeSet;
 
 /**
  * This class is the starting point for every Yield Game, it contains all the objects of the game.
@@ -99,16 +101,17 @@ public class YldGame extends YldScene {
         launch(game, null);
     }
 
+
     /**
      * Update the scene, and if it's the first frame, call the create() method on all systems and the scene itself.
      * The first thing we do is check if the scene has been updated before. If it hasn't, we call the create() method on
      * all systems and the scene itself. This is done by checking if the system implements the SystemCreateMethod
      * interface, and if it does, we call the create() method on it.
      *
-     * @param delta    The time in seconds since the last frame.
-     * @param graphics The graphics object that is used to draw the scene.
+     * @param delta       The time in seconds since the last frame.
+     * @param renderables A TreeSet of Renderable objects.
      */
-    public final void updateScene(float delta, SampleGraphics graphics) {
+    public final void updateScene(float delta, TreeSet<Renderable> renderables) {
         if (scene.getFrames() == 0) {
             scene.setView(new View(1280, 720));
             for (YldSystem system : scene.getSystems()) {
@@ -126,7 +129,7 @@ public class YldGame extends YldScene {
         }
         scene.update(delta);
         globalUpdate(delta);
-        scene.process(delta, graphics);
+        scene.process(delta, renderables);
     }
 
     /**
@@ -458,7 +461,6 @@ public class YldGame extends YldScene {
      */
     public Texture loadTexture(Texture texture) {
         handler.getRenderMaster().loadTexture(texture);
-        texture.onLoad();
         return texture;
     }
 
@@ -473,7 +475,6 @@ public class YldGame extends YldScene {
         if (getHandler().getWindowPrint() == null)
             Yld.throwException(new MissingWindowPrintException());
         Texture tex = getHandler().getWindowPrint().print(pos, size);
-        tex.onLoad();
         return tex;
     }
 

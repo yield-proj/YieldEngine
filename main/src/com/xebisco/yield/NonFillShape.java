@@ -16,6 +16,10 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.render.Renderable;
+
+import java.util.TreeSet;
+
 /**
  * It's a shape that can't be filled.
  */
@@ -23,10 +27,10 @@ public abstract class NonFillShape extends SimpleRenderable implements Spacial {
     private Vector2 size = new Vector2(64, 64);
 
     protected Vector2 drawPosition, drawSize, offset = new Vector2();
+    private int thickness = 1;
 
     @Override
-    public void render(SampleGraphics graphics) {
-        super.render(graphics);
+    public void render(TreeSet<Renderable> renderabless) {
         Transform t = getEntity().getTransform();
         drawSize = getSize().mul(t.scale);
         if (isIgnoreViewPosition()) {
@@ -35,6 +39,12 @@ public abstract class NonFillShape extends SimpleRenderable implements Spacial {
             drawPosition = t.position.subt(scene.getView().getTransform().position);
         }
         drawPosition = drawPosition.sum(offset);
+        getRenderable().setX((int) drawPosition.x);
+        getRenderable().setY((int) drawPosition.y);
+        getRenderable().setWidth((int) drawSize.x);
+        getRenderable().setHeight((int) drawSize.y);
+        getRenderable().setThickness(thickness);
+        getRenderable().setzIndex(getEntity().getIndex());
     }
 
     /**
@@ -116,5 +126,13 @@ public abstract class NonFillShape extends SimpleRenderable implements Spacial {
      */
     public void setOffset(Vector2 offset) {
         this.offset = offset;
+    }
+
+    public int getThickness() {
+        return thickness;
+    }
+
+    public void setThickness(int thickness) {
+        this.thickness = thickness;
     }
 }

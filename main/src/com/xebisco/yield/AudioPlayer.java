@@ -36,10 +36,9 @@ public class AudioPlayer extends Component {
      * It loads an audio clip into the game.
      *
      * @param audioClip The AudioClip object that you want to load.
-     * @param multiThread This is the MultiThread object that will be used to load the audio clip.
      */
-    public void load(AudioClip audioClip, MultiThread multiThread) {
-        game.getHandler().getRenderMaster().loadAudioClip(audioClip, this, multiThread, this);
+    public void load(AudioClip audioClip) {
+        game.getHandler().getRenderMaster().loadAudioClip(audioClip, this);
     }
     /**
      * Get the volume of the audio player.
@@ -164,24 +163,14 @@ public class AudioPlayer extends Component {
     }
 
     /**
-     * Sets the audio clip.
-     *
-     * @param audioClip The audio clip value to set.
-     */
-    public void setAudioClip(AudioClip audioClip) {
-        setAudioClip(audioClip, null);
-    }
-
-    /**
      * This function sets the audio clip and loads it.
      *
      * @param audioClip The AudioClip to load.
-     * @param multiThread This is a boolean value that determines whether the audio clip will be loaded in a separate
      * thread.
      */
-    public void setAudioClip(AudioClip audioClip, MultiThread multiThread) {
+    public void setAudioClip(AudioClip audioClip) {
         this.audioClip = audioClip;
-        load(audioClip, multiThread);
+        load(audioClip);
     }
 
     /**

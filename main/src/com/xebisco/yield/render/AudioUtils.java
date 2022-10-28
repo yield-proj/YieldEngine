@@ -18,7 +18,6 @@ package com.xebisco.yield.render;
 
 import com.xebisco.yield.AudioClip;
 import com.xebisco.yield.AudioPlayer;
-import com.xebisco.yield.MultiThread;
 import com.xebisco.yield.YldB;
 
 public interface AudioUtils {
@@ -27,10 +26,8 @@ public interface AudioUtils {
      *
      * @param audioClip The AudioClip to load.
      * @param audioPlayer The AudioPlayer object that will play the audio clip.
-     * @param multiThread The MultiThread object that will be used to load the audio clip.
-     * @param yldB The YldB object that contains concurrent information.
      */
-    void loadAudioClip(AudioClip audioClip, AudioPlayer audioPlayer, MultiThread multiThread, YldB yldB);
+    void loadAudioClip(AudioClip audioClip, AudioPlayer audioPlayer);
     /**
      * Sets an audioPlayer position in microseconds.
      *

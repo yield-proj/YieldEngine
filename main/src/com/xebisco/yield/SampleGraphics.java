@@ -16,6 +16,7 @@
 
 package com.xebisco.yield;
 
+@Deprecated
 public interface SampleGraphics
 {
     /**

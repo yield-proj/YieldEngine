@@ -20,6 +20,7 @@ import com.xebisco.yield.*;
 import com.xebisco.yield.config.WindowConfiguration;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
@@ -29,26 +30,11 @@ import java.util.Set;
  * @since 4-1.2
  */
 public interface RenderMaster extends VisualUtils, AudioUtils, FileUtils {
-    /**
-     * This function returns a SampleGraphics object.
-     *
-     * @return A SampleGraphics object.
-     */
-    SampleGraphics initGraphics();
 
     /**
-     * Returns a SampleGraphics object that contains the graphics for this sample.
-     *
-     * @return The specificGraphics method is being returned.
+     * @param renderables A TreeSet of Renderable objects.
      */
-    SampleGraphics specificGraphics();
-
-    /**
-     * This function is called before the game starts
-     *
-     * @param game The game object.
-     */
-    void before(YldGame game);
+    void start(TreeSet<Renderable> renderables);
 
     /**
      * It creates a window
@@ -59,26 +45,18 @@ public interface RenderMaster extends VisualUtils, AudioUtils, FileUtils {
     SampleWindow initWindow(WindowConfiguration configuration);
 
     /**
-     * "This function is called once per frame, before the frame is rendered."
-     * The `graphics` parameter is a `SampleGraphics` object that you can use to draw things on the screen.
-     *
-     * @param graphics The graphics object that you can use to draw to the screen.
-     */
-    void frameStart(SampleGraphics graphics);
-
-    /**
      * This function is called at the end of each frame, to the RenderMaster render the game. The `view`
      * parameter is a `View` object that you can use to get information about the current view
      *
-     * @param view The view object.
+     * @param backgroundColor The color of the background.
      */
-    void frameEnd(View view);
+    void frameEnd(Color backgroundColor);
 
     /**
      * This function is called when the game is resized.
      * The first parameter is the new width of the game. The second parameter is the new height of the game
      *
-     * @param width The width of the game
+     * @param width  The width of the game
      * @param height The height of the game
      */
     void onResize(int width, int height);
@@ -118,5 +96,28 @@ public interface RenderMaster extends VisualUtils, AudioUtils, FileUtils {
      */
     int mouseY();
 
-    void close();
+    /**
+     * Sets the thread related task to be executed.
+     *
+     * @param threadTask The thread related task to be executed.
+     */
+    void setThreadTask(YldTask threadTask);
+
+    /**
+     * Returns the width of the given string in pixels, using the given font.
+     *
+     * @param str The string to get the width of.
+     * @param font The font to use.
+     * @return The width of the string in pixels.
+     */
+    float getStringWidth(String str, String font);
+
+    /**
+     * Returns the height of the given string in pixels, using the given font
+     *
+     * @param str The string to get the height of
+     * @param font The font to use.
+     * @return The height of the string in pixels.
+     */
+    float getStringHeight(String str, String font);
 }

@@ -16,12 +16,15 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.render.Renderable;
+
+import java.util.TreeSet;
+
 /**
  * It's a NonFillShape that renders text
  */
 public class Text extends NonFillShape {
     private String contents = "Sample Text", font = "arial";
-    private Vector2 textScale = new Vector2(1, 1);
 
     public Text() {
     }
@@ -47,12 +50,12 @@ public class Text extends NonFillShape {
     }
 
     @Override
-    public void render(SampleGraphics graphics) {
-        super.render(graphics);
+    public void render(TreeSet<Renderable> renderables) {
+        super.render(renderables);
         Transform t = getEntity().getTransform();
-        graphics.drawString(contents, getColor(), drawPosition, textScale.mul(t.scale), font);
-        getSize().x = graphics.getStringWidth(contents, font) * t.scale.x;
-        getSize().y = graphics.getStringHeight(contents, font) * t.scale.y;
+        getRenderable().setSpecific(contents);
+        getSize().x = getGame().getHandler().getRenderMaster().getStringWidth(contents, font) * t.scale.x;
+        getSize().y = getGame().getHandler().getRenderMaster().getStringHeight(contents, font) * t.scale.y;
     }
 
     @Override
@@ -96,23 +99,5 @@ public class Text extends NonFillShape {
      */
     public void setFont(String font) {
         this.font = font;
-    }
-
-    /**
-     * Returns the scale of the text
-     *
-     * @return The textScale variable is being returned.
-     */
-    public Vector2 getTextScale() {
-        return textScale;
-    }
-
-    /**
-     * Sets the scale of the text
-     *
-     * @param textScale The scale of the text.
-     */
-    public void setTextScale(Vector2 textScale) {
-        this.textScale = textScale;
     }
 }

@@ -16,6 +16,10 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.render.Renderable;
+
+import java.util.TreeSet;
+
 /**
  * Shape is a NonFillShape that can be filled.
  */
@@ -23,8 +27,9 @@ public abstract class Shape extends NonFillShape {
     private boolean filled = true;
 
     @Override
-    public void render(SampleGraphics graphics) {
-        super.render(graphics);
+    public void render(TreeSet<Renderable> renderables) {
+        super.render(renderables);
+        getRenderable().setFilled(filled);
     }
 
     /**

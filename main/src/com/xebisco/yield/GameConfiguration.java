@@ -77,7 +77,7 @@ public class GameConfiguration extends WindowConfiguration {
     /**
      * The number of frames before the garbage collector is called.
      */
-    public int framesToGarbageCollection = 300;
+    public int framesToGarbageCollection = -1;
     /**
      * A flag to start the physics system.
      */
