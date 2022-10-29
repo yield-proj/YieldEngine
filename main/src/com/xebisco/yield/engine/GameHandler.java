@@ -137,10 +137,9 @@ public class GameHandler extends Engine {
                 lastMemory = actualMemory;
                 actualMemory = Yld.MEMORY();
                 framesToGarbageCollectionCount = 0;
-                Yld.log(lastLastMemory + ", " + lastMemory + ", " + actualMemory);
-                if(lastLastMemory < lastMemory && lastMemory < actualMemory) {
+                if (lastLastMemory < lastMemory && lastMemory < actualMemory) {
                     System.gc();
-                    Yld.log("gc");
+                    Yld.getDebugLogger().log("GameHandler: Called garbage collector.");
                 }
             }
         }
