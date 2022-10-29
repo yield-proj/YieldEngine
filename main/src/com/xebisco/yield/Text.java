@@ -17,8 +17,9 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.render.Renderable;
+import com.xebisco.yield.render.RenderableType;
 
-import java.util.TreeSet;
+import java.util.Set;
 
 /**
  * It's a NonFillShape that renders text
@@ -50,10 +51,11 @@ public class Text extends NonFillShape {
     }
 
     @Override
-    public void render(TreeSet<Renderable> renderables) {
+    public void render(Set<Renderable> renderables) {
         super.render(renderables);
         Transform t = getEntity().getTransform();
-        getRenderable().setSpecific(contents);
+        getRenderable().setType(RenderableType.TEXT);
+        getRenderable().setSpecific(contents + '\1' + font);
         getSize().x = getGame().getHandler().getRenderMaster().getStringWidth(contents, font) * t.scale.x;
         getSize().y = getGame().getHandler().getRenderMaster().getStringHeight(contents, font) * t.scale.y;
     }

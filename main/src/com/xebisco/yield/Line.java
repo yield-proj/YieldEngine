@@ -19,14 +19,14 @@ package com.xebisco.yield;
 import com.xebisco.yield.render.Renderable;
 import com.xebisco.yield.render.RenderableType;
 
-import java.util.TreeSet;
+import java.util.Set;
 
 /**
  * It draws a line from the top left corner of the shape to the bottom right corner of the shape
  */
 public class Line extends NonFillShape {
     @Override
-    public void render(TreeSet<Renderable> renderables) {
+    public void render(Set<Renderable> renderables) {
         super.render(renderables);
         getRenderable().setType(RenderableType.LINE);
     }

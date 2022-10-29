@@ -18,7 +18,7 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.render.Renderable;
 
-import java.util.TreeSet;
+import java.util.Set;
 
 /**
  * It's a shape that can't be filled.
@@ -30,7 +30,8 @@ public abstract class NonFillShape extends SimpleRenderable implements Spacial {
     private int thickness = 1;
 
     @Override
-    public void render(TreeSet<Renderable> renderabless) {
+    public void render(Set<Renderable> renderables) {
+        super.render(renderables);
         Transform t = getEntity().getTransform();
         drawSize = getSize().mul(t.scale);
         if (isIgnoreViewPosition()) {
@@ -44,7 +45,6 @@ public abstract class NonFillShape extends SimpleRenderable implements Spacial {
         getRenderable().setWidth((int) drawSize.x);
         getRenderable().setHeight((int) drawSize.y);
         getRenderable().setThickness(thickness);
-        getRenderable().setzIndex(getEntity().getIndex());
     }
 
     /**

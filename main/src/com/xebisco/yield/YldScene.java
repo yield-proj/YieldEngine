@@ -24,7 +24,7 @@ import com.xebisco.yield.systems.YldTimeSystem;
 import org.jbox2d.dynamics.World;
 
 import java.util.ArrayList;
-import java.util.TreeSet;
+import java.util.Set;
 
 /**
  * A YldScene is the base of a Yield game, it contains the Entities, YldGraphics and the Systems, it's used to alternate between game moments.
@@ -145,7 +145,7 @@ public class YldScene extends YldB {
      *
      * @param delta The time variation between the last frame and the actual one in seconds.
      */
-    public final void process(float delta, TreeSet<Renderable> renderables) {
+    public final void process(float delta, Set<Renderable> renderables) {
         masterEntity.process(delta, renderables);
         masterEntity.sortChildren();
     }

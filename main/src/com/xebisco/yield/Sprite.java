@@ -17,8 +17,9 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.render.Renderable;
+import com.xebisco.yield.render.RenderableType;
 
-import java.util.TreeSet;
+import java.util.Set;
 
 /**
  * A Sprite is a NonFillShape that renders a texture
@@ -39,20 +40,21 @@ public class Sprite extends NonFillShape {
     }
 
     @Override
-    public void render(TreeSet<Renderable> renderables) {
+    public void render(Set<Renderable> renderables) {
         super.render(renderables);
+        getRenderable().setType(RenderableType.IMAGE);
         if (smartRender) {
             if (drawPosition.x + drawSize.x / 2f >= 0 && drawPosition.x - drawSize.x / 2f <= scene.getView().getWidth() && drawPosition.y + drawSize.y / 2f >= 0 && drawPosition.y - drawSize.y / 2f <= scene.getView().getHeight()) {
                 Texture tex = getMaterial().getTexture();
                 if (tex == null)
                     tex = game.getYieldLogo();
-                getRenderable().setSpecific(getMaterial().getTexture());
+                getRenderable().setSpecific(getMaterial().getTexture().getSpecificImage());
             }
         } else {
             Texture tex = getMaterial().getTexture();
             if (tex == null)
                 tex = game.getYieldLogo();
-            getRenderable().setSpecific(getMaterial().getTexture());
+            getRenderable().setSpecific(getMaterial().getTexture().getSpecificImage());
         }
     }
 

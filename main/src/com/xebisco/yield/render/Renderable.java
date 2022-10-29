@@ -124,7 +124,7 @@ public class Renderable implements Comparable<Renderable> {
 
     @Override
     public int compareTo(@NotNull Renderable o) {
-        return Integer.compare(zIndex, o.zIndex);
+        return Integer.compare(o.zIndex, zIndex);
     }
 
     public int getzIndex() {

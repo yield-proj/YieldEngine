@@ -34,7 +34,7 @@ public interface RenderMaster extends VisualUtils, AudioUtils, FileUtils {
     /**
      * @param renderables A TreeSet of Renderable objects.
      */
-    void start(TreeSet<Renderable> renderables);
+    void start(Set<Renderable> renderables);
 
     /**
      * It creates a window

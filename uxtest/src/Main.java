@@ -18,13 +18,24 @@ import com.xebisco.yield.*;
 
 public class Main extends YldGame {
 
-    Text text;
+    Entity text;
 
     @Override
     public void create() {
-        instantiate(e -> {
-            e.addComponent(new Rectangle(new Vector2(1000, 1000)));
-        });
+        /*instantiate(e -> {
+            e.addComponent(new Rectangle(new Vector2(100, 100)));
+            e.addComponent(new YldScript() {
+                @Override
+                public void update(float delta) {
+                    transform.translate(new Vector2(input.getAxis("Horizontal"), input.getAxis("Vertical")).mul(delta * 100f));
+                }
+            });
+            e.center();
+        });*/
+        graphics.rect(100, 100);
+        graphics.setColor(Colors.RED);
+        text = graphics.text("Hello, World!");
+        text.center();
 
 
         //text = graphics.text("AAA").getComponent(Text.class);
@@ -45,7 +56,10 @@ public class Main extends YldGame {
 
     @Override
     public void update(float delta) {
-        Yld.log(delta);
+        if(input.isPressed(Key.W)) {
+            text.setIndex(1);}
+        if(input.isPressed(Key.S))
+            text.setIndex(-1);
        /* if (text != null) {
             text.getEntity().center();
             text.setContents(String.valueOf(getFrames()));
@@ -55,7 +69,6 @@ public class Main extends YldGame {
     }
 
     public static void main(String[] args) {
-        System.setProperty("sun.java2d.opengl", "True");
         launch(new Main());
     }
 }

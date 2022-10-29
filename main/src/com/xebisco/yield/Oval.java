@@ -19,14 +19,14 @@ package com.xebisco.yield;
 import com.xebisco.yield.render.Renderable;
 import com.xebisco.yield.render.RenderableType;
 
-import java.util.TreeSet;
+import java.util.Set;
 
 /**
  * It's a shape that draws an oval
  */
 public class Oval extends Shape {
     @Override
-    public void render(TreeSet<Renderable> renderables) {
+    public void render(Set<Renderable> renderables) {
         super.render(renderables);
         getRenderable().setType(RenderableType.OVAL);
     }

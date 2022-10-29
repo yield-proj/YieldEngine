@@ -24,6 +24,7 @@ import org.jbox2d.dynamics.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 /**
@@ -198,7 +199,7 @@ public abstract class Component extends YldB
      *
      * @param renderables A TreeSet of Renderable objects. This is a set of all the objects that need to be rendered.
      */
-    public void render(TreeSet<Renderable> renderables) {
+    public void render(Set<Renderable> renderables) {
 
     }
 

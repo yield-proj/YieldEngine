@@ -19,7 +19,7 @@ package com.xebisco.yield;
 import com.xebisco.yield.render.Renderable;
 import com.xebisco.yield.render.RenderableType;
 
-import java.util.TreeSet;
+import java.util.Set;
 
 /**
  * It's a rectangle that can be drawn on the screen.
@@ -27,8 +27,7 @@ import java.util.TreeSet;
 public class Rectangle extends Shape
 {
     @Override
-    public void render(TreeSet<Renderable> renderables) {
-        Yld.log(renderables);
+    public void render(Set<Renderable> renderables) {
         super.render(renderables);
         getRenderable().setType(RenderableType.RECTANGLE);
     }

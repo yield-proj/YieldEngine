@@ -18,7 +18,7 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.render.Renderable;
 
-import java.util.TreeSet;
+import java.util.Set;
 
 /**
  * It renders the entity with a rotation and a color
@@ -35,8 +35,10 @@ public class SimpleRenderable extends Component {
     private boolean ignoreViewPosition;
 
     @Override
-    public void render(TreeSet<Renderable> renderables) {
+    public void render(Set<Renderable> renderables) {
         renderables.add(renderable);
+        renderable.setSpecificColor(null);
+        renderable.setColor(color);
         float angle = getEntity().getTransform().rotation + this.angle;
         if (forceAngle)
             angle = this.angle;

@@ -27,6 +27,9 @@ import com.xebisco.yield.render.Renderable;
 import com.xebisco.yield.render.WindowPrint;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.TreeSet;
 
 /**
@@ -34,7 +37,7 @@ import java.util.TreeSet;
  */
 public class GameHandler extends Engine {
     private final YldGame game;
-    private TreeSet<Renderable> renderables, updateRenderables;
+    private Set<Renderable> renderables, updateRenderables;
     private RenderMaster renderMaster;
     private static RenderMaster sampleRenderMaster;
     private WindowPrint windowPrint;
@@ -42,6 +45,7 @@ public class GameHandler extends Engine {
     private int framesToGarbageCollectionCount;
 
     private boolean canRenderNext;
+    private int lastMemory, lastLastMemory, actualMemory;
     private FinalObjectWrapper threadObjectWrapper;
 
     public GameHandler(YldGame game) {
@@ -85,9 +89,13 @@ public class GameHandler extends Engine {
         }
         setTargetTime(1000 / game.getConfiguration().fps);
         setLock(game.getConfiguration().fpsLock);
-        renderables = new TreeSet<>();
-        updateRenderables = new TreeSet<>();
-        renderMaster.start(renderables);
+        renderables = new LinkedHashSet<>();
+        updateRenderables = new LinkedHashSet<>();
+        try {
+            renderMaster.start(renderables);
+        } catch (AbstractMethodError e) {
+            Yld.throwException(new IncompatibleException(e.getMessage()));
+        }
     }
 
     private boolean zeroDelta = true;
@@ -125,8 +133,15 @@ public class GameHandler extends Engine {
         if (game.getConfiguration().framesToGarbageCollection >= 0) {
             framesToGarbageCollectionCount++;
             if (framesToGarbageCollectionCount - game.getConfiguration().framesToGarbageCollection >= 0) {
-                System.gc();
+                lastLastMemory = lastMemory;
+                lastMemory = actualMemory;
+                actualMemory = Yld.MEMORY();
                 framesToGarbageCollectionCount = 0;
+                Yld.log(lastLastMemory + ", " + lastMemory + ", " + actualMemory);
+                if(lastLastMemory < lastMemory && lastMemory < actualMemory) {
+                    System.gc();
+                    Yld.log("gc");
+                }
             }
         }
     }
@@ -158,11 +173,11 @@ public class GameHandler extends Engine {
         this.renderMaster = renderMaster;
     }
 
-    public TreeSet<Renderable> getRenderables() {
+    public Set<Renderable> getRenderables() {
         return renderables;
     }
 
-    public void setRenderables(TreeSet<Renderable> renderables) {
+    public void setRenderables(Set<Renderable> renderables) {
         this.renderables = renderables;
     }
 
@@ -249,5 +264,45 @@ public class GameHandler extends Engine {
 
     public void setZeroDelta(boolean zeroDelta) {
         this.zeroDelta = zeroDelta;
+    }
+
+    public Set<Renderable> getUpdateRenderables() {
+        return updateRenderables;
+    }
+
+    public void setUpdateRenderables(Set<Renderable> updateRenderables) {
+        this.updateRenderables = updateRenderables;
+    }
+
+    public int getLastMemory() {
+        return lastMemory;
+    }
+
+    public void setLastMemory(int lastMemory) {
+        this.lastMemory = lastMemory;
+    }
+
+    public int getLastLastMemory() {
+        return lastLastMemory;
+    }
+
+    public void setLastLastMemory(int lastLastMemory) {
+        this.lastLastMemory = lastLastMemory;
+    }
+
+    public int getActualMemory() {
+        return actualMemory;
+    }
+
+    public void setActualMemory(int actualMemory) {
+        this.actualMemory = actualMemory;
+    }
+
+    public FinalObjectWrapper getThreadObjectWrapper() {
+        return threadObjectWrapper;
+    }
+
+    public void setThreadObjectWrapper(FinalObjectWrapper threadObjectWrapper) {
+        this.threadObjectWrapper = threadObjectWrapper;
     }
 }

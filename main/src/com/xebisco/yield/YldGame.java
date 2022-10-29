@@ -17,7 +17,6 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.engine.Engine;
-import com.xebisco.yield.engine.EngineStop;
 import com.xebisco.yield.engine.GameHandler;
 import com.xebisco.yield.engine.YldEngineAction;
 import com.xebisco.yield.exceptions.MissingWindowPrintException;
@@ -29,7 +28,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.TreeSet;
+import java.util.Set;
 
 /**
  * This class is the starting point for every Yield Game, it contains all the objects of the game.
@@ -111,7 +110,7 @@ public class YldGame extends YldScene {
      * @param delta       The time in seconds since the last frame.
      * @param renderables A TreeSet of Renderable objects.
      */
-    public final void updateScene(float delta, TreeSet<Renderable> renderables) {
+    public final void updateScene(float delta, Set<Renderable> renderables) {
         if (scene.getFrames() == 0) {
             scene.setView(new View(1280, 720));
             for (YldSystem system : scene.getSystems()) {
@@ -125,7 +124,6 @@ public class YldGame extends YldScene {
         if (scene.isCallStart()) {
             scene.setCallStart(false);
             scene.start();
-            System.gc();
         }
         scene.update(delta);
         globalUpdate(delta);

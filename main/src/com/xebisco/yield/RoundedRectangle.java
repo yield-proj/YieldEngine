@@ -19,7 +19,7 @@ package com.xebisco.yield;
 import com.xebisco.yield.render.Renderable;
 import com.xebisco.yield.render.RenderableType;
 
-import java.util.TreeSet;
+import java.util.Set;
 
 /**
  * It's a rectangle with rounded corners
@@ -29,7 +29,7 @@ public class RoundedRectangle extends Shape {
     private Vector2 arc = new Vector2(5, 5);
 
     @Override
-    public void render(TreeSet<Renderable> renderables) {
+    public void render(Set<Renderable> renderables) {
         super.render(renderables);
         getRenderable().setType(RenderableType.ROUNDED_RECTANGLE);
         getRenderable().setArcWidth((int) arc.x);

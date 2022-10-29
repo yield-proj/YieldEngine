@@ -16,8 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.engine.Engine;
-import com.xebisco.yield.engine.YldEngineAction;
 import com.xebisco.yield.render.Renderable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -64,7 +62,7 @@ public final class Entity implements Comparable<Entity> {
      *
      * @param delta The time variation between the last frame and the actual one in seconds.
      */
-    public void process(float delta, TreeSet<Renderable> renderables) {
+    public void process(float delta, Set<Renderable> renderables) {
         if (active) {
             int i = 0;
             while (i < components.size()) {
@@ -88,10 +86,10 @@ public final class Entity implements Comparable<Entity> {
                 try {
                     Entity e = children.get(i);
                     if (e != null) {
-                        TreeSet<Renderable> renderables1 = renderables;
+                        Set<Renderable> renderables1 = renderables;
                         if (!e.isVisible())
                             renderables1 = null;
-                        e.process(delta, renderables);
+                        e.process(delta, renderables1);
                     }
                 } catch (IndexOutOfBoundsException ignore) {
                 }
