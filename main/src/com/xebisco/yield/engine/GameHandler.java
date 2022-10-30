@@ -118,7 +118,7 @@ public class GameHandler extends Engine {
         renderables.clear();
         renderables.addAll(updateRenderables);
         try {
-            renderMaster.frameEnd(game.getScene().getView().getBgColor());
+            renderMaster.frameEnd(game.getScene().getView().getBgColor(), getGame().getScene().getView().getWidth(), getGame().getScene().getView().getHeight(), (int) getGame().getScene().getView().getPosition().x, (int) getGame().getScene().getView().getPosition().y, getGame().getScene().getView().getTransform().scale.x, getGame().getScene().getView().getTransform().scale.y);
         } catch (AbstractMethodError e) {
             Yld.throwException(new IncompatibleException(e.getMessage()));
         }

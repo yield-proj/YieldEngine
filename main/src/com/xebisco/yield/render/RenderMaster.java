@@ -50,7 +50,7 @@ public interface RenderMaster extends VisualUtils, AudioUtils, FileUtils {
      *
      * @param backgroundColor The color of the background.
      */
-    void frameEnd(Color backgroundColor);
+    void frameEnd(Color backgroundColor, int width, int height, int offsetX, int offsetY, float scaleX, float scaleY);
 
     /**
      * This function is called when the game is resized.
