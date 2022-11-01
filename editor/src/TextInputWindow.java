@@ -16,18 +16,17 @@
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class TextInputWindow {
-    public static String request(Object contextObject) {
-        final String[] s = {""};
+    public static String request(Object contextObject, String startString) {
+        final String[] s = {startString};
         JFrame frame = new JFrame();
-        Font font = new Font("arial", Font.PLAIN, 40);
-        int startWidth = 400;
-        frame.setSize(startWidth, 40);
+        Font font = new Font("arial", Font.PLAIN, 25);
+        int startWidth = 200;
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setSize(startWidth, 30);
         frame.setLocation(MouseInfo.getPointerInfo().getLocation());
         frame.setUndecorated(true);
         frame.setVisible(true);
@@ -36,11 +35,12 @@ public class TextInputWindow {
         JPanel panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
+                ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
                 g.setColor(Color.WHITE);
                 g.fillRect(0, 0, getWidth(), getHeight());
                 g.setColor(Color.BLACK);
                 g.setFont(font);
-                g.drawString(s[0], 2, getHeight() - 5);
+                g.drawString(s[0], 2, getHeight() - 8);
                 g.setColor(Color.DARK_GRAY);
                 g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
                 int sw = g.getFontMetrics().stringWidth(s[0]) + 5;
@@ -53,22 +53,30 @@ public class TextInputWindow {
         frame.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (Character.isAlphabetic(e.getKeyChar()) || Character.isDigit(e.getKeyChar()) || e.getKeyChar() == ' ')
-                    s[0] += e.getKeyChar();
-                else switch (e.getKeyCode()) {
-                    case KeyEvent.VK_BACK_SPACE:
-                        if (s[0].length() > 0)
-                            s[0] = s[0].substring(0, s[0].length() - 1);
-                        break;
-                    case KeyEvent.VK_ENTER:
-                        synchronized (contextObject) {
-                            contextObject.notify();
-                        }
-                        frame.setVisible(false);
-                        frame.dispose();
-                        break;
-                }
+                if (Character.isDefined(e.getKeyChar()))
+                    switch (e.getKeyCode()) {
+                        case KeyEvent.VK_DELETE:
+                        case KeyEvent.VK_ESCAPE:
+                            break;
+                        case KeyEvent.VK_BACK_SPACE:
+                            if (s[0].length() > 0)
+                                s[0] = s[0].substring(0, s[0].length() - 1);
+                            break;
+                        case KeyEvent.VK_ENTER:
+                            frame.dispose();
+                            break;
+                        default:
+                            s[0] += e.getKeyChar();
+                    }
                 panel.repaint();
+            }
+        });
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                synchronized (contextObject) {
+                    contextObject.notify();
+                }
             }
         });
 

@@ -15,9 +15,15 @@
  */
 
 import javax.swing.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.HashSet;
+import java.util.Set;
 
-public class EditorMain {
+public class EditorMain implements MouseListener {
     private static JFrame frame;
+    private static Set<Integer> mousePressing = new HashSet<>();
+
     public static void main(String[] args) {
         frame = new JFrame();
         frame.setSize(1280, 720);
@@ -26,6 +32,48 @@ public class EditorMain {
         frame.add(new Renderer());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        System.out.println(TextInputWindow.request(""));
+        frame.addMouseListener(new EditorMain());
+        System.out.println(TextInputWindow.request("", "TESTTEXT"));
+    }
+
+    public static JFrame getFrame() {
+        return frame;
+    }
+
+    public static void setFrame(JFrame frame) {
+        EditorMain.frame = frame;
+    }
+
+    public static Set<Integer> getMousePressing() {
+        return mousePressing;
+    }
+
+    public static void setMousePressing(Set<Integer> mousePressing) {
+        EditorMain.mousePressing = mousePressing;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        mousePressing.add(e.getButton());
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        mousePressing.remove(e.getButton());
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
