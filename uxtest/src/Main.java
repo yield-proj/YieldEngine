@@ -22,50 +22,18 @@ public class Main extends YldGame {
 
     @Override
     public void create() {
-        /*instantiate(e -> {
-            e.addComponent(new Rectangle(new Vector2(100, 100)));
-            e.addComponent(new YldScript() {
-                @Override
-                public void update(float delta) {
-                    transform.translate(new Vector2(input.getAxis("Horizontal"), input.getAxis("Vertical")).mul(delta * 100f));
-                }
-            });
-            e.center();
-        });*/
         graphics.rect(100, 100);
         graphics.setColor(Colors.RED);
         text = graphics.text("Hello, World!");
         text.center();
-
-
-        //text = graphics.text("AAA").getComponent(Text.class);
-        /*instantiate(e -> {
-            UXMain main = new UXMain(new Vector2(getView().getWidth(), getView().getHeight()), new UXPalette());
-            UXPanel panel = main.getMainPanel();
-            UXButton button = panel.add(UXButton.class, false, "Ok", new Vector2(-50, -50), new Vector2(150, 70));
-            UXButton button2 = panel.add(UXButton.class, false, "Cancel", new Vector2(-50 - 180, -50), new Vector2(150, 70));
-            panel.add(UXTitleText.class, false, "Welcome!", new Vector2(80, 80));
-            panel.add(UXText.class, false, "This is YieldUX.", new Vector2(90, 80 + 140));
-            panel.add(UXSlider.class, true, 200f, new Vector2(0, 0));
-            button.setAction(() -> Yld.log("Ok"));
-            button2.setAction(() -> Yld.log("Cancel"));
-            //panel.getComponents().forEach(s -> {if(s instanceof UXRect) ((UXRect) s).setBackground(main.getPalette().foreground2);});
-            e.addComponent(main);
-        });*/
     }
 
     @Override
     public void update(float delta) {
-        if(input.isPressed(Key.W)) {
-            text.setIndex(1);}
+        if(input.isPressed(Key.W))
+            text.setIndex(1);
         if(input.isPressed(Key.S))
             text.setIndex(-1);
-       /* if (text != null) {
-            text.getEntity().center();
-            text.setContents(String.valueOf(getFrames()));
-        }
-        if (getFrames() == 300)
-            setScene(Main.class);*/
     }
 
     public static void main(String[] args) {
