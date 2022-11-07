@@ -22,6 +22,7 @@ public class Main extends YldGame {
 
     @Override
     public void create() {
+        setView(new View(427, 240));
         graphics.rect(100, 100);
         graphics.setColor(Colors.RED);
         text = graphics.text("Hello, World!");

@@ -44,7 +44,7 @@ public class GameHandler extends Engine {
 
     private int framesToGarbageCollectionCount;
 
-    private boolean canRenderNext;
+    private boolean canRenderNext, hasSync;
     private int lastMemory, lastLastMemory, actualMemory;
     private FinalObjectWrapper threadObjectWrapper;
 
@@ -78,6 +78,7 @@ public class GameHandler extends Engine {
         }
         try {
             renderMaster.setThreadTask(() -> {
+                hasSync = true;
                 if (threadObjectWrapper != null) {
                     synchronized (threadObjectWrapper.getObject()) {
                         threadObjectWrapper.getObject().notify();
@@ -108,13 +109,6 @@ public class GameHandler extends Engine {
             delta = 0f;
         }
         zeroDelta = false;
-        updateRenderables.clear();
-        try {
-            if (renderMaster.canStart())
-                game.updateScene(delta, updateRenderables);
-        } catch (AbstractMethodError e) {
-            Yld.throwException(new IncompatibleException(e.getMessage()));
-        }
         renderables.clear();
         renderables.addAll(updateRenderables);
         try {
@@ -122,13 +116,22 @@ public class GameHandler extends Engine {
         } catch (AbstractMethodError e) {
             Yld.throwException(new IncompatibleException(e.getMessage()));
         }
+        updateRenderables.clear();
         try {
-            synchronized (threadObjectWrapper.getObject()) {
-                threadObjectWrapper.getObject().wait();
-            }
-        } catch (InterruptedException e) {
-            Yld.throwException(e);
+            if (renderMaster.canStart())
+                game.updateScene(delta, updateRenderables);
+        } catch (AbstractMethodError e) {
+            Yld.throwException(new IncompatibleException(e.getMessage()));
         }
+        if (!hasSync)
+            try {
+                synchronized (threadObjectWrapper.getObject()) {
+                    threadObjectWrapper.getObject().wait();
+                }
+            } catch (InterruptedException e) {
+                Yld.throwException(e);
+            }
+        hasSync = false;
         game.afterRender(delta);
         if (game.getConfiguration().framesToGarbageCollection >= 0) {
             framesToGarbageCollectionCount++;
