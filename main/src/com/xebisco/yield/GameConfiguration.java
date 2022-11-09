@@ -82,4 +82,9 @@ public class GameConfiguration extends WindowConfiguration {
      * A flag to start the physics system.
      */
     public boolean startPhysicsSystem = true;
+
+    /**
+     * A flag to run the game on the calling thread.
+     */
+    public boolean runOnThisThread;
 }

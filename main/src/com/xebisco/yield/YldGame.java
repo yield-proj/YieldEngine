@@ -87,8 +87,10 @@ public class YldGame extends YldScene {
         }
         game.loadFont("arial", 30, 0, new RelativeFile("com/xebisco/yield/assets/ArialNormal.ttf"));
         game.setScene(game.getClass());
-        game.getHandler().getThread().start();
         Yld.debug(() -> Yld.log("Game '" + game.getClass().getSimpleName() + "' started."));
+        if (configuration.runOnThisThread) game.getHandler().run();
+        else
+            game.getHandler().getThread().start();
     }
 
     /**
