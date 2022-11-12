@@ -15,26 +15,30 @@
  */
 
 import com.xebisco.yield.*;
+import com.xebisco.yield.ux.UXCanvas;
+import com.xebisco.yield.ux.UXComponent;
+import com.xebisco.yield.ux.UXGraphics;
+import com.xebisco.yield.ux.UXPanel;
 
 public class Main extends YldGame {
 
-    Entity text;
-
     @Override
     public void create() {
-        setView(new View(427, 240));
-        graphics.rect(100, 100);
-        graphics.setColor(Colors.RED);
-        text = graphics.text("Hello, World!");
-        text.center();
-    }
-
-    @Override
-    public void update(float delta) {
-        if(input.isPressed(Key.W))
-            text.setIndex(1);
-        if(input.isPressed(Key.S))
-            text.setIndex(-1);
+        UXCanvas canvas = new UXCanvas();
+        instantiate(e -> {
+            e.addComponent(canvas);
+            e.center();
+        });
+        UXPanel panel = new UXPanel();
+        canvas.add(panel);
+        panel.add(new UXComponent() {
+            @Override
+            protected void paintComponent(UXGraphics g) {
+                super.paintComponent(g);
+                g.fillOval(1000, 1000, 100, 100);
+                g.drawString("Hello, World!", 10, 10);
+            }
+        });
     }
 
     public static void main(String[] args) {

@@ -32,4 +32,10 @@ public interface UXGraphics {
     Color getColor();
     void setFont(UXFont font);
     UXFont getFont();
+    void setThickness(int thickness);
+    int getThickness();
+    void setZIndex(int zIndex);
+    int getZIndex();
+    void setRotation(int degrees);
+    int getRotation();
 }

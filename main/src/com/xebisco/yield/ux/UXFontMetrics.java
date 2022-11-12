@@ -16,5 +16,37 @@
 
 package com.xebisco.yield.ux;
 
+import com.xebisco.yield.Vector2;
+import com.xebisco.yield.render.RenderMaster;
+
 public class UXFontMetrics {
+    private UXFont font;
+    private RenderMaster renderMaster;
+    public Vector2 getStringBounds(String string) {
+        return new Vector2(renderMaster.getStringWidth(string, font.getGenName()), renderMaster.getStringHeight(string, font.getGenName()));
+    }
+
+    public int stringWidth(String string) {
+        return (int) getStringBounds(string).x;
+    }
+
+    public int getHeight() {
+        return (int) font.getSize();
+    }
+
+    public void setFont(UXFont font) {
+        this.font = font;
+    }
+
+    public UXFont getFont() {
+        return font;
+    }
+
+    public RenderMaster getRenderMaster() {
+        return renderMaster;
+    }
+
+    public void setRenderMaster(RenderMaster renderMaster) {
+        this.renderMaster = renderMaster;
+    }
 }

@@ -16,42 +16,55 @@
 
 package com.xebisco.yield.ux;
 
+import com.xebisco.yield.RelativeFile;
+import com.xebisco.yield.Yld;
+import com.xebisco.yield.YldGame;
+import com.xebisco.yield.render.RenderMaster;
+
 public class UXFont {
-    public static final int PLAIN = 0, BOLD = 1, ITALIC = 2;
-    private String name;
-    private int style = PLAIN;
-    private float size;
+    public static final int PLAIN = 0, BOLD = 1, ITALIC = 2, LOADED = 3;
+    private final String name;
+    private final String genName = String.valueOf(Yld.RAND.nextLong());
+    private final int style;
+    private final float size;
+    private final RenderMaster renderMaster;
+    private final RelativeFile relativeFile;
 
-    public UXFont() {
-    }
-
-    public UXFont(String name, int style, float size) {
+    public UXFont(String name, float size, int style, RenderMaster renderMaster, RelativeFile relativeFile) {
         this.name = name;
         this.style = style;
         this.size = size;
+        this.renderMaster = renderMaster;
+        this.relativeFile = null;
+        renderMaster.loadFont(genName, name, size, style);
+    }
+
+    public UXFont(String name, float size, int format, RelativeFile relativeFile, RenderMaster renderMaster) {
+        this.name = name;
+        this.style = UXFont.LOADED;
+        this.size = size;
+        this.renderMaster = renderMaster;
+        this.relativeFile = relativeFile;
+        renderMaster.loadFont(genName, size, size, format, relativeFile);
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getStyle() {
         return style;
-    }
-
-    public void setStyle(int style) {
-        this.style = style;
     }
 
     public float getSize() {
         return size;
     }
 
-    public void setSize(float size) {
-        this.size = size;
+    public RenderMaster getRenderMaster() {
+        return renderMaster;
+    }
+
+    public String getGenName() {
+        return genName;
     }
 }
