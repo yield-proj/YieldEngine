@@ -16,8 +16,6 @@
 
 package com.xebisco.yield.ux;
 
-import jdk.jfr.Experimental;
-
 import java.util.LinkedHashSet;
 import java.util.Set;
 
