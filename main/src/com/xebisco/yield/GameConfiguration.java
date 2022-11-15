@@ -56,6 +56,11 @@ public class GameConfiguration extends WindowConfiguration {
     public String renderMasterName;
 
     /**
+     * Used to specify the method to be called to instance the render master.
+     */
+    public String renderMasterMethod;
+
+    /**
      * A render master implementation.
      */
     public RenderMaster renderMaster;

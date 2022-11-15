@@ -27,9 +27,20 @@ public class Main extends YldGame {
         UXCanvas canvas = new UXCanvas();
         instantiate(e -> {
             e.addComponent(canvas);
-            e.center();
+            e.addComponent(new YldScript() {
+                @Override
+                public void update(float delta) {
+                    float x = input.getAxis("Horizontal");
+                    if(x != 0) {
+                        getComponent(UXCanvas.class).getPanels().forEach(p -> {
+                            p.setWidth((int) (p.getWidth() + x));
+                            p.repaint();
+                        });
+                    }
+                }
+            });
         });
-        UXPanel panel = new UXPanel();
+        UXPanel panel = new UXPanel(getView().getWidth() - 200, getView().getHeight() - 200);
         canvas.add(panel);
         panel.add(new UXComponent() {
             @Override

@@ -33,6 +33,11 @@ public class UXPanel extends UXCompartment {
     private final Set<Renderable> renderables = new LinkedHashSet<>();
     private Color background = Colors.BLACK.get();
 
+    public UXPanel(int width, int height) {
+        setWidth(width);
+        setHeight(height);
+    }
+
     @Override
     public void update(UXGraphics graphics) {
         try {

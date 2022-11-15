@@ -52,7 +52,14 @@ public class GameHandler extends Engine {
         super(null);
         game.setHandler(this);
         this.game = game;
-        if (game.getConfiguration().renderMaster == null) {
+        if (game.getConfiguration().renderMasterMethod != null) {
+            try {
+                renderMaster = (RenderMaster) Class.forName(game.getConfiguration().renderMasterName).getMethod(game.getConfiguration().renderMasterMethod).invoke(null);
+            } catch (NoSuchMethodException | ClassNotFoundException | IllegalAccessException |
+                     InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (game.getConfiguration().renderMaster == null) {
             if (game.getConfiguration().renderMasterName != null) {
                 try {
                     renderMaster = (RenderMaster) Class.forName(game.getConfiguration().renderMasterName).getDeclaredConstructor().newInstance();
