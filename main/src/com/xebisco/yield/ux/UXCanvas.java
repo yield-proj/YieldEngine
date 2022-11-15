@@ -17,12 +17,14 @@
 package com.xebisco.yield.ux;
 
 import com.xebisco.yield.Component;
-import com.xebisco.yield.Yld;
+import com.xebisco.yield.DevelopmentFase;
+import com.xebisco.yield.NotFinished;
 import com.xebisco.yield.render.Renderable;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+@NotFinished(fase = DevelopmentFase.EXPERIMENTAL)
 public class UXCanvas extends Component {
     private final Set<UXPanel> panels = new LinkedHashSet<>();
 

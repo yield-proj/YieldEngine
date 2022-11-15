@@ -14,25 +14,8 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.ux;
+package com.xebisco.yield;
 
-import jdk.jfr.Experimental;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-public abstract class UXCompartment extends UXComponent {
-    private final Set<UXComponent> components = new LinkedHashSet<>();
-
-    public void add(UXComponent component) {
-        components.add(component);
-    }
-
-    public void remove(UXComponent component) {
-        components.remove(component);
-    }
-
-    public Set<UXComponent> getComponents() {
-        return components;
-    }
+public @interface NotFinished {
+    DevelopmentFase fase();
 }
