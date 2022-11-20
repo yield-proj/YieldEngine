@@ -189,7 +189,7 @@ public class Engine implements Runnable {
     }
 
     /**
-     * > Sets the ignoreTodo flag
+     * Sets the ignoreTodo flag
      *
      * @param ignoreTodo If true, the plugin will ignore the elements in the todoList.
      */

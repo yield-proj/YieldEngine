@@ -170,7 +170,7 @@ public abstract class Component extends YldB
     }
 
     /**
-     * > This function returns a RayCast object that contains information about the first entity that was hit by a ray cast
+     * This function returns a RayCast object that contains information about the first entity that was hit by a ray cast
      * from point1 to point2
      *
      * @param requestEntity The entity that is requesting the raycast. This is used to determine if the raycast should hit

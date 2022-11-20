@@ -209,7 +209,7 @@ public class GameHandler extends Engine {
     }
 
     /**
-     * > Returns whether the next frame can be rendered
+     * Returns whether the next frame can be rendered
      *
      * @return The value of the canRenderNext variable.
      */

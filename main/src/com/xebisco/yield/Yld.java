@@ -327,7 +327,7 @@ public final class Yld {
     }
 
     /**
-     * > Sets the Gson object to be used by the Yld library
+     * Sets the Gson object to be used by the Yld library
      *
      * @param gson The Gson object to use for serialization and deserialization of json files.
      */

@@ -297,7 +297,7 @@ public class TileGen {
     }
 
     /**
-     * > This function returns the tilesToCompare variable
+     * This function returns the tilesToCompare variable
      *
      * @return The tilesToCompare object.
      */

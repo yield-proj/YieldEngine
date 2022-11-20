@@ -76,7 +76,7 @@ public class PhysicsBody extends YldScript {
     }
 
     /**
-     * > Destroy all the fixtures attached to the body
+     * Destroy all the fixtures attached to the body
      */
     public void destroyFixtures() {
         int size = 0;
@@ -376,7 +376,7 @@ public class PhysicsBody extends YldScript {
     }
 
     /**
-     * > Returns true if the body is prevented from rotating
+     * Returns true if the body is prevented from rotating
      *
      * @return The boolean value of fixedRotation.
      */
@@ -405,7 +405,7 @@ public class PhysicsBody extends YldScript {
     }
 
     /**
-     * > Sets whether continuous collision detection is enabled
+     * Sets whether continuous collision detection is enabled
      *
      * @param continuousCollision If true, the object will be checked for collisions continuously. If false, the object
      * will only be checked for collisions when it moves.

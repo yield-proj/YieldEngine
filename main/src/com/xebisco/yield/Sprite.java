@@ -66,7 +66,7 @@ public class Sprite extends NonFillShape {
     }
 
     /**
-     * > Returns whether the smart render feature is enabled
+     * Returns whether the smart render feature is enabled
      *
      * @return The value of the smartRender variable.
      */
@@ -75,7 +75,7 @@ public class Sprite extends NonFillShape {
     }
 
     /**
-     * > Sets the smartRender property
+     * Sets the smartRender property
      *
      * @param smartRender The smartRender value to set.
      */

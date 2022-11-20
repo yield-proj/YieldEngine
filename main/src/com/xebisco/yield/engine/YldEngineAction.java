@@ -91,7 +91,7 @@ public class YldEngineAction {
     }
 
     /**
-     * > This function returns the id of the object
+     * This function returns the id of the object
      *
      * @return The id of the object.
      */

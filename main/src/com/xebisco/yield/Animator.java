@@ -186,7 +186,7 @@ public class Animator extends Component {
     }
 
     /**
-     * > Returns whether the animator will automatically replay the animation when it ends
+     * Returns whether the animator will automatically replay the animation when it ends
      *
      * @return The value of the autoReplay variable.
      */
