@@ -241,7 +241,7 @@ public final class Yld {
      * @param value The value to calculate the cosine of.
      * @return The cosine of the value.
      */
-    public static int cos(int value) {
+    public static float cos(int value) {
         return (int) Math.cos(value);
     }
 
@@ -251,7 +251,7 @@ public final class Yld {
      * @param value The value to calculate the cosine of.
      * @return The cosine of the value.
      */
-    public static long cos(long value) {
+    public static float cos(long value) {
         return (long) Math.cos(value);
     }
 
