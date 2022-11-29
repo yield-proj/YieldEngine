@@ -85,6 +85,7 @@ public class YldGame extends YldScene {
             game.yieldLogo = new Texture("com/xebisco/yield/assets/yieldlogo.png");
             game.loadTexture(game.yieldLogo);
         }
+        game.loadTexture(ParticleSystem.getDefaultParticleTexture());
         game.loadFont("arial", 30, 0, new RelativeFile("com/xebisco/yield/assets/ArialNormal.ttf"));
         game.setScene(game.getClass());
         Yld.debug(() -> Yld.log("Game '" + game.getClass().getSimpleName() + "' started."));

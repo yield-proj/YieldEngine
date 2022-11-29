@@ -14,10 +14,29 @@
  * limitations under the License.
  */
 
-import com.xebisco.yield.*;
+package com.xebisco.yield;
 
-public class Main extends YldGame {
-    public static void main(String[] args) {
-        launch(new Main());
+public class PosRef {
+    private Vector2 position, speed;
+
+    public PosRef(Vector2 position, Vector2 speed) {
+        this.speed = speed;
+        this.position = position;
+    }
+
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    public void setPosition(Vector2 position) {
+        this.position = position;
+    }
+
+    public Vector2 getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(Vector2 speed) {
+        this.speed = speed;
     }
 }
