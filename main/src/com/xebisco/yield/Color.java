@@ -16,8 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.swingyield.SwingYield;
-
 import java.util.Objects;
 
 /**

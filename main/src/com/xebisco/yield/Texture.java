@@ -16,8 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.swingyield.exceptions.NotCapableTextureException;
-import com.xebisco.yield.render.Renderable;
 import com.xebisco.yield.render.VisualUtils;
 
 /**
