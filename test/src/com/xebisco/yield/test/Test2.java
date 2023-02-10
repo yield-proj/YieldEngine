@@ -2,8 +2,6 @@ package com.xebisco.yield.test;
 
 import com.xebisco.yield.*;
 
-import java.util.Arrays;
-
 public class Test2 extends YldGame {
 
     @Override
