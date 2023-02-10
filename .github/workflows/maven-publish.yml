@@ -17,8 +17,6 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: goto repos
-        run: cd ~/.m2/repository
       - name: Publish package
         run: mvn --batch-mode deploy
         env:
