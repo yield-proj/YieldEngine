@@ -101,7 +101,8 @@ public class Engine implements Runnable {
             try {
                 thread.join();
             } catch (InterruptedException e) {
-                Yld.throwException(e);
+                e.printStackTrace();
+                System.exit(1);
             }
         }
     }
