@@ -2,7 +2,7 @@
   <artifact type="jar" name="YieldEngine:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/YieldEngine_jar</output-path>
     <root id="archive" name="YieldEngine.jar">
-      <element id="module-output" name="YieldEngine" />
+      <element id="module-output" name="yield-engine" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/slf4j/slf4j-nop/1.7.9/slf4j-nop-1.7.9.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jbox2d/jbox2d-library/2.2.1.1/jbox2d-library-2.2.1.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.9/slf4j-api-1.7.9.jar" path-in-jar="/" />
