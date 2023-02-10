@@ -41,7 +41,7 @@ public final class Yld {
     /**
      * The version of the Yield Game Engine.
      */
-    public static final String VERSION = "1.2.3.1";
+    public static final String VERSION = "1.2.3.1b";
 
     public final static MathContext roundDownContext = new MathContext(2, RoundingMode.DOWN);
     public final static MathContext roundUpContext = new MathContext(2, RoundingMode.UP);
