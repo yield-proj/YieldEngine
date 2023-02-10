@@ -4,12 +4,15 @@ on:
     type: published
 jobs:
   publish:
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-18.04
     permissions: 
       contents: read
       packages: write 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          path: go/src/github.com/${{ github.repository }}
       - uses: actions/setup-java@v3
         with:
           java-version: '11'
