@@ -208,7 +208,7 @@ public class UXPanel extends UXCompartment {
                 return rotation;
             }
         };
-        graphics.setFont(new UXFont("Roboto-Medium", 30f, 0, new RelativeFile("com/xebisco/yield/assets/Roboto-Medium.ttf"), renderMaster));
+        graphics.setFont(new UXFont("Roboto-Medium", 30f, 0, new RelativeFile("res/com/xebisco/yield/assets/Roboto-Medium.ttf"), renderMaster));
         update(graphics);
     }
 

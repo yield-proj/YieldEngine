@@ -1,7 +1,5 @@
 package com.xebisco.yield.test;
 
-import com.xebisco.yield.*;
-
 public class Test2 extends YldGame {
 
     @Override

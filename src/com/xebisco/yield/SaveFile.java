@@ -24,6 +24,6 @@ public class SaveFile extends RelativeFile {
         super(relativePath + ".ylds");
     }
     public SaveFile() {
-        super("/com/xebisco/yield/assets/DefaultSave.ylds");
+        super("/res/com/xebisco/yield/assets/DefaultSave.ylds");
     }
 }

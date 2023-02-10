@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/YieldEngine.iml" filepath="$PROJECT_DIR$/YieldEngine.iml" />
       <module fileurl="file://$PROJECT_DIR$/ptest/ptest.iml" filepath="$PROJECT_DIR$/ptest/ptest.iml" />
       <module fileurl="file://$PROJECT_DIR$/test/test.iml" filepath="$PROJECT_DIR$/test/test.iml" />
       <module fileurl="file://$PROJECT_DIR$/uxtest/uxtest.iml" filepath="$PROJECT_DIR$/uxtest/uxtest.iml" />

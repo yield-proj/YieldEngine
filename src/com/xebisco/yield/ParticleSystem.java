@@ -28,7 +28,7 @@ public class ParticleSystem extends Component {
     private int angle = 90, angleRange = 10, randomSpeedValue = 0;
     private Vector2 gravity = new Vector2(0, 10), size = new Vector2(100, 100), emissionOffset = new Vector2();
     private Texture texture;
-    private final static Texture defaultParticleTexture = new Texture("com/xebisco/yield/assets/default-particle.png");
+    private final static Texture defaultParticleTexture = new Texture("res/com/xebisco/yield/assets/default-particle.png");
     private final Set<YldPair<PosRef, Float>> particles = new HashSet<>();
 
     @Override

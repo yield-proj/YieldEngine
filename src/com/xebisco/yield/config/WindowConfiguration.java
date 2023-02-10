@@ -40,7 +40,7 @@ public class WindowConfiguration
     /**
      * Icon for the window.
      */
-    public Texture icon = new Texture("com/xebisco/yield/assets/icon.png");
+    public Texture icon = new Texture("res/com/xebisco/yield/assets/icon.png");
     /**
      * Window configuration
      */

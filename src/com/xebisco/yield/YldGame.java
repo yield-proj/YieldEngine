@@ -73,7 +73,7 @@ public class YldGame extends YldScene {
     public static void launch(YldGame game, GameConfiguration configuration) {
         Yld.debug(() -> Yld.log("Starting game '" + game.getClass().getSimpleName() + "'."));
         if (configuration == null)
-            configuration = (GameConfiguration) new JsonFileWrapper("com/xebisco/yield/assets/stdlaunchconfig.json", GameConfiguration.class).getObject();
+            configuration = (GameConfiguration) new JsonFileWrapper("res/com/xebisco/yield/assets/stdlaunchconfig.json", GameConfiguration.class).getObject();
         game.setConfiguration(configuration);
         game.addScene(game);
         game.setInput(new YldInput(game));
@@ -82,11 +82,11 @@ public class YldGame extends YldScene {
             game.loadTexture(configuration.icon);
         game.setWindow(game.getHandler().getRenderMaster().initWindow(game.getConfiguration()));
         if (configuration.loadYieldLogo) {
-            game.yieldLogo = new Texture("com/xebisco/yield/assets/yieldlogo.png");
+            game.yieldLogo = new Texture("res/com/xebisco/yield/assets/yieldlogo.png");
             game.loadTexture(game.yieldLogo);
         }
         game.loadTexture(ParticleSystem.getDefaultParticleTexture());
-        game.loadFont("arial", 30, 0, new RelativeFile("com/xebisco/yield/assets/ArialNormal.ttf"));
+        game.loadFont("arial", 30, 0, new RelativeFile("res/com/xebisco/yield/assets/ArialNormal.ttf"));
         game.setScene(game.getClass());
         Yld.debug(() -> Yld.log("Game '" + game.getClass().getSimpleName() + "' started."));
         if (configuration.runOnThisThread) game.getHandler().run();

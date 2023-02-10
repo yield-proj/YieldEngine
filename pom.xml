@@ -29,7 +29,7 @@
     </distributionManagement>
 
     <groupId>com.xebisco.yield</groupId>
-    <artifactId>core</artifactId>
+    <artifactId>YieldEngine</artifactId>
     <version>1.2.3.1b</version>
     <repositories>
         <repository>
