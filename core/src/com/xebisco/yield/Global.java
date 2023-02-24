@@ -16,17 +16,17 @@
 
 package com.xebisco.yield;
 
-public class Size2D extends TwoAnchorRepresentation {
-
-    public Size2D(double width, double height) {
-        super(width, height);
+public class Global {
+    public static int clamp(int value, int min, int max) {
+        return value > max ? max : Math.max(value, min);
     }
-
-    public double getWidth() {
-        return getX();
+    public static long clamp(long value, long min, long max) {
+        return value > max ? max : Math.max(value, min);
     }
-
-    public double getHeight() {
-        return getX();
+    public static double clamp(double value, double min, double max) {
+        return value > max ? max : Math.max(value, min);
+    }
+    public static float clamp(float value, float min, float max) {
+        return value > max ? max : Math.max(value, min);
     }
 }
