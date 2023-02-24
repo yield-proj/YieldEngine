@@ -1,5 +1,5 @@
 package com.xebisco.yield;
 
-public abstract class Renderable {
-
+public interface Renderable {
+    void render(PlatformGraphics graphics);
 }
