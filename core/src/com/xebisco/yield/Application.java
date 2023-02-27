@@ -16,6 +16,7 @@
 
 package com.xebisco.yield;
 
+import java.util.ConcurrentModificationException;
 import java.util.concurrent.CompletableFuture;
 
 public class Application implements Behavior {
@@ -50,6 +51,13 @@ public class Application implements Behavior {
                 drawInstruction.setPosition(new Point2D(0, 0));
                 drawInstruction.setSize(platformInit.getResolution());
                 platformGraphics.draw(drawInstruction);
+                try {
+                    for (Entity2D entity : scene.getEntities()) {
+                        entity.render(platformGraphics);
+                    }
+                } catch (ConcurrentModificationException ignore) {
+
+                }
                 platformGraphics.conclude();
             });
             scene.setFrames(scene.getFrames() + 1);
@@ -57,6 +65,13 @@ public class Application implements Behavior {
                 scene.onStart();
             }
             scene.onUpdate();
+            try {
+                for (Entity2D entity : scene.getEntities()) {
+                    entity.process();
+                }
+            } catch (ConcurrentModificationException ignore) {
+
+            }
             while (!renderAsync.isDone()) {
                 synchronized (renderLock) {
                     try {

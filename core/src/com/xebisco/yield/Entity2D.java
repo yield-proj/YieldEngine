@@ -16,43 +16,73 @@
 
 package com.xebisco.yield;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 
-public class Entity2D implements Renderable, Behavior {
+public final class Entity2D implements Renderable, Disposable, Comparable<Entity2D> {
     private List<ComponentBehavior> components = new ArrayList<>();
-    private List<Entity2D> children = new ArrayList<>();
+    private TreeSet<Entity2D> children = new TreeSet<>();
+    private int index;
+    private final Transform2D transform = new Transform2D();
     private int frames;
 
-    @Override
-    public void onStart() {
-        frames = 0;
+    public Entity2D() {
     }
 
-    @Override
-    public void onUpdate() {
+    public Entity2D(Collection<Entity2D> children) {
+        if (children != null)
+            this.children.addAll(children);
+    }
+
+    public Entity2D(TreeSet<Entity2D> children, ComponentBehavior... components) {
+        this(children);
+        this.components.addAll(List.of(components));
+    }
+
+    public void process() {
         frames++;
-        IntStream.range(0, components.size()).parallel().forEach(i -> children.get(0).onUpdate());
+        IntStream.range(0, components.size()).parallel().forEach(i -> {
+            ComponentBehavior component = components.get(i);
+            component.setEntity(this);
+            component.setFrames(component.getFrames() + 1);
+            if(component.getFrames() == 1)
+                component.onStart();
+            component.onUpdate();
+        });
+        try {
+            for (Entity2D entity : children) {
+                entity.process();
+            }
+        } catch (ConcurrentModificationException ignore) {
+
+        }
     }
 
     @Override
     public void dispose() {
-        IntStream.range(0, components.size()).parallel().forEach(i -> children.get(0).dispose());
+        for (Entity2D entity : children) {
+            entity.dispose();
+        }
         setComponents(null);
         setChildren(null);
     }
 
     @Override
     public void render(PlatformGraphics graphics) {
+        for (ComponentBehavior component : components)
+            component.render(graphics);
+    }
 
+    @Override
+    public int compareTo(Entity2D o) {
+        return Integer.compare(o.index, index);
     }
 
     public <T extends ComponentBehavior> T getComponent(Class<T> componentType, int index) {
         int i = 0;
-        for(ComponentBehavior c : components) {
-            if(c.getClass().hashCode() == componentType.hashCode() && c.getClass().equals(componentType)) {
-                if(index == i) {
+        for (ComponentBehavior c : components) {
+            if (c.getClass().hashCode() == componentType.hashCode() && c.getClass().equals(componentType)) {
+                if (index == i) {
                     //noinspection unchecked
                     return (T) c;
                 }
@@ -79,6 +109,18 @@ public class Entity2D implements Renderable, Behavior {
         removeComponent(getComponent(componentType));
     }
 
+    public Transform2D getTransform() {
+        return transform;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     public List<ComponentBehavior> getComponents() {
         return components;
     }
@@ -87,11 +129,11 @@ public class Entity2D implements Renderable, Behavior {
         this.components = components;
     }
 
-    public List<Entity2D> getChildren() {
+    public TreeSet<Entity2D> getChildren() {
         return children;
     }
 
-    public void setChildren(List<Entity2D> children) {
+    public void setChildren(TreeSet<Entity2D> children) {
         this.children = children;
     }
 

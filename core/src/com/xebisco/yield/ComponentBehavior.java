@@ -16,5 +16,23 @@
 
 package com.xebisco.yield;
 
-public abstract class ComponentBehavior implements Behavior {
+public abstract class ComponentBehavior implements Behavior, Renderable {
+    private int frames;
+    private Entity2D entity;
+
+    public int getFrames() {
+        return frames;
+    }
+
+    public void setFrames(int frames) {
+        this.frames = frames;
+    }
+
+    public Entity2D getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Entity2D entity) {
+        this.entity = entity;
+    }
 }

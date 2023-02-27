@@ -16,5 +16,10 @@
 
 package com.xebisco.yield;
 
-public abstract class RenderableComponent extends ComponentBehavior implements Renderable {
+public class Oval extends Rectangle {
+    @Override
+    public void onStart() {
+        super.onStart();
+        getDrawInstruction().setType(DrawInstruction.Type.OVAL);
+    }
 }

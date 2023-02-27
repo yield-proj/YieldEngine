@@ -18,6 +18,8 @@ package com.xebisco.yield;
 
 public class Transform2D {
     private final Point2D position = new Point2D();
+    private final Size2D size = new Size2D(100, 100);
+    private final Vector2D scale = new Vector2D(1, 1);
     private double zRotation;
 
     public Point2D getPosition() {
@@ -30,5 +32,13 @@ public class Transform2D {
 
     public void setzRotation(double zRotation) {
         this.zRotation = zRotation;
+    }
+
+    public Vector2D getScale() {
+        return scale;
+    }
+
+    public Size2D getSize() {
+        return size;
     }
 }
