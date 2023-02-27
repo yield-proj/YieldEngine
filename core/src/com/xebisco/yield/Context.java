@@ -25,11 +25,13 @@ public class Context implements Runnable {
     private final AtomicBoolean running = new AtomicBoolean();
     private final Object lockObject = new Object();
     private final Runnable runnable;
+    private final Disposable disposable;
     private boolean lightweight;
 
-    public Context(ContextTime contextTime, Runnable runnable) {
+    public Context(ContextTime contextTime, Runnable runnable, Disposable disposable) {
         this.contextTime = contextTime;
         this.runnable = runnable;
+        this.disposable = disposable;
     }
 
     @Override
@@ -37,30 +39,33 @@ public class Context implements Runnable {
         running.set(true);
         long last = System.nanoTime(), actual;
         while (running.get()) {
-            if(!lightweight) {
+            if (!lightweight) {
                 do {
                     actual = System.nanoTime();
-                } while (actual - last < contextTime.getTargetSleepTime() * 1_000_000);
+                } while (actual - last < contextTime.getTargetSleepTime() * 1_000);
             } else {
                 actual = System.nanoTime();
             }
             contextTime.setDeltaTime((actual - last) / 1_000_000_000.0);
-            runnable.run();
+            if (runnable != null)
+                runnable.run();
             last = actual;
             actual = System.nanoTime();
 
-            long value = contextTime.getTargetSleepTime() - 1 - ((actual - last) / 1_000_000);
-            if(lightweight) value++;
+            long value = contextTime.getTargetSleepTime() - 1000 - ((actual - last) / 1_000);
+            if (lightweight) value++;
             value = Global.clamp(value, 0, value);
-            if(value > 0)
+            if (value > 0)
                 synchronized (lockObject) {
                     try {
-                        lockObject.wait(value);
+                        lockObject.wait(value / 1000, (int) (value - value / 1000));
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
                 }
         }
+        if (disposable != null)
+            disposable.dispose();
     }
 
     public Thread getThread() {
@@ -81,5 +86,17 @@ public class Context implements Runnable {
 
     public Runnable getRunnable() {
         return runnable;
+    }
+
+    public boolean isLightweight() {
+        return lightweight;
+    }
+
+    public void setLightweight(boolean lightweight) {
+        this.lightweight = lightweight;
+    }
+
+    public Disposable getDisposable() {
+        return disposable;
     }
 }

@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/editor/editor.iml" filepath="$PROJECT_DIR$/editor/editor.iml" />
       <module fileurl="file://$PROJECT_DIR$/random-tests/random-tests.iml" filepath="$PROJECT_DIR$/random-tests/random-tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../impl/swingimpl/swingimpl.iml" filepath="$PROJECT_DIR$/../impl/swingimpl/swingimpl.iml" />
     </modules>
   </component>
 </project>

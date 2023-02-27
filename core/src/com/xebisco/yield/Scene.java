@@ -16,17 +16,23 @@
 
 package com.xebisco.yield;
 
-public class Size2D extends TwoAnchorRepresentation {
+public abstract class Scene implements Behavior {
+    private int frames;
+    private Color backGroundColor = Colors.GRAY.darker();
 
-    public Size2D(double width, double height) {
-        super(width, height);
+    public int getFrames() {
+        return frames;
     }
 
-    public double getWidth() {
-        return getX();
+    public void setFrames(int frames) {
+        this.frames = frames;
     }
 
-    public double getHeight() {
-        return getY();
+    public Color getBackGroundColor() {
+        return backGroundColor;
+    }
+
+    public void setBackGroundColor(Color backGroundColor) {
+        this.backGroundColor = backGroundColor;
     }
 }

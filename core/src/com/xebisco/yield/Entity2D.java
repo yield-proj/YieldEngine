@@ -66,14 +66,9 @@ public class Entity2D implements Renderable, Behavior {
         return getComponent(componentType, 0);
     }
 
-    public void addComponent(ComponentBehavior component) {
-        components.add(component);
-        component.onAdd();
-    }
-
     public void removeComponent(ComponentBehavior component) {
-        components.add(component);
-        component.onAdd();
+        components.remove(component);
+        component.dispose();
     }
 
     public void removeComponent(Class<? extends ComponentBehavior> componentType, int index) {

@@ -16,8 +16,24 @@
 
 package com.xebisco.yield;
 
-public interface PlatformGraphics {
+import java.lang.reflect.InvocationTargetException;
+
+public interface PlatformGraphics extends Disposable {
+
+    static PlatformGraphics swingGraphics() throws ClassNotFoundException {
+        //noinspection unchecked
+        Class<? extends PlatformGraphics> swingGraphicsImplClass = (Class<? extends PlatformGraphics>) Class.forName("com.xebisco.yield.swingimpl.SwingPlatformGraphics");
+        try {
+            return swingGraphicsImplClass.getConstructor().newInstance();
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     void init(PlatformInit platformInit);
+    void frame();
     void draw(DrawInstruction drawInstruction);
-    void dispose();
+    void resetRotation();
+    boolean shouldClose();
+    void conclude();
 }

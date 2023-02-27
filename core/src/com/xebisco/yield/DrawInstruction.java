@@ -17,14 +17,16 @@
 package com.xebisco.yield;
 
 public class DrawInstruction {
-    enum Type {
+    public enum Type {
         RECTANGLE, OVAL, TEXT, SIMPLE_LINE, IMAGE
     }
     private Type type;
     private Point2D position;
     private Size2D size;
-    private String text;
-
+    private Object renderRef;
+    private boolean filled;
+    private Color innerColor, borderColor;
+    private double borderThickness, rotation;
     public Type getType() {
         return type;
     }
@@ -49,11 +51,51 @@ public class DrawInstruction {
         this.size = size;
     }
 
-    public String getText() {
-        return text;
+    public Object getRenderRef() {
+        return renderRef;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setRenderRef(Object renderRef) {
+        this.renderRef = renderRef;
+    }
+
+    public boolean isFilled() {
+        return filled;
+    }
+
+    public void setFilled(boolean filled) {
+        this.filled = filled;
+    }
+
+    public Color getInnerColor() {
+        return innerColor;
+    }
+
+    public void setInnerColor(Color innerColor) {
+        this.innerColor = innerColor;
+    }
+
+    public Color getBorderColor() {
+        return borderColor;
+    }
+
+    public void setBorderColor(Color borderColor) {
+        this.borderColor = borderColor;
+    }
+
+    public double getBorderThickness() {
+        return borderThickness;
+    }
+
+    public void setBorderThickness(double borderThickness) {
+        this.borderThickness = borderThickness;
+    }
+
+    public double getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(double rotation) {
+        this.rotation = rotation;
     }
 }
