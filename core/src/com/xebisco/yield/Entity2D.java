@@ -19,6 +19,9 @@ package com.xebisco.yield;
 import java.util.*;
 import java.util.stream.IntStream;
 
+/**
+ * It's a class that can be rendered, disposed, and compared to other entities
+ */
 public final class Entity2D implements Renderable, Disposable, Comparable<Entity2D> {
     private List<ComponentBehavior> components = new ArrayList<>();
     private TreeSet<Entity2D> children = new TreeSet<>();
@@ -81,6 +84,15 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
         return Integer.compare(o.index, index);
     }
 
+    /**
+     * Get the component of the specified type at the specified index.
+     * The first line of the function is a generic type declaration. This is a way of saying that the function will return
+     * a component of the specified type
+     *
+     * @param componentType The type of component you want to get.
+     * @param index The index of the component you want to get.
+     * @return A component of the specified type.
+     */
     public <T extends ComponentBehavior> T getComponent(Class<T> componentType, int index) {
         int i = 0;
         for (ComponentBehavior c : components) {
@@ -95,55 +107,122 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
         return null;
     }
 
+    /**
+     * Returns the first component of the specified type, or null if no such component exists.
+     *
+     * @param componentType The type of the component to retrieve.
+     * @return The first component of the given type.
+     */
     public <T extends ComponentBehavior> T getComponent(Class<T> componentType) {
         return getComponent(componentType, 0);
     }
 
+    /**
+     * Remove the component from the list of components and dispose of it.
+     *
+     * @param component The component to remove.
+     */
     public void removeComponent(ComponentBehavior component) {
         components.remove(component);
         component.dispose();
     }
 
+    /**
+     * Remove the component of the given type at the given index.
+     *
+     * @param componentType The type of component to remove.
+     * @param index The index of the component to remove.
+     */
     public void removeComponent(Class<? extends ComponentBehavior> componentType, int index) {
         removeComponent(getComponent(componentType, index));
     }
 
+    /**
+     * Remove the component of the given type from the entity.
+     *
+     * @param componentType The type of the component to remove.
+     */
     public void removeComponent(Class<? extends ComponentBehavior> componentType) {
         removeComponent(getComponent(componentType));
     }
 
+    /**
+     * Returns the transform of the entity.
+     *
+     * @return The transform of the entity.
+     */
     public Transform2D getTransform() {
         return transform;
     }
 
+    /**
+     * This function returns the index of the entity.
+     *
+     * @return The index of the entity.
+     */
     public int getIndex() {
         return index;
     }
 
+    /**
+     * This function sets the index of the entity to the index passed in as a parameter.
+     *
+     * @param index The index of the entity.
+     */
     public void setIndex(int index) {
         this.index = index;
     }
 
+    /**
+     * This function returns a list of ComponentBehavior objects.
+     *
+     * @return A list of ComponentBehavior objects.
+     */
     public List<ComponentBehavior> getComponents() {
         return components;
     }
 
+    /**
+     * This function sets the components of the current object to the components of the parameter.
+     *
+     * @param components A list of ComponentBehavior objects.
+     */
     public void setComponents(List<ComponentBehavior> components) {
         this.components = components;
     }
 
+    /**
+     * Returns a set of all the children of this entity.
+     *
+     * @return A TreeSet of Entity2D objects.
+     */
     public TreeSet<Entity2D> getChildren() {
         return children;
     }
 
+    /**
+     * This function sets the children of the entity to the children passed in.
+     *
+     * @param children A TreeSet of Entity2D objects.
+     */
     public void setChildren(TreeSet<Entity2D> children) {
         this.children = children;
     }
 
+    /**
+     * This function returns the number of frames in the entity.
+     *
+     * @return The number of frames in the entity.
+     */
     public int getFrames() {
         return frames;
     }
 
+    /**
+     * This function sets the number of frames in the entity.
+     *
+     * @param frames The number of frames in the entity.
+     */
     public void setFrames(int frames) {
         this.frames = frames;
     }
