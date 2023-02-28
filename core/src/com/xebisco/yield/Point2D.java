@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * Point2D is a 2D point representation.
+ */
 public class Point2D extends TwoAnchorRepresentation {
     public Point2D() {
         super(0, 0);

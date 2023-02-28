@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * It's a representation of a point in 2D space
+ */
 public class TwoAnchorRepresentation {
     private double x, y;
     public TwoAnchorRepresentation(double x, double y) {
@@ -27,38 +30,78 @@ public class TwoAnchorRepresentation {
         this.y = y;
     }
 
+    /**
+     * Add the x and y values of the given TwoAnchorRepresentation to the x and y values of this TwoAnchorRepresentation.
+     *
+     * @param a The TwoAnchorRepresentation object to add to this one.
+     */
     public void sumLocal(TwoAnchorRepresentation a) {
         x += a.x;
         y += a.y;
     }
 
+    /**
+     * Subtracts the given representation from this one.
+     *
+     * @param a The TwoAnchorRepresentation to subtract from this one.
+     */
     public void subtractLocal(TwoAnchorRepresentation a) {
         x -= a.x;
         y -= a.y;
     }
 
+    /**
+     * Multiply the x and y values of this object by the x and y values of the given object.
+     *
+     * @param a The TwoAnchorRepresentation to multiply this TwoAnchorRepresentation by.
+     */
     public void multiplyLocal(TwoAnchorRepresentation a) {
         x *= a.x;
         y *= a.y;
     }
 
+    /**
+     * Divide the x and y values of this object by the x and y values of the given object.
+     *
+     * @param a The TwoAnchorRepresentation to divide by.
+     */
     public void divideLocal(TwoAnchorRepresentation a) {
         x /= a.x;
         y /= a.y;
     }
 
+    /**
+     * This function returns the value of the x variable.
+     *
+     * @return The value of the x variable.
+     */
     public double getX() {
         return x;
     }
 
+    /**
+     * This function sets the value of the x variable to the value of the x parameter.
+     *
+     * @param x The x coordinate of the point.
+     */
     public void setX(double x) {
         this.x = x;
     }
 
+    /**
+     * This function returns the y coordinate of the point.
+     *
+     * @return The y coordinate of the point.
+     */
     public double getY() {
         return y;
     }
 
+    /**
+     * This function sets the y coordinate of the point to the value of the parameter y.
+     *
+     * @param y The y coordinate of the point.
+     */
     public void setY(double y) {
         this.y = y;
     }

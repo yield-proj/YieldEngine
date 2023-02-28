@@ -16,8 +16,6 @@
 
 package com.xebisco.yield;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.TreeSet;
 
 public abstract class Scene implements Behavior {

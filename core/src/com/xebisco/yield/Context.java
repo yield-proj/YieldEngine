@@ -18,6 +18,9 @@ package com.xebisco.yield;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * It's a class that runs a runnable at a specified frame-rate
+ */
 public class Context implements Runnable {
 
     private final Thread thread = new Thread(this);
@@ -68,34 +71,74 @@ public class Context implements Runnable {
             disposable.dispose();
     }
 
+    /**
+     * Returns the thread that is running this context.
+     *
+     * @return The thread object.
+     */
     public Thread getThread() {
         return thread;
     }
 
+    /**
+     * This function returns the context time.
+     *
+     * @return The contextTime object.
+     */
     public ContextTime getContextTime() {
         return contextTime;
     }
 
+    /**
+     * This function returns the value of the running variable.
+     *
+     * @return The value of the running variable.
+     */
     public AtomicBoolean getRunning() {
         return running;
     }
 
+    /**
+     * This function returns the lock object.
+     *
+     * @return The lock object.
+     */
     public Object getLockObject() {
         return lockObject;
     }
 
+    /**
+     * This function returns a Runnable object.
+     *
+     * @return The runnable object.
+     */
     public Runnable getRunnable() {
         return runnable;
     }
 
+    /**
+     * Returns true if this component is lightweight.
+     *
+     * @return The boolean value of the variable lightweight.
+     */
     public boolean isLightweight() {
         return lightweight;
     }
 
+    /**
+     * Sets the lightweight property of the component.
+     *
+     * @param lightweight If true, the component will behavior as a lightweight context.
+     */
     public void setLightweight(boolean lightweight) {
         this.lightweight = lightweight;
     }
 
+    /**
+     * This function returns the disposable object that was passed in the constructor.
+     *
+     * @return The disposable object.
+     */
     public Disposable getDisposable() {
         return disposable;
     }

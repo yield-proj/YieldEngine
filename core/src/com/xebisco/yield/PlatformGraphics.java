@@ -18,6 +18,10 @@ package com.xebisco.yield;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * The `PlatformGraphics` interface is a wrapper around the platform's graphics API. It's a simple class that provides a
+ * few functions for drawing to the screen
+ */
 public interface PlatformGraphics extends Disposable {
 
     static PlatformGraphics swingGraphics() throws ClassNotFoundException {
@@ -30,10 +34,36 @@ public interface PlatformGraphics extends Disposable {
         }
     }
 
+    /**
+     * Initializes the platform graphics
+     *
+     * @param platformInit This is a struct that contains the parameters that will be used to init the graphics.
+     */
     void init(PlatformInit platformInit);
+    /**
+     * This function is called once per frame.
+     * This is the first function called in render, it's used to prepare the graphics for the incoming draw calls.
+     */
     void frame();
+    /**
+     * Draws the given draw instruction.
+     *
+     * @param drawInstruction A DrawInstruction object that contains all the information needed to draw the object.
+     */
     void draw(DrawInstruction drawInstruction);
+    /**
+     * Resets the graphics rotation.
+     */
     void resetRotation();
+    /**
+     * Returns true if the user has requested that the application close.
+     *
+     * @return A boolean value.
+     */
     boolean shouldClose();
+    /**
+     * This function is called once per frame.
+     * This is the last function called in render.
+     */
     void conclude();
 }

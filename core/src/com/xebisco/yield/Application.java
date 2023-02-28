@@ -19,6 +19,10 @@ package com.xebisco.yield;
 import java.util.ConcurrentModificationException;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * It's a class that implements the `Behavior` interface and is responsible for rendering the scene and updating the
+ * entities
+ */
 public class Application implements Behavior {
     private int frames;
     private final PlatformGraphics platformGraphics;
@@ -90,22 +94,47 @@ public class Application implements Behavior {
         platformGraphics.dispose();
     }
 
+    /**
+     * This function returns the number of frames already passed in the application.
+     *
+     * @return The number of frames in the application.
+     */
     public int getFrames() {
         return frames;
     }
 
+    /**
+     * This function sets the number of frames in the application.
+     *
+     * @param frames The number of frames in the application.
+     */
     public void setFrames(int frames) {
         this.frames = frames;
     }
 
+    /**
+     * Returns the platform graphics object for this application.
+     *
+     * @return The platformGraphics object.
+     */
     public PlatformGraphics getPlatformGraphics() {
         return platformGraphics;
     }
 
+    /**
+     * This function returns the scene.
+     *
+     * @return The scene.
+     */
     public Scene getScene() {
         return scene;
     }
 
+    /**
+     * This function sets the scene to the scene that is passed in.
+     *
+     * @param scene The scene to be set.
+     */
     public void setScene(Scene scene) {
         this.scene = scene;
     }

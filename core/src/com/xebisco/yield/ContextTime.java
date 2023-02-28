@@ -16,30 +16,63 @@
 
 package com.xebisco.yield;
 
+/**
+ * It's a container for time-related variables
+ */
 public class ContextTime {
     private double timeScale = 1, deltaTime;
     private long targetSleepTime = 16;
 
+    /**
+     * > Returns the scale of the context time.
+     *
+     * @return The timeScale variable is being returned.
+     */
     public double getTimeScale() {
         return timeScale;
     }
 
+    /**
+     * This function sets the timescale of the context.
+     *
+     * @param timeScale This is the timescale of the context. The default value is 1.0.
+     */
     public void setTimeScale(double timeScale) {
         this.timeScale = timeScale;
     }
 
+    /**
+     * Returns the time in seconds since the last frame.
+     *
+     * @return The time in seconds since the last update multiplied by the timescale.
+     */
     public double getDeltaTime() {
-        return deltaTime;
+        return deltaTime * timeScale;
     }
 
+    /**
+     * This function sets the deltaTime variable to the value of the deltaTime parameter.
+     *
+     * @param deltaTime The time in seconds since the last update.
+     */
     public void setDeltaTime(double deltaTime) {
         this.deltaTime = deltaTime;
     }
 
+    /**
+     * Returns the target sleep time in microseconds
+     *
+     * @return The target sleep time.
+     */
     public long getTargetSleepTime() {
         return targetSleepTime;
     }
 
+    /**
+     * This function sets the target sleep time to the value passed in.
+     *
+     * @param targetSleepTime The amount of time the thread should sleep for in microseconds.
+     */
     public void setTargetSleepTime(long targetSleepTime) {
         this.targetSleepTime = targetSleepTime;
     }

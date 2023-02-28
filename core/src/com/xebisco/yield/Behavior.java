@@ -16,7 +16,17 @@
 
 package com.xebisco.yield;
 
+
+/**
+ * The Behavior is the main interface of the Yield Game Engine, almost all elements of an application implements this interface.
+ */
 public interface Behavior extends Disposable {
+    /**
+     * This function is called when the object starts
+     */
     void onStart();
+    /**
+     * > This function is called every time the application updates
+     */
     void onUpdate();
 }

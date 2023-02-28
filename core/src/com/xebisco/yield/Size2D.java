@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * A Size2D is a TwoAnchorRepresentation that represents a width and a height.
+ */
 public class Size2D extends TwoAnchorRepresentation {
 
     public Size2D(double width, double height) {

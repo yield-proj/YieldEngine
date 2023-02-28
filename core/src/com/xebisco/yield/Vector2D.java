@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * Vector2D is a TwoAnchorRepresentation that represents a vector in 2D space.
+ */
 public class Vector2D extends TwoAnchorRepresentation {
 
     public Vector2D() {

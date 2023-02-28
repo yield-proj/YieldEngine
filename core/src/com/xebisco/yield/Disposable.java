@@ -16,6 +16,12 @@
 
 package com.xebisco.yield;
 
+/**
+ * An interface that contains the 'dispose()' method.
+ */
 public interface Disposable {
+    /**
+     * Dispose of the object
+     */
     void dispose();
 }

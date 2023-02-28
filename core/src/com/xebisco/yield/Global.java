@@ -16,16 +16,58 @@
 
 package com.xebisco.yield;
 
-public class Global {
+/**
+ * Static collection of utils methods.
+ */
+public final class Global {
+    /**
+     * If value is greater than max, return max, otherwise return the greatest of value and min.
+     *
+     * @param value The value to clamp.
+     * @param min   The minimum value that the returned value can be.
+     * @param max   The maximum value that the returned value can be.
+     * @return The value of the variable value if it is less than the variable max, otherwise the value of the variable
+     * max.
+     */
     public static int clamp(int value, int min, int max) {
         return value > max ? max : Math.max(value, min);
     }
+
+    /**
+     * If value is greater than max, return max, otherwise return the greatest of value and min.
+     *
+     * @param value The value to clamp.
+     * @param min   The minimum value that the returned value can be.
+     * @param max   The maximum value that the returned value can be.
+     * @return The value of the variable value if it is less than the variable max, otherwise the value of the variable
+     * max.
+     */
     public static long clamp(long value, long min, long max) {
         return value > max ? max : Math.max(value, min);
     }
+
+    /**
+     * If value is greater than max, return max, otherwise return the greatest of value and min.
+     *
+     * @param value The value to clamp.
+     * @param min   The minimum value that the returned value can be.
+     * @param max   The maximum value that the returned value can be.
+     * @return The value of the variable value if it is less than the variable max, otherwise the value of the variable
+     * max.
+     */
     public static double clamp(double value, double min, double max) {
         return value > max ? max : Math.max(value, min);
     }
+
+    /**
+     * If value is greater than max, return max, otherwise return the greatest of value and min.
+     *
+     * @param value The value to clamp.
+     * @param min   The minimum value that the returned value can be.
+     * @param max   The maximum value that the returned value can be.
+     * @return The value of the variable value if it is less than the variable max, otherwise the value of the variable
+     * max.
+     */
     public static float clamp(float value, float min, float max) {
         return value > max ? max : Math.max(value, min);
     }

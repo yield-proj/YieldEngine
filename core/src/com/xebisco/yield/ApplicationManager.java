@@ -19,6 +19,9 @@ package com.xebisco.yield;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * It's a class that manages multiple applications.
+ */
 public class ApplicationManager implements Runnable {
 
     private List<Application> applications = new ArrayList<>();
@@ -36,6 +39,9 @@ public class ApplicationManager implements Runnable {
         managerContext.getThread().start();
     }
 
+    /**
+     * It runs the applications
+     */
     class ApplicationManagerContextRunnable implements Runnable {
         @Override
         public void run() {
@@ -50,6 +56,9 @@ public class ApplicationManager implements Runnable {
             if(removed && applications.size() == 0) managerContext.getRunning().set(false);
         }
     }
+    /**
+     * It disposes of all the applications in the manager context when the manager context is disposed
+     */
     class ApplicationManagerContextDisposable implements Disposable {
         @Override
         public void dispose() {

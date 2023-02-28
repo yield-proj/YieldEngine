@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * It's a collection of static final Color objects that represent the default colors used by GrADS
+ */
 public class Colors {
     /**
      * GrADS Default colors.

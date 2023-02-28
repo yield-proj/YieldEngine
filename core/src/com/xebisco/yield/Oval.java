@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * Oval extends Rectangle and overrides onStart() to set the DrawInstruction's type to OVAL.
+ */
 public class Oval extends Rectangle {
     @Override
     public void onStart() {

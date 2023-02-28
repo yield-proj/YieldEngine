@@ -39,6 +39,9 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
         this.components.addAll(List.of(components));
     }
 
+    /**
+     * For each component, set the entity and frames, and call onStart and onUpdate.
+     */
     public void process() {
         frames++;
         IntStream.range(0, components.size()).parallel().forEach(i -> {
