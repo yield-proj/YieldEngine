@@ -57,6 +57,7 @@ public class Application implements Behavior {
                 platformGraphics.draw(drawInstruction);
                 try {
                     for (Entity2D entity : scene.getEntities()) {
+                        platformGraphics.resetRotation();
                         entity.render(platformGraphics);
                     }
                 } catch (ConcurrentModificationException ignore) {

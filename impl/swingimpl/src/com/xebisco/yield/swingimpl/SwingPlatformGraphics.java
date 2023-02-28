@@ -105,6 +105,7 @@ public class SwingPlatformGraphics implements PlatformGraphics {
     @Override
     public void frame() {
         graphics = renderImage.createGraphics();
+        defaultTransform = graphics.getTransform();
     }
 
     @Override
@@ -154,7 +155,7 @@ public class SwingPlatformGraphics implements PlatformGraphics {
 
     @Override
     public void resetRotation() {
-        graphics.setTransform(defaultTransform);
+        graphics.setTransform(new AffineTransform(defaultTransform));
     }
 
     @Override
