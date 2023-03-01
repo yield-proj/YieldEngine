@@ -6,7 +6,6 @@ public class Main extends Scene {
         time.setTargetSleepTime(16666);
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
-        platformInit.setStretchViewport(true);
         Application application = new Application(new Main(), PlatformGraphics.swingGraphics(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
