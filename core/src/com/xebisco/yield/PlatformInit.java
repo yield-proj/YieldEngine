@@ -23,6 +23,7 @@ public class PlatformInit {
     private Size2D resolution = new Size2D(1280, 720), windowSize = new Size2D(1280, 720);
     private String title = "Yield Window";
     private boolean fullscreen, undecorated, stretchViewport;
+    private Texture windowIcon;
 
     /**
      * Returns the resolution of the screen.
@@ -131,5 +132,13 @@ public class PlatformInit {
      */
     public void setStretchViewport(boolean stretchViewport) {
         this.stretchViewport = stretchViewport;
+    }
+
+    public Texture getWindowIcon() {
+        return windowIcon;
+    }
+
+    public void setWindowIcon(Texture windowIcon) {
+        this.windowIcon = windowIcon;
     }
 }

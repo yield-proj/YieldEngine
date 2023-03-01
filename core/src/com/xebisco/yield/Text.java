@@ -4,7 +4,7 @@ public class Text extends ComponentBehavior {
     private final DrawInstruction drawInstruction = new DrawInstruction();
     private Color color = Colors.LIGHT_BLUE.brighter();
     private String contents = "Sample Text";
-    private Font font;
+    private Font font = Global.getDefaultFont();
 
     private double width, height;
 
@@ -18,10 +18,6 @@ public class Text extends ComponentBehavior {
     @Override
     public void onStart() {
         drawInstruction.setSize(new Size2D(0, 0));
-        if (Global.getDefaultFont() == null)
-            Global.setDefaultFont(new Font("OpenSans-Regular.ttf", 48, getEntity().getFontLoader()));
-        if (font == null)
-            font = Global.getDefaultFont();
         drawInstruction.setType(DrawInstruction.Type.TEXT);
     }
 
@@ -42,8 +38,8 @@ public class Text extends ComponentBehavior {
     @Override
     public void render(PlatformGraphics graphics) {
         if (font != null) {
-            width = graphics.getStringWidth(contents, font.getFontRef());
-            height = graphics.getStringHeight(contents, font.getFontRef());
+            width = ((FontLoader) graphics).getStringWidth(contents, font.getFontRef());
+            height = ((FontLoader) graphics).getStringHeight(contents, font.getFontRef());
             drawInstruction.getSize().set(width, height);
             graphics.draw(drawInstruction);
         }

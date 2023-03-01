@@ -28,6 +28,7 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
     private int index;
     private final Transform2D transform = new Transform2D();
     private FontLoader fontLoader;
+    private TextureLoader textureLoader;
     private int frames;
 
     public Entity2D() {
@@ -244,5 +245,13 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
 
     public void setFontLoader(FontLoader fontLoader) {
         this.fontLoader = fontLoader;
+    }
+
+    public TextureLoader getTextureLoader() {
+        return textureLoader;
+    }
+
+    public void setTextureLoader(TextureLoader textureLoader) {
+        this.textureLoader = textureLoader;
     }
 }

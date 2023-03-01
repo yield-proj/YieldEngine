@@ -16,18 +16,18 @@
 
 package com.xebisco.yield.swingimpl;
 
-import com.xebisco.yield.DrawInstruction;
-import com.xebisco.yield.FontLoader;
-import com.xebisco.yield.PlatformGraphics;
-import com.xebisco.yield.PlatformInit;
+import com.xebisco.yield.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.geom.AffineTransform;
 import java.awt.image.VolatileImage;
 import java.io.IOException;
 
-public class SwingPlatformGraphics implements PlatformGraphics, FontLoader {
+public class SwingPlatformGraphics implements PlatformGraphics, FontLoader, TextureLoader {
     private VolatileImage renderImage;
     private GraphicsDevice device;
     private GraphicsConfiguration graphicsConfiguration;
@@ -40,20 +40,54 @@ public class SwingPlatformGraphics implements PlatformGraphics, FontLoader {
 
     @Override
     public Object loadFont(com.xebisco.yield.Font font) {
+        Font f;
         try {
-            return Font.createFont(Font.TRUETYPE_FONT, font.getInputStream()).deriveFont((float) font.getSize());
+            f = Font.createFont(Font.TRUETYPE_FONT, font.getInputStream()).deriveFont((float) font.getSize());
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void unloadFont(com.xebisco.yield.Font font) {
         try {
             font.getInputStream().close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return f;
+    }
+
+    @Override
+    public void unloadFont(com.xebisco.yield.Font font) {
+        font.setFontRef(null);
+    }
+
+    @Override
+    public Object loadTexture(Texture texture) {
+        Image i;
+        try {
+            i = ImageIO.read(texture.getInputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            texture.getInputStream().close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return i;
+    }
+
+    @Override
+    public void unloadTexture(Texture texture) {
+        texture.setImageRef(null);
+    }
+
+    @Override
+    public int getImageWidth(Object imageRef) {
+        return 0;
+    }
+
+    @Override
+    public int getImageHeight(Object imageRef) {
+        return 0;
     }
 
     class SwingImplPanel extends JPanel {
@@ -118,11 +152,14 @@ public class SwingPlatformGraphics implements PlatformGraphics, FontLoader {
         );
         if (platformInit.isUndecorated()) {
             frame.setUndecorated(true);
+            frame.setSize((int) platformInit.getWindowSize().getWidth(), (int) platformInit.getWindowSize().getHeight());
+        } else {
+            frame.setSize((int) platformInit.getWindowSize().getWidth(), (int) platformInit.getWindowSize().getHeight() + 31);
         }
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setTitle(platformInit.getTitle());
-        frame.setSize((int) platformInit.getWindowSize().getWidth(), (int) platformInit.getWindowSize().getHeight());
         frame.setLocationRelativeTo(null);
+        frame.setIconImage((Image) platformInit.getWindowIcon().getImageRef());
         frame.setVisible(true);
         if (platformInit.isFullscreen() && device.isFullScreenSupported()) {
             device.setFullScreenWindow(frame);

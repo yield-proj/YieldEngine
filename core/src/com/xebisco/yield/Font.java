@@ -4,7 +4,7 @@ import java.io.InputStream;
 
 public class Font extends FileInput {
 
-    private final Object fontRef;
+    private Object fontRef;
     private final double size;
 
     public Font(String relativePath, double size, FontLoader fontLoader) {
@@ -21,6 +21,10 @@ public class Font extends FileInput {
 
     public Object getFontRef() {
         return fontRef;
+    }
+
+    public void setFontRef(Object fontRef) {
+        this.fontRef = fontRef;
     }
 
     public double getSize() {

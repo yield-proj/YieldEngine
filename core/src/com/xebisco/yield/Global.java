@@ -23,6 +23,8 @@ public final class Global {
 
     private static Font defaultFont;
 
+    private static Texture defaultTexture;
+
     /**
      * If value is greater than max, return max, otherwise return the greatest of value and min.
      *
@@ -81,5 +83,13 @@ public final class Global {
 
     public static void setDefaultFont(Font defaultFont) {
         Global.defaultFont = defaultFont;
+    }
+
+    public static Texture getDefaultTexture() {
+        return defaultTexture;
+    }
+
+    public static void setDefaultTexture(Texture defaultTexture) {
+        Global.defaultTexture = defaultTexture;
     }
 }

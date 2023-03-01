@@ -30,6 +30,7 @@ public class Application implements Behavior {
     private final PlatformInit platformInit;
     private final Object renderLock = new Object();
     private final FontLoader fontLoader;
+    private final TextureLoader textureLoader;
     private final DrawInstruction drawInstruction = new DrawInstruction();
 
     public Application(Scene initialScene, PlatformGraphics platformGraphics, PlatformInit platformInit) {
@@ -37,12 +38,21 @@ public class Application implements Behavior {
         if (platformGraphics instanceof FontLoader)
             fontLoader = (FontLoader) platformGraphics;
         else fontLoader = null;
+        if (platformGraphics instanceof TextureLoader)
+            textureLoader = (TextureLoader) platformGraphics;
+        else textureLoader = null;
         scene = initialScene;
         this.platformInit = platformInit;
     }
 
     @Override
     public void onStart() {
+        if (Global.getDefaultFont() == null)
+            Global.setDefaultFont(new Font("OpenSans-Regular.ttf", 48, fontLoader));
+        if (Global.getDefaultTexture() == null)
+            Global.setDefaultTexture(new Texture("yieldIcon.png", textureLoader));
+        if(platformInit.getWindowIcon() == null)
+            platformInit.setWindowIcon(Global.getDefaultTexture());
         platformGraphics.init(platformInit);
     }
 
