@@ -175,6 +175,16 @@ public class SwingPlatformGraphics implements PlatformGraphics {
     }
 
     @Override
+    public double getStringWidth(String text, Object fontRef) {
+        return graphics.getFontMetrics((Font) fontRef).getStringBounds(text, graphics).getWidth();
+    }
+
+    @Override
+    public double getStringHeight(String text, Object fontRef) {
+        return graphics.getFontMetrics((Font) fontRef).getStringBounds(text, graphics).getHeight();
+    }
+
+    @Override
     public void conclude() {
         graphics.dispose();
         panel.paintImmediately(0, 0, panel.getWidth(), panel.getHeight());
