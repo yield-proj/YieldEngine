@@ -5,18 +5,25 @@ import java.io.InputStream;
 public class Font extends FileInput {
 
     private final Object fontRef;
+    private final double size;
 
-    public Font(String relativePath, FontLoader fontLoader) {
+    public Font(String relativePath, double size, FontLoader fontLoader) {
         super(relativePath);
+        this.size = size;
         fontRef = fontLoader.loadFont(this);
     }
 
-    public Font(InputStream inputStream, FontLoader fontLoader) {
+    public Font(InputStream inputStream, double size, FontLoader fontLoader) {
         super(inputStream);
+        this.size = size;
         fontRef = fontLoader.loadFont(this);
     }
 
     public Object getFontRef() {
         return fontRef;
+    }
+
+    public double getSize() {
+        return size;
     }
 }

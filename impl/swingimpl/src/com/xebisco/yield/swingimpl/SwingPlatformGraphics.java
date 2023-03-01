@@ -17,6 +17,7 @@
 package com.xebisco.yield.swingimpl;
 
 import com.xebisco.yield.DrawInstruction;
+import com.xebisco.yield.FontLoader;
 import com.xebisco.yield.PlatformGraphics;
 import com.xebisco.yield.PlatformInit;
 
@@ -24,8 +25,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.VolatileImage;
+import java.io.IOException;
 
-public class SwingPlatformGraphics implements PlatformGraphics {
+public class SwingPlatformGraphics implements PlatformGraphics, FontLoader {
     private VolatileImage renderImage;
     private GraphicsDevice device;
     private GraphicsConfiguration graphicsConfiguration;
@@ -35,6 +37,24 @@ public class SwingPlatformGraphics implements PlatformGraphics {
     private AffineTransform defaultTransform = new AffineTransform();
 
     private boolean stretch;
+
+    @Override
+    public Object loadFont(com.xebisco.yield.Font font) {
+        try {
+            return Font.createFont(Font.TRUETYPE_FONT, font.getInputStream()).deriveFont((float) font.getSize());
+        } catch (FontFormatException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void unloadFont(com.xebisco.yield.Font font) {
+        try {
+            font.getInputStream().close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     class SwingImplPanel extends JPanel {
         @Override
@@ -149,7 +169,8 @@ public class SwingPlatformGraphics implements PlatformGraphics {
             case IMAGE -> graphics.drawImage((Image) drawInstruction.getRenderRef(), x, y, w, h, null);
             case TEXT -> {
                 graphics.setColor(awtColor(drawInstruction.getInnerColor()));
-                graphics.drawString((String) drawInstruction.getRenderRef(), x, y);
+                graphics.setFont((Font) drawInstruction.getFont().getFontRef());
+                graphics.drawString((String) drawInstruction.getRenderRef(), x, y + h / 2);
             }
             case SIMPLE_LINE -> {
                 graphics.setColor(awtColor(drawInstruction.getBorderColor()));

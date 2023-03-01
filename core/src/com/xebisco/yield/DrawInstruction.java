@@ -27,6 +27,7 @@ public class DrawInstruction {
     private Point2D position;
     private Size2D size;
     private Object renderRef;
+    private Font font;
     private boolean filled;
     private Color innerColor, borderColor;
     private double borderThickness, rotation;
@@ -190,5 +191,23 @@ public class DrawInstruction {
      */
     public void setRotation(double rotation) {
         this.rotation = rotation;
+    }
+
+    /**
+     * This function returns the font of the instruction.
+     *
+     * @return The font of the instruction.
+     */
+    public Font getFont() {
+        return font;
+    }
+
+    /**
+     * This function sets the font of the instruction to the value of the parameter.
+     *
+     * @param font The font of the instruction.
+     */
+    public void setFont(Font font) {
+        this.font = font;
     }
 }

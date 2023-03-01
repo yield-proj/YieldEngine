@@ -20,6 +20,9 @@ package com.xebisco.yield;
  * Static collection of utils methods.
  */
 public final class Global {
+
+    private static Font defaultFont;
+
     /**
      * If value is greater than max, return max, otherwise return the greatest of value and min.
      *
@@ -70,5 +73,13 @@ public final class Global {
      */
     public static float clamp(float value, float min, float max) {
         return value > max ? max : Math.max(value, min);
+    }
+
+    public static Font getDefaultFont() {
+        return defaultFont;
+    }
+
+    public static void setDefaultFont(Font defaultFont) {
+        Global.defaultFont = defaultFont;
     }
 }

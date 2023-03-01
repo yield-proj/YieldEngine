@@ -27,6 +27,7 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
     private TreeSet<Entity2D> children = new TreeSet<>();
     private int index;
     private final Transform2D transform = new Transform2D();
+    private FontLoader fontLoader;
     private int frames;
 
     public Entity2D() {
@@ -225,5 +226,23 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
      */
     public void setFrames(int frames) {
         this.frames = frames;
+    }
+
+    /**
+     * This function returns the fontLoader of this entity.
+     *
+     * @return The fontLoader of this entity.
+     */
+    public FontLoader getFontLoader() {
+        return fontLoader;
+    }
+    /**
+     * This function sets the fontLoader of this entity.
+     *
+     * @param fontLoader The fontLoader of this entity.
+     */
+
+    public void setFontLoader(FontLoader fontLoader) {
+        this.fontLoader = fontLoader;
     }
 }

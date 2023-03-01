@@ -29,10 +29,14 @@ public class Application implements Behavior {
     private Scene scene;
     private final PlatformInit platformInit;
     private final Object renderLock = new Object();
+    private final FontLoader fontLoader;
     private final DrawInstruction drawInstruction = new DrawInstruction();
 
     public Application(Scene initialScene, PlatformGraphics platformGraphics, PlatformInit platformInit) {
         this.platformGraphics = platformGraphics;
+        if (platformGraphics instanceof FontLoader)
+            fontLoader = (FontLoader) platformGraphics;
+        else fontLoader = null;
         scene = initialScene;
         this.platformInit = platformInit;
     }
@@ -64,6 +68,9 @@ public class Application implements Behavior {
 
                 }
                 platformGraphics.conclude();
+            }).exceptionally(exp -> {
+                exp.printStackTrace();
+                return null;
             });
             scene.setFrames(scene.getFrames() + 1);
             if (scene.getFrames() == 1) {
@@ -72,6 +79,7 @@ public class Application implements Behavior {
             scene.onUpdate();
             try {
                 for (Entity2D entity : scene.getEntities()) {
+                    entity.setFontLoader(fontLoader);
                     entity.process();
                 }
             } catch (ConcurrentModificationException ignore) {
