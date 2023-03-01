@@ -167,6 +167,8 @@ public class SwingPlatformGraphics implements PlatformGraphics {
 
     @Override
     public boolean shouldClose() {
+        if(frame == null)
+            return true;
         if (!frame.isDisplayable()) {
             dispose();
             return true;
