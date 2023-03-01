@@ -34,6 +34,8 @@ public class SwingPlatformGraphics implements PlatformGraphics {
     private Graphics2D graphics;
     private AffineTransform defaultTransform = new AffineTransform();
 
+    private boolean stretch;
+
     class SwingImplPanel extends JPanel {
         @Override
         public void update(Graphics g) {
@@ -45,7 +47,10 @@ public class SwingPlatformGraphics implements PlatformGraphics {
             super.paintComponent(g);
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, getWidth(), getHeight());
-            Dimension imageSize = onSizeBoundary(renderImage, getSize());
+            Dimension imageSize;
+            if(stretch)
+                imageSize = new Dimension(getWidth(), getHeight());
+                else imageSize = onSizeBoundary(renderImage, getSize());
             g.drawImage(renderImage, (getWidth() - imageSize.width) / 2, (getHeight() - imageSize.height) / 2, imageSize.width, imageSize.height, this);
         }
     }
@@ -79,6 +84,8 @@ public class SwingPlatformGraphics implements PlatformGraphics {
     @Override
     public void init(PlatformInit platformInit) {
         System.setProperty("sun.java2d.opengl", "True");
+        Toolkit.getDefaultToolkit().setDynamicLayout(false);
+        stretch = platformInit.isStretchViewport();
         device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         graphicsConfiguration = device.getDefaultConfiguration();
         panel = new SwingImplPanel();

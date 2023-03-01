@@ -22,7 +22,7 @@ package com.xebisco.yield;
 public class PlatformInit {
     private Size2D resolution = new Size2D(1280, 720), windowSize = new Size2D(1280, 720);
     private String title = "Yield Window";
-    private boolean fullscreen, undecorated;
+    private boolean fullscreen, undecorated, stretchViewport;
 
     /**
      * Returns the resolution of the screen.
@@ -112,5 +112,24 @@ public class PlatformInit {
      */
     public void setUndecorated(boolean undecorated) {
         this.undecorated = undecorated;
+    }
+
+
+    /**
+     * Return true if application viewport will be stretched.
+     *
+     * @return The boolean value of the variable stretchViewport.
+     */
+    public boolean isStretchViewport() {
+        return stretchViewport;
+    }
+
+    /**
+     * This function sets the undecorated variable to the value of the parameter undecorated.
+     *
+     * @param stretchViewport If true, the application viewport will be stretched.
+     */
+    public void setStretchViewport(boolean stretchViewport) {
+        this.stretchViewport = stretchViewport;
     }
 }
