@@ -144,7 +144,7 @@ public class SwingPlatformGraphics implements PlatformGraphics, FontLoader, Text
         device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         graphicsConfiguration = device.getDefaultConfiguration();
         panel = new SwingImplPanel();
-        frame = new JFrame();
+        frame = new JFrame(graphicsConfiguration);
         frame.add(panel);
         renderImage = graphicsConfiguration.createCompatibleVolatileImage(
                 (int) platformInit.getResolution().getWidth(),
