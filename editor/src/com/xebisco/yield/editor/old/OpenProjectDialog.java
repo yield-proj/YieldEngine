@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.xebisco.yield.editor;
+package com.xebisco.yield.editor.old;
 
 import javax.swing.*;
 import java.awt.*;

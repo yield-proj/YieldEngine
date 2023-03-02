@@ -14,10 +14,23 @@
  *  limitations under the License.
  */
 
-package com.xebisco.yield.editor;
+package com.xebisco.yield.editor.old;
 
-import javax.swing.*;
+import com.formdev.flatlaf.FlatDarkLaf;
 
-public class SceneView extends JPanel {
+import java.io.IOException;
 
+public class Main {
+    public static void main(String[] args) {
+        FlatDarkLaf.setup();
+        Splash splash;
+        try {
+            splash = new Splash();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        splash.setVisible(true);
+        splash.dispose();
+        new ProjectManager().setVisible(true);
+    }
 }

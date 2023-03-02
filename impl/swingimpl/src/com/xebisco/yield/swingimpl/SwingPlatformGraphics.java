@@ -106,6 +106,7 @@ public class SwingPlatformGraphics implements PlatformGraphics, FontLoader, Text
                 imageSize = new Dimension(getWidth(), getHeight());
                 else imageSize = onSizeBoundary(renderImage, getSize());
             g.drawImage(renderImage, (getWidth() - imageSize.width) / 2, (getHeight() - imageSize.height) / 2, imageSize.width, imageSize.height, this);
+            g.dispose();
         }
     }
 
@@ -179,7 +180,7 @@ public class SwingPlatformGraphics implements PlatformGraphics, FontLoader, Text
                 w = (int) drawInstruction.getSize().getWidth(),
                 h = (int) drawInstruction.getSize().getHeight();
         if (drawInstruction.getRotation() != 0)
-            graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), x, y);
+            graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), x + w / 2.0, y + h / 2.0);
         switch (drawInstruction.getType()) {
             case RECTANGLE -> {
                 if (drawInstruction.isFilled()) {
@@ -236,12 +237,12 @@ public class SwingPlatformGraphics implements PlatformGraphics, FontLoader, Text
 
     @Override
     public double getStringWidth(String text, Object fontRef) {
-        return graphics.getFontMetrics((Font) fontRef).getStringBounds(text, graphics).getWidth();
+        return graphics.getFontMetrics((Font) fontRef).stringWidth(text);
     }
 
     @Override
     public double getStringHeight(String text, Object fontRef) {
-        return graphics.getFontMetrics((Font) fontRef).getStringBounds(text, graphics).getHeight();
+        return graphics.getFontMetrics((Font) fontRef).getHeight();
     }
 
     @Override

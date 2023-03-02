@@ -13,7 +13,7 @@ public class Main extends Scene {
 
     @Override
     public void onStart() {
-        getEntities().add(new Entity2D(null, new Text("Hello, World!")));
+        getEntities().add(new Entity2D(null, new TextureRectangle()));
     }
 
     @Override

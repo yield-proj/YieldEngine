@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.xebisco.yield.editor;
+package com.xebisco.yield.editor.old;
 
 import java.io.File;
 import java.io.Serializable;

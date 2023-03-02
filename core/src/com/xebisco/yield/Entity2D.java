@@ -17,6 +17,7 @@
 package com.xebisco.yield;
 
 import java.util.*;
+import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 
 /**
@@ -49,14 +50,13 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
      */
     public void process() {
         frames++;
-        IntStream.range(0, components.size()).parallel().forEach(i -> {
-            ComponentBehavior component = components.get(i);
+        for(ComponentBehavior component : components) {
             component.setEntity(this);
             component.setFrames(component.getFrames() + 1);
             if(component.getFrames() == 1)
                 component.onStart();
             component.onUpdate();
-        });
+        }
         try {
             for (Entity2D entity : children) {
                 entity.process();

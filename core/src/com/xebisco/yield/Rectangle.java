@@ -29,21 +29,22 @@ public class Rectangle extends ComponentBehavior {
     @Override
     public void onStart() {
         drawInstruction.setType(DrawInstruction.Type.RECTANGLE);
+        drawInstruction.setSize(new Size2D(0, 0));
     }
 
     @Override
     public void onUpdate() {
         drawInstruction.setRotation(getEntity().getTransform().getzRotation());
         drawInstruction.setFilled(filled);
-        if(borderThickness != 0)
+        if (borderThickness != 0)
             drawInstruction.setBorderColor(borderColor);
         else drawInstruction.setBorderColor(null);
         drawInstruction.setInnerColor(color);
         drawInstruction.setPosition(getEntity().getTransform().getPosition());
-        drawInstruction.setSize(new Size2D(
+        drawInstruction.getSize().set(
                 getEntity().getTransform().getSize().getWidth() * getEntity().getTransform().getScale().getX(),
                 getEntity().getTransform().getSize().getHeight() * getEntity().getTransform().getScale().getY()
-        ));
+        );
         drawInstruction.setBorderThickness(borderThickness);
     }
 
