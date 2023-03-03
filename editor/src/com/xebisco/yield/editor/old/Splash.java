@@ -31,7 +31,7 @@ public class Splash extends JFrame {
         pack();
         setSize(500, 330);
         //noinspection ConstantConditions
-        splashBkg = ImageIO.read(Splash.class.getResourceAsStream("/splashBkg.png")).getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH);
+        splashBkg = ImageIO.read(Splash.class.getResourceAsStream("/com/xebisco/yield/editor/splashBkg.png")).getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH);
         setLocationRelativeTo(null);
     }
 
