@@ -13,7 +13,7 @@ public class Main extends Scene {
 
     @Override
     public void onStart() {
-        getEntities().add(new Entity2D(null, new TextureRectangle()));
+        getEntities().add(new Entity2D(null, new Rectangle(), new Comp()));
     }
 
     @Override
@@ -23,6 +23,28 @@ public class Main extends Scene {
 
     @Override
     public void dispose() {
+
+    }
+}
+
+class Comp extends ComponentBehavior {
+    @Override
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onUpdate() {
+        getEntity().getTransform().setzRotation(getFrames());
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
+    @Override
+    public void render(PlatformGraphics graphics) {
 
     }
 }

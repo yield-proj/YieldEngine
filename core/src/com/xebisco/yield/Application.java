@@ -32,6 +32,7 @@ public class Application implements Behavior {
     private final Object renderLock = new Object();
     private final FontLoader fontLoader;
     private final TextureLoader textureLoader;
+    private final InputManager inputManager;
     private final DrawInstruction drawInstruction = new DrawInstruction();
 
     private final Runnable renderer;
@@ -48,6 +49,9 @@ public class Application implements Behavior {
         if (platformGraphics instanceof TextureLoader)
             textureLoader = (TextureLoader) platformGraphics;
         else textureLoader = null;
+        if (platformGraphics instanceof InputManager)
+            inputManager = (InputManager) platformGraphics;
+        else inputManager = null;
         scene = initialScene;
         this.platformInit = platformInit;
         renderer = () -> {

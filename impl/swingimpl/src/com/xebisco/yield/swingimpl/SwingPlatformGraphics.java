@@ -26,8 +26,10 @@ import java.awt.Font;
 import java.awt.geom.AffineTransform;
 import java.awt.image.VolatileImage;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
 
-public class SwingPlatformGraphics implements PlatformGraphics, FontLoader, TextureLoader {
+public class SwingPlatformGraphics implements PlatformGraphics, FontLoader, TextureLoader, InputManager {
     private VolatileImage renderImage;
     private GraphicsDevice device;
     private GraphicsConfiguration graphicsConfiguration;
@@ -35,8 +37,10 @@ public class SwingPlatformGraphics implements PlatformGraphics, FontLoader, Text
     private JFrame frame;
     private Graphics2D graphics;
     private AffineTransform defaultTransform = new AffineTransform();
+    private final HashSet<Integer> pressingKeys = new HashSet<>(), pressingMouse = new HashSet<>();
 
     private boolean stretch;
+    private final Point2D mousePosition = new Point2D();
 
     @Override
     public Object loadFont(com.xebisco.yield.Font font) {
@@ -88,6 +92,26 @@ public class SwingPlatformGraphics implements PlatformGraphics, FontLoader, Text
     @Override
     public int getImageHeight(Object imageRef) {
         return 0;
+    }
+
+    @Override
+    public Collection<Integer> getPressingKeys() {
+        return pressingKeys;
+    }
+
+    @Override
+    public Collection<Integer> getPressingMouse() {
+        return pressingMouse;
+    }
+
+    @Override
+    public double getMouseX() {
+        return mousePosition.getX();
+    }
+
+    @Override
+    public double getMouseY() {
+        return mousePosition.getY();
     }
 
     class SwingImplPanel extends JPanel {
@@ -171,6 +195,8 @@ public class SwingPlatformGraphics implements PlatformGraphics, FontLoader, Text
     public void frame() {
         graphics = renderImage.createGraphics();
         defaultTransform = graphics.getTransform();
+        Point mousePoint = MouseInfo.getPointerInfo().getLocation();
+        mousePosition.set((mousePoint.x - frame.getX()) / (double) frame.getWidth() * renderImage.getWidth(), (mousePoint.y - frame.getY()) / (double) frame.getHeight() * renderImage.getHeight());
     }
 
     @Override
