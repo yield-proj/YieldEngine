@@ -17,6 +17,9 @@
 package com.xebisco.yield;
 
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -34,6 +37,7 @@ public class Application implements Behavior {
     private final TextureLoader textureLoader;
     private final InputManager inputManager;
     private final DrawInstruction drawInstruction = new DrawInstruction();
+    private final Set<Axis> axes = new HashSet<>();
 
     private final Runnable renderer;
     private final Function<Throwable, Void> exceptionThrowFunction = throwable -> {
@@ -74,6 +78,8 @@ public class Application implements Behavior {
             }
             platformGraphics.conclude();
         };
+        axes.add(new Axis(Global.HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
+        axes.add(new Axis(Global.VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
     }
 
     @Override
@@ -85,6 +91,18 @@ public class Application implements Behavior {
         if(platformInit.getWindowIcon() == null)
             platformInit.setWindowIcon(Global.getDefaultTexture());
         platformGraphics.init(platformInit);
+    }
+
+    public void updateAxes() {
+        for(Axis axis : axes) {
+            if(inputManager.getPressingKeys().contains(axis.getPositiveKey()) || inputManager.getPressingKeys().contains(axis.getAltPositiveKey())) {
+                axis.setValue(1);
+            } else if(inputManager.getPressingKeys().contains(axis.getNegativeKey()) || inputManager.getPressingKeys().contains(axis.getAltNegativeKey())) {
+                axis.setValue(-1);
+            } else {
+                axis.setValue(0);
+            }
+        }
     }
 
     @Override
@@ -113,6 +131,11 @@ public class Application implements Behavior {
                     }
                 }
             }
+            if(inputManager != null) {
+                updateAxes();
+                inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
+                inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
+            }
         }
     }
 
@@ -120,6 +143,18 @@ public class Application implements Behavior {
     public void dispose() {
         scene = null;
         platformGraphics.dispose();
+    }
+
+    public Axis getAxis(String name) {
+        for(Axis axis : axes) {
+            if(axis.getName().hashCode() == name.hashCode() && axis.getName().equals(name))
+                return axis;
+        }
+        return null;
+    }
+
+    public Set<Axis> getAxes() {
+        return axes;
     }
 
     /**
@@ -165,5 +200,37 @@ public class Application implements Behavior {
      */
     public void setScene(Scene scene) {
         this.scene = scene;
+    }
+
+    public PlatformInit getPlatformInit() {
+        return platformInit;
+    }
+
+    public Object getRenderLock() {
+        return renderLock;
+    }
+
+    public FontLoader getFontLoader() {
+        return fontLoader;
+    }
+
+    public TextureLoader getTextureLoader() {
+        return textureLoader;
+    }
+
+    public InputManager getInputManager() {
+        return inputManager;
+    }
+
+    public DrawInstruction getDrawInstruction() {
+        return drawInstruction;
+    }
+
+    public Runnable getRenderer() {
+        return renderer;
+    }
+
+    public Function<Throwable, Void> getExceptionThrowFunction() {
+        return exceptionThrowFunction;
     }
 }

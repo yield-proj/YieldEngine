@@ -7,6 +7,7 @@ public class Main extends Scene {
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
         Application application = new Application(new Main(), PlatformGraphics.swingGraphics(), platformInit);
+        Global.setMainApplication(application);
         applicationManager.getApplications().add(application);
         applicationManager.run();
     }
@@ -36,6 +37,7 @@ class Comp extends ComponentBehavior {
     @Override
     public void onUpdate() {
         getEntity().getTransform().setzRotation(getFrames());
+        getEntity().getTransform().getPosition().set(Global.getMainApplication().getInputManager().getMouseX(), Global.getMainApplication().getInputManager().getMouseY());
     }
 
     @Override

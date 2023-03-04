@@ -3,8 +3,8 @@ package com.xebisco.yield;
 import java.util.Collection;
 
 public interface InputManager {
-    Collection<Integer> getPressingKeys();
-    Collection<Integer> getPressingMouse();
+    Collection<Input.Key> getPressingKeys();
+    Collection<Input.MouseButton> getPressingMouseButtons();
     double getMouseX();
     double getMouseY();
 }

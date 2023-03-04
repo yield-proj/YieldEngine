@@ -25,6 +25,10 @@ public final class Global {
 
     private static Texture defaultTexture;
 
+    private static Application mainApplication;
+
+    public static final String HORIZONTAL = "Horizontal", VERTICAL = "Vertical";
+
     /**
      * If value is greater than max, return max, otherwise return the greatest of value and min.
      *
@@ -91,5 +95,13 @@ public final class Global {
 
     public static void setDefaultTexture(Texture defaultTexture) {
         Global.defaultTexture = defaultTexture;
+    }
+
+    public static Application getMainApplication() {
+        return mainApplication;
+    }
+
+    public static void setMainApplication(Application mainApplication) {
+        Global.mainApplication = mainApplication;
     }
 }
