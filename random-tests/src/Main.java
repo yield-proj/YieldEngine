@@ -19,6 +19,7 @@ public class Main extends Scene {
 
     @Override
     public void onStart() {
+        getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
         instantiate(new Entity2DPrefab(new TextureRectangle(), new Comp()));
     }
 
