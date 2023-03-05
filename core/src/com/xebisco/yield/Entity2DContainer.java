@@ -28,4 +28,8 @@ public class Entity2DContainer {
     public void setEntities(TreeSet<Entity2D> entities) {
         this.entities = entities;
     }
+
+    public Application getApplication() {
+        return application;
+    }
 }

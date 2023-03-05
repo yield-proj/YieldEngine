@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import org.jbox2d.common.Vec2;
+
 /**
  * Static collection of utils methods.
  */
@@ -28,6 +30,14 @@ public final class Global {
     private static Application mainApplication;
 
     public static final String HORIZONTAL = "Horizontal", VERTICAL = "Vertical";
+
+    public static Vec2 toVec2(Vector2D vector2D) {
+        return new Vec2((float) vector2D.getX(), (float) vector2D.getY());
+    }
+
+    public static Vector2D toVector2D(Vec2 vec2) {
+        return new Vector2D(vec2.x, vec2.y);
+    }
 
     /**
      * If value is greater than max, return max, otherwise return the greatest of value and min.

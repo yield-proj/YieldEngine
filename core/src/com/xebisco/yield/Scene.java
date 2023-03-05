@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.physics.PhysicsSystem;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,8 +26,11 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
     private Color backGroundColor = Colors.GRAY.darker();
     private Set<SystemBehavior> systems = new HashSet<>();
 
+    private final PhysicsSystem physicsSystem = new PhysicsSystem();
+
     public Scene(Application application) {
         super(application);
+        getSystems().add(physicsSystem);
     }
 
     public int getFrames() {
@@ -50,5 +55,9 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
 
     public void setSystems(Set<SystemBehavior> systems) {
         this.systems = systems;
+    }
+
+    public PhysicsSystem getPhysicsSystem() {
+        return physicsSystem;
     }
 }
