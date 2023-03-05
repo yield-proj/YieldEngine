@@ -25,6 +25,8 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
     private int frames;
     private Entity2D entity;
 
+    public static final String HORIZONTAL = Global.HORIZONTAL, VERTICAL = Global.VERTICAL;
+
     /**
      * This function returns the number of frames that this component is in a scene.
      *
@@ -113,5 +115,13 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
 
     public <T extends ComponentBehavior> T getComponent(Class<T> componentType, int index) {
         return getEntity().getComponent(componentType, index);
+    }
+
+    public Application getApplication() {
+        return getEntity().getApplication();
+    }
+
+    public ContextTime getTime() {
+        return getEntity().getApplication().getApplicationManager().getManagerContext().getContextTime();
     }
 }

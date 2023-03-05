@@ -16,9 +16,9 @@
 
 package com.xebisco.yield;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -39,13 +39,15 @@ public class Application implements Behavior {
     private final DrawInstruction drawInstruction = new DrawInstruction();
     private final Set<Axis> axes = new HashSet<>();
 
+    private final ApplicationManager applicationManager;
     private final Runnable renderer;
     private final Function<Throwable, Void> exceptionThrowFunction = throwable -> {
         throwable.printStackTrace();
         return null;
     };
 
-    public Application(Scene initialScene, PlatformGraphics platformGraphics, PlatformInit platformInit) {
+    public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, PlatformGraphics platformGraphics, PlatformInit platformInit) {
+        this.applicationManager = applicationManager;
         this.platformGraphics = platformGraphics;
         if (platformGraphics instanceof FontLoader)
             fontLoader = (FontLoader) platformGraphics;
@@ -56,7 +58,11 @@ public class Application implements Behavior {
         if (platformGraphics instanceof InputManager)
             inputManager = (InputManager) platformGraphics;
         else inputManager = null;
-        scene = initialScene;
+        try {
+            scene = initialScene.getConstructor(Application.class).newInstance(this);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
         this.platformInit = platformInit;
         renderer = () -> {
             platformGraphics.frame();
@@ -145,12 +151,16 @@ public class Application implements Behavior {
         platformGraphics.dispose();
     }
 
-    public Axis getAxis(String name) {
+    public double getAxis(String name) {
         for(Axis axis : axes) {
             if(axis.getName().hashCode() == name.hashCode() && axis.getName().equals(name))
-                return axis;
+                return axis.getValue();
         }
-        return null;
+        throw new IllegalArgumentException("none axis with the name: '" + name + "'");
+    }
+
+    public TwoAnchorRepresentation getAxis(String axisX, String axisY) {
+        return new TwoAnchorRepresentation(getAxis(axisX), getAxis(axisY));
     }
 
     public Set<Axis> getAxes() {
@@ -232,5 +242,9 @@ public class Application implements Behavior {
 
     public Function<Throwable, Void> getExceptionThrowFunction() {
         return exceptionThrowFunction;
+    }
+
+    public ApplicationManager getApplicationManager() {
+        return applicationManager;
     }
 }

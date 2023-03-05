@@ -16,12 +16,13 @@
 
 package com.xebisco.yield;
 
-import java.util.TreeSet;
-
-public abstract class Scene implements Behavior {
+public abstract class Scene extends Entity2DContainer implements Behavior {
     private int frames;
     private Color backGroundColor = Colors.GRAY.darker();
-    private final TreeSet<Entity2D> entities = new TreeSet<>();
+
+    public Scene(Application application) {
+        super(application);
+    }
 
     public int getFrames() {
         return frames;
@@ -37,9 +38,5 @@ public abstract class Scene implements Behavior {
 
     public void setBackGroundColor(Color backGroundColor) {
         this.backGroundColor = backGroundColor;
-    }
-
-    public TreeSet<Entity2D> getEntities() {
-        return entities;
     }
 }

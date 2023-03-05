@@ -17,31 +17,24 @@
 package com.xebisco.yield;
 
 import java.util.*;
-import java.util.function.IntConsumer;
-import java.util.stream.IntStream;
 
 /**
  * It's a class that can be rendered, disposed, and compared to other entities
  */
-public final class Entity2D implements Renderable, Disposable, Comparable<Entity2D> {
+public final class Entity2D extends Entity2DContainer implements Renderable, Disposable, Comparable<Entity2D> {
     private final Transform2D transform = new Transform2D();
+    private final Application application;
     private List<ComponentBehavior> components = new ArrayList<>();
-    private TreeSet<Entity2D> children = new TreeSet<>();
     private int index;
     private FontLoader fontLoader;
     private TextureLoader textureLoader;
     private int frames;
 
-    public Entity2D() {
-    }
-
-    public Entity2D(Collection<Entity2D> children) {
+    Entity2D(Application application, Entity2D[] children, ComponentBehavior[] components) {
+        super(application);
+        this.application = application;
         if (children != null)
-            this.children.addAll(children);
-    }
-
-    public Entity2D(TreeSet<Entity2D> children, ComponentBehavior... components) {
-        this(children);
+            getEntities().addAll(List.of(children));
         this.components.addAll(List.of(components));
     }
 
@@ -58,7 +51,7 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
             component.onUpdate();
         }
         try {
-            for (Entity2D entity : children) {
+            for (Entity2D entity : getEntities()) {
                 entity.process();
             }
         } catch (ConcurrentModificationException ignore) {
@@ -68,11 +61,11 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
 
     @Override
     public void dispose() {
-        for (Entity2D entity : children) {
+        for (Entity2D entity : getEntities()) {
             entity.dispose();
         }
         setComponents(null);
-        setChildren(null);
+        setEntities(null);
     }
 
     @Override
@@ -194,24 +187,6 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
     }
 
     /**
-     * Returns a set of all the children of this entity.
-     *
-     * @return A TreeSet of Entity2D objects.
-     */
-    public TreeSet<Entity2D> getChildren() {
-        return children;
-    }
-
-    /**
-     * This function sets the children of the entity to the children passed in.
-     *
-     * @param children A TreeSet of Entity2D objects.
-     */
-    public void setChildren(TreeSet<Entity2D> children) {
-        this.children = children;
-    }
-
-    /**
      * This function returns the number of frames in the entity.
      *
      * @return The number of frames in the entity.
@@ -254,5 +229,9 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
 
     public void setTextureLoader(TextureLoader textureLoader) {
         this.textureLoader = textureLoader;
+    }
+
+    public Application getApplication() {
+        return application;
     }
 }

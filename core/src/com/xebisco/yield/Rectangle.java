@@ -26,6 +26,8 @@ public class Rectangle extends ComponentBehavior {
     private double borderThickness;
     private boolean filled = true;
 
+    private final Size2D size = new Size2D(100, 100);
+
     @Override
     public void onStart() {
         drawInstruction.setType(DrawInstruction.Type.RECTANGLE);
@@ -42,8 +44,8 @@ public class Rectangle extends ComponentBehavior {
         drawInstruction.setInnerColor(color);
         drawInstruction.setPosition(getEntity().getTransform().getPosition());
         drawInstruction.getSize().set(
-                getEntity().getTransform().getSize().getWidth() * getEntity().getTransform().getScale().getX(),
-                getEntity().getTransform().getSize().getHeight() * getEntity().getTransform().getScale().getY()
+                size.getWidth() * getEntity().getTransform().getScale().getX(),
+                size.getHeight() * getEntity().getTransform().getScale().getY()
         );
         drawInstruction.setBorderThickness(borderThickness);
     }
@@ -137,5 +139,14 @@ public class Rectangle extends ComponentBehavior {
      */
     public void setFilled(boolean filled) {
         this.filled = filled;
+    }
+
+    /**
+     * Returns the size of the object.
+     *
+     * @return The size of the object.
+     */
+    public Size2D getSize() {
+        return size;
     }
 }

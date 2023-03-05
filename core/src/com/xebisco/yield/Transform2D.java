@@ -21,7 +21,6 @@ package com.xebisco.yield;
  */
 public class Transform2D {
     private final Point2D position = new Point2D();
-    private final Size2D size = new Size2D(100, 100);
     private final Vector2D scale = new Vector2D(1, 1);
     private double zRotation;
 
@@ -79,14 +78,5 @@ public class Transform2D {
      */
     public Vector2D getScale() {
         return scale;
-    }
-
-    /**
-     * Returns the size of the object.
-     *
-     * @return The size of the object.
-     */
-    public Size2D getSize() {
-        return size;
     }
 }

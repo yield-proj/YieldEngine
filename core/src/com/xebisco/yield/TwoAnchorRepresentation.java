@@ -25,9 +25,10 @@ public class TwoAnchorRepresentation {
         set(x, y);
     }
 
-    public void set(double x, double y) {
+    public TwoAnchorRepresentation set(double x, double y) {
         this.x = x;
         this.y = y;
+        return this;
     }
 
     /**
@@ -35,9 +36,16 @@ public class TwoAnchorRepresentation {
      *
      * @param a The TwoAnchorRepresentation object to add to this one.
      */
-    public void sumLocal(TwoAnchorRepresentation a) {
+    public TwoAnchorRepresentation sumLocal(TwoAnchorRepresentation a) {
         x += a.x;
         y += a.y;
+        return this;
+    }
+
+    public TwoAnchorRepresentation sum(TwoAnchorRepresentation a) {
+        TwoAnchorRepresentation result = new TwoAnchorRepresentation(x, y);
+        result.sumLocal(a);
+        return result;
     }
 
     /**
@@ -45,9 +53,16 @@ public class TwoAnchorRepresentation {
      *
      * @param a The TwoAnchorRepresentation to subtract from this one.
      */
-    public void subtractLocal(TwoAnchorRepresentation a) {
+    public TwoAnchorRepresentation subtractLocal(TwoAnchorRepresentation a) {
         x -= a.x;
         y -= a.y;
+        return this;
+    }
+
+    public TwoAnchorRepresentation subtract(TwoAnchorRepresentation a) {
+        TwoAnchorRepresentation result = new TwoAnchorRepresentation(x, y);
+        result.subtractLocal(a);
+        return result;
     }
 
     /**
@@ -55,9 +70,22 @@ public class TwoAnchorRepresentation {
      *
      * @param a The TwoAnchorRepresentation to multiply this TwoAnchorRepresentation by.
      */
-    public void multiplyLocal(TwoAnchorRepresentation a) {
+    public TwoAnchorRepresentation multiplyLocal(TwoAnchorRepresentation a) {
         x *= a.x;
         y *= a.y;
+        return this;
+    }
+
+    public TwoAnchorRepresentation multiplyLocal(double value) {
+        x *= value;
+        y *= value;
+        return this;
+    }
+
+    public TwoAnchorRepresentation multiply(TwoAnchorRepresentation a) {
+        TwoAnchorRepresentation result = new TwoAnchorRepresentation(x, y);
+        result.multiplyLocal(a);
+        return result;
     }
 
     /**
@@ -65,9 +93,16 @@ public class TwoAnchorRepresentation {
      *
      * @param a The TwoAnchorRepresentation to divide by.
      */
-    public void divideLocal(TwoAnchorRepresentation a) {
+    public TwoAnchorRepresentation divideLocal(TwoAnchorRepresentation a) {
         x /= a.x;
         y /= a.y;
+        return this;
+    }
+
+    public TwoAnchorRepresentation divide(TwoAnchorRepresentation a) {
+        TwoAnchorRepresentation result = new TwoAnchorRepresentation(x, y);
+        result.divideLocal(a);
+        return result;
     }
 
     /**
