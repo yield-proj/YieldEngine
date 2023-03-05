@@ -10,6 +10,7 @@ public class Main extends Scene {
         time.setTargetSleepTime(16666);
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
+        platformInit.setFullscreen(true);
         Application application = new Application(applicationManager, Main.class, PlatformGraphics.swingGraphics(), platformInit);
         Global.setMainApplication(application);
         applicationManager.getApplications().add(application);
@@ -39,7 +40,6 @@ class Comp extends ComponentBehavior {
 
     @Override
     public void onUpdate() {
-        getEntity().getTransform().setzRotation(getFrames());
         getEntity().getTransform().translate(getApplication().getAxis(HORIZONTAL, VERTICAL).multiplyLocal(getTime().getDeltaTime() * 100));
     }
 

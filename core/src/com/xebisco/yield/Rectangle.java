@@ -22,11 +22,10 @@ package com.xebisco.yield;
 public class Rectangle extends ComponentBehavior {
 
     private final DrawInstruction drawInstruction = new DrawInstruction();
+    private final Size2D size = new Size2D(100, 100);
     private Color color = Colors.LIGHT_BLUE.brighter(), borderColor = Colors.BLACK;
     private double borderThickness;
     private boolean filled = true;
-
-    private final Size2D size = new Size2D(100, 100);
 
     @Override
     public void onStart() {
@@ -57,7 +56,8 @@ public class Rectangle extends ComponentBehavior {
 
     @Override
     public void render(PlatformGraphics graphics) {
-        graphics.draw(drawInstruction);
+        if (graphics != null)
+            graphics.draw(drawInstruction);
     }
 
     /**

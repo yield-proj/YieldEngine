@@ -119,6 +119,18 @@ public class Application implements Behavior {
             if (scene.getFrames() == 1) {
                 scene.onStart();
             }
+            try {
+                for (SystemBehavior system : scene.getSystems()) {
+                    system.setScene(scene);
+                    system.setFrames(system.getFrames() + 1);
+                    if (system.getFrames() == 1) {
+                        system.onStart();
+                    }
+                    system.onUpdate();
+                }
+            } catch (ConcurrentModificationException ignore) {
+
+            }
             scene.onUpdate();
             try {
                 for (Entity2D entity : scene.getEntities()) {
@@ -147,7 +159,7 @@ public class Application implements Behavior {
 
     @Override
     public void dispose() {
-        scene = null;
+        setScene(null);
         platformGraphics.dispose();
     }
 
@@ -209,6 +221,12 @@ public class Application implements Behavior {
      * @param scene The scene to be set.
      */
     public void setScene(Scene scene) {
+        if(this.scene != null) {
+            for(SystemBehavior system : this.scene.getSystems()) {
+                system.dispose();
+            }
+            this.scene.dispose();
+        }
         this.scene = scene;
     }
 

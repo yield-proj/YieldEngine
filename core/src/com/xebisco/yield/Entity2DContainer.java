@@ -16,6 +16,11 @@ public class Entity2DContainer {
         return entity;
     }
 
+    public boolean remove(Entity2D entity) {
+        entity.dispose();
+        return getEntities().remove(entity);
+    }
+
     public TreeSet<Entity2D> getEntities() {
         return entities;
     }

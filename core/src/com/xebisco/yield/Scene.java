@@ -16,9 +16,13 @@
 
 package com.xebisco.yield;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public abstract class Scene extends Entity2DContainer implements Behavior {
     private int frames;
     private Color backGroundColor = Colors.GRAY.darker();
+    private Set<SystemBehavior> systems = new HashSet<>();
 
     public Scene(Application application) {
         super(application);
@@ -38,5 +42,13 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
 
     public void setBackGroundColor(Color backGroundColor) {
         this.backGroundColor = backGroundColor;
+    }
+
+    public Set<SystemBehavior> getSystems() {
+        return systems;
+    }
+
+    public void setSystems(Set<SystemBehavior> systems) {
+        this.systems = systems;
     }
 }

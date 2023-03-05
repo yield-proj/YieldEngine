@@ -27,6 +27,26 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
 
     public static final String HORIZONTAL = Global.HORIZONTAL, VERTICAL = Global.VERTICAL;
 
+    @Override
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onUpdate() {
+
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
+    @Override
+    public void render(PlatformGraphics graphics) {
+
+    }
+
     /**
      * This function returns the number of frames that this component is in a scene.
      *
