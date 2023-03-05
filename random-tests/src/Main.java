@@ -41,6 +41,8 @@ class Comp extends ComponentBehavior {
 
     @Override
     public void onUpdate() {
+        if(getApplication().getAxis("Vertical") > 0)
+            getComponent(PhysicsBody.class).setLinearVelocity(new org.jbox2d.common.Vec2(0, 1000));
         //getEntity().getTransform().translate(getApplication().getAxis(HORIZONTAL, VERTICAL).multiplyLocal(getTime().getDeltaTime() * 100));
     }
 

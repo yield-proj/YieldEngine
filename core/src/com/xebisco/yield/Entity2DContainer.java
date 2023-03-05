@@ -10,10 +10,16 @@ public class Entity2DContainer {
         this.application = application;
     }
 
-    public Entity2D instantiate(Entity2DPrefab prefab) {
+    public Entity2D instantiate(Entity2DPrefab prefab, EntityStarter entityStarter) {
         Entity2D entity = new Entity2D(application, prefab.getChildren(), prefab.getComponents());
         getEntities().add(entity);
+        if(entityStarter != null)
+            entityStarter.start(entity);
         return entity;
+    }
+
+    public Entity2D instantiate(Entity2DPrefab prefab) {
+        return instantiate(prefab, null);
     }
 
     public boolean remove(Entity2D entity) {
