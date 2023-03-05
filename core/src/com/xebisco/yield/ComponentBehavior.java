@@ -60,4 +60,58 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
     public void setEntity(Entity2D entity) {
         this.entity = entity;
     }
+
+    /**
+     * Returns the transform of the entity.
+     *
+     * @return The transform of the entity.
+     */
+    public Transform2D getTransform() {
+        return getEntity().getTransform();
+    }
+
+    /**
+     * This function returns the index of the entity.
+     *
+     * @return The index of the entity.
+     */
+
+    public int getIndex() {
+        return getEntity().getIndex();
+    }
+
+    /**
+     * This function sets the index of the entity to the index passed in as a parameter.
+     *
+     * @param index The index of the entity.
+     */
+
+    public void setIndex(int index) {
+        getEntity().setIndex(index);
+    }
+
+    /**
+     * Returns the first component of the specified type, or null if no such component exists.
+     *
+     * @param componentType The type of the component to retrieve.
+     * @return The first component of the given type.
+     */
+
+    public <T extends ComponentBehavior> T getComponent(Class<T> componentType) {
+        return getEntity().getComponent(componentType);
+    }
+
+    /**
+     * Get the component of the specified type at the specified index.
+     * The first line of the function is a generic type declaration. This is a way of saying that the function will return
+     * a component of the specified type
+     *
+     * @param componentType The type of component you want to get.
+     * @param index         The index of the component you want to get.
+     * @return A component of the specified type.
+     */
+
+    public <T extends ComponentBehavior> T getComponent(Class<T> componentType, int index) {
+        return getEntity().getComponent(componentType, index);
+    }
 }

@@ -24,10 +24,10 @@ import java.util.stream.IntStream;
  * It's a class that can be rendered, disposed, and compared to other entities
  */
 public final class Entity2D implements Renderable, Disposable, Comparable<Entity2D> {
+    private final Transform2D transform = new Transform2D();
     private List<ComponentBehavior> components = new ArrayList<>();
     private TreeSet<Entity2D> children = new TreeSet<>();
     private int index;
-    private final Transform2D transform = new Transform2D();
     private FontLoader fontLoader;
     private TextureLoader textureLoader;
     private int frames;
@@ -50,10 +50,10 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
      */
     public void process() {
         frames++;
-        for(ComponentBehavior component : components) {
+        for (ComponentBehavior component : components) {
             component.setEntity(this);
             component.setFrames(component.getFrames() + 1);
-            if(component.getFrames() == 1)
+            if (component.getFrames() == 1)
                 component.onStart();
             component.onUpdate();
         }
@@ -92,7 +92,7 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
      * a component of the specified type
      *
      * @param componentType The type of component you want to get.
-     * @param index The index of the component you want to get.
+     * @param index         The index of the component you want to get.
      * @return A component of the specified type.
      */
     public <T extends ComponentBehavior> T getComponent(Class<T> componentType, int index) {
@@ -133,7 +133,7 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
      * Remove the component of the given type at the given index.
      *
      * @param componentType The type of component to remove.
-     * @param index The index of the component to remove.
+     * @param index         The index of the component to remove.
      */
     public void removeComponent(Class<? extends ComponentBehavior> componentType, int index) {
         removeComponent(getComponent(componentType, index));
@@ -237,6 +237,7 @@ public final class Entity2D implements Renderable, Disposable, Comparable<Entity
     public FontLoader getFontLoader() {
         return fontLoader;
     }
+
     /**
      * This function sets the fontLoader of this entity.
      *

@@ -25,6 +25,26 @@ public class Transform2D {
     private final Vector2D scale = new Vector2D(1, 1);
     private double zRotation;
 
+    public void translate(TwoAnchorRepresentation value) {
+        position.sumLocal(value);
+    }
+
+    public void translate(double x, double y) {
+        translate(new TwoAnchorRepresentation(x, y));
+    }
+
+    public void scale(double x, double y) {
+        scale(new TwoAnchorRepresentation(x, y));
+    }
+
+    public void scale(TwoAnchorRepresentation value) {
+        scale.sumLocal(value);
+    }
+
+    public void rotate(double value) {
+        zRotation += value;
+    }
+
     /**
      * This function returns the position of the object.
      *
