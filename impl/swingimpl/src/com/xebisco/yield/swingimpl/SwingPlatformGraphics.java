@@ -315,7 +315,7 @@ public class SwingPlatformGraphics implements PlatformGraphics, FontLoader, Text
                 (int) platformInit.getResolution().getHeight(),
                 Transparency.OPAQUE
         );
-        if (platformInit.isUndecorated()) {
+        if (platformInit.isUndecorated() || platformInit.isFullscreen() && device.isFullScreenSupported()) {
             frame.setUndecorated(true);
             frame.setSize((int) platformInit.getWindowSize().getWidth(), (int) platformInit.getWindowSize().getHeight());
         } else {
