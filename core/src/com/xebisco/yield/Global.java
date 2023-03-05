@@ -27,8 +27,6 @@ public final class Global {
 
     private static Texture defaultTexture;
 
-    private static Application mainApplication;
-
     public static final String HORIZONTAL = "Horizontal", VERTICAL = "Vertical";
 
     public static Vec2 toVec2(Vector2D vector2D) {
@@ -105,13 +103,5 @@ public final class Global {
 
     public static void setDefaultTexture(Texture defaultTexture) {
         Global.defaultTexture = defaultTexture;
-    }
-
-    public static Application getMainApplication() {
-        return mainApplication;
-    }
-
-    public static void setMainApplication(Application mainApplication) {
-        Global.mainApplication = mainApplication;
     }
 }

@@ -1,4 +1,6 @@
 import com.xebisco.yield.*;
+import com.xebisco.yield.physics.PhysicsBody;
+import com.xebisco.yield.physics.RectangleCollider;
 
 public class Main extends Scene {
     public Main(Application application) {
@@ -10,9 +12,7 @@ public class Main extends Scene {
         time.setTargetSleepTime(16666);
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
-        platformInit.setFullscreen(true);
         Application application = new Application(applicationManager, Main.class, PlatformGraphics.swingGraphics(), platformInit);
-        Global.setMainApplication(application);
         applicationManager.getApplications().add(application);
         applicationManager.run();
     }
@@ -20,7 +20,7 @@ public class Main extends Scene {
     @Override
     public void onStart() {
         getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
-        instantiate(new Entity2DPrefab(new TextureRectangle(), new Comp()));
+        instantiate(new Entity2DPrefab(new TextureRectangle(), new Comp(), new PhysicsBody(), new RectangleCollider()));
     }
 
     @Override
@@ -41,7 +41,7 @@ class Comp extends ComponentBehavior {
 
     @Override
     public void onUpdate() {
-        getEntity().getTransform().translate(getApplication().getAxis(HORIZONTAL, VERTICAL).multiplyLocal(getTime().getDeltaTime() * 100));
+        //getEntity().getTransform().translate(getApplication().getAxis(HORIZONTAL, VERTICAL).multiplyLocal(getTime().getDeltaTime() * 100));
     }
 
     @Override

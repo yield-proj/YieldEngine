@@ -35,6 +35,9 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
         this.application = application;
         if (children != null)
             getEntities().addAll(List.of(children));
+        for(ComponentBehavior c : components) {
+            c.setEntity(this);
+        }
         this.components.addAll(List.of(components));
     }
 
