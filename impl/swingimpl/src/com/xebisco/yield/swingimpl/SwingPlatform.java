@@ -19,6 +19,10 @@ package com.xebisco.yield.swingimpl;
 import com.xebisco.yield.*;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Color;
@@ -30,7 +34,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class SwingPlatformGraphics implements PlatformGraphics, FontLoader, TextureLoader, InputManager, KeyListener, MouseListener, MouseWheelListener {
+public class SwingPlatform implements PlatformGraphics, FontLoader, TextureLoader, InputManager, KeyListener, MouseListener, MouseWheelListener, AudioManager {
     private final HashSet<Input.Key> pressingKeys = new HashSet<>();
     private final HashSet<Input.MouseButton> pressingMouseButtons = new HashSet<>();
     private final Point2D mousePosition = new Point2D();
@@ -519,6 +523,88 @@ public class SwingPlatformGraphics implements PlatformGraphics, FontLoader, Text
         } else {
             pressingMouseButtons.add(Input.MouseButton.SCROLL_DOWN);
         }
+    }
+
+    @Override
+    public Object loadAudio(Audio audio) {
+        Clip clip;
+        try {
+            clip = AudioSystem.getClip();
+        } catch (LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+
+            clip.open(AudioSystem.getAudioInputStream(audio.getInputStream()));
+        } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            audio.getInputStream().close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return clip;
+    }
+
+    @Override
+    public void unloadAudio(Audio audio) {
+
+    }
+
+    @Override
+    public Object loadAudioPlayer(AudioPlayer audioPlayer) {
+        return null;
+    }
+
+    @Override
+    public void unloadAudioPlayer(AudioPlayer audioPlayer) {
+
+    }
+
+    @Override
+    public void play(AudioPlayer audioPlayer) {
+
+    }
+
+    @Override
+    public void pause(AudioPlayer audioPlayer) {
+
+    }
+
+    @Override
+    public double getLength(AudioPlayer audioPlayer) {
+        return 0;
+    }
+
+    @Override
+    public double getPosition(AudioPlayer audioPlayer) {
+        return 0;
+    }
+
+    @Override
+    public void setPosition(AudioPlayer audioPlayer, double position) {
+
+    }
+
+    @Override
+    public double getGain(AudioPlayer audioPlayer) {
+        return 0;
+    }
+
+    @Override
+    public void setGain(AudioPlayer audioPlayer, double gain) {
+
+    }
+
+    @Override
+    public double getPan(AudioPlayer audioPlayer) {
+        return 0;
+    }
+
+    @Override
+    public void setPan(AudioPlayer audioPlayer, double pan) {
+
     }
 
     private interface KeyAction {

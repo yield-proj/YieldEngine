@@ -16,23 +16,11 @@
 
 package com.xebisco.yield;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * The `PlatformGraphics` interface is a wrapper around the platform's graphics API. It's a simple class that provides a
  * few functions for drawing to the screen
  */
 public interface PlatformGraphics extends Disposable {
-
-    static PlatformGraphics swingGraphics() throws ClassNotFoundException {
-        //noinspection unchecked
-        Class<? extends PlatformGraphics> swingGraphicsImplClass = (Class<? extends PlatformGraphics>) Class.forName("com.xebisco.yield.swingimpl.SwingPlatformGraphics");
-        try {
-            return swingGraphicsImplClass.getConstructor().newInstance();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * Initializes the platform graphics

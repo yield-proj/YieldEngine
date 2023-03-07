@@ -18,8 +18,10 @@ package com.xebisco.yield;
 
 import org.jbox2d.common.Vec2;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
- * Static collection of utils methods.
+ * Static collection of util methods.
  */
 public final class Global {
 
@@ -28,6 +30,16 @@ public final class Global {
     private static Texture defaultTexture;
 
     public static final String HORIZONTAL = "Horizontal", VERTICAL = "Vertical";
+
+    public static PlatformGraphics swingPlatform() throws ClassNotFoundException {
+        //noinspection unchecked
+        Class<? extends PlatformGraphics> swingPlatformImplClass = (Class<? extends PlatformGraphics>) Class.forName("com.xebisco.yield.swingimpl.SwingPlatform");
+        try {
+            return swingPlatformImplClass.getConstructor().newInstance();
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static Vec2 toVec2(Vector2D vector2D) {
         return new Vec2((float) vector2D.getX(), (float) vector2D.getY());
