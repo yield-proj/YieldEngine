@@ -67,7 +67,7 @@ public class Context implements Runnable {
                         throw new RuntimeException(e);
                     }
                 }
-            if(!lightweight && (int) (frameCount + 1) % 400 == 0) {
+            if((int) (frameCount + 1) % 1000 == 0) {
                 System.gc();
             }
         }

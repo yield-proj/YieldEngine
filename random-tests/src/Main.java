@@ -1,6 +1,5 @@
 import com.xebisco.yield.*;
-import com.xebisco.yield.physics.PhysicsBody;
-import com.xebisco.yield.physics.RectangleCollider;
+import com.xebisco.yield.physics.*;
 
 public class Main extends Scene {
     public Main(Application application) {
@@ -20,7 +19,26 @@ public class Main extends Scene {
     @Override
     public void onStart() {
         getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
-        instantiate(new Entity2DPrefab(new TextureRectangle(), new Comp(), new PhysicsBody(), new RectangleCollider()));
+
+        instantiate(new Entity2DPrefab(new Rectangle(), new Comp(), new PhysicsBody(), new RectangleCollider())).setContactAdapter(new ContactAdapter() {
+            Entity2D e, e1;
+
+            @Override
+            public void onContactBegin(Collider entity, Collider colliding) {
+                e = instantiate(new Entity2DPrefab(new Text("ENCOSTOU AAAAA")));
+                e.setVisible(true);
+                if (e1 != null)
+                    e1.setVisible(false);
+            }
+
+            @Override
+            public void onContactEnd(Collider entity, Collider colliding) {
+                e1 = instantiate(new Entity2DPrefab(new Text("DESINCONSTAL AAAAA")));
+                e1.setVisible(true);
+                e.setVisible(false);
+            }
+        });
+        instantiate(new Entity2DPrefab(new Rectangle(), new PhysicsBody(), new Comp2(), new RectangleCollider()));
     }
 
     @Override
@@ -41,9 +59,9 @@ class Comp extends ComponentBehavior {
 
     @Override
     public void onUpdate() {
-        if(getApplication().getAxis("Vertical") > 0)
-            getComponent(PhysicsBody.class).setLinearVelocity(new org.jbox2d.common.Vec2(0, 1000));
-        //getEntity().getTransform().translate(getApplication().getAxis(HORIZONTAL, VERTICAL).multiplyLocal(getTime().getDeltaTime() * 100));
+        if (getApplication().getAxis("Vertical") > 0)
+            getComponent(PhysicsBody.class).setLinearVelocity(new org.jbox2d.common.Vec2(0, 10));
+        getEntity().getTransform().translate(getApplication().getAxis(HORIZONTAL, VERTICAL).multiplyLocal(getTime().getDeltaTime() * 100));
     }
 
     @Override
@@ -54,5 +72,19 @@ class Comp extends ComponentBehavior {
     @Override
     public void render(PlatformGraphics graphics) {
 
+    }
+}
+
+class Comp2 extends ComponentBehavior {
+    @Override
+    public void onStart() {
+        getComponent(PhysicsBody.class).setPosition(new Vector2D(0, -720 / 2f));
+        getComponent(PhysicsBody.class).setType(PhysicsType.STATIC);
+    }
+
+    @Override
+    public void onUpdate() {
+
+        ///System.out.println(getTransform().getPosition());
     }
 }

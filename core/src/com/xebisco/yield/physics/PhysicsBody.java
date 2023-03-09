@@ -1,9 +1,6 @@
 package com.xebisco.yield.physics;
 
-import com.xebisco.yield.ComponentBehavior;
-import com.xebisco.yield.Global;
-import com.xebisco.yield.Point2D;
-import com.xebisco.yield.Vector2D;
+import com.xebisco.yield.*;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -30,6 +27,7 @@ public class PhysicsBody extends ComponentBehavior {
             f.m_shape = ((Collider) f.getUserData()).getShape();
             f.setDensity(((Collider) f.getUserData()).getDensity());
             f.setFriction(((Collider) f.getUserData()).getFriction());
+            f.setSensor(((Collider) f.getUserData()).isSensor());
             if(!getEntity().getComponents().contains((Collider) f.getUserData())) {
                 b2Body.destroyFixture(f);
             }
@@ -59,7 +57,7 @@ public class PhysicsBody extends ComponentBehavior {
         b2Body.setBullet(bullet);
         b2Body.m_mass = (float) mass;
         b2Body.setFixedRotation(fixedRotation);
-        getTransform().getPosition().set(b2Body.getPosition().x, b2Body.getPosition().y);
+        getTransform().getPosition().set(b2Body.getPosition().x * getApplication().getPhysicsPpm(), (b2Body.getPosition().y + 2) * getApplication().getPhysicsPpm());
         getTransform().setzRotation(b2Body.getAngle());
     }
 
@@ -77,6 +75,10 @@ public class PhysicsBody extends ComponentBehavior {
             case ANGULAR_IMPULSE -> b2Body.applyAngularImpulse((float) force);
             default -> throw new IllegalArgumentException(forceType.name());
         }
+    }
+
+    public void setPosition(TwoAnchorRepresentation value) {
+        b2Body.setTransform(new Vec2((float) (value.getX() / getApplication().getPhysicsPpm()), (float) (value.getY() / getApplication().getPhysicsPpm())), b2Body.getAngle());
     }
 
     public Vec2 getPosition() {

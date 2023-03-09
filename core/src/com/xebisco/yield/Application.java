@@ -39,6 +39,8 @@ public class Application implements Behavior {
     private final DrawInstruction drawInstruction = new DrawInstruction();
     private final Set<Axis> axes = new HashSet<>();
 
+    private double physicsPpm = 16;
+
     private final ApplicationManager applicationManager;
     private final Runnable renderer;
     private final Function<Throwable, Void> exceptionThrowFunction = throwable -> {
@@ -264,5 +266,13 @@ public class Application implements Behavior {
 
     public ApplicationManager getApplicationManager() {
         return applicationManager;
+    }
+
+    public double getPhysicsPpm() {
+        return physicsPpm;
+    }
+
+    public void setPhysicsPpm(double physicsPpm) {
+        this.physicsPpm = physicsPpm;
     }
 }

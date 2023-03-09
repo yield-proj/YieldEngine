@@ -16,7 +16,11 @@
 
 package com.xebisco.yield;
 
-import java.util.*;
+import com.xebisco.yield.physics.ContactAdapter;
+
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.List;
 
 /**
  * It's a class that can be rendered, disposed, and compared to other entities
@@ -28,14 +32,16 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     private int index;
     private FontLoader fontLoader;
     private TextureLoader textureLoader;
+    private ContactAdapter contactAdapter;
     private int frames;
+    private boolean visible = true;
 
     Entity2D(Application application, Entity2D[] children, ComponentBehavior[] components) {
         super(application);
         this.application = application;
         if (children != null)
             getEntities().addAll(List.of(children));
-        for(ComponentBehavior c : components) {
+        for (ComponentBehavior c : components) {
             c.setEntity(this);
         }
         this.components.addAll(List.of(components));
@@ -73,8 +79,9 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
 
     @Override
     public void render(PlatformGraphics graphics) {
-        for (ComponentBehavior component : components)
-            component.render(graphics);
+        if (visible)
+            for (ComponentBehavior component : components)
+                component.render(graphics);
     }
 
     @Override
@@ -236,5 +243,21 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
 
     public Application getApplication() {
         return application;
+    }
+
+    public ContactAdapter getContactAdapter() {
+        return contactAdapter;
+    }
+
+    public void setContactAdapter(ContactAdapter contactAdapter) {
+        this.contactAdapter = contactAdapter;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 }

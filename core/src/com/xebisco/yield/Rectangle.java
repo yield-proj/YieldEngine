@@ -56,7 +56,7 @@ public class Rectangle extends ComponentBehavior {
 
     @Override
     public void render(PlatformGraphics graphics) {
-        if (getFrames() > 0)
+        if (drawInstruction.getPosition() != null)
             graphics.draw(drawInstruction);
     }
 

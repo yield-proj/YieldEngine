@@ -3,19 +3,52 @@ package com.xebisco.yield.physics;
 import com.xebisco.yield.Global;
 import com.xebisco.yield.SystemBehavior;
 import com.xebisco.yield.Vector2D;
+import org.jbox2d.callbacks.ContactImpulse;
+import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.collision.Manifold;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 
 public class PhysicsSystem extends SystemBehavior {
     private World b2World;
     private Vec2 gravity;
-    private int velocityIterations = 10;
-    private int positionIterations = 8;
+    private int velocityIterations = 4;
+    private int positionIterations = 3;
 
     @Override
     public void onStart() {
         gravity = new Vec2(0, -10);
         b2World = new World(gravity);
+        b2World.setContactListener(new ContactListener() {
+            @Override
+            public void beginContact(Contact contact) {
+                Collider c = ((Collider) contact.m_fixtureA.getUserData());
+                if (c.getEntity().getContactAdapter() != null)
+                    c.getEntity().getContactAdapter().onContactBegin(c, ((Collider) contact.m_fixtureB.getUserData()));
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+                Collider c = ((Collider) contact.m_fixtureA.getUserData());
+                if (c.getEntity().getContactAdapter() != null)
+                    c.getEntity().getContactAdapter().onContactEnd(c, ((Collider) contact.m_fixtureB.getUserData()));
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold manifold) {
+                Collider c = ((Collider) contact.m_fixtureA.getUserData());
+                if (c.getEntity().getContactAdapter() != null)
+                    c.getEntity().getContactAdapter().preSolve(contact, manifold);
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse contactImpulse) {
+                Collider c = ((Collider) contact.m_fixtureA.getUserData());
+                if (c.getEntity().getContactAdapter() != null)
+                    c.getEntity().getContactAdapter().postSolve(contact, contactImpulse);
+            }
+        });
     }
 
     @Override

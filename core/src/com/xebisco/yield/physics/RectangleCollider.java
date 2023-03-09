@@ -8,7 +8,7 @@ public class RectangleCollider extends Collider {
     @Override
     public Shape getShape() {
         PolygonShape s = new PolygonShape();
-        s.setAsBox((float) (size.getWidth() * getTransform().getScale().getX()), (float) (size.getHeight() * getTransform().getScale().getY()));
+        s.setAsBox((float) (size.getWidth() * getTransform().getScale().getX() / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() * getTransform().getScale().getY() / getApplication().getPhysicsPpm() / 2.0));
         return s;
     }
 

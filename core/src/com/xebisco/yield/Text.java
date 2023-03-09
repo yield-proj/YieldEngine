@@ -40,8 +40,10 @@ public class Text extends ComponentBehavior {
         if (font != null) {
             width = ((FontLoader) graphics).getStringWidth(contents, font.getFontRef());
             height = ((FontLoader) graphics).getStringHeight(contents, font.getFontRef());
-            drawInstruction.getSize().set(width, height);
-            graphics.draw(drawInstruction);
+            if (drawInstruction.getSize() != null) {
+                drawInstruction.getSize().set(width, height);
+                graphics.draw(drawInstruction);
+            }
         }
     }
 
