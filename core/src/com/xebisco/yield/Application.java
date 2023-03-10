@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+import net.java.games.input.Controller;
+import net.java.games.input.ControllerEnvironment;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
@@ -38,6 +41,7 @@ public class Application implements Behavior {
     private final InputManager inputManager;
     private final DrawInstruction drawInstruction = new DrawInstruction();
     private final Set<Axis> axes = new HashSet<>();
+    private final Controller[] gamepads;
 
     private double physicsPpm = 16;
 
@@ -49,6 +53,8 @@ public class Application implements Behavior {
     };
 
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, PlatformGraphics platformGraphics, PlatformInit platformInit) {
+        System.setProperty("net.java.games.input.useDefaultPlugin", "false");
+        gamepads = ControllerEnvironment.getDefaultEnvironment().getControllers();
         this.applicationManager = applicationManager;
         this.platformGraphics = platformGraphics;
         if (platformGraphics instanceof FontLoader)
@@ -88,6 +94,7 @@ public class Application implements Behavior {
         };
         axes.add(new Axis(Global.HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
         axes.add(new Axis(Global.VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
+
     }
 
     @Override
