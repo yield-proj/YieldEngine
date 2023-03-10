@@ -58,7 +58,7 @@ public class PhysicsBody extends ComponentBehavior {
         b2Body.m_mass = (float) mass;
         b2Body.setFixedRotation(fixedRotation);
         getTransform().getPosition().set(b2Body.getPosition().x * getApplication().getPhysicsPpm(), (b2Body.getPosition().y + 2) * getApplication().getPhysicsPpm());
-        getTransform().setzRotation(b2Body.getAngle());
+        getTransform().setzRotation(Math.toDegrees(b2Body.getAngle()));
     }
 
     public void addForce(Vector2D force, ForceType forceType) {
@@ -91,6 +91,10 @@ public class PhysicsBody extends ComponentBehavior {
 
     public void setLinearVelocity(Vec2 linearVelocity) {
         b2Body.setLinearVelocity(linearVelocity);
+    }
+
+    public void setLinearVelocity(Vector2D linearVelocity) {
+        setLinearVelocity(Global.toVec2(linearVelocity));
     }
 
 

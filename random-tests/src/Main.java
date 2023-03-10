@@ -20,7 +20,7 @@ public class Main extends Scene {
     public void onStart() {
         getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
 
-        instantiate(new Entity2DPrefab(new Rectangle(), new Comp(), new PhysicsBody(), new RectangleCollider())).setContactAdapter(new ContactAdapter() {
+        instantiate(new Entity2DPrefab(new Rectangle(),  new PhysicsBody(), new Comp(), new RectangleCollider())).setContactAdapter(new ContactAdapter() {
             Entity2D e, e1;
 
             @Override
@@ -59,8 +59,7 @@ class Comp extends ComponentBehavior {
 
     @Override
     public void onUpdate() {
-        if (getApplication().getAxis("Vertical") > 0)
-            getComponent(PhysicsBody.class).setLinearVelocity(new org.jbox2d.common.Vec2(0, 10));
+        getComponent(PhysicsBody.class).setLinearVelocity(new Vector2D(getApplication().getAxis("Horizontal") * 30, getApplication().getAxis("Vertical") * 30));
         getEntity().getTransform().translate(getApplication().getAxis(HORIZONTAL, VERTICAL).multiplyLocal(getTime().getDeltaTime() * 100));
     }
 

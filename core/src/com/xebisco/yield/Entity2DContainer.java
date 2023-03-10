@@ -2,7 +2,6 @@ package com.xebisco.yield;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 
 public class Entity2DContainer {
     private List<Entity2D> entities = new ArrayList<>();
@@ -14,8 +13,10 @@ public class Entity2DContainer {
 
     public Entity2D instantiate(Entity2DPrefab prefab, EntityStarter entityStarter) {
         Entity2D entity = new Entity2D(application, prefab.getChildren(), prefab.getComponents());
-        getEntities().add(entity);
-        getEntities().sort(Entity2D::compareTo);
+        List<Entity2D> entities = new ArrayList<>(getEntities());
+        entities.add(entity);
+        entities.sort(Entity2D::compareTo);
+        setEntities(entities);
         if(entityStarter != null)
             entityStarter.start(entity);
         return entity;

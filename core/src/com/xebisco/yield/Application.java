@@ -16,8 +16,11 @@
 
 package com.xebisco.yield;
 
-import net.java.games.input.Controller;
-import net.java.games.input.ControllerEnvironment;
+import com.github.strikerx3.jxinput.XInputAxes;
+import com.github.strikerx3.jxinput.XInputButtons;
+import com.github.strikerx3.jxinput.XInputComponents;
+import com.github.strikerx3.jxinput.XInputDevice;
+import com.github.strikerx3.jxinput.exceptions.XInputNotLoadedException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ConcurrentModificationException;
@@ -31,9 +34,7 @@ import java.util.function.Function;
  * entities
  */
 public class Application implements Behavior {
-    private int frames;
     private final PlatformGraphics platformGraphics;
-    private Scene scene;
     private final PlatformInit platformInit;
     private final Object renderLock = new Object();
     private final FontLoader fontLoader;
@@ -41,20 +42,18 @@ public class Application implements Behavior {
     private final InputManager inputManager;
     private final DrawInstruction drawInstruction = new DrawInstruction();
     private final Set<Axis> axes = new HashSet<>();
-    private final Controller[] gamepads;
-
-    private double physicsPpm = 16;
-
     private final ApplicationManager applicationManager;
     private final Runnable renderer;
     private final Function<Throwable, Void> exceptionThrowFunction = throwable -> {
         throwable.printStackTrace();
         return null;
     };
+    private final XInputDevice[] gamePads;
+    private int frames;
+    private Scene scene;
+    private double physicsPpm = 16;
 
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, PlatformGraphics platformGraphics, PlatformInit platformInit) {
-        System.setProperty("net.java.games.input.useDefaultPlugin", "false");
-        gamepads = ControllerEnvironment.getDefaultEnvironment().getControllers();
         this.applicationManager = applicationManager;
         this.platformGraphics = platformGraphics;
         if (platformGraphics instanceof FontLoader)
@@ -68,7 +67,8 @@ public class Application implements Behavior {
         else inputManager = null;
         try {
             scene = initialScene.getConstructor(Application.class).newInstance(this);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
         this.platformInit = platformInit;
@@ -94,7 +94,17 @@ public class Application implements Behavior {
         };
         axes.add(new Axis(Global.HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
         axes.add(new Axis(Global.VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
+        if (XInputDevice.isAvailable()) {
+            try {
+                gamePads = XInputDevice.getAllDevices();
+            } catch (XInputNotLoadedException e) {
+                throw new RuntimeException(e);
+            }
 
+        } else {
+            gamePads = null;
+            System.err.println("WARNING: XInput is not available!");
+        }
     }
 
     @Override
@@ -103,19 +113,57 @@ public class Application implements Behavior {
             Global.setDefaultFont(new Font("OpenSans-Regular.ttf", 48, fontLoader));
         if (Global.getDefaultTexture() == null)
             Global.setDefaultTexture(new Texture("yieldIcon.png", textureLoader));
-        if(platformInit.getWindowIcon() == null)
+        if (platformInit.getWindowIcon() == null)
             platformInit.setWindowIcon(Global.getDefaultTexture());
         platformGraphics.init(platformInit);
+        for (XInputDevice device : gamePads) {
+            if (device.getPlayerNum() > 0) {
+                axes.add(new Axis(Global.HORIZONTAL + (device.getPlayerNum() + 1), null, null, null, null));
+                axes.add(new Axis(Global.VERTICAL + (device.getPlayerNum() + 1), null, null, null, null));
+            }
+            axes.add(new Axis("CamHorizontal" + (device.getPlayerNum() + 1), null, null, null, null));
+            axes.add(new Axis("CamVertical" + (device.getPlayerNum() + 1), null, null, null, null));
+        }
     }
 
     public void updateAxes() {
-        for(Axis axis : axes) {
-            if(inputManager.getPressingKeys().contains(axis.getPositiveKey()) || inputManager.getPressingKeys().contains(axis.getAltPositiveKey())) {
+        for (Axis axis : axes) {
+            if ((axis.getPositiveKey() != null && inputManager.getPressingKeys().contains(axis.getPositiveKey())) || (axis.getAltPositiveKey() != null && inputManager.getPressingKeys().contains(axis.getAltPositiveKey()))) {
                 axis.setValue(1);
-            } else if(inputManager.getPressingKeys().contains(axis.getNegativeKey()) || inputManager.getPressingKeys().contains(axis.getAltNegativeKey())) {
+            } else if ((axis.getNegativeKey() != null && inputManager.getPressingKeys().contains(axis.getNegativeKey())) || (axis.getAltNegativeKey() != null && inputManager.getPressingKeys().contains(axis.getAltNegativeKey()))) {
                 axis.setValue(-1);
             } else {
                 axis.setValue(0);
+            }
+        }
+        for (XInputDevice device : gamePads) {
+            device.poll();
+            if (device.isConnected()) {
+                XInputComponents components = device.getComponents();
+                XInputButtons buttons = components.getButtons();
+                XInputAxes axes = components.getAxes();
+                String a = String.valueOf((device.getPlayerNum() + 1));
+                if (device.getPlayerNum() == 0)
+                    a = "";
+                for (Axis axis : this.axes) {
+                    if (axis.getName().equals(Global.HORIZONTAL + a)) {
+                        axis.setValue(axes.lx);
+                        if (Math.abs(axis.getValue()) < 0.1)
+                            axis.setValue(0);
+                    } else if (axis.getName().equals(Global.VERTICAL + a)) {
+                        axis.setValue(axes.ly);
+                        if (Math.abs(axis.getValue()) < 0.1)
+                            axis.setValue(0);
+                    } else if (axis.getName().equals("CamHorizontal" + a)) {
+                        axis.setValue(axes.rx);
+                        if (Math.abs(axis.getValue()) < 0.1)
+                            axis.setValue(0);
+                    } else if (axis.getName().equals("CamVertical" + a)) {
+                        axis.setValue(axes.ry);
+                        if (Math.abs(axis.getValue()) < 0.1)
+                            axis.setValue(0);
+                    }
+                }
             }
         }
     }
@@ -158,7 +206,7 @@ public class Application implements Behavior {
                     }
                 }
             }
-            if(inputManager != null) {
+            if (inputManager != null) {
                 updateAxes();
                 inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
                 inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
@@ -173,8 +221,8 @@ public class Application implements Behavior {
     }
 
     public double getAxis(String name) {
-        for(Axis axis : axes) {
-            if(axis.getName().hashCode() == name.hashCode() && axis.getName().equals(name))
+        for (Axis axis : axes) {
+            if (axis.getName().hashCode() == name.hashCode() && axis.getName().equals(name))
                 return axis.getValue();
         }
         throw new IllegalArgumentException("none axis with the name: '" + name + "'");
@@ -230,8 +278,8 @@ public class Application implements Behavior {
      * @param scene The scene to be set.
      */
     public void setScene(Scene scene) {
-        if(this.scene != null) {
-            for(SystemBehavior system : this.scene.getSystems()) {
+        if (this.scene != null) {
+            for (SystemBehavior system : this.scene.getSystems()) {
                 system.dispose();
             }
             this.scene.dispose();
