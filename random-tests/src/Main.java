@@ -19,36 +19,20 @@ public class Main extends Scene {
     @Override
     public void onStart() {
         getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
-
-        instantiate(new Entity2DPrefab(new TextureRectangle(),  new PhysicsBody(), new Comp(), new RectangleCollider())).setContactAdapter(new ContactAdapter() {
-            Entity2D e, e1;
+        instantiate(new Entity2DPrefab(new TextureRectangle(), new PhysicsBody(), new Comp(), new RectangleCollider())).setContactAdapter(new ContactAdapter() {
+            Entity2D e = instantiate(new Entity2DPrefab(new Text()));
 
             @Override
             public void onContactBegin(Collider entity, Collider colliding) {
-                e = instantiate(new Entity2DPrefab(new Text("ENCOSTOU AAAAA")));
-                e.setVisible(true);
-                if (e1 != null)
-                    e1.setVisible(false);
+                e.getComponent(Text.class).setContents("COSTÔ");
             }
 
             @Override
             public void onContactEnd(Collider entity, Collider colliding) {
-                e1 = instantiate(new Entity2DPrefab(new Text("DESINCONSTAL AAAAA")));
-                e1.setVisible(true);
-                e.setVisible(false);
+                e.getComponent(Text.class).setContents("DESENCOSTÔ");
             }
         });
         instantiate(new Entity2DPrefab(new Rectangle(), new PhysicsBody(), new Comp2(), new RectangleCollider()));
-    }
-
-    @Override
-    public void onUpdate() {
-
-    }
-
-    @Override
-    public void dispose() {
-
     }
 }
 
@@ -59,8 +43,14 @@ class Comp extends ComponentBehavior {
 
     @Override
     public void onUpdate() {
-        getComponent(PhysicsBody.class).setLinearVelocity(new Vector2D(getApplication().getAxis("Horizontal") * 30, getApplication().getAxis("Vertical") * 30));
+        getComponent(PhysicsBody.class).setLinearVelocity(new Vector2D(getApplication().getAxis("Horizontal") * 300 * getTime().getDeltaTime(), getComponent(PhysicsBody.class).getLinearVelocity().y));
+        if (getApplication().getAxis("Fire") > 0)
+            getComponent(PhysicsBody.class).addForce(new Vector2D(0, 50), ForceType.LINEAR_IMPULSE);
         getApplication().getScene().getCamera().sumLocal(new Vector2D(getApplication().getAxis("HorizontalCam") * 30, getApplication().getAxis("VerticalCam") * 30));
+        if (getApplication().getAxis("RightFire") != 0)
+            getComponent(PhysicsBody.class).addForce(-getApplication().getAxis("RightFire") * 100, ForceType.ANGULAR_IMPULSE);
+        else
+            getComponent(PhysicsBody.class).addForce(getApplication().getAxis("LeftFire") * 100, ForceType.ANGULAR_IMPULSE);
     }
 
     @Override
@@ -79,6 +69,7 @@ class Comp2 extends ComponentBehavior {
     public void onStart() {
         getComponent(PhysicsBody.class).setPosition(new Vector2D(0, -720 / 2f));
         getComponent(PhysicsBody.class).setType(PhysicsType.STATIC);
+        getComponent(RectangleCollider.class).setFriction(0f);
     }
 
     @Override

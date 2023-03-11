@@ -81,8 +81,10 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     public void render(PlatformGraphics graphics) {
         if (visible)
             for (ComponentBehavior component : components)
-                if (component.getFrames() > 0)
+                if (component.getFrames() > 1) {
+                    graphics.resetRotation();
                     component.render(graphics);
+                }
     }
 
     @Override

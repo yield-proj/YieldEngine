@@ -34,6 +34,21 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
         getSystems().add(physicsSystem);
     }
 
+    @Override
+    public void onStart() {
+        
+    }
+
+    @Override
+    public void onUpdate() {
+
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
     public int getFrames() {
         return frames;
     }

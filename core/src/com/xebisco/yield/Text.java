@@ -3,7 +3,7 @@ package com.xebisco.yield;
 public class Text extends ComponentBehavior {
     private final DrawInstruction drawInstruction = new DrawInstruction();
     private Color color = Colors.LIGHT_BLUE.brighter();
-    private String contents = "Sample Text";
+    private String contents = "";
     private Font font = Global.getDefaultFont();
 
     private double width, height;

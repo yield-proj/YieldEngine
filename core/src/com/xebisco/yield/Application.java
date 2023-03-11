@@ -82,7 +82,6 @@ public class Application implements Behavior {
             platformGraphics.draw(drawInstruction);
             try {
                 for (Entity2D entity : scene.getEntities()) {
-                    platformGraphics.resetRotation();
                     entity.render(platformGraphics);
                 }
             } catch (ConcurrentModificationException ignore) {
@@ -92,6 +91,13 @@ public class Application implements Behavior {
         };
         axes.add(new Axis(Global.HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
         axes.add(new Axis(Global.VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
+        axes.add(new Axis("Fire", Input.Key.VK_SPACE, null, null, null));
+        axes.add(new Axis("Back", Input.Key.VK_BACK_SPACE, null, null, null));
+        axes.add(new Axis("Action", Input.Key.VK_E, null, null, null));
+        axes.add(new Axis("Inventory", Input.Key.VK_TAB, null, null, null));
+        axes.add(new Axis("Start",  Input.Key.VK_ESCAPE, null, null, null));
+        axes.add(new Axis("RightFire", Input.Key.VK_1, null, null, null));
+        axes.add(new Axis("LeftFire", Input.Key.VK_3, null, null, null));
         controllerManager = new ControllerManager(4);
         controllerManager.initSDLGamepad();
     }
@@ -112,24 +118,22 @@ public class Application implements Behavior {
             if (i > 0) {
                 axes.add(new Axis(Global.HORIZONTAL + a, null, null, null, null));
                 axes.add(new Axis(Global.VERTICAL + a, null, null, null, null));
+                axes.add(new Axis("Fire" + a, null, null, null, null));
+                axes.add(new Axis("Back" + a, null, null, null, null));
+                axes.add(new Axis("Action" + a, null, null, null, null));
+                axes.add(new Axis("Inventory" + a, null, null, null, null));
+                axes.add(new Axis("Start" + a, null, null, null, null));
+                axes.add(new Axis("RightFire" + a, null, null, null, null));
+                axes.add(new Axis("LeftFire" + a, null, null, null, null));
             }
             axes.add(new Axis("HorizontalCam" + a, null, null, null, null));
             axes.add(new Axis("VerticalCam" + a, null, null, null, null));
             axes.add(new Axis("HorizontalPad" + a, null, null, null, null));
             axes.add(new Axis("VerticalPad" + a, null, null, null, null));
-            axes.add(new Axis("RightFire" + a, null, null, null, null));
-            axes.add(new Axis("LeftFire" + a, null, null, null, null));
-            axes.add(new Axis("RightBumper" + a, null, null, null, null));
-            axes.add(new Axis("LeftBumper" + a, null, null, null, null));
             axes.add(new Axis("RightBumper" + a, null, null, null, null));
             axes.add(new Axis("LeftBumper" + a, null, null, null, null));
             axes.add(new Axis("RightThumb" + a, null, null, null, null));
             axes.add(new Axis("LeftThumb" + a, null, null, null, null));
-            axes.add(new Axis("Fire" + a, null, null, null, null));
-            axes.add(new Axis("Back" + a, null, null, null, null));
-            axes.add(new Axis("Action" + a, null, null, null, null));
-            axes.add(new Axis("Inventory" + a, null, null, null, null));
-            axes.add(new Axis("Start" + a, null, null, null, null));
             axes.add(new Axis("View" + a, null, null, null, null));
         }
     }
