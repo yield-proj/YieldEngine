@@ -74,8 +74,8 @@ public class PhysicsSystem extends SystemBehavior {
     /**
      * Raycast from point1 to point2 and return the closest hit.
      *
-     * @param requestingEntity The entity that is requesting the raycast.
-     * @param point1           The starting point of the raycast.
+     * @param requestingEntity The entity that is requesting the ray-cast.
+     * @param point1           The starting point of the ray-cast.
      * @param point2           The end point of the ray.
      * @return A RayCast object.
      */
