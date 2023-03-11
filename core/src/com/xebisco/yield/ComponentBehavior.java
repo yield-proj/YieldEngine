@@ -51,7 +51,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
     /**
      * Raycast from point1 to point2 and return the closest hit.
      *
-     * @param point1 The starting point of the raycast.
+     * @param point1 The starting point of the ray-cast.
      * @param point2 The end point of the ray.
      * @return A RayCast object.
      */
