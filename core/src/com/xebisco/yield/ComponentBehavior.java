@@ -16,16 +16,17 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.physics.RayCast;
+
 /**
  * ComponentBehavior is an abstract class that implements the Behavior and Renderable interfaces.
  * This the class is declared as abstract. This means that it cannot be instantiated. It
  * is only meant to be extended by other classes
  */
 public abstract class ComponentBehavior implements Behavior, Renderable {
+    public static final String HORIZONTAL = Global.HORIZONTAL, VERTICAL = Global.VERTICAL;
     private int frames;
     private Entity2D entity;
-
-    public static final String HORIZONTAL = Global.HORIZONTAL, VERTICAL = Global.VERTICAL;
 
     @Override
     public void onStart() {
@@ -45,6 +46,17 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
     @Override
     public void render(PlatformGraphics graphics) {
 
+    }
+
+    /**
+     * Raycast from point1 to point2 and return the closest hit.
+     *
+     * @param point1 The starting point of the raycast.
+     * @param point2 The end point of the ray.
+     * @return A RayCast object.
+     */
+    public final RayCast rayCast(Vector2D point1, Vector2D point2) {
+        return getApplication().getScene().getPhysicsSystem().rayCast(getEntity(), point1, point2);
     }
 
     /**

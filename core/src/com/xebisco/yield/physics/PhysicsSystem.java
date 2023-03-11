@@ -1,10 +1,12 @@
 package com.xebisco.yield.physics;
 
+import com.xebisco.yield.Entity2D;
 import com.xebisco.yield.Global;
 import com.xebisco.yield.SystemBehavior;
 import com.xebisco.yield.Vector2D;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.Manifold;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
@@ -20,6 +22,8 @@ public class PhysicsSystem extends SystemBehavior {
     public void onStart() {
         gravity = new Vec2(0, -10);
         b2World = new World(gravity);
+
+
         b2World.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
@@ -49,6 +53,21 @@ public class PhysicsSystem extends SystemBehavior {
                     c.getEntity().getContactAdapter().postSolve(contact, contactImpulse);
             }
         });
+    }
+
+    /**
+     * Raycast from point1 to point2 and return the closest hit.
+     *
+     * @param requestingEntity The entity that is requesting the raycast.
+     * @param point1           The starting point of the raycast.
+     * @param point2           The end point of the ray.
+     * @return A RayCast object.
+     */
+    public final RayCast rayCast(Entity2D requestingEntity, Vector2D point1, Vector2D point2) {
+        RayCast rayCastCallback = new RayCast();
+        rayCastCallback.setRequestEntity(requestingEntity);
+        b2World.raycast(rayCastCallback, Global.toVec2(point1), Global.toVec2(point2));
+        return rayCastCallback;
     }
 
     @Override
