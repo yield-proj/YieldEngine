@@ -13,8 +13,8 @@ import org.jbox2d.dynamics.contacts.Contact;
 public class PhysicsSystem extends SystemBehavior {
     private World b2World;
     private Vec2 gravity;
-    private int velocityIterations = 4;
-    private int positionIterations = 3;
+    private int velocityIterations = 6;
+    private int positionIterations = 2;
 
     @Override
     public void onStart() {
