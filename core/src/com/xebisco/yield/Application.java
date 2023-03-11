@@ -42,6 +42,7 @@ public class Application implements Behavior {
     private final Set<Axis> axes = new HashSet<>();
     private final ApplicationManager applicationManager;
     private final Runnable renderer;
+    private final AudioManager audioManager;
     private final Function<Throwable, Void> exceptionThrowFunction = throwable -> {
         throwable.printStackTrace();
         return null;
@@ -63,6 +64,9 @@ public class Application implements Behavior {
         if (platformGraphics instanceof InputManager)
             inputManager = (InputManager) platformGraphics;
         else inputManager = null;
+        if (platformGraphics instanceof AudioManager)
+            audioManager = (AudioManager) platformGraphics;
+        else audioManager = null;
         try {
             setScene(initialScene.getConstructor(Application.class).newInstance(this));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
@@ -393,5 +397,13 @@ public class Application implements Behavior {
 
     public void setPhysicsPpm(double physicsPpm) {
         this.physicsPpm = physicsPpm;
+    }
+
+    public AudioManager getAudioManager() {
+        return audioManager;
+    }
+
+    public ControllerManager getControllerManager() {
+        return controllerManager;
     }
 }

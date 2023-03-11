@@ -19,10 +19,7 @@ package com.xebisco.yield.swingimpl;
 import com.xebisco.yield.*;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Color;
@@ -538,7 +535,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureLoade
     }
 
     @Override
-    public Object loadAudio(Audio audio) {
+    public Object loadAudio(AudioPlayer audioPlayer) {
         Clip clip;
         try {
             clip = AudioSystem.getClip();
@@ -546,13 +543,12 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureLoade
             throw new RuntimeException(e);
         }
         try {
-
-            clip.open(AudioSystem.getAudioInputStream(audio.getInputStream()));
+            clip.open(AudioSystem.getAudioInputStream(audioPlayer.getAudioClip().getInputStream()));
         } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
             throw new RuntimeException(e);
         }
         try {
-            audio.getInputStream().close();
+            audioPlayer.getAudioClip().getInputStream().close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -560,63 +556,51 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureLoade
     }
 
     @Override
-    public void unloadAudio(Audio audio) {
-
-    }
-
-    @Override
-    public Object loadAudioPlayer(AudioPlayer audioPlayer) {
-        return null;
-    }
-
-    @Override
-    public void unloadAudioPlayer(AudioPlayer audioPlayer) {
-
+    public void unloadAudio(AudioPlayer audioPlayer) {
+        ((Clip) audioPlayer.getClipRef()).close();
+        audioPlayer.setClipRef(null);
     }
 
     @Override
     public void play(AudioPlayer audioPlayer) {
-
+        ((Clip) audioPlayer.getClipRef()).start();
     }
 
     @Override
     public void pause(AudioPlayer audioPlayer) {
-
+        ((Clip) audioPlayer.getClipRef()).stop();
     }
 
     @Override
     public double getLength(AudioPlayer audioPlayer) {
-        return 0;
+        return ((Clip) audioPlayer.getClipRef()).getMicrosecondLength() / 1000.0;
     }
 
     @Override
     public double getPosition(AudioPlayer audioPlayer) {
-        return 0;
+        return ((Clip) audioPlayer.getClipRef()).getMicrosecondPosition() / 1000.0;
     }
 
     @Override
     public void setPosition(AudioPlayer audioPlayer, double position) {
-
-    }
-
-    @Override
-    public double getGain(AudioPlayer audioPlayer) {
-        return 0;
+        ((Clip) audioPlayer.getClipRef()).setMicrosecondPosition((long) (position * 1000));
     }
 
     @Override
     public void setGain(AudioPlayer audioPlayer, double gain) {
-
-    }
-
-    @Override
-    public double getPan(AudioPlayer audioPlayer) {
-        return 0;
+        FloatControl gainControl = (FloatControl) ((Clip) audioPlayer.getClipRef()).getControl(FloatControl.Type.MASTER_GAIN);
+        gainControl.setValue(20f * (float) Math.log10(gain));
     }
 
     @Override
     public void setPan(AudioPlayer audioPlayer, double pan) {
+        FloatControl panControl = (FloatControl) ((Clip) audioPlayer.getClipRef()).getControl(FloatControl.Type.PAN);
+        panControl.setValue((float) pan);
+    }
 
+    @Override
+    public boolean isPlaying(AudioPlayer audioPlayer) {
+        return false;
     }
 
     private interface KeyAction {

@@ -17,13 +17,9 @@
 package com.xebisco.yield;
 
 public interface AudioManager {
-    Object loadAudio(Audio audio);
+    Object loadAudio(AudioPlayer audio);
 
-    void unloadAudio(Audio audio);
-
-    Object loadAudioPlayer(AudioPlayer audioPlayer);
-
-    void unloadAudioPlayer(AudioPlayer audioPlayer);
+    void unloadAudio(AudioPlayer audio);
 
     void play(AudioPlayer audioPlayer);
 
@@ -35,12 +31,10 @@ public interface AudioManager {
 
     void setPosition(AudioPlayer audioPlayer, double position);
 
-    double getGain(AudioPlayer audioPlayer);
-
     void setGain(AudioPlayer audioPlayer, double gain);
 
-    double getPan(AudioPlayer audioPlayer);
-
     void setPan(AudioPlayer audioPlayer, double pan);
+
+    boolean isPlaying(AudioPlayer audioPlayer);
 }
 
