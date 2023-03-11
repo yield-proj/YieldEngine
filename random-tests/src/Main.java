@@ -11,6 +11,8 @@ public class Main extends Scene {
         time.setTargetSleepTime(16666);
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
+        platformInit.setResolution(new Size2D(1920, 1080));
+        platformInit.setFullscreen(true);
         Application application = new Application(applicationManager, Main.class, Global.swingPlatform(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
