@@ -100,8 +100,8 @@ public class Application implements Behavior {
         axes.add(new Axis("Action", Input.Key.VK_E, null, null, null));
         axes.add(new Axis("Inventory", Input.Key.VK_TAB, null, null, null));
         axes.add(new Axis("Start",  Input.Key.VK_ESCAPE, null, null, null));
-        axes.add(new Axis("RightFire", Input.Key.VK_1, null, null, null));
-        axes.add(new Axis("LeftFire", Input.Key.VK_3, null, null, null));
+        axes.add(new Axis("RightFire", Input.Key.VK_3, null, null, null));
+        axes.add(new Axis("LeftFire", Input.Key.VK_1, null, null, null));
         controllerManager = new ControllerManager(4);
         controllerManager.initSDLGamepad();
     }
