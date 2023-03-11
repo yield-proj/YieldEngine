@@ -16,15 +16,21 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.editoruse.VisibleOnInspector;
+
 /**
  * It's a behavior that draws a rectangle
  */
 public class Rectangle extends ComponentBehavior {
 
     private final DrawInstruction drawInstruction = new DrawInstruction();
+    @VisibleOnInspector
     private final Size2D size = new Size2D(100, 100);
+    @VisibleOnInspector
     private Color color = Colors.LIGHT_BLUE.brighter(), borderColor = Colors.BLACK;
+    @VisibleOnInspector
     private double borderThickness;
+    @VisibleOnInspector
     private boolean filled = true;
 
     @Override

@@ -1,9 +1,11 @@
 package com.xebisco.yield.physics;
 
+import com.xebisco.yield.editoruse.VisibleOnInspector;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.Shape;
 
 public class CircleCollider extends Collider {
+    @VisibleOnInspector
     private double radius = 50;
     @Override
     public Shape getShape() {

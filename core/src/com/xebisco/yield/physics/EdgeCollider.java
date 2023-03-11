@@ -1,12 +1,13 @@
 package com.xebisco.yield.physics;
 
 import com.xebisco.yield.Point2D;
+import com.xebisco.yield.editoruse.VisibleOnInspector;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
 public class EdgeCollider extends Collider {
-
+    @VisibleOnInspector
     private Point2D point1 = new Point2D(-50, 0), point2 = new Point2D(50, 0);
 
     @Override

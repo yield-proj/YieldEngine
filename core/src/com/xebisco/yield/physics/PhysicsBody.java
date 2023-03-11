@@ -1,6 +1,7 @@
 package com.xebisco.yield.physics;
 
 import com.xebisco.yield.*;
+import com.xebisco.yield.editoruse.VisibleOnInspector;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -10,8 +11,11 @@ import org.jbox2d.dynamics.Fixture;
 public class PhysicsBody extends ComponentBehavior {
 
     private Body b2Body;
+    @VisibleOnInspector
     private PhysicsType type = PhysicsType.DYNAMIC;
+    @VisibleOnInspector
     private double gravityScale = 1, mass = 1;
+    @VisibleOnInspector
     private boolean bullet, fixedRotation;
 
     @Override
@@ -128,5 +132,29 @@ public class PhysicsBody extends ComponentBehavior {
 
     public void setB2Body(Body b2Body) {
         this.b2Body = b2Body;
+    }
+
+    public double getMass() {
+        return mass;
+    }
+
+    public void setMass(double mass) {
+        this.mass = mass;
+    }
+
+    public boolean isBullet() {
+        return bullet;
+    }
+
+    public void setBullet(boolean bullet) {
+        this.bullet = bullet;
+    }
+
+    public boolean isFixedRotation() {
+        return fixedRotation;
+    }
+
+    public void setFixedRotation(boolean fixedRotation) {
+        this.fixedRotation = fixedRotation;
     }
 }

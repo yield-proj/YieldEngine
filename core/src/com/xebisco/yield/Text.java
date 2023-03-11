@@ -1,9 +1,14 @@
 package com.xebisco.yield;
 
+import com.xebisco.yield.editoruse.VisibleOnInspector;
+
 public class Text extends ComponentBehavior {
     private final DrawInstruction drawInstruction = new DrawInstruction();
+    @VisibleOnInspector
     private Color color = Colors.LIGHT_BLUE.brighter();
+    @VisibleOnInspector
     private String contents = "";
+    @VisibleOnInspector
     private Font font = Global.getDefaultFont();
 
     private double width, height;
