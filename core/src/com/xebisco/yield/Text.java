@@ -22,15 +22,6 @@ public class Text extends ComponentBehavior {
     }
 
     @Override
-    public void onUpdate() {
-        drawInstruction.setRenderRef(contents);
-        drawInstruction.setFont(font);
-        drawInstruction.setRotation(getEntity().getTransform().getzRotation());
-        drawInstruction.setInnerColor(color);
-        drawInstruction.setPosition(getEntity().getTransform().getPosition());
-    }
-
-    @Override
     public void dispose() {
 
     }
@@ -38,6 +29,11 @@ public class Text extends ComponentBehavior {
     @Override
     public void render(PlatformGraphics graphics) {
         if (font != null) {
+            drawInstruction.setRenderRef(contents);
+            drawInstruction.setFont(font);
+            drawInstruction.setRotation(getEntity().getTransform().getzRotation());
+            drawInstruction.setInnerColor(color);
+            drawInstruction.setPosition(getEntity().getTransform().getPosition());
             width = ((FontLoader) graphics).getStringWidth(contents, font.getFontRef());
             height = ((FontLoader) graphics).getStringHeight(contents, font.getFontRef());
             if (drawInstruction.getSize() != null) {

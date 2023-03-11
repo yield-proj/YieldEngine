@@ -16,11 +16,9 @@
 
 package com.xebisco.yield;
 
-import com.github.strikerx3.jxinput.XInputAxes;
-import com.github.strikerx3.jxinput.XInputButtons;
-import com.github.strikerx3.jxinput.XInputComponents;
-import com.github.strikerx3.jxinput.XInputDevice;
-import com.github.strikerx3.jxinput.exceptions.XInputNotLoadedException;
+import com.studiohartman.jamepad.ControllerManager;
+import com.studiohartman.jamepad.ControllerState;
+import com.studiohartman.jamepad.ControllerUnpluggedException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ConcurrentModificationException;
@@ -48,7 +46,7 @@ public class Application implements Behavior {
         throwable.printStackTrace();
         return null;
     };
-    private final XInputDevice[] gamePads;
+    private final ControllerManager controllerManager;
     private int frames;
     private Scene scene;
     private double physicsPpm = 16;
@@ -66,7 +64,7 @@ public class Application implements Behavior {
             inputManager = (InputManager) platformGraphics;
         else inputManager = null;
         try {
-            scene = initialScene.getConstructor(Application.class).newInstance(this);
+            setScene(initialScene.getConstructor(Application.class).newInstance(this));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
@@ -79,7 +77,7 @@ public class Application implements Behavior {
             drawInstruction.setFilled(true);
             drawInstruction.setInnerColor(scene.getBackGroundColor());
             drawInstruction.setType(DrawInstruction.Type.RECTANGLE);
-            drawInstruction.setPosition(new Point2D(0, 0));
+            drawInstruction.setPosition(platformGraphics.getCamera());
             drawInstruction.setSize(platformInit.getResolution());
             platformGraphics.draw(drawInstruction);
             try {
@@ -94,17 +92,8 @@ public class Application implements Behavior {
         };
         axes.add(new Axis(Global.HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
         axes.add(new Axis(Global.VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
-        if (XInputDevice.isAvailable()) {
-            try {
-                gamePads = XInputDevice.getAllDevices();
-            } catch (XInputNotLoadedException e) {
-                throw new RuntimeException(e);
-            }
-
-        } else {
-            gamePads = null;
-            System.err.println("WARNING: XInput is not available!");
-        }
+        controllerManager = new ControllerManager(4);
+        controllerManager.initSDLGamepad();
     }
 
     @Override
@@ -116,13 +105,41 @@ public class Application implements Behavior {
         if (platformInit.getWindowIcon() == null)
             platformInit.setWindowIcon(Global.getDefaultTexture());
         platformGraphics.init(platformInit);
-        for (XInputDevice device : gamePads) {
-            if (device.getPlayerNum() > 0) {
-                axes.add(new Axis(Global.HORIZONTAL + (device.getPlayerNum() + 1), null, null, null, null));
-                axes.add(new Axis(Global.VERTICAL + (device.getPlayerNum() + 1), null, null, null, null));
+        for (int i = 0; i < 4; i++) {
+            String a = String.valueOf((i + 1));
+            if (i == 0)
+                a = "";
+            if (i > 0) {
+                axes.add(new Axis(Global.HORIZONTAL + a, null, null, null, null));
+                axes.add(new Axis(Global.VERTICAL + a, null, null, null, null));
             }
-            axes.add(new Axis("CamHorizontal" + (device.getPlayerNum() + 1), null, null, null, null));
-            axes.add(new Axis("CamVertical" + (device.getPlayerNum() + 1), null, null, null, null));
+            axes.add(new Axis("HorizontalCam" + a, null, null, null, null));
+            axes.add(new Axis("VerticalCam" + a, null, null, null, null));
+            axes.add(new Axis("HorizontalPad" + a, null, null, null, null));
+            axes.add(new Axis("VerticalPad" + a, null, null, null, null));
+            axes.add(new Axis("RightFire" + a, null, null, null, null));
+            axes.add(new Axis("LeftFire" + a, null, null, null, null));
+            axes.add(new Axis("RightBumper" + a, null, null, null, null));
+            axes.add(new Axis("LeftBumper" + a, null, null, null, null));
+            axes.add(new Axis("RightBumper" + a, null, null, null, null));
+            axes.add(new Axis("LeftBumper" + a, null, null, null, null));
+            axes.add(new Axis("RightThumb" + a, null, null, null, null));
+            axes.add(new Axis("LeftThumb" + a, null, null, null, null));
+            axes.add(new Axis("Fire" + a, null, null, null, null));
+            axes.add(new Axis("Back" + a, null, null, null, null));
+            axes.add(new Axis("Action" + a, null, null, null, null));
+            axes.add(new Axis("Inventory" + a, null, null, null, null));
+            axes.add(new Axis("Start" + a, null, null, null, null));
+            axes.add(new Axis("View" + a, null, null, null, null));
+        }
+    }
+
+
+    public void vibrateController(int playerIndex, double leftMagnitude, double rightMagnitude, double duration) {
+        try {
+            controllerManager.getControllerIndex(playerIndex).doVibration((float) leftMagnitude, (float) rightMagnitude, (int) duration * 1000);
+        } catch (ControllerUnpluggedException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -136,32 +153,72 @@ public class Application implements Behavior {
                 axis.setValue(0);
             }
         }
-        for (XInputDevice device : gamePads) {
-            device.poll();
-            if (device.isConnected()) {
-                XInputComponents components = device.getComponents();
-                XInputButtons buttons = components.getButtons();
-                XInputAxes axes = components.getAxes();
-                String a = String.valueOf((device.getPlayerNum() + 1));
-                if (device.getPlayerNum() == 0)
+        controllerManager.update();
+        for (int i = 0; i < controllerManager.getNumControllers(); i++) {
+            ControllerState device = controllerManager.getState(i);
+            if (device.isConnected) {
+                String a = String.valueOf(i + 1);
+                if (i == 0)
                     a = "";
                 for (Axis axis : this.axes) {
                     if (axis.getName().equals(Global.HORIZONTAL + a)) {
-                        axis.setValue(axes.lx);
+                        axis.setValue(device.leftStickX);
                         if (Math.abs(axis.getValue()) < 0.1)
                             axis.setValue(0);
                     } else if (axis.getName().equals(Global.VERTICAL + a)) {
-                        axis.setValue(axes.ly);
+                        axis.setValue(device.leftStickY);
                         if (Math.abs(axis.getValue()) < 0.1)
                             axis.setValue(0);
-                    } else if (axis.getName().equals("CamHorizontal" + a)) {
-                        axis.setValue(axes.rx);
+                    } else if (axis.getName().equals("HorizontalCam" + a)) {
+                        axis.setValue(device.rightStickX);
                         if (Math.abs(axis.getValue()) < 0.1)
                             axis.setValue(0);
-                    } else if (axis.getName().equals("CamVertical" + a)) {
-                        axis.setValue(axes.ry);
+                    } else if (axis.getName().equals("VerticalCam" + a)) {
+                        axis.setValue(device.rightStickY);
                         if (Math.abs(axis.getValue()) < 0.1)
                             axis.setValue(0);
+                    } else if (axis.getName().equals("RightFire" + a)) {
+                        axis.setValue(device.rightTrigger);
+                    } else if (axis.getName().equals("LeftFire" + a)) {
+                        axis.setValue(device.leftTrigger);
+                    } else if (axis.getName().equals("HorizontalPad" + a)) {
+                        if (device.dpadRight) axis.setValue(1);
+                        else if (device.dpadLeft) axis.setValue(-1);
+                        else axis.setValue(0);
+                    } else if (axis.getName().equals("VerticalPad" + a)) {
+                        if (device.dpadUp) axis.setValue(1);
+                        else if (device.dpadDown) axis.setValue(-1);
+                        else axis.setValue(0);
+                    } else if (axis.getName().equals("Fire" + a)) {
+                        if (device.a) axis.setValue(1);
+                        else axis.setValue(0);
+                    } else if (axis.getName().equals("Action" + a)) {
+                        if (device.x) axis.setValue(1);
+                        else axis.setValue(0);
+                    } else if (axis.getName().equals("Back" + a)) {
+                        if (device.b) axis.setValue(1);
+                        else axis.setValue(0);
+                    } else if (axis.getName().equals("Inventory" + a)) {
+                        if (device.y) axis.setValue(1);
+                        else axis.setValue(0);
+                    } else if (axis.getName().equals("RightBumper" + a)) {
+                        if (device.rb) axis.setValue(1);
+                        else axis.setValue(0);
+                    } else if (axis.getName().equals("LeftBumper" + a)) {
+                        if (device.lb) axis.setValue(1);
+                        else axis.setValue(0);
+                    } else if (axis.getName().equals("RightThumb" + a)) {
+                        if (device.rightStickClick) axis.setValue(1);
+                        else axis.setValue(0);
+                    } else if (axis.getName().equals("LeftThumb" + a)) {
+                        if (device.leftStickClick) axis.setValue(1);
+                        else axis.setValue(0);
+                    } else if (axis.getName().equals("Start" + a)) {
+                        if (device.start) axis.setValue(1);
+                        else axis.setValue(0);
+                    } else if (axis.getName().equals("View" + a)) {
+                        if (device.back) axis.setValue(1);
+                        else axis.setValue(0);
                     }
                 }
             }
@@ -217,6 +274,7 @@ public class Application implements Behavior {
     @Override
     public void dispose() {
         setScene(null);
+        controllerManager.quitSDLGamepad();
         platformGraphics.dispose();
     }
 
@@ -279,12 +337,14 @@ public class Application implements Behavior {
      */
     public void setScene(Scene scene) {
         if (this.scene != null) {
+            System.out.println(platformGraphics.getCamera());
             for (SystemBehavior system : this.scene.getSystems()) {
                 system.dispose();
             }
             this.scene.dispose();
         }
         this.scene = scene;
+        platformGraphics.setCamera(scene.getCamera());
     }
 
     public PlatformInit getPlatformInit() {

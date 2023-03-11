@@ -23,6 +23,7 @@ import java.util.Set;
 
 public abstract class Scene extends Entity2DContainer implements Behavior {
     private int frames;
+    private final Point2D camera = new Point2D();
     private Color backGroundColor = Colors.GRAY.darker();
     private Set<SystemBehavior> systems = new HashSet<>();
 
@@ -59,5 +60,9 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
 
     public PhysicsSystem getPhysicsSystem() {
         return physicsSystem;
+    }
+
+    public Point2D getCamera() {
+        return camera;
     }
 }

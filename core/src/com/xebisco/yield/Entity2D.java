@@ -81,7 +81,8 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     public void render(PlatformGraphics graphics) {
         if (visible)
             for (ComponentBehavior component : components)
-                component.render(graphics);
+                if (component.getFrames() > 0)
+                    component.render(graphics);
     }
 
     @Override

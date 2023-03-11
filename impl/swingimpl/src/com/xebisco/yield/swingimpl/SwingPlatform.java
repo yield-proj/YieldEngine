@@ -52,6 +52,8 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureLoade
     private AffineTransform defaultTransform = new AffineTransform();
     private boolean stretch;
 
+    private Point2D camera;
+
     public static Dimension onSizeBoundary(Image image, Dimension boundary) {
         int original_width = image.getWidth(null);
         int original_height = image.getHeight(null);
@@ -72,6 +74,16 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureLoade
 
     public static Color awtColor(com.xebisco.yield.Color yieldColor) {
         return new Color(yieldColor.getRGBA(), true);
+    }
+
+    @Override
+    public Point2D getCamera() {
+        return camera;
+    }
+
+    @Override
+    public void setCamera(Point2D camera) {
+        this.camera = camera;
     }
 
     @Override
@@ -351,10 +363,10 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureLoade
 
     @Override
     public void draw(DrawInstruction drawInstruction) {
-        int x = (int) (drawInstruction.getPosition().getX() - drawInstruction.getSize().getWidth() / 2.0) + renderImage.getWidth() / 2,
-                y = (int) (-drawInstruction.getPosition().getY() - drawInstruction.getSize().getHeight() / 2.0) + renderImage.getHeight() / 2,
-                w = (int) drawInstruction.getSize().getWidth(),
-                h = (int) drawInstruction.getSize().getHeight();
+        int w = (int) (drawInstruction.getSize().getWidth()),
+                h = (int) (drawInstruction.getSize().getHeight()),
+                x = (int) (drawInstruction.getPosition().getX() - w / 2.0 - camera.getX()) + renderImage.getWidth() / 2,
+                y = (int) (-drawInstruction.getPosition().getY() - h / 2.0 + camera.getY()) + renderImage.getHeight() / 2;
         if (drawInstruction.getRotation() != 0)
             graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), x + w / 2.0, y + h / 2.0);
         switch (drawInstruction.getType()) {
@@ -632,5 +644,37 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureLoade
             g.drawImage(renderImage, (getWidth() - bounds.width) / 2, (getHeight() - bounds.height) / 2, bounds.width, bounds.height, this);
             g.dispose();
         }
+    }
+
+    public Point2D getMousePosition() {
+        return mousePosition;
+    }
+
+    public KeyAction getAddKeyAction() {
+        return addKeyAction;
+    }
+
+    public KeyAction getRemoveKeyAction() {
+        return removeKeyAction;
+    }
+
+    public Dimension getBounds() {
+        return bounds;
+    }
+
+    public MouseButtonAction getAddBtnAction() {
+        return addBtnAction;
+    }
+
+    public MouseButtonAction getRemoveBtnAction() {
+        return removeBtnAction;
+    }
+
+    public boolean isStretch() {
+        return stretch;
+    }
+
+    public void setStretch(boolean stretch) {
+        this.stretch = stretch;
     }
 }

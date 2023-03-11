@@ -55,4 +55,8 @@ public interface PlatformGraphics extends Disposable {
      * This is the last function called in render.
      */
     void conclude();
+
+    Point2D getCamera();
+
+    void setCamera(Point2D camera);
 }

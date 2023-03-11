@@ -34,7 +34,12 @@ public class Rectangle extends ComponentBehavior {
     }
 
     @Override
-    public void onUpdate() {
+    public void dispose() {
+
+    }
+
+    @Override
+    public void render(PlatformGraphics graphics) {
         drawInstruction.setRotation(getEntity().getTransform().getzRotation());
         drawInstruction.setFilled(filled);
         if (borderThickness != 0)
@@ -42,22 +47,13 @@ public class Rectangle extends ComponentBehavior {
         else drawInstruction.setBorderColor(null);
         drawInstruction.setInnerColor(color);
         drawInstruction.setPosition(getEntity().getTransform().getPosition());
+        if(drawInstruction.getSize() == null) drawInstruction.setSize(new Size2D(1, 1));
         drawInstruction.getSize().set(
                 size.getWidth() * getEntity().getTransform().getScale().getX(),
                 size.getHeight() * getEntity().getTransform().getScale().getY()
         );
         drawInstruction.setBorderThickness(borderThickness);
-    }
-
-    @Override
-    public void dispose() {
-
-    }
-
-    @Override
-    public void render(PlatformGraphics graphics) {
-        if (drawInstruction.getPosition() != null)
-            graphics.draw(drawInstruction);
+        graphics.draw(drawInstruction);
     }
 
     /**
