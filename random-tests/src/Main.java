@@ -27,8 +27,8 @@ public class Main extends Scene {
         time.setTargetSleepTime(16666);
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
-        platformInit.setResolution(new Size2D(1920, 1080));
         platformInit.setFullscreen(true);
+        platformInit.setResolution(new Size2D(1920, 1080));
         Application application = new Application(applicationManager, Main.class, Global.swingPlatform(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
@@ -57,6 +57,11 @@ public class Main extends Scene {
 class Comp extends ComponentBehavior {
     @Override
     public void onStart() {
+        getComponent(TextureRectangle.class).setPixelProcessor(pixel -> {
+            pixel.setAsOriginal();
+            pixel.setX(pixel.getX() + 100);
+            return pixel;
+        });
     }
 
     @Override

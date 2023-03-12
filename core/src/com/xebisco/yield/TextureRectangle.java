@@ -16,9 +16,13 @@
 
 package com.xebisco.yield;
 
-public class TextureRectangle extends Rectangle {
+import com.xebisco.yield.editoruse.VisibleOnInspector;
 
+public class TextureRectangle extends Rectangle {
+    @VisibleOnInspector
     private Texture texture = Global.getDefaultTexture();
+    @VisibleOnInspector
+    private PixelProcessor pixelProcessor;
 
     @Override
     public void onStart() {
@@ -29,7 +33,14 @@ public class TextureRectangle extends Rectangle {
     @Override
     public void onUpdate() {
         super.onUpdate();
+        if (pixelProcessor != null)
+            texture.processPixels(pixelProcessor);
+    }
+
+    @Override
+    public void render(PlatformGraphics graphics) {
         getDrawInstruction().setRenderRef(texture.getImageRef());
+        super.render(graphics);
     }
 
     public Texture getTexture() {
@@ -38,5 +49,13 @@ public class TextureRectangle extends Rectangle {
 
     public void setTexture(Texture texture) {
         this.texture = texture;
+    }
+
+    public PixelProcessor getPixelProcessor() {
+        return pixelProcessor;
+    }
+
+    public void setPixelProcessor(PixelProcessor pixelProcessor) {
+        this.pixelProcessor = pixelProcessor;
     }
 }

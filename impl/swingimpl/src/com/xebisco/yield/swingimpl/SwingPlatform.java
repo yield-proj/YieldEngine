@@ -26,12 +26,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class SwingPlatform implements PlatformGraphics, FontLoader, TextureLoader, InputManager, KeyListener, MouseListener, MouseWheelListener, AudioManager {
+public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, AudioManager {
     private final HashSet<Input.Key> pressingKeys = new HashSet<>();
     private final HashSet<Input.MouseButton> pressingMouseButtons = new HashSet<>();
     private final Point2D mousePosition = new Point2D();
@@ -70,7 +71,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureLoade
     }
 
     public static Color awtColor(com.xebisco.yield.Color yieldColor) {
-        return new Color(yieldColor.getRGBA(), true);
+        return new Color(yieldColor.getARGB(), true);
     }
 
     @Override
@@ -126,13 +127,25 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureLoade
     }
 
     @Override
+    public void setPixels(Object imageRef, int[] pixels) {
+        BufferedImage image = (BufferedImage) imageRef;
+        image.setRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
+    }
+
+    @Override
+    public int[] getPixels(Object imageRef) {
+        BufferedImage image = (BufferedImage) imageRef;
+        return image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
+    }
+
+    @Override
     public int getImageWidth(Object imageRef) {
-        return 0;
+        return ((BufferedImage) imageRef).getWidth();
     }
 
     @Override
     public int getImageHeight(Object imageRef) {
-        return 0;
+        return ((BufferedImage) imageRef).getHeight();
     }
 
     @Override

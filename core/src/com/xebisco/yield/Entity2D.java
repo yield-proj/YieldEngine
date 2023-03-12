@@ -31,7 +31,7 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     private List<ComponentBehavior> components = new ArrayList<>();
     private int index;
     private FontLoader fontLoader;
-    private TextureLoader textureLoader;
+    private TextureManager textureManager;
     private ContactAdapter contactAdapter;
     private int frames;
     private boolean visible = true;
@@ -236,12 +236,12 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
         this.fontLoader = fontLoader;
     }
 
-    public TextureLoader getTextureLoader() {
-        return textureLoader;
+    public TextureManager getTextureLoader() {
+        return textureManager;
     }
 
-    public void setTextureLoader(TextureLoader textureLoader) {
-        this.textureLoader = textureLoader;
+    public void setTextureLoader(TextureManager textureManager) {
+        this.textureManager = textureManager;
     }
 
     public Application getApplication() {

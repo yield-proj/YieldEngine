@@ -25,11 +25,36 @@ public class Color {
 
     private double red, green, blue, alpha;
 
-    public Color(long rgba) {
-        alpha = ((rgba >> 24) & 0xFF) / 255f;
-        red = ((rgba >> 16) & 0xFF) / 255f;
-        green = ((rgba >> 8) & 0xFF) / 255f;
-        blue = ((rgba) & 0xFF) / 255f;
+    public enum Format {
+        RGB, RGBA, ARGB
+    }
+
+    public Color(long color) {
+        this(color, Format.ARGB);
+    }
+
+    public Color(long color, Format format) {
+        switch (format) {
+            case RGB -> {
+                red = ((color >> 16) & 0xFF) / 255f;
+                green = ((color >> 8) & 0xFF) / 255f;
+                blue = ((color) & 0xFF) / 255f;
+                alpha = 1;
+            }
+            case RGBA -> {
+                red = ((color >> 24) & 0xFF) / 255f;
+                green = ((color >> 16) & 0xFF) / 255f;
+                blue = ((color >> 8) & 0xFF) / 255f;
+                alpha = ((color) & 0xFF) / 255f;
+            }
+            case ARGB -> {
+                alpha = ((color >> 24) & 0xFF) / 255f;
+                red = ((color >> 16) & 0xFF) / 255f;
+                green = ((color >> 8) & 0xFF) / 255f;
+                blue = ((color) & 0xFF) / 255f;
+            }
+        }
+
     }
 
     public Color(Color toCopy) {
@@ -52,6 +77,7 @@ public class Color {
         this.blue = Global.clamp(blue, 0, 1);
         this.alpha = 1f;
     }
+
     public Color(double red, double green, double blue, double alpha) {
         this.red = Global.clamp(red, 0, 1);
         this.green = Global.clamp(green, 0, 1);
@@ -171,29 +197,31 @@ public class Color {
         this.alpha = Global.clamp(alpha, 0, 1);
     }
 
-    /**
-     * It converts the RGB values of a color to a hexadecimal value, then converts that hexadecimal value to an integer
-     *
-     * @return The RGB value of the color.
-     */
     public int getRGB() {
-        String hex = String.format("%02X%02X%02X", (int) (red * 255.0), (int) (green * 255.0), (int) (blue * 255.0));
-        return Integer.parseInt(hex, 16);
+        int rgb = (int) (red * 255.0);
+        rgb = (rgb << 8) + (int) (green * 255.0);
+        rgb = (rgb << 8) + (int) (blue * 255.0);
+        return rgb;
     }
 
-    /**
-     * It converts the color to a hexadecimal string, then converts that string to an integer
-     *
-     * @return The hexadecimal value of the color.
-     */
+    public int getARGB() {
+        int rgb = (int) (alpha * 255.0);
+        rgb = (rgb << 8) + (int) (red * 255.0);
+        rgb = (rgb << 8) + (int) (green * 255.0);
+        rgb = (rgb << 8) + (int) (blue * 255.0);
+        return rgb;
+    }
+
     public int getRGBA() {
-        String hex = String.format("%02X%02X%02X%02X", (int) (alpha * 255.0), (int) (red * 255.0), (int) (green * 255.0), (int) (blue * 255.0));
-        return Integer.parseUnsignedInt(hex, 16);
+        int rgb = (int) (red * 255.0);
+        rgb = (rgb << 8) + (int) (green * 255.0);
+        rgb = (rgb << 8) + (int) (blue * 255.0);
+        rgb = (rgb << 8) + (int) (alpha * 255.0);
+        return rgb;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Color color = (Color) o;
@@ -201,14 +229,12 @@ public class Color {
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(red, green, blue, alpha);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Color{" +
                 "red=" + red +
                 ", green=" + green +

@@ -36,7 +36,7 @@ public class Application implements Behavior {
     private final PlatformInit platformInit;
     private final Object renderLock = new Object();
     private final FontLoader fontLoader;
-    private final TextureLoader textureLoader;
+    private final TextureManager textureManager;
     private final InputManager inputManager;
     private final DrawInstruction drawInstruction = new DrawInstruction();
     private final Set<Axis> axes = new HashSet<>();
@@ -58,9 +58,9 @@ public class Application implements Behavior {
         if (platformGraphics instanceof FontLoader)
             fontLoader = (FontLoader) platformGraphics;
         else fontLoader = null;
-        if (platformGraphics instanceof TextureLoader)
-            textureLoader = (TextureLoader) platformGraphics;
-        else textureLoader = null;
+        if (platformGraphics instanceof TextureManager)
+            textureManager = (TextureManager) platformGraphics;
+        else textureManager = null;
         if (platformGraphics instanceof InputManager)
             inputManager = (InputManager) platformGraphics;
         else inputManager = null;
@@ -111,7 +111,7 @@ public class Application implements Behavior {
         if (Global.getDefaultFont() == null)
             Global.setDefaultFont(new Font("OpenSans-Regular.ttf", 48, fontLoader));
         if (Global.getDefaultTexture() == null)
-            Global.setDefaultTexture(new Texture("yieldIcon.png", textureLoader));
+            Global.setDefaultTexture(new Texture("yieldIcon.png", textureManager));
         if (platformInit.getWindowIcon() == null)
             platformInit.setWindowIcon(Global.getDefaultTexture());
         platformGraphics.init(platformInit);
@@ -367,8 +367,8 @@ public class Application implements Behavior {
         return fontLoader;
     }
 
-    public TextureLoader getTextureLoader() {
-        return textureLoader;
+    public TextureManager getTextureLoader() {
+        return textureManager;
     }
 
     public InputManager getInputManager() {
