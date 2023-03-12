@@ -28,7 +28,6 @@ public class Main extends Scene {
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
         platformInit.setFullscreen(true);
-        platformInit.setResolution(new Size2D(1920, 1080));
         Application application = new Application(applicationManager, Main.class, Global.swingPlatform(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
@@ -57,7 +56,7 @@ public class Main extends Scene {
 class Comp extends ComponentBehavior {
     @Override
     public void onStart() {
-        getComponent(TextureRectangle.class).setPixelProcessor(new PixelProcessor() {
+        getComponent(TextureRectangle.class).getTexture().process(new PixelProcessor() {
             @Override
             public void run() {
                 int i = getGlobalId() * 4;
@@ -67,6 +66,7 @@ class Comp extends ComponentBehavior {
                 pixels[i + 3] = originalPixels[i + 3];
             }
         });
+        getComponent(TextureRectangle.class).setSize(new Size2D(400, 400));
     }
 
     @Override
@@ -74,6 +74,8 @@ class Comp extends ComponentBehavior {
         getComponent(PhysicsBody.class).setLinearVelocity(new Vector2D(getApplication().getAxis("Horizontal") * 300 * getTime().getDeltaTime(), getComponent(PhysicsBody.class).getLinearVelocity().y));
         if (getApplication().getAxis("Fire") > 0)
             getComponent(PhysicsBody.class).addForce(new Vector2D(0, 50), ForceType.LINEAR_IMPULSE);
+        if (getApplication().getAxis("Back") > 0)
+            getComponent(PhysicsBody.class).addForce(new Vector2D(0, -999999999), ForceType.LINEAR_IMPULSE);
         getApplication().getScene().getCamera().sumLocal(new Vector2D(getApplication().getAxis("HorizontalCam") * 30, getApplication().getAxis("VerticalCam") * 30));
         if (getApplication().getAxis("RightFire") != 0)
             getComponent(PhysicsBody.class).addForce(-getApplication().getAxis("RightFire") * 100, ForceType.ANGULAR_IMPULSE);

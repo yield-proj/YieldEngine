@@ -25,7 +25,7 @@ public class Rectangle extends ComponentBehavior {
 
     private final DrawInstruction drawInstruction = new DrawInstruction();
     @VisibleOnInspector
-    private final Size2D size = new Size2D(100, 100);
+    private Size2D size = new Size2D(100, 100);
     @VisibleOnInspector
     private Color color = Colors.LIGHT_BLUE.brighter(), borderColor = Colors.BLACK;
     @VisibleOnInspector
@@ -150,5 +150,9 @@ public class Rectangle extends ComponentBehavior {
      */
     public Size2D getSize() {
         return size;
+    }
+
+    public void setSize(Size2D size) {
+        this.size = size;
     }
 }
