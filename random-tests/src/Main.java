@@ -27,6 +27,7 @@ public class Main extends Scene {
         time.setTargetSleepTime(16666);
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
+        platformInit.setFullscreen(true);
         Application application = new Application(applicationManager, Main.class, Global.swingPlatform(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
@@ -65,12 +66,11 @@ class Comp extends ComponentBehavior {
                 pixels[i + 3] = originalPixels[i + 3];
             }
         });*/
-        getComponent(TextureRectangle.class).setSize(new Size2D(400, 400));
     }
 
     @Override
     public void onUpdate() {
-        getApplication().getScene().getCamera().sumLocal(new Vector2D(getApplication().getAxis("Horizontal"), getApplication().getAxis("Vertical")));
+        getComponent(PhysicsBody.class).setLinearVelocity(new Vector2D(getApplication().getAxis("Horizontal"), getComponent(PhysicsBody.class).getLinearVelocity().y));
         if (getApplication().getAxis("Fire") > 0)
             getComponent(PhysicsBody.class).addForce(new Vector2D(0, 50), ForceType.LINEAR_IMPULSE);
         if (getApplication().getAxis("Back") > 0)

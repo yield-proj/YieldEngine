@@ -45,6 +45,7 @@ public class Application implements Behavior {
     private final Runnable renderer;
     private final AudioManager audioManager;
     private final Texture controllerTexture;
+    private final Texture translucentControllerTexture;
     private final Function<Throwable, Void> exceptionThrowFunction = throwable -> {
         throwable.printStackTrace();
         return null;
@@ -114,6 +115,18 @@ public class Application implements Behavior {
         axes.add(new Axis("RightBumper", Input.Key.VK_F, null, null, null));
         axes.add(new Axis("LeftBumper", Input.Key.VK_G, null, null, null));
         controllerTexture = new Texture("controller.png", textureManager);
+        translucentControllerTexture = new Texture("controller.png", textureManager);
+        translucentControllerTexture.process(new PixelProcessor() {
+            @Override
+            public void run() {
+                int v = originalPixels[getGlobalId() * 4 + 3] - 180;
+                if(v < 0) v = 0;
+                pixels[getGlobalId() * 4 + 3] = v;
+                pixels[getGlobalId() * 4 + 2] = originalPixels[getGlobalId() * 4 + 2];
+                pixels[getGlobalId() * 4 + 1] = originalPixels[getGlobalId() * 4 + 1];
+                pixels[getGlobalId() * 4] = originalPixels[getGlobalId() * 4];
+            }
+        });
         controllerManager = new ControllerManager(4);
         controllerManager.initSDLGamepad();
     }
@@ -439,5 +452,9 @@ public class Application implements Behavior {
 
     public void setDefaultTexture(Texture defaultTexture) {
         this.defaultTexture = defaultTexture;
+    }
+
+    public Texture getTranslucentControllerTexture() {
+        return translucentControllerTexture;
     }
 }

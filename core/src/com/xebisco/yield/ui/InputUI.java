@@ -18,17 +18,21 @@ package com.xebisco.yield.ui;
 
 import com.xebisco.yield.*;
 
+import java.util.concurrent.CompletableFuture;
+
 public class InputUI extends ComponentBehavior {
     private final DrawInstruction instruction = new DrawInstruction();
     private int stage = -1, lastControllerNum, frameSaved;
     private String msg;
     private double f, target = 150, onMessage;
     private Font font;
+    private AudioPlayer audioPlayer;
 
     @Override
     public void onStart() {
         lastControllerNum = getApplication().getControllerManager().getNumControllers();
         font = new Font("Pixeboy.ttf", 40, getApplication().getFontLoader());
+        audioPlayer = getComponent(AudioPlayer.class);
     }
 
     @Override
@@ -37,11 +41,21 @@ public class InputUI extends ComponentBehavior {
             stage = 0;
             frameSaved = getFrames();
             msg = "Controller Connected";
+            CompletableFuture.runAsync(() -> {
+                audioPlayer.setAudioClip(new FileInput("ioconnected.wav"));
+                audioPlayer.setGain(.1);
+                audioPlayer.play();
+            });
         }
         if (getApplication().getControllerManager().getNumControllers() < lastControllerNum) {
             stage = 0;
             frameSaved = getFrames();
             msg = "Controller Disconnected";
+            CompletableFuture.runAsync(() -> {
+                audioPlayer.setAudioClip(new FileInput("iodisconnected.wav"));
+                audioPlayer.setGain(.1);
+                audioPlayer.play();
+            });
         }
         if (stage == 0) {
             onMessage += getTime().getDeltaTime();
@@ -65,6 +79,15 @@ public class InputUI extends ComponentBehavior {
     public void render(PlatformGraphics graphics) {
         if (stage == -1)
             return;
+        instruction.setType(DrawInstruction.Type.IMAGE);
+        for(int i = 0; i < 4; i++) {
+            if(getApplication().getControllerManager().getControllerIndex(i).isConnected())
+                instruction.setRenderRef(getApplication().getControllerTexture().getImageRef());
+            else instruction.setRenderRef(getApplication().getTranslucentControllerTexture().getImageRef());
+            instruction.setSize(new Size2D(50, 50));
+            instruction.setPosition(new Point2D(getApplication().getScene().getCamera().getX() - getApplication().getResolution().getWidth() / 2.0 + 50 + getApplication().getControllerTexture().getSize().getWidth() / 2.0 * i - (target - f), -getApplication().getResolution().getHeight() / 2.0 + 50 + getApplication().getScene().getCamera().getY()));
+            graphics.draw(instruction);
+        }
         target = getApplication().getFontLoader().getStringWidth(msg, font.getFontRef()) + 80;
         instruction.setType(DrawInstruction.Type.RECTANGLE);
         instruction.setInnerColor(Colors.DARK_PURPLE.darker());
@@ -78,7 +101,7 @@ public class InputUI extends ComponentBehavior {
             instruction.setType(DrawInstruction.Type.IMAGE);
             instruction.setRenderRef(getApplication().getControllerTexture().getImageRef());
             instruction.setSize(new Size2D(50, 50));
-            instruction.setPosition(new Point2D(getApplication().getScene().getCamera().getX() - f / 2.0 + 30, -getApplication().getResolution().getHeight() / 2f + 50 + getApplication().getScene().getCamera().getY()));
+            instruction.setPosition(new Point2D(getApplication().getScene().getCamera().getX() - f / 2.0 + 30, -getApplication().getResolution().getHeight() / 2.0 + 50 + getApplication().getScene().getCamera().getY()));
             graphics.draw(instruction);
         }
         if (f > target - 30) {
