@@ -75,7 +75,7 @@ class Comp extends ComponentBehavior {
         if (getApplication().getAxis("Fire") > 0)
             getComponent(PhysicsBody.class).addForce(new Vector2D(0, 50), ForceType.LINEAR_IMPULSE);
         if (getApplication().getAxis("Back") > 0)
-            getComponent(PhysicsBody.class).addForce(new Vector2D(0, -999999999), ForceType.LINEAR_IMPULSE);
+            getComponent(PhysicsBody.class).addForce(new Vector2D(0, -200), ForceType.LINEAR_IMPULSE);
         getApplication().getScene().getCamera().sumLocal(new Vector2D(getApplication().getAxis("HorizontalCam") * 30, getApplication().getAxis("VerticalCam") * 30));
         if (getApplication().getAxis("RightFire") != 0)
             getComponent(PhysicsBody.class).addForce(-getApplication().getAxis("RightFire") * 100, ForceType.ANGULAR_IMPULSE);
