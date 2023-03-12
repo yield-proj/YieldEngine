@@ -56,15 +56,6 @@ public class Main extends Scene {
 
 class Comp extends ComponentBehavior {
     @Override
-    public void onStart() {
-        getComponent(TextureRectangle.class).setPixelProcessor(pixel -> {
-            pixel.setAsOriginal();
-            pixel.setX(pixel.getX() + 100);
-            return pixel;
-        });
-    }
-
-    @Override
     public void onUpdate() {
         getComponent(PhysicsBody.class).setLinearVelocity(new Vector2D(getApplication().getAxis("Horizontal") * 300 * getTime().getDeltaTime(), getComponent(PhysicsBody.class).getLinearVelocity().y));
         if (getApplication().getAxis("Fire") > 0)

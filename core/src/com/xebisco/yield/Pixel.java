@@ -17,24 +17,8 @@
 package com.xebisco.yield;
 
 public class Pixel {
-    private Color originalColor, color;
-    private int x, y, originalX, originalY;
-
-    public Color getOriginalColor() {
-        return originalColor;
-    }
-
-    public void setOriginalColor(Color originalColor) {
-        this.originalColor = originalColor;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
+    private Color color;
+    private int x, y;
 
     public int getX() {
         return x;
@@ -52,25 +36,11 @@ public class Pixel {
         this.y = y;
     }
 
-    public int getOriginalX() {
-        return originalX;
+    public Color getColor() {
+        return color;
     }
 
-    public void setOriginalX(int originalX) {
-        this.originalX = originalX;
-    }
-
-    public int getOriginalY() {
-        return originalY;
-    }
-
-    public void setOriginalY(int originalY) {
-        this.originalY = originalY;
-    }
-
-    public void setAsOriginal() {
-        x = originalX;
-        y = originalY;
-        color = originalColor;
+    public void setColor(Color color) {
+        this.color = color;
     }
 }

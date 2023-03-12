@@ -18,18 +18,21 @@ package com.xebisco.yield;
 
 import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.IntStream;
 
 public class Texture extends FileInput {
 
     private final ImmutableSize2D size;
     private final TextureManager textureManager;
     private Object imageRef;
+    private int[] originalPixels;
 
     public Texture(String relativePath, TextureManager textureManager) {
         super(relativePath);
         this.textureManager = textureManager;
         imageRef = textureManager.loadTexture(this);
         size = new ImmutableSize2D(textureManager.getImageWidth(imageRef), textureManager.getImageHeight(imageRef));
+        originalPixels = textureManager.getPixels(imageRef);
     }
 
     public Texture(InputStream inputStream, TextureManager textureManager) {
@@ -37,34 +40,33 @@ public class Texture extends FileInput {
         this.textureManager = textureManager;
         imageRef = textureManager.loadTexture(this);
         size = new ImmutableSize2D(textureManager.getImageWidth(imageRef), textureManager.getImageHeight(imageRef));
+        originalPixels = textureManager.getPixels(imageRef);
     }
 
     public void processPixels(PixelProcessor pixelProcessor) {
         Pixel actPixel = new Pixel();
         int width = (int) size.getWidth();
         int height = (int) size.getHeight();
-        int[] pixels = textureManager.getPixels(imageRef);
-        int[] toSetPixels = new int[pixels.length];
-        for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++) {
-                Color color = new Color(pixels[x + y * width], Color.Format.ARGB);
-                actPixel.setOriginalColor(color);
-                actPixel.setOriginalX(x);
-                actPixel.setOriginalY(y);
-                Pixel pixel = pixelProcessor.process(actPixel);
-                int ax = pixel.getX();
-                int ay = pixel.getY();
-                while (ax >= width)
-                    ax -= width;
-                while (ax < 0)
-                    ax += width;
-                while (ay >= height)
-                    ay -= height;
-                while (ay < 0)
-                    ay += height;
-                toSetPixels[ax + ay * width] = pixel.getOriginalColor().getARGB();
-            }
-        getTextureLoader().setPixels(imageRef, toSetPixels);
+        int[] toSetPixels = new int[originalPixels.length];
+        IntStream.range(0, width).parallel().forEach(y ->
+                IntStream.range(0, height).parallel().forEach(x -> {
+                    actPixel.setColor(new Color(originalPixels[x + y * width], Color.Format.ARGB));
+                    actPixel.setX(x);
+                    actPixel.setY(y);
+                    Pixel pixel = pixelProcessor.process(actPixel);
+                    int ax = pixel.getX();
+                    int ay = pixel.getY();
+                    while (ax >= width)
+                        ax -= width;
+                    while (ax < 0)
+                        ax += width;
+                    while (ay >= height)
+                        ay -= height;
+                    while (ay < 0)
+                        ay += height;
+                    toSetPixels[ax + ay * width] = pixel.getColor().getARGB();
+                })
+        );
     }
 
     public void asyncProcessPixels(PixelProcessor pixelProcessor) {
@@ -85,7 +87,15 @@ public class Texture extends FileInput {
         return size;
     }
 
-    public TextureManager getTextureLoader() {
+    public TextureManager getTextureManager() {
         return textureManager;
+    }
+
+    public int[] getOriginalPixels() {
+        return originalPixels;
+    }
+
+    public void setOriginalPixels(int[] originalPixels) {
+        this.originalPixels = originalPixels;
     }
 }

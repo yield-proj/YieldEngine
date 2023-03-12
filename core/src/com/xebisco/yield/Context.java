@@ -41,9 +41,10 @@ public class Context implements Runnable {
     public void run() {
         running.set(true);
         long last = System.nanoTime(), actual, frameCount = 0;
+        long value = 0;
         while (running.get()) {
             frameCount++;
-            if (!lightweight) {
+            if (!lightweight && value > 0) {
                 do {
                     actual = System.nanoTime();
                 } while (actual - last < contextTime.getTargetSleepTime() * 1_000);
@@ -56,7 +57,7 @@ public class Context implements Runnable {
             last = actual;
             actual = System.nanoTime();
 
-            long value = contextTime.getTargetSleepTime() - 1000 - ((actual - last) / 1_000);
+            value = contextTime.getTargetSleepTime() - 1000 - ((actual - last) / 1_000);
             if (lightweight) value++;
             value = Global.clamp(value, 0, value);
             if (value > 0)
