@@ -17,6 +17,7 @@
 package com.xebisco.yield;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 
@@ -43,36 +44,17 @@ public class Texture extends FileInput {
         originalPixels = textureManager.getPixels(imageRef);
     }
 
-    public void processPixels(PixelProcessor pixelProcessor) {
-        Pixel actPixel = new Pixel();
-        int width = (int) size.getWidth();
-        int height = (int) size.getHeight();
-        int[] toSetPixels = new int[originalPixels.length];
-        IntStream.range(0, width).parallel().forEach(y ->
-                IntStream.range(0, height).parallel().forEach(x -> {
-                    actPixel.setColor(new Color(originalPixels[x + y * width], Color.Format.ARGB));
-                    actPixel.setX(x);
-                    actPixel.setY(y);
-                    Pixel pixel = pixelProcessor.process(actPixel);
-                    int ax = pixel.getX();
-                    int ay = pixel.getY();
-                    while (ax >= width)
-                        ax -= width;
-                    while (ax < 0)
-                        ax += width;
-                    while (ay >= height)
-                        ay -= height;
-                    while (ay < 0)
-                        ay += height;
-                    toSetPixels[ax + ay * width] = pixel.getColor().getARGB();
-                })
-        );
+    public void process(PixelProcessor pixelProcessor) {
+        pixelProcessor.originalPixels = originalPixels;
+        if(pixelProcessor.pixels == null || pixelProcessor.pixels.length != pixelProcessor.originalPixels.length)
+            pixelProcessor.pixels = new int[pixelProcessor.originalPixels.length];
+        pixelProcessor.execute(originalPixels.length / 4);
+
+        setPixels(pixelProcessor.pixels);
     }
 
-    public void asyncProcessPixels(PixelProcessor pixelProcessor) {
-        CompletableFuture.runAsync(() -> processPixels(pixelProcessor)).exceptionally(e -> {
-            throw new TextureProcessException(e);
-        });
+    public void setPixels(int[] toSetPixels) {
+        CompletableFuture.runAsync(() -> getTextureManager().setPixels(imageRef, toSetPixels));
     }
 
     public Object getImageRef() {
