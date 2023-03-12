@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, AudioManager {
+public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, AudioManager, ViewportZoomScale {
     private final HashSet<Input.Key> pressingKeys = new HashSet<>();
     private final HashSet<Input.MouseButton> pressingMouseButtons = new HashSet<>();
     private final Point2D mousePosition = new Point2D();
@@ -51,6 +51,8 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     private boolean stretch;
 
     private Point2D camera;
+
+    private TwoAnchorRepresentation zoomScale = new TwoAnchorRepresentation(1, 1);
 
     public static Dimension onSizeBoundary(Image image, Dimension boundary) {
         int original_width = image.getWidth(null);
@@ -661,6 +663,16 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         this.stretch = stretch;
     }
 
+    @Override
+    public TwoAnchorRepresentation getZoomScale() {
+        return zoomScale;
+    }
+
+    @Override
+    public void setZoomScale(TwoAnchorRepresentation zoomScale) {
+        this.zoomScale = zoomScale;
+    }
+
     private interface KeyAction {
         void call(Input.Key key);
     }
@@ -683,7 +695,8 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
             if (stretch)
                 bounds.setSize(getWidth(), getHeight());
             else bounds.setSize(onSizeBoundary(renderImage, getSize()));
-            g.drawImage(renderImage, (getWidth() - bounds.width) / 2, (getHeight() - bounds.height) / 2, bounds.width, bounds.height, this);
+            Dimension b = new Dimension((int) (bounds.width * zoomScale.getX()), (int) (bounds.height * zoomScale.getY()));
+            g.drawImage(renderImage, (getWidth() - b.width) / 2, (getHeight() - b.height) / 2, b.width, b.height, this);
             g.dispose();
         }
     }

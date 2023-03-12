@@ -16,8 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.editoruse.VisibleOnInspector;
-
 /**
  * It's a behavior that draws a rectangle
  */

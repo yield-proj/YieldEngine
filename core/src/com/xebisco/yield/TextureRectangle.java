@@ -16,8 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.editoruse.VisibleOnInspector;
-
 public class TextureRectangle extends Rectangle {
     @VisibleOnInspector
     private Texture texture;

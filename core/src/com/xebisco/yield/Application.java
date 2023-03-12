@@ -20,6 +20,7 @@ import com.studiohartman.jamepad.ControllerManager;
 import com.studiohartman.jamepad.ControllerState;
 import com.studiohartman.jamepad.ControllerUnpluggedException;
 
+import javax.swing.text.View;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
@@ -46,6 +47,7 @@ public class Application implements Behavior {
     private final AudioManager audioManager;
     private final Texture controllerTexture;
     private final Texture translucentControllerTexture;
+    private final ViewportZoomScale viewportZoomScale;
     private final Function<Throwable, Void> exceptionThrowFunction = throwable -> {
         throwable.printStackTrace();
         return null;
@@ -74,6 +76,9 @@ public class Application implements Behavior {
         if (platformGraphics instanceof AudioManager)
             audioManager = (AudioManager) platformGraphics;
         else audioManager = null;
+        if (platformGraphics instanceof ViewportZoomScale)
+            viewportZoomScale = (ViewportZoomScale) platformGraphics;
+        else viewportZoomScale = null;
         try {
             setScene(initialScene.getConstructor(Application.class).newInstance(this));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
@@ -383,6 +388,8 @@ public class Application implements Behavior {
             this.scene.dispose();
         }
         this.scene = scene;
+        if(viewportZoomScale != null)
+            viewportZoomScale.getZoomScale().set(1, 1);
         platformGraphics.setCamera(scene.getCamera());
     }
 

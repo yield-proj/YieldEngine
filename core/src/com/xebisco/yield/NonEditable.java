@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.editoruse;
+package com.xebisco.yield;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,5 +23,5 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface VisibleOnInspector {
+public @interface NonEditable {
 }

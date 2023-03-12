@@ -16,8 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.editoruse.VisibleOnInspector;
-
 public class Text extends ComponentBehavior {
     private final DrawInstruction drawInstruction = new DrawInstruction();
     @VisibleOnInspector

@@ -17,7 +17,7 @@
 package com.xebisco.yield.physics;
 
 import com.xebisco.yield.*;
-import com.xebisco.yield.editoruse.VisibleOnInspector;
+import com.xebisco.yield.VisibleOnInspector;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;

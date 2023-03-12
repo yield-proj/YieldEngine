@@ -17,7 +17,7 @@
 package com.xebisco.yield.physics;
 
 import com.xebisco.yield.Point2D;
-import com.xebisco.yield.editoruse.VisibleOnInspector;
+import com.xebisco.yield.VisibleOnInspector;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;

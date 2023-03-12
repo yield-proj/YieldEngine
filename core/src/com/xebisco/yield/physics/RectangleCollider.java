@@ -17,7 +17,7 @@
 package com.xebisco.yield.physics;
 
 import com.xebisco.yield.Size2D;
-import com.xebisco.yield.editoruse.VisibleOnInspector;
+import com.xebisco.yield.VisibleOnInspector;
 import org.jbox2d.collision.shapes.*;
 
 public class RectangleCollider extends Collider {

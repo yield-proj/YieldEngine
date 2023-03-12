@@ -16,7 +16,7 @@
 
 package com.xebisco.yield.physics;
 
-import com.xebisco.yield.editoruse.VisibleOnInspector;
+import com.xebisco.yield.VisibleOnInspector;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.Shape;
 

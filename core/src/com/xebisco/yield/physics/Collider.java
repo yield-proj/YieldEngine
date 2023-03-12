@@ -17,7 +17,7 @@
 package com.xebisco.yield.physics;
 
 import com.xebisco.yield.ComponentBehavior;
-import com.xebisco.yield.editoruse.VisibleOnInspector;
+import com.xebisco.yield.VisibleOnInspector;
 import org.jbox2d.collision.shapes.Shape;
 
 public abstract class Collider extends ComponentBehavior {
