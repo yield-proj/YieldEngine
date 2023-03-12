@@ -21,7 +21,7 @@ package com.xebisco.yield;
  */
 public class DrawInstruction {
     public enum Type {
-        RECTANGLE, OVAL, TEXT, SIMPLE_LINE, IMAGE
+        RECTANGLE, OVAL, TEXT, SIMPLE_LINE, IMAGE, EQUILATERAL_TRIANGLE
     }
     private Type type;
     private Point2D position;

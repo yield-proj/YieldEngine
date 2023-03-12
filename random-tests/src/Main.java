@@ -15,7 +15,10 @@
  */
 
 import com.xebisco.yield.*;
-import com.xebisco.yield.physics.*;
+import com.xebisco.yield.physics.PhysicsBody;
+import com.xebisco.yield.physics.PhysicsType;
+import com.xebisco.yield.physics.RectangleCollider;
+import com.xebisco.yield.physics.TriangleCollider;
 
 public class Main extends Scene {
     public Main(Application application) {
@@ -27,7 +30,6 @@ public class Main extends Scene {
         time.setTargetSleepTime(16666);
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
-        platformInit.setFullscreen(true);
         Application application = new Application(applicationManager, Main.class, Global.swingPlatform(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
@@ -36,74 +38,21 @@ public class Main extends Scene {
     @Override
     public void onStart() {
         getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
-        instantiate(new Entity2DPrefab(new TextureRectangle(), new PhysicsBody(), new Comp(), new RectangleCollider())).setContactAdapter(new ContactAdapter() {
-            Entity2D e = instantiate(new Entity2DPrefab(new Text()));
-
-            @Override
-            public void onContactBegin(Collider entity, Collider colliding) {
-                e.getComponent(Text.class).setContents("COSTÔ");
-            }
-
-            @Override
-            public void onContactEnd(Collider entity, Collider colliding) {
-                e.getComponent(Text.class).setContents("DESENCOSTÔ");
-            }
-        });
-        instantiate(new Entity2DPrefab(new Rectangle(), new PhysicsBody(), new Comp2(), new RectangleCollider()));
-    }
-}
-
-class Comp extends ComponentBehavior {
-    @Override
-    public void onStart() {
-        /*getComponent(TextureRectangle.class).getTexture().process(new PixelProcessor() {
-            @Override
-            public void run() {
-                int i = getGlobalId() * 4;
-                pixels[i] = 255-originalPixels[i];
-                pixels[i + 1] = 255- originalPixels[i + 1];
-                pixels[i + 2] = 255-originalPixels[i + 2];
-                pixels[i + 3] = originalPixels[i + 3];
-            }
-        });*/
-    }
-
-    @Override
-    public void onUpdate() {
-        getComponent(PhysicsBody.class).setLinearVelocity(new Vector2D(getApplication().getAxis("Horizontal"), getComponent(PhysicsBody.class).getLinearVelocity().y));
-        if (getApplication().getAxis("Fire") > 0)
-            getComponent(PhysicsBody.class).addForce(new Vector2D(0, 50), ForceType.LINEAR_IMPULSE);
-        if (getApplication().getAxis("Back") > 0)
-            getComponent(PhysicsBody.class).addForce(new Vector2D(0, -200), ForceType.LINEAR_IMPULSE);
-        getApplication().getScene().getCamera().sumLocal(new Vector2D(getApplication().getAxis("HorizontalCam") * 30, getApplication().getAxis("VerticalCam") * 30));
-        if (getApplication().getAxis("RightFire") != 0)
-            getComponent(PhysicsBody.class).addForce(-getApplication().getAxis("RightFire") * 100, ForceType.ANGULAR_IMPULSE);
-        else
-            getComponent(PhysicsBody.class).addForce(getApplication().getAxis("LeftFire") * 100, ForceType.ANGULAR_IMPULSE);
-    }
-
-    @Override
-    public void dispose() {
-
-    }
-
-    @Override
-    public void render(PlatformGraphics graphics) {
-
+        instantiate(new Entity2DPrefab(new Rectangle(), new RectangleCollider(), new PhysicsBody()));
+        instantiate(new Entity2DPrefab(new EquilateralTriangle(), new TriangleCollider(), new PhysicsBody(), new Comp2()));
     }
 }
 
 class Comp2 extends ComponentBehavior {
+
     @Override
     public void onStart() {
-        getComponent(PhysicsBody.class).setPosition(new Vector2D(0, -720 / 2f));
         getComponent(PhysicsBody.class).setType(PhysicsType.STATIC);
-        getComponent(RectangleCollider.class).setFriction(0f);
+        getComponent(PhysicsBody.class).setPosition(new TwoAnchorRepresentation(10, -300));
     }
 
     @Override
     public void onUpdate() {
-
-        ///System.out.println(getTransform().getPosition());
+        getApplication().getScene().getCamera().sumLocal(new Vector2D(getApplication().getAxis("HorizontalCam") * 30, getApplication().getAxis("VerticalCam") * 30));
     }
 }

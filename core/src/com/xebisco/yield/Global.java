@@ -36,8 +36,8 @@ public final class Global {
         }
     }
 
-    public static Vec2 toVec2(Vector2D vector2D) {
-        return new Vec2((float) vector2D.getX(), (float) vector2D.getY());
+    public static Vec2 toVec2(TwoAnchorRepresentation twoAnchorRepresentation) {
+        return new Vec2((float) twoAnchorRepresentation.getX(), (float) twoAnchorRepresentation.getY());
     }
 
     public static Vector2D toVector2D(Vec2 vec2) {

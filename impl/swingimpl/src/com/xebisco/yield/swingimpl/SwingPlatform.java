@@ -21,9 +21,9 @@ import com.xebisco.yield.*;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -413,6 +413,19 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
                 graphics.setStroke(new BasicStroke((float) drawInstruction.getBorderThickness()));
                 graphics.drawLine(x, y, w, h);
             }
+            case EQUILATERAL_TRIANGLE -> {
+                int[] xs = new int[]{x, x + w / 2, x + w};
+                int[] ys = new int[]{y + h, y, y + h};
+                if (drawInstruction.isFilled()) {
+                    graphics.setColor(awtColor(drawInstruction.getInnerColor()));
+                    graphics.fillPolygon(xs, ys, 3);
+                }
+                if (drawInstruction.getBorderColor() != null) {
+                    graphics.setColor(awtColor(drawInstruction.getBorderColor()));
+                    graphics.setStroke(new BasicStroke((float) drawInstruction.getBorderThickness()));
+                    graphics.drawPolygon(xs, ys, 3);
+                }
+            }
             default -> throw new UnsupportedDrawInstructionException(drawInstruction.getType().name());
         }
     }
@@ -616,33 +629,6 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         return false;
     }
 
-    private interface KeyAction {
-        void call(Input.Key key);
-    }
-
-    private interface MouseButtonAction {
-        void call(Input.MouseButton button);
-    }
-
-    class SwingImplPanel extends JPanel {
-        @Override
-        public void update(Graphics g) {
-            paintComponent(g);
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            g.setColor(Color.BLACK);
-            g.fillRect(0, 0, getWidth(), getHeight());
-            if (stretch)
-                bounds.setSize(getWidth(), getHeight());
-            else bounds.setSize(onSizeBoundary(renderImage, getSize()));
-            g.drawImage(renderImage, (getWidth() - bounds.width) / 2, (getHeight() - bounds.height) / 2, bounds.width, bounds.height, this);
-            g.dispose();
-        }
-    }
-
     public Point2D getMousePosition() {
         return mousePosition;
     }
@@ -673,5 +659,32 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     public void setStretch(boolean stretch) {
         this.stretch = stretch;
+    }
+
+    private interface KeyAction {
+        void call(Input.Key key);
+    }
+
+    private interface MouseButtonAction {
+        void call(Input.MouseButton button);
+    }
+
+    class SwingImplPanel extends JPanel {
+        @Override
+        public void update(Graphics g) {
+            paintComponent(g);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, getWidth(), getHeight());
+            if (stretch)
+                bounds.setSize(getWidth(), getHeight());
+            else bounds.setSize(onSizeBoundary(renderImage, getSize()));
+            g.drawImage(renderImage, (getWidth() - bounds.width) / 2, (getHeight() - bounds.height) / 2, bounds.width, bounds.height, this);
+            g.dispose();
+        }
     }
 }
