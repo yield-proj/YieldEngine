@@ -25,7 +25,7 @@ public class Text extends ComponentBehavior {
     @VisibleOnInspector
     private String contents = "";
     @VisibleOnInspector
-    private Font font = Global.getDefaultFont();
+    private Font font;
 
     private double width, height;
 
@@ -38,6 +38,7 @@ public class Text extends ComponentBehavior {
 
     @Override
     public void onStart() {
+        if(font == null) font = getApplication().getDefaultFont();
         drawInstruction.setSize(new Size2D(0, 0));
         drawInstruction.setType(DrawInstruction.Type.TEXT);
     }

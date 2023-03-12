@@ -17,6 +17,7 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.physics.PhysicsSystem;
+import com.xebisco.yield.ui.InputUI;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,6 +33,7 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
     public Scene(Application application) {
         super(application);
         getSystems().add(physicsSystem);
+        instantiate(new Entity2DPrefab(new InputUI())).setIndex(-1);
     }
 
     @Override

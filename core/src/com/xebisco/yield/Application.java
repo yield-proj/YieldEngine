@@ -41,8 +41,10 @@ public class Application implements Behavior {
     private final DrawInstruction drawInstruction = new DrawInstruction();
     private final Set<Axis> axes = new HashSet<>();
     private final ApplicationManager applicationManager;
+    private final Size2D resolution;
     private final Runnable renderer;
     private final AudioManager audioManager;
+    private final Texture controllerTexture;
     private final Function<Throwable, Void> exceptionThrowFunction = throwable -> {
         throwable.printStackTrace();
         return null;
@@ -51,6 +53,10 @@ public class Application implements Behavior {
     private int frames;
     private Scene scene;
     private double physicsPpm = 16;
+
+    private Font defaultFont;
+
+    private Texture defaultTexture;
 
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, PlatformGraphics platformGraphics, PlatformInit platformInit) {
         this.applicationManager = applicationManager;
@@ -93,6 +99,7 @@ public class Application implements Behavior {
             }
             platformGraphics.conclude();
         };
+        resolution = new ImmutableSize2D(platformInit.getResolution().getWidth(), platformInit.getResolution().getHeight());
         axes.add(new Axis(Global.HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
         axes.add(new Axis(Global.VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
         axes.add(new Axis("HorizontalPad", Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
@@ -106,18 +113,17 @@ public class Application implements Behavior {
         axes.add(new Axis("LeftFire", Input.Key.VK_1, null, null, null));
         axes.add(new Axis("RightBumper", Input.Key.VK_F, null, null, null));
         axes.add(new Axis("LeftBumper", Input.Key.VK_G, null, null, null));
+        controllerTexture = new Texture("controller.png", textureManager);
         controllerManager = new ControllerManager(4);
         controllerManager.initSDLGamepad();
     }
 
     @Override
     public void onStart() {
-        if (Global.getDefaultFont() == null)
-            Global.setDefaultFont(new Font("OpenSans-Regular.ttf", 48, fontLoader));
-        if (Global.getDefaultTexture() == null)
-            Global.setDefaultTexture(new Texture("yieldIcon.png", textureManager));
+        defaultFont = new Font("OpenSans-Regular.ttf", 48, fontLoader);
+        defaultTexture = new Texture("yieldIcon.png", textureManager);
         if (platformInit.getWindowIcon() == null)
-            platformInit.setWindowIcon(Global.getDefaultTexture());
+            platformInit.setWindowIcon(defaultTexture);
         platformGraphics.init(platformInit);
         for (int i = 0; i < 4; i++) {
             String a = String.valueOf((i + 1));
@@ -333,6 +339,14 @@ public class Application implements Behavior {
         return platformGraphics;
     }
 
+    public TextureManager getTextureManager() {
+        return textureManager;
+    }
+
+    public Size2D getResolution() {
+        return resolution;
+    }
+
     /**
      * This function returns the scene.
      *
@@ -371,10 +385,6 @@ public class Application implements Behavior {
         return fontLoader;
     }
 
-    public TextureManager getTextureLoader() {
-        return textureManager;
-    }
-
     public InputManager getInputManager() {
         return inputManager;
     }
@@ -409,5 +419,25 @@ public class Application implements Behavior {
 
     public ControllerManager getControllerManager() {
         return controllerManager;
+    }
+
+    public Texture getControllerTexture() {
+        return controllerTexture;
+    }
+
+    public Font getDefaultFont() {
+        return defaultFont;
+    }
+
+    public void setDefaultFont(Font defaultFont) {
+        this.defaultFont = defaultFont;
+    }
+
+    public Texture getDefaultTexture() {
+        return defaultTexture;
+    }
+
+    public void setDefaultTexture(Texture defaultTexture) {
+        this.defaultTexture = defaultTexture;
     }
 }

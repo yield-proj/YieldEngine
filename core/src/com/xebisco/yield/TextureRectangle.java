@@ -20,7 +20,7 @@ import com.xebisco.yield.editoruse.VisibleOnInspector;
 
 public class TextureRectangle extends Rectangle {
     @VisibleOnInspector
-    private Texture texture = Global.getDefaultTexture();
+    private Texture texture;
 
     @VisibleOnInspector
     private PixelProcessor pixelProcessor;
@@ -28,6 +28,7 @@ public class TextureRectangle extends Rectangle {
     @Override
     public void onStart() {
         super.onStart();
+        if(texture == null) texture = getApplication().getDefaultTexture();
         getDrawInstruction().setType(DrawInstruction.Type.IMAGE);
     }
 

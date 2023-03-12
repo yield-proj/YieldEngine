@@ -406,7 +406,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
             case TEXT -> {
                 graphics.setColor(awtColor(drawInstruction.getInnerColor()));
                 graphics.setFont((Font) drawInstruction.getFont().getFontRef());
-                graphics.drawString((String) drawInstruction.getRenderRef(), x, y + h / 2);
+                graphics.drawString((String) drawInstruction.getRenderRef(), x, (int) (y + h / 1.5));
             }
             case SIMPLE_LINE -> {
                 graphics.setColor(awtColor(drawInstruction.getBorderColor()));

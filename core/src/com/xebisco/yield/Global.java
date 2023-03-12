@@ -24,11 +24,6 @@ import java.lang.reflect.InvocationTargetException;
  * Static collection of util methods.
  */
 public final class Global {
-
-    private static Font defaultFont;
-
-    private static Texture defaultTexture;
-
     public static final String HORIZONTAL = "Horizontal", VERTICAL = "Vertical";
 
     public static PlatformGraphics swingPlatform() throws ClassNotFoundException {
@@ -99,21 +94,5 @@ public final class Global {
      */
     public static float clamp(float value, float min, float max) {
         return value > max ? max : Math.max(value, min);
-    }
-
-    public static Font getDefaultFont() {
-        return defaultFont;
-    }
-
-    public static void setDefaultFont(Font defaultFont) {
-        Global.defaultFont = defaultFont;
-    }
-
-    public static Texture getDefaultTexture() {
-        return defaultTexture;
-    }
-
-    public static void setDefaultTexture(Texture defaultTexture) {
-        Global.defaultTexture = defaultTexture;
     }
 }
