@@ -59,7 +59,6 @@ public class Context implements Runnable {
 
             value = contextTime.getTargetSleepTime() - 1000 - ((actual - last) / 1_000);
             if (lightweight) value++;
-            value = Global.clamp(value, 0, value);
             if (value > 0)
                 synchronized (lockObject) {
                     try {
