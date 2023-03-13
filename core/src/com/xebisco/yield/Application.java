@@ -32,6 +32,7 @@ import java.util.function.Function;
  * entities
  */
 public class Application implements Behavior {
+    public final Vector2D mousePosition = new Vector2D();
     private final PlatformGraphics platformGraphics;
     private final PlatformInit platformInit;
     private final Object renderLock = new Object();
@@ -55,9 +56,7 @@ public class Application implements Behavior {
     private int frames;
     private Scene scene;
     private double physicsPpm = 16;
-
     private Font defaultFont;
-
     private Texture defaultTexture;
 
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, PlatformGraphics platformGraphics, PlatformInit platformInit) {
@@ -113,17 +112,22 @@ public class Application implements Behavior {
         axes.add(new Axis("Back", Input.Key.VK_BACK_SPACE, null, null, null));
         axes.add(new Axis("Action", Input.Key.VK_E, null, null, null));
         axes.add(new Axis("Inventory", Input.Key.VK_TAB, null, null, null));
-        axes.add(new Axis("Start",  Input.Key.VK_ESCAPE, null, null, null));
+        axes.add(new Axis("Start", Input.Key.VK_ESCAPE, null, null, null));
         axes.add(new Axis("RightFire", Input.Key.VK_3, null, null, null));
         axes.add(new Axis("LeftFire", Input.Key.VK_1, null, null, null));
         axes.add(new Axis("RightBumper", Input.Key.VK_F, null, null, null));
         axes.add(new Axis("LeftBumper", Input.Key.VK_G, null, null, null));
-        controllerTexture = new Texture("controller.png", textureManager);
-        translucentControllerTexture = new Texture("controller.png", textureManager);
-        translucentControllerTexture.process(pixel -> {
-            pixel.getColor().setAlpha(pixel.getColor().getAlpha() - .6);
-            return pixel;
-        });
+        if (textureManager != null) {
+            controllerTexture = new Texture("controller.png", textureManager);
+            translucentControllerTexture = new Texture("controller.png", textureManager);
+            translucentControllerTexture.process(pixel -> {
+                pixel.getColor().setAlpha(pixel.getColor().getAlpha() - .6);
+                return pixel;
+            });
+        } else {
+            controllerTexture = null;
+            translucentControllerTexture = null;
+        }
         controllerManager = new ControllerManager(4);
         controllerManager.initSDLGamepad();
     }
@@ -161,7 +165,6 @@ public class Application implements Behavior {
             axes.add(new Axis("View" + a, null, null, null, null));
         }
     }
-
 
     public void vibrateController(int playerIndex, double leftMagnitude, double rightMagnitude, double duration) {
         try {
@@ -357,7 +360,6 @@ public class Application implements Behavior {
     public Size2D getResolution() {
         return resolution;
     }
-    public final Vector2D mousePosition = new Vector2D();
 
     /**
      * This function returns the scene.
@@ -382,7 +384,7 @@ public class Application implements Behavior {
             this.scene.dispose();
         }
         this.scene = scene;
-        if(viewportZoomScale != null)
+        if (viewportZoomScale != null)
             viewportZoomScale.getZoomScale().set(1, 1);
         platformGraphics.setCamera(scene.getCamera());
     }

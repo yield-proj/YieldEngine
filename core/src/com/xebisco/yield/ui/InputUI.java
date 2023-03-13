@@ -33,9 +33,6 @@ public class InputUI extends ComponentBehavior {
         lastControllerNum = getApplication().getControllerManager().getNumControllers();
         font = new Font("Pixeboy.ttf", 40, getApplication().getFontLoader());
         audioPlayer = getComponent(AudioPlayer.class);
-        stage = 0;
-        frameSaved = getFrames();
-        msg = "Controller Connected";
     }
 
     @Override
