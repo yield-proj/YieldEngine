@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class InputUI extends ComponentBehavior {
     private final DrawInstruction instruction = new DrawInstruction();
-    private int stage = -1, lastControllerNum, frameSaved;
+    private int stage = -1, lastControllerNum;
     private String msg;
     private double f, target = 150, onMessage;
     private Font font;
@@ -39,7 +39,6 @@ public class InputUI extends ComponentBehavior {
     public void onUpdate() {
         if (getApplication().getControllerManager().getNumControllers() > lastControllerNum) {
             stage = 0;
-            frameSaved = getFrames();
             msg = "Controller Connected";
             CompletableFuture.runAsync(() -> {
                 audioPlayer.setAudioClip(new FileInput("ioconnected.wav"));
@@ -49,7 +48,6 @@ public class InputUI extends ComponentBehavior {
         }
         if (getApplication().getControllerManager().getNumControllers() < lastControllerNum) {
             stage = 0;
-            frameSaved = getFrames();
             msg = "Controller Disconnected";
             CompletableFuture.runAsync(() -> {
                 audioPlayer.setAudioClip(new FileInput("iodisconnected.wav"));
