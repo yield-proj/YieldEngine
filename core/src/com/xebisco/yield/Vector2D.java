@@ -29,8 +29,8 @@ public class Vector2D extends TwoAnchorRepresentation {
         super(x, y);
     }
 
-    public Vector2D(int degrees, double intensity) {
-        super(Math.cos(degrees) * intensity, Math.sin(degrees) * intensity);
+    public static Vector2D vector2D(int degrees, double intensity) {
+        return new Vector2D(Math.cos(degrees) * intensity, Math.sin(degrees) * intensity);
     }
 
     public double calculateDegrees() {
