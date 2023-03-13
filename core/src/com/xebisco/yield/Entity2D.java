@@ -41,7 +41,7 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
         this.application = application;
         if (children != null)
             getEntities().addAll(List.of(children));
-        for(Entity2D e : children) {
+        for (Entity2D e : children) {
             e.setParent(this);
         }
         for (ComponentBehavior c : components) {
@@ -80,11 +80,13 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
 
     @Override
     public void dispose() {
-        getParent().getEntities().remove(this);
         for (Entity2D entity : getEntities()) {
             entity.dispose();
         }
-        setParent(null);
+        if (getParent() != null) {
+            getParent().getEntities().remove(this);
+            setParent(null);
+        }
         setComponents(null);
         setEntities(null);
     }
