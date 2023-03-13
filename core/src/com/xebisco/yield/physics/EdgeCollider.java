@@ -16,7 +16,7 @@
 
 package com.xebisco.yield.physics;
 
-import com.xebisco.yield.Point2D;
+import com.xebisco.yield.Vector2D;
 import com.xebisco.yield.VisibleOnInspector;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.Shape;
@@ -24,7 +24,7 @@ import org.jbox2d.common.Vec2;
 
 public class EdgeCollider extends Collider {
     @VisibleOnInspector
-    private Point2D point1 = new Point2D(-50, 0), point2 = new Point2D(50, 0);
+    private Vector2D point1 = new Vector2D(-50, 0), point2 = new Vector2D(50, 0);
 
     @Override
     public Shape getShape() {
@@ -33,19 +33,19 @@ public class EdgeCollider extends Collider {
         return s;
     }
 
-    public Point2D getPoint1() {
+    public Vector2D getPoint1() {
         return point1;
     }
 
-    public void setPoint1(Point2D point1) {
+    public void setPoint1(Vector2D point1) {
         this.point1 = point1;
     }
 
-    public Point2D getPoint2() {
+    public Vector2D getPoint2() {
         return point2;
     }
 
-    public void setPoint2(Point2D point2) {
+    public void setPoint2(Vector2D point2) {
         this.point2 = point2;
     }
 }

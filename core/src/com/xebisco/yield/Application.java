@@ -180,6 +180,7 @@ public class Application implements Behavior {
     }
 
     public void updateAxes() {
+        mousePosition.set(getInputManager().getMouseX(), getInputManager().getMouseY());
         for (Axis axis : axes) {
             if ((axis.getPositiveKey() != null && inputManager.getPressingKeys().contains(axis.getPositiveKey())) || (axis.getAltPositiveKey() != null && inputManager.getPressingKeys().contains(axis.getAltPositiveKey()))) {
                 axis.setValue(1);
@@ -364,6 +365,7 @@ public class Application implements Behavior {
     public Size2D getResolution() {
         return resolution;
     }
+    public final Vector2D mousePosition = new Vector2D();
 
     /**
      * This function returns the scene.

@@ -20,7 +20,7 @@ package com.xebisco.yield;
  * It represents the position, size, scale, and rotation of a 2D object
  */
 public class Transform2D {
-    private final Point2D position = new Point2D();
+    private final Vector2D position = new Vector2D();
     private final Vector2D scale = new Vector2D(1, 1);
     private double zRotation;
 
@@ -49,7 +49,7 @@ public class Transform2D {
      *
      * @return The position of the object.
      */
-    public Point2D getPosition() {
+    public Vector2D getPosition() {
         return position;
     }
 

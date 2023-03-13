@@ -85,7 +85,7 @@ public class InputUI extends ComponentBehavior {
                 instruction.setRenderRef(getApplication().getControllerTexture().getImageRef());
             else instruction.setRenderRef(getApplication().getTranslucentControllerTexture().getImageRef());
             instruction.setSize(new Size2D(50, 50));
-            instruction.setPosition(new Point2D(getApplication().getScene().getCamera().getX() - getApplication().getResolution().getWidth() / 2.0 + 50 + getApplication().getControllerTexture().getSize().getWidth() / 2.0 * i - (target - f), -getApplication().getResolution().getHeight() / 2.0 + 50 + getApplication().getScene().getCamera().getY()));
+            instruction.setPosition(new Vector2D(getApplication().getScene().getCamera().getX() - getApplication().getResolution().getWidth() / 2.0 + 50 + getApplication().getControllerTexture().getSize().getWidth() / 2.0 * i - (target - f), -getApplication().getResolution().getHeight() / 2.0 + 50 + getApplication().getScene().getCamera().getY()));
             graphics.draw(instruction);
         }
         target = getApplication().getFontLoader().getStringWidth(msg, font.getFontRef()) + 80;
@@ -95,13 +95,13 @@ public class InputUI extends ComponentBehavior {
         instruction.setBorderThickness(5);
         instruction.setFilled(true);
         instruction.setSize(new Size2D(f, 50));
-        instruction.setPosition(new Point2D(getApplication().getScene().getCamera().getX(), -getApplication().getResolution().getHeight() / 2f + 50 + getApplication().getScene().getCamera().getY()));
+        instruction.setPosition(new Vector2D(getApplication().getScene().getCamera().getX(), -getApplication().getResolution().getHeight() / 2f + 50 + getApplication().getScene().getCamera().getY()));
         graphics.draw(instruction);
         if (f > 50) {
             instruction.setType(DrawInstruction.Type.IMAGE);
             instruction.setRenderRef(getApplication().getControllerTexture().getImageRef());
             instruction.setSize(new Size2D(50, 50));
-            instruction.setPosition(new Point2D(getApplication().getScene().getCamera().getX() - f / 2.0 + 30, -getApplication().getResolution().getHeight() / 2.0 + 50 + getApplication().getScene().getCamera().getY()));
+            instruction.setPosition(new Vector2D(getApplication().getScene().getCamera().getX() - f / 2.0 + 30, -getApplication().getResolution().getHeight() / 2.0 + 50 + getApplication().getScene().getCamera().getY()));
             graphics.draw(instruction);
         }
         if (f > target - 30) {
@@ -111,7 +111,7 @@ public class InputUI extends ComponentBehavior {
             instruction.getInnerColor().setAlpha(1 - (target - f) / 30.0);
             instruction.setFont(font);
             instruction.getSize().set(getApplication().getFontLoader().getStringWidth(msg, font.getFontRef()), getApplication().getFontLoader().getStringHeight(msg, font.getFontRef()));
-            instruction.setPosition(new Point2D(getApplication().getScene().getCamera().getX() + 30, -getApplication().getResolution().getHeight() / 2f + 48 + getApplication().getScene().getCamera().getY()));
+            instruction.setPosition(new Vector2D(getApplication().getScene().getCamera().getX() + 30, -getApplication().getResolution().getHeight() / 2f + 48 + getApplication().getScene().getCamera().getY()));
             graphics.draw(instruction);
         }
     }

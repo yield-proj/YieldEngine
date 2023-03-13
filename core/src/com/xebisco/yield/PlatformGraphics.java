@@ -56,7 +56,7 @@ public interface PlatformGraphics extends Disposable {
      */
     void conclude();
 
-    Point2D getCamera();
+    Vector2D getCamera();
 
-    void setCamera(Point2D camera);
+    void setCamera(Vector2D camera);
 }

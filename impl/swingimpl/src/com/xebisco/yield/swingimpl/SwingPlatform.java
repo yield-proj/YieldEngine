@@ -35,7 +35,7 @@ import java.util.HashSet;
 public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, AudioManager, ViewportZoomScale {
     private final HashSet<Input.Key> pressingKeys = new HashSet<>();
     private final HashSet<Input.MouseButton> pressingMouseButtons = new HashSet<>();
-    private final Point2D mousePosition = new Point2D();
+    private final Vector2D mousePosition = new Vector2D();
     private final KeyAction addKeyAction = pressingKeys::add;
     private final KeyAction removeKeyAction = pressingKeys::remove;
     private final Dimension bounds = new Dimension();
@@ -50,7 +50,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     private AffineTransform defaultTransform = new AffineTransform();
     private boolean stretch;
 
-    private Point2D camera;
+    private Vector2D camera;
 
     private TwoAnchorRepresentation zoomScale = new TwoAnchorRepresentation(1, 1);
 
@@ -77,12 +77,12 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     }
 
     @Override
-    public Point2D getCamera() {
+    public Vector2D getCamera() {
         return camera;
     }
 
     @Override
-    public void setCamera(Point2D camera) {
+    public void setCamera(Vector2D camera) {
         this.camera = camera;
     }
 
@@ -631,7 +631,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         return false;
     }
 
-    public Point2D getMousePosition() {
+    public Vector2D getMousePosition() {
         return mousePosition;
     }
 

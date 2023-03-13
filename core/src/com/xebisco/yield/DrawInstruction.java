@@ -24,7 +24,7 @@ public class DrawInstruction {
         RECTANGLE, OVAL, TEXT, SIMPLE_LINE, IMAGE, EQUILATERAL_TRIANGLE
     }
     private Type type;
-    private Point2D position;
+    private Vector2D position;
     private Size2D size;
     private Object renderRef;
     private Font font;
@@ -54,7 +54,7 @@ public class DrawInstruction {
      *
      * @return The position of the draw instruction.
      */
-    public Point2D getPosition() {
+    public Vector2D getPosition() {
         return position;
     }
 
@@ -63,7 +63,7 @@ public class DrawInstruction {
      *
      * @param position The position of the instruction.
      */
-    public void setPosition(Point2D position) {
+    public void setPosition(Vector2D position) {
         this.position = position;
     }
 

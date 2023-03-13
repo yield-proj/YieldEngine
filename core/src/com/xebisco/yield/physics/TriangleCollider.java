@@ -17,14 +17,14 @@
 package com.xebisco.yield.physics;
 
 import com.xebisco.yield.Global;
-import com.xebisco.yield.Point2D;
 import com.xebisco.yield.TwoAnchorRepresentation;
+import com.xebisco.yield.Vector2D;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
 public class TriangleCollider extends Collider {
-    private final Point2D[] vertices = new Point2D[] {new Point2D(-50, -50), new Point2D(0, 50), new Point2D(50, -50)};
+    private final Vector2D[] vertices = new Vector2D[] {new Vector2D(-50, -50), new Vector2D(0, 50), new Vector2D(50, -50)};
 
     @Override
     public Shape getShape() {
@@ -34,7 +34,7 @@ public class TriangleCollider extends Collider {
         return s;
     }
 
-    public Point2D[] getVertices() {
+    public Vector2D[] getVertices() {
         return vertices;
     }
 }
