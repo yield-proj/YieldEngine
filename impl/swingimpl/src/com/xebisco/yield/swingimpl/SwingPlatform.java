@@ -29,6 +29,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -148,6 +149,12 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     @Override
     public int getImageHeight(Object imageRef) {
         return ((BufferedImage) imageRef).getHeight();
+    }
+
+    @Override
+    public Texture cropTexture(Object imageRef, int x, int y, int w, int h) {
+        BufferedImage image = ((BufferedImage) imageRef).getSubimage(x, y, w, h);
+        return new Texture(image, null, this);
     }
 
     @Override

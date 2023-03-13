@@ -44,6 +44,14 @@ public class Texture extends FileInput {
         originalPixels = textureManager.getPixels(imageRef);
     }
 
+    public Texture(Object imageRef, InputStream inputStream, TextureManager textureManager) {
+        super(inputStream);
+        this.textureManager = textureManager;
+        this.imageRef = imageRef;
+        size = new ImmutableSize2D(textureManager.getImageWidth(imageRef), textureManager.getImageHeight(imageRef));
+        originalPixels = textureManager.getPixels(imageRef);
+    }
+
     public void process(PixelProcessor pixelProcessor) {
         pixelProcessor.originalPixels = originalPixels;
         if(pixelProcessor.pixels == null || pixelProcessor.pixels.length != pixelProcessor.originalPixels.length)
@@ -55,6 +63,10 @@ public class Texture extends FileInput {
 
     public void setPixels(int[] toSetPixels) {
         CompletableFuture.runAsync(() -> getTextureManager().setPixels(imageRef, toSetPixels));
+    }
+
+    public Texture crop(int x, int y, int w, int h) {
+        return getTextureManager().cropTexture(imageRef, x, y, w, h);
     }
 
     public Object getImageRef() {

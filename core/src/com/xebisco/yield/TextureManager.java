@@ -37,4 +37,6 @@ public interface TextureManager {
      * @return The texture height.
      */
     int getImageHeight(Object imageRef);
+
+    Texture cropTexture(Object imageRef, int x, int y, int w, int h);
 }
