@@ -17,7 +17,6 @@
 package com.xebisco.yield;
 
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 
@@ -52,13 +51,30 @@ public class Texture extends FileInput {
         originalPixels = textureManager.getPixels(imageRef);
     }
 
-    public void process(PixelProcessor pixelProcessor) {
-        pixelProcessor.originalPixels = originalPixels;
-        if(pixelProcessor.pixels == null || pixelProcessor.pixels.length != pixelProcessor.originalPixels.length)
-            pixelProcessor.pixels = new int[pixelProcessor.originalPixels.length];
-        pixelProcessor.execute(originalPixels.length / 4);
+    public void process(GPUPixelProcessor gpuPixelProcessor) {
+        gpuPixelProcessor.originalPixels = originalPixels;
+        if(gpuPixelProcessor.pixels == null || gpuPixelProcessor.pixels.length != gpuPixelProcessor.originalPixels.length)
+            gpuPixelProcessor.pixels = new int[gpuPixelProcessor.originalPixels.length];
+        gpuPixelProcessor.execute(originalPixels.length / 4);
 
-        setPixels(pixelProcessor.pixels);
+        setPixels(gpuPixelProcessor.pixels);
+    }
+
+    public void process(PixelProcessor pixelProcessor) {
+        Pixel actPixel = new Pixel();
+        int[] toSetPixels = new int[originalPixels.length];
+        for(int i = 0; i < originalPixels.length / 4; i++) {
+            int index = i * 4;
+            actPixel.setColor(new Color(originalPixels[index] / 255.0, originalPixels[index + 1] / 255.0, originalPixels[index + 2] / 255.0, originalPixels[index + 3] / 255.0));
+            actPixel.setIndex(i);
+            Pixel p = pixelProcessor.process(actPixel);
+            index = p.getIndex() * 4;
+            toSetPixels[index] = (int) (p.getColor().getRed() * 255.0);
+            toSetPixels[index + 1] = (int) (p.getColor().getGreen() * 255.0);
+            toSetPixels[index + 2] = (int) (p.getColor().getBlue() * 255.0);
+            toSetPixels[index + 3] = (int) (p.getColor().getAlpha() * 255.0);
+        }
+        setPixels(toSetPixels);
     }
 
     public void setPixels(int[] toSetPixels) {

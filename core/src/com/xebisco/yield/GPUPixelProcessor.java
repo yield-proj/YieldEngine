@@ -15,7 +15,13 @@
  */
 
 package com.xebisco.yield;
-@FunctionalInterface
-public interface PixelProcessor {
-    Pixel process(Pixel pixel);
+
+import com.aparapi.Kernel;
+
+public abstract class GPUPixelProcessor extends Kernel {
+    public int[] originalPixels, pixels;
+
+    public GPUPixelProcessor() {
+        isExplicit();
+    }
 }

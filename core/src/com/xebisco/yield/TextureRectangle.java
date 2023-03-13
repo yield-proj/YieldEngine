@@ -21,7 +21,7 @@ public class TextureRectangle extends Rectangle {
     private Texture texture;
 
     @VisibleOnInspector
-    private PixelProcessor pixelProcessor;
+    private GPUPixelProcessor gpuPixelProcessor;
 
     @Override
     public void onStart() {
@@ -33,8 +33,8 @@ public class TextureRectangle extends Rectangle {
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if(pixelProcessor != null) {
-            texture.process(pixelProcessor);
+        if(gpuPixelProcessor != null) {
+            texture.process(gpuPixelProcessor);
         }
     }
 
@@ -52,11 +52,11 @@ public class TextureRectangle extends Rectangle {
         this.texture = texture;
     }
 
-    public PixelProcessor getPixelProcessor() {
-        return pixelProcessor;
+    public GPUPixelProcessor getGpuPixelProcessor() {
+        return gpuPixelProcessor;
     }
 
-    public void setPixelProcessor(PixelProcessor pixelProcessor) {
-        this.pixelProcessor = pixelProcessor;
+    public void setGpuPixelProcessor(GPUPixelProcessor gpuPixelProcessor) {
+        this.gpuPixelProcessor = gpuPixelProcessor;
     }
 }

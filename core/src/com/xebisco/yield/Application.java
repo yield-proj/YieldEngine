@@ -20,7 +20,6 @@ import com.studiohartman.jamepad.ControllerManager;
 import com.studiohartman.jamepad.ControllerState;
 import com.studiohartman.jamepad.ControllerUnpluggedException;
 
-import javax.swing.text.View;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
@@ -121,16 +120,9 @@ public class Application implements Behavior {
         axes.add(new Axis("LeftBumper", Input.Key.VK_G, null, null, null));
         controllerTexture = new Texture("controller.png", textureManager);
         translucentControllerTexture = new Texture("controller.png", textureManager);
-        translucentControllerTexture.process(new PixelProcessor() {
-            @Override
-            public void run() {
-                int v = originalPixels[getGlobalId() * 4 + 3] - 180;
-                if(v < 0) v = 0;
-                pixels[getGlobalId() * 4 + 3] = v;
-                pixels[getGlobalId() * 4 + 2] = originalPixels[getGlobalId() * 4 + 2];
-                pixels[getGlobalId() * 4 + 1] = originalPixels[getGlobalId() * 4 + 1];
-                pixels[getGlobalId() * 4] = originalPixels[getGlobalId() * 4];
-            }
+        translucentControllerTexture.process(pixel -> {
+            pixel.getColor().setAlpha(pixel.getColor().getAlpha() - .6);
+            return pixel;
         });
         controllerManager = new ControllerManager(4);
         controllerManager.initSDLGamepad();
