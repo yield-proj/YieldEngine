@@ -34,7 +34,7 @@ public class Vector2D extends TwoAnchorRepresentation {
     }
 
     public double calculateDegrees() {
-        return Math.atan2(getY(), getX());
+        return Math.toDegrees(Math.atan2(getY(), getX()));
     }
 
     public double calculateIntensity() {
