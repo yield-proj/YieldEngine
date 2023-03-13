@@ -29,9 +29,9 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     private final Transform2D transform = new Transform2D();
     private final Application application;
     private List<ComponentBehavior> components = new ArrayList<>();
+    private Entity2D parent;
     private int index;
     private FontLoader fontLoader;
-    private TextureManager textureManager;
     private ContactAdapter contactAdapter;
     private int frames;
     private boolean visible = true;
@@ -41,10 +41,20 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
         this.application = application;
         if (children != null)
             getEntities().addAll(List.of(children));
+        for(Entity2D e : children) {
+            e.setParent(this);
+        }
         for (ComponentBehavior c : components) {
             c.setEntity(this);
         }
         this.components.addAll(List.of(components));
+    }
+
+    @Override
+    public Entity2D instantiate(Entity2DPrefab prefab) {
+        Entity2D e = super.instantiate(prefab);
+        e.setParent(this);
+        return e;
     }
 
     /**
@@ -70,9 +80,11 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
 
     @Override
     public void dispose() {
+        getParent().getEntities().remove(this);
         for (Entity2D entity : getEntities()) {
             entity.dispose();
         }
+        setParent(null);
         setComponents(null);
         setEntities(null);
     }
@@ -236,14 +248,6 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
         this.fontLoader = fontLoader;
     }
 
-    public TextureManager getTextureLoader() {
-        return textureManager;
-    }
-
-    public void setTextureLoader(TextureManager textureManager) {
-        this.textureManager = textureManager;
-    }
-
     public Application getApplication() {
         return application;
     }
@@ -262,5 +266,13 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
 
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    public Entity2D getParent() {
+        return parent;
+    }
+
+    public void setParent(Entity2D parent) {
+        this.parent = parent;
     }
 }
