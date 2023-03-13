@@ -393,6 +393,10 @@ public class Application implements Behavior {
         platformGraphics.setCamera(scene.getCamera());
     }
 
+    public ViewportZoomScale getViewportZoomScale() {
+        return viewportZoomScale;
+    }
+
     public PlatformInit getPlatformInit() {
         return platformInit;
     }
