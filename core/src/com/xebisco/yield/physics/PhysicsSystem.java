@@ -22,22 +22,21 @@ import com.xebisco.yield.SystemBehavior;
 import com.xebisco.yield.Vector2D;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
-import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.Manifold;
-import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 
 public class PhysicsSystem extends SystemBehavior {
     private World b2World;
-    private Vec2 gravity;
+    private Vector2D gravity;
     private int velocityIterations = 6;
     private int positionIterations = 2;
 
     @Override
     public void onStart() {
-        gravity = new Vec2(0, -10);
-        b2World = new World(gravity);
+        if (gravity == null)
+            gravity = new Vector2D(0, -10);
+        b2World = new World(Global.toVec2(gravity));
 
 
         b2World.setContactListener(new ContactListener() {
@@ -88,23 +87,20 @@ public class PhysicsSystem extends SystemBehavior {
 
     @Override
     public void onUpdate() {
+        b2World.setGravity(Global.toVec2(gravity));
         b2World.step((float) getScene().getApplication().getApplicationManager().getManagerContext().getContextTime().getDeltaTime(), velocityIterations, positionIterations);
     }
 
-    public Vec2 getGravity() {
+    public Vector2D getGravity() {
         return gravity;
     }
 
-    public void setGravity(Vec2 gravity) {
+    public void setGravity(Vector2D gravity) {
         this.gravity = gravity;
     }
 
     public Vector2D getGravity2D() {
-        return Global.toVector2D(gravity);
-    }
-
-    public void setGravity2D(Vector2D gravity) {
-        this.gravity = Global.toVec2(gravity);
+        return gravity;
     }
 
     public World getB2World() {

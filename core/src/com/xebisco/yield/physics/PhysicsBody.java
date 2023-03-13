@@ -101,6 +101,14 @@ public class PhysicsBody extends ComponentBehavior {
         b2Body.setTransform(new Vec2((float) (value.getX() / getApplication().getPhysicsPpm()), (float) (value.getY() / getApplication().getPhysicsPpm())), b2Body.getAngle());
     }
 
+    public void setAngle(double angle) {
+        getB2Body().setTransform(getB2Body().getPosition(), (float) Math.toRadians(angle));
+    }
+
+    public double getAngle() {
+        return Math.toDegrees(getB2Body().getAngle());
+    }
+
     public Vec2 getPosition() {
         return b2Body.getPosition();
     }
