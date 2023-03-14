@@ -38,13 +38,12 @@ public class Main extends Scene {
     @Override
     public void onStart() {
         getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
-        instantiate(new Entity2DPrefab(new Rectangle(), new RectangleCollider(), new PhysicsBody()));
-        instantiate(new Entity2DPrefab(new EquilateralTriangle(), new TriangleCollider(), new PhysicsBody(), new Comp2()));
+        instantiate(new Entity2DPrefab(new ComponentCreation(Rectangle.class), new ComponentCreation(RectangleCollider.class), new ComponentCreation(PhysicsBody.class)));
+        instantiate(new Entity2DPrefab(new ComponentCreation(EquilateralTriangle.class), new ComponentCreation(TriangleCollider.class), new ComponentCreation(PhysicsBody.class), new ComponentCreation(Comp2.class)));
     }
 }
 
 class Comp2 extends ComponentBehavior {
-
     @Override
     public void onStart() {
         getComponent(PhysicsBody.class).setType(PhysicsType.STATIC);

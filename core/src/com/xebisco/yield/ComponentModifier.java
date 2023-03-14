@@ -16,24 +16,7 @@
 
 package com.xebisco.yield;
 
-public class Entity2DPrefab {
-    private final ComponentCreation[] components;
-    private final Entity2DPrefab[] children;
-
-    public Entity2DPrefab(Entity2DPrefab[] children, ComponentCreation... components) {
-        this.components = components;
-        this.children = children;
-    }
-
-    public Entity2DPrefab(ComponentCreation... components) {
-        this(new Entity2DPrefab[0], components);
-    }
-
-    public ComponentCreation[] getComponents() {
-        return components;
-    }
-
-    public Entity2DPrefab[] getChildren() {
-        return children;
-    }
+@FunctionalInterface
+public interface ComponentModifier {
+    void modify(ComponentBehavior component);
 }

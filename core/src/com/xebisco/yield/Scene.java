@@ -33,7 +33,7 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
     public Scene(Application application) {
         super(application);
         getSystems().add(physicsSystem);
-        instantiate(new Entity2DPrefab(new AudioPlayer(), new InputUI())).setIndex(-1);
+        instantiate(new Entity2DPrefab(new ComponentCreation(AudioPlayer.class), new ComponentCreation(InputUI.class))).setIndex(-1);
     }
 
     @Override

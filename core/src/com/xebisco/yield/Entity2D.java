@@ -36,14 +36,9 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     private int frames;
     private boolean visible = true;
 
-    Entity2D(Application application, Entity2D[] children, ComponentBehavior[] components) {
+    Entity2D(Application application, ComponentBehavior[] components) {
         super(application);
         this.application = application;
-        if (children != null)
-            getEntities().addAll(List.of(children));
-        for (Entity2D e : children) {
-            e.setParent(this);
-        }
         for (ComponentBehavior c : components) {
             c.setEntity(this);
         }

@@ -16,24 +16,41 @@
 
 package com.xebisco.yield;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Entity2DContainer {
-    private List<Entity2D> entities = new ArrayList<>();
     private final Application application;
+    private List<Entity2D> entities = new ArrayList<>();
 
     public Entity2DContainer(Application application) {
         this.application = application;
     }
 
     public Entity2D instantiate(Entity2DPrefab prefab, EntityStarter entityStarter) {
-        Entity2D entity = new Entity2D(application, prefab.getChildren(), prefab.getComponents());
+        ComponentBehavior[] components = new ComponentBehavior[prefab.getComponents().length];
+        for (int i = 0; i < components.length; i++) {
+            ComponentCreation cc = prefab.getComponents()[i];
+            try {
+                components[i] = cc.getComponentClass().getDeclaredConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchMethodException e) {
+                throw new IllegalStateException("Components need to have one constructor without any arguments. '" + cc.getComponentClass() + "'");
+            }
+            if (cc.getComponentModifier() != null)
+                cc.getComponentModifier().modify(components[i]);
+        }
+        Entity2D entity = new Entity2D(application, components);
+        for (Entity2DPrefab p : prefab.getChildren()) {
+            entity.instantiate(p);
+        }
         List<Entity2D> entities = new ArrayList<>(getEntities());
         entities.add(entity);
         entities.sort(Entity2D::compareTo);
         setEntities(entities);
-        if(entityStarter != null)
+        if (entityStarter != null)
             entityStarter.start(entity);
         return entity;
     }
