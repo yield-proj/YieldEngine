@@ -30,7 +30,8 @@ public class Vector2D extends TwoAnchorRepresentation {
     }
 
     public static Vector2D vector2D(int degrees, double intensity) {
-        return new Vector2D(Math.cos(degrees) * intensity, Math.sin(degrees) * intensity);
+        double radians = Math.toRadians(degrees);
+        return new Vector2D(Math.cos(radians) * intensity, Math.sin(radians) * intensity);
     }
 
     public double calculateDegrees() {
