@@ -31,6 +31,10 @@ public class TwoAnchorRepresentation {
         return this;
     }
 
+    public TwoAnchorRepresentation set(TwoAnchorRepresentation a) {
+        return set(a.getX(), a.getY());
+    }
+
     /**
      * Add the x and y values of the given TwoAnchorRepresentation to the x and y values of this TwoAnchorRepresentation.
      *
