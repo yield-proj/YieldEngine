@@ -81,6 +81,11 @@ public class PhysicsBody extends ComponentBehavior {
         getTransform().setzRotation(Math.toDegrees(b2Body.getAngle()));
     }
 
+    @Override
+    public void dispose() {
+        getApplication().getScene().getPhysicsSystem().getB2World().destroyBody(b2Body);
+    }
+
     public void addForce(Vector2D force, ForceType forceType) {
         switch (forceType) {
             case FORCE -> b2Body.applyForceToCenter(Global.toVec2(force));
