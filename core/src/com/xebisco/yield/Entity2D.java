@@ -32,6 +32,8 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     private int index;
     private FontLoader fontLoader;
     private ContactAdapter contactAdapter;
+
+    private String[] tags;
     private int frames;
     private boolean visible = true;
 
@@ -98,6 +100,14 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     @Override
     public int compareTo(Entity2D o) {
         return Integer.compare(o.index, index);
+    }
+
+    public boolean containsTag(String tag) {
+        for(String t : tags) {
+            if(t.hashCode() == tag.hashCode() && t.equals(tag))
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -270,5 +280,13 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
 
     public void setParent(Entity2DContainer parent) {
         this.parent = parent;
+    }
+
+    public String[] getTags() {
+        return tags;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
     }
 }

@@ -19,14 +19,24 @@ package com.xebisco.yield;
 public class Entity2DPrefab {
     private final ComponentCreation[] components;
     private final Entity2DPrefab[] children;
+    private final String[] tags;
 
     public Entity2DPrefab(Entity2DPrefab[] children, ComponentCreation... components) {
+        this(children, new String[0], components);
+    }
+
+    public Entity2DPrefab(Entity2DPrefab[] children, String[] tags, ComponentCreation... components) {
         this.components = components;
         this.children = children;
+        this.tags = tags;
     }
 
     public Entity2DPrefab(ComponentCreation... components) {
-        this(new Entity2DPrefab[0], components);
+        this(new Entity2DPrefab[0], null, components);
+    }
+
+    public Entity2DPrefab(String[] tags, ComponentCreation... components) {
+        this(new Entity2DPrefab[0], tags, components);
     }
 
     public ComponentCreation[] getComponents() {
@@ -35,5 +45,9 @@ public class Entity2DPrefab {
 
     public Entity2DPrefab[] getChildren() {
         return children;
+    }
+
+    public String[] getTags() {
+        return tags;
     }
 }
