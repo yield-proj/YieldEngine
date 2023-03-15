@@ -74,6 +74,9 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
         for (Entity2D entity : getEntities()) {
             entity.dispose();
         }
+        for (ComponentBehavior component : components) {
+            component.dispose();
+        }
         if (getParent() != null) {
             getParent().getEntities().remove(this);
             setParent(null);
