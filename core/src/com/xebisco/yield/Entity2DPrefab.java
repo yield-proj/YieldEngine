@@ -32,7 +32,7 @@ public class Entity2DPrefab {
     }
 
     public Entity2DPrefab(ComponentCreation... components) {
-        this(new Entity2DPrefab[0], null, components);
+        this(new Entity2DPrefab[0], new String[0], components);
     }
 
     public Entity2DPrefab(String[] tags, ComponentCreation... components) {
