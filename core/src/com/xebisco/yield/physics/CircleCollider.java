@@ -27,7 +27,7 @@ public class CircleCollider extends Collider {
     public Shape getShape() {
         CircleShape s = new CircleShape();
         float largerScale = (float) (Math.max(getTransform().getScale().getX(), getTransform().getScale().getY()));
-        s.setRadius((float) radius * largerScale);
+        s.setRadius((float) (radius * largerScale / getApplication().getPhysicsPpm()));
         return s;
     }
 
