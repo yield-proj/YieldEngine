@@ -95,8 +95,15 @@ public class Application implements Behavior {
             drawInstruction.setSize(platformInit.getResolution());
             platformGraphics.draw(drawInstruction);
             try {
-                for (Entity2D entity : scene.getEntities()) {
-                    entity.render(platformGraphics);
+                for (int i = 0; i < scene.getEntities().size(); i++) {
+                    Entity2D e = null;
+                    try {
+                        e = scene.getEntities().get(i);
+                    } catch (IndexOutOfBoundsException ignore) {
+
+                    }
+                    if (e != null)
+                        e.render(platformGraphics);
                 }
             } catch (ConcurrentModificationException ignore) {
 
@@ -260,7 +267,6 @@ public class Application implements Behavior {
     @Override
     public void onUpdate() {
         if (scene != null) {
-            CompletableFuture<Void> renderAsync = CompletableFuture.runAsync(renderer).exceptionally(exceptionThrowFunction);
             scene.setFrames(scene.getFrames() + 1);
             if (scene.getFrames() == 1) {
                 scene.onStart();
@@ -286,15 +292,7 @@ public class Application implements Behavior {
             } catch (ConcurrentModificationException ignore) {
 
             }
-            while (!renderAsync.isDone()) {
-                synchronized (renderLock) {
-                    try {
-                        renderLock.wait(1);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
+            renderer.run();
             if (inputManager != null) {
                 updateAxes();
                 inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);

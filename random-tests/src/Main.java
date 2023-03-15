@@ -39,19 +39,5 @@ public class Main extends Scene {
     public void onStart() {
         getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
         instantiate(new Entity2DPrefab(new ComponentCreation(Rectangle.class), new ComponentCreation(RectangleCollider.class), new ComponentCreation(PhysicsBody.class)));
-        instantiate(new Entity2DPrefab(new ComponentCreation(EquilateralTriangle.class), new ComponentCreation(TriangleCollider.class), new ComponentCreation(PhysicsBody.class), new ComponentCreation(Comp2.class)));
-    }
-}
-
-class Comp2 extends ComponentBehavior {
-    @Override
-    public void onStart() {
-        getComponent(PhysicsBody.class).setType(PhysicsType.STATIC);
-        getComponent(PhysicsBody.class).setPosition(new TwoAnchorRepresentation(10, -300));
-    }
-
-    @Override
-    public void onUpdate() {
-        getApplication().getScene().getCamera().sumLocal(new Vector2D(getApplication().getAxis("HorizontalCam") * 30, getApplication().getAxis("VerticalCam") * 30));
     }
 }

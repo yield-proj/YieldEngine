@@ -19,7 +19,6 @@ package com.xebisco.yield;
 import com.xebisco.yield.physics.ContactAdapter;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /**
@@ -57,12 +56,14 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
                 component.onStart();
             component.onUpdate();
         }
-        try {
-            for (Entity2D entity : getEntities()) {
-                    entity.process();
-            }
-        } catch (ConcurrentModificationException ignore) {
+        for (int i = 0; i < getEntities().size(); i++) {
+            Entity2D e = null;
+            try {
+                e = getEntities().get(i);
+            } catch (IndexOutOfBoundsException ignore) {
 
+            }
+            e.process();
         }
     }
 
@@ -80,11 +81,18 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     @Override
     public void render(PlatformGraphics graphics) {
         if (visible)
-            for (ComponentBehavior component : components)
-                if (component.getFrames() > 1) {
+            for (int i = 0; i < components.size(); i++) {
+                ComponentBehavior component = null;
+                try {
+                    component = components.get(i);
+                } catch (IndexOutOfBoundsException ignore) {
+
+                }
+                if (component != null && component.getFrames() > 1) {
                     graphics.resetRotation();
                     component.render(graphics);
                 }
+            }
     }
 
     @Override
