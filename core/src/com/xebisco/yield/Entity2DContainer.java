@@ -43,6 +43,7 @@ public class Entity2DContainer {
                 cc.getComponentModifier().modify(components[i]);
         }
         Entity2D entity = new Entity2D(application, components);
+        entity.setParent(this);
         for (Entity2DPrefab p : prefab.getChildren()) {
             entity.instantiate(p);
         }

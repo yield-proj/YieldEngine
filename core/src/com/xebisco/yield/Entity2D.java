@@ -29,7 +29,7 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     private final Transform2D transform = new Transform2D();
     private final Application application;
     private List<ComponentBehavior> components = new ArrayList<>();
-    private Entity2D parent;
+    private Entity2DContainer parent;
     private int index;
     private FontLoader fontLoader;
     private ContactAdapter contactAdapter;
@@ -43,13 +43,6 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
             c.setEntity(this);
         }
         this.components.addAll(List.of(components));
-    }
-
-    @Override
-    public Entity2D instantiate(Entity2DPrefab prefab) {
-        Entity2D e = super.instantiate(prefab);
-        e.setParent(this);
-        return e;
     }
 
     /**
@@ -66,7 +59,7 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
         }
         try {
             for (Entity2D entity : getEntities()) {
-                entity.process();
+                    entity.process();
             }
         } catch (ConcurrentModificationException ignore) {
 
@@ -82,8 +75,6 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
             getParent().getEntities().remove(this);
             setParent(null);
         }
-        setComponents(null);
-        setEntities(null);
     }
 
     @Override
@@ -265,11 +256,11 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
         this.visible = visible;
     }
 
-    public Entity2D getParent() {
+    public Entity2DContainer getParent() {
         return parent;
     }
 
-    public void setParent(Entity2D parent) {
+    public void setParent(Entity2DContainer parent) {
         this.parent = parent;
     }
 }
