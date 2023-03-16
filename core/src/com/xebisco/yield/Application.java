@@ -88,7 +88,7 @@ public class Application implements Behavior {
                          NoSuchMethodException e) {
                     throw new RuntimeException(e);
                 }
-                t.purge();
+                t.cancel();
             }
         }, 2000L);
 
