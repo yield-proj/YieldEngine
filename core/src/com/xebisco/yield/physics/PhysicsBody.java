@@ -38,47 +38,47 @@ public class PhysicsBody extends ComponentBehavior {
     public void onStart() {
         BodyDef def = new BodyDef();
         def.userData = getEntity();
-        b2Body = getApplication().getScene().getPhysicsSystem().getB2World().createBody(def);
+        setB2Body(getApplication().getScene().getPhysicsSystem().getB2World().createBody(def));
     }
 
     @Override
     public void onUpdate() {
-        for (Fixture f = b2Body.getFixtureList(); f != null; f = f.getNext()) {
+        for (Fixture f = getB2Body().getFixtureList(); f != null; f = f.getNext()) {
             f.m_shape = ((Collider) f.getUserData()).getShape();
             f.setDensity(((Collider) f.getUserData()).getDensity());
             f.setFriction(((Collider) f.getUserData()).getFriction());
             f.setSensor(((Collider) f.getUserData()).isSensor());
             if(!getEntity().getComponents().contains((Collider) f.getUserData())) {
-                b2Body.destroyFixture(f);
+                getB2Body().destroyFixture(f);
             }
         }
         for (int i = 0; i < getEntity().getComponents().size(); i++) {
             ComponentBehavior c = getEntity().getComponents().get(i);
             if(c instanceof Collider) {
                 boolean contains = false;
-                for (Fixture f = b2Body.getFixtureList(); f != null; f = f.getNext()) {
+                for (Fixture f = getB2Body().getFixtureList(); f != null; f = f.getNext()) {
                     if(f.getUserData() == c) {
                         contains = true;
                         break;
                     }
                 }
                 if(!contains) {
-                    Fixture f = b2Body.createFixture(((Collider) c).getShape(), ((Collider) c).getDensity());
+                    Fixture f = getB2Body().createFixture(((Collider) c).getShape(), ((Collider) c).getDensity());
                     f.setUserData(c);
                 }
             }
         }
-        b2Body.setType(switch (type) {
+        getB2Body().setType(switch (type) {
             case DYNAMIC -> BodyType.DYNAMIC;
             case STATIC -> BodyType.STATIC;
             case KINEMATIC -> BodyType.KINEMATIC;
         });
-        b2Body.setGravityScale((float) gravityScale);
-        b2Body.setBullet(bullet);
-        b2Body.m_mass = (float) mass;
-        b2Body.setFixedRotation(fixedRotation);
-        getTransform().getPosition().set(b2Body.getPosition().x * getApplication().getPhysicsPpm(), (b2Body.getPosition().y + 2) * getApplication().getPhysicsPpm());
-        getTransform().setzRotation(Math.toDegrees(b2Body.getAngle()));
+        getB2Body().setGravityScale((float) gravityScale);
+        getB2Body().setBullet(bullet);
+        getB2Body().m_mass = (float) mass;
+        getB2Body().setFixedRotation(fixedRotation);
+        getTransform().getPosition().set(getB2Body().getPosition().x * getApplication().getPhysicsPpm(), (getB2Body().getPosition().y + 2) * getApplication().getPhysicsPpm());
+        getTransform().setzRotation(Math.toDegrees(getB2Body().getAngle()));
     }
 
     @Override
@@ -88,22 +88,31 @@ public class PhysicsBody extends ComponentBehavior {
 
     public void addForce(Vector2D force, ForceType forceType) {
         switch (forceType) {
-            case FORCE -> b2Body.applyForceToCenter(Global.toVec2(force));
-            case LINEAR_IMPULSE -> b2Body.applyLinearImpulse(Global.toVec2(force), b2Body.getWorldCenter());
+            case FORCE -> getB2Body().applyForceToCenter(Global.toVec2(force));
+            case LINEAR_IMPULSE -> getB2Body().applyLinearImpulse(Global.toVec2(force), getB2Body().getWorldCenter());
             default -> throw new IllegalArgumentException(forceType.name());
         }
     }
 
     public void addForce(double force, ForceType forceType) {
+        checkBodyCreation();
         switch (forceType) {
-            case TORQUE -> b2Body.applyTorque((float) force);
-            case ANGULAR_IMPULSE -> b2Body.applyAngularImpulse((float) force);
+            case TORQUE -> getB2Body().applyTorque((float) force);
+            case ANGULAR_IMPULSE -> getB2Body().applyAngularImpulse((float) force);
             default -> throw new IllegalArgumentException(forceType.name());
         }
     }
 
+    public void translate(TwoAnchorRepresentation a) {
+        setPosition(new TwoAnchorRepresentation(getPosition().x + a.getX(), getPosition().y + a.getY()));
+    }
+
     public void setPosition(TwoAnchorRepresentation value) {
-        b2Body.setTransform(new Vec2((float) (value.getX() / getApplication().getPhysicsPpm()), (float) (value.getY() / getApplication().getPhysicsPpm())), b2Body.getAngle());
+        getB2Body().setTransform(new Vec2((float) (value.getX() / getApplication().getPhysicsPpm()), (float) (value.getY() / getApplication().getPhysicsPpm())), b2Body.getAngle());
+    }
+
+    public void checkBodyCreation() {
+        if(b2Body == null) throw new BodyNotCreatedException();
     }
 
     public void setAngle(double angle) {
@@ -115,15 +124,15 @@ public class PhysicsBody extends ComponentBehavior {
     }
 
     public Vec2 getPosition() {
-        return b2Body.getPosition();
+        return getB2Body().getPosition();
     }
 
     public Vec2 getLinearVelocity() {
-        return b2Body.getLinearVelocity();
+        return getB2Body().getLinearVelocity();
     }
 
     public void setLinearVelocity(Vec2 linearVelocity) {
-        b2Body.setLinearVelocity(linearVelocity);
+        getB2Body().setLinearVelocity(linearVelocity);
     }
 
     public void setLinearVelocity(Vector2D linearVelocity) {
@@ -132,11 +141,11 @@ public class PhysicsBody extends ComponentBehavior {
 
 
     public double getAngularVelocity() {
-        return b2Body.getAngularVelocity();
+        return getB2Body().getAngularVelocity();
     }
 
     public void setAngularVelocity(double angularVelocity) {
-        b2Body.setAngularVelocity((float) angularVelocity);
+        getB2Body().setAngularVelocity((float) angularVelocity);
     }
 
     public PhysicsType getType() {
@@ -156,6 +165,7 @@ public class PhysicsBody extends ComponentBehavior {
     }
 
     public Body getB2Body() {
+        checkBodyCreation();
         return b2Body;
     }
 
