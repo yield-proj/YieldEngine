@@ -21,9 +21,7 @@ import com.studiohartman.jamepad.ControllerState;
 import com.studiohartman.jamepad.ControllerUnpluggedException;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ConcurrentModificationException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -61,6 +59,7 @@ public class Application implements Behavior {
 
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, PlatformGraphics platformGraphics, PlatformInit platformInit) {
         this.applicationManager = applicationManager;
+        applicationManager.getApplications().add(this);
         this.platformGraphics = platformGraphics;
         if (platformGraphics instanceof FontLoader)
             fontLoader = (FontLoader) platformGraphics;
@@ -77,12 +76,22 @@ public class Application implements Behavior {
         if (platformGraphics instanceof ViewportZoomScale)
             viewportZoomScale = (ViewportZoomScale) platformGraphics;
         else viewportZoomScale = null;
-        try {
-            setScene(initialScene.getConstructor(Application.class).newInstance(this));
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+
+        setScene(new BlankScene(this));
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    setScene(initialScene.getConstructor(Application.class).newInstance(Application.this));
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                         NoSuchMethodException e) {
+                    throw new RuntimeException(e);
+                }
+                t.purge();
+            }
+        }, 2000L);
+
         this.platformInit = platformInit;
         renderer = () -> {
             platformGraphics.frame();
@@ -375,7 +384,9 @@ public class Application implements Behavior {
      */
     public void setScene(Scene scene) {
         if (this.scene != null) {
-            System.out.println(platformGraphics.getCamera());
+            for (int i = this.scene.getEntities().size() - 1; i >= 0; i--) {
+                this.scene.getEntities().get(i).dispose();
+            }
             for (SystemBehavior system : this.scene.getSystems()) {
                 system.dispose();
             }
@@ -384,7 +395,10 @@ public class Application implements Behavior {
         this.scene = scene;
         if (viewportZoomScale != null)
             viewportZoomScale.getZoomScale().set(1, 1);
-        platformGraphics.setCamera(scene.getCamera());
+        if (scene != null) {
+            scene.setFrames(0);
+            platformGraphics.setCamera(scene.getCamera());
+        }
     }
 
     public ViewportZoomScale getViewportZoomScale() {

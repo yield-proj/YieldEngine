@@ -91,6 +91,11 @@ public class PhysicsSystem extends SystemBehavior {
         b2World.step((float) getScene().getApplication().getApplicationManager().getManagerContext().getContextTime().getDeltaTime(), velocityIterations, positionIterations);
     }
 
+    @Override
+    public void dispose() {
+        b2World = null;
+    }
+
     public Vector2D getGravity() {
         return gravity;
     }

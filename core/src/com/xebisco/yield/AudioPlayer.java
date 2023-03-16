@@ -32,9 +32,11 @@ public class AudioPlayer extends ComponentBehavior {
 
     @Override
     public void dispose() {
-        pause();
-        setPosition(0);
-        getApplication().getAudioManager().unloadAudio(this);
+        if(audioClip != null) {
+            pause();
+            setPosition(0);
+            getApplication().getAudioManager().unloadAudio(this);
+        }
     }
 
     public double getPosition() {
