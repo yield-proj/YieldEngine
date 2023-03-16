@@ -16,7 +16,7 @@
 
 package com.xebisco.yield;
 
-public class ComponentCreation {
+public final class ComponentCreation {
     private final Class<? extends ComponentBehavior> componentClass;
     private final ComponentModifier componentModifier;
 
