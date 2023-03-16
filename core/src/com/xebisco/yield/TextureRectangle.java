@@ -26,6 +26,9 @@ public class TextureRectangle extends Rectangle {
     @VisibleOnInspector
     private PixelProcessor pixelProcessor;
 
+    @VisibleOnInspector
+    private boolean textureSize;
+
     @Override
     public void onStart() {
         super.onStart();
@@ -47,6 +50,9 @@ public class TextureRectangle extends Rectangle {
     @Override
     public void render(PlatformGraphics graphics) {
         getDrawInstruction().setRenderRef(texture.getImageRef());
+        if(textureSize) {
+            getSize().set(texture.getSize());
+        }
         super.render(graphics);
     }
 
