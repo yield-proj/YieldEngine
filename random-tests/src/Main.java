@@ -38,6 +38,6 @@ public class Main extends Scene {
     @Override
     public void onStart() {
         getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
-        instantiate(new Entity2DPrefab(new ComponentCreation(Rectangle.class), new ComponentCreation(RectangleCollider.class), new ComponentCreation(PhysicsBody.class)));
+        instantiate(new Entity2DPrefab(new ComponentCreation(Rectangle.class), new ComponentCreation(RectangleCollider.class), new ComponentCreation(PhysicsBody.class), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class)));
     }
 }
