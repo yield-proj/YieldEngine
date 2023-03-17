@@ -104,7 +104,7 @@ public class PhysicsBody extends ComponentBehavior {
     }
 
     public void translate(TwoAnchorRepresentation a) {
-        setPosition(new TwoAnchorRepresentation(getPosition().x + a.getX(), getPosition().y + a.getY()));
+        setPosition(new TwoAnchorRepresentation(getPosition().x + a.getX() / getApplication().getPhysicsPpm(), getPosition().y + a.getY() / getApplication().getPhysicsPpm()));
     }
 
     public void setPosition(TwoAnchorRepresentation value) {
