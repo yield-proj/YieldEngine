@@ -79,4 +79,12 @@ public class TextureRectangle extends Rectangle {
     public void setPixelProcessor(PixelProcessor pixelProcessor) {
         this.pixelProcessor = pixelProcessor;
     }
+
+    public boolean isTextureSize() {
+        return textureSize;
+    }
+
+    public void setTextureSize(boolean textureSize) {
+        this.textureSize = textureSize;
+    }
 }
