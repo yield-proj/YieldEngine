@@ -110,7 +110,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     @Override
     public Object loadTexture(Texture texture) {
-        Image i;
+        BufferedImage i;
         try {
             i = ImageIO.read(texture.getInputStream());
         } catch (IOException e) {
@@ -121,11 +121,17 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return i;
+        BufferedImage out = new BufferedImage(i.getWidth(), i.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = out.getGraphics();
+        g.drawImage(i, 0, 0, null);
+        g.dispose();
+        i.flush();
+        return out;
     }
 
     @Override
     public void unloadTexture(Texture texture) {
+        ((Image) texture.getImageRef()).flush();
         texture.setImageRef(null);
     }
 
