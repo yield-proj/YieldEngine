@@ -42,7 +42,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     private final Dimension bounds = new Dimension();
     private final MouseButtonAction addBtnAction = pressingMouseButtons::add;
     private final MouseButtonAction removeBtnAction = pressingMouseButtons::remove;
-    private VolatileImage renderImage;
+    private BufferedImage renderImage;
     private GraphicsDevice device;
     private GraphicsConfiguration graphicsConfiguration;
     private JPanel panel;
@@ -54,6 +54,11 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     private Vector2D camera;
 
     private TwoAnchorRepresentation zoomScale = new TwoAnchorRepresentation(1, 1);
+
+    public SwingPlatform() {
+        device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        graphicsConfiguration = device.getDefaultConfiguration();
+    }
 
     public static Dimension onSizeBoundary(Image image, Dimension boundary) {
         int original_width = image.getWidth(null);
@@ -121,7 +126,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        BufferedImage out = new BufferedImage(i.getWidth(), i.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage out = graphicsConfiguration.createCompatibleImage(i.getWidth(), i.getHeight(), Transparency.TRANSLUCENT);
         Graphics g = out.getGraphics();
         g.drawImage(i, 0, 0, null);
         g.dispose();
@@ -160,6 +165,15 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     @Override
     public Texture cropTexture(Object imageRef, int x, int y, int w, int h) {
         BufferedImage image = ((BufferedImage) imageRef).getSubimage(x, y, w, h);
+        return new Texture(image, null, this);
+    }
+
+    @Override
+    public Texture scaledTexture(Object imageRef, int w, int h) {
+        BufferedImage image = graphicsConfiguration.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
+        Graphics g = image.getGraphics();
+        g.drawImage((Image) imageRef, 0, 0, w, h, panel);
+        g.dispose();
         return new Texture(image, null, this);
     }
 
@@ -343,15 +357,13 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         System.setProperty("sun.java2d.opengl", "True");
         Toolkit.getDefaultToolkit().setDynamicLayout(false);
         stretch = platformInit.isStretchViewport();
-        device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        graphicsConfiguration = device.getDefaultConfiguration();
         panel = new SwingImplPanel();
         frame = new JFrame(graphicsConfiguration);
         frame.addKeyListener(this);
         frame.addMouseListener(this);
         frame.addMouseWheelListener(this);
         frame.add(panel);
-        renderImage = graphicsConfiguration.createCompatibleVolatileImage(
+        renderImage = graphicsConfiguration.createCompatibleImage(
                 (int) platformInit.getResolution().getWidth(),
                 (int) platformInit.getResolution().getHeight(),
                 Transparency.OPAQUE
@@ -477,11 +489,11 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         panel.paintImmediately(0, 0, panel.getWidth(), panel.getHeight());
     }
 
-    public VolatileImage getRenderImage() {
+    public BufferedImage getRenderImage() {
         return renderImage;
     }
 
-    public void setRenderImage(VolatileImage renderImage) {
+    public void setRenderImage(BufferedImage renderImage) {
         this.renderImage = renderImage;
     }
 

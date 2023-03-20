@@ -16,9 +16,7 @@
 
 import com.xebisco.yield.*;
 import com.xebisco.yield.physics.PhysicsBody;
-import com.xebisco.yield.physics.PhysicsType;
 import com.xebisco.yield.physics.RectangleCollider;
-import com.xebisco.yield.physics.TriangleCollider;
 
 public class Main extends Scene {
     public Main(Application application) {

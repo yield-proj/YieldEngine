@@ -85,6 +85,11 @@ public class Texture extends FileInput {
         return getTextureManager().cropTexture(imageRef, x, y, w, h);
     }
 
+    public Texture scaled(int w, int h) {
+        return getTextureManager().scaledTexture(imageRef, w, h);
+    }
+
+
     public Object getImageRef() {
         return imageRef;
     }
