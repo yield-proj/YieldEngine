@@ -40,10 +40,9 @@ public class Context implements Runnable {
     @Override
     public void run() {
         running.set(true);
-        long last = System.nanoTime(), actual, frameCount = 0;
+        long last = System.nanoTime(), actual;
         long value = 0;
         while (running.get()) {
-            frameCount++;
             if (!lightweight && value > 0) {
                 do {
                     actual = System.nanoTime();
@@ -67,9 +66,6 @@ public class Context implements Runnable {
                         throw new RuntimeException(e);
                     }
                 }
-            if((int) (frameCount + 1) % 1000 == 0) {
-                System.gc();
-            }
         }
         if (disposable != null)
             disposable.dispose();
