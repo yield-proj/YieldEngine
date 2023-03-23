@@ -18,6 +18,8 @@ package com.xebisco.yield;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Entity2DContainer {
@@ -48,10 +50,7 @@ public class Entity2DContainer {
         for (Entity2DPrefab p : prefab.getChildren()) {
             entity.instantiate(p);
         }
-        List<Entity2D> entities = new ArrayList<>(getEntities());
         entities.add(entity);
-        entities.sort(Entity2D::compareTo);
-        setEntities(entities);
         if (entityStarter != null)
             entityStarter.start(entity);
         return entity;

@@ -301,6 +301,7 @@ public class Application implements Behavior {
             } catch (ConcurrentModificationException ignore) {
 
             }
+            scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex));
             renderer.run();
             if (inputManager != null) {
                 updateAxes();

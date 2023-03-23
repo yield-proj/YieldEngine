@@ -21,10 +21,7 @@ import com.xebisco.yield.physics.ContactAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * It's a class that can be rendered, disposed, and compared to other entities
- */
-public final class Entity2D extends Entity2DContainer implements Renderable, Disposable, Comparable<Entity2D> {
+public final class Entity2D extends Entity2DContainer implements Renderable, Disposable {
     private final Transform2D transform = new Transform2D();
     private final Application application;
     private List<ComponentBehavior> components = new ArrayList<>();
@@ -98,11 +95,6 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
                     component.render(graphics);
                 }
             }
-    }
-
-    @Override
-    public int compareTo(Entity2D o) {
-        return Integer.compare(o.index, index);
     }
 
     public boolean containsTag(String tag) {
