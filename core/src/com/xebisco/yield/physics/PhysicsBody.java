@@ -37,6 +37,7 @@ public class PhysicsBody extends ComponentBehavior {
     @Override
     public void onStart() {
         BodyDef def = new BodyDef();
+        def.position = Global.toVec2(getTransform().getPosition());
         def.userData = getEntity();
         setB2Body(getApplication().getScene().getPhysicsSystem().getB2World().createBody(def));
     }
