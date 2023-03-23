@@ -402,6 +402,14 @@ public class Application implements Behavior {
         }
     }
 
+    public boolean isPressingKey(Input.Key key) {
+        return getInputManager().getPressingKeys().contains(key);
+    }
+
+    public boolean isPressingButton(Input.MouseButton button) {
+        return getInputManager().getPressingMouseButtons().contains(button);
+    }
+
     public ViewportZoomScale getViewportZoomScale() {
         return viewportZoomScale;
     }
