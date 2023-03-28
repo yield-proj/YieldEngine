@@ -21,8 +21,14 @@ package com.xebisco.yield;
  */
 public class Vector2D extends TwoAnchorRepresentation {
 
+    public static final Vector2D RIGHT = new Vector2D(1, 0), LEFT = new Vector2D(-1, 0), UP = new Vector2D(0, 1), DOWN = new Vector2D(0, -1), ZERO = new Vector2D(0, 0);
+
     public Vector2D() {
         super(0, 0);
+    }
+
+    public Vector2D(TwoAnchorRepresentation a) {
+        super(a);
     }
 
     public Vector2D(double x, double y) {

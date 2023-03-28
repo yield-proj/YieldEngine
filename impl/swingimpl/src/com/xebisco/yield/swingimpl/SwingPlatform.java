@@ -28,6 +28,7 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -595,12 +596,14 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         } catch (LineUnavailableException e) {
             throw new RuntimeException(e);
         }
+        BufferedInputStream bis = new BufferedInputStream(audioPlayer.getAudioClip().getInputStream());
         try {
-            clip.open(AudioSystem.getAudioInputStream(audioPlayer.getAudioClip().getInputStream()));
+            clip.open(AudioSystem.getAudioInputStream(bis));
         } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
             throw new RuntimeException(e);
         }
         try {
+            bis.close();
             audioPlayer.getAudioClip().getInputStream().close();
         } catch (IOException e) {
             throw new RuntimeException(e);

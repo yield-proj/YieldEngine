@@ -25,6 +25,10 @@ public class TwoAnchorRepresentation {
         set(x, y);
     }
 
+    public TwoAnchorRepresentation(TwoAnchorRepresentation a) {
+        set(a.getX(), a.getY());
+    }
+
     public TwoAnchorRepresentation set(double x, double y) {
         this.x = x;
         this.y = y;
@@ -47,9 +51,7 @@ public class TwoAnchorRepresentation {
     }
 
     public TwoAnchorRepresentation sum(TwoAnchorRepresentation a) {
-        TwoAnchorRepresentation result = new TwoAnchorRepresentation(x, y);
-        result.sumLocal(a);
-        return result;
+        return new TwoAnchorRepresentation(x, y).sumLocal(a);
     }
 
     /**
@@ -64,9 +66,7 @@ public class TwoAnchorRepresentation {
     }
 
     public TwoAnchorRepresentation subtract(TwoAnchorRepresentation a) {
-        TwoAnchorRepresentation result = new TwoAnchorRepresentation(x, y);
-        result.subtractLocal(a);
-        return result;
+        return new TwoAnchorRepresentation(x, y).subtractLocal(a);
     }
 
     /**
@@ -87,9 +87,7 @@ public class TwoAnchorRepresentation {
     }
 
     public TwoAnchorRepresentation multiply(TwoAnchorRepresentation a) {
-        TwoAnchorRepresentation result = new TwoAnchorRepresentation(x, y);
-        result.multiplyLocal(a);
-        return result;
+        return new TwoAnchorRepresentation(x, y).multiplyLocal(a);
     }
 
     /**
@@ -104,9 +102,25 @@ public class TwoAnchorRepresentation {
     }
 
     public TwoAnchorRepresentation divide(TwoAnchorRepresentation a) {
-        TwoAnchorRepresentation result = new TwoAnchorRepresentation(x, y);
-        result.divideLocal(a);
-        return result;
+        return new TwoAnchorRepresentation(x, y).divideLocal(a);
+    }
+
+    public TwoAnchorRepresentation absoluteLocal() {
+        x = Math.abs(x);
+        y = Math.abs(y);
+        return this;
+    }
+
+    public TwoAnchorRepresentation absolute() {
+        return new TwoAnchorRepresentation(x, y).absoluteLocal();
+    }
+
+    public TwoAnchorRepresentation invertLocal() {
+        return multiplyLocal(-1);
+    }
+
+    public TwoAnchorRepresentation invert() {
+        return multiply(new TwoAnchorRepresentation(-1, -1));
     }
 
     /**

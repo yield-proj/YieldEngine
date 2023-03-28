@@ -30,7 +30,7 @@ public class TriangleCollider extends Collider {
     public Shape getShape() {
         PolygonShape s = new PolygonShape();
         TwoAnchorRepresentation dppm = new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm());
-        s.set(new Vec2[]{Global.toVec2(vertices[0].divide(dppm).multiply(getTransform().getScale())), Global.toVec2(vertices[1].divide(dppm).multiply(getTransform().getScale())), Global.toVec2(vertices[2].divide(dppm).multiply(getTransform().getScale()))}, 3);
+        s.set(new Vec2[]{Global.toVec2(vertices[0].divide(dppm).multiply(getTransform().getScale().absolute())), Global.toVec2(vertices[1].divide(dppm).multiply(getTransform().getScale().absolute())), Global.toVec2(vertices[2].divide(dppm).multiply(getTransform().getScale()))}, 3);
         return s;
     }
 

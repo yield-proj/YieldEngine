@@ -78,7 +78,7 @@ public class PhysicsBody extends ComponentBehavior {
         getB2Body().setBullet(bullet);
         getB2Body().m_mass = (float) mass;
         getB2Body().setFixedRotation(fixedRotation);
-        getTransform().getPosition().set(getB2Body().getPosition().x * getApplication().getPhysicsPpm(), (getB2Body().getPosition().y + 2) * getApplication().getPhysicsPpm());
+        getTransform().getPosition().set(getB2Body().getPosition().x * getApplication().getPhysicsPpm(), getB2Body().getPosition().y * getApplication().getPhysicsPpm());
         getTransform().setzRotation(Math.toDegrees(getB2Body().getAngle()));
     }
 
