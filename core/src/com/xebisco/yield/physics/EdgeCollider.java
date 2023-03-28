@@ -16,11 +16,11 @@
 
 package com.xebisco.yield.physics;
 
+import com.xebisco.yield.Global;
 import com.xebisco.yield.Vector2D;
 import com.xebisco.yield.VisibleOnInspector;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.Shape;
-import org.jbox2d.common.Vec2;
 
 public class EdgeCollider extends Collider {
     @VisibleOnInspector
@@ -29,7 +29,7 @@ public class EdgeCollider extends Collider {
     @Override
     public Shape getShape() {
         EdgeShape s = new EdgeShape();
-        s.set(new Vec2((float) point1.getX(), (float) point1.getY()), new Vec2((float) point2.getX(), (float) point2.getY()));
+        s.set(Global.toVec2(point1.multiply(getTransform().getScale().absolute())), Global.toVec2(point2.multiply(getTransform().getScale().absolute())));
         return s;
     }
 
