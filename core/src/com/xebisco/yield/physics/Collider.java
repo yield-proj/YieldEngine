@@ -20,11 +20,21 @@ import com.xebisco.yield.ComponentBehavior;
 import com.xebisco.yield.VisibleOnInspector;
 import org.jbox2d.collision.shapes.Shape;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public abstract class Collider extends ComponentBehavior {
     @VisibleOnInspector
     private float density = 1f, friction = 1f;
+
+    @VisibleOnInspector
+    private Set<Integer> collisionFilter = new HashSet<>();
+
+    @VisibleOnInspector
+    private int collisionMask = 1;
     @VisibleOnInspector
     private boolean sensor;
+
     public abstract Shape getShape();
 
     public float getDensity() {
@@ -49,5 +59,21 @@ public abstract class Collider extends ComponentBehavior {
 
     public void setSensor(boolean sensor) {
         this.sensor = sensor;
+    }
+
+    public Set<Integer> getCollisionFilter() {
+        return collisionFilter;
+    }
+
+    public void setCollisionFilter(Set<Integer> collisionFilter) {
+        this.collisionFilter = collisionFilter;
+    }
+
+    public int getCollisionMask() {
+        return collisionMask;
+    }
+
+    public void setCollisionMask(int collisionMask) {
+        this.collisionMask = collisionMask;
     }
 }

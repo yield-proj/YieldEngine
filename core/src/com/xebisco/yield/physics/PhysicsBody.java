@@ -65,6 +65,10 @@ public class PhysicsBody extends ComponentBehavior {
                 }
                 if(!contains) {
                     Fixture f = getB2Body().createFixture(((Collider) c).getShape(), ((Collider) c).getDensity());
+                    f.m_filter.categoryBits = ((Collider) c).getCollisionMask();
+                    f.m_filter.maskBits = 0xFFFF;
+                    for(int filter : ((Collider) c).getCollisionFilter())
+                        f.m_filter.maskBits &= ~filter;
                     f.setUserData(c);
                 }
             }
