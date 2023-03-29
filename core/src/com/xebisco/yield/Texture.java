@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 
-public class Texture extends FileInput {
+public class Texture extends FileInput implements Disposable {
 
     private final ImmutableSize2D size;
     private final TextureManager textureManager;
@@ -89,6 +89,10 @@ public class Texture extends FileInput {
         return getTextureManager().scaledTexture(imageRef, w, h);
     }
 
+    @Override
+    public void dispose() {
+        getTextureManager().unloadTexture(this);
+    }
 
     public Object getImageRef() {
         return imageRef;
@@ -113,4 +117,5 @@ public class Texture extends FileInput {
     public void setOriginalPixels(int[] originalPixels) {
         this.originalPixels = originalPixels;
     }
+
 }

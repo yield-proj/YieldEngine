@@ -16,7 +16,7 @@
 
 package com.xebisco.yield;
 
-public class Animation {
+public class Animation implements Disposable {
     private Texture[] frames;
     private double delay;
     private boolean loop;
@@ -29,6 +29,12 @@ public class Animation {
         this.loop = loop;
         this.frames = frames;
         this.delay = delay;
+    }
+
+    @Override
+    public void dispose() {
+        for(Texture t : frames)
+            t.dispose();
     }
 
     public Texture[] getFrames() {
@@ -54,4 +60,5 @@ public class Animation {
     public void setLoop(boolean loop) {
         this.loop = loop;
     }
+
 }
