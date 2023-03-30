@@ -64,16 +64,16 @@ public class Rectangle extends ComponentBehavior {
         );
         switch (anchor) {
             case UP:
-                drawInstruction.getPosition().sumLocal(new TwoAnchorRepresentation(0, drawInstruction.getSize().getY() / 2.0));
-                break;
-            case DOWN:
                 drawInstruction.getPosition().sumLocal(new TwoAnchorRepresentation(0, -drawInstruction.getSize().getY() / 2.0));
                 break;
-            case LEFT:
-                drawInstruction.getPosition().sumLocal(new TwoAnchorRepresentation(drawInstruction.getSize().getY() / 2.0, 0));
+            case DOWN:
+                drawInstruction.getPosition().sumLocal(new TwoAnchorRepresentation(0, drawInstruction.getSize().getY() / 2.0));
                 break;
             case RIGHT:
                 drawInstruction.getPosition().sumLocal(new TwoAnchorRepresentation(-drawInstruction.getSize().getY() / 2.0, 0));
+                break;
+            case LEFT:
+                drawInstruction.getPosition().sumLocal(new TwoAnchorRepresentation(drawInstruction.getSize().getY() / 2.0, 0));
                 break;
         }
         drawInstruction.getPosition().sumLocal(offset);
