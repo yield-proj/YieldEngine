@@ -25,34 +25,30 @@ public class Color {
 
     private double red, green, blue, alpha;
 
-    public enum Format {
-        RGB, RGBA, ARGB
-    }
-
     public Color(long color) {
         this(color, Format.ARGB);
     }
 
     public Color(long color, Format format) {
         switch (format) {
-            case RGB -> {
+            case RGB:
                 red = ((color >> 16) & 0xFF) / 255f;
                 green = ((color >> 8) & 0xFF) / 255f;
                 blue = ((color) & 0xFF) / 255f;
                 alpha = 1;
-            }
-            case RGBA -> {
+                break;
+            case RGBA:
                 red = ((color >> 24) & 0xFF) / 255f;
                 green = ((color >> 16) & 0xFF) / 255f;
                 blue = ((color >> 8) & 0xFF) / 255f;
                 alpha = ((color) & 0xFF) / 255f;
-            }
-            case ARGB -> {
+                break;
+            case ARGB:
                 alpha = ((color >> 24) & 0xFF) / 255f;
                 red = ((color >> 16) & 0xFF) / 255f;
                 green = ((color >> 8) & 0xFF) / 255f;
                 blue = ((color) & 0xFF) / 255f;
-            }
+                break;
         }
 
     }
@@ -241,5 +237,9 @@ public class Color {
                 ", blue=" + blue +
                 ", a=" + alpha +
                 '}';
+    }
+
+    public enum Format {
+        RGB, RGBA, ARGB
     }
 }
