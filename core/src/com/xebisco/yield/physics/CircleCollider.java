@@ -16,6 +16,8 @@
 
 package com.xebisco.yield.physics;
 
+import com.xebisco.yield.Global;
+import com.xebisco.yield.Vector2D;
 import com.xebisco.yield.VisibleOnInspector;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.Shape;
@@ -23,11 +25,16 @@ import org.jbox2d.collision.shapes.Shape;
 public class CircleCollider extends Collider {
     @VisibleOnInspector
     private double radius = 50;
+
+    @VisibleOnInspector
+    private Vector2D center = new Vector2D();
+
     @Override
     public Shape getShape() {
         CircleShape s = new CircleShape();
         float largerScale = (float) (Math.max(Math.abs(getTransform().getScale().getX()), Math.abs(getTransform().getScale().getY())));
         s.setRadius((float) (radius * largerScale / getApplication().getPhysicsPpm()));
+        s.m_p.set(Global.toVec2(center));
         return s;
     }
 
@@ -37,5 +44,13 @@ public class CircleCollider extends Collider {
 
     public void setRadius(double radius) {
         this.radius = radius;
+    }
+
+    public Vector2D getCenter() {
+        return center;
+    }
+
+    public void setCenter(Vector2D center) {
+        this.center = center;
     }
 }
