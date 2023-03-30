@@ -32,6 +32,9 @@ public class Rectangle extends ComponentBehavior {
     private boolean filled = true;
 
     @VisibleOnInspector
+    private Vector2D offset = new Vector2D();
+
+    @VisibleOnInspector
     private RectangleAnchor anchor = RectangleAnchor.CENTER;
 
     @Override
@@ -61,18 +64,19 @@ public class Rectangle extends ComponentBehavior {
         );
         switch (anchor) {
             case UP:
-                drawInstruction.getPosition().sum(new TwoAnchorRepresentation(0, drawInstruction.getSize().getY() / 2.0));
+                drawInstruction.getPosition().sumLocal(new TwoAnchorRepresentation(0, drawInstruction.getSize().getY() / 2.0));
                 break;
             case DOWN:
-                drawInstruction.getPosition().sum(new TwoAnchorRepresentation(0, -drawInstruction.getSize().getY() / 2.0));
+                drawInstruction.getPosition().sumLocal(new TwoAnchorRepresentation(0, -drawInstruction.getSize().getY() / 2.0));
                 break;
             case LEFT:
-                drawInstruction.getPosition().sum(new TwoAnchorRepresentation(drawInstruction.getSize().getY() / 2.0, 0));
+                drawInstruction.getPosition().sumLocal(new TwoAnchorRepresentation(drawInstruction.getSize().getY() / 2.0, 0));
                 break;
             case RIGHT:
-                drawInstruction.getPosition().sum(new TwoAnchorRepresentation(-drawInstruction.getSize().getY() / 2.0, 0));
+                drawInstruction.getPosition().sumLocal(new TwoAnchorRepresentation(-drawInstruction.getSize().getY() / 2.0, 0));
                 break;
         }
+        drawInstruction.getPosition().sumLocal(offset);
         drawInstruction.setBorderThickness(borderThickness);
         graphics.draw(drawInstruction);
     }
@@ -177,5 +181,13 @@ public class Rectangle extends ComponentBehavior {
 
     public void setAnchor(RectangleAnchor anchor) {
         this.anchor = anchor;
+    }
+
+    public Vector2D getOffset() {
+        return offset;
+    }
+
+    public void setOffset(Vector2D offset) {
+        this.offset = offset;
     }
 }
