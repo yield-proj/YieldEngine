@@ -16,17 +16,24 @@
 
 package com.xebisco.yield.physics;
 
-import com.xebisco.yield.Size2D;
-import com.xebisco.yield.VisibleOnInspector;
+import com.xebisco.yield.*;
 import org.jbox2d.collision.shapes.*;
 
 public class RectangleCollider extends Collider {
     @VisibleOnInspector
     private Size2D size = new Size2D(100, 100);
+
+    @VisibleOnInspector
+    private Vector2D centroid = new Vector2D(), center = new Vector2D();
+
+    @VisibleOnInspector
+    private double angle;
+
     @Override
     public Shape getShape() {
         PolygonShape s = new PolygonShape();
-        s.setAsBox((float) (size.getWidth() * Math.abs(getTransform().getScale().getX()) / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() * Math.abs(getTransform().getScale().getY()) / getApplication().getPhysicsPpm() / 2.0));
+        s.setAsBox((float) (size.getWidth() * Math.abs(getTransform().getScale().getX()) / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() * Math.abs(getTransform().getScale().getY()) / getApplication().getPhysicsPpm() / 2.0), Global.toVec2(centroid.divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))), (float) Math.toRadians(angle));
+        s.m_centroid.set(Global.toVec2(centroid.divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))));
         return s;
     }
 
@@ -36,5 +43,29 @@ public class RectangleCollider extends Collider {
 
     public void setSize(Size2D size) {
         this.size = size;
+    }
+
+    public Vector2D getCentroid() {
+        return centroid;
+    }
+
+    public void setCentroid(Vector2D centroid) {
+        this.centroid = centroid;
+    }
+
+    public Vector2D getCenter() {
+        return center;
+    }
+
+    public void setCenter(Vector2D center) {
+        this.center = center;
+    }
+
+    public double getAngle() {
+        return angle;
+    }
+
+    public void setAngle(double angle) {
+        this.angle = angle;
     }
 }
