@@ -31,6 +31,9 @@ public class Rectangle extends ComponentBehavior {
     @VisibleOnInspector
     private boolean filled = true;
 
+    @VisibleOnInspector
+    private RectangleAnchor anchor = RectangleAnchor.CENTER;
+
     @Override
     public void onStart() {
         drawInstruction.setType(DrawInstruction.Type.RECTANGLE);
@@ -56,6 +59,20 @@ public class Rectangle extends ComponentBehavior {
                 size.getWidth() * getEntity().getTransform().getScale().getX(),
                 size.getHeight() * getEntity().getTransform().getScale().getY()
         );
+        switch (anchor) {
+            case UP:
+                drawInstruction.getPosition().sum(new TwoAnchorRepresentation(0, drawInstruction.getSize().getY() / 2.0));
+                break;
+            case DOWN:
+                drawInstruction.getPosition().sum(new TwoAnchorRepresentation(0, -drawInstruction.getSize().getY() / 2.0));
+                break;
+            case LEFT:
+                drawInstruction.getPosition().sum(new TwoAnchorRepresentation(drawInstruction.getSize().getY() / 2.0, 0));
+                break;
+            case RIGHT:
+                drawInstruction.getPosition().sum(new TwoAnchorRepresentation(-drawInstruction.getSize().getY() / 2.0, 0));
+                break;
+        }
         drawInstruction.setBorderThickness(borderThickness);
         graphics.draw(drawInstruction);
     }
@@ -152,5 +169,13 @@ public class Rectangle extends ComponentBehavior {
 
     public void setSize(Size2D size) {
         this.size = size;
+    }
+
+    public RectangleAnchor getAnchor() {
+        return anchor;
+    }
+
+    public void setAnchor(RectangleAnchor anchor) {
+        this.anchor = anchor;
     }
 }
