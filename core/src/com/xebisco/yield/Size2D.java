@@ -25,6 +25,10 @@ public class Size2D extends TwoAnchorRepresentation {
         super(width, height);
     }
 
+    public Size2D(TwoAnchorRepresentation a) {
+        super(a);
+    }
+
     public double getWidth() {
         return getX();
     }
