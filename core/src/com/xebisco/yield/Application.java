@@ -132,6 +132,7 @@ public class Application implements Behavior {
         axes.add(new Axis("RightFire", Input.Key.VK_3, null, null, null));
         axes.add(new Axis("LeftFire", Input.Key.VK_1, null, null, null));
         axes.add(new Axis("RightBumper", Input.Key.VK_F, null, null, null));
+        axes.add(new Axis("Run", Input.Key.VK_SHIFT, null, null, null));
         axes.add(new Axis("LeftBumper", Input.Key.VK_G, null, null, null));
         if (textureManager != null) {
             controllerTexture = new Texture("controller.png", textureManager);
@@ -173,6 +174,7 @@ public class Application implements Behavior {
                 axes.add(new Axis("VerticalPad" + a, null, null, null, null));
                 axes.add(new Axis("RightBumper" + a, null, null, null, null));
                 axes.add(new Axis("LeftBumper" + a, null, null, null, null));
+                axes.add(new Axis("Run" + a, null, null, null, null));
             }
             axes.add(new Axis("HorizontalCam" + a, null, null, null, null));
             axes.add(new Axis("VerticalCam" + a, null, null, null, null));
@@ -226,6 +228,8 @@ public class Application implements Behavior {
                         if (Math.abs(axis.getValue()) < 0.1)
                             axis.setValue(0);
                     } else if (axis.getName().equals("RightFire" + a)) {
+                        axis.setValue(device.rightTrigger);
+                    } else if (axis.getName().equals("Run" + a)) {
                         axis.setValue(device.rightTrigger);
                     } else if (axis.getName().equals("LeftFire" + a)) {
                         axis.setValue(device.leftTrigger);
