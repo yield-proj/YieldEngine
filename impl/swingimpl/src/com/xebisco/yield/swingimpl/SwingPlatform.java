@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, AudioManager, ViewportZoomScale {
+    private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
     private final HashSet<Input.Key> pressingKeys = new HashSet<>();
     private final HashSet<Input.MouseButton> pressingMouseButtons = new HashSet<>();
     private final Vector2D mousePosition = new Vector2D();
@@ -61,6 +62,10 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         graphicsConfiguration = device.getDefaultConfiguration();
     }
 
+    public static Color awtColor(com.xebisco.yield.Color yieldColor) {
+        return new Color(yieldColor.getARGB(), true);
+    }
+
     public Dimension onSizeBoundary(Image image, Dimension boundary) {
         int original_width = image.getWidth(canvas);
         int original_height = image.getHeight(canvas);
@@ -77,10 +82,6 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         }
 
         return new Dimension(new_width, new_height);
-    }
-
-    public static Color awtColor(com.xebisco.yield.Color yieldColor) {
-        return new Color(yieldColor.getARGB(), true);
     }
 
     @Override
@@ -647,7 +648,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
                 Transparency.OPAQUE
         );
         gameBuffer.setAccelerationPriority(1);
-        uiBuffer = graphicsConfiguration.createCompatibleImage(
+        uiBuffer = graphicsConfiguration.createCompatibleVolatileImage(
                 (int) platformInit.getUiResolution().getWidth(),
                 (int) platformInit.getUiResolution().getHeight(),
                 Transparency.TRANSLUCENT
@@ -675,11 +676,13 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     public void frame() {
         graphics = (Graphics2D) gameBuffer.getGraphics();
         uiGraphics = (Graphics2D) uiBuffer.getGraphics();
+        int w = uiBuffer.getWidth(canvas), h = uiBuffer.getHeight(canvas);
+        uiGraphics.setBackground(TRANSPARENT);
+        uiGraphics.clearRect(0, 0, w, h);
         defaultTransform = graphics.getTransform();
         PointerInfo pointerInfo = MouseInfo.getPointerInfo();
         if (pointerInfo != null) {
             Point mousePoint = MouseInfo.getPointerInfo().getLocation();
-            int w = uiBuffer.getWidth(canvas), h = uiBuffer.getHeight(canvas);
             mousePosition.set((mousePoint.x - frame.getX() - frame.getWidth() / 2.0) / bounds.getWidth() * w, -(mousePoint.y - frame.getY() - frame.getHeight() / 2.0 - frame.getInsets().top / 4.0) / bounds.getHeight() * h);
             mousePosition.set(Global.clamp(mousePosition.getX(), -w / 2.0, w / 2.0), Global.clamp(mousePosition.getY(), -h / 2.0, h / 2.0));
         } else {
@@ -691,14 +694,20 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     public void draw(DrawInstruction drawInstruction) {
         int w = (int) (drawInstruction.getSize().getWidth()),
                 h = (int) (drawInstruction.getSize().getHeight()),
-                x = (int) (drawInstruction.getPosition().getX() - w / 2.0 - camera.getX()) + gameBuffer.getWidth(canvas) / 2,
-                y = (int) (-drawInstruction.getPosition().getY() - h / 2.0 + camera.getY()) + gameBuffer.getHeight(canvas) / 2;
+                x = (int) (drawInstruction.getPosition().getX() - w / 2.0 - camera.getX()),
+                y = (int) (-drawInstruction.getPosition().getY() - h / 2.0 + camera.getY());
+        Graphics2D graphics;
+        if (drawInstruction.isUiLayer()) {
+            graphics = uiGraphics;
+            x += uiBuffer.getWidth(canvas) / 2;
+            y += uiBuffer.getHeight(canvas) / 2;
+        } else {
+            graphics = this.graphics;
+            x += gameBuffer.getWidth(canvas) / 2;
+            y += gameBuffer.getHeight(canvas) / 2;
+        }
         if (drawInstruction.getRotation() != 0)
             graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), x + w / 2.0, y + h / 2.0);
-        Graphics2D graphics;
-        if(drawInstruction.isUiLayer())
-            graphics = uiGraphics;
-        else graphics = this.graphics;
         switch (drawInstruction.getType()) {
             case RECTANGLE:
                 if (drawInstruction.isFilled()) {
