@@ -25,14 +25,12 @@ public class Texture extends FileInput implements Disposable {
     private final ImmutableSize2D size;
     private final TextureManager textureManager;
     private Object imageRef;
-    private int[] originalPixels;
 
     public Texture(String relativePath, TextureManager textureManager) {
         super(relativePath);
         this.textureManager = textureManager;
         imageRef = textureManager.loadTexture(this);
         size = new ImmutableSize2D(textureManager.getImageWidth(imageRef), textureManager.getImageHeight(imageRef));
-        originalPixels = textureManager.getPixels(imageRef);
     }
 
     public Texture(InputStream inputStream, TextureManager textureManager) {
@@ -40,7 +38,6 @@ public class Texture extends FileInput implements Disposable {
         this.textureManager = textureManager;
         imageRef = textureManager.loadTexture(this);
         size = new ImmutableSize2D(textureManager.getImageWidth(imageRef), textureManager.getImageHeight(imageRef));
-        originalPixels = textureManager.getPixels(imageRef);
     }
 
     public Texture(Object imageRef, InputStream inputStream, TextureManager textureManager) {
@@ -48,27 +45,33 @@ public class Texture extends FileInput implements Disposable {
         this.textureManager = textureManager;
         this.imageRef = imageRef;
         size = new ImmutableSize2D(textureManager.getImageWidth(imageRef), textureManager.getImageHeight(imageRef));
-        originalPixels = textureManager.getPixels(imageRef);
     }
 
+    @Deprecated
     public void process(GPUPixelProcessor gpuPixelProcessor) {
-        gpuPixelProcessor.originalPixels = originalPixels;
-        if(gpuPixelProcessor.pixels == null || gpuPixelProcessor.pixels.length != gpuPixelProcessor.originalPixels.length)
+        gpuPixelProcessor.originalPixels = getTextureManager().getPixels(getImageRef());
+        if (gpuPixelProcessor.pixels == null || gpuPixelProcessor.pixels.length != gpuPixelProcessor.originalPixels.length)
             gpuPixelProcessor.pixels = new int[gpuPixelProcessor.originalPixels.length];
-        gpuPixelProcessor.execute(originalPixels.length / 4);
+        gpuPixelProcessor.execute(gpuPixelProcessor.originalPixels.length / 4);
 
         setPixels(gpuPixelProcessor.pixels);
     }
 
     public void process(PixelProcessor pixelProcessor) {
         Pixel actPixel = new Pixel();
-        int[] toSetPixels = new int[originalPixels.length];
-        for(int i = 0; i < originalPixels.length / 4; i++) {
-            int index = i * 4;
-            actPixel.setColor(new Color(originalPixels[index] / 255.0, originalPixels[index + 1] / 255.0, originalPixels[index + 2] / 255.0, originalPixels[index + 3] / 255.0));
+        int[] toSetPixels = new int[(int) getSize().getWidth() * (int) getSize().getHeight() * 4];
+        for (int i = 0; i < toSetPixels.length / 4; i++) {
+            int x = i, y = 0;
+            while (x > getSize().getWidth() - 1) {
+                x -= getSize().getWidth();
+                y++;
+            }
+
+            int[] pixel = getTextureManager().getPixel(getImageRef(), x, y);
+            actPixel.setColor(new Color(pixel[0] / 255.0, pixel[1] / 255.0, pixel[2] / 255.0, pixel[3] / 255.0));
             actPixel.setIndex(i);
             Pixel p = pixelProcessor.process(actPixel);
-            index = p.getIndex() * 4;
+            int index = p.getIndex() * 4;
             toSetPixels[index] = (int) (p.getColor().getRed() * 255.0);
             toSetPixels[index + 1] = (int) (p.getColor().getGreen() * 255.0);
             toSetPixels[index + 2] = (int) (p.getColor().getBlue() * 255.0);
@@ -108,14 +111,6 @@ public class Texture extends FileInput implements Disposable {
 
     public TextureManager getTextureManager() {
         return textureManager;
-    }
-
-    public int[] getOriginalPixels() {
-        return originalPixels;
-    }
-
-    public void setOriginalPixels(int[] originalPixels) {
-        this.originalPixels = originalPixels;
     }
 
 }

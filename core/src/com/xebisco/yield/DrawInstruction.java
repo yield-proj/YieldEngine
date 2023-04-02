@@ -28,7 +28,7 @@ public class DrawInstruction {
     private Size2D size;
     private Object renderRef;
     private Font font;
-    private boolean filled;
+    private boolean filled, uiLayer;
     private Color innerColor, borderColor;
     private double borderThickness, rotation;
     /**
@@ -209,5 +209,13 @@ public class DrawInstruction {
      */
     public void setFont(Font font) {
         this.font = font;
+    }
+
+    public boolean isUiLayer() {
+        return uiLayer;
+    }
+
+    public void setUiLayer(boolean uiLayer) {
+        this.uiLayer = uiLayer;
     }
 }

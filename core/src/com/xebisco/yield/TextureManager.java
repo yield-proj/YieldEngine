@@ -23,6 +23,7 @@ public interface TextureManager {
     void setPixels(Object imageRef, int[] pixels);
 
     int[] getPixels(Object imageRef);
+    int[] getPixel(Object imageRef, int x, int y);
 
     /**
      * Calculates the texture width.
@@ -40,4 +41,6 @@ public interface TextureManager {
 
     Texture cropTexture(Object imageRef, int x, int y, int w, int h);
     Texture scaledTexture(Object imageRef, int w, int h);
+
+    Texture printScreenTexture();
 }

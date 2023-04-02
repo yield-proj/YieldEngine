@@ -28,7 +28,7 @@ import org.jbox2d.dynamics.contacts.Contact;
 
 public class PhysicsSystem extends SystemBehavior {
     private World b2World;
-    private Vector2D gravity;
+    private Vector2D gravity = new Vector2D(0, -10);
     private int velocityIterations = 6;
     private int positionIterations = 2;
 
@@ -87,7 +87,8 @@ public class PhysicsSystem extends SystemBehavior {
 
     @Override
     public void onUpdate() {
-        b2World.setGravity(Global.toVec2(gravity));
+        if(b2World.getGravity().x != gravity.getX() || b2World.getGravity().y != gravity.getY())
+            b2World.setGravity(Global.toVec2(gravity));
         b2World.step((float) getScene().getApplication().getApplicationManager().getManagerContext().getContextTime().getDeltaTime(), velocityIterations, positionIterations);
     }
 

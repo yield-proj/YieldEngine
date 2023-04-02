@@ -101,7 +101,7 @@ public class Application implements Behavior {
             drawInstruction.setInnerColor(scene.getBackGroundColor());
             drawInstruction.setType(DrawInstruction.Type.RECTANGLE);
             drawInstruction.setPosition(platformGraphics.getCamera());
-            drawInstruction.setSize(platformInit.getResolution());
+            drawInstruction.setSize(platformInit.getGameResolution());
             platformGraphics.draw(drawInstruction);
             try {
                 for (int i = 0; i < scene.getEntities().size(); i++) {
@@ -119,7 +119,7 @@ public class Application implements Behavior {
             }
             platformGraphics.conclude();
         };
-        resolution = new ImmutableSize2D(platformInit.getResolution().getWidth(), platformInit.getResolution().getHeight());
+        resolution = new ImmutableSize2D(platformInit.getGameResolution().getWidth(), platformInit.getGameResolution().getHeight());
         axes.add(new Axis(Global.HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
         axes.add(new Axis(Global.VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
         axes.add(new Axis("HorizontalPad", Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
@@ -306,12 +306,12 @@ public class Application implements Behavior {
 
             }
             scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex));
-            renderer.run();
             if (inputManager != null) {
                 updateAxes();
                 inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
                 inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
             }
+            renderer.run();
         }
     }
 

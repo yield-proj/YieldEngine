@@ -27,10 +27,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -43,12 +41,12 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     private final Dimension bounds = new Dimension();
     private final MouseButtonAction addBtnAction = pressingMouseButtons::add;
     private final MouseButtonAction removeBtnAction = pressingMouseButtons::remove;
-    private BufferedImage renderImage;
+    private Image gameBuffer, uiBuffer, vBuffer;
     private GraphicsDevice device;
     private GraphicsConfiguration graphicsConfiguration;
-    private JPanel panel;
+    private JComponent canvas;
     private JFrame frame;
-    private Graphics2D graphics;
+    private Graphics2D graphics, uiGraphics;
     private AffineTransform defaultTransform = new AffineTransform();
     private boolean stretch;
 
@@ -57,13 +55,15 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     private TwoAnchorRepresentation zoomScale = new TwoAnchorRepresentation(1, 1);
 
     public SwingPlatform() {
+        System.setProperty("sun.java2d.opengl", "True");
+        System.setProperty("sun.java2d.accthreshold", "0");
         device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         graphicsConfiguration = device.getDefaultConfiguration();
     }
 
-    public static Dimension onSizeBoundary(Image image, Dimension boundary) {
-        int original_width = image.getWidth(null);
-        int original_height = image.getHeight(null);
+    public Dimension onSizeBoundary(Image image, Dimension boundary) {
+        int original_width = image.getWidth(canvas);
+        int original_height = image.getHeight(canvas);
         int bound_width = boundary.width;
         int bound_height = boundary.height;
         int new_width;
@@ -129,7 +129,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         }
         BufferedImage out = graphicsConfiguration.createCompatibleImage(i.getWidth(), i.getHeight(), Transparency.TRANSLUCENT);
         Graphics g = out.getGraphics();
-        g.drawImage(i, 0, 0, null);
+        g.drawImage(i, 0, 0, canvas);
         g.dispose();
         i.flush();
         return out;
@@ -154,6 +154,12 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     }
 
     @Override
+    public int[] getPixel(Object imageRef, int x, int y) {
+        BufferedImage image = (BufferedImage) imageRef;
+        return image.getRaster().getPixel(x, y, new int[4]);
+    }
+
+    @Override
     public int getImageWidth(Object imageRef) {
         return ((BufferedImage) imageRef).getWidth();
     }
@@ -173,7 +179,16 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     public Texture scaledTexture(Object imageRef, int w, int h) {
         BufferedImage image = graphicsConfiguration.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
         Graphics g = image.getGraphics();
-        g.drawImage((Image) imageRef, 0, 0, w, h, panel);
+        g.drawImage((Image) imageRef, 0, 0, w, h, canvas);
+        g.dispose();
+        return new Texture(image, null, this);
+    }
+
+    @Override
+    public Texture printScreenTexture() {
+        BufferedImage image = graphicsConfiguration.createCompatibleImage(gameBuffer.getWidth(canvas), gameBuffer.getHeight(canvas), Transparency.TRANSLUCENT);
+        Graphics g = image.getGraphics();
+        g.drawImage(gameBuffer, 0, 0, canvas);
         g.dispose();
         return new Texture(image, null, this);
     }
@@ -601,28 +616,44 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     @Override
     public void dispose() {
-        renderImage.flush();
-        panel = null;
+        gameBuffer.flush();
+        uiBuffer.flush();
+        canvas = null;
         frame.dispose();
         frame = null;
     }
 
     @Override
     public void init(PlatformInit platformInit) {
-        System.setProperty("sun.java2d.opengl", "True");
         Toolkit.getDefaultToolkit().setDynamicLayout(false);
         stretch = platformInit.isStretchViewport();
-        panel = new SwingImplPanel();
         frame = new JFrame(graphicsConfiguration);
         frame.addKeyListener(this);
         frame.addMouseListener(this);
         frame.addMouseWheelListener(this);
-        frame.add(panel);
-        renderImage = graphicsConfiguration.createCompatibleImage(
-                (int) platformInit.getResolution().getWidth(),
-                (int) platformInit.getResolution().getHeight(),
+
+        vBuffer = graphicsConfiguration.createCompatibleVolatileImage(
+                (int) platformInit.getGameResolution().getWidth(),
+                (int) platformInit.getGameResolution().getHeight(),
                 Transparency.OPAQUE
         );
+        vBuffer.setAccelerationPriority(1);
+
+        canvas = new SwingImplPanel();
+
+        gameBuffer = graphicsConfiguration.createCompatibleVolatileImage(
+                (int) platformInit.getGameResolution().getWidth(),
+                (int) platformInit.getGameResolution().getHeight(),
+                Transparency.OPAQUE
+        );
+        gameBuffer.setAccelerationPriority(1);
+        uiBuffer = graphicsConfiguration.createCompatibleImage(
+                (int) platformInit.getUiResolution().getWidth(),
+                (int) platformInit.getUiResolution().getHeight(),
+                Transparency.TRANSLUCENT
+        );
+        uiBuffer.setAccelerationPriority(1);
+
         if (platformInit.isUndecorated() || platformInit.isFullscreen() && device.isFullScreenSupported()) {
             frame.setUndecorated(true);
             frame.setSize((int) platformInit.getWindowSize().getWidth(), (int) platformInit.getWindowSize().getHeight());
@@ -637,17 +668,20 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         if (platformInit.isFullscreen() && device.isFullScreenSupported()) {
             device.setFullScreenWindow(frame);
         }
+        frame.add(canvas);
     }
 
     @Override
     public void frame() {
-        graphics = renderImage.createGraphics();
+        graphics = (Graphics2D) gameBuffer.getGraphics();
+        uiGraphics = (Graphics2D) uiBuffer.getGraphics();
         defaultTransform = graphics.getTransform();
         PointerInfo pointerInfo = MouseInfo.getPointerInfo();
         if (pointerInfo != null) {
             Point mousePoint = MouseInfo.getPointerInfo().getLocation();
-            mousePosition.set((mousePoint.x - frame.getX() - frame.getWidth() / 2.0) / bounds.getWidth() * renderImage.getWidth(), -(mousePoint.y - frame.getY() - frame.getHeight() / 2.0 - frame.getInsets().top / 4.0) / bounds.getHeight() * renderImage.getHeight());
-            mousePosition.set(Global.clamp(mousePosition.getX(), -renderImage.getWidth() / 2.0, renderImage.getWidth() / 2.0), Global.clamp(mousePosition.getY(), -renderImage.getHeight() / 2.0, renderImage.getHeight() / 2.0));
+            int w = uiBuffer.getWidth(canvas), h = uiBuffer.getHeight(canvas);
+            mousePosition.set((mousePoint.x - frame.getX() - frame.getWidth() / 2.0) / bounds.getWidth() * w, -(mousePoint.y - frame.getY() - frame.getHeight() / 2.0 - frame.getInsets().top / 4.0) / bounds.getHeight() * h);
+            mousePosition.set(Global.clamp(mousePosition.getX(), -w / 2.0, w / 2.0), Global.clamp(mousePosition.getY(), -h / 2.0, h / 2.0));
         } else {
             mousePosition.set(0, 0);
         }
@@ -657,10 +691,14 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     public void draw(DrawInstruction drawInstruction) {
         int w = (int) (drawInstruction.getSize().getWidth()),
                 h = (int) (drawInstruction.getSize().getHeight()),
-                x = (int) (drawInstruction.getPosition().getX() - w / 2.0 - camera.getX()) + renderImage.getWidth() / 2,
-                y = (int) (-drawInstruction.getPosition().getY() - h / 2.0 + camera.getY()) + renderImage.getHeight() / 2;
+                x = (int) (drawInstruction.getPosition().getX() - w / 2.0 - camera.getX()) + gameBuffer.getWidth(canvas) / 2,
+                y = (int) (-drawInstruction.getPosition().getY() - h / 2.0 + camera.getY()) + gameBuffer.getHeight(canvas) / 2;
         if (drawInstruction.getRotation() != 0)
             graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), x + w / 2.0, y + h / 2.0);
+        Graphics2D graphics;
+        if(drawInstruction.isUiLayer())
+            graphics = uiGraphics;
+        else graphics = this.graphics;
         switch (drawInstruction.getType()) {
             case RECTANGLE:
                 if (drawInstruction.isFilled()) {
@@ -685,7 +723,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
                 }
                 break;
             case IMAGE:
-                graphics.drawImage((Image) drawInstruction.getRenderRef(), x, y, w, h, null);
+                graphics.drawImage((Image) drawInstruction.getRenderRef(), x, y, w, h, canvas);
                 break;
             case TEXT:
                 graphics.setColor(awtColor(drawInstruction.getInnerColor()));
@@ -744,15 +782,20 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     @Override
     public void conclude() {
         graphics.dispose();
-        panel.paintImmediately(0, 0, panel.getWidth(), panel.getHeight());
+        uiGraphics.dispose();
+        Graphics g = vBuffer.getGraphics();
+        g.drawImage(gameBuffer, 0, 0, vBuffer.getWidth(canvas), vBuffer.getHeight(canvas), canvas);
+        g.drawImage(uiBuffer, 0, 0, vBuffer.getWidth(canvas), vBuffer.getHeight(canvas), canvas);
+        g.dispose();
+        canvas.paintImmediately(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
-    public BufferedImage getRenderImage() {
-        return renderImage;
+    public Image getGameBuffer() {
+        return gameBuffer;
     }
 
-    public void setRenderImage(BufferedImage renderImage) {
-        this.renderImage = renderImage;
+    public void setGameBuffer(Image gameBuffer) {
+        this.gameBuffer = gameBuffer;
     }
 
     public GraphicsDevice getDevice() {
@@ -771,12 +814,12 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         this.graphicsConfiguration = graphicsConfiguration;
     }
 
-    public JPanel getPanel() {
-        return panel;
+    public JComponent getCanvas() {
+        return canvas;
     }
 
-    public void setPanel(JPanel panel) {
-        this.panel = panel;
+    public void setCanvas(JComponent canvas) {
+        this.canvas = canvas;
     }
 
     public JFrame getFrame() {
@@ -928,6 +971,14 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         return false;
     }
 
+    public Image getUiBuffer() {
+        return uiBuffer;
+    }
+
+    public void setUiBuffer(Image uiBuffer) {
+        this.uiBuffer = uiBuffer;
+    }
+
     public Vector2D getMousePosition() {
         return mousePosition;
     }
@@ -978,7 +1029,53 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         void call(Input.MouseButton button);
     }
 
+/*
+    class SwingImplCanvas extends Canvas {
+
+        private BufferStrategy strategy;
+
+        public SwingImplCanvas() {
+            setIgnoreRepaint(true);
+        }
+
+        public void render() {
+            if (strategy == null) {
+                createBufferStrategy(2);
+                strategy = getBufferStrategy();
+            }
+            do {
+                do {
+                    Graphics g = getBufferStrategy().getDrawGraphics();
+                    g.setColor(Color.BLACK);
+                    g.fillRect(0, 0, getWidth(), getHeight());
+                    if (stretch)
+                        bounds.setSize(getWidth(), getHeight());
+                    else bounds.setSize(onSizeBoundary(getGameBuffer(), getSize()));
+                    Dimension b = new Dimension((int) (bounds.width * zoomScale.getX()), (int) (bounds.height * zoomScale.getY()));
+                    g.drawImage(getGameBuffer(), (getWidth() - b.width) / 2, (getHeight() - b.height) / 2, b.width, b.height, this);
+                    if (stretch)
+                        bounds.setSize(getWidth(), getHeight());
+                    else bounds.setSize(onSizeBoundary(getUiBuffer(), getSize()));
+                    b = new Dimension((int) (bounds.width * zoomScale.getX()), (int) (bounds.height * zoomScale.getY()));
+                    g.drawImage(getUiBuffer(), (getWidth() - b.width) / 2, (getHeight() - b.height) / 2, b.width, b.height, this);
+                    g.dispose();
+                    getBufferStrategy().show();
+                } while (strategy.contentsRestored());
+                strategy.show();
+            } while (strategy.contentsLost());
+        }
+
+    }
+*/
+
     class SwingImplPanel extends JPanel {
+
+        public SwingImplPanel() {
+            setIgnoreRepaint(true);
+            setDoubleBuffered(true);
+            setOpaque(true);
+        }
+
         @Override
         public void update(Graphics g) {
             paintComponent(g);
@@ -991,9 +1088,9 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
             g.fillRect(0, 0, getWidth(), getHeight());
             if (stretch)
                 bounds.setSize(getWidth(), getHeight());
-            else bounds.setSize(onSizeBoundary(renderImage, getSize()));
+            else bounds.setSize(onSizeBoundary(vBuffer, getSize()));
             Dimension b = new Dimension((int) (bounds.width * zoomScale.getX()), (int) (bounds.height * zoomScale.getY()));
-            g.drawImage(renderImage, (getWidth() - b.width) / 2, (getHeight() - b.height) / 2, b.width, b.height, this);
+            g.drawImage(vBuffer, (getWidth() - b.width) / 2, (getHeight() - b.height) / 2, b.width, b.height, this);
             g.dispose();
         }
     }
