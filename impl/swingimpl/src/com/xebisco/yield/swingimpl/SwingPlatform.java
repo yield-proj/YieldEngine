@@ -129,7 +129,9 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
             throw new RuntimeException(e);
         }
         BufferedImage out = graphicsConfiguration.createCompatibleImage(i.getWidth(), i.getHeight(), Transparency.TRANSLUCENT);
-        Graphics g = out.getGraphics();
+        Graphics2D g = out.createGraphics();
+        g.setBackground(TRANSPARENT);
+        g.clearRect(0, 0, out.getWidth(), out.getHeight());
         g.drawImage(i, 0, 0, canvas);
         g.dispose();
         i.flush();
@@ -793,8 +795,9 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         graphics.dispose();
         uiGraphics.dispose();
         Graphics g = vBuffer.getGraphics();
-        g.drawImage(gameBuffer, 0, 0, vBuffer.getWidth(canvas), vBuffer.getHeight(canvas), canvas);
-        g.drawImage(uiBuffer, 0, 0, vBuffer.getWidth(canvas), vBuffer.getHeight(canvas), canvas);
+        int w = vBuffer.getWidth(canvas), h = vBuffer.getHeight(canvas);
+        g.drawImage(gameBuffer, (int) ((-w * zoomScale.getX() + w) / 2.0), (int) ((-h * zoomScale.getY() + h) / 2.0), (int) (w * zoomScale.getX()), (int) (h * zoomScale.getY()), canvas);
+        g.drawImage(uiBuffer, 0, 0, w, h, canvas);
         g.dispose();
         canvas.paintImmediately(0, 0, canvas.getWidth(), canvas.getHeight());
     }
@@ -1038,45 +1041,6 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         void call(Input.MouseButton button);
     }
 
-/*
-    class SwingImplCanvas extends Canvas {
-
-        private BufferStrategy strategy;
-
-        public SwingImplCanvas() {
-            setIgnoreRepaint(true);
-        }
-
-        public void render() {
-            if (strategy == null) {
-                createBufferStrategy(2);
-                strategy = getBufferStrategy();
-            }
-            do {
-                do {
-                    Graphics g = getBufferStrategy().getDrawGraphics();
-                    g.setColor(Color.BLACK);
-                    g.fillRect(0, 0, getWidth(), getHeight());
-                    if (stretch)
-                        bounds.setSize(getWidth(), getHeight());
-                    else bounds.setSize(onSizeBoundary(getGameBuffer(), getSize()));
-                    Dimension b = new Dimension((int) (bounds.width * zoomScale.getX()), (int) (bounds.height * zoomScale.getY()));
-                    g.drawImage(getGameBuffer(), (getWidth() - b.width) / 2, (getHeight() - b.height) / 2, b.width, b.height, this);
-                    if (stretch)
-                        bounds.setSize(getWidth(), getHeight());
-                    else bounds.setSize(onSizeBoundary(getUiBuffer(), getSize()));
-                    b = new Dimension((int) (bounds.width * zoomScale.getX()), (int) (bounds.height * zoomScale.getY()));
-                    g.drawImage(getUiBuffer(), (getWidth() - b.width) / 2, (getHeight() - b.height) / 2, b.width, b.height, this);
-                    g.dispose();
-                    getBufferStrategy().show();
-                } while (strategy.contentsRestored());
-                strategy.show();
-            } while (strategy.contentsLost());
-        }
-
-    }
-*/
-
     class SwingImplPanel extends JPanel {
 
         public SwingImplPanel() {
@@ -1098,8 +1062,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
             if (stretch)
                 bounds.setSize(getWidth(), getHeight());
             else bounds.setSize(onSizeBoundary(vBuffer, getSize()));
-            Dimension b = new Dimension((int) (bounds.width * zoomScale.getX()), (int) (bounds.height * zoomScale.getY()));
-            g.drawImage(vBuffer, (getWidth() - b.width) / 2, (getHeight() - b.height) / 2, b.width, b.height, this);
+            g.drawImage(vBuffer, (getWidth() - bounds.width) / 2, (getHeight() - bounds.height) / 2, bounds.width, bounds.height, canvas);
             g.dispose();
         }
     }
