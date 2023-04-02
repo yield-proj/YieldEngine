@@ -26,17 +26,20 @@ public class TextureRectangle extends Rectangle {
     @VisibleOnInspector
     private boolean textureSize;
 
+    @VisibleOnInspector
+    private TwoAnchorRepresentation textureScale = null;
+
     @Override
     public void onStart() {
         super.onStart();
-        if(texture == null) texture = getApplication().getDefaultTexture();
+        if (texture == null) texture = getApplication().getDefaultTexture();
         getDrawInstruction().setType(DrawInstruction.Type.IMAGE);
     }
 
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if(pixelProcessor != null) {
+        if (pixelProcessor != null) {
             texture.process(pixelProcessor);
         }
     }
@@ -44,8 +47,11 @@ public class TextureRectangle extends Rectangle {
     @Override
     public void render(PlatformGraphics graphics) {
         getDrawInstruction().setRenderRef(texture.getImageRef());
-        if(textureSize) {
-            getSize().set(texture.getSize());
+        if (textureSize) {
+            if (textureScale == null)
+                getSize().set(texture.getSize());
+            else
+                getSize().set(texture.getSize().multiply(textureScale));
         }
         super.render(graphics);
     }
@@ -72,5 +78,13 @@ public class TextureRectangle extends Rectangle {
 
     public void setTextureSize(boolean textureSize) {
         this.textureSize = textureSize;
+    }
+
+    public TwoAnchorRepresentation getTextureScale() {
+        return textureScale;
+    }
+
+    public void setTextureScale(TwoAnchorRepresentation textureScale) {
+        this.textureScale = textureScale;
     }
 }
