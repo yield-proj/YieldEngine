@@ -633,8 +633,8 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         frame.addMouseWheelListener(this);
 
         vBuffer = graphicsConfiguration.createCompatibleVolatileImage(
-                (int) platformInit.getGameResolution().getWidth(),
-                (int) platformInit.getGameResolution().getHeight(),
+                (int) platformInit.getResolution().getWidth(),
+                (int) platformInit.getResolution().getHeight(),
                 Transparency.OPAQUE
         );
         vBuffer.setAccelerationPriority(1);

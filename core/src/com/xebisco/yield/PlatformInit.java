@@ -20,7 +20,7 @@ package com.xebisco.yield;
  * It's a class that holds the initial configuration of the specific platform.
  */
 public class PlatformInit {
-    private Size2D gameResolution = new Size2D(1280, 720), uiResolution = new Size2D(1280, 720), windowSize = new Size2D(1280, 720);
+    private Size2D gameResolution = new Size2D(1280, 720), resolution = new Size2D(1280, 720), uiResolution = new Size2D(1280, 720), windowSize = new Size2D(1280, 720);
     private String title = "Yield Window";
     private boolean fullscreen, undecorated, stretchViewport;
     private Texture windowIcon;
@@ -138,5 +138,13 @@ public class PlatformInit {
 
     public void setGameResolution(Size2D gameResolution) {
         this.gameResolution = gameResolution;
+    }
+
+    public Size2D getResolution() {
+        return resolution;
+    }
+
+    public void setResolution(Size2D resolution) {
+        this.resolution = resolution;
     }
 }
