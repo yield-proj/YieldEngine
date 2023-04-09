@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.editor.old;
+package com.xebisco.yield.editor;
 
 import java.awt.*;
 import java.util.Vector;
@@ -23,8 +23,8 @@ import java.util.Vector;
  * Extends BorderLayout with multiple components in the northList, southList, eastList, westList
  * and centerList. Layout is used for correct working multiple toolbars.
  *
- * @author    Stanislav Lapitsky
- * @version   1.0
+ * @author Stanislav Lapitsky
+ * @version 1.0
  */
 class MultiBorderLayout extends BorderLayout {
     /**
@@ -62,8 +62,8 @@ class MultiBorderLayout extends BorderLayout {
     /**
      * Constructs new layout instance with defined parameters.
      *
-     * @param hgap  the horizontal gap.
-     * @param vgap  the vertical gap.
+     * @param hgap the horizontal gap.
+     * @param vgap the vertical gap.
      */
     public MultiBorderLayout(int hgap, int vgap) {
         super(hgap, vgap);
@@ -74,14 +74,14 @@ class MultiBorderLayout extends BorderLayout {
      * constraint object. For border layouts, the constraint must be one of the
      * following constants: <code>NORTH</code>, <code>SOUTH</code>, <code>EAST</code>
      * , <code>WEST</code>, or <code>CENTER</code>. <p>
-     *
+     * <p>
      * Most applications do not call this method directly. This method is called
      * when a component is added to a container using the <code>Container.add</code>
      * method with the same argument types.
      *
-     * @param name         The feature to be added to the LayoutComponent
-     *      attribute.
-     * @param comp         the component to be added.
+     * @param name The feature to be added to the LayoutComponent
+     *             attribute.
+     * @param comp the component to be added.
      */
 
     //the method is deprecated, but it's necessary to override it because current class extends
@@ -101,12 +101,23 @@ class MultiBorderLayout extends BorderLayout {
              *  Assign the component to one of the known regions of the layout.
              */
             switch (name) {
-                case "Center" -> centerList.add(comp);
-                case "North" -> northList.insertElementAt(comp, 0);
-                case "South" -> southList.add(comp);
-                case "East" -> eastList.add(comp);
-                case "West" -> westList.add(comp);
-                default -> throw new IllegalArgumentException("cannot add to layout: unknown constraint: " + name);
+                case "Center":
+                    centerList.add(comp);
+                    break;
+                case "North":
+                    northList.insertElementAt(comp, 0);
+                    break;
+                case "South":
+                    southList.add(comp);
+                    break;
+                case "East":
+                    eastList.add(comp);
+                    break;
+                case "West":
+                    westList.add(comp);
+                    break;
+                default:
+                    throw new IllegalArgumentException("cannot add to layout: unknown constraint: " + name);
             }
 
         }
@@ -117,7 +128,7 @@ class MultiBorderLayout extends BorderLayout {
      * called when a container calls its <code>remove</code> or <code>removeAll</code>
      * methods. Most applications do not call this method directly.
      *
-     * @param comp  the component to be removed.
+     * @param comp the component to be removed.
      */
     public void removeLayoutComponent(Component comp) {
         synchronized (comp.getTreeLock()) {
@@ -133,13 +144,13 @@ class MultiBorderLayout extends BorderLayout {
     /**
      * Determines the minimum size of the <code>target</code> container using
      * this layout manager. <p>
-     *
+     * <p>
      * This method is called when a container calls its <code>getMinimumSize</code>
      * method. Most applications do not call this method directly.
      *
-     * @param target  the container in which to do the layout.
-     * @return        the minimum dimensions needed to lay out the subcomponents
-     *      of the specified container.
+     * @param target the container in which to do the layout.
+     * @return the minimum dimensions needed to lay out the subcomponents
+     * of the specified container.
      */
     public Dimension minimumLayoutSize(Container target) {
         synchronized (target.getTreeLock()) {
@@ -160,7 +171,7 @@ class MultiBorderLayout extends BorderLayout {
             }
             if (westList.size() > 0) {
                 for (Component component : westList) {
-                    c =  component;
+                    c = component;
                     if (!c.isVisible()) {
                         continue;
                     }
@@ -216,13 +227,13 @@ class MultiBorderLayout extends BorderLayout {
     /**
      * Determines the preferred size of the <code>target</code> container using
      * this layout manager, based on the components in the container. <p>
-     *
+     * <p>
      * Most applications do not call this method directly. This method is called
      * when a container calls its <code>getPreferredSize</code> method.
      *
-     * @param target  the container in which to do the layout.
-     * @return        the preferred dimensions to lay out the subcomponents of
-     *      the specified container.
+     * @param target the container in which to do the layout.
+     * @return the preferred dimensions to lay out the subcomponents of
+     * the specified container.
      */
     public Dimension prefferedLayoutSize(Container target) {
         synchronized (target.getTreeLock()) {
@@ -300,7 +311,7 @@ class MultiBorderLayout extends BorderLayout {
 
     /**
      * Lays out the container argument using this border layout. <p>
-     *
+     * <p>
      * This method actually reshapes the components in the specified container
      * in order to satisfy the constraints of this <code>BorderLayout</code>
      * object. The <code>NORTH</code> and <code>SOUTH</code> components, if any,
@@ -308,11 +319,11 @@ class MultiBorderLayout extends BorderLayout {
      * <code>WEST</code> and <code>EAST</code> components are then placed on the
      * left and right, respectively. Finally, the <code>CENTER</code> object is
      * placed in any remaining space in the middle. <p>
-     *
+     * <p>
      * Most applications do not call this method directly. This method is called
      * when a container calls its <code>doLayout</code> method.
      *
-     * @param target  the container in which to do the layout.
+     * @param target the container in which to do the layout.
      */
     public void layoutContainer(Container target) {
         synchronized (target.getTreeLock()) {

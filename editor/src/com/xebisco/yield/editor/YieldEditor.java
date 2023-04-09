@@ -16,228 +16,287 @@
 
 package com.xebisco.yield.editor;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
-import java.awt.geom.RoundRectangle2D;
-import java.io.*;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Objects;
 
-public class YieldEditor {
+public class YieldEditor extends JFrame {
 
-    private static File project;
-    private JFrame frame;
-    public Map<String, String> toLoadIcons = new HashMap<>();
-    private final File projectFile;
-    public final Map<String, ImageIcon> icons = new HashMap<>();
-    private static final List<File> recentOpenedProjects;
-    private static final File DATA_DIR = new File(System.getenv("APPDATA"), "YieldEditor");
-
-    static {
-        if (!DATA_DIR.exists()) {//noinspection ResultOfMethodCallIgnored
-            DATA_DIR.mkdir();
-            try {
-                File file = new File(DATA_DIR, "recentOpenedProjects.ser");
-                file.createNewFile();
-                ObjectOutput output = new ObjectOutputStream(new FileOutputStream(file));
-                output.writeObject(new ArrayList<>());
-                output.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        try (ObjectInput objectInput = new ObjectInputStream(new FileInputStream(new File(DATA_DIR, "recentOpenedProjects.ser")))) {
-            //noinspection unchecked
-            recentOpenedProjects = (List<File>) objectInput.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void main(String[] args) {
-        FlatMacDarkLaf.setup();
-        File project;
-        if (args.length != 1) {
-            if (args.length == 0) project = null;
-            else {
-                JOptionPane.showMessageDialog(null, "Wrong argument number", "Launch Error", JOptionPane.ERROR_MESSAGE);
-                throw new RuntimeException("Wrong argument number");
-            }
-        } else {
-            project = new File(args[0]);
-        }
-
-        new YieldEditor(project);
-    }
-
-    public void loadAssets() {
-
-        toLoadIcons.put("editorLogo", "editorLogo.png");
-        icons.put("yieldIcon", new ImageIcon(Objects.requireNonNull(YieldEditor.class.getResource("yieldIcon.png"))));
-        icons.put("splashScreen", new ImageIcon(Objects.requireNonNull(YieldEditor.class.getResource("splashScreen.png"))));
-        toLoadIcons.put("yieldIcon64x64rsl", null);
-        toLoadIcons.put("starredIcon", "starredIcon.png");
-        toLoadIcons.put("notStarredIcon", "notStarredIcon.png");
+    public static BufferedImage ICON, CLOSE_ICON, SELECTED_CLOSE_ICON, YIELD_SMALL_ICON;
+    private final File project;
+    private JTabbedPane scenesPanel;
 
 
-        JFrame splash = new JFrame();
-        JProgressBar progressBar = new JProgressBar();
-        splash.setIconImage(icons.get("yieldIcon").getImage());
-        splash.add(new JLabel(icons.get("splashScreen")), BorderLayout.NORTH);
-        splash.add(progressBar, BorderLayout.CENTER);
-        splash.setUndecorated(true);
-        splash.pack();
-        splash.setLocationRelativeTo(null);
-        splash.setVisible(true);
-        splash.setShape(new RoundRectangle2D.Double(0, 0, splash.getWidth(), splash.getHeight(), 25, 25));
-        progressBar.setMinimum(0);
-        progressBar.setMaximum(toLoadIcons.size());
-        progressBar.setValue(0);
-        int index = 0;
-        for (String i : toLoadIcons.keySet()) {
-            ImageIcon imageIcon;
-            if (i.endsWith("rsl")) {
-                Matcher matcher = Pattern.compile("^([^0-9]+)([0-9]+)x([0-9]+)rsl$").matcher(i);
-                //noinspection ResultOfMethodCallIgnored
-                matcher.matches();
-                imageIcon = new ImageIcon(icons.get(matcher.group(1)).getImage().getScaledInstance(Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)), Image.SCALE_SMOOTH));
-            } else {
-                imageIcon = new ImageIcon(Objects.requireNonNull(YieldEditor.class.getResource(toLoadIcons.get(i))));
-            }
-            icons.put(i, imageIcon);
-            progressBar.setValue(index + 1);
-            index++;
-            /*try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }*/
-        }
-        splash.dispose();
-        /*JPanel logoPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
+    public YieldEditor(File project) {
+        this.project = project;
+        setTitle("Yield Editor - " + project.getName());
+        setMinimumSize(new Dimension(500, 300));
+        setIconImage(ICON);
 
-            }
-        };*/
-    }
 
-    public JMenuBar createMenuBar() {
-        JMenuBar mainMenuBar = new JMenuBar();
+        //Title bar
+
+        JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("File");
-        menu.setMnemonic('F');
-        JMenuItem item = new JMenuItem(new AbstractAction("Open Project...") {
+        menu.add(new JMenuItem(new AbstractAction("New") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new YieldEditor(null);
-            }
-        });
-        menu.add(item);
-
-        JMenu menu2 = new JMenu("Open Recent");
-        menu2.addMenuListener(new MenuListener() {
-            @Override
-            public void menuSelected(MenuEvent e) {
-                menu2.removeAll();
-                if (recentOpenedProjects.size() == 0)
-                    menu2.add(new JMenuItem("No recent projects"));
-                for (File project : recentOpenedProjects) {
-                    menu2.add(new JMenuItem(new AbstractAction(project.getName()) {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            new YieldEditor(project);
-                        }
-                    }));
-                }
-            }
-
-            @Override
-            public void menuDeselected(MenuEvent e) {
-
-            }
-
-            @Override
-            public void menuCanceled(MenuEvent e) {
-
-            }
-        });
-
-
-        menu.add(menu2);
-
-        mainMenuBar.add(menu);
-        return mainMenuBar;
-    }
-
-    public YieldEditor(File projectFile) {
-        if (projectFile == null) {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-                projectFile = fileChooser.getSelectedFile();
-            }
-        }
-        if (projectFile != null) {
-            this.projectFile = projectFile;
-            if (!projectFile.exists()) {
-                JOptionPane.showMessageDialog(null, "Project does not exist", "Launch Error", JOptionPane.ERROR_MESSAGE);
-                throw new RuntimeException("Project does not exist");
-            }
-
-            if (projectFile.isDirectory())
-                projectFile = new File(projectFile, "project.ser");
-            if (!projectFile.exists()) {
-                JOptionPane.showMessageDialog(null, "Is not a project", "Launch Error", JOptionPane.ERROR_MESSAGE);
-                throw new RuntimeException("Is not a project");
-            }
-            init();
-        } else {
-            this.projectFile = null;
-        }
-    }
-
-    private void init() {
-        loadAssets();
-        frame = new JFrame();
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                frame.dispose();
-                recentOpenedProjects.add(projectFile);
-
-                for (ListIterator<File> iterator = recentOpenedProjects.listIterator(); iterator.hasNext(); ) {
-                    File customer = iterator.next();
-                    if (Collections.frequency(recentOpenedProjects, customer) > 1) {
-                        iterator.remove();
-                    }
-                }
-                AtomicInteger i = new AtomicInteger();
-                recentOpenedProjects.removeIf(p -> i.addAndGet(1) > 30);
-
-                try (ObjectOutput output = new ObjectOutputStream(new FileOutputStream(new File(DATA_DIR, "recentOpenedProjects.ser")))) {
-                    output.writeObject(recentOpenedProjects);
+                try {
+                    openEditor(null);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
             }
+        }));
+
+        menu.add(new JMenuItem(new AbstractAction("Open") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                fileChooser.setDragEnabled(true);
+                if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        openEditor(fileChooser.getSelectedFile().getAbsolutePath());
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                } else {
+                    throwException(new Exception("Operation cancelled"), YieldEditor.this);
+                }
+            }
+        }));
+
+        menu.addSeparator();
+
+        menu.add(new JMenuItem(new AbstractAction("Save") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO
+            }
+        }));
+
+        menu.add(new JMenuItem(new AbstractAction("Close") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        }));
+
+        menuBar.add(menu);
+
+
+        menu = new JMenu("Scene");
+        menu.add(new JMenuItem(new AbstractAction("New Scene") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createNewDialog("New Scene", new JList<>(new String[]{"Empty", "Hello, World!"}), (n, s) -> {
+                    JPanel scenePanel = new GameView();
+                    scenesPanel.insertTab(n, null, scenePanel, n, 0);
+                });
+            }
+        }));
+
+        menuBar.add(menu);
+
+        setJMenuBar(menuBar);
+
+        //Title bar
+
+
+        JPanel mainPanel = new JPanel();
+
+        // add(mainPanel);
+
+        createScenesPanel();
+JTabbedPane tabbedPane = new DnDTabbedPane();
+        tabbedPane.addTab("aaa", new JPanel());
+        JSplitPane p1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scenesPanel, tabbedPane);
+
+        mainPanel.setPreferredSize(getSize());
+
+        add(p1);
+
+        p1.setDividerLocation(1000);
+
+
+        setSize(new Dimension(1280, 720));
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                YieldEditor.this.dispose();
+            }
         });
-        frame.setJMenuBar(createMenuBar());
-        frame.setSize(1280, 720);
-        frame.setLocationRelativeTo(null);
-        frame.setTitle(projectFile.getName() + " - Yield Editor");
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.setVisible(true);
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) throws IOException {
+        String p = null;
+        if (args.length == 1)
+            p = args[0];
+        openEditor(p);
+    }
+
+    public static void openEditor(String projectPath) throws IOException {
+
+        JDialog splashDialog = new JDialog();
+        splashDialog.add(new JLabel(new ImageIcon(ImageIO.read(Objects.requireNonNull(YieldEditor.class.getResource("splashScreen.png"))))));
+
+        splashDialog.setUndecorated(true);
+        splashDialog.pack();
+        splashDialog.setLocationRelativeTo(null);
+        splashDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+        splashDialog.setVisible(true);
+
+        FlatDarkLaf.setup();
+
+        if (ICON == null) {
+            log("Loading resources");
+            try {
+
+                ICON = ImageIO.read(Objects.requireNonNull(YieldEditor.class.getResource("yieldIcon.png")));
+                YIELD_SMALL_ICON = ImageIO.read(Objects.requireNonNull(YieldEditor.class.getResource("yieldSmallIcon.png")));
+            } catch (IOException e) {
+                throwException(e, null);
+                System.exit(1);
+            }
+        }
+
+
+        File project = null;
+
+        if (projectPath == null) {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            fileChooser.setDragEnabled(true);
+            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                project = fileChooser.getSelectedFile();
+            } else {
+                splashDialog.dispose();
+                return;
+            }
+        }
+
+        log("Verifying project");
+
+        if (project == null) {
+            assert projectPath != null;
+            project = new File(projectPath);
+        }
+
+        if (!project.exists()) {
+            throwException(new IllegalStateException("File does not exists"), null);
+            splashDialog.dispose();
+            return;
+        }
+
+        if (!project.isDirectory()) {
+            throwException(new IllegalStateException("File is not a directory"), null);
+            splashDialog.dispose();
+            return;
+        }
+
+        log("Opening editor");
+
+        splashDialog.dispose();
+
+        new YieldEditor(project);
+    }
+
+    public static void log(String msg) {
+        System.out.println("YE: " + msg + " (" + new Date() + ")");
+    }
+
+    public static void throwException(Exception e, Component parent) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(parent, e.getMessage(), e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void createNewDialog(String title, JList<String> options, DialogConfirm create) {
+        JDialog dialog = new JDialog(YieldEditor.this, true);
+        dialog.setLayout(new BorderLayout());
+        dialog.getRootPane().setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedSoftBevelBorder(), title, TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION, UIManager.getFont("Label.font").deriveFont(Font.BOLD)));
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(dialog.getBackground().darker());
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        JButton button;
+        buttonPanel.add(new JButton(new AbstractAction("Cancel") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispose();
+            }
+        }));
+        JTextField sceneName = new JTextField();
+        buttonPanel.add(button = new JButton(new AbstractAction("Create") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (sceneName.getText().hashCode() == "".hashCode()) {
+                    JOptionPane.showMessageDialog(dialog, "Name field must not be empty!", title, JOptionPane.ERROR_MESSAGE);
+                } else {
+                    dialog.dispose();
+                    create.create(sceneName.getText(), options.getSelectedValue());
+                }
+            }
+        }));
+        dialog.getRootPane().setDefaultButton(button);
+        dialog.add(buttonPanel, BorderLayout.SOUTH);
+        dialog.setTitle(title);
+        dialog.setIconImage(ICON);
+        sceneName.setToolTipText(title + " Name");
+        dialog.add(sceneName, BorderLayout.NORTH);
+        options.setBackground(dialog.getBackground().darker());
+        options.setSelectedIndex(0);
+        options.setDragEnabled(false);
+        dialog.add(options, BorderLayout.CENTER);
+        dialog.setUndecorated(true);
+        dialog.pack();
+
+        dialog.setResizable(false);
+        dialog.setSize(new Dimension(dialog.getSize().width + 50, dialog.getSize().height));
+        dialog.setLocationRelativeTo(YieldEditor.this);
+        dialog.setVisible(true);
+    }
+
+    private void createScenesPanel() {
+        scenesPanel = new CloseableTabbedPane();
+
+        JPopupMenu popupMenu = new JPopupMenu("Scenes");
+        popupMenu.add(new JMenuItem(new AbstractAction("Close all tabs") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                while (scenesPanel.getTabCount() > 0)
+                    scenesPanel.removeTabAt(0);
+            }
+        }));
+        scenesPanel.setComponentPopupMenu(popupMenu);
+
+        //TODO
+
+        for (int i = 0; i < 10; i++) {
+            String title = "Tab " + i;
+            JPanel panel = new JPanel();
+            panel.add(title, new JLabel(title));
+            scenesPanel.addTab(title, panel);
+        }
+
+        scenesPanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
 }

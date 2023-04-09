@@ -14,30 +14,16 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.editor.old;
+package com.xebisco.yield.editor;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class BigListCellRenderer extends JLabel implements ListCellRenderer<String> {
-  public BigListCellRenderer() {
-    setOpaque(true);
-  }
-
-  public Component getListCellRendererComponent(JList<? extends String> list, String value, int index, boolean isSelected, boolean cellHasFocus) {
-    setText(value);
-    setHorizontalAlignment(CENTER);
-
-    Color background;
-
-    if (isSelected) {
-      background = UIManager.getColor("Tree.selectionBackground");
-    } else {
-      background = UIManager.getColor("Tree.background");
+public class GameView extends JPanel {
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.setColor(Color.RED);
+        g.fillRect(0, 0, 100, 100);
     }
-
-    setBackground(background);
-
-    return this;
-  }
 }
