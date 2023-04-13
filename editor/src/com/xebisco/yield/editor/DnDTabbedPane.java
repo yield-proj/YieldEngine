@@ -621,6 +621,6 @@ class GhostGlassPane extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setComposite(m_composite);
 
-        g2.drawImage(m_draggingGhost, (int) m_location.getX(), (int) m_location.getY(), null);
+        g2.drawImage(m_draggingGhost, (int) m_location.getX(), (int) m_location.getY() - 1, null);
     }
 }

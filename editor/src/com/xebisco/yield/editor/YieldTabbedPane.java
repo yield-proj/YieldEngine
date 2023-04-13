@@ -22,7 +22,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
 
-public class CloseableTabbedPane extends DnDTabbedPane {
+public class YieldTabbedPane extends DnDTabbedPane {
 
     static int count = 0;
     private static Icon CLOSING_ICON;
@@ -31,11 +31,13 @@ public class CloseableTabbedPane extends DnDTabbedPane {
     private String iconFileName = "closeIcon.png";
     private String selectedIconFileName = "selectedCloseIcon.png";
 
-    public CloseableTabbedPane() {
+    private String emptyText = "No open tabs";
+
+    public YieldTabbedPane() {
         super();
     }
 
-    public CloseableTabbedPane(TabClosingListener aTabClosingListener) {
+    public YieldTabbedPane(TabClosingListener aTabClosingListener) {
         super();
         tabClosingListener = aTabClosingListener;
     }
@@ -44,9 +46,16 @@ public class CloseableTabbedPane extends DnDTabbedPane {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         if(getTabCount() == 0) {
-            String nos = "No Open Scenes";
-            g.drawString(nos, getWidth() / 2 - g.getFontMetrics().stringWidth(nos) / 2, getHeight() / 2 - g.getFont().getSize() / 4);
+            g.drawString(emptyText, getWidth() / 2 - g.getFontMetrics().stringWidth(emptyText) / 2, getHeight() / 2 - g.getFont().getSize() / 4);
         }
+    }
+
+    public String getEmptyText() {
+        return emptyText;
+    }
+
+    public void setEmptyText(String emptyText) {
+        this.emptyText = emptyText;
     }
 
     /**
@@ -166,7 +175,12 @@ public class CloseableTabbedPane extends DnDTabbedPane {
             closingLabel = new JLabel(CLOSING_ICON);
             closingLabel.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
-                    JTabbedPane tabbedPane = (JTabbedPane) getParent().getParent().getParent().getParent();
+                    Component c = CloseButtonTab.this;
+                    do {
+                        c = c.getParent();
+                    }
+                    while (!(c instanceof JTabbedPane));
+                    JTabbedPane tabbedPane = (JTabbedPane) c;
                     int tabIndex = indexOfComponent(tab);
                     if (tabClosingListener != null) {
                         if (tabClosingListener.selectTabBeforeClosing(tabIndex)) {

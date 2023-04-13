@@ -16,29 +16,16 @@
 
 package com.xebisco.yield.editor;
 
-import javax.swing.*;
 import java.awt.*;
 
-public class GameView extends JPanel {
+public class InEditorScene {
+    private Color backGroundColor = new Color(0.47f, 0.47f, 0.47f);
 
-    private InEditorScene scene;
-
-    private int middleX, middleY;
-
-    public InEditorScene getScene() {
-        return scene;
+    public Color getBackGroundColor() {
+        return backGroundColor;
     }
 
-    public void setScene(InEditorScene scene) {
-        this.scene = scene;
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        middleX = getHeight() / 2;
-        middleY = getHeight() / 2;
-        g.setColor(scene.getBackGroundColor());
-        g.fillRect(0, 0, getWidth(), getHeight());
+    public void setBackGroundColor(Color backGroundColor) {
+        this.backGroundColor = backGroundColor;
     }
 }

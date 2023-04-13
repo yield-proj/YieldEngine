@@ -16,30 +16,28 @@
 
 package com.xebisco.yield.editor;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.IntFunction;
 
 public class YieldEditor extends JFrame {
 
-    public static BufferedImage ICON, CLOSE_ICON, SELECTED_CLOSE_ICON, YIELD_SMALL_ICON;
+    public static BufferedImage ICON, CLOSE_ICON, SELECTED_CLOSE_ICON, YIELD_SMALL_ICON, WHAT_ICON;
     private final File project;
-    private JTabbedPane scenesPanel;
+    private final List<File> favorites = new ArrayList<>();
+    private YieldTabbedPane scenesPanel, down, left, right;
 
 
     public YieldEditor(File project) {
@@ -100,14 +98,58 @@ public class YieldEditor extends JFrame {
 
         menuBar.add(menu);
 
+        menu = new JMenu("Tool Windows");
+
+        menu.add(new JMenuItem(new AbstractAction("Project Files") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JList<File> favorites = new JList<>(YieldEditor.this.favorites.toArray(new File[0]));
+                favorites.setCellRenderer(new SmallFileCellRenderer());
+                favorites.setBorder(BorderFactory.createTitledBorder("Favorites"));
+                favorites.setMinimumSize(new Dimension(100, 100));
+                favorites.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        favorites.setListData(YieldEditor.this.favorites.toArray(new File[0]));
+                    }
+                });
+                FileList f = new FileList(project);
+                f.setFavorites(YieldEditor.this.favorites);
+                f.setCellRenderer(new FileCellRenderer());
+                f.setLayoutOrientation(JList.VERTICAL_WRAP);
+                f.setVisibleRowCount(1);
+                f.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getClickCount() == 2) {
+                            f.setDirectory(f.getSelectedValue());
+                            f.reload();
+                        }
+                    }
+                });
+                /*f.addListSelectionListener(e1 -> {
+                    if (f.getSelectedValue() != null) {
+                        f.setDirectory(f.getSelectedValue());
+                        f.reload();
+                    }
+                });*/
+
+
+                JSplitPane projectFiles = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, favorites, f);
+                down.addTab("Project Files", projectFiles);
+            }
+        }));
+
+        menuBar.add(menu);
 
         menu = new JMenu("Scene");
         menu.add(new JMenuItem(new AbstractAction("New Scene") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 createNewDialog("New Scene", new JList<>(new String[]{"Empty", "Hello, World!"}), (n, s) -> {
-                    JPanel scenePanel = new GameView();
-                    scenesPanel.insertTab(n, null, scenePanel, n, 0);
+                    GameView gameView = new GameView();
+                    gameView.setScene(new InEditorScene());
+                    scenesPanel.insertTab(n, null, gameView, n, 0);
                 });
             }
         }));
@@ -124,15 +166,41 @@ public class YieldEditor extends JFrame {
         // add(mainPanel);
 
         createScenesPanel();
-JTabbedPane tabbedPane = new DnDTabbedPane();
-        tabbedPane.addTab("aaa", new JPanel());
-        JSplitPane p1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scenesPanel, tabbedPane);
+
+        GameView emptyGameView = new GameView();
+        emptyGameView.setScene(new InEditorScene());
+
+        scenesPanel.addTab("Empty Scene", emptyGameView);
+
+        down = new YieldTabbedPane();
+        left = new YieldTabbedPane();
+        right = new YieldTabbedPane();
+
+        JSplitPane mainAndLeft = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, scenesPanel);
+
+        mainAndLeft.setDividerLocation(200);
+
+        JSplitPane mainAndDown = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainAndLeft, down);
+
+        mainAndDown.setDividerLocation(500);
+
+        JSplitPane mainAndRight = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mainAndDown, right);
+
+        mainAndRight.setDividerLocation(1000);
 
         mainPanel.setPreferredSize(getSize());
 
-        add(p1);
+        add(mainAndRight);
 
-        p1.setDividerLocation(1000);
+        //FileSystemView.getFileSystemView().getSy
+
+        mainAndLeft.setOneTouchExpandable(true);
+        mainAndDown.setOneTouchExpandable(true);
+        mainAndRight.setOneTouchExpandable(true);
+
+        mainAndLeft.setResizeWeight(.5);
+        mainAndDown.setResizeWeight(.5);
+        mainAndRight.setResizeWeight(.5);
 
 
         setSize(new Dimension(1280, 720));
@@ -148,6 +216,8 @@ JTabbedPane tabbedPane = new DnDTabbedPane();
     }
 
     public static void main(String[] args) throws IOException {
+        FlatDarkLaf.setup();
+
         String p = null;
         if (args.length == 1)
             p = args[0];
@@ -155,25 +225,12 @@ JTabbedPane tabbedPane = new DnDTabbedPane();
     }
 
     public static void openEditor(String projectPath) throws IOException {
-
-        JDialog splashDialog = new JDialog();
-        splashDialog.add(new JLabel(new ImageIcon(ImageIO.read(Objects.requireNonNull(YieldEditor.class.getResource("splashScreen.png"))))));
-
-        splashDialog.setUndecorated(true);
-        splashDialog.pack();
-        splashDialog.setLocationRelativeTo(null);
-        splashDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-        splashDialog.setVisible(true);
-
-        FlatDarkLaf.setup();
-
         if (ICON == null) {
             log("Loading resources");
             try {
-
                 ICON = ImageIO.read(Objects.requireNonNull(YieldEditor.class.getResource("yieldIcon.png")));
                 YIELD_SMALL_ICON = ImageIO.read(Objects.requireNonNull(YieldEditor.class.getResource("yieldSmallIcon.png")));
+                WHAT_ICON = ImageIO.read(Objects.requireNonNull(YieldEditor.class.getResource("what.png")));
             } catch (IOException e) {
                 throwException(e, null);
                 System.exit(1);
@@ -190,7 +247,6 @@ JTabbedPane tabbedPane = new DnDTabbedPane();
             if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 project = fileChooser.getSelectedFile();
             } else {
-                splashDialog.dispose();
                 return;
             }
         }
@@ -204,19 +260,15 @@ JTabbedPane tabbedPane = new DnDTabbedPane();
 
         if (!project.exists()) {
             throwException(new IllegalStateException("File does not exists"), null);
-            splashDialog.dispose();
             return;
         }
 
         if (!project.isDirectory()) {
             throwException(new IllegalStateException("File is not a directory"), null);
-            splashDialog.dispose();
             return;
         }
 
         log("Opening editor");
-
-        splashDialog.dispose();
 
         new YieldEditor(project);
     }
@@ -233,7 +285,7 @@ JTabbedPane tabbedPane = new DnDTabbedPane();
     public void createNewDialog(String title, JList<String> options, DialogConfirm create) {
         JDialog dialog = new JDialog(YieldEditor.this, true);
         dialog.setLayout(new BorderLayout());
-        dialog.getRootPane().setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedSoftBevelBorder(), title, TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION, UIManager.getFont("Label.font").deriveFont(Font.BOLD)));
+        dialog.getRootPane().setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), title, TitledBorder.CENTER, TitledBorder.TOP, UIManager.getFont("Label.font").deriveFont(Font.BOLD)));
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(dialog.getBackground().darker());
         buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -276,26 +328,9 @@ JTabbedPane tabbedPane = new DnDTabbedPane();
     }
 
     private void createScenesPanel() {
-        scenesPanel = new CloseableTabbedPane();
-
-        JPopupMenu popupMenu = new JPopupMenu("Scenes");
-        popupMenu.add(new JMenuItem(new AbstractAction("Close all tabs") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                while (scenesPanel.getTabCount() > 0)
-                    scenesPanel.removeTabAt(0);
-            }
-        }));
-        scenesPanel.setComponentPopupMenu(popupMenu);
+        scenesPanel = new YieldTabbedPane();
 
         //TODO
-
-        for (int i = 0; i < 10; i++) {
-            String title = "Tab " + i;
-            JPanel panel = new JPanel();
-            panel.add(title, new JLabel(title));
-            scenesPanel.addTab(title, panel);
-        }
 
         scenesPanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
