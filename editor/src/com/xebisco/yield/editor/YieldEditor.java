@@ -97,7 +97,7 @@ public class YieldEditor extends JFrame {
 
         menuBar.add(menu);
 
-        menu = new JMenu("Tools");
+        menu = new JMenu("Tool Windows");
 
         menu.add(new JMenuItem(new AbstractAction("Project Files") {
             @Override
