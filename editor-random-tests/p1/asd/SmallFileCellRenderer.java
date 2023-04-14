@@ -16,58 +16,41 @@
 
 package com.xebisco.yield.editor;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
-import java.util.*;
 
-public class FileCellRenderer implements ListCellRenderer<File> {
-
-    public static Map<File, Image> IMAGE_CACHE = new HashMap<>();
-
+public class SmallFileCellRenderer implements ListCellRenderer<File> {
     @Override
     public Component getListCellRendererComponent(JList<? extends File> list, File value, int index, boolean isSelected, boolean cellHasFocus) {
         Image fileIcon;
 
         Icon icon = FileSystemView.getFileSystemView().getSystemIcon(value);
 
-        if (IMAGE_CACHE.containsKey(value)) {
-            fileIcon = IMAGE_CACHE.get(value);
+        if (icon instanceof ImageIcon) {
+            fileIcon = ((ImageIcon) icon).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
         } else {
-            if (value.getName().endsWith(".png") || value.getName().endsWith(".jpeg") || value.getName().endsWith(".jpg")) {
-                try {
-                    fileIcon = ImageIO.read(value).getScaledInstance(50, 50, Image.SCALE_FAST);
-                } catch (IOException e) {
-                    fileIcon = YieldEditor.WHAT_ICON.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-                }
-            } else
-                fileIcon = ((ImageIcon) icon).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-            IMAGE_CACHE.put(value, fileIcon);
+            fileIcon = YieldEditor.WHAT_ICON;
         }
 
         JPanel panel = new JPanel();
 
         panel.setLayout(new BorderLayout());
 
-        panel.add(new JLabel(new ImageIcon(fileIcon)), BorderLayout.CENTER);
+        panel.add(new JLabel(new ImageIcon(fileIcon)), BorderLayout.WEST);
         JLabel name = new JLabel(value.getName(), JLabel.CENTER);
         name.setFont(name.getFont().deriveFont(Font.BOLD));
-        panel.add(name, BorderLayout.SOUTH);
+        panel.add(name, BorderLayout.CENTER);
 
         if (isSelected) {
             panel.setBackground(list.getSelectionBackground());
             panel.setForeground(list.getSelectionForeground());
-            panel.setBorder(BorderFactory.createRaisedBevelBorder());
-        } else {
+        }
+        else {
             panel.setBackground(list.getBackground());
             panel.setForeground(list.getForeground());
         }
-        //panel.setOpaque(false);
-
-        panel.setPreferredSize(new Dimension(100, 100));
 
         return panel;
     }

@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.editor; /**
- * Modified DnDTabbedPane.java
+package com.xebisco.yield.editor; /** Modified DnDTabbedPane.java
  * http://java-swing-tips.blogspot.com/2008/04/drag-and-drop-tabs-in-jtabbedpane.html
  * originally written by Terai Atsuhiro.
  * so that tabs can be transfered from one pane to another.
@@ -33,14 +32,15 @@ public class DnDTabbedPane extends JTabbedPane {
     public static final long serialVersionUID = 1L;
     private static final int LINEWIDTH = 3;
     private static final String NAME = "TabTransferData";
-    private static GhostGlassPane s_glassPane = new GhostGlassPane();
     private final DataFlavor FLAVOR = new DataFlavor(
             DataFlavor.javaJVMLocalObjectMimeType, NAME);
-    private final Rectangle2D m_lineRect = new Rectangle2D.Double();
-    private final Color m_lineColor = new Color(0, 100, 255);
+    private static GhostGlassPane s_glassPane = new GhostGlassPane();
+
     private boolean m_isDrawRect = false;
+    private final Rectangle2D m_lineRect = new Rectangle2D.Double();
+
+    private final Color m_lineColor = new Color(0, 100, 255);
     private TabAcceptor m_acceptor = null;
-    private boolean m_hasGhost = true;
 
     public DnDTabbedPane() {
         super();
@@ -122,7 +122,7 @@ public class DnDTabbedPane extends JTabbedPane {
 
                 initGlassPane(e.getComponent(), e.getDragOrigin(), dragTabIndex);
                 try {
-                    e.startDrag(DragSource.DefaultMoveDrop,
+                    e.startDrag(DragSource.DefaultMoveDrop, 
                             new TabTransferable(DnDTabbedPane.this, dragTabIndex), dsl);
                 } catch (InvalidDnDOperationException idoe) {
                     idoe.printStackTrace();
@@ -150,11 +150,10 @@ public class DnDTabbedPane extends JTabbedPane {
         m_acceptor = a_value;
     }
 
-    private TabTransferData getTabTransferData(DropTargetDropEvent a_event) {
+    private TabTransferData getTabTransferData(DropTargetDropEvent a_event) {       
         try {
-            return (TabTransferData) a_event.getTransferable().getTransferData(FLAVOR);
-        } catch (UnsupportedFlavorException ignore) {
-
+            TabTransferData data = (TabTransferData) a_event.getTransferable().getTransferData(FLAVOR);             
+            return data;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -164,9 +163,8 @@ public class DnDTabbedPane extends JTabbedPane {
 
     private TabTransferData getTabTransferData(DropTargetDragEvent a_event) {
         try {
-            return (TabTransferData) a_event.getTransferable().getTransferData(FLAVOR);
-        } catch (UnsupportedFlavorException ignore) {
-
+            TabTransferData data = (TabTransferData) a_event.getTransferable().getTransferData(FLAVOR);             
+            return data;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -177,13 +175,65 @@ public class DnDTabbedPane extends JTabbedPane {
     private TabTransferData getTabTransferData(DragSourceDragEvent a_event) {
         try {
             TabTransferData data = (TabTransferData) a_event.getDragSourceContext()
-                    .getTransferable().getTransferData(FLAVOR);
+                .getTransferable().getTransferData(FLAVOR);             
             return data;
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return null;
+        return null;        
+    }
+
+    class TabTransferable implements Transferable {
+        private TabTransferData m_data = null;
+
+        public TabTransferable(DnDTabbedPane a_tabbedPane, int a_tabIndex) {
+            m_data = new TabTransferData(DnDTabbedPane.this, a_tabIndex);
+        }
+
+        public Object getTransferData(DataFlavor flavor) {
+            return m_data;
+            // return DnDTabbedPane.this;
+        }
+
+        public DataFlavor[] getTransferDataFlavors() {
+            DataFlavor[] f = new DataFlavor[1];
+            f[0] = FLAVOR;
+            return f;
+        }
+
+        public boolean isDataFlavorSupported(DataFlavor flavor) {
+            return flavor.getHumanPresentableName().equals(NAME);
+        }       
+    }
+
+    class TabTransferData {
+        private DnDTabbedPane m_tabbedPane = null;
+        private int m_tabIndex = -1;
+
+        public TabTransferData() {
+        }
+
+        public TabTransferData(DnDTabbedPane a_tabbedPane, int a_tabIndex) {
+            m_tabbedPane = a_tabbedPane;
+            m_tabIndex = a_tabIndex;
+        }
+
+        public DnDTabbedPane getTabbedPane() {
+            return m_tabbedPane;
+        }
+
+        public void setTabbedPane(DnDTabbedPane pane) {
+            m_tabbedPane = pane;
+        }
+
+        public int getTabIndex() {
+            return m_tabIndex;
+        }
+
+        public void setTabIndex(int index) {
+            m_tabIndex = index;
+        }
     }
 
     private Point buildGhostLocation(Point a_location) {
@@ -193,32 +243,136 @@ public class DnDTabbedPane extends JTabbedPane {
             case JTabbedPane.TOP: {
                 retval.y = 1;
                 retval.x -= s_glassPane.getGhostWidth() / 2;
-            }
-            break;
+            } break;
 
             case JTabbedPane.BOTTOM: {
                 retval.y = getHeight() - 1 - s_glassPane.getGhostHeight();
                 retval.x -= s_glassPane.getGhostWidth() / 2;
-            }
-            break;
+            } break;
 
             case JTabbedPane.LEFT: {
                 retval.x = 1;
                 retval.y -= s_glassPane.getGhostHeight() / 2;
-            }
-            break;
+            } break;
 
             case JTabbedPane.RIGHT: {
                 retval.x = getWidth() - 1 - s_glassPane.getGhostWidth();
                 retval.y -= s_glassPane.getGhostHeight() / 2;
-            }
-            break;
+            } break;
         } // switch
 
         retval = SwingUtilities.convertPoint(DnDTabbedPane.this,
                 retval, s_glassPane);
         return retval;
     }
+
+    class CDropTargetListener implements DropTargetListener {
+        public void dragEnter(DropTargetDragEvent e) {
+            // System.out.println("DropTarget.dragEnter: " + DnDTabbedPane.this);
+
+            if (isDragAcceptable(e)) {
+                e.acceptDrag(e.getDropAction());
+            } else {
+                e.rejectDrag();
+            } // if
+        }
+
+        public void dragExit(DropTargetEvent e) {
+            // System.out.println("DropTarget.dragExit: " + DnDTabbedPane.this);
+            m_isDrawRect = false;
+        }
+
+        public void dropActionChanged(DropTargetDragEvent e) {
+        }
+
+        public void dragOver(final DropTargetDragEvent e) {
+            TabTransferData data = getTabTransferData(e);
+
+            if (getTabPlacement() == JTabbedPane.TOP
+                    || getTabPlacement() == JTabbedPane.BOTTOM) {
+                initTargetLeftRightLine(getTargetTabIndex(e.getLocation()), data);
+            } else {
+                initTargetTopBottomLine(getTargetTabIndex(e.getLocation()), data);
+            } // if-else
+
+            repaint();
+            if (hasGhost()) {
+                s_glassPane.setPoint(buildGhostLocation(e.getLocation()));
+                s_glassPane.repaint();
+            }
+        }
+
+        public void drop(DropTargetDropEvent a_event) {
+            // System.out.println("DropTarget.drop: " + DnDTabbedPane.this);
+
+            if (isDropAcceptable(a_event)) {
+                convertTab(getTabTransferData(a_event),
+                    getTargetTabIndex(a_event.getLocation()));
+                a_event.dropComplete(true);
+            } else {
+                a_event.dropComplete(false);
+            } // if-else
+
+            m_isDrawRect = false;
+            repaint();
+        }
+
+        public boolean isDragAcceptable(DropTargetDragEvent e) {
+            Transferable t = e.getTransferable();
+            if (t == null) {
+                return false;
+            } // if
+
+            DataFlavor[] flavor = e.getCurrentDataFlavors();
+            if (!t.isDataFlavorSupported(flavor[0])) {
+                return false;
+            } // if
+
+            TabTransferData data = getTabTransferData(e);
+
+            if (DnDTabbedPane.this == data.getTabbedPane()
+                    && data.getTabIndex() >= 0) {
+                return true;
+            } // if
+
+            if (DnDTabbedPane.this != data.getTabbedPane()) {
+                if (m_acceptor != null) {
+                    return m_acceptor.isDropAcceptable(data.getTabbedPane(), data.getTabIndex());
+                } // if
+            } // if
+
+            return false;
+        }
+
+        public boolean isDropAcceptable(DropTargetDropEvent e) {
+            Transferable t = e.getTransferable();
+            if (t == null) {
+                return false;
+            } // if
+
+            DataFlavor[] flavor = e.getCurrentDataFlavors();
+            if (!t.isDataFlavorSupported(flavor[0])) {
+                return false;
+            } // if
+
+            TabTransferData data = getTabTransferData(e);
+
+            if (DnDTabbedPane.this == data.getTabbedPane()
+                    && data.getTabIndex() >= 0) {
+                return true;
+            } // if
+
+            if (DnDTabbedPane.this != data.getTabbedPane()) {
+                if (m_acceptor != null) {
+                    return m_acceptor.isDropAcceptable(data.getTabbedPane(), data.getTabIndex());
+                } // if
+            } // if
+
+            return false;
+        }
+    }
+
+    private boolean m_hasGhost = true;
 
     public void setPaintGhost(boolean flag) {
         m_hasGhost = flag;
@@ -318,9 +472,7 @@ public class DnDTabbedPane extends JTabbedPane {
         }
     }
 
-    private void initTargetLeftRightLine(int next, TabTransferData a_data) {
-        if(a_data == null)
-            return;
+    private void initTargetLeftRightLine(int next, TabTransferData a_data) {        
         if (next < 0) {
             m_lineRect.setRect(0, 0, 0, 0);
             m_isDrawRect = false;
@@ -396,7 +548,7 @@ public class DnDTabbedPane extends JTabbedPane {
             Graphics g = image.getGraphics();
             c.paint(g);
             image = image.getSubimage(rect.x, rect.y, rect.width, rect.height);
-            s_glassPane.setImage(image);
+            s_glassPane.setImage(image);            
         } // if
 
         s_glassPane.setPoint(buildGhostLocation(tabPt));
@@ -420,167 +572,6 @@ public class DnDTabbedPane extends JTabbedPane {
 
     public interface TabAcceptor {
         boolean isDropAcceptable(DnDTabbedPane a_component, int a_index);
-    }
-
-    class TabTransferable implements Transferable {
-        private TabTransferData m_data = null;
-
-        public TabTransferable(DnDTabbedPane a_tabbedPane, int a_tabIndex) {
-            m_data = new TabTransferData(DnDTabbedPane.this, a_tabIndex);
-        }
-
-        public Object getTransferData(DataFlavor flavor) {
-            return m_data;
-            // return DnDTabbedPane.this;
-        }
-
-        public DataFlavor[] getTransferDataFlavors() {
-            DataFlavor[] f = new DataFlavor[1];
-            f[0] = FLAVOR;
-            return f;
-        }
-
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return flavor.getHumanPresentableName().equals(NAME);
-        }
-    }
-
-    class TabTransferData {
-        private DnDTabbedPane m_tabbedPane = null;
-        private int m_tabIndex = -1;
-
-        public TabTransferData() {
-        }
-
-        public TabTransferData(DnDTabbedPane a_tabbedPane, int a_tabIndex) {
-            m_tabbedPane = a_tabbedPane;
-            m_tabIndex = a_tabIndex;
-        }
-
-        public DnDTabbedPane getTabbedPane() {
-            return m_tabbedPane;
-        }
-
-        public void setTabbedPane(DnDTabbedPane pane) {
-            m_tabbedPane = pane;
-        }
-
-        public int getTabIndex() {
-            return m_tabIndex;
-        }
-
-        public void setTabIndex(int index) {
-            m_tabIndex = index;
-        }
-    }
-
-    class CDropTargetListener implements DropTargetListener {
-        public void dragEnter(DropTargetDragEvent e) {
-            // System.out.println("DropTarget.dragEnter: " + DnDTabbedPane.this);
-
-            if (isDragAcceptable(e)) {
-                e.acceptDrag(e.getDropAction());
-            } else {
-                e.rejectDrag();
-            } // if
-        }
-
-        public void dragExit(DropTargetEvent e) {
-            // System.out.println("DropTarget.dragExit: " + DnDTabbedPane.this);
-            m_isDrawRect = false;
-        }
-
-        public void dropActionChanged(DropTargetDragEvent e) {
-        }
-
-        public void dragOver(final DropTargetDragEvent e) {
-            TabTransferData data = getTabTransferData(e);
-
-            if (getTabPlacement() == JTabbedPane.TOP
-                    || getTabPlacement() == JTabbedPane.BOTTOM) {
-                initTargetLeftRightLine(getTargetTabIndex(e.getLocation()), data);
-            } else {
-                initTargetTopBottomLine(getTargetTabIndex(e.getLocation()), data);
-            } // if-else
-
-            repaint();
-            if (hasGhost()) {
-                s_glassPane.setPoint(buildGhostLocation(e.getLocation()));
-                s_glassPane.repaint();
-            }
-        }
-
-        public void drop(DropTargetDropEvent a_event) {
-            // System.out.println("DropTarget.drop: " + DnDTabbedPane.this);
-
-            if (isDropAcceptable(a_event)) {
-                convertTab(getTabTransferData(a_event),
-                        getTargetTabIndex(a_event.getLocation()));
-                a_event.dropComplete(true);
-            } else {
-                a_event.dropComplete(false);
-            } // if-else
-
-            m_isDrawRect = false;
-            repaint();
-        }
-
-        public boolean isDragAcceptable(DropTargetDragEvent e) {
-            Transferable t = e.getTransferable();
-            if (t == null) {
-                return false;
-            } // if
-
-            DataFlavor[] flavor = e.getCurrentDataFlavors();
-            if (!t.isDataFlavorSupported(flavor[0])) {
-                return false;
-            } // if
-
-            TabTransferData data = getTabTransferData(e);
-
-            if(data == null)
-                return false;
-
-            if (DnDTabbedPane.this == data.getTabbedPane()
-                    && data.getTabIndex() >= 0) {
-                return true;
-            } // if
-
-            if (DnDTabbedPane.this != data.getTabbedPane()) {
-                if (m_acceptor != null) {
-                    return m_acceptor.isDropAcceptable(data.getTabbedPane(), data.getTabIndex());
-                } // if
-            } // if
-
-            return false;
-        }
-
-        public boolean isDropAcceptable(DropTargetDropEvent e) {
-            Transferable t = e.getTransferable();
-            if (t == null) {
-                return false;
-            } // if
-
-            DataFlavor[] flavor = e.getCurrentDataFlavors();
-            if (!t.isDataFlavorSupported(flavor[0])) {
-                return false;
-            } // if
-
-            TabTransferData data = getTabTransferData(e);
-
-            if (DnDTabbedPane.this == data.getTabbedPane()
-                    && data.getTabIndex() >= 0) {
-                return true;
-            } // if
-
-            if (DnDTabbedPane.this != data.getTabbedPane()) {
-                if (m_acceptor != null) {
-                    return m_acceptor.isDropAcceptable(data.getTabbedPane(), data.getTabIndex());
-                } // if
-            } // if
-
-            return false;
-        }
     }
 }
 

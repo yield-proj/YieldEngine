@@ -16,39 +16,43 @@
 
 package com.xebisco.yield.editor;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 
 public class FileCellRenderer implements ListCellRenderer<File> {
-
-    public static Map<File, Image> IMAGE_CACHE = new HashMap<>();
-
     @Override
     public Component getListCellRendererComponent(JList<? extends File> list, File value, int index, boolean isSelected, boolean cellHasFocus) {
         Image fileIcon;
 
         Icon icon = FileSystemView.getFileSystemView().getSystemIcon(value);
 
-        if (IMAGE_CACHE.containsKey(value)) {
-            fileIcon = IMAGE_CACHE.get(value);
+        if (icon instanceof ImageIcon) {
+            fileIcon = ((ImageIcon) icon).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
         } else {
-            if (value.getName().endsWith(".png") || value.getName().endsWith(".jpeg") || value.getName().endsWith(".jpg")) {
-                try {
-                    fileIcon = ImageIO.read(value).getScaledInstance(50, 50, Image.SCALE_FAST);
-                } catch (IOException e) {
-                    fileIcon = YieldEditor.WHAT_ICON.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-                }
-            } else
-                fileIcon = ((ImageIcon) icon).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-            IMAGE_CACHE.put(value, fileIcon);
+            fileIcon = YieldEditor.WHAT_ICON;
         }
 
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel() /*{
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (isSelected)
+                    g.setColor(list.getSelectionBackground());
+                else g.setColor(list.getForeground());
+                g.fillRoundRect(getX(), getY(), getWidth(), getHeight(), 20, 20);
+                g.drawImage(fileIcon, getX() + 25, getY() + 15, getWidth() - 50, getHeight() - 50, this);
+                if (isSelected)
+                    g.setColor(list.getForeground());
+                else g.setColor(list.getSelectionBackground());
+                g.setFont(UIManager.getFont("Label.font").deriveFont(Font.BOLD));
+                g.drawString(value.getName(), getX() + getWidth() / 2 - g.getFontMetrics().stringWidth(value.getName()) / 2, getY() + getHeight() - 20);
+            }
+        }*/;
 
         panel.setLayout(new BorderLayout());
 
@@ -61,7 +65,8 @@ public class FileCellRenderer implements ListCellRenderer<File> {
             panel.setBackground(list.getSelectionBackground());
             panel.setForeground(list.getSelectionForeground());
             panel.setBorder(BorderFactory.createRaisedBevelBorder());
-        } else {
+        }
+        else {
             panel.setBackground(list.getBackground());
             panel.setForeground(list.getForeground());
         }

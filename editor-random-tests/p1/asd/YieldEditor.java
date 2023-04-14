@@ -26,9 +26,10 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Timer;
+import java.util.Objects;
 import java.util.function.IntFunction;
 
 public class YieldEditor extends JFrame {
@@ -97,7 +98,7 @@ public class YieldEditor extends JFrame {
 
         menuBar.add(menu);
 
-        menu = new JMenu("Tools");
+        menu = new JMenu("Tool Windows");
 
         menu.add(new JMenuItem(new AbstractAction("Project Files") {
             @Override
@@ -130,8 +131,6 @@ public class YieldEditor extends JFrame {
                 filesPanel.add(toolBar, BorderLayout.NORTH);
 
                 JScrollPane scrollPane = new JScrollPane(f);
-                scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-                scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
                 filesPanel.add(scrollPane, BorderLayout.CENTER);
                 favorites.setCellRenderer(new SmallFileCellRenderer());
                 favorites.setBorder(BorderFactory.createTitledBorder("Favorites"));
@@ -152,12 +151,8 @@ public class YieldEditor extends JFrame {
                 });
                 f.setFavorites(YieldEditor.this.favorites);
                 f.setCellRenderer(new FileCellRenderer());
-                f.setDragEnabled(true);
-                f.setFixedCellHeight(100);
-                f.setFixedCellWidth(100);
-                f.setTransferHandler(new FileListTransferHandler(f));
-                f.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-                f.setVisibleRowCount(-1);
+                f.setLayoutOrientation(JList.VERTICAL_WRAP);
+                f.setVisibleRowCount(1);
                 f.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -168,6 +163,12 @@ public class YieldEditor extends JFrame {
                         }
                     }
                 });
+                /*f.addListSelectionListener(e1 -> {
+                    if (f.getSelectedValue() != null) {
+                        f.setDirectory(f.getSelectedValue());
+                        f.reload();
+                    }
+                });*/
 
 
                 JSplitPane projectFiles = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, favorites, filesPanel);
