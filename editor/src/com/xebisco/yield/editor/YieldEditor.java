@@ -26,10 +26,10 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.function.IntFunction;
+import java.util.Objects;
 
 public class YieldEditor extends JFrame {
 
