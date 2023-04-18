@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.editor; /**
- * Modified DnDTabbedPane.java
- * http://java-swing-tips.blogspot.com/2008/04/drag-and-drop-tabs-in-jtabbedpane.html
- * originally written by Terai Atsuhiro.
- * so that tabs can be transfered from one pane to another.
- * eed3si9n.
- */
+package com.xebisco.yield.editor;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -29,6 +23,13 @@ import java.awt.geom.*;
 import java.awt.image.*;
 import javax.swing.*;
 
+ /**
+ * Modified DnDTabbedPane.java
+ * http://java-swing-tips.blogspot.com/2008/04/drag-and-drop-tabs-in-jtabbedpane.html
+ * originally written by Terai Atsuhiro.
+ * so that tabs can be transfered from one pane to another.
+ * eed3si9n.
+ */
 public class DnDTabbedPane extends JTabbedPane {
     public static final long serialVersionUID = 1L;
     private static final int LINEWIDTH = 3;
