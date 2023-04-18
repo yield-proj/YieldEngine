@@ -27,6 +27,9 @@ public class TextureRectangle extends Rectangle {
     private boolean textureSize;
 
     @VisibleOnInspector
+    private boolean disposeTexture;
+
+    @VisibleOnInspector
     private TwoAnchorRepresentation textureScale = null;
 
     @Override
@@ -54,6 +57,11 @@ public class TextureRectangle extends Rectangle {
                 getSize().set(texture.getSize().multiply(textureScale));
         }
         super.render(graphics);
+    }
+
+    @Override
+    public void dispose() {
+        if (disposeTexture && texture != null) texture.dispose();
     }
 
     public Texture getTexture() {
@@ -86,5 +94,13 @@ public class TextureRectangle extends Rectangle {
 
     public void setTextureScale(TwoAnchorRepresentation textureScale) {
         this.textureScale = textureScale;
+    }
+
+    public boolean isDisposeTexture() {
+        return disposeTexture;
+    }
+
+    public void setDisposeTexture(boolean disposeTexture) {
+        this.disposeTexture = disposeTexture;
     }
 }

@@ -18,6 +18,11 @@ package com.xebisco.yield;
 
 import com.aparapi.Kernel;
 
+/**
+ * The GPUPixelProcessor class is an abstract class that extends the Kernel class and contains two integer arrays for
+ * original and modified pixels.
+ */
+@Deprecated
 public abstract class GPUPixelProcessor extends Kernel {
     public int[] originalPixels, pixels;
 

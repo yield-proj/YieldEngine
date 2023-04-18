@@ -16,24 +16,19 @@
 
 package com.xebisco.yield;
 
-import java.io.InputStream;
+public class TextureRectangleLoader extends ComponentBehavior {
+    private String texturePath;
 
-/**
- * The FileInput class provides methods for obtaining an InputStream from a file path or an existing InputStream.
- */
-public class FileInput {
-    private final InputStream inputStream;
-
-    public FileInput(String relativePath) {
-        if (!relativePath.startsWith("/")) relativePath = "/" + relativePath;
-        inputStream = FileInput.class.getResourceAsStream(relativePath);
+    @Override
+    public void onStart() {
+        getComponent(TextureRectangle.class).setTexture(new Texture(texturePath, getApplication().getTextureManager()));
     }
 
-    public FileInput(InputStream inputStream) {
-        this.inputStream = inputStream;
+    public String getTexturePath() {
+        return texturePath;
     }
 
-    public InputStream getInputStream() {
-        return inputStream;
+    public void setTexturePath(String texturePath) {
+        this.texturePath = texturePath;
     }
 }

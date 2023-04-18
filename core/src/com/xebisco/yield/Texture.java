@@ -20,6 +20,9 @@ import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 
+/**
+ * The Texture class represents an image texture and provides methods for processing and manipulating it.
+ */
 public class Texture extends FileInput implements Disposable {
 
     private final ImmutableSize2D size;
@@ -57,6 +60,14 @@ public class Texture extends FileInput implements Disposable {
         setPixels(gpuPixelProcessor.pixels);
     }
 
+    /**
+     * The function processes pixels by getting their color values, processing them, and setting the resulting color values
+     * for each pixel.
+     *
+     * @param pixelProcessor The parameter `pixelProcessor` is an object of the `PixelProcessor` class, which is
+     * responsible for processing each pixel of an image. It contains a method `process` that takes a `Pixel` object as
+     * input and returns a modified `Pixel` object. The `process` method is called
+     */
     public void process(PixelProcessor pixelProcessor) {
         Pixel actPixel = new Pixel();
         int[] toSetPixels = new int[(int) getSize().getWidth() * (int) getSize().getHeight() * 4];
