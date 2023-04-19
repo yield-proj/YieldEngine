@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * The `Pixel` class represents a pixel with a color and an index.
+ */
 public class Pixel {
     private Color color;
     private int index;

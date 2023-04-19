@@ -16,6 +16,10 @@
 
 package com.xebisco.yield;
 
+/**
+ * The StandardPrefabs class provides methods for creating 2D entity prefabs with text, rectangles, and texture rectangles
+ * components.
+ */
 public class StandardPrefabs {
 
     /**
