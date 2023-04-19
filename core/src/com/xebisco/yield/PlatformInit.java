@@ -23,6 +23,7 @@ public class PlatformInit {
     private Size2D gameResolution = new Size2D(1280, 720), resolution = new Size2D(1280, 720), uiResolution = new Size2D(1280, 720), windowSize = new Size2D(1280, 720);
     private String title = "Yield Window";
     private boolean fullscreen, undecorated, stretchViewport;
+    private Texture windowIcon;
     private String windowIconPath;
 
     /**
@@ -188,5 +189,24 @@ public class PlatformInit {
      */
     public void setResolution(Size2D resolution) {
         this.resolution = resolution;
+    }
+
+    /**
+     * This function returns the window icon as a Texture object in Yield.
+     *
+     * @return The method is returning a Texture object named "windowIcon".
+     */
+    public Texture getWindowIcon() {
+        return windowIcon;
+    }
+
+    /**
+     * This function sets the window icon of a Yield application.
+     *
+     * @param windowIcon The parameter "windowIcon" is a Texture object that represents the icon of a window in a Yield application. The method "setWindowIcon" sets the value of the windowIcon instance variable to the value passed as
+     * a parameter.
+     */
+    public void setWindowIcon(Texture windowIcon) {
+        this.windowIcon = windowIcon;
     }
 }

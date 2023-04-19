@@ -24,8 +24,12 @@ import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
+/**
+ * The TriangleCollider class represents a triangle shape for collision detection, with adjustable
+ * vertices and centroid.
+ */
 public class TriangleCollider extends Collider {
-    private final Vector2D[] vertices = new Vector2D[] {new Vector2D(-50, -50), new Vector2D(0, 50), new Vector2D(50, -50)};
+    private final Vector2D[] vertices = new Vector2D[]{new Vector2D(-50, -50), new Vector2D(0, 50), new Vector2D(50, -50)};
 
 
     @VisibleOnInspector
@@ -40,14 +44,30 @@ public class TriangleCollider extends Collider {
         return s;
     }
 
+    /**
+     * The function returns an array of Vector2D objects representing the vertices.
+     *
+     * @return An array of Vector2D objects named "vertices" is being returned.
+     */
     public Vector2D[] getVertices() {
         return vertices;
     }
 
+    /**
+     * The function returns the centroid of the triangle collider.
+     *
+     * @return A Vector2D object representing the centroid.
+     */
     public Vector2D getCentroid() {
         return centroid;
     }
 
+    /**
+     * This function sets the centroid of the triangle collider.
+     *
+     * @param centroid The parameter "centroid" is a Vector2D object representing the centroid of  the triangle collider. The method "setCentroid" sets the value of the centroid for the current object to the value
+     *                 passed as the parameter.
+     */
     public void setCentroid(Vector2D centroid) {
         this.centroid = centroid;
     }

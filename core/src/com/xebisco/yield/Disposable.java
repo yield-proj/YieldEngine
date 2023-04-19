@@ -21,7 +21,7 @@ package com.xebisco.yield;
  */
 public interface Disposable {
     /**
-     * Dispose of the object
+     * The function "dispose()" is used to release any resources held by an object.
      */
     void dispose();
 }

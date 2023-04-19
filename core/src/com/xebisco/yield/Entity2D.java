@@ -327,10 +327,20 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
         this.parent = parent;
     }
 
+    /**
+     * The function returns an array of strings representing tags.
+     *
+     * @return The tags array.
+     */
     public String[] getTags() {
         return tags;
     }
 
+    /**
+     * This function sets the value of the tags array of this entity.
+     *
+     * @param tags The tags array to set.
+     */
     public void setTags(String[] tags) {
         this.tags = tags;
     }

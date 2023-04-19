@@ -16,6 +16,10 @@
 
 package com.xebisco.yield;
 
+/**
+ * The class "Axis" represents an input axis with keys for positive and negative values, and can store and retrieve its
+ * current value.
+ */
 public class Axis {
     private final String name;
     private final Input.Key positiveKey, negativeKey, altPositiveKey, altNegativeKey;
@@ -37,30 +41,65 @@ public class Axis {
         this.altNegativeKey = null;
     }
 
+    /**
+     * The function returns the name.
+     *
+     * @return The method `getName()` is returning the value of the `name` variable, which is a `String`.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * The function returns the positive key input.
+     *
+     * @return The method is returning the value of the variable `positiveKey`, which is of type `Input.Key`.
+     */
     public Input.Key getPositiveKey() {
         return positiveKey;
     }
 
+    /**
+     * The function returns the negative key input.
+     *
+     * @return The method is returning the value of the variable `negativeKey`, which is of type `Input.Key`.
+     */
     public Input.Key getNegativeKey() {
         return negativeKey;
     }
 
+    /**
+     * The function returns the alternate positive key input.
+     *
+     * @return The method is returning the value of the variable `altPositiveKey`, which is of type `Input.Key`.
+     */
     public Input.Key getAltPositiveKey() {
         return altPositiveKey;
     }
 
+    /**
+     * The function returns the alternate negative key input.
+     *
+     * @return The method is returning the value of the variable `altNegativeKey`, which is of type `Input.Key`.
+     */
     public Input.Key getAltNegativeKey() {
         return altNegativeKey;
     }
 
+    /**
+     * The function returns the value of this axis.
+     *
+     * @return The value of the variable "value".
+     */
     public double getValue() {
         return value;
     }
 
+    /**
+     * The function sets the value of this axis.
+     *
+     * @param value The value to be set.
+     */
     public void setValue(double value) {
         this.value = value;
     }

@@ -16,6 +16,10 @@
 
 package com.xebisco.yield.physics;
 
+/**
+ * This enum can be used to represent different types of physics bodies in a game or simulation.
+ */
+
 public enum PhysicsType {
     DYNAMIC, STATIC, KINEMATIC
 }

@@ -33,7 +33,6 @@ public class Application implements Behavior {
     public final Vector2D mousePosition = new Vector2D();
     private final PlatformGraphics platformGraphics;
     private final PlatformInit platformInit;
-    private final Object renderLock = new Object();
     private final FontLoader fontLoader;
     private final TextureManager textureManager;
     private final InputManager inputManager;
@@ -152,9 +151,8 @@ public class Application implements Behavior {
     @Override
     public void onStart() {
         defaultFont = new Font("OpenSans-Regular.ttf", 48, fontLoader);
-        defaultTexture = new Texture("yieldIcon.png", textureManager);
         if (platformInit.getWindowIcon() == null)
-            platformInit.setWindowIcon(defaultTexture);
+            platformInit.setWindowIcon(new Texture(platformInit.getWindowIconPath(), getTextureManager()));
         platformGraphics.init(platformInit);
         for (int i = 0; i < 4; i++) {
             String a = String.valueOf((i + 1));
@@ -184,6 +182,17 @@ public class Application implements Behavior {
         }
     }
 
+    /**
+     * This Java function vibrates a game controller for a specified player with left and right magnitudes and a duration.
+     *
+     * @param playerIndex    The index of the player's controller. It is used to identify which controller to vibrate.
+     * @param leftMagnitude  The intensity of the vibration on the left side of the controller. It is a double value between
+     *                       0.0 and 1.0, where 0.0 means no vibration and 1.0 means maximum vibration intensity.
+     * @param rightMagnitude The rightMagnitude parameter in the vibrateController method represents the intensity of the
+     *                       vibration on the right side of the controller. It is a double value that ranges from 0.0 (no vibration) to 1.0
+     *                       (maximum vibration).
+     * @param duration       The duration parameter is the length of time in seconds that the controller will vibrate for.
+     */
     public void vibrateController(int playerIndex, double leftMagnitude, double rightMagnitude, double duration) {
         try {
             controllerManager.getControllerIndex(playerIndex).doVibration((float) leftMagnitude, (float) rightMagnitude, (int) duration * 1000);
@@ -192,6 +201,9 @@ public class Application implements Behavior {
         }
     }
 
+    /**
+     * This function updates the values of various input axes based on keyboard and controller inputs.
+     */
     public void updateAxes() {
         mousePosition.set(getInputManager().getMouseX(), getInputManager().getMouseY());
         for (Axis axis : axes) {
@@ -322,6 +334,14 @@ public class Application implements Behavior {
         platformGraphics.dispose();
     }
 
+    /**
+     * This Java function returns the value of an axis with a given name, or throws an exception if no axis with that name
+     * exists.
+     *
+     * @param name The parameter "name" is a String representing the name of the axis that the method is trying to retrieve
+     *             the value for.
+     * @return The method is returning a double value which represents the value of the axis with the given name.
+     */
     public double getAxis(String name) {
         for (Axis axis : axes) {
             if (axis.getName().hashCode() == name.hashCode() && axis.getName().equals(name))
@@ -330,10 +350,25 @@ public class Application implements Behavior {
         throw new IllegalArgumentException("none axis with the name: '" + name + "'");
     }
 
+    /**
+     * This function returns a TwoAnchorRepresentation object with the X and Y axis obtained from calling the getAxis
+     * method.
+     *
+     * @param axisX It is a String parameter representing the name or label of the X-axis.
+     * @param axisY It is a String parameter representing the name or label of the Y-axis.
+     * @return A new instance of the `TwoAnchorRepresentation` class, which is constructed using the `getAxis` method with
+     * the `axisX` and `axisY` parameters. The `getAxis` method is called twice, once with `axisX` and once with `axisY`,
+     * and the results are used to create the `TwoAnchorRepresentation` object.
+     */
     public TwoAnchorRepresentation getAxis(String axisX, String axisY) {
         return new TwoAnchorRepresentation(getAxis(axisX), getAxis(axisY));
     }
 
+    /**
+     * The function returns a set of Axis objects.
+     *
+     * @return A Set of Axis objects is being returned.
+     */
     public Set<Axis> getAxes() {
         return axes;
     }
@@ -365,10 +400,20 @@ public class Application implements Behavior {
         return platformGraphics;
     }
 
+    /**
+     * The function returns the texture manager object.
+     *
+     * @return The method is returning this application texture manager.
+     */
     public TextureManager getTextureManager() {
         return textureManager;
     }
 
+    /**
+     * The function returns the resolution as a Size2D object.
+     *
+     * @return The method is returning an object of type `Size2D`, which represents the resolution of this application.
+     */
     public Size2D getResolution() {
         return resolution;
     }
@@ -406,86 +451,195 @@ public class Application implements Behavior {
         }
     }
 
+    /**
+     * This function checks if a specific key is being pressed by the user.
+     *
+     * @param key The parameter "key" is of type Input.Key, which is an enum that represents a specific key on a standard
+     *            keyboard. This method checks if the key is currently being pressed down by the user.
+     * @return The method is returning a boolean value which indicates whether the specified key is being pressed or not.
+     * It checks if the list of currently pressing keys obtained from the input manager contains the specified key, and
+     * returns true if it does, false otherwise.
+     */
     public boolean isPressingKey(Input.Key key) {
         return getInputManager().getPressingKeys().contains(key);
     }
 
+    /**
+     * This function checks if a specific mouse button is currently being pressed.
+     *
+     * @param button The parameter "button" is of type Input.MouseButton, which is likely an enum that represents the
+     *               different mouse buttons. This method checks if the specified mouse button is currently
+     *               being pressed down by the user.
+     * @return The method `isPressingButton` returns a boolean value indicating whether the specified `MouseButton` is
+     * currently being pressed or not. It returns `true` if the button is being pressed and `false` otherwise.
+     */
     public boolean isPressingButton(Input.MouseButton button) {
         return getInputManager().getPressingMouseButtons().contains(button);
     }
 
+    /**
+     * This function returns a ViewportZoomScale object.
+     *
+     * @return The method is returning an object of type `ViewportZoomScale`.
+     */
     public ViewportZoomScale getViewportZoomScale() {
         return viewportZoomScale;
     }
 
+    /**
+     * The function returns the platform initialization object.
+     *
+     * @return The method is returning an object of type `PlatformInit`.
+     */
     public PlatformInit getPlatformInit() {
         return platformInit;
     }
 
-    public Object getRenderLock() {
-        return renderLock;
-    }
-
+    /**
+     * The function returns a FontLoader object.
+     *
+     * @return The `getFontLoader()` method is returning an object of type `FontLoader`.
+     */
     public FontLoader getFontLoader() {
         return fontLoader;
     }
 
+    /**
+     * The function returns an instance of the InputManager class.
+     *
+     * @return The method is returning an object of type `InputManager`.
+     */
     public InputManager getInputManager() {
         return inputManager;
     }
 
+    /**
+     * The function returns a DrawInstruction object.
+     *
+     * @return The method is returning an object of type `DrawInstruction`.
+     */
     public DrawInstruction getDrawInstruction() {
         return drawInstruction;
     }
 
+    /**
+     * The function returns a Runnable object named "renderer".
+     *
+     * @return A Runnable object named "renderer" is being returned.
+     */
     public Runnable getRenderer() {
         return renderer;
     }
 
+    /**
+     * The function returns a Function object that takes a Throwable as input and returns Void.
+     *
+     * @return A `Function` object that takes a `Throwable` as input and returns `Void` as output. The
+     * `exceptionThrowFunction` variable is being returned.
+     */
     public Function<Throwable, Void> getExceptionThrowFunction() {
         return exceptionThrowFunction;
     }
 
+    /**
+     * This function returns an instance of the ApplicationManager class.
+     *
+     * @return The method is returning an object of type `ApplicationManager`.
+     */
     public ApplicationManager getApplicationManager() {
         return applicationManager;
     }
 
+    /**
+     * The function returns the value of the variable physicsPpm as a double.
+     *
+     * @return The method is returning a double value which is the value of the variable `physicsPpm`.
+     */
     public double getPhysicsPpm() {
         return physicsPpm;
     }
 
+    /**
+     * This function sets the value of the physicsPpm variable.
+     *
+     * @param physicsPpm physicsPpm stands for "physics pixels per meter". It is a measure of the scale used in a physics
+     *                   simulation, where the size of objects and distances between them are represented in pixels and meters. By setting
+     *                   the physicsPpm value, you can adjust the scale of the physics simulation.
+     */
     public void setPhysicsPpm(double physicsPpm) {
         this.physicsPpm = physicsPpm;
     }
 
+    /**
+     * This function returns an instance of the AudioManager class in Yield.
+     *
+     * @return The method is returning an instance of the AudioManager class.
+     */
     public AudioManager getAudioManager() {
         return audioManager;
     }
 
+    /**
+     * The function returns the controller manager object.
+     *
+     * @return The method is returning an object of type `ControllerManager`.
+     */
     public ControllerManager getControllerManager() {
         return controllerManager;
     }
 
+    /**
+     * The function returns a texture object representing the controller texture.
+     *
+     * @return The method is returning a Texture object named "controllerTexture".
+     */
     public Texture getControllerTexture() {
         return controllerTexture;
     }
 
+    /**
+     * This function returns the default font.
+     *
+     * @return The method is returning a Font object named "defaultFont".
+     */
     public Font getDefaultFont() {
         return defaultFont;
     }
 
+    /**
+     * This function sets the default font for a Java program.
+     *
+     * @param defaultFont The parameter `defaultFont` is of type `Font`, which represents a font that can be used to render
+     *                    text. This method sets the default font to be used in the application.
+     */
     public void setDefaultFont(Font defaultFont) {
         this.defaultFont = defaultFont;
     }
 
+    /**
+     * The function returns the default texture.
+     *
+     * @return The method is returning a Texture object named "defaultTexture".
+     */
     public Texture getDefaultTexture() {
         return defaultTexture;
     }
 
+    /**
+     * This function sets the default texture for an object.
+     *
+     * @param defaultTexture The parameter `defaultTexture` is of type `Texture` and represents the default texture that
+     *                       will be set for an object. This method allows the user to set a default texture that will be used if no other texture is specified.
+     */
     public void setDefaultTexture(Texture defaultTexture) {
         this.defaultTexture = defaultTexture;
     }
 
+    /**
+     * This function returns a Texture object representing a translucent controller texture.
+     *
+     * @return The method is returning a Texture object named "translucentControllerTexture".
+     */
     public Texture getTranslucentControllerTexture() {
         return translucentControllerTexture;
     }

@@ -18,5 +18,10 @@ package com.xebisco.yield;
 
 @FunctionalInterface
 public interface ComponentModifier {
+    /**
+     * The function modifies the behavior of a component.
+     *
+     * @param component The component to be modified.
+     */
     void modify(ComponentBehavior component);
 }

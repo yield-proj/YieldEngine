@@ -16,6 +16,10 @@
 
 package com.xebisco.yield.physics;
 
+/**
+ * The class `BodyNotCreatedException` is a custom exception that extends the `RuntimeException` class and can be used to
+ * indicate that a body has not been created.
+ */
 public class BodyNotCreatedException extends RuntimeException {
     public BodyNotCreatedException() {
     }

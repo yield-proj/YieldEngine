@@ -16,6 +16,10 @@
 
 package com.xebisco.yield.physics;
 
+/**
+ * The ForceType enum contains constants can be used to represent different types of forces in a physics
+ */
+// simulation.
 public enum ForceType {
     FORCE, LINEAR_IMPULSE, TORQUE, ANGULAR_IMPULSE
 }

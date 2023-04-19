@@ -22,6 +22,9 @@ import com.xebisco.yield.VisibleOnInspector;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.Shape;
 
+/**
+ * The CircleCollider class defines a circle collider with a radius and center point that can be set and retrieved.
+ */
 public class CircleCollider extends Collider {
     @VisibleOnInspector
     private double radius = 50;
@@ -38,14 +41,30 @@ public class CircleCollider extends Collider {
         return s;
     }
 
+    /**
+     * The function returns the value of the radius.
+     *
+     * @return The method `getRadius()` is returning the value of the `radius` variable, which is of type `double`.
+     */
     public double getRadius() {
         return radius;
     }
 
+    /**
+     * The function sets the value of the radius variable.
+     *
+     * @param radius The parameter "radius" is a double data type that represents the radius of a circle. The method
+     * "setRadius" sets the value of the instance variable "radius" to the value passed as a parameter.
+     */
     public void setRadius(double radius) {
         this.radius = radius;
     }
 
+    /**
+     * The function returns a Vector2D representing the center point.
+     *
+     * @return A Vector2D object representing the center of something (e.g. a shape or object).
+     */
     public Vector2D getCenter() {
         return center;
     }

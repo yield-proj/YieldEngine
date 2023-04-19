@@ -19,6 +19,10 @@ package com.xebisco.yield.physics;
 import com.xebisco.yield.*;
 import org.jbox2d.collision.shapes.*;
 
+/**
+ * This is a Java class for a rectangle collider that extends a Collider class and includes properties for size, centroid,
+ * center, and angle.
+ */
 public class RectangleCollider extends Collider {
     @VisibleOnInspector
     private Size2D size = new Size2D(100, 100);
@@ -37,34 +41,77 @@ public class RectangleCollider extends Collider {
         return s;
     }
 
+    /**
+     * The function returns a Size2D object.
+     *
+     * @return The method `getSize()` is returning an object of type `Size2D`.
+     */
     public Size2D getSize() {
         return size;
     }
 
+    /**
+     * This Java function sets the size of an object using a Size2D parameter.
+     *
+     * @param size The size value to set.
+     */
     public void setSize(Size2D size) {
         this.size = size;
     }
 
+    /**
+     * The function returns the centroid of the rectangle collider.
+     *
+     * @return A Vector2D object representing the centroid.
+     */
     public Vector2D getCentroid() {
         return centroid;
     }
 
+    /**
+     * This function sets the centroid of the rectangle collider.
+     *
+     * @param centroid The parameter "centroid" is a Vector2D object that represents the center point of the rectangle collider. The method "setCentroid" sets the value of the centroid for
+     *                 the current object to the specified value.
+     */
     public void setCentroid(Vector2D centroid) {
         this.centroid = centroid;
     }
 
+    /**
+     * The function returns a Vector2D representing the center point.
+     *
+     * @return A Vector2D object representing the center of the rectangle collider.
+     */
     public Vector2D getCenter() {
         return center;
     }
 
+    /**
+     * This function sets the center of a Vector2D object.
+     *
+     * @param center The parameter "center" is a Vector2D object that represents the center point of the rectangle collider. The method "setCenter" sets the value of the center point to the specified Vector2D object.
+     */
     public void setCenter(Vector2D center) {
         this.center = center;
     }
 
+    /**
+     * The function returns the value of the angle.
+     *
+     * @return The method `getAngle()` is returning a `double` value which represents the angle.
+     */
     public double getAngle() {
         return angle;
     }
 
+    /**
+     * This function sets the value of the "angle" variable to the input "angle" value.
+     *
+     * @param angle The parameter "angle" is a double data type that represents the angle value to be set for an object or
+     * variable. The method "setAngle" is used to set the value of the angle variable to the specified value passed as an
+     * argument to the method.
+     */
     public void setAngle(double angle) {
         this.angle = angle;
     }

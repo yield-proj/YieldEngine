@@ -21,7 +21,7 @@ package com.xebisco.yield;
  */
 public class Colors {
     /**
-     * GrADS Default colors.
+     * From GrADS Default colors.
      */
     public static final Color
             BLACK = new ImmutableColor(0, 0, 0),

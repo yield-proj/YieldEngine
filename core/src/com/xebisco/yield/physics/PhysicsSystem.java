@@ -26,6 +26,9 @@ import org.jbox2d.collision.Manifold;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 
+/**
+ * The PhysicsSystem class is a Java class that handles physics simulation using the Box2D engine.
+ */
 public class PhysicsSystem extends SystemBehavior {
     private World b2World;
     private Vector2D gravity = new Vector2D(0, -10);
@@ -97,38 +100,82 @@ public class PhysicsSystem extends SystemBehavior {
         b2World = null;
     }
 
+    /**
+     * The function returns a Vector2D representing the gravity.
+     *
+     * @return A Vector2D object representing the gravity.
+     */
     public Vector2D getGravity() {
         return gravity;
     }
 
+    /**
+     * This function sets the gravity vector for an object.
+     *
+     * @param gravity The "gravity" parameter is a Vector2D object that represents the gravitational force acting on an
+     * object in a 2D space. This method sets the value of the "gravity" instance variable to the provided Vector2D object.
+     */
     public void setGravity(Vector2D gravity) {
         this.gravity = gravity;
     }
 
-    public Vector2D getGravity2D() {
-        return gravity;
-    }
-
+    /**
+     * The function returns a World object.
+     *
+     * @return The method is returning an object of type "World".
+     */
     public World getB2World() {
         return b2World;
     }
 
+    /**
+     * This function sets the value of a variable named "b2World" to the value passed as a parameter.
+     *
+     * @param b2World b2World is an object of the Box2D physics engine's World class. It represents the simulation world in
+     * which physical bodies interact with each other according to the laws of physics.
+     */
     public void setB2World(World b2World) {
         this.b2World = b2World;
     }
 
+    /**
+     * This function returns the number of velocity iterations used in a physics simulation.
+     *
+     * @return The method is returning the value of the variable `velocityIterations`.
+     */
     public int getVelocityIterations() {
         return velocityIterations;
     }
 
+    /**
+     * This function sets the number of velocity iterations for a physics simulation in Box2D.
+     *
+     * @param velocityIterations The parameter "velocityIterations" is an integer value that represents the number of
+     * iterations the physics engine will perform to calculate the velocity of objects in a simulation. Increasing the
+     * number of velocity iterations can improve the accuracy of the simulation, but it can also increase the computational
+     * cost.
+     */
     public void setVelocityIterations(int velocityIterations) {
         this.velocityIterations = velocityIterations;
     }
 
+    /**
+     * The function returns the value of the variable positionIterations.
+     *
+     * @return The method `getPositionIterations()` is returning an integer value, which is the value of the variable
+     * `positionIterations`.
+     */
     public int getPositionIterations() {
         return positionIterations;
     }
 
+    /**
+     * This function sets the number of position iterations for a physics simulation in Box2D.
+     *
+     * @param positionIterations positionIterations is an integer parameter that represents the number of iterations the
+     * physics engine will perform to calculate the positions of objects in a simulation. Increasing the number of position
+     * iterations can improve the accuracy of the simulation, but it can also increase the computational cost.
+     */
     public void setPositionIterations(int positionIterations) {
         this.positionIterations = positionIterations;
     }

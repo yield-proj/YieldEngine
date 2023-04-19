@@ -149,10 +149,21 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
         return getEntity().getComponent(componentType, index);
     }
 
+    /**
+     * This function returns the application associated with the entity.
+     *
+     * @return The method is returning an instance of the `Application` class. It is getting the `Application` object from
+     * the `Entity` object and returning it.
+     */
     public Application getApplication() {
         return getEntity().getApplication();
     }
 
+    /**
+     * This function returns the time context of the application manager.
+     *
+     * @return The method `getTime()` is returning an object of type `ContextTime`.
+     */
     public ContextTime getTime() {
         return getEntity().getApplication().getApplicationManager().getManagerContext().getContextTime();
     }

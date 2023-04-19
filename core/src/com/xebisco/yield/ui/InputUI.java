@@ -20,6 +20,10 @@ import com.xebisco.yield.*;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * The InputUI class is responsible for displaying a message and visual feedback when a controller is connected or
+ * disconnected in a Yield application.
+ */
 public class InputUI extends ComponentBehavior {
     private final DrawInstruction instruction = new DrawInstruction();
     private int stage = -1, lastControllerNum;

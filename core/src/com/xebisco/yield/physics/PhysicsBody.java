@@ -46,8 +46,8 @@ public class PhysicsBody extends ComponentBehavior {
     public void onUpdate() {
         for (Fixture f = getB2Body().getFixtureList(); f != null; f = f.getNext()) {
             f.m_shape = ((Collider) f.getUserData()).getShape();
-            f.setDensity(((Collider) f.getUserData()).getDensity());
-            f.setFriction(((Collider) f.getUserData()).getFriction());
+            f.setDensity((float) ((Collider) f.getUserData()).getDensity());
+            f.setFriction((float) ((Collider) f.getUserData()).getFriction());
             f.setSensor(((Collider) f.getUserData()).isSensor());
             if (!getEntity().getComponents().contains((Collider) f.getUserData())) {
                 getB2Body().destroyFixture(f);
@@ -64,7 +64,7 @@ public class PhysicsBody extends ComponentBehavior {
                     }
                 }
                 if (!contains) {
-                    Fixture f = getB2Body().createFixture(((Collider) c).getShape(), ((Collider) c).getDensity());
+                    Fixture f = getB2Body().createFixture(((Collider) c).getShape(), (float) ((Collider) c).getDensity());
                     f.m_filter.categoryBits = ((Collider) c).getCollisionMask();
                     f.m_filter.maskBits = 0xFFFF;
                     f.setSensor(((Collider) c).isSensor());

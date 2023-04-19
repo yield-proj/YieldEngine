@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * The TextureManager interface should be implemented by the specific platform running the application, it contains function for manipulation image files.
+ */
 public interface TextureManager {
     /**
      * This function loads a texture and returns the specific image reference.

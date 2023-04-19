@@ -16,6 +16,10 @@
 
 package com.xebisco.yield;
 
+/**
+ * The ComponentCreation class represents the creation of a component with a specified behavior and
+ * modifier.
+ */
 public final class ComponentCreation {
     private final Class<? extends ComponentBehavior> componentClass;
     private final ComponentModifier componentModifier;
@@ -29,10 +33,21 @@ public final class ComponentCreation {
         this(componentClass, null);
     }
 
+    /**
+     * This function returns the class of a component's behavior.
+     *
+     * @return The method is returning an object of type `Class` that extends `ComponentBehavior`. The specific class being
+     * returned is determined by the value of the `componentClass` variable.
+     */
     public Class<? extends ComponentBehavior> getComponentClass() {
         return componentClass;
     }
 
+    /**
+     * The function returns a ComponentModifier object.
+     *
+     * @return The method is returning an object of type `ComponentModifier`.
+     */
     public ComponentModifier getComponentModifier() {
         return componentModifier;
     }
