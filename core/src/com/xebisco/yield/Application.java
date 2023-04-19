@@ -180,6 +180,9 @@ public class Application implements Behavior {
             axes.add(new Axis("LeftThumb" + a, null, null, null, null));
             axes.add(new Axis("View" + a, null, null, null, null));
         }
+        if(textureManager != null) {
+            defaultTexture = new Texture("yieldIcon.png", textureManager);
+        }
     }
 
     /**
