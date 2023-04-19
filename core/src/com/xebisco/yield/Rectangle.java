@@ -57,7 +57,7 @@ public class Rectangle extends ComponentBehavior {
         else drawInstruction.setBorderColor(null);
         drawInstruction.setInnerColor(color);
         drawInstruction.setPosition(getEntity().getTransform().getPosition());
-        if(drawInstruction.getSize() == null) drawInstruction.setSize(new Size2D(1, 1));
+        if (drawInstruction.getSize() == null) drawInstruction.setSize(new Size2D(1, 1));
         drawInstruction.getSize().set(
                 size.getWidth() * getEntity().getTransform().getScale().getX(),
                 size.getHeight() * getEntity().getTransform().getScale().getY()
@@ -171,22 +171,60 @@ public class Rectangle extends ComponentBehavior {
         return size;
     }
 
+    /**
+     * This function sets the size of an object using a Size2D parameter.
+     *
+     * @param size The size value to set.
+     */
     public void setSize(Size2D size) {
         this.size = size;
     }
 
+    /**
+     * This function returns the start drawing anchor of a rectangle.
+     * If its ´DOWN´, The rectangle will have its center on the top point.
+     * If its ´UP´, The rectangle will have its center on the bottom point.
+     * If its ´CENTER´, The rectangle will have its center on the center point.
+     * If its ´LEFT´, The rectangle will have its center on the right point.
+     * If its ´DOWN´, The rectangle will have its center on the left point.
+     *
+     * @return The method is returning an object of type `RectangleAnchor`.
+     */
     public RectangleAnchor getAnchor() {
         return anchor;
     }
 
+    /**
+     * This function sets the anchor of a rectangle.
+     *
+     * @param anchor The parameter "anchor" is of type RectangleAnchor, which is an enumerated type that represents the
+     *               position of an anchor point relative to a rectangle.
+     *               If its ´DOWN´, The rectangle will have its center on the top point.
+     *               If its ´UP´, The rectangle will have its center on the bottom point.
+     *               If its ´CENTER´, The rectangle will have its center on the center point.
+     *               If its ´LEFT´, The rectangle will have its center on the right point.
+     *               If its ´DOWN´, The rectangle will have its center on the left point.
+     */
     public void setAnchor(RectangleAnchor anchor) {
         this.anchor = anchor;
     }
 
+    /**
+     * The function returns a Vector2D object representing an offset.
+     *
+     * @return A Vector2D object named "offset" is being returned.
+     */
     public Vector2D getOffset() {
         return offset;
     }
 
+    /**
+     * This function sets the offset of a Vector2D object.
+     *
+     * @param offset The "offset" parameter is a Vector2D object that represents the amount of displacement or shift in
+     *               position from a reference point. This method sets the value of the "offset" instance variable to the value of the
+     *               "offset" parameter passed to it.
+     */
     public void setOffset(Vector2D offset) {
         this.offset = offset;
     }

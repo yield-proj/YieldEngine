@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * This is an abstract class that implements the Behavior interface and contains methods for managing scenes.
+ */
 public abstract class SystemBehavior implements Behavior {
 
     private int frames;
@@ -36,18 +39,39 @@ public abstract class SystemBehavior implements Behavior {
 
     }
 
+    /**
+     * The function returns a Scene object.
+     *
+     * @return The `getScene()` method is returning a `Scene` object.
+     */
     public Scene getScene() {
         return scene;
     }
 
+    /**
+     * This function sets the scene for a Java application.
+     *
+     * @param scene The method "setScene" sets the value of the
+     * instance variable "scene" to the value passed as the parameter.
+     */
     public void setScene(Scene scene) {
         this.scene = scene;
     }
 
+    /**
+     * The function returns the value of the frames variable.
+     *
+     * @return The method is returning an integer value of the variable "frames".
+     */
     public int getFrames() {
         return frames;
     }
 
+    /**
+     * The function sets the number of frames for a given object.
+     *
+     * @param frames The "frames" parameter is an integer value that represents the number of frames.
+     */
     public void setFrames(int frames) {
         this.frames = frames;
     }

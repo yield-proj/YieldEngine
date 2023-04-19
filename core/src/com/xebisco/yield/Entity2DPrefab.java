@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * The Entity2DPrefab class is a blueprint for creating 2D entities with components, children, and tags.
+ */
 public class Entity2DPrefab {
     private final ComponentCreation[] components;
     private final Entity2DPrefab[] children;
@@ -39,14 +42,29 @@ public class Entity2DPrefab {
         this(new Entity2DPrefab[0], tags, components);
     }
 
+    /**
+     * The function returns an array of ComponentCreation objects.
+     *
+     * @return An array of ComponentCreation objects is being returned.
+     */
     public ComponentCreation[] getComponents() {
         return components;
     }
 
+    /**
+     * The function returns an array of 2D entity prefabs that are children of a parent entity.
+     *
+     * @return The method `getChildren()` is returning an array of `Entity2DPrefab` objects named `children`.
+     */
     public Entity2DPrefab[] getChildren() {
         return children;
     }
 
+    /**
+     * The function returns an array of strings representing tags.
+     *
+     * @return An array of strings called "tags" is being returned.
+     */
     public String[] getTags() {
         return tags;
     }

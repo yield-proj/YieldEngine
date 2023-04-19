@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * The EquilateralTriangle class extends the Rectangle class and sets the draw instruction type to equilateral triangle.
+ */
 public class EquilateralTriangle extends Rectangle {
     @Override
     public void onStart() {

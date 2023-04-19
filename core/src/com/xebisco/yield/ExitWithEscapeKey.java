@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * This class exits the application when the escape key is pressed.
+ */
 public class ExitWithEscapeKey extends SystemBehavior {
     @Override
     public void onUpdate() {

@@ -29,10 +29,20 @@ public class Size2D extends TwoAnchorRepresentation {
         super(a);
     }
 
+    /**
+     * The function returns the X-coordinate value of a point representing the width.
+     *
+     * @return The method `getWidth()` is returning the value of the `x` coordinate of an object.
+     */
     public double getWidth() {
         return getX();
     }
 
+    /**
+     * This function returns the y-coordinate of a point representing the height.
+     *
+     * @return The method `getHeight()` is returning the y-coordinate of an object.
+     */
     public double getHeight() {
         return getY();
     }

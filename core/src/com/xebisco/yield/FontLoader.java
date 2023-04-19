@@ -16,15 +16,26 @@
 
 package com.xebisco.yield;
 
-import java.io.InputStream;
-
 public interface FontLoader {
+    /**
+     * The function loads a font object in Java.
+     *
+     * @param font The "font" parameter in the "loadFont" method is the font that you want to load.
+     */
     Object loadFont(Font font);
+
+    /**
+     * The function unloads a specified font.
+     *
+     * @param font The parameter "font" is a variable of type "Font" that represents a font loaded in memory. This function
+     * "unloadFont" is used to release the memory allocated for the font and free up resources used by the font.
+     */
     void unloadFont(Font font);
 
     /**
      * Calculates the text width based on the font reference gave.
-     * @param text The text.
+     *
+     * @param text    The text.
      * @param fontRef The font reference.
      * @return The text width.
      */
@@ -32,7 +43,8 @@ public interface FontLoader {
 
     /**
      * Calculates the text height based on the font reference gave.
-     * @param text The text.
+     *
+     * @param text    The text.
      * @param fontRef The font reference.
      * @return The text height.
      */

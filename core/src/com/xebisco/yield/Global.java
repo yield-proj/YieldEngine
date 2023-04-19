@@ -26,6 +26,11 @@ import java.lang.reflect.InvocationTargetException;
 public final class Global {
     public static final String HORIZONTAL = "Horizontal", VERTICAL = "Vertical";
 
+    /**
+     * This function returns an instance of a SwingPlatform class for Java's Swing graphics.
+     *
+     * @return An instance of the class `SwingPlatform` that implements the `PlatformGraphics` interface.
+     */
     public static PlatformGraphics swingPlatform() throws ClassNotFoundException {
         //noinspection unchecked
         Class<? extends PlatformGraphics> swingPlatformImplClass = (Class<? extends PlatformGraphics>) Class.forName("com.xebisco.yield.swingimpl.SwingPlatform");
@@ -36,10 +41,20 @@ public final class Global {
         }
     }
 
+    /**
+     * The function converts a TwoAnchorRepresentation object to a Vec2 object with the same x and y values.
+     *
+     * @param twoAnchorRepresentation The generated TwoAnchorRepresentation.
+     */
     public static Vec2 toVec2(TwoAnchorRepresentation twoAnchorRepresentation) {
         return new Vec2((float) twoAnchorRepresentation.getX(), (float) twoAnchorRepresentation.getY());
     }
 
+    /**
+     * The function converts a Vec2 object to a TwoAnchorRepresentation object with the same x and y values.
+     *
+     * @param vec2 The generated TwoAnchorRepresentation.
+     */
     public static Vector2D toVector2D(Vec2 vec2) {
         return new Vector2D(vec2.x, vec2.y);
     }

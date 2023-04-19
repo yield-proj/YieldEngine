@@ -50,6 +50,15 @@ public class TwoAnchorRepresentation {
         return this;
     }
 
+    /**
+     * This method returns the sum of two anchor representations.
+     *
+     * @param a The parameter `a` is an object of the class `TwoAnchorRepresentation` that is being passed as an argument
+     * to the `sum` method.
+     * @return A new instance of the `TwoAnchorRepresentation` class is being returned, which is the result of adding the
+     * current instance's coordinates (`x` and `y`) to the coordinates of the `TwoAnchorRepresentation` object passed as
+     * the argument `a`. The `sumLocal` method is called on the new instance to perform the addition operation.
+     */
     public TwoAnchorRepresentation sum(TwoAnchorRepresentation a) {
         return new TwoAnchorRepresentation(x, y).sumLocal(a);
     }
@@ -65,6 +74,14 @@ public class TwoAnchorRepresentation {
         return this;
     }
 
+    /**
+     * This method subtracts a TwoAnchorRepresentation object from another and returns the result as a new
+     * TwoAnchorRepresentation object.
+     *
+     * @param a The parameter "a" is a TwoAnchorRepresentation object that is being subtracted from the current object.
+     * @return A new instance of the `TwoAnchorRepresentation` class is being returned. The `subtractLocal` method is being
+     * called on the new instance with the `a` parameter passed in, which modifies the instance's `x` and `y` values.
+     */
     public TwoAnchorRepresentation subtract(TwoAnchorRepresentation a) {
         return new TwoAnchorRepresentation(x, y).subtractLocal(a);
     }
@@ -80,12 +97,28 @@ public class TwoAnchorRepresentation {
         return this;
     }
 
+    /**
+     * This method multiplies the x and y values of a TwoAnchorRepresentation object by a given value and returns the
+     * object.
+     *
+     * @param value The parameter "value" is a double type variable that represents the value by which the x and y
+     * coordinates of the TwoAnchorRepresentation object are multiplied.
+     * @return The method is returning this instance of the `TwoAnchorRepresentation`.
+     */
     public TwoAnchorRepresentation multiplyLocal(double value) {
         x *= value;
         y *= value;
         return this;
     }
 
+    /**
+     * This method returns the result of multiplying two instances of the TwoAnchorRepresentation class.
+     *
+     * @param a The parameter "a" is a TwoAnchorRepresentation object that is being passed as an argument to the "multiply"
+     * method.
+     * @return A new instance of the `TwoAnchorRepresentation` class is being returned. The new instance is created by
+     * calling the `multiplyLocal` method on the current instance of `TwoAnchorRepresentation` with the argument `a`.
+     */
     public TwoAnchorRepresentation multiply(TwoAnchorRepresentation a) {
         return new TwoAnchorRepresentation(x, y).multiplyLocal(a);
     }
@@ -101,24 +134,57 @@ public class TwoAnchorRepresentation {
         return this;
     }
 
+    /**
+     * This Java function returns a new TwoAnchorRepresentation object that is the result of dividing the current object by
+     * the input object.
+     *
+     * @param a The parameter "a" is a TwoAnchorRepresentation object that is being passed as an argument to the "divide"
+     * method.
+     * @return A new instance of the `TwoAnchorRepresentation` class is being returned, which is the result of dividing the
+     * current instance by the `a` parameter using the `divideLocal` method.
+     */
     public TwoAnchorRepresentation divide(TwoAnchorRepresentation a) {
         return new TwoAnchorRepresentation(x, y).divideLocal(a);
     }
 
+    /**
+     * The function returns the absolute value of the x and y coordinates of a TwoAnchorRepresentation object.
+     *
+     * @return The method is returning this instance of the `TwoAnchorRepresentation` class.
+     */
     public TwoAnchorRepresentation absoluteLocal() {
         x = Math.abs(x);
         y = Math.abs(y);
         return this;
     }
 
+    /**
+     * This method returns a new TwoAnchorRepresentation object with absolute values of x and y coordinates.
+     *
+     * @return A new instance of the `TwoAnchorRepresentation` class is being returned, which is created using the `x` and
+     * `y` values of the current instance. The `absoluteLocal()` method is then called on the new instance to modify its
+     * values, but the modified instance is not returned.
+     */
     public TwoAnchorRepresentation absolute() {
         return new TwoAnchorRepresentation(x, y).absoluteLocal();
     }
 
+    /**
+     * This function inverts a TwoAnchorRepresentation object locally by multiplying it with -1.
+     *
+     * @return The method is returning this `TwoAnchorRepresentation` object.
+     */
     public TwoAnchorRepresentation invertLocal() {
         return multiplyLocal(-1);
     }
 
+    /**
+     * The function inverts a TwoAnchorRepresentation object by multiplying it with a new object with negative values.
+     *
+     * @return The method is returning a new instance of the `TwoAnchorRepresentation` class that is the result of
+     * multiplying the current instance with a new instance of `TwoAnchorRepresentation` that has the values `-1` for both
+     * anchors. This new instance is effectively the inverse of the current instance.
+     */
     public TwoAnchorRepresentation invert() {
         return multiply(new TwoAnchorRepresentation(-1, -1));
     }

@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * This class loads a texture for a TextureRectangle component.
+ */
 public class TextureRectangleLoader extends ComponentBehavior {
     private String texturePath;
 

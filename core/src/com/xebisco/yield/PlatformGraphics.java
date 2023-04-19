@@ -56,7 +56,17 @@ public interface PlatformGraphics extends Disposable {
      */
     void conclude();
 
+    /**
+     * The function returns a 2D vector representing the position of the camera.
+     *
+     * @return A Vector2D object representing the position of the camera.
+     */
     Vector2D getCamera();
 
+    /**
+     * The function sets the position of the camera in a 2D space.
+     *
+     * @param camera The parameter "camera" is a Vector2D object that represents the position of the camera in a 2D space.
+     */
     void setCamera(Vector2D camera);
 }

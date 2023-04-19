@@ -22,6 +22,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * This is a class that represents a container for 2D entities, allowing for instantiation and removal of entities.
+ */
 public class Entity2DContainer {
     private final Application application;
     private List<Entity2D> entities = new ArrayList<>();
@@ -30,6 +33,17 @@ public class Entity2DContainer {
         this.application = application;
     }
 
+    /**
+     * This function instantiates a 2D entity using a prefab and its components, sets its tags and parent, adds it to a
+     * list of entities, and starts it.
+     *
+     * @param prefab The prefab parameter is an instance of the Entity2DPrefab class, which contains information about the
+     * components and children of the entity to be instantiated.
+     * @param entityStarter entityStarter is an optional parameter of type EntityStarter, which is an interface that
+     * defines a method called "start" that takes an Entity2D object as a parameter. This parameter allows for additional
+     * functionality to be executed on the instantiated entity after it has been created.
+     * @return The method is returning an instance of the Entity2D class.
+     */
     public Entity2D instantiate(Entity2DPrefab prefab, EntityStarter entityStarter) {
         ComponentBehavior[] components = new ComponentBehavior[prefab.getComponents().length];
         for (int i = 0; i < components.length; i++) {
@@ -56,6 +70,13 @@ public class Entity2DContainer {
         return entity;
     }
 
+    /**
+     * This function instantiates a 2D entity using a prefab and returns it.
+     *
+     * @param prefab The prefab parameter is an instance of the Entity2DPrefab class, which contains information about the
+     * components and children of the entity to be instantiated.
+     * @return The method is returning an instance of the Entity2D class.
+     */
     public Entity2D instantiate(Entity2DPrefab prefab) {
         return instantiate(prefab, null);
     }

@@ -16,5 +16,8 @@
 
 package com.xebisco.yield;
 
+/**
+ * An ImmutableBreakException is thrown when an immutable object changes its properties.
+ */
 public class ImmutableBreakException extends RuntimeException {
 }

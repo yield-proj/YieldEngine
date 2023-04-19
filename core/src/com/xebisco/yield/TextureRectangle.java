@@ -16,6 +16,10 @@
 
 package com.xebisco.yield;
 
+/**
+ * This is a class that extends the Rectangle class and adds functionality for rendering textures with options for
+ * scaling and processing pixels.
+ */
 public class TextureRectangle extends Rectangle {
     @VisibleOnInspector
     private Texture texture;
@@ -24,7 +28,7 @@ public class TextureRectangle extends Rectangle {
     private PixelProcessor pixelProcessor;
 
     @VisibleOnInspector
-    private boolean textureSize;
+    private boolean textureSized;
 
     @VisibleOnInspector
     private boolean disposeTexture;
@@ -50,7 +54,7 @@ public class TextureRectangle extends Rectangle {
     @Override
     public void render(PlatformGraphics graphics) {
         getDrawInstruction().setRenderRef(texture.getImageRef());
-        if (textureSize) {
+        if (textureSized) {
             if (textureScale == null)
                 getSize().set(texture.getSize());
             else
@@ -64,42 +68,97 @@ public class TextureRectangle extends Rectangle {
         if (disposeTexture && texture != null) texture.dispose();
     }
 
+    /**
+     * The function returns a texture object.
+     *
+     * @return The method is returning a Texture object.
+     */
     public Texture getTexture() {
         return texture;
     }
 
+    /**
+     * This function sets the texture of this object.
+     *
+     * @param texture The "texture" parameter is an object of the class "Texture". The method "setTexture" sets the value
+     * of the instance variable "texture" to the value passed as the parameter.
+     */
     public void setTexture(Texture texture) {
         this.texture = texture;
     }
 
+    /**
+     * The function returns a PixelProcessor object.
+     *
+     * @return The method is returning an object of type `PixelProcessor`.
+     */
     public PixelProcessor getPixelProcessor() {
         return pixelProcessor;
     }
 
+    /**
+     * This function sets the pixel processor for an object.
+     *
+     * @param pixelProcessor The parameter `pixelProcessor` is an object of the class `PixelProcessor`. It is being passed
+     * as an argument to the method `setPixelProcessor()`. This method sets the value of the instance variable
+     * `pixelProcessor` to the value of the parameter `pixelProcessor`.
+     */
     public void setPixelProcessor(PixelProcessor pixelProcessor) {
         this.pixelProcessor = pixelProcessor;
     }
 
-    public boolean isTextureSize() {
-        return textureSize;
+    /**
+     * The function returns a boolean value indicating whether the TextureRectangle is texture sized or not.
+     *
+     * @return A boolean value indicating whether the TextureRectangle is texture sized or not.
+     */
+    public boolean isTextureSized() {
+        return textureSized;
     }
 
-    public void setTextureSize(boolean textureSize) {
-        this.textureSize = textureSize;
+    /**
+     * This function sets the value of the textureSized variable.
+     *
+     * @param textureSized A boolean variable that sets whether the TextureRectangle is texture sized or not.
+     */
+    public void setTextureSized(boolean textureSized) {
+        this.textureSized = textureSized;
     }
 
+    /**
+     * This function returns a TwoAnchorRepresentation object representing the texture scale.
+     *
+     * @return A variable of type `TwoAnchorRepresentation` named `textureScale` is being returned.
+     */
     public TwoAnchorRepresentation getTextureScale() {
         return textureScale;
     }
 
+    /**
+     * This function sets the texture scale of a TwoAnchorRepresentation object.
+     *
+     * @param textureScale The parameter texture scale of a TwoAnchorRepresentation object to set.
+     */
     public void setTextureScale(TwoAnchorRepresentation textureScale) {
         this.textureScale = textureScale;
     }
 
+    /**
+     * The function returns a boolean value indicating whether the texture should be disposed.
+     *
+     * @return The method is returning a boolean value, specifically the value of the variable `disposeTexture`.
+     */
     public boolean isDisposeTexture() {
         return disposeTexture;
     }
 
+    /**
+     * This function sets a boolean value to determine whether a texture should be disposed or not.
+     *
+     * @param disposeTexture disposeTexture is a boolean parameter that determines whether the texture associated with an
+     * object should be disposed of when the object is no longer needed. If disposeTexture is set to true, the texture will
+     * be disposed of, freeing up memory. If it is set to false, the texture will not be disposed of
+     */
     public void setDisposeTexture(boolean disposeTexture) {
         this.disposeTexture = disposeTexture;
     }

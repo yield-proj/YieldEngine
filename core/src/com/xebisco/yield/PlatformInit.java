@@ -23,7 +23,7 @@ public class PlatformInit {
     private Size2D gameResolution = new Size2D(1280, 720), resolution = new Size2D(1280, 720), uiResolution = new Size2D(1280, 720), windowSize = new Size2D(1280, 720);
     private String title = "Yield Window";
     private boolean fullscreen, undecorated, stretchViewport;
-    private Texture windowIcon;
+    private String windowIconPath;
 
     /**
      * Returns the size of the window.
@@ -116,34 +116,76 @@ public class PlatformInit {
         this.stretchViewport = stretchViewport;
     }
 
-    public Texture getWindowIcon() {
-        return windowIcon;
+    /**
+     * The function returns the path of the window icon.
+     *
+     * @return The method `getWindowIconPath()` is returning a `String` value which is the path of the window icon.
+     */
+    public String getWindowIconPath() {
+        return windowIconPath;
     }
 
-    public void setWindowIcon(Texture windowIcon) {
-        this.windowIcon = windowIcon;
+    /**
+     * This function sets the path of the window icon in a Yield application.
+     *
+     * @param windowIconPath The parameter "windowIconPath" is a string that represents the file path of the icon that will
+     * be displayed in the window.
+     */
+    public void setWindowIconPath(String windowIconPath) {
+        this.windowIconPath = windowIconPath;
     }
 
+    /**
+     * The function returns the UI resolution as a Size2D object.
+     *
+     * @return The method is returning an object of type `Size2D`.
+     */
     public Size2D getUiResolution() {
         return uiResolution;
     }
 
+    /**
+     * This function sets the UI resolution to a specified Size2D object.
+     *
+     * @param uiResolution uiResolution is a variable of type Size2D that represents the resolution of the user interface
+     * (UI). It is used to set the size of the UI in two dimensions (width and height).
+     */
     public void setUiResolution(Size2D uiResolution) {
         this.uiResolution = uiResolution;
     }
 
+    /**
+     * The function returns the game resolution as a Size2D object.
+     *
+     * @return A Size2D object representing the game resolution is being returned.
+     */
     public Size2D getGameResolution() {
         return gameResolution;
     }
 
+    /**
+     * This function sets the game resolution to a specified Size2D object.
+     *
+     * @param gameResolution The parameter `gameResolution` is of type `Size2D`, Is representing the dimensions of the game screen.
+     */
     public void setGameResolution(Size2D gameResolution) {
         this.gameResolution = gameResolution;
     }
 
+    /**
+     * The function returns the resolution as a Size2D object.
+     *
+     * @return The method is returning an object of type `Size2D`, which represents the resolution of the window.
+     */
     public Size2D getResolution() {
         return resolution;
     }
 
+    /**
+     * This function sets the resolution of a window to a specified Size2D value.
+     *
+     * @param resolution The parameter "resolution" is a Size2D object that represents the resolution of the window.
+     */
     public void setResolution(Size2D resolution) {
         this.resolution = resolution;
     }

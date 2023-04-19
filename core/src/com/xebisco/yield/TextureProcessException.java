@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * The TextureProcessException class is a custom exception that extends the RuntimeException class.
+ */
 public class TextureProcessException extends RuntimeException {
     public TextureProcessException() {
     }

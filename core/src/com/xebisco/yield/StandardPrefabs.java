@@ -286,7 +286,7 @@ public class StandardPrefabs {
         return new Entity2DPrefab(
                 tags,
                 new ComponentCreation(TextureRectangle.class, c -> {
-                    ((TextureRectangle) c).setTextureSize(true);
+                    ((TextureRectangle) c).setTextureSized(true);
                 }),
                 new ComponentCreation(TextureRectangleLoader.class, c -> {
                     ((TextureRectangleLoader) c).setTexturePath(texturePath);
@@ -304,7 +304,7 @@ public class StandardPrefabs {
     public static Entity2DPrefab texRectangle(String texturePath) {
         return new Entity2DPrefab(
                 new ComponentCreation(TextureRectangle.class, c -> {
-                    ((TextureRectangle) c).setTextureSize(true);
+                    ((TextureRectangle) c).setTextureSized(true);
                 }),
                 new ComponentCreation(TextureRectangleLoader.class, c -> {
                     ((TextureRectangleLoader) c).setTexturePath(texturePath);

@@ -21,6 +21,10 @@ import com.xebisco.yield.physics.ContactAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The Entity2D class is a final class that extends Entity2DContainer and implements Renderable and Disposable, and
+ * contains various methods and properties for managing components and rendering.
+ */
 public final class Entity2D extends Entity2DContainer implements Renderable, Disposable {
     private final Transform2D transform = new Transform2D();
     private final Application application;
@@ -97,6 +101,13 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
             }
     }
 
+    /**
+     * This function checks if a given tag is present in an array of tags.
+     *
+     * @param tag The parameter "tag" is a String representing the tag that we want to check if it exists in the "tags"
+     * array.
+     * @return A boolean value is being returned.
+     */
     public boolean containsTag(String tag) {
         for(String t : tags) {
             if(t.hashCode() == tag.hashCode() && t.equals(tag))
@@ -249,30 +260,69 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
         this.fontLoader = fontLoader;
     }
 
+    /**
+     * The function returns an instance of the Application class.
+     *
+     * @return The method is returning an object of type `Application`.
+     */
     public Application getApplication() {
         return application;
     }
 
+    /**
+     * The function returns a ContactAdapter object.
+     *
+     * @return The method is returning an object of type `ContactAdapter`.
+     */
     public ContactAdapter getContactAdapter() {
         return contactAdapter;
     }
 
+    /**
+     * This function sets the contact adapter for a class.
+     *
+     * @param contactAdapter The contactAdapter value to set.
+     */
     public void setContactAdapter(ContactAdapter contactAdapter) {
         this.contactAdapter = contactAdapter;
     }
 
+    /**
+     * The function returns a boolean value indicating whether an entity is visible or not.
+     *
+     * @return The method `isVisible()` is returning a boolean value, which indicates whether the entity is visible or not.
+     * The value returned depends on the value of the `visible` variable.
+     */
     public boolean isVisible() {
         return visible;
     }
 
+    /**
+     * This function sets the visibility of this entity.
+     *
+     * @param visible The "visible" parameter is a boolean variable that determines whether this entity should
+     * be visible or not. If the value of "visible" is true, the object will be visible on the screen. If the
+     * value is false, the object or component will be hidden from view.
+     */
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
+    /**
+     * This function returns the parent container of a 2D entity in Java.
+     *
+     * @return The method is returning an object of type `Entity2DContainer`, which is the parent of the current entity.
+     */
     public Entity2DContainer getParent() {
         return parent;
     }
 
+    /**
+     * This function sets the parent of a 2D entity container.
+     *
+     * @param parent The parameter "parent" is an object of type Entity2DContainer, which represents the parent container
+     * of the current object. This method sets the parent container of the current object to the specified parent object.
+     */
     public void setParent(Entity2DContainer parent) {
         this.parent = parent;
     }

@@ -24,22 +24,50 @@ public class Transform2D {
     private final Vector2D scale = new Vector2D(1, 1);
     private double zRotation;
 
+    /**
+     * This function translates the position by adding a TwoAnchorRepresentation value to it.
+     *
+     * @param value The `TwoAnchorRepresentation` object to translate this `Transform2D` instance position.
+     */
     public void translate(TwoAnchorRepresentation value) {
         position.sumLocal(value);
     }
 
+    /**
+     * This method translates an object's position by a given x and y value using a TwoAnchorRepresentation.
+     *
+     * @param x The x-coordinate by which the object will be translated.
+     * @param y The y-coordinate by which the object will be translated.
+     */
     public void translate(double x, double y) {
         translate(new TwoAnchorRepresentation(x, y));
     }
 
+    /**
+     * The function scales the `Transform2D` object using a two-anchor representation.
+     *
+     * @param x The value to scale the object horizontally.
+     * @param y The value to scale the object vertically.
+     */
     public void scale(double x, double y) {
         scale(new TwoAnchorRepresentation(x, y));
     }
 
+    /**
+     * The function scales the `Transform2D` object using a two-anchor representation.
+     *
+     * @param value The `TwoAnchorRepresentation` object to scale this `Transform2D` instance.
+     */
     public void scale(TwoAnchorRepresentation value) {
-        scale.sumLocal(value);
+        scale.sumLocal(scale.multiply(value));
     }
 
+    /**
+     * The function rotates an object by a specified angle around the z-axis.
+     *
+     * @param value The parameter "value" is a double type variable that represents the amount of rotation to be added to
+     * the current zRotation value.
+     */
     public void rotate(double value) {
         zRotation += value;
     }

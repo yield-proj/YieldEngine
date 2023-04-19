@@ -33,6 +33,11 @@ public class FileInput {
         this.inputStream = inputStream;
     }
 
+    /**
+     * The function returns an InputStream object.
+     *
+     * @return The method `getInputStream()` is returning an `InputStream` object.
+     */
     public InputStream getInputStream() {
         return inputStream;
     }

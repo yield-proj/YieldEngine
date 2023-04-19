@@ -19,8 +19,28 @@ package com.xebisco.yield;
 import java.util.Collection;
 
 public interface InputManager {
+    /**
+     * The function returns a collection of currently pressed keys.
+     *
+     * @return A collection of currently pressing keys is being returned.
+     */
     Collection<Input.Key> getPressingKeys();
+    /**
+     * This function returns a collection of currently pressing mouse buttons.
+     *
+     * @return A collection of currently pressing mouse buttons.
+     */
     Collection<Input.MouseButton> getPressingMouseButtons();
+    /**
+     * The function returns the x-coordinate of the mouse cursor.
+     *
+     * @return A double value representing the x-coordinate of the mouse cursor.
+     */
     double getMouseX();
+    /**
+     * The function returns the y-coordinate of the mouse cursor.
+     *
+     * @return A double value representing the Y-coordinate of the mouse cursor on the screen.
+     */
     double getMouseY();
 }

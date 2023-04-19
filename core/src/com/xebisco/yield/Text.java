@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * This is a class for rendering text with customizable font, color, and content.
+ */
 public class Text extends ComponentBehavior {
     private final DrawInstruction drawInstruction = new DrawInstruction();
     @VisibleOnInspector
@@ -42,11 +45,6 @@ public class Text extends ComponentBehavior {
     }
 
     @Override
-    public void dispose() {
-
-    }
-
-    @Override
     public void render(PlatformGraphics graphics) {
         if (font != null) {
             drawInstruction.setRenderRef(contents);
@@ -63,38 +61,84 @@ public class Text extends ComponentBehavior {
         }
     }
 
+    /**
+     * The function returns a DrawInstruction object.
+     *
+     * @return The method is returning an object of type `DrawInstruction`.
+     */
     public DrawInstruction getDrawInstruction() {
         return drawInstruction;
     }
 
+    /**
+     * This function returns the color.
+     *
+     * @return The method `getColor()` is returning a `Color` object.
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     * This function sets the color of an object.
+     *
+     * @param color The "this.color" refers to the color variable of the current object instance.
+     */
     public void setColor(Color color) {
         this.color = color;
     }
 
+    /**
+     * The function returns the contents of a string.
+     *
+     * @return The method `getContents()` is returning a `String` variable named `contents`.
+     */
     public String getContents() {
         return contents;
     }
 
+    /**
+     * This function sets the contents of this text.
+     *
+     * @param contents The parameter "contents" is a String that represents the new contents to be set for a variable in
+     * the class.
+     */
     public void setContents(String contents) {
         this.contents = contents;
     }
 
+    /**
+     * The function returns the font.
+     *
+     * @return The method is returning a Font object.
+     */
     public Font getFont() {
         return font;
     }
 
+    /**
+     * This function sets the font of an object.
+     *
+     * @param font The "font" parameter is an object of the "Font" class.
+     */
     public void setFont(Font font) {
         this.font = font;
     }
 
+    /**
+     * The function returns the value of the width variable as a double.
+     *
+     * @return The method `getWidth()` is returning a `double` value which represents the width.
+     */
     public double getWidth() {
         return width;
     }
 
+    /**
+     * The function returns the value of the "height" variable as a double data type.
+     *
+     * @return The method `getHeight()` is returning a `double` value which represents the height.
+     */
     public double getHeight() {
         return height;
     }

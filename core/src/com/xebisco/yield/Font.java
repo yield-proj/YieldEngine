@@ -18,6 +18,9 @@ package com.xebisco.yield;
 
 import java.io.InputStream;
 
+/**
+ * The Font class represents a font loaded from a file or input stream with a specified size and font loader.
+ */
 public class Font extends FileInput {
 
     private Object fontRef;
@@ -35,14 +38,29 @@ public class Font extends FileInput {
         fontRef = fontLoader.loadFont(this);
     }
 
+    /**
+     * The function returns a reference to a font object.
+     *
+     * @return The fontRef object.
+     */
     public Object getFontRef() {
         return fontRef;
     }
 
+    /**
+     * This function sets the font reference object for a Java object.
+     *
+     * @param fontRef The parameter `fontRef` is an object that represents a reference to a font.
+     */
     public void setFontRef(Object fontRef) {
         this.fontRef = fontRef;
     }
 
+    /**
+     * The function returns the size as a double.
+     *
+     * @return The method is returning a double value which is the size.
+     */
     public double getSize() {
         return size;
     }

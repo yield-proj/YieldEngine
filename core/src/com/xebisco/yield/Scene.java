@@ -22,6 +22,10 @@ import com.xebisco.yield.ui.InputUI;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The Scene class is an abstract class that extends Entity2DContainer and implements Behavior, and contains various
+ * systems and properties for managing a scene.
+ */
 public abstract class Scene extends Entity2DContainer implements Behavior {
     private int frames;
     private final Vector2D camera = new Vector2D();
@@ -51,34 +55,75 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
 
     }
 
+    /**
+     * The function returns the value of the frames variable.
+     *
+     * @return The method is returning an integer value of the variable "frames".
+     */
     public int getFrames() {
         return frames;
     }
 
+    /**
+     * The function sets the number of frames for this scene.
+     *
+     * @param frames The "frames" parameter is an integer value that represents the number of frames on this scene.
+     */
     public void setFrames(int frames) {
         this.frames = frames;
     }
 
+    /**
+     * This function returns the background color.
+     *
+     * @return The method is returning the value of the `backGroundColor` variable.
+     */
     public Color getBackGroundColor() {
         return backGroundColor;
     }
 
+    /**
+     * This function sets the background color of the scene.
+     *
+     * @param backGroundColor The background color to set.
+     */
     public void setBackGroundColor(Color backGroundColor) {
         this.backGroundColor = backGroundColor;
     }
 
+    /**
+     * The function returns a Set of SystemBehavior objects.
+     *
+     * @return A Set of SystemBehavior objects is being returned.
+     */
     public Set<SystemBehavior> getSystems() {
         return systems;
     }
 
+    /**
+     * This function sets the value of a Set of SystemBehavior objects in the current object.
+     *
+     * @param systems The parameter "systems" is a Set of objects of type "SystemBehavior". This method sets the value of
+     * the instance variable "systems" to the value passed as the parameter.
+     */
     public void setSystems(Set<SystemBehavior> systems) {
         this.systems = systems;
     }
 
+    /**
+     * The function returns the physics system.
+     *
+     * @return The method is returning an object of type `PhysicsSystem`.
+     */
     public PhysicsSystem getPhysicsSystem() {
         return physicsSystem;
     }
 
+    /**
+     * The function returns a Vector2D representing the camera position.
+     *
+     * @return A Vector2D object representing the camera position.
+     */
     public Vector2D getCamera() {
         return camera;
     }

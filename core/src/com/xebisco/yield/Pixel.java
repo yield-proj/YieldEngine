@@ -20,18 +20,38 @@ public class Pixel {
     private Color color;
     private int index;
 
+    /**
+     * This function returns the color.
+     *
+     * @return The method `getColor()` is returning a `Color` object.
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     * This function sets the color of this pixel.
+     *
+     * @param color The color value to set.
+     */
     public void setColor(Color color) {
         this.color = color;
     }
 
+    /**
+     * The function returns the value of the variable "index".
+     *
+     * @return The value of the `index` variable.
+     */
     public int getIndex() {
         return index;
     }
 
+    /**
+     * This function sets the value of the "index" variable to the input parameter "index".
+     *
+     * @param index The parameter "index" is an integer value that is used to set the value of the instance variable.
+     */
     public void setIndex(int index) {
         this.index = index;
     }
