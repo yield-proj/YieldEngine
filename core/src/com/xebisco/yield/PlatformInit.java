@@ -24,7 +24,7 @@ public class PlatformInit {
     private String title = "Yield Window";
     private boolean fullscreen, undecorated, stretchViewport;
     private Texture windowIcon;
-    private String windowIconPath;
+    private String windowIconPath = "yieldIcon.png";
 
     /**
      * Returns the size of the window.
