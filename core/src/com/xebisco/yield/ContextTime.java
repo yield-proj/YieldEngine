@@ -24,7 +24,7 @@ public class ContextTime {
     private long targetSleepTime = 16;
 
     /**
-     * > Returns the scale of the context time.
+     * Returns the scale of the context time.
      *
      * @return The timeScale variable is being returned.
      */

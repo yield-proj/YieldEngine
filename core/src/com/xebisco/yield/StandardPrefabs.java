@@ -171,18 +171,20 @@ public class StandardPrefabs {
     }
 
     /**
-     * This method returns an entity prefab with an oval component with specified size, color, fill, border color, and border
-     * thickness.
+     * This function returns an oval shape prefab with specified size, color, border, and tags.
      *
-     * @param size            The size of the oval shape, represented by a Size2D object which contains the width and height values.
-     * @param color           The color parameter is the fill color of the oval shape.
-     * @param filled          The "filled" parameter is a boolean value that determines whether the oval shape should be filled with
-     *                        the specified color or not. If it is set to true, the oval will be filled with the specified color, and if it is set
-     *                        to false, the oval will be an outline with the specified border
-     * @param borderColor     The `borderColor` parameter is a `Color` object that represents the color of the border of the
-     *                        oval shape. It is an optional parameter that can be set to `null` if no border color is desired.
-     * @param borderThickness The border thickness parameter is a double value that specifies the thickness of the border
-     *                        of the oval shape. It determines how thick the border of the oval will be when it is drawn on the screen.
+     * @param size The size of the oval shape, represented by a Size2D object which contains the width and height values.
+     * @param color The color parameter is the fill color of the oval shape. It determines the color that will be used to
+     * fill the interior.
+     * @param filled The "filled" parameter is a boolean value that determines whether the oval shape should be filled with
+     * the specified color or not. If it is set to true, the oval will be filled with the specified color. If it is set to
+     * false, the oval will only have a border with the specified border
+     * @param borderColor The `borderColor` parameter is a `Color` object that represents the color of the border of the
+     * oval shape. It can be set to any valid color value such as `Color.RED`, `Color.BLUE`, `Color.BLACK`, etc.
+     * @param borderThickness The borderThickness parameter is a Double value that specifies the thickness of the border of
+     * the oval shape. It determines how thick the border of the oval will be when it is drawn on the screen.
+     * @param tags The "tags" parameter is an array of strings that can be used to add metadata or labels to the entity
+     * being created. These tags can be used later to search or filter entities based on their properties.
      * @return The method is returning an Entity2DPrefab object.
      */
     public static Entity2DPrefab oval(Size2D size, Color color, Boolean filled, Color borderColor, Double borderThickness, String[] tags) {

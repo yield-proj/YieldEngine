@@ -26,7 +26,7 @@ public interface Behavior extends Disposable {
      */
     void onStart();
     /**
-     * > This function is called every time the application updates
+     * This function is called every time the application updates
      */
     void onUpdate();
 }
