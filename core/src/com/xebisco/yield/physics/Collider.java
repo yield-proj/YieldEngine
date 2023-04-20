@@ -32,10 +32,10 @@ public abstract class Collider extends ComponentBehavior {
     private double density = 1, friction = 1;
 
     @VisibleOnInspector
-    private Set<Integer> collisionFilter = new HashSet<>();
+    private Set<String> collisionFilter = new HashSet<>();
 
     @VisibleOnInspector
-    private int collisionMask = 1;
+    private String collisionMask = "default";
     @VisibleOnInspector
     private boolean sensor;
 
@@ -106,39 +106,39 @@ public abstract class Collider extends ComponentBehavior {
     }
 
     /**
-     * The function returns a set of integers representing a collision filter.
+     * The function returns a set of Strings representing a collision filter.
      *
-     * @return A Set of Integers named "collisionFilter" is being returned.
+     * @return A Set of Strings named "collisionFilter" is being returned.
      */
-    public Set<Integer> getCollisionFilter() {
+    public Set<String> getCollisionFilter() {
         return collisionFilter;
     }
 
     /**
      * This function sets the collision filter for an object.
      *
-     * @param collisionFilter The parameter "collisionFilter" is a Set of Integers that is used to filter collisions. It contains the IDs of the objects that should be checked for collisions. Objects with IDs
+     * @param collisionFilter The parameter "collisionFilter" is a Set of Strings that is used to filter collisions. It contains the IDs of the objects that should be checked for collisions. Objects with IDs
      * that are present in the collisionFilter will be ignored in collisions.
      */
-    public void setCollisionFilter(Set<Integer> collisionFilter) {
+    public void setCollisionFilter(Set<String> collisionFilter) {
         this.collisionFilter = collisionFilter;
     }
 
     /**
-     * The function returns the collision mask as an integer value.
+     * The function returns the collision mask as a String value.
      *
-     * @return The method is returning an integer value which represents the collision mask.
+     * @return The method is returning a String value which represents the collision mask.
      */
-    public int getCollisionMask() {
+    public String getCollisionMask() {
         return collisionMask;
     }
 
     /**
      * This function sets the collision mask of an object.
      *
-     * @param collisionMask The collisionMask parameter is an integer value that represents the ID of this collider when colliding with other objects.
+     * @param collisionMask The collisionMask parameter is a String value that represents the ID of this collider when colliding with other objects.
      */
-    public void setCollisionMask(int collisionMask) {
+    public void setCollisionMask(String collisionMask) {
         this.collisionMask = collisionMask;
     }
 }

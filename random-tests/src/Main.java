@@ -38,10 +38,10 @@ public class Main extends Scene {
     public void onStart() {
         getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
         instantiate(new Entity2DPrefab(new ComponentCreation(Rectangle.class), new ComponentCreation(RectangleCollider.class, c -> {
-            ((RectangleCollider) c).getCollisionFilter().add(3);
+            ((RectangleCollider) c).getCollisionFilter().add("rect");
         }), new ComponentCreation(PhysicsBody.class), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class)));
         instantiate(new Entity2DPrefab(new ComponentCreation(Rectangle.class), new ComponentCreation(RectangleCollider.class, c -> {
-            ((RectangleCollider) c).setCollisionMask(3);
+            ((RectangleCollider) c).setCollisionMask("rect");
         }), new ComponentCreation(PhysicsBody.class, c -> {
             ((PhysicsBody) c).setType(PhysicsType.STATIC);
         }), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class))).getTransform().translate(0, -200);
