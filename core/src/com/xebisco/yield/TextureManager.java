@@ -36,14 +36,16 @@ public interface TextureManager {
     void unloadTexture(Texture texture);
 
     /**
-     * The function sets an array of pixels in a given image reference.
+     * The function sets the color of a pixel at a specific location in an image.
      *
-     * @param imageRef The imageRef parameter is an object reference that represents the image to which the pixels will be
-     * set.
-     * @param pixels The "pixels" parameter is an array of integers that represents the color values of each pixel in an
-     * image. Each integer in the array represents a single pixel and contains information about the color of that pixel.
+     * @param imageRef The image reference is a variable that holds the reference to the image object that you want to
+     * modify.
+     * @param color The color parameter is of type Color and represents the color that will be used to set the pixel at the
+     * specified x and y coordinates in the image.
+     * @param x x is an integer value that represents the horizontal position of the pixel in the image.
+     * @param y x is an integer value that represents the vertical position of the pixel in the image.
      */
-    void setPixels(Object imageRef, int[] pixels);
+    void setPixel(Object imageRef, Color color, int x, int y);
 
     /**
      * The function "getPixels" takes an image reference as input and returns an array of integers representing the pixels

@@ -145,9 +145,9 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     }
 
     @Override
-    public void setPixels(Object imageRef, int[] pixels) {
+    public void setPixel(Object imageRef, com.xebisco.yield.Color color, int x, int y) {
         BufferedImage image = (BufferedImage) imageRef;
-        image.getRaster().setPixels(0, 0, image.getWidth(), image.getHeight(), pixels);
+        image.setRGB(x, y, color.getARGB());
     }
 
     @Override

@@ -50,16 +50,6 @@ public class Texture extends FileInput implements Disposable {
         size = new ImmutableSize2D(textureManager.getImageWidth(imageRef), textureManager.getImageHeight(imageRef));
     }
 
-    @Deprecated
-    public void process(GPUPixelProcessor gpuPixelProcessor) {
-        gpuPixelProcessor.originalPixels = getTextureManager().getPixels(getImageRef());
-        if (gpuPixelProcessor.pixels == null || gpuPixelProcessor.pixels.length != gpuPixelProcessor.originalPixels.length)
-            gpuPixelProcessor.pixels = new int[gpuPixelProcessor.originalPixels.length];
-        gpuPixelProcessor.execute(gpuPixelProcessor.originalPixels.length / 4);
-
-        setPixels(gpuPixelProcessor.pixels);
-    }
-
     /**
      * The function processes pixels by getting their color values, processing them, and setting the resulting color values
      * for each pixel.
@@ -70,8 +60,9 @@ public class Texture extends FileInput implements Disposable {
      */
     public void process(PixelProcessor pixelProcessor) {
         Pixel actPixel = new Pixel();
-        int[] toSetPixels = new int[(int) getSize().getWidth() * (int) getSize().getHeight() * 4];
-        for (int i = 0; i < toSetPixels.length / 4; i++) {
+        actPixel.setPosition(new Vector2D());
+        int size = (int) getSize().getWidth() * (int) getSize().getHeight() * 4;
+        for (int i = 0; i < size / 4; i++) {
             int x = i, y = 0;
             while (x > getSize().getWidth() - 1) {
                 x -= getSize().getWidth();
@@ -80,26 +71,10 @@ public class Texture extends FileInput implements Disposable {
 
             int[] pixel = getTextureManager().getPixel(getImageRef(), x, y);
             actPixel.setColor(new Color(pixel[0] / 255.0, pixel[1] / 255.0, pixel[2] / 255.0, pixel[3] / 255.0));
-            actPixel.setIndex(i);
+            actPixel.getPosition().set(x, y);
             Pixel p = pixelProcessor.process(actPixel);
-            int index = p.getIndex() * 4;
-            toSetPixels[index] = (int) (p.getColor().getRed() * 255.0);
-            toSetPixels[index + 1] = (int) (p.getColor().getGreen() * 255.0);
-            toSetPixels[index + 2] = (int) (p.getColor().getBlue() * 255.0);
-            toSetPixels[index + 3] = (int) (p.getColor().getAlpha() * 255.0);
+            getTextureManager().setPixel(getImageRef(), actPixel.getColor(), (int) p.getPosition().getX(), (int) p.getPosition().getY());
         }
-        setPixels(toSetPixels);
-    }
-
-    /**
-     * This function sets the pixels of an image asynchronously using a provided array of integers.
-     *
-     * @param toSetPixels toSetPixels is an integer array that contains the pixel values to be set for the image referenced
-     * by imageRef. Each element of the array represents the color of a single pixel in the image. The order of the
-     * elements in the array corresponds to the order of the pixels in the image, typically from
-     */
-    public void setPixels(int[] toSetPixels) {
-        CompletableFuture.runAsync(() -> getTextureManager().setPixels(imageRef, toSetPixels));
     }
 
     /**

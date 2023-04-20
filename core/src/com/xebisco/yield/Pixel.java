@@ -21,7 +21,7 @@ package com.xebisco.yield;
  */
 public class Pixel {
     private Color color;
-    private int index;
+    private Vector2D position;
 
     /**
      * This function returns the color.
@@ -42,20 +42,21 @@ public class Pixel {
     }
 
     /**
-     * The function returns the value of the variable "index".
+     * The function returns the position of an object as a Vector2D.
      *
-     * @return The value of the `index` variable.
+     * @return A Vector2D object representing the position.
      */
-    public int getIndex() {
-        return index;
+    public Vector2D getPosition() {
+        return position;
     }
 
     /**
-     * This function sets the value of the "index" variable to the input parameter "index".
+     * This function sets the position of an object to a given 2D vector.
      *
-     * @param index The parameter "index" is an integer value that is used to set the value of the instance variable.
+     * @param position position is a parameter of type Vector2D which represents the new position that we want to set for
+     * the pixel.
      */
-    public void setIndex(int index) {
-        this.index = index;
+    public void setPosition(Vector2D position) {
+        this.position = position;
     }
 }
