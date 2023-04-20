@@ -73,6 +73,23 @@ public class Texture extends FileInput implements Disposable {
             actPixel.setColor(new Color(pixel[0] / 255.0, pixel[1] / 255.0, pixel[2] / 255.0, pixel[3] / 255.0));
             actPixel.getPosition().set(x, y);
             Pixel p = pixelProcessor.process(actPixel);
+
+            while (p.getPosition().getX() > getSize().getWidth() - 1) {
+                p.getPosition().setX(p.getPosition().getX() - getSize().getWidth());
+            }
+
+            while (p.getPosition().getX() < 0) {
+                p.getPosition().setX(p.getPosition().getX() + getSize().getWidth());
+            }
+
+            while (p.getPosition().getY() > getSize().getHeight() - 1) {
+                p.getPosition().setY(p.getPosition().getY() - getSize().getHeight());
+            }
+
+            while (p.getPosition().getY() < 0) {
+                p.getPosition().setY(p.getPosition().getY() + getSize().getHeight());
+            }
+
             getTextureManager().setPixel(getImageRef(), actPixel.getColor(), (int) p.getPosition().getX(), (int) p.getPosition().getY());
         }
     }
