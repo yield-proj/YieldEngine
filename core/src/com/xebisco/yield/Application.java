@@ -52,11 +52,12 @@ public class Application implements Behavior {
     private final ControllerManager controllerManager;
     private int frames;
     private Scene scene;
-    private double physicsPpm = 16;
+    private double physicsPpm;
     private Font defaultFont;
     private Texture defaultTexture;
 
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, PlatformGraphics platformGraphics, PlatformInit platformInit) {
+        physicsPpm = platformInit.getStartPhysicsPpm();
         this.applicationManager = applicationManager;
         applicationManager.getApplications().add(this);
         this.platformGraphics = platformGraphics;

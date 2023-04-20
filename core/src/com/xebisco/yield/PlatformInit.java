@@ -22,6 +22,7 @@ package com.xebisco.yield;
 public class PlatformInit {
     private Size2D gameResolution = new Size2D(1280, 720), resolution = new Size2D(1280, 720), uiResolution = new Size2D(1280, 720), windowSize = new Size2D(1280, 720);
     private String title = "Yield Window";
+    private int startPhysicsPpm = 16;
     private boolean fullscreen, undecorated, stretchViewport, verticalSync;
     private Texture windowIcon;
     private String windowIconPath = "yieldIcon.png";
@@ -229,5 +230,24 @@ public class PlatformInit {
      */
     public void setVerticalSync(boolean verticalSync) {
         this.verticalSync = verticalSync;
+    }
+
+    /**
+     * The function returns the value of the variable startPhysicsPpm.
+     *
+     * @return The method is returning the value of the variable `startPhysicsPpm`.
+     */
+    public int getStartPhysicsPpm() {
+        return startPhysicsPpm;
+    }
+
+    /**
+     * This is a method that sets the value of a variable called "startPhysicsPpm".
+     *
+     * @param startPhysicsPpm startPhysicsPpm is a variable of type integer that represents the starting value of the
+     * physics pixels per meter (ppm) for the physics simulation.
+     */
+    public void setStartPhysicsPpm(int startPhysicsPpm) {
+        this.startPhysicsPpm = startPhysicsPpm;
     }
 }
