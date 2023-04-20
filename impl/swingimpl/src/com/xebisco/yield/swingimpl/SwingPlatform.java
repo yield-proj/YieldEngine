@@ -49,7 +49,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     private JFrame frame;
     private Graphics2D graphics, uiGraphics;
     private AffineTransform defaultTransform = new AffineTransform();
-    private boolean stretch;
+    private boolean stretch, verticalSync;
 
     private Vector2D camera;
 
@@ -799,7 +799,11 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         g.drawImage(gameBuffer, (int) ((-w * zoomScale.getX() + w) / 2.0), (int) ((-h * zoomScale.getY() + h) / 2.0), (int) (w * zoomScale.getX()), (int) (h * zoomScale.getY()), canvas);
         g.drawImage(uiBuffer, 0, 0, w, h, canvas);
         g.dispose();
-        canvas.paintImmediately(0, 0, canvas.getWidth(), canvas.getHeight());
+        if (verticalSync)
+            canvas.paintImmediately(0, 0, canvas.getWidth(), canvas.getHeight());
+        else
+            frame.repaint();
+        Toolkit.getDefaultToolkit().sync();
     }
 
     public Image getGameBuffer() {

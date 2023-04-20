@@ -294,7 +294,7 @@ public class Application implements Behavior {
 
     @Override
     public void onUpdate() {
-        if (scene != null) {
+        if (scene != null && !(scene instanceof BlankScene)) {
             scene.setFrames(scene.getFrames() + 1);
             if (scene.getFrames() == 1) {
                 scene.onStart();

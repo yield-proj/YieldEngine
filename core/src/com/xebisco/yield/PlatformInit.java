@@ -22,7 +22,7 @@ package com.xebisco.yield;
 public class PlatformInit {
     private Size2D gameResolution = new Size2D(1280, 720), resolution = new Size2D(1280, 720), uiResolution = new Size2D(1280, 720), windowSize = new Size2D(1280, 720);
     private String title = "Yield Window";
-    private boolean fullscreen, undecorated, stretchViewport;
+    private boolean fullscreen, undecorated, stretchViewport, verticalSync;
     private Texture windowIcon;
     private String windowIconPath = "yieldIcon.png";
 
@@ -208,5 +208,26 @@ public class PlatformInit {
      */
     public void setWindowIcon(Texture windowIcon) {
         this.windowIcon = windowIcon;
+    }
+
+    /**
+     * The function returns a boolean value indicating whether vertical synchronization is enabled or not.
+     *
+     * @return The method `isVerticalSync()` is returning the value of the variable
+     * `verticalSync`.
+     */
+    public boolean isVerticalSync() {
+        return verticalSync;
+    }
+
+    /**
+     * This function sets the value of the boolean variable "verticalSync".
+     *
+     * @param verticalSync A boolean parameter that determines whether vertical synchronization is enabled or disabled.
+     * Vertical synchronization (or VSync) is a technique used in computer graphics to synchronize the frame rate of a game
+     * or application with the refresh rate of the monitor, in order to prevent screen tearing and other visual artifacts.
+     */
+    public void setVerticalSync(boolean verticalSync) {
+        this.verticalSync = verticalSync;
     }
 }
