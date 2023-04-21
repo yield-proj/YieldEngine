@@ -49,7 +49,7 @@ public class Application implements Behavior {
         throwable.printStackTrace();
         return null;
     };
-    private final ControllerManager controllerManager;
+    private ControllerManager controllerManager;
     private int frames;
     private Scene scene;
     private double physicsPpm;
@@ -145,8 +145,14 @@ public class Application implements Behavior {
             controllerTexture = null;
             translucentControllerTexture = null;
         }
-        controllerManager = new ControllerManager(4);
-        controllerManager.initSDLGamepad();
+        try {
+            controllerManager = new ControllerManager(4);
+        } catch (Exception | UnsatisfiedLinkError ignore) {
+            controllerManager = null;
+            System.err.println("WARNING: Cannot connect to Gamepad library");
+        }
+        if (controllerManager != null)
+            controllerManager.initSDLGamepad();
     }
 
     @Override
@@ -181,7 +187,7 @@ public class Application implements Behavior {
             axes.add(new Axis("LeftThumb" + a, null, null, null, null));
             axes.add(new Axis("View" + a, null, null, null, null));
         }
-        if(textureManager != null) {
+        if (textureManager != null) {
             defaultTexture = new Texture("yieldIcon.png", textureManager);
         }
     }
@@ -198,11 +204,13 @@ public class Application implements Behavior {
      * @param duration       The duration parameter is the length of time in seconds that the controller will vibrate for.
      */
     public void vibrateController(int playerIndex, double leftMagnitude, double rightMagnitude, double duration) {
-        try {
-            controllerManager.getControllerIndex(playerIndex).doVibration((float) leftMagnitude, (float) rightMagnitude, (int) duration * 1000);
-        } catch (ControllerUnpluggedException e) {
-            throw new RuntimeException(e);
-        }
+        if (controllerManager != null)
+            try {
+                controllerManager.getControllerIndex(playerIndex).doVibration((float) leftMagnitude, (float) rightMagnitude, (int) duration * 1000);
+            } catch (ControllerUnpluggedException e) {
+                throw new RuntimeException(e);
+            }
+        else System.err.println("WARNING: Cannot connect to Gamepad library");
     }
 
     /**
@@ -219,74 +227,76 @@ public class Application implements Behavior {
                 axis.setValue(0);
             }
         }
-        controllerManager.update();
-        for (int i = 0; i < controllerManager.getNumControllers(); i++) {
-            ControllerState device = controllerManager.getState(i);
-            if (device.isConnected) {
-                String a = String.valueOf(i + 1);
-                if (i == 0)
-                    a = "";
-                for (Axis axis : this.axes) {
-                    if (axis.getName().equals(Global.HORIZONTAL + a)) {
-                        axis.setValue(device.leftStickX);
-                        if (Math.abs(axis.getValue()) < 0.1)
-                            axis.setValue(0);
-                    } else if (axis.getName().equals(Global.VERTICAL + a)) {
-                        axis.setValue(device.leftStickY);
-                        if (Math.abs(axis.getValue()) < 0.1)
-                            axis.setValue(0);
-                    } else if (axis.getName().equals("HorizontalCam" + a)) {
-                        axis.setValue(device.rightStickX);
-                        if (Math.abs(axis.getValue()) < 0.1)
-                            axis.setValue(0);
-                    } else if (axis.getName().equals("VerticalCam" + a)) {
-                        axis.setValue(device.rightStickY);
-                        if (Math.abs(axis.getValue()) < 0.1)
-                            axis.setValue(0);
-                    } else if (axis.getName().equals("RightFire" + a)) {
-                        axis.setValue(device.rightTrigger);
-                    } else if (axis.getName().equals("Run" + a)) {
-                        axis.setValue(device.rightTrigger);
-                    } else if (axis.getName().equals("LeftFire" + a)) {
-                        axis.setValue(device.leftTrigger);
-                    } else if (axis.getName().equals("HorizontalPad" + a)) {
-                        if (device.dpadRight) axis.setValue(1);
-                        else if (device.dpadLeft) axis.setValue(-1);
-                        else axis.setValue(0);
-                    } else if (axis.getName().equals("VerticalPad" + a)) {
-                        if (device.dpadUp) axis.setValue(1);
-                        else if (device.dpadDown) axis.setValue(-1);
-                        else axis.setValue(0);
-                    } else if (axis.getName().equals("Fire" + a)) {
-                        if (device.a) axis.setValue(1);
-                        else axis.setValue(0);
-                    } else if (axis.getName().equals("Action" + a)) {
-                        if (device.x) axis.setValue(1);
-                        else axis.setValue(0);
-                    } else if (axis.getName().equals("Back" + a)) {
-                        if (device.b) axis.setValue(1);
-                        else axis.setValue(0);
-                    } else if (axis.getName().equals("Inventory" + a)) {
-                        if (device.y) axis.setValue(1);
-                        else axis.setValue(0);
-                    } else if (axis.getName().equals("RightBumper" + a)) {
-                        if (device.rb) axis.setValue(1);
-                        else axis.setValue(0);
-                    } else if (axis.getName().equals("LeftBumper" + a)) {
-                        if (device.lb) axis.setValue(1);
-                        else axis.setValue(0);
-                    } else if (axis.getName().equals("RightThumb" + a)) {
-                        if (device.rightStickClick) axis.setValue(1);
-                        else axis.setValue(0);
-                    } else if (axis.getName().equals("LeftThumb" + a)) {
-                        if (device.leftStickClick) axis.setValue(1);
-                        else axis.setValue(0);
-                    } else if (axis.getName().equals("Start" + a)) {
-                        if (device.start) axis.setValue(1);
-                        else axis.setValue(0);
-                    } else if (axis.getName().equals("View" + a)) {
-                        if (device.back) axis.setValue(1);
-                        else axis.setValue(0);
+        if (controllerManager != null) {
+            controllerManager.update();
+            for (int i = 0; i < controllerManager.getNumControllers(); i++) {
+                ControllerState device = controllerManager.getState(i);
+                if (device.isConnected) {
+                    String a = String.valueOf(i + 1);
+                    if (i == 0)
+                        a = "";
+                    for (Axis axis : this.axes) {
+                        if (axis.getName().equals(Global.HORIZONTAL + a)) {
+                            axis.setValue(device.leftStickX);
+                            if (Math.abs(axis.getValue()) < 0.1)
+                                axis.setValue(0);
+                        } else if (axis.getName().equals(Global.VERTICAL + a)) {
+                            axis.setValue(device.leftStickY);
+                            if (Math.abs(axis.getValue()) < 0.1)
+                                axis.setValue(0);
+                        } else if (axis.getName().equals("HorizontalCam" + a)) {
+                            axis.setValue(device.rightStickX);
+                            if (Math.abs(axis.getValue()) < 0.1)
+                                axis.setValue(0);
+                        } else if (axis.getName().equals("VerticalCam" + a)) {
+                            axis.setValue(device.rightStickY);
+                            if (Math.abs(axis.getValue()) < 0.1)
+                                axis.setValue(0);
+                        } else if (axis.getName().equals("RightFire" + a)) {
+                            axis.setValue(device.rightTrigger);
+                        } else if (axis.getName().equals("Run" + a)) {
+                            axis.setValue(device.rightTrigger);
+                        } else if (axis.getName().equals("LeftFire" + a)) {
+                            axis.setValue(device.leftTrigger);
+                        } else if (axis.getName().equals("HorizontalPad" + a)) {
+                            if (device.dpadRight) axis.setValue(1);
+                            else if (device.dpadLeft) axis.setValue(-1);
+                            else axis.setValue(0);
+                        } else if (axis.getName().equals("VerticalPad" + a)) {
+                            if (device.dpadUp) axis.setValue(1);
+                            else if (device.dpadDown) axis.setValue(-1);
+                            else axis.setValue(0);
+                        } else if (axis.getName().equals("Fire" + a)) {
+                            if (device.a) axis.setValue(1);
+                            else axis.setValue(0);
+                        } else if (axis.getName().equals("Action" + a)) {
+                            if (device.x) axis.setValue(1);
+                            else axis.setValue(0);
+                        } else if (axis.getName().equals("Back" + a)) {
+                            if (device.b) axis.setValue(1);
+                            else axis.setValue(0);
+                        } else if (axis.getName().equals("Inventory" + a)) {
+                            if (device.y) axis.setValue(1);
+                            else axis.setValue(0);
+                        } else if (axis.getName().equals("RightBumper" + a)) {
+                            if (device.rb) axis.setValue(1);
+                            else axis.setValue(0);
+                        } else if (axis.getName().equals("LeftBumper" + a)) {
+                            if (device.lb) axis.setValue(1);
+                            else axis.setValue(0);
+                        } else if (axis.getName().equals("RightThumb" + a)) {
+                            if (device.rightStickClick) axis.setValue(1);
+                            else axis.setValue(0);
+                        } else if (axis.getName().equals("LeftThumb" + a)) {
+                            if (device.leftStickClick) axis.setValue(1);
+                            else axis.setValue(0);
+                        } else if (axis.getName().equals("Start" + a)) {
+                            if (device.start) axis.setValue(1);
+                            else axis.setValue(0);
+                        } else if (axis.getName().equals("View" + a)) {
+                            if (device.back) axis.setValue(1);
+                            else axis.setValue(0);
+                        }
                     }
                 }
             }
@@ -334,7 +344,8 @@ public class Application implements Behavior {
     @Override
     public void dispose() {
         setScene(null);
-        controllerManager.quitSDLGamepad();
+        if (controllerManager != null)
+            controllerManager.quitSDLGamepad();
         platformGraphics.dispose();
     }
 
@@ -593,6 +604,16 @@ public class Application implements Behavior {
     }
 
     /**
+     * This function sets the controller manager for the current object.
+     *
+     * @param controllerManager The parameter "controllerManager" is an object of the class "ControllerManager". This
+     * method sets the value of the instance variable "controllerManager" to the value passed as the parameter.
+     */
+    public void setControllerManager(ControllerManager controllerManager) {
+        this.controllerManager = controllerManager;
+    }
+
+    /**
      * The function returns a texture object representing the controller texture.
      *
      * @return The method is returning a Texture object named "controllerTexture".
@@ -646,5 +667,14 @@ public class Application implements Behavior {
      */
     public Texture getTranslucentControllerTexture() {
         return translucentControllerTexture;
+    }
+
+    /**
+     * The function returns the current position of the mouse as a Vector2D object.
+     *
+     * @return A Vector2D object representing the position of the mouse.
+     */
+    public Vector2D getMousePosition() {
+        return mousePosition;
     }
 }
