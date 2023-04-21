@@ -1,4 +1,5 @@
 import com.xebisco.yield.*;
+import com.xebisco.yield.debugger.DebugUI;
 
 public class Main extends Scene {
 

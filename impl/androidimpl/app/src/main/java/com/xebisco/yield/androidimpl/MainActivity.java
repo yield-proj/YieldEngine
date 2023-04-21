@@ -7,6 +7,8 @@ import com.xebisco.yield.ApplicationManager;
 import com.xebisco.yield.ContextTime;
 import com.xebisco.yield.PlatformInit;
 
+import java.util.concurrent.CompletableFuture;
+
 public class MainActivity extends Activity {
 
     @Override
@@ -18,7 +20,7 @@ public class MainActivity extends Activity {
         MainView mainView = new MainView(this);
         new Application(manager, TestScene.class, mainView, init);
         setContentView(mainView);
-        manager.run();
+        CompletableFuture.runAsync(manager::run);
     }
 
 

@@ -19,6 +19,7 @@ package com.xebisco.yield;
 import com.studiohartman.jamepad.ControllerManager;
 import com.studiohartman.jamepad.ControllerState;
 import com.studiohartman.jamepad.ControllerUnpluggedException;
+import org.apache.bcel.classfile.ClassFormatException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -448,6 +449,15 @@ public class Application implements Behavior {
      * @param scene The scene to be set.
      */
     public void setScene(Scene scene) {
+        try {
+            Class<?> debugComponent = Class.forName("com.xebisco.yield.debugger.DebugUI");
+            System.out.println("Started scene: " + scene + " with DebugUI");
+            if(debugComponent.getSuperclass().equals(ComponentBehavior.class)) {
+                scene.instantiate((Entity2DPrefab) debugComponent.getField("DEBUG_UI_PREFAB").get(null));
+            }
+        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException ignore) {
+        }
+
         if (this.scene != null) {
             for (int i = this.scene.getEntities().size() - 1; i >= 0; i--) {
                 this.scene.getEntities().get(i).dispose();

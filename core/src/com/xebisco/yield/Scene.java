@@ -31,13 +31,13 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
     private final Vector2D camera = new Vector2D();
     private Color backGroundColor = Colors.GRAY.darker();
     private Set<SystemBehavior> systems = new HashSet<>();
-
     private final PhysicsSystem physicsSystem = new PhysicsSystem();
+    public static final Entity2DPrefab INPUT_UI_PREFAB = new Entity2DPrefab(new ComponentCreation(AudioPlayer.class), new ComponentCreation(InputUI.class));
 
     public Scene(Application application) {
         super(application);
         getSystems().add(physicsSystem);
-        instantiate(new Entity2DPrefab(new ComponentCreation(AudioPlayer.class), new ComponentCreation(InputUI.class))).setIndex(-1);
+        instantiate(INPUT_UI_PREFAB).setIndex(-1);
     }
 
     @Override

@@ -1,9 +1,14 @@
 package com.xebisco.yield.androidimpl;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.*;
-import android.view.View;
+import android.os.Build;
+import android.view.*;
 import com.xebisco.yield.*;
 
 import java.io.File;
@@ -19,8 +24,8 @@ public class MainView extends View implements PlatformGraphics, TextureManager, 
     private final Rect drawRect = new Rect();
     private final Paint drawPaint = new Paint();
 
-    public MainView(Context context) {
-        super(context);
+    public MainView(Activity activity) {
+        super(activity);
     }
 
     int x;
@@ -37,6 +42,8 @@ public class MainView extends View implements PlatformGraphics, TextureManager, 
 
     @Override
     public void init(PlatformInit platformInit) {
+        ((Activity) getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        hideStatusBar_AllVersions();
         gameBuffer = Bitmap.createBitmap(
                 (int) platformInit.getGameResolution().getWidth(),
                 (int) platformInit.getGameResolution().getHeight(),
@@ -55,6 +62,35 @@ public class MainView extends View implements PlatformGraphics, TextureManager, 
                 Bitmap.Config.ARGB_8888,
                 false
         );
+    }
+
+    @SuppressWarnings("deprecation")
+    void hideStatusBar_Deprecated() {
+        View decorView = ((Activity) getContext()).getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+
+        ((Activity) getContext()).getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+    @TargetApi(Build.VERSION_CODES.R)
+    void hideStatusBar_Actual() {
+        /*View decorView = ((Activity) getContext()).getWindow().getDecorView();
+        decorView.getWindowInsetsController().hide(WindowInsets.Type.statusBars());*/
+        WindowInsetsController controller = ((Activity) getContext()).getWindow().getInsetsController();
+        if (controller != null) {
+            controller.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
+            controller.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        }
+    }
+
+    void hideStatusBar_AllVersions() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            hideStatusBar_Deprecated();
+        } else {
+            hideStatusBar_Actual();
+        }
     }
 
     @Override
@@ -79,7 +115,7 @@ public class MainView extends View implements PlatformGraphics, TextureManager, 
 
     @Override
     public void conclude() {
-
+        requestLayout();
     }
 
     @Override
