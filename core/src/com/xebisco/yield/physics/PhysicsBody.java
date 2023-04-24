@@ -95,7 +95,8 @@ public class PhysicsBody extends ComponentBehavior {
 
     @Override
     public void dispose() {
-        getApplication().getScene().getPhysicsSystem().getB2World().destroyBody(b2Body);
+        if (b2Body != null)
+            getApplication().getScene().getPhysicsSystem().getB2World().destroyBody(b2Body);
     }
 
     public void addForce(Vector2D force, ForceType forceType) {

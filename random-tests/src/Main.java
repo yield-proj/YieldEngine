@@ -36,6 +36,7 @@ public class Main extends Scene {
 
     @Override
     public void onStart() {
+        setBackGroundColor(Colors.RED);
         getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
         instantiate(new Entity2DPrefab(new ComponentCreation(Rectangle.class), new ComponentCreation(RectangleCollider.class, c -> {
             ((RectangleCollider) c).getCollisionFilter().add("rect");
@@ -45,5 +46,16 @@ public class Main extends Scene {
         }), new ComponentCreation(PhysicsBody.class, c -> {
             ((PhysicsBody) c).setType(PhysicsType.STATIC);
         }), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class))).getTransform().translate(0, -200);
+    }
+
+    public static boolean a;
+
+    @Override
+    public void onUpdate() {
+        if (getApplication().isPressingKey(Input.Key.VK_SPACE)) {
+            if (a)
+                getApplication().setScene(new Main(getApplication()));
+            a = false;
+        } else a = true;
     }
 }

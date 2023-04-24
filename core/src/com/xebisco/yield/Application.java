@@ -41,7 +41,7 @@ public class Application implements Behavior {
     private final Set<Axis> axes = new HashSet<>();
     private final ApplicationManager applicationManager;
     private final Size2D resolution;
-    private final Runnable renderer;
+    private final Function<Scene, Void> renderer;
     private final AudioManager audioManager;
     private final Texture controllerTexture;
     private final Texture translucentControllerTexture;
@@ -94,7 +94,7 @@ public class Application implements Behavior {
         }, 2000L);
 
         this.platformInit = platformInit;
-        renderer = () -> {
+        renderer = (scene) -> {
             platformGraphics.frame();
             platformGraphics.resetRotation();
             drawInstruction.setBorderColor(null);
@@ -119,6 +119,7 @@ public class Application implements Behavior {
 
             }
             platformGraphics.conclude();
+            return null;
         };
         resolution = new ImmutableSize2D(platformInit.getGameResolution().getWidth(), platformInit.getGameResolution().getHeight());
         axes.add(new Axis(Global.HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
@@ -307,6 +308,7 @@ public class Application implements Behavior {
     @Override
     public void onUpdate() {
         if (scene != null && !(scene instanceof BlankScene)) {
+            Scene scene = this.scene;
             scene.setFrames(scene.getFrames() + 1);
             if (scene.getFrames() == 1) {
                 scene.onStart();
@@ -328,17 +330,24 @@ public class Application implements Behavior {
                 for (Entity2D entity : scene.getEntities()) {
                     entity.setFontLoader(fontLoader);
                     entity.process();
+
+                    if (scene != this.scene) {
+                        return;
+                    }
                 }
             } catch (ConcurrentModificationException ignore) {
-
             }
+
             scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex));
             if (inputManager != null) {
                 updateAxes();
                 inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
                 inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
             }
-            renderer.run();
+            if (scene == this.scene && scene.getFrames() >= 2) {
+                renderer.apply(scene);
+            }
+
         }
     }
 
@@ -443,16 +452,18 @@ public class Application implements Behavior {
         return scene;
     }
 
+
     /**
-     * This function sets the scene to the scene that is passed in.
+     * This function sets the scene and disposes of any previous scene and its entities and systems.
      *
-     * @param scene The scene to be set.
+     * @param scene The scene parameter is an object of the Scene class, which represents a collection of entities and
+     *              systems that make up a application scene. This method sets the current scene to the specified scene object.
      */
     public void setScene(Scene scene) {
         try {
             Class<?> debugComponent = Class.forName("com.xebisco.yield.debugger.DebugUI");
             System.out.println("Started scene: " + scene + " with DebugUI");
-            if(debugComponent.getSuperclass().equals(ComponentBehavior.class)) {
+            if (debugComponent.getSuperclass().equals(ComponentBehavior.class)) {
                 scene.instantiate((Entity2DPrefab) debugComponent.getField("DEBUG_UI_PREFAB").get(null));
             }
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException ignore) {
@@ -548,11 +559,12 @@ public class Application implements Behavior {
     }
 
     /**
-     * The function returns a Runnable object named "renderer".
+     * The function returns a renderer for a Java Scene object.
      *
-     * @return A Runnable object named "renderer" is being returned.
+     * @return A `Function` object that takes a `Scene` parameter and returns `Void`. The `renderer` variable is being
+     * returned.
      */
-    public Runnable getRenderer() {
+    public Function<Scene, Void> getRenderer() {
         return renderer;
     }
 
@@ -617,7 +629,7 @@ public class Application implements Behavior {
      * This function sets the controller manager for the current object.
      *
      * @param controllerManager The parameter "controllerManager" is an object of the class "ControllerManager". This
-     * method sets the value of the instance variable "controllerManager" to the value passed as the parameter.
+     *                          method sets the value of the instance variable "controllerManager" to the value passed as the parameter.
      */
     public void setControllerManager(ControllerManager controllerManager) {
         this.controllerManager = controllerManager;
