@@ -331,7 +331,8 @@ public class Application implements Behavior {
             } catch (ConcurrentModificationException ignore) {
 
             }
-            if (changeSceneEffect == null || !changeSceneEffect.isStopUpdatingScene()) {
+
+            if (changeSceneEffect == null || !changeSceneEffect.isStopUpdatingScene() || toChangeScene == null) {
                 scene.onUpdate();
                 try {
                     for (Entity2D entity : scene.getEntities()) {
@@ -779,8 +780,8 @@ public class Application implements Behavior {
      * This function sets the toggleFullScreen variable to the value passed as a parameter.
      *
      * @param toggleFullScreen toggleFullScreen is a variable of type ToggleFullScreen that is being set to the instance
-     * variable of the class using the "this" keyword. It is the class has a method or functionality related to
-     * toggling full screen mode.
+     *                         variable of the class using the "this" keyword. It is the class has a method or functionality related to
+     *                         toggling full screen mode.
      */
     public void setToggleFullScreen(ToggleFullScreen toggleFullScreen) {
         this.toggleFullScreen = toggleFullScreen;

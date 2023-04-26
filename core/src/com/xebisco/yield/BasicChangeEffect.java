@@ -113,6 +113,9 @@ public class BasicChangeEffect {
         }
     }
 
+    /**
+     * The SlideUp class is a scene change effect that slides a rectangle from to top of the screen the bottom while changing scenes.
+     */
     public static class SlideUp extends ChangeSceneEffect {
         private Texture sliderUp, sliderDown;
         private final DrawInstruction di = new DrawInstruction();
@@ -130,25 +133,13 @@ public class BasicChangeEffect {
             if (getPassedTime() >= getTimeToWait() * 2.0)
                 setFinished(true);
             double y = getPassedTime() / getTimeToWait() * (getApplication().getResolution().getHeight() + sliderUp.getSize().getHeight() + sliderDown.getSize().getHeight()) - getApplication().getResolution().getHeight() - sliderUp.getSize().getHeight();
-            di.setSize(getApplication().getResolution());
-            di.setType(DrawInstruction.Type.RECTANGLE);
-            di.setFilled(true);
-            di.setInnerColor(new Color(Colors.BLACK));
-            di.setPosition(new Vector2D(0, y));
-            graphics.draw(di);
-            di.setSize(sliderUp.getSize());
-            di.setRenderRef(sliderUp.getImageRef());
-            di.setType(DrawInstruction.Type.IMAGE);
-            di.setPosition(new Vector2D(0, y + getApplication().getResolution().getHeight() / 2 + di.getSize().getHeight() / 2));
-            graphics.draw(di);
-            di.setSize(sliderDown.getSize());
-            di.setRenderRef(sliderDown.getImageRef());
-            di.setType(DrawInstruction.Type.IMAGE);
-            di.setPosition(new Vector2D(0, y - getApplication().getResolution().getHeight() / 2  - di.getSize().getHeight() / 2));
-            graphics.draw(di);
+            slideRender(graphics, y, di, getApplication(), sliderUp, sliderDown);
         }
     }
 
+    /**
+     * The SlideDown class is a scene change effect that slides a rectangle from to bottom of the screen the top while changing scenes.
+     */
     public static class SlideDown extends ChangeSceneEffect {
         private Texture sliderUp, sliderDown;
         private final DrawInstruction di = new DrawInstruction();
@@ -166,22 +157,39 @@ public class BasicChangeEffect {
             if (getPassedTime() >= getTimeToWait() * 2.0)
                 setFinished(true);
             double y = getApplication().getResolution().getHeight() + sliderDown.getSize().getHeight() - getPassedTime() / getTimeToWait() * (getApplication().getResolution().getHeight() + sliderUp.getSize().getHeight() + sliderDown.getSize().getHeight());
-            di.setSize(getApplication().getResolution());
-            di.setType(DrawInstruction.Type.RECTANGLE);
-            di.setFilled(true);
-            di.setInnerColor(new Color(Colors.BLACK));
-            di.setPosition(new Vector2D(0, y));
-            graphics.draw(di);
-            di.setSize(sliderUp.getSize());
-            di.setRenderRef(sliderUp.getImageRef());
-            di.setType(DrawInstruction.Type.IMAGE);
-            di.setPosition(new Vector2D(0, y + getApplication().getResolution().getHeight() / 2 + di.getSize().getHeight() / 2));
-            graphics.draw(di);
-            di.setSize(sliderDown.getSize());
-            di.setRenderRef(sliderDown.getImageRef());
-            di.setType(DrawInstruction.Type.IMAGE);
-            di.setPosition(new Vector2D(0, y - getApplication().getResolution().getHeight() / 2  - di.getSize().getHeight() / 2));
-            graphics.draw(di);
+            slideRender(graphics, y, di, getApplication(), sliderUp, sliderDown);
         }
+
+    }
+
+    /**
+     * The function renders a sliding bar with two textures on a graphics platform.
+     *
+     * @param graphics an object that handles the rendering of graphics on a platform (such as a computer or mobile device)
+     * @param y The y-coordinate of the position where the slider will be rendered on the screen.
+     * @param di `di` is a `DrawInstruction` object that contains information about how to draw a rectangle and images on
+     * the screen. It is used to set the size, type, color, position, and render reference of the rectangle and images.
+     * @param application An instance of the Application class, which contains information about the current application,
+     * such as its resolution.
+     * @param sliderUp A Texture object representing the image of the slider in its "up" state.
+     * @param sliderDown A Texture object representing the image of the slider when it is in the down position.
+     */
+    private static void slideRender(PlatformGraphics graphics, double y, DrawInstruction di, Application application, Texture sliderUp, Texture sliderDown) {
+        di.setSize(application.getResolution());
+        di.setType(DrawInstruction.Type.RECTANGLE);
+        di.setFilled(true);
+        di.setInnerColor(new Color(Colors.BLACK));
+        di.setPosition(new Vector2D(0, y));
+        graphics.draw(di);
+        di.setSize(sliderUp.getSize());
+        di.setRenderRef(sliderUp.getImageRef());
+        di.setType(DrawInstruction.Type.IMAGE);
+        di.setPosition(new Vector2D(0, y + application.getResolution().getHeight() / 2 + di.getSize().getHeight() / 2));
+        graphics.draw(di);
+        di.setSize(sliderDown.getSize());
+        di.setRenderRef(sliderDown.getImageRef());
+        di.setType(DrawInstruction.Type.IMAGE);
+        di.setPosition(new Vector2D(0, y - application.getResolution().getHeight() / 2 - di.getSize().getHeight() / 2));
+        graphics.draw(di);
     }
 }
