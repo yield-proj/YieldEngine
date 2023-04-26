@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.xebisco.yield"},{"l":"com.xebisco.yield.editor"},{"l":"com.xebisco.yield.physics"},{"l":"com.xebisco.yield.swingimpl"},{"l":"com.xebisco.yield.ui"}]
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.xebisco.yield"},{"l":"com.xebisco.yield.debugger"},{"l":"com.xebisco.yield.editor"},{"l":"com.xebisco.yield.physics"},{"l":"com.xebisco.yield.swingimpl"},{"l":"com.xebisco.yield.ui"}]
