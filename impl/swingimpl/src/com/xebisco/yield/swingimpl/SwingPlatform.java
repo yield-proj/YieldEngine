@@ -661,6 +661,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     }
 
     public void startFrame() {
+        verticalSync = platformInit.isVerticalSync();
         if (frame == null) {
             frame = new JFrame(graphicsConfiguration);
             frame.addKeyListener(this);
