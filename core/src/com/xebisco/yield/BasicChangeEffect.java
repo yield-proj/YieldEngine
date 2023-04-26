@@ -20,7 +20,7 @@ package com.xebisco.yield;
  * The BasicChangeEffect class contains three subclasses that implement fade-in, fade-out, and fade-in-and-out effects for
  * changing scenes in an application.
  */
-public class BasicChangeEffect {//TODO implement these effects into the Application class.
+public class BasicChangeEffect {
 
     /**
      * The FadeIn class is a subclass of ChangeSceneEffect that renders a black rectangle that fades in over a specified
@@ -30,18 +30,19 @@ public class BasicChangeEffect {//TODO implement these effects into the Applicat
 
         private final DrawInstruction di = new DrawInstruction();
 
-        protected FadeIn(double timeToWait) {
-            super(timeToWait);
+        public FadeIn(double timeToWait, boolean stopUpdatingScene) {
+            super(timeToWait, stopUpdatingScene);
             di.setType(DrawInstruction.Type.RECTANGLE);
             di.setFilled(true);
             di.setInnerColor(new Color(Colors.BLACK));
             di.setPosition(new Vector2D());
-            di.setSize(getSceneResolution());
         }
 
         @Override
         public void render(PlatformGraphics graphics) {
+            di.setSize(getApplication().getResolution());
             di.getInnerColor().setAlpha(getPassedTime() / getTimeToWait());
+            System.out.println(di.getSize());
             if (di.getInnerColor().getAlpha() == 1) {
                 setFinished(true);
             }
@@ -58,18 +59,18 @@ public class BasicChangeEffect {//TODO implement these effects into the Applicat
         private final DrawInstruction di = new DrawInstruction();
         private final double timeAfter;
 
-        protected FadeOut(double timeAfter) {
-            super(0);
+        public FadeOut(double timeAfter, boolean stopUpdatingScene) {
+            super(0, stopUpdatingScene);
             this.timeAfter = timeAfter;
             di.setType(DrawInstruction.Type.RECTANGLE);
             di.setFilled(true);
             di.setInnerColor(new Color(Colors.BLACK));
             di.setPosition(new Vector2D());
-            di.setSize(getSceneResolution());
         }
 
         @Override
         public void render(PlatformGraphics graphics) {
+            di.setSize(getApplication().getResolution());
             di.getInnerColor().setAlpha(1 - getPassedTime() / timeAfter);
             if (di.getInnerColor().getAlpha() == 0) {
                 setFinished(true);
@@ -87,18 +88,18 @@ public class BasicChangeEffect {//TODO implement these effects into the Applicat
         private final DrawInstruction di = new DrawInstruction();
         private final double timeAfter;
 
-        protected FadeInAndOut(double timeToWait, double timeAfter) {
-            super(timeToWait);
+        public FadeInAndOut(double timeToWait, double timeAfter, boolean stopUpdatingScene) {
+            super(timeToWait, stopUpdatingScene);
             this.timeAfter = timeAfter;
             di.setType(DrawInstruction.Type.RECTANGLE);
             di.setFilled(true);
             di.setInnerColor(new Color(Colors.BLACK));
             di.setPosition(new Vector2D());
-            di.setSize(getSceneResolution());
         }
 
         @Override
         public void render(PlatformGraphics graphics) {
+            di.setSize(getApplication().getResolution());
             double a = getPassedTime() / timeAfter;
             if (a > 1) {
                 di.getInnerColor().setAlpha(1 - (getPassedTime() - getTimeToWait()) / timeAfter);
@@ -108,6 +109,78 @@ public class BasicChangeEffect {//TODO implement these effects into the Applicat
             } else {
                 di.getInnerColor().setAlpha(getPassedTime() / getTimeToWait());
             }
+            graphics.draw(di);
+        }
+    }
+
+    public static class SlideUp extends ChangeSceneEffect {
+        private Texture sliderUp, sliderDown;
+        private final DrawInstruction di = new DrawInstruction();
+
+        public SlideUp(double slideTime, boolean stopUpdatingScene) {
+            super(slideTime / 2, stopUpdatingScene);
+        }
+
+        @Override
+        public void render(PlatformGraphics graphics) {
+            if (sliderUp == null)
+                sliderUp = new Texture("slideSceneChangeEffect.png", getApplication().getTextureManager());
+            if (sliderDown == null)
+                sliderDown = new Texture("invertedSlideSceneChangeEffect.png", getApplication().getTextureManager());
+            if (getPassedTime() >= getTimeToWait() * 2.0)
+                setFinished(true);
+            double y = getPassedTime() / getTimeToWait() * (getApplication().getResolution().getHeight() + sliderUp.getSize().getHeight() + sliderDown.getSize().getHeight()) - getApplication().getResolution().getHeight() - sliderUp.getSize().getHeight();
+            di.setSize(getApplication().getResolution());
+            di.setType(DrawInstruction.Type.RECTANGLE);
+            di.setFilled(true);
+            di.setInnerColor(new Color(Colors.BLACK));
+            di.setPosition(new Vector2D(0, y));
+            graphics.draw(di);
+            di.setSize(sliderUp.getSize());
+            di.setRenderRef(sliderUp.getImageRef());
+            di.setType(DrawInstruction.Type.IMAGE);
+            di.setPosition(new Vector2D(0, y + getApplication().getResolution().getHeight() / 2 + di.getSize().getHeight() / 2));
+            graphics.draw(di);
+            di.setSize(sliderDown.getSize());
+            di.setRenderRef(sliderDown.getImageRef());
+            di.setType(DrawInstruction.Type.IMAGE);
+            di.setPosition(new Vector2D(0, y - getApplication().getResolution().getHeight() / 2  - di.getSize().getHeight() / 2));
+            graphics.draw(di);
+        }
+    }
+
+    public static class SlideDown extends ChangeSceneEffect {
+        private Texture sliderUp, sliderDown;
+        private final DrawInstruction di = new DrawInstruction();
+
+        public SlideDown(double slideTime, boolean stopUpdatingScene) {
+            super(slideTime / 2, stopUpdatingScene);
+        }
+
+        @Override
+        public void render(PlatformGraphics graphics) {
+            if (sliderUp == null)
+                sliderUp = new Texture("slideSceneChangeEffect.png", getApplication().getTextureManager());
+            if (sliderDown == null)
+                sliderDown = new Texture("invertedSlideSceneChangeEffect.png", getApplication().getTextureManager());
+            if (getPassedTime() >= getTimeToWait() * 2.0)
+                setFinished(true);
+            double y = getApplication().getResolution().getHeight() + sliderDown.getSize().getHeight() - getPassedTime() / getTimeToWait() * (getApplication().getResolution().getHeight() + sliderUp.getSize().getHeight() + sliderDown.getSize().getHeight());
+            di.setSize(getApplication().getResolution());
+            di.setType(DrawInstruction.Type.RECTANGLE);
+            di.setFilled(true);
+            di.setInnerColor(new Color(Colors.BLACK));
+            di.setPosition(new Vector2D(0, y));
+            graphics.draw(di);
+            di.setSize(sliderUp.getSize());
+            di.setRenderRef(sliderUp.getImageRef());
+            di.setType(DrawInstruction.Type.IMAGE);
+            di.setPosition(new Vector2D(0, y + getApplication().getResolution().getHeight() / 2 + di.getSize().getHeight() / 2));
+            graphics.draw(di);
+            di.setSize(sliderDown.getSize());
+            di.setRenderRef(sliderDown.getImageRef());
+            di.setType(DrawInstruction.Type.IMAGE);
+            di.setPosition(new Vector2D(0, y - getApplication().getResolution().getHeight() / 2  - di.getSize().getHeight() / 2));
             graphics.draw(di);
         }
     }

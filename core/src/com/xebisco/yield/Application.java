@@ -19,11 +19,9 @@ package com.xebisco.yield;
 import com.studiohartman.jamepad.ControllerManager;
 import com.studiohartman.jamepad.ControllerState;
 import com.studiohartman.jamepad.ControllerUnpluggedException;
-import org.apache.bcel.classfile.ClassFormatException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 /**
@@ -56,6 +54,10 @@ public class Application implements Behavior {
     private double physicsPpm;
     private Font defaultFont;
     private Texture defaultTexture;
+
+    private ChangeSceneEffect changeSceneEffect;
+
+    private Scene toChangeScene;
 
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, PlatformGraphics platformGraphics, PlatformInit platformInit) {
         physicsPpm = platformInit.getStartPhysicsPpm();
@@ -118,7 +120,6 @@ public class Application implements Behavior {
             } catch (ConcurrentModificationException ignore) {
 
             }
-            platformGraphics.conclude();
             return null;
         };
         resolution = new ImmutableSize2D(platformInit.getGameResolution().getWidth(), platformInit.getGameResolution().getHeight());
@@ -325,29 +326,51 @@ public class Application implements Behavior {
             } catch (ConcurrentModificationException ignore) {
 
             }
-            scene.onUpdate();
-            try {
-                for (Entity2D entity : scene.getEntities()) {
-                    entity.setFontLoader(fontLoader);
-                    entity.process();
+            if (changeSceneEffect == null || !changeSceneEffect.isStopUpdatingScene()) {
+                scene.onUpdate();
+                try {
+                    for (Entity2D entity : scene.getEntities()) {
+                        entity.setFontLoader(fontLoader);
+                        entity.process();
 
-                    if (scene != this.scene) {
-                        return;
+                        if (scene != this.scene) {
+                            return;
+                        }
                     }
+                } catch (ConcurrentModificationException ignore) {
                 }
-            } catch (ConcurrentModificationException ignore) {
+
+                scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex));
             }
 
-            scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex));
             if (inputManager != null) {
                 updateAxes();
                 inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
                 inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
             }
-            if (scene == this.scene && scene.getFrames() >= 2) {
+            if (scene == this.scene && scene.getFrames() >= 2)
                 renderer.apply(scene);
+
+
+            if (changeSceneEffect != null) {
+                changeSceneEffect.setApplication(this);
+                changeSceneEffect.setDeltaTime(getApplicationManager().getManagerContext().getContextTime().getDeltaTime());
+                changeSceneEffect.setPassedTime(changeSceneEffect.getPassedTime() + changeSceneEffect.getDeltaTime());
+                changeSceneEffect.setFrames(changeSceneEffect.getFrames() + 1);
+                changeSceneEffect.render(platformGraphics);
+                if (changeSceneEffect.getPassedTime() >= changeSceneEffect.getTimeToWait() && toChangeScene != null) {
+                    setScene(toChangeScene);
+                    toChangeScene = null;
+                }
+                if (changeSceneEffect.isFinished())
+                    changeSceneEffect = null;
+            } else if (toChangeScene != null) {
+                setScene(toChangeScene);
+                toChangeScene = null;
             }
 
+            if (scene.getFrames() >= 2)
+                platformGraphics.conclude();
         }
     }
 
@@ -457,7 +480,7 @@ public class Application implements Behavior {
      * This function sets the scene and disposes of any previous scene and its entities and systems.
      *
      * @param scene The scene parameter is an object of the Scene class, which represents a collection of entities and
-     *              systems that make up a application scene. This method sets the current scene to the specified scene object.
+     *              systems that make up an application scene. This method sets the current scene to the specified scene object.
      */
     public void setScene(Scene scene) {
         try {
@@ -485,6 +508,44 @@ public class Application implements Behavior {
             scene.setFrames(0);
             platformGraphics.setCamera(scene.getCamera());
         }
+    }
+
+    public void changeScene(Class<? extends Scene> sceneClass) {
+        changeScene(sceneClass, null);
+    }
+
+    public void changeScene(Class<? extends Scene> sceneClass, ChangeSceneEffect changeSceneEffect) {
+        try {
+            changeScene(sceneClass.getConstructor(Application.class).newInstance(this), changeSceneEffect);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void changeScene(Scene scene, ChangeSceneEffect changeSceneEffect) {
+        if (toChangeScene != null)
+            System.err.println("WARNING: Ignoring scene change, a scene change is already in place.");
+        else {
+            setToChangeScene(scene);
+            setChangeSceneEffect(changeSceneEffect);
+        }
+    }
+
+    public ChangeSceneEffect getChangeSceneEffect() {
+        return changeSceneEffect;
+    }
+
+    void setChangeSceneEffect(ChangeSceneEffect changeSceneEffect) {
+        this.changeSceneEffect = changeSceneEffect;
+    }
+
+    public Scene getToChangeScene() {
+        return toChangeScene;
+    }
+
+    void setToChangeScene(Scene toChangeScene) {
+        this.toChangeScene = toChangeScene;
     }
 
     /**

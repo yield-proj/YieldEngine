@@ -23,12 +23,14 @@ public abstract class ChangeSceneEffect implements Renderable {
 
     private double deltaTime, passedTime;
     private final double timeToWait;
-    private Size2D sceneResolution;
+    private Application application;
     private int frames;
     private boolean finished;
+    private final boolean stopUpdatingScene;
 
-    protected ChangeSceneEffect(double timeToWait) {
+    protected ChangeSceneEffect(double timeToWait, boolean stopUpdatingScene) {
         this.timeToWait = timeToWait;
+        this.stopUpdatingScene = stopUpdatingScene;
     }
 
     /**
@@ -97,21 +99,22 @@ public abstract class ChangeSceneEffect implements Renderable {
     }
 
     /**
-     * The function returns the scene resolution as a Size2D object.
+     * The function returns an instance of the Application class.
      *
-     * @return The method is returning an object of type `Size2D`, which represents the resolution of the scene.
+     * @return The method is returning an object of type `Application`.
      */
-    public Size2D getSceneResolution() {
-        return sceneResolution;
+    public Application getApplication() {
+        return application;
     }
 
     /**
-     * This function sets the `sceneResolution` variable.
+     * This function sets the value of the "application" variable in the current object to the value passed as a parameter.
      *
-     * @param sceneResolution The parameter `sceneResolution` is of type `Size2D`.
+     * @param application The parameter "application" is an object of the class "Application". The method "setApplication"
+     * sets the value of the instance variable "application" to the value passed as a parameter.
      */
-    public void setSceneResolution(Size2D sceneResolution) {
-        this.sceneResolution = sceneResolution;
+    public void setApplication(Application application) {
+        this.application = application;
     }
 
     /**
@@ -130,5 +133,14 @@ public abstract class ChangeSceneEffect implements Renderable {
      */
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    /**
+     * This function returns the value of a boolean variable called "stopUpdatingScene".
+     *
+     * @return The method is returning a boolean value, specifically the value of the variable `stopUpdatingScene`.
+     */
+    public boolean isStopUpdatingScene() {
+        return stopUpdatingScene;
     }
 }
