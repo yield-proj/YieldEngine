@@ -16,6 +16,9 @@
 
 package com.xebisco.yield;
 
+/**
+ * This class toggles full screen mode in an application when the user presses the ALT and ENTER keys.
+ */
 public class ToggleFullScreenSystem extends SystemBehavior {
 
     private boolean canStartAction, doAction, onFullScreen;
@@ -42,27 +45,12 @@ public class ToggleFullScreenSystem extends SystemBehavior {
         }
     }
 
-    public boolean isCanStartAction() {
-        return canStartAction;
-    }
-
-    public void setCanStartAction(boolean canStartAction) {
-        this.canStartAction = canStartAction;
-    }
-
-    public boolean isDoAction() {
-        return doAction;
-    }
-
-    public void setDoAction(boolean doAction) {
-        this.doAction = doAction;
-    }
-
+    /**
+     * The function returns a boolean value indicating whether the program is currently on full screen mode or not.
+     *
+     * @return The method is returning the value of the boolean variable `onFullScreen`.
+     */
     public boolean isOnFullScreen() {
         return onFullScreen;
-    }
-
-    public void setOnFullScreen(boolean onFullScreen) {
-        this.onFullScreen = onFullScreen;
     }
 }
