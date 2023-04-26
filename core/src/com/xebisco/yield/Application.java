@@ -55,7 +55,7 @@ public class Application implements Behavior {
     private Font defaultFont;
     private Texture defaultTexture;
 
-    private ChangeSceneEffect changeSceneEffect;
+    private ChangeSceneTransition changeSceneTransition;
 
     private ToggleFullScreen toggleFullScreen;
 
@@ -332,7 +332,7 @@ public class Application implements Behavior {
 
             }
 
-            if (changeSceneEffect == null || !changeSceneEffect.isStopUpdatingScene() || toChangeScene == null) {
+            if (changeSceneTransition == null || !changeSceneTransition.isStopUpdatingScene() || toChangeScene == null) {
                 scene.onUpdate();
                 try {
                     for (Entity2D entity : scene.getEntities()) {
@@ -358,18 +358,18 @@ public class Application implements Behavior {
                 renderer.apply(scene);
 
 
-            if (changeSceneEffect != null) {
-                changeSceneEffect.setApplication(this);
-                changeSceneEffect.setDeltaTime(getApplicationManager().getManagerContext().getContextTime().getDeltaTime());
-                changeSceneEffect.setPassedTime(changeSceneEffect.getPassedTime() + changeSceneEffect.getDeltaTime());
-                changeSceneEffect.setFrames(changeSceneEffect.getFrames() + 1);
-                changeSceneEffect.render(platformGraphics);
-                if (changeSceneEffect.getPassedTime() >= changeSceneEffect.getTimeToWait() && toChangeScene != null) {
+            if (changeSceneTransition != null) {
+                changeSceneTransition.setApplication(this);
+                changeSceneTransition.setDeltaTime(getApplicationManager().getManagerContext().getContextTime().getDeltaTime());
+                changeSceneTransition.setPassedTime(changeSceneTransition.getPassedTime() + changeSceneTransition.getDeltaTime());
+                changeSceneTransition.setFrames(changeSceneTransition.getFrames() + 1);
+                changeSceneTransition.render(platformGraphics);
+                if (changeSceneTransition.getPassedTime() >= changeSceneTransition.getTimeToWait() && toChangeScene != null) {
                     setScene(toChangeScene);
                     toChangeScene = null;
                 }
-                if (changeSceneEffect.isFinished())
-                    changeSceneEffect = null;
+                if (changeSceneTransition.isFinished())
+                    changeSceneTransition = null;
             } else if (toChangeScene != null) {
                 setScene(toChangeScene);
                 toChangeScene = null;
@@ -520,36 +520,59 @@ public class Application implements Behavior {
         changeScene(sceneClass, null);
     }
 
-    public void changeScene(Class<? extends Scene> sceneClass, ChangeSceneEffect changeSceneEffect) {
+    public void changeScene(Class<? extends Scene> sceneClass, ChangeSceneTransition changeSceneTransition) {
         try {
-            changeScene(sceneClass.getConstructor(Application.class).newInstance(this), changeSceneEffect);
+            changeScene(sceneClass.getConstructor(Application.class).newInstance(this), changeSceneTransition);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void changeScene(Scene scene, ChangeSceneEffect changeSceneEffect) {
+    public void changeScene(Scene scene, ChangeSceneTransition changeSceneTransition) {
         if (toChangeScene != null)
             System.err.println("WARNING: Ignoring scene change, a scene change is already in place.");
         else {
             setToChangeScene(scene);
-            setChangeSceneEffect(changeSceneEffect);
+            setChangeSceneTransition(changeSceneTransition);
         }
     }
 
-    public ChangeSceneEffect getChangeSceneEffect() {
-        return changeSceneEffect;
+    /**
+     * The function returns a ChangeSceneTransition object.
+     *
+     * @return The method is returning an object of type `ChangeSceneTransition`.
+     */
+    public ChangeSceneTransition getChangeSceneTransition() {
+        return changeSceneTransition;
     }
 
-    void setChangeSceneEffect(ChangeSceneEffect changeSceneEffect) {
-        this.changeSceneEffect = changeSceneEffect;
+    /**
+     * The function sets the change scene transition for a given object.
+     *
+     * @param changeSceneTransition changeSceneTransition is a variable of type ChangeSceneTransition that is being passed
+     * as a parameter to the method setChangeSceneTransition. The method sets the value of the instance variable
+     * changeSceneTransition to the value passed as the parameter.
+     */
+    void setChangeSceneTransition(ChangeSceneTransition changeSceneTransition) {
+        this.changeSceneTransition = changeSceneTransition;
     }
 
+    /**
+     * The function returns a Scene object to change the current scene.
+     *
+     * @return The method is returning a Scene object named "toChangeScene".
+     */
     public Scene getToChangeScene() {
         return toChangeScene;
     }
 
+    /**
+     * The function sets the value of a variable "toChangeScene" to a given Scene object.
+     *
+     * @param toChangeScene toChangeScene is a variable of type Scene that represents the scene that the current scene will
+     * change to. This method sets the value of the toChangeScene variable to the passed in Scene object.
+     */
     void setToChangeScene(Scene toChangeScene) {
         this.toChangeScene = toChangeScene;
     }

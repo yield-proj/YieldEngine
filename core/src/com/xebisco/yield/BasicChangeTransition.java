@@ -17,16 +17,16 @@
 package com.xebisco.yield;
 
 /**
- * The BasicChangeEffect class contains three subclasses that implement fade-in, fade-out, and fade-in-and-out effects for
+ * The BasicChangeTransition class contains three subclasses that implement fade-in, fade-out, and fade-in-and-out effects for
  * changing scenes in an application.
  */
-public class BasicChangeEffect {
+public class BasicChangeTransition {
 
     /**
-     * The FadeIn class is a subclass of ChangeSceneEffect that renders a black rectangle that fades in over a specified
+     * The FadeIn class is a subclass of ChangeSceneTransition that renders a black rectangle that fades in over a specified
      * amount of time.
      */
-    public static class FadeIn extends ChangeSceneEffect {
+    public static class FadeIn extends ChangeSceneTransition {
 
         private final DrawInstruction di = new DrawInstruction();
 
@@ -51,10 +51,10 @@ public class BasicChangeEffect {
     }
 
     /**
-     * The FadeOut class is a subclass of ChangeSceneEffect that renders a black rectangle that fades out over a specified
+     * The FadeOut class is a subclass of ChangeSceneTransition that renders a black rectangle that fades out over a specified
      * time period.
      */
-    public static class FadeOut extends ChangeSceneEffect {
+    public static class FadeOut extends ChangeSceneTransition {
 
         private final DrawInstruction di = new DrawInstruction();
         private final double timeAfter;
@@ -80,10 +80,10 @@ public class BasicChangeEffect {
     }
 
     /**
-     * The FadeInAndOut class is a subclass of ChangeSceneEffect that creates a fade-in and fade-out effect by rendering a
+     * The FadeInAndOut class is a subclass of ChangeSceneTransition that creates a fade-in and fade-out effect by rendering a
      * black rectangle with changing alpha values.
      */
-    public static class FadeInAndOut extends ChangeSceneEffect {
+    public static class FadeInAndOut extends ChangeSceneTransition {
 
         private final DrawInstruction di = new DrawInstruction();
         private final double timeAfter;
@@ -116,7 +116,7 @@ public class BasicChangeEffect {
     /**
      * The SlideUp class is a scene change effect that slides a rectangle from to top of the screen the bottom while changing scenes.
      */
-    public static class SlideUp extends ChangeSceneEffect {
+    public static class SlideUp extends ChangeSceneTransition {
         private Texture sliderUp, sliderDown;
         private final DrawInstruction di = new DrawInstruction();
 
@@ -140,7 +140,7 @@ public class BasicChangeEffect {
     /**
      * The SlideDown class is a scene change effect that slides a rectangle from to bottom of the screen the top while changing scenes.
      */
-    public static class SlideDown extends ChangeSceneEffect {
+    public static class SlideDown extends ChangeSceneTransition {
         private Texture sliderUp, sliderDown;
         private final DrawInstruction di = new DrawInstruction();
 

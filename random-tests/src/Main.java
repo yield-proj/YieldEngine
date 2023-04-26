@@ -55,7 +55,7 @@ public class Main extends Scene {
     public void onUpdate() {
         if (getApplication().isPressingKey(Input.Key.VK_SPACE)) {
             if (a)
-                getApplication().changeScene(Main.class, new BasicChangeEffect.SlideUp(3, true));
+                getApplication().changeScene(Main.class, new BasicChangeTransition.SlideUp(3, true));
             a = false;
         } else a = true;
     }
