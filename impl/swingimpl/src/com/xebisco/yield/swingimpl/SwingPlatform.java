@@ -29,10 +29,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, AudioManager, ViewportZoomScale {
+public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, AudioManager, ViewportZoomScale, ToggleFullScreen {
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
     private final HashSet<Input.Key> pressingKeys = new HashSet<>();
     private final HashSet<Input.MouseButton> pressingMouseButtons = new HashSet<>();
@@ -50,6 +51,8 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     private Graphics2D graphics, uiGraphics;
     private AffineTransform defaultTransform = new AffineTransform();
     private boolean stretch, verticalSync;
+
+    private PlatformInit platformInit;
 
     private Vector2D camera;
 
@@ -628,12 +631,9 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     @Override
     public void init(PlatformInit platformInit) {
+        this.platformInit = platformInit;
         Toolkit.getDefaultToolkit().setDynamicLayout(false);
         stretch = platformInit.isStretchViewport();
-        frame = new JFrame(graphicsConfiguration);
-        frame.addKeyListener(this);
-        frame.addMouseListener(this);
-        frame.addMouseWheelListener(this);
 
         vBuffer = graphicsConfiguration.createCompatibleVolatileImage(
                 (int) platformInit.getResolution().getWidth(),
@@ -657,10 +657,23 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         );
         uiBuffer.setAccelerationPriority(1);
 
-        if (platformInit.isUndecorated() || platformInit.isFullscreen() && device.isFullScreenSupported()) {
+        startFrame();
+    }
+
+    public void startFrame() {
+        if (frame == null) {
+            frame = new JFrame(graphicsConfiguration);
+            frame.addKeyListener(this);
+            frame.addMouseListener(this);
+            frame.addMouseWheelListener(this);
+            frame.add(canvas);
+        }
+
+        if (platformInit.isUndecorated() || (platformInit.isFullscreen() && device.isFullScreenSupported())) {
             frame.setUndecorated(true);
             frame.setSize((int) platformInit.getWindowSize().getWidth(), (int) platformInit.getWindowSize().getHeight());
         } else {
+            frame.setUndecorated(false);
             frame.setSize((int) platformInit.getWindowSize().getWidth(), (int) platformInit.getWindowSize().getHeight() + 31);
         }
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -671,7 +684,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         if (platformInit.isFullscreen() && device.isFullScreenSupported()) {
             device.setFullScreenWindow(frame);
         }
-        frame.add(canvas);
+
     }
 
     @Override
@@ -1035,6 +1048,17 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     @Override
     public void setZoomScale(TwoAnchorRepresentation zoomScale) {
         this.zoomScale = zoomScale;
+    }
+
+    @Override
+    public void setFullScreen(boolean fullScreen) {
+        if (platformInit != null) {
+            platformInit.setFullscreen(fullScreen);
+            if (frame != null) {
+                frame.dispose();
+                startFrame();
+            }
+        }
     }
 
     private interface KeyAction {

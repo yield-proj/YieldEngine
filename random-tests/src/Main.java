@@ -36,6 +36,7 @@ public class Main extends Scene {
 
     @Override
     public void onStart() {
+        getSystems().add(new ToggleFullScreenSystem());
         setBackGroundColor(Colors.RED);
         getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
         instantiate(new Entity2DPrefab(new ComponentCreation(Rectangle.class), new ComponentCreation(RectangleCollider.class, c -> {

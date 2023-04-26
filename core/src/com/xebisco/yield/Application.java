@@ -57,6 +57,8 @@ public class Application implements Behavior {
 
     private ChangeSceneEffect changeSceneEffect;
 
+    private ToggleFullScreen toggleFullScreen;
+
     private Scene toChangeScene;
 
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, PlatformGraphics platformGraphics, PlatformInit platformInit) {
@@ -64,6 +66,9 @@ public class Application implements Behavior {
         this.applicationManager = applicationManager;
         applicationManager.getApplications().add(this);
         this.platformGraphics = platformGraphics;
+        if (platformGraphics instanceof ToggleFullScreen)
+            toggleFullScreen = (ToggleFullScreen) platformGraphics;
+        else toggleFullScreen = null;
         if (platformGraphics instanceof FontLoader)
             fontLoader = (FontLoader) platformGraphics;
         else fontLoader = null;
@@ -759,5 +764,25 @@ public class Application implements Behavior {
      */
     public Vector2D getMousePosition() {
         return mousePosition;
+    }
+
+    /**
+     * The function returns an object of type ToggleFullScreen.
+     *
+     * @return The method is returning an object of type `ToggleFullScreen`.
+     */
+    public ToggleFullScreen getToggleFullScreen() {
+        return toggleFullScreen;
+    }
+
+    /**
+     * This function sets the toggleFullScreen variable to the value passed as a parameter.
+     *
+     * @param toggleFullScreen toggleFullScreen is a variable of type ToggleFullScreen that is being set to the instance
+     * variable of the class using the "this" keyword. It is the class has a method or functionality related to
+     * toggling full screen mode.
+     */
+    public void setToggleFullScreen(ToggleFullScreen toggleFullScreen) {
+        this.toggleFullScreen = toggleFullScreen;
     }
 }
