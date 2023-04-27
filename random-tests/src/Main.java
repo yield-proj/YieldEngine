@@ -26,7 +26,7 @@ public class Main extends Scene {
 
     public static void main(String[] args) throws ClassNotFoundException {
         ContextTime time = new ContextTime();
-        time.setTargetSleepTime(16666);
+        time.setTargetFPS(60);
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
         Application application = new Application(applicationManager, Main.class, Global.swingPlatform(), platformInit);

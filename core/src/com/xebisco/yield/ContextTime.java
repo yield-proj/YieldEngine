@@ -21,7 +21,7 @@ package com.xebisco.yield;
  */
 public class ContextTime {
     private double timeScale = 1, deltaTime;
-    private long targetSleepTime = 16;
+    private long targetSleepTime = 16666;
 
     /**
      * This function sets the target sleep time based on the desired frames per second.
