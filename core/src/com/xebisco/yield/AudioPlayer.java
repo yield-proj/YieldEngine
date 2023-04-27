@@ -34,6 +34,13 @@ public class AudioPlayer extends ComponentBehavior {
     }
 
     /**
+     * The "reset" function sets the position to 0.
+     */
+    public void reset() {
+        setPosition(0);
+    }
+
+    /**
      * This function pauses the audio clip using the application's audio manager.
      */
     public void pause() {
