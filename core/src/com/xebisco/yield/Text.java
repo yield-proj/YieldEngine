@@ -28,6 +28,9 @@ public class Text extends ComponentBehavior {
     @VisibleOnInspector
     private Font font;
 
+    @VisibleOnInspector
+    private Vector2D offset = new Vector2D();
+
     private double width, height;
 
     public Text() {
@@ -51,7 +54,7 @@ public class Text extends ComponentBehavior {
             drawInstruction.setFont(font);
             drawInstruction.setRotation(getEntity().getTransform().getzRotation());
             drawInstruction.setInnerColor(color);
-            drawInstruction.setPosition(getEntity().getTransform().getPosition());
+            drawInstruction.setPosition(new Vector2D(getEntity().getTransform().getPosition().sum(offset)));
             width = ((FontLoader) graphics).getStringWidth(contents, font.getFontRef());
             height = ((FontLoader) graphics).getStringHeight(contents, font.getFontRef());
             if (drawInstruction.getSize() != null) {
@@ -141,5 +144,25 @@ public class Text extends ComponentBehavior {
      */
     public double getHeight() {
         return height;
+    }
+
+    /**
+     * The function returns a Vector2D object representing an offset.
+     *
+     * @return A Vector2D object named "offset" is being returned.
+     */
+    public Vector2D getOffset() {
+        return offset;
+    }
+
+    /**
+     * This function sets the offset of a Vector2D object.
+     *
+     * @param offset The "offset" parameter is a Vector2D object that represents the amount of displacement or shift in
+     * position from a reference point. This method sets the value of the "offset" instance variable to the value of the
+     * "offset" parameter passed to it.
+     */
+    public void setOffset(Vector2D offset) {
+        this.offset = offset;
     }
 }
