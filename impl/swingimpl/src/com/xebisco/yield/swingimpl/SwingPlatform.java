@@ -758,7 +758,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
             case SIMPLE_LINE:
                 graphics.setColor(awtColor(drawInstruction.getBorderColor()));
                 graphics.setStroke(new BasicStroke((float) drawInstruction.getBorderThickness()));
-                graphics.drawLine(x, y, w, h);
+                graphics.drawLine(x, y, w + x, h + y);
                 break;
             case EQUILATERAL_TRIANGLE:
                 int[] xs = new int[]{x, x + w / 2, x + w};
