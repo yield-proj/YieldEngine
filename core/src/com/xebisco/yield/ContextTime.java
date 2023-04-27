@@ -24,6 +24,16 @@ public class ContextTime {
     private long targetSleepTime = 16;
 
     /**
+     * This function sets the target sleep time based on the desired frames per second.
+     *
+     * @param targetFPS The target frames per second (FPS) that the program should aim to achieve.
+     */
+    public void setTargetFPS(double targetFPS) {
+        if (targetFPS <= 0) throw new IllegalArgumentException("targetFPS can't be less or equal to zero");
+        setTargetSleepTime((long) (1 / targetFPS * 1_000_000));
+    }
+
+    /**
      * Returns the scale of the context time.
      *
      * @return The timeScale variable is being returned.
