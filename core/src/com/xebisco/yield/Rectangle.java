@@ -29,7 +29,7 @@ public class Rectangle extends ComponentBehavior {
     @VisibleOnInspector
     private double borderThickness;
     @VisibleOnInspector
-    private boolean filled = true;
+    private boolean filled = true, absoluteScaled;
 
     @VisibleOnInspector
     private Vector2D offset = new Vector2D();
@@ -58,10 +58,16 @@ public class Rectangle extends ComponentBehavior {
         drawInstruction.setInnerColor(color);
         drawInstruction.setPosition(getEntity().getTransform().getPosition());
         if (drawInstruction.getSize() == null) drawInstruction.setSize(new Size2D(1, 1));
-        drawInstruction.getSize().set(
-                size.getWidth() * getEntity().getTransform().getScale().getX(),
-                size.getHeight() * getEntity().getTransform().getScale().getY()
-        );
+        if (absoluteScaled)
+            drawInstruction.getSize().set(
+                    size.getWidth() * Math.abs(getEntity().getTransform().getScale().getX()),
+                    size.getHeight() * Math.abs(getEntity().getTransform().getScale().getY())
+            );
+        else
+            drawInstruction.getSize().set(
+                    size.getWidth() * getEntity().getTransform().getScale().getX(),
+                    size.getHeight() * getEntity().getTransform().getScale().getY()
+            );
         switch (anchor) {
             case UP:
                 drawInstruction.getPosition().sumLocal(new TwoAnchorRepresentation(0, -drawInstruction.getSize().getY() / 2.0));
@@ -227,5 +233,25 @@ public class Rectangle extends ComponentBehavior {
      */
     public void setOffset(Vector2D offset) {
         this.offset = offset;
+    }
+
+    /**
+     * This function returns a boolean value indicating whether the scaling is absolute or not.
+     *
+     * @return The method `isAbsoluteScaled()` is returning a boolean value, which indicates whether the scaling used is
+     * absolute or not. The value returned is stored in the variable `absoluteScaled`.
+     */
+    public boolean isAbsoluteScaled() {
+        return absoluteScaled;
+    }
+
+    /**
+     * This function sets the value of a boolean variable called "absoluteScaled".
+     *
+     * @param absoluteScaled absoluteScaled is a boolean parameter that is used to set whether the scaling of an object is
+     * absolute.
+     */
+    public void setAbsoluteScaled(boolean absoluteScaled) {
+        this.absoluteScaled = absoluteScaled;
     }
 }
