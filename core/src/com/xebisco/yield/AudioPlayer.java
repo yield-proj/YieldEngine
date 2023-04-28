@@ -34,6 +34,13 @@ public class AudioPlayer extends ComponentBehavior {
     }
 
     /**
+     * This function loops audio using the application's audio manager.
+     */
+    public void loop() {
+        getApplication().getAudioManager().loop(this);
+    }
+
+    /**
      * The "reset" function sets the position to 0.
      */
     public void reset() {

@@ -29,7 +29,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -962,6 +961,11 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     @Override
     public void play(AudioPlayer audioPlayer) {
         ((Clip) audioPlayer.getClipRef()).start();
+    }
+
+    @Override
+    public void loop(AudioPlayer audioPlayer) {
+        ((Clip) audioPlayer.getClipRef()).loop(Clip.LOOP_CONTINUOUSLY);
     }
 
     @Override

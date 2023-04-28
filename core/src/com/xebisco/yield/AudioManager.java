@@ -47,6 +47,15 @@ public interface AudioManager {
     void play(AudioPlayer audioPlayer);
 
     /**
+     * This function takes an AudioPlayer object and loops it continuously.
+     *
+     * @param audioPlayer The "audioPlayer" parameter is an object of the "AudioPlayer" class, which is used to play audio
+     * files in Arduino projects. It is passed as an argument to the "loop" function, which is a standard function in
+     * Arduino sketches that is executed repeatedly as long as the board is powered
+     */
+    void loop(AudioPlayer audioPlayer);
+
+    /**
      * This function takes an AudioPlayer object as input and pauses it.
      *
      * @param audioPlayer The audio player to be paused.
