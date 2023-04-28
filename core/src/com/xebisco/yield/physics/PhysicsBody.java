@@ -44,15 +44,6 @@ public class PhysicsBody extends ComponentBehavior {
 
     @Override
     public void onUpdate() {
-        for (Fixture f = getB2Body().getFixtureList(); f != null; f = f.getNext()) {
-            f.m_shape = ((Collider) f.getUserData()).getShape();
-            f.setDensity((float) ((Collider) f.getUserData()).getDensity());
-            f.setFriction((float) ((Collider) f.getUserData()).getFriction());
-            f.setSensor(((Collider) f.getUserData()).isSensor());
-            if (!getEntity().getComponents().contains((Collider) f.getUserData())) {
-                getB2Body().destroyFixture(f);
-            }
-        }
         for (int i = 0; i < getEntity().getComponents().size(); i++) {
             ComponentBehavior c = getEntity().getComponents().get(i);
             if (c instanceof Collider) {
@@ -65,12 +56,22 @@ public class PhysicsBody extends ComponentBehavior {
                 }
                 if (!contains) {
                     Fixture f = getB2Body().createFixture(((Collider) c).getShape(), (float) ((Collider) c).getDensity());
-                    f.m_filter.categoryBits = ((Collider) c).getCollisionMask().hashCode();
-                    f.setSensor(((Collider) c).isSensor());
-                    for (String filter : ((Collider) c).getCollisionFilter()) {
-                        f.m_filter.maskBits &= ~(filter.hashCode());
-                    }
                     f.setUserData(c);
+                }
+            }
+        }
+        for (Fixture f = getB2Body().getFixtureList(); f != null; f = f.getNext()) {
+            if (!getEntity().getComponents().contains((Collider) f.getUserData())) {
+                getB2Body().destroyFixture(f);
+            } else {
+                f.m_shape = ((Collider) f.getUserData()).getShape();
+                f.setDensity((float) ((Collider) f.getUserData()).getDensity());
+                f.setFriction((float) ((Collider) f.getUserData()).getFriction());
+                f.setSensor(((Collider) f.getUserData()).isSensor());
+                f.m_filter.categoryBits = ((Collider) c).getCollisionMask().hashCode();
+                f.setSensor(((Collider) c).isSensor());
+                for (String filter : ((Collider) c).getCollisionFilter()) {
+                    f.m_filter.maskBits &= ~(filter.hashCode());
                 }
             }
         }
