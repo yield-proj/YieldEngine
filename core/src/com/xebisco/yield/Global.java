@@ -42,6 +42,22 @@ public final class Global {
     }
 
     /**
+     * This function returns an instance of a class that implements the PlatformGraphics interface using OpenGL.
+     *
+     * @return The method is returning an instance of a class that implements the `PlatformGraphics` interface,
+     * specifically an instance of the `OpenGLPlatform` class.
+     */
+    public static PlatformGraphics openGLPlatform() throws ClassNotFoundException {
+        //noinspection unchecked
+        Class<? extends PlatformGraphics> openGLPlatformImplClass = (Class<? extends PlatformGraphics>) Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
+        try {
+            return openGLPlatformImplClass.getConstructor().newInstance();
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * The function converts a TwoAnchorRepresentation object to a Vec2 object with the same x and y values.
      *
      * @param twoAnchorRepresentation The generated TwoAnchorRepresentation.
