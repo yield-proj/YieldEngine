@@ -16,13 +16,13 @@
 
 package com.xebisco.yield.openglimpl;
 
-import com.xebisco.yield.DrawInstruction;
-import com.xebisco.yield.PlatformGraphics;
-import com.xebisco.yield.PlatformInit;
-import com.xebisco.yield.Vector2D;
+import com.xebisco.yield.*;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.stb.STBTTFontinfo;
+import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
@@ -33,7 +33,7 @@ import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class OpenGLPlatform implements PlatformGraphics {
+public class OpenGLPlatform implements PlatformGraphics, FontLoader {
 
     private long windowID = -1;
     private static boolean initiatedGLFW, setupThread = true;
@@ -105,7 +105,8 @@ public class OpenGLPlatform implements PlatformGraphics {
 
     @Override
     public boolean shouldClose() {
-        return false;
+        if (windowID == -1) return false;
+        return glfwWindowShouldClose(windowID);
     }
 
     @Override
@@ -121,5 +122,34 @@ public class OpenGLPlatform implements PlatformGraphics {
     @Override
     public void setCamera(Vector2D camera) {
 
+    }
+
+    @Override
+    public Object loadFont(Font font) {
+        return null;
+    }
+
+    @Override
+    public void unloadFont(Font font) {
+
+    }
+
+    @Override
+    public double getStringWidth(String text, Object fontRef) {        //TODO
+            float length = 0f;
+            for (int i = 0; i < text.length(); i++) {
+                IntBuffer advancewidth = BufferUtils.createIntBuffer(1);
+                IntBuffer leftsidebearing = BufferUtils.createIntBuffer(1);
+                STBTruetype.stbtt_GetCodepointHMetrics((STBTTFontinfo) fontRef, text.charAt(i), advancewidth, leftsidebearing);
+                length += advancewidth.get(0);
+            }
+            return length;
+    }
+
+    @Override
+    public double getStringHeight(String text, Object fontRef) {
+
+        //TODO
+        return ((STBTTFontinfo) fontRef).sizeof();
     }
 }
