@@ -126,4 +126,26 @@ public final class Global {
     public static float clamp(float value, float min, float max) {
         return value > max ? max : Math.max(value, min);
     }
+
+    /**
+     * The function resizes a given size to fit within a specified boundary while maintaining its aspect ratio.
+     *
+     * @param size The size of the object that needs to be resized to fit within the boundary.
+     * @param boundary The boundary parameter is a Size2D object that represents the maximum size that the input size can
+     * be scaled to while maintaining its aspect ratio.
+     * @return A new Size2D object with the adjusted width and height values based on the given size and boundary.
+     */
+    public static Size2D onSizeBoundary(Size2D size, Size2D boundary) {
+        double new_width;
+        double new_height;
+
+        new_height = boundary.getHeight();
+        new_width = (new_height * size.getWidth()) / size.getHeight();
+        if (new_width > boundary.getWidth()) {
+            new_width = boundary.getWidth();
+            new_height = (new_width * size.getHeight()) / size.getWidth();
+        }
+
+        return new Size2D(new_width, new_height);
+    }
 }

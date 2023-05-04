@@ -35,6 +35,8 @@ public class Application implements Behavior {
     private final FontLoader fontLoader;
     private final TextureManager textureManager;
     private final InputManager inputManager;
+    private final CheckKey checkKey;
+    private final MouseCheck mouseCheck;
     private final DrawInstruction drawInstruction = new DrawInstruction();
     private final Set<Axis> axes = new HashSet<>();
     private final ApplicationManager applicationManager;
@@ -78,6 +80,12 @@ public class Application implements Behavior {
         if (platformGraphics instanceof InputManager)
             inputManager = (InputManager) platformGraphics;
         else inputManager = null;
+        if (platformGraphics instanceof CheckKey)
+            checkKey = (CheckKey) platformGraphics;
+        else checkKey = null;
+        if (platformGraphics instanceof MouseCheck)
+            mouseCheck = (MouseCheck) platformGraphics;
+        else mouseCheck = null;
         if (platformGraphics instanceof AudioManager)
             audioManager = (AudioManager) platformGraphics;
         else audioManager = null;
@@ -225,11 +233,11 @@ public class Application implements Behavior {
      * This function updates the values of various input axes based on keyboard and controller inputs.
      */
     public void updateAxes() {
-        mousePosition.set(getInputManager().getMouseX(), getInputManager().getMouseY());
+        mousePosition.set(mouseCheck.getMouseX(), mouseCheck.getMouseY());
         for (Axis axis : axes) {
-            if ((axis.getPositiveKey() != null && inputManager.getPressingKeys().contains(axis.getPositiveKey())) || (axis.getAltPositiveKey() != null && inputManager.getPressingKeys().contains(axis.getAltPositiveKey()))) {
+            if ((axis.getPositiveKey() != null && isPressingKey(axis.getPositiveKey())) || (axis.getAltPositiveKey() != null && isPressingKey(axis.getAltPositiveKey()))) {
                 axis.setValue(1);
-            } else if ((axis.getNegativeKey() != null && inputManager.getPressingKeys().contains(axis.getNegativeKey())) || (axis.getAltNegativeKey() != null && inputManager.getPressingKeys().contains(axis.getAltNegativeKey()))) {
+            } else if ((axis.getNegativeKey() != null && isPressingKey(axis.getNegativeKey())) || (axis.getAltNegativeKey() != null && isPressingKey(axis.getAltNegativeKey()))) {
                 axis.setValue(-1);
             } else {
                 axis.setValue(0);
@@ -349,8 +357,9 @@ public class Application implements Behavior {
                 scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex));
             }
 
+
+            updateAxes();
             if (inputManager != null) {
-                updateAxes();
                 inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
                 inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
             }
@@ -551,8 +560,8 @@ public class Application implements Behavior {
      * The function sets the change scene transition for a given object.
      *
      * @param changeSceneTransition changeSceneTransition is a variable of type ChangeSceneTransition that is being passed
-     * as a parameter to the method setChangeSceneTransition. The method sets the value of the instance variable
-     * changeSceneTransition to the value passed as the parameter.
+     *                              as a parameter to the method setChangeSceneTransition. The method sets the value of the instance variable
+     *                              changeSceneTransition to the value passed as the parameter.
      */
     void setChangeSceneTransition(ChangeSceneTransition changeSceneTransition) {
         this.changeSceneTransition = changeSceneTransition;
@@ -571,14 +580,14 @@ public class Application implements Behavior {
      * The function sets the value of a variable "toChangeScene" to a given Scene object.
      *
      * @param toChangeScene toChangeScene is a variable of type Scene that represents the scene that the current scene will
-     * change to. This method sets the value of the toChangeScene variable to the passed in Scene object.
+     *                      change to. This method sets the value of the toChangeScene variable to the passed in Scene object.
      */
     void setToChangeScene(Scene toChangeScene) {
         this.toChangeScene = toChangeScene;
     }
 
     /**
-     * This function checks if a specific key is being pressed by the user.
+     * This function checks if a specific key is currently being pressed.
      *
      * @param key The parameter "key" is of type Input.Key, which is an enum that represents a specific key on a standard
      *            keyboard. This method checks if the key is currently being pressed down by the user.
@@ -587,7 +596,11 @@ public class Application implements Behavior {
      * returns true if it does, false otherwise.
      */
     public boolean isPressingKey(Input.Key key) {
-        return getInputManager().getPressingKeys().contains(key);
+        if (checkKey == null && inputManager != null)
+            return getInputManager().getPressingKeys().contains(key);
+        if (checkKey != null && inputManager == null)
+            return checkKey.checkKey(key);
+        return false;
     }
 
     /**
@@ -600,7 +613,11 @@ public class Application implements Behavior {
      * currently being pressed or not. It returns `true` if the button is being pressed and `false` otherwise.
      */
     public boolean isPressingButton(Input.MouseButton button) {
-        return getInputManager().getPressingMouseButtons().contains(button);
+        if (checkKey == null && inputManager != null)
+            return getInputManager().getPressingMouseButtons().contains(button);
+        if (checkKey != null && inputManager == null)
+            return checkKey.checkMouseButton(button);
+        return false;
     }
 
     /**

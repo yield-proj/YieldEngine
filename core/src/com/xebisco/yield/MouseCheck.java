@@ -16,19 +16,17 @@
 
 package com.xebisco.yield;
 
-import java.util.Collection;
-
-public interface InputManager extends MouseCheck {
+public interface MouseCheck {
     /**
-     * The function returns a collection of currently pressed keys.
+     * The function returns the x-coordinate of the mouse cursor.
      *
-     * @return A collection of currently pressing keys is being returned.
+     * @return A double value representing the x-coordinate of the mouse cursor.
      */
-    Collection<Input.Key> getPressingKeys();
+    double getMouseX();
     /**
-     * This function returns a collection of currently pressing mouse buttons.
+     * The function returns the y-coordinate of the mouse cursor.
      *
-     * @return A collection of currently pressing mouse buttons.
+     * @return A double value representing the Y-coordinate of the mouse cursor on the screen.
      */
-    Collection<Input.MouseButton> getPressingMouseButtons();
+    double getMouseY();
 }

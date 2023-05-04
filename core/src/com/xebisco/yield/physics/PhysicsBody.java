@@ -38,6 +38,7 @@ public class PhysicsBody extends ComponentBehavior {
     public void onStart() {
         BodyDef def = new BodyDef();
         def.position = Global.toVec2(getTransform().getPosition().divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm())));
+        def.angle = (float) Math.toRadians(getTransform().getzRotation());
         def.userData = getEntity();
         setB2Body(getApplication().getScene().getPhysicsSystem().getB2World().createBody(def));
     }
