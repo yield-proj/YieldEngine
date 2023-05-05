@@ -48,15 +48,6 @@ public interface TextureManager {
     void setPixel(Object imageRef, Color color, int x, int y);
 
     /**
-     * The function "getPixels" takes an image reference as input and returns an array of integers representing the pixels
-     * of the image.
-     *
-     * @param imageRef The imageRef parameter is an object that represents a reference to an image.
-     * @return An array of integers representing the pixels of the `imageRef`.
-     */
-    int[] getPixels(Object imageRef);
-
-    /**
      * The function returns an array of integers representing the pixel values at a specified (x,y) coordinate of an image.
      *
      * @param imageRef The image reference is an object that represents the image from which we want to retrieve the pixel

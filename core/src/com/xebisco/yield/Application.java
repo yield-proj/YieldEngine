@@ -43,8 +43,8 @@ public class Application implements Behavior {
     private final Size2D resolution;
     private final Function<Scene, Void> renderer;
     private final AudioManager audioManager;
-    private final Texture controllerTexture;
-    private final Texture translucentControllerTexture;
+    private Texture controllerTexture;
+    private Texture translucentControllerTexture;
     private final ViewportZoomScale viewportZoomScale;
     private final Function<Throwable, Void> exceptionThrowFunction = throwable -> {
         throwable.printStackTrace();
@@ -150,33 +150,15 @@ public class Application implements Behavior {
         axes.add(new Axis("RightBumper", Input.Key.VK_F, null, null, null));
         axes.add(new Axis("Run", Input.Key.VK_SHIFT, null, null, null));
         axes.add(new Axis("LeftBumper", Input.Key.VK_G, null, null, null));
-        if (textureManager != null) {
-            controllerTexture = new Texture("controller.png", textureManager);
-            translucentControllerTexture = new Texture("controller.png", textureManager);
-            translucentControllerTexture.process(pixel -> {
-                pixel.getColor().setAlpha(pixel.getColor().getAlpha() - .6);
-                return pixel;
-            });
-        } else {
-            controllerTexture = null;
-            translucentControllerTexture = null;
-        }
-        try {
-            controllerManager = new ControllerManager(4);
-        } catch (Exception | UnsatisfiedLinkError ignore) {
-            controllerManager = null;
-            System.err.println("WARNING: Cannot connect to Gamepad library");
-        }
-        if (controllerManager != null)
-            controllerManager.initSDLGamepad();
     }
 
     @Override
     public void onStart() {
+        platformGraphics.init(platformInit);
         defaultFont = new Font("OpenSans-Regular.ttf", 48, fontLoader);
         if (platformInit.getWindowIcon() == null)
             platformInit.setWindowIcon(new Texture(platformInit.getWindowIconPath(), getTextureManager()));
-        platformGraphics.init(platformInit);
+        platformGraphics.updateWindowIcon(platformInit.getWindowIcon());
         for (int i = 0; i < 4; i++) {
             String a = String.valueOf((i + 1));
             if (i == 0)
@@ -206,6 +188,25 @@ public class Application implements Behavior {
         if (textureManager != null) {
             defaultTexture = new Texture("yieldIcon.png", textureManager);
         }
+        if (textureManager != null) {
+            controllerTexture = new Texture("controller.png", textureManager);
+            translucentControllerTexture = new Texture("controller.png", textureManager);
+            translucentControllerTexture.process(pixel -> {
+                pixel.getColor().setAlpha(pixel.getColor().getAlpha() - .6);
+                return pixel;
+            });
+        } else {
+            controllerTexture = null;
+            translucentControllerTexture = null;
+        }
+        try {
+            controllerManager = new ControllerManager(4);
+        } catch (Exception | UnsatisfiedLinkError ignore) {
+            controllerManager = null;
+            System.err.println("WARNING: Cannot connect to Gamepad library");
+        }
+        if (controllerManager != null)
+            controllerManager.initSDLGamepad();
     }
 
     /**
@@ -825,5 +826,21 @@ public class Application implements Behavior {
      */
     public void setToggleFullScreen(ToggleFullScreen toggleFullScreen) {
         this.toggleFullScreen = toggleFullScreen;
+    }
+
+    public CheckKey getCheckKey() {
+        return checkKey;
+    }
+
+    public MouseCheck getMouseCheck() {
+        return mouseCheck;
+    }
+
+    public void setControllerTexture(Texture controllerTexture) {
+        this.controllerTexture = controllerTexture;
+    }
+
+    public void setTranslucentControllerTexture(Texture translucentControllerTexture) {
+        this.translucentControllerTexture = translucentControllerTexture;
     }
 }

@@ -28,6 +28,14 @@ public interface PlatformGraphics extends Disposable {
      * @param platformInit This is a struct that contains the parameters that will be used to init the graphics.
      */
     void init(PlatformInit platformInit);
+
+    /**
+     * This function updates the icon the window using a texture.
+     *
+     * @param icon The "icon" parameter is a Texture object that represents the image that will be used as the icon for the
+     * window. This function updates the icon of the window to the specified texture.
+     */
+    void updateWindowIcon(Texture icon);
     /**
      * This function is called once per frame.
      * This is the first function called in render, it's used to prepare the graphics for the incoming draw calls.

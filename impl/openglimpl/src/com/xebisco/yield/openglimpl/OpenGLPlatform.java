@@ -15,10 +15,26 @@
  */
 
 package com.xebisco.yield.openglimpl;
+/*
+ * Copyright [2022-2023] [Xebisco]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import com.xebisco.yield.*;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.stb.STBTTFontinfo;
@@ -38,6 +54,8 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
     private boolean setupThread = true;
     private PlatformInit platformInit;
 
+    private ImageLoader imageLoader = new ImageLoader();
+
     private Vector2D camera = new Vector2D();
 
     @Override
@@ -53,6 +71,18 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
         if (!glfwInit()) {
             throw new IllegalStateException("Unable to initialize GLFW");
         }
+
+        updateWindow();
+    }
+
+    @Override
+    public void updateWindowIcon(Texture icon) {
+        GLFWImage.Buffer gb = GLFWImage.create(1);
+        GLFWImage iconGI = GLFWImage.create().set((int) icon.getSize().getWidth(), (int) icon.getSize().getWidth(), ((Image) icon.getImageRef()).getPixels());
+        gb.put(0, iconGI);
+        glfwSetWindowIcon(windowID, gb);
+        gb.close();
+        iconGI.close();
     }
 
     public void updateWindow() {
@@ -95,8 +125,9 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
     public void frame() {
         if (setupThread) {
             setupThread = false;
-            updateWindow();
             GL.createCapabilities();
+
+            glEnable(GL_TEXTURE_2D);
 
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
@@ -127,9 +158,7 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
     @Override
     public void draw(DrawInstruction drawInstruction) {
-        Vector2D[] vertices;
-
-        double w, h, x = drawInstruction.getPosition().getX() - camera.getX(), y = drawInstruction.getPosition().getY() - camera.getY();
+        float w, h, x = (float) (drawInstruction.getPosition().getX() - camera.getX()), y = (float) (drawInstruction.getPosition().getY() - camera.getY());
 
         glLoadIdentity();
 
@@ -139,56 +168,64 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
                 (float) drawInstruction.getInnerColor().getBlue(),
                 (float) drawInstruction.getInnerColor().getAlpha()
         );
-        glTranslatef((float) x, (float) y, 0);
+        glTranslatef(x, y, 0);
 
         glRotatef((float) drawInstruction.getRotation(), 0, 0, 1);
 
         switch (drawInstruction.getType()) {
             case RECTANGLE:
-                vertices = new Vector2D[4];
-                w = drawInstruction.getSize().getWidth() / 2;
-                h = drawInstruction.getSize().getHeight() / 2;
+                w = (float) (drawInstruction.getSize().getWidth() / 2);
+                h = (float) (drawInstruction.getSize().getHeight() / 2);
 
-                vertices[0] = new Vector2D(-w, h);
-                vertices[1] = new Vector2D(w, h);
-                vertices[2] = new Vector2D(w, -h);
-                vertices[3] = new Vector2D(-w, -h);
+                glBegin(GL_QUADS);
 
-                glRotatef((float) drawInstruction.getRotation(), 0, 0, 1);
-                drawPolygon(vertices);
+                glVertex2f(-w, h);
+                glVertex2f(w, h);
+                glVertex2f(w, -h);
+                glVertex2f(-w, -h);
 
                 break;
             case EQUILATERAL_TRIANGLE:
-                vertices = new Vector2D[3];
-                w = drawInstruction.getSize().getWidth() / 2;
-                h = drawInstruction.getSize().getHeight() / 2;
+                w = (float) (drawInstruction.getSize().getWidth() / 2);
+                h = (float) (drawInstruction.getSize().getHeight() / 2);
 
+                glBegin(GL_POLYGON);
 
-                vertices[0] = new Vector2D(-w, -h);
-                vertices[1] = new Vector2D(0, h);
-                vertices[2] = new Vector2D(w, -h);
+                glVertex2f(-w, -h);
+                glVertex2f(0, h);
+                glVertex2f(w, -h);
 
-                drawPolygon(vertices);
                 break;
             case OVAL:
-                w = drawInstruction.getSize().getWidth();
-                h = drawInstruction.getSize().getHeight();
-                vertices = new Vector2D[100];
-                double ap = 6.28318 / (double) vertices.length;
+                w = (float) drawInstruction.getSize().getWidth();
+                h = (float) drawInstruction.getSize().getHeight();
+                double ap = 6.28318 / 60.;
                 double theta = 0.;
-                for (int i = 0; i < vertices.length; i++) {
-                    vertices[i] = new Vector2D(w / 2. * Math.cos(theta), h / 2. * Math.sin(theta));
+
+                glBegin(GL_POLYGON);
+
+                for (int i = 0; i < 60; i++) {
+                    glVertex2f((float) (w / 2f * Math.cos(theta)), (float) (h / 2f * Math.sin(theta)));
                     theta += ap;
                 }
 
-                drawPolygon(vertices);
-        }
-    }
+                break;
+            case IMAGE:
+                w = (float) (drawInstruction.getSize().getWidth() / 2);
+                h = (float) (drawInstruction.getSize().getHeight() / 2);
 
-    private void drawPolygon(Vector2D[] vertices) {
-        glBegin(GL_POLYGON);
-        for (Vector2D vertex : vertices) {
-            glVertex2f((float) vertex.getX(), (float) vertex.getY());
+                glBindTexture(GL_TEXTURE_2D, ((Image) drawInstruction.getRenderRef()).getId());
+
+                glBegin(GL_QUADS);
+                glTexCoord2f(0, 0);
+                glVertex2f(-w, h);
+                glTexCoord2f(1, 0);
+                glVertex2f(w, h);
+                glTexCoord2f(1, 1);
+                glVertex2f(w, -h);
+                glTexCoord2f(0, 1);
+                glVertex2f(-w, -h);
+                break;
         }
         glEnd();
     }
@@ -253,7 +290,8 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
     @Override
     public Object loadTexture(Texture texture) {
-        return null;
+
+        return imageLoader.load(texture.getInputStream());
     }
 
     @Override
@@ -267,23 +305,27 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
     }
 
     @Override
-    public int[] getPixels(Object imageRef) {
-        return new int[0];
-    }
-
-    @Override
     public int[] getPixel(Object imageRef, int x, int y) {
-        return new int[0];
+        int[] pixel = new int[4];
+
+        int index = (x + y * ((Image) imageRef).getWidth()) * 4;
+
+        pixel[0] = ((Image) imageRef).getPixels().get(index) & 0xFF;
+        pixel[1] = ((Image) imageRef).getPixels().get(index + 1) & 0xFF;
+        pixel[2] = ((Image) imageRef).getPixels().get(index + 2) & 0xFF;
+        pixel[3] = ((Image) imageRef).getPixels().get(index + 3) & 0xFF;
+
+        return pixel;
     }
 
     @Override
     public int getImageWidth(Object imageRef) {
-        return 0;
+        return ((Image) imageRef).getWidth();
     }
 
     @Override
     public int getImageHeight(Object imageRef) {
-        return 0;
+        return ((Image) imageRef).getHeight();
     }
 
     @Override

@@ -153,12 +153,6 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     }
 
     @Override
-    public int[] getPixels(Object imageRef) {
-        BufferedImage image = (BufferedImage) imageRef;
-        return image.getRaster().getPixels(0, 0, image.getWidth(), image.getHeight(), new int[image.getWidth() * image.getHeight() * 4]);
-    }
-
-    @Override
     public int[] getPixel(Object imageRef, int x, int y) {
         BufferedImage image = (BufferedImage) imageRef;
         return image.getRaster().getPixel(x, y, new int[4]);
@@ -659,6 +653,11 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         startFrame();
     }
 
+    @Override
+    public void updateWindowIcon(Texture icon) {
+        frame.setIconImage((Image) icon.getImageRef());
+    }
+
     public void startFrame() {
         verticalSync = platformInit.isVerticalSync();
         if (frame == null) {
@@ -679,7 +678,6 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setTitle(platformInit.getTitle());
         frame.setLocationRelativeTo(null);
-        frame.setIconImage((Image) platformInit.getWindowIcon().getImageRef());
         frame.setVisible(true);
         if (platformInit.isFullscreen() && device.isFullScreenSupported()) {
             device.setFullScreenWindow(frame);
