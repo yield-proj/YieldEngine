@@ -28,7 +28,7 @@ public class DrawInstruction {
     private Size2D size;
     private Object renderRef;
     private Font font;
-    private boolean filled, uiLayer;
+    private boolean filled;
     private Color innerColor, borderColor;
     private double borderThickness, rotation;
     /**
@@ -209,24 +209,5 @@ public class DrawInstruction {
      */
     public void setFont(Font font) {
         this.font = font;
-    }
-
-    /**
-     * The function returns a boolean value indicating whether the current layer is a user interface layer or not.
-     *
-     * @return The method is returning a boolean value, which is determined by the value of the variable `uiLayer`.
-     */
-    public boolean isUiLayer() {
-        return uiLayer;
-    }
-
-    /**
-     * This function sets the value of a boolean variable called "uiLayer".
-     *
-     * @param uiLayer The parameter `uiLayer` is a boolean variable that is used to set the value of the `uiLayer` instance
-     * variable of the class. It determines whether the current draw instruction is in the user interface layer or not.
-     */
-    public void setUiLayer(boolean uiLayer) {
-        this.uiLayer = uiLayer;
     }
 }

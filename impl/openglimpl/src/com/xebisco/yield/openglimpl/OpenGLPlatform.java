@@ -131,7 +131,7 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
-            glOrtho(-platformInit.getResolution().getWidth() / 2, platformInit.getResolution().getWidth() / 2, -platformInit.getResolution().getHeight() / 2, platformInit.getResolution().getHeight() / 2, 0.0f, 1.0f);
+            glOrtho(-platformInit.getViewportSize().getWidth() / 2, platformInit.getViewportSize().getWidth() / 2, -platformInit.getViewportSize().getHeight() / 2, platformInit.getViewportSize().getHeight() / 2, 0.0f, 1.0f);
             glMatrixMode(GL_MODELVIEW);
 
             glClearColor(0, 0, 0, 1);
@@ -141,7 +141,7 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
         if (platformInit.isStretchViewport()) {
             glViewport(0, 0, (int) windowSize.getWidth(), (int) windowSize.getHeight());
         } else {
-            Size2D viewport = Global.onSizeBoundary(platformInit.getResolution(), windowSize);
+            Size2D viewport = Global.onSizeBoundary(platformInit.getViewportSize(), windowSize);
 
             glViewport((int) (windowSize.getWidth() / 2 - viewport.getWidth() / 2), (int) (windowSize.getHeight() / 2 - viewport.getHeight() / 2), (int) viewport.getWidth(), (int) viewport.getHeight());
         }

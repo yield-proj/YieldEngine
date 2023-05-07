@@ -42,12 +42,12 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     private final Dimension bounds = new Dimension();
     private final MouseButtonAction addBtnAction = pressingMouseButtons::add;
     private final MouseButtonAction removeBtnAction = pressingMouseButtons::remove;
-    private Image gameBuffer, uiBuffer, vBuffer;
+    private Image viewBuffer;
     private GraphicsDevice device;
     private GraphicsConfiguration graphicsConfiguration;
     private JComponent canvas;
     private JFrame frame;
-    private Graphics2D graphics, uiGraphics;
+    private Graphics2D graphics;
     private AffineTransform defaultTransform = new AffineTransform();
     private boolean stretch, verticalSync;
 
@@ -185,9 +185,9 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     @Override
     public Texture printScreenTexture() {
-        BufferedImage image = graphicsConfiguration.createCompatibleImage(gameBuffer.getWidth(canvas), gameBuffer.getHeight(canvas), Transparency.TRANSLUCENT);
+        BufferedImage image = graphicsConfiguration.createCompatibleImage(viewBuffer.getWidth(canvas), viewBuffer.getHeight(canvas), Transparency.TRANSLUCENT);
         Graphics g = image.getGraphics();
-        g.drawImage(gameBuffer, 0, 0, canvas);
+        g.drawImage(viewBuffer, 0, 0, canvas);
         g.dispose();
         return new Texture(image, null, this);
     }
@@ -615,11 +615,19 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     @Override
     public void dispose() {
-        gameBuffer.flush();
-        uiBuffer.flush();
+        viewBuffer.flush();
         canvas = null;
         frame.dispose();
         frame = null;
+    }
+
+    private void updateViewBuffer() {
+        viewBuffer = graphicsConfiguration.createCompatibleVolatileImage(
+                canvas.getWidth(),
+                canvas.getHeight(),
+                Transparency.OPAQUE
+        );
+        viewBuffer.setAccelerationPriority(1);
     }
 
     @Override
@@ -628,29 +636,12 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         Toolkit.getDefaultToolkit().setDynamicLayout(false);
         stretch = platformInit.isStretchViewport();
 
-        vBuffer = graphicsConfiguration.createCompatibleVolatileImage(
-                (int) platformInit.getResolution().getWidth(),
-                (int) platformInit.getResolution().getHeight(),
-                Transparency.OPAQUE
-        );
-        vBuffer.setAccelerationPriority(1);
 
         canvas = new SwingImplPanel();
 
-        gameBuffer = graphicsConfiguration.createCompatibleVolatileImage(
-                (int) platformInit.getGameResolution().getWidth(),
-                (int) platformInit.getGameResolution().getHeight(),
-                Transparency.OPAQUE
-        );
-        gameBuffer.setAccelerationPriority(1);
-        uiBuffer = graphicsConfiguration.createCompatibleVolatileImage(
-                (int) platformInit.getUiResolution().getWidth(),
-                (int) platformInit.getUiResolution().getHeight(),
-                Transparency.TRANSLUCENT
-        );
-        uiBuffer.setAccelerationPriority(1);
-
         startFrame();
+
+        updateViewBuffer();
     }
 
     @Override
@@ -687,11 +678,11 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     @Override
     public void frame() {
-        graphics = (Graphics2D) gameBuffer.getGraphics();
-        uiGraphics = (Graphics2D) uiBuffer.getGraphics();
-        int w = uiBuffer.getWidth(canvas), h = uiBuffer.getHeight(canvas);
-        uiGraphics.setBackground(TRANSPARENT);
-        uiGraphics.clearRect(0, 0, w, h);
+        int w = viewBuffer.getWidth(canvas), h = viewBuffer.getHeight(canvas);
+        if(w != canvas.getWidth() || h != canvas.getHeight()) {
+
+        }
+        graphics = (Graphics2D) viewBuffer.getGraphics();
         defaultTransform = graphics.getTransform();
         PointerInfo pointerInfo = MouseInfo.getPointerInfo();
         if (pointerInfo != null) {
@@ -705,20 +696,10 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     @Override
     public void draw(DrawInstruction drawInstruction) {
-        int w = (int) (drawInstruction.getSize().getWidth()),
-                h = (int) (drawInstruction.getSize().getHeight()),
-                x = (int) (drawInstruction.getPosition().getX() - w / 2.0 - camera.getX()),
-                y = (int) (-drawInstruction.getPosition().getY() - h / 2.0 + camera.getY());
-        Graphics2D graphics;
-        if (drawInstruction.isUiLayer()) {
-            graphics = uiGraphics;
-            x += uiBuffer.getWidth(canvas) / 2;
-            y += uiBuffer.getHeight(canvas) / 2;
-        } else {
-            graphics = this.graphics;
-            x += gameBuffer.getWidth(canvas) / 2;
-            y += gameBuffer.getHeight(canvas) / 2;
-        }
+        int w = (int) (drawInstruction.getSize().getWidth() / platformInit.getViewportSize().getWidth() * canvas.getWidth()),
+                h = (int) (drawInstruction.getSize().getHeight() / platformInit.getViewportSize().getWidth() * canvas.getWidth()),
+                x = (int) ((drawInstruction.getPosition().getX() - w / 2.0 - camera.getX()) / platformInit.getViewportSize().getWidth() * canvas.getWidth()),
+                y = (int) ((-drawInstruction.getPosition().getY() - h / 2.0 + camera.getY()) / platformInit.getViewportSize().getHeight() * canvas.getHeight());
         if (drawInstruction.getRotation() != 0)
             graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), x + w / 2.0, y + h / 2.0);
         switch (drawInstruction.getType()) {
@@ -804,25 +785,11 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     @Override
     public void conclude() {
         graphics.dispose();
-        uiGraphics.dispose();
-        Graphics g = vBuffer.getGraphics();
-        int w = vBuffer.getWidth(canvas), h = vBuffer.getHeight(canvas);
-        g.drawImage(gameBuffer, (int) ((-w * zoomScale.getX() + w) / 2.0), (int) ((-h * zoomScale.getY() + h) / 2.0), (int) (w * zoomScale.getX()), (int) (h * zoomScale.getY()), canvas);
-        g.drawImage(uiBuffer, 0, 0, w, h, canvas);
-        g.dispose();
         if (verticalSync)
             canvas.paintImmediately(0, 0, canvas.getWidth(), canvas.getHeight());
         else
             frame.repaint();
         Toolkit.getDefaultToolkit().sync();
-    }
-
-    public Image getGameBuffer() {
-        return gameBuffer;
-    }
-
-    public void setGameBuffer(Image gameBuffer) {
-        this.gameBuffer = gameBuffer;
     }
 
     public GraphicsDevice getDevice() {
@@ -1003,14 +970,6 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         return false;
     }
 
-    public Image getUiBuffer() {
-        return uiBuffer;
-    }
-
-    public void setUiBuffer(Image uiBuffer) {
-        this.uiBuffer = uiBuffer;
-    }
-
     public Vector2D getMousePosition() {
         return mousePosition;
     }
@@ -1092,8 +1051,8 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
             g.fillRect(0, 0, getWidth(), getHeight());
             if (stretch)
                 bounds.setSize(getWidth(), getHeight());
-            else bounds.setSize(onSizeBoundary(vBuffer, getSize()));
-            g.drawImage(vBuffer, (getWidth() - bounds.width) / 2, (getHeight() - bounds.height) / 2, bounds.width, bounds.height, canvas);
+            else bounds.setSize(onSizeBoundary(viewBuffer, getSize()));
+            g.drawImage(viewBuffer, (getWidth() - bounds.width) / 2, (getHeight() - bounds.height) / 2, bounds.width, bounds.height, canvas);
             g.dispose();
         }
     }

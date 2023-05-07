@@ -36,12 +36,11 @@ public class BasicChangeTransition {
             di.setFilled(true);
             di.setInnerColor(new Color(Colors.BLACK));
             di.setPosition(new Vector2D());
-            di.setUiLayer(true);
         }
 
         @Override
         public void render(PlatformGraphics graphics) {
-            di.setSize(getApplication().getPlatformInit().getUiResolution());
+            di.setSize(getApplication().getPlatformInit().getViewportSize());
             di.getInnerColor().setAlpha(getPassedTime() / getTimeToWait());
             if (di.getInnerColor().getAlpha() == 1) {
                 setFinished(true);
@@ -66,12 +65,11 @@ public class BasicChangeTransition {
             di.setFilled(true);
             di.setInnerColor(new Color(Colors.BLACK));
             di.setPosition(new Vector2D());
-            di.setUiLayer(true);
         }
 
         @Override
         public void render(PlatformGraphics graphics) {
-            di.setSize(getApplication().getPlatformInit().getUiResolution());
+            di.setSize(getApplication().getPlatformInit().getViewportSize());
             di.getInnerColor().setAlpha(1 - getPassedTime() / timeAfter);
             if (di.getInnerColor().getAlpha() == 0) {
                 setFinished(true);
@@ -95,13 +93,12 @@ public class BasicChangeTransition {
             di.setType(DrawInstruction.Type.RECTANGLE);
             di.setFilled(true);
             di.setInnerColor(new Color(Colors.BLACK));
-            di.setUiLayer(true);
         }
 
         @Override
         public void render(PlatformGraphics graphics) {
             di.setPosition(graphics.getCamera());
-            di.setSize(getApplication().getPlatformInit().getUiResolution());
+            di.setSize(getApplication().getPlatformInit().getViewportSize());
             double a = getPassedTime() / timeAfter;
             if (a > 1) {
                 di.getInnerColor().setAlpha(1 - (getPassedTime() - getTimeToWait()) / timeAfter);
@@ -126,7 +123,7 @@ public class BasicChangeTransition {
         @Override
         public void render(PlatformGraphics graphics) {
             super.render(graphics);
-            double h = getApplication().getPlatformInit().getUiResolution().getHeight();
+            double h = getApplication().getPlatformInit().getViewportSize().getHeight();
             double y = getPassedTime() / getTimeToWait() * (h + sliderUp.getSize().getHeight() + sliderDown.getSize().getHeight()) - h - sliderUp.getSize().getHeight();
             slideRender(graphics, y, di, getApplication(), sliderUp, sliderDown);
         }
@@ -143,7 +140,7 @@ public class BasicChangeTransition {
         @Override
         public void render(PlatformGraphics graphics) {
             super.render(graphics);
-            double h = getApplication().getPlatformInit().getUiResolution().getHeight();
+            double h = getApplication().getPlatformInit().getViewportSize().getHeight();
             double y = h + sliderDown.getSize().getHeight() - getPassedTime() / getTimeToWait() * (h + sliderUp.getSize().getHeight() + sliderDown.getSize().getHeight());
             slideRender(graphics, y, di, getApplication(), sliderUp, sliderDown);
         }
@@ -156,7 +153,6 @@ public class BasicChangeTransition {
 
         public Slide(double slideTime, boolean stopUpdatingScene) {
             super(slideTime / 2, stopUpdatingScene);
-            di.setUiLayer(true);
         }
 
         @Override
@@ -185,21 +181,21 @@ public class BasicChangeTransition {
      * @param sliderDown  A Texture object representing the image of the slider when it is in the down position.
      */
     private static void slideRender(PlatformGraphics graphics, double y, DrawInstruction di, Application application, Texture sliderUp, Texture sliderDown) {
-        di.setSize(application.getPlatformInit().getUiResolution());
+        di.setSize(application.getPlatformInit().getViewportSize());
         di.setType(DrawInstruction.Type.RECTANGLE);
         di.setFilled(true);
         di.setInnerColor(new Color(Colors.BLACK));
         di.setPosition(new Vector2D(0, y));
         graphics.draw(di);
-        di.setSize(new Size2D(application.getPlatformInit().getUiResolution().getWidth(), sliderUp.getSize().getHeight()));
+        di.setSize(new Size2D(application.getPlatformInit().getViewportSize().getWidth(), sliderUp.getSize().getHeight()));
         di.setRenderRef(sliderUp.getImageRef());
         di.setType(DrawInstruction.Type.IMAGE);
-        di.setPosition(new Vector2D(0, y + application.getPlatformInit().getUiResolution().getHeight() / 2 + di.getSize().getHeight() / 2));
+        di.setPosition(new Vector2D(0, y + application.getPlatformInit().getViewportSize().getHeight() / 2 + di.getSize().getHeight() / 2));
         graphics.draw(di);
-        di.setSize(new Size2D(application.getPlatformInit().getUiResolution().getWidth(), sliderDown.getSize().getHeight()));
+        di.setSize(new Size2D(application.getPlatformInit().getViewportSize().getWidth(), sliderDown.getSize().getHeight()));
         di.setRenderRef(sliderDown.getImageRef());
         di.setType(DrawInstruction.Type.IMAGE);
-        di.setPosition(new Vector2D(0, y - application.getPlatformInit().getUiResolution().getHeight() / 2 - di.getSize().getHeight() / 2));
+        di.setPosition(new Vector2D(0, y - application.getPlatformInit().getViewportSize().getHeight() / 2 - di.getSize().getHeight() / 2));
         graphics.draw(di);
     }
 }

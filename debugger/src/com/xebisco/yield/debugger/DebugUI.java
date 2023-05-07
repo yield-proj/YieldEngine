@@ -27,7 +27,6 @@ public class DebugUI extends ComponentBehavior {
 
     @Override
     public void onStart() {
-        inst.setUiLayer(true);
         inst.setFont(getApplication().getDefaultFont());
     }
 
@@ -52,7 +51,7 @@ public class DebugUI extends ComponentBehavior {
             inst.setBorderColor(null);
             inst.setBorderThickness(0);
             inst.setPosition(new Vector2D(0, 0));
-            inst.setSize(getApplication().getPlatformInit().getUiResolution());
+            inst.setSize(getApplication().getPlatformInit().getViewportSize());
             graphics.draw(inst);
 
 

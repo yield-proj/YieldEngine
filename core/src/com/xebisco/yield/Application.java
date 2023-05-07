@@ -40,7 +40,7 @@ public class Application implements Behavior {
     private final DrawInstruction drawInstruction = new DrawInstruction();
     private final Set<Axis> axes = new HashSet<>();
     private final ApplicationManager applicationManager;
-    private final Size2D resolution;
+    private final Size2D viewportSize;
     private final Function<Scene, Void> renderer;
     private final AudioManager audioManager;
     private Texture controllerTexture;
@@ -117,7 +117,7 @@ public class Application implements Behavior {
             drawInstruction.setInnerColor(scene.getBackGroundColor());
             drawInstruction.setType(DrawInstruction.Type.RECTANGLE);
             drawInstruction.setPosition(platformGraphics.getCamera());
-            drawInstruction.setSize(platformInit.getGameResolution());
+            drawInstruction.setSize(platformInit.getViewportSize());
             platformGraphics.draw(drawInstruction);
             try {
                 for (int i = 0; i < scene.getEntities().size(); i++) {
@@ -135,7 +135,7 @@ public class Application implements Behavior {
             }
             return null;
         };
-        resolution = new ImmutableSize2D(platformInit.getGameResolution().getWidth(), platformInit.getGameResolution().getHeight());
+        viewportSize = new ImmutableSize2D(platformInit.getWindowSize().getWidth(), platformInit.getViewportSize().getHeight());
         axes.add(new Axis(Global.HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
         axes.add(new Axis(Global.VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
         axes.add(new Axis("HorizontalPad", Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
@@ -355,7 +355,7 @@ public class Application implements Behavior {
                 } catch (ConcurrentModificationException ignore) {
                 }
 
-                scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex));
+                scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex).reversed());
             }
 
 
@@ -399,7 +399,7 @@ public class Application implements Behavior {
     }
 
     /**
-     * This Java function returns the value of an axis with a given name, or throws an exception if no axis with that name
+     * This function returns the value of an axis with a given name, or throws an exception if no axis with that name
      * exists.
      *
      * @param name The parameter "name" is a String representing the name of the axis that the method is trying to retrieve
@@ -474,12 +474,12 @@ public class Application implements Behavior {
     }
 
     /**
-     * The function returns the resolution as a Size2D object.
+     * The function returns the size of the viewport as a Size2D object.
      *
-     * @return The method is returning an object of type `Size2D`, which represents the resolution of this application.
+     * @return The method is returning an object of type `Size2D`.
      */
-    public Size2D getResolution() {
-        return resolution;
+    public Size2D getViewportSize() {
+        return viewportSize;
     }
 
     /**
