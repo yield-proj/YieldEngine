@@ -106,11 +106,4 @@ public interface TextureManager {
      * @return The method `scaledTexture` is returning a `Texture` object.
      */
     Texture scaledTexture(Object imageRef, int w, int h);
-
-    /**
-     * This function returns a texture representing the current screen.
-     *
-     * @return A texture object is being returned.
-     */
-    Texture printScreenTexture();
 }

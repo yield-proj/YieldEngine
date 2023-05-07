@@ -77,4 +77,11 @@ public interface PlatformGraphics extends Disposable {
      * @param camera The parameter "camera" is a Vector2D object that represents the position of the camera in a 2D space.
      */
     void setCamera(Vector2D camera);
+
+    /**
+     * This function returns a texture representing the current screen.
+     *
+     * @return A texture object is being returned.
+     */
+    Texture printScreenTexture();
 }
