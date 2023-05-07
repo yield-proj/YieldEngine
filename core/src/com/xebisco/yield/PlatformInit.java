@@ -20,7 +20,7 @@ package com.xebisco.yield;
  * It's a class that holds the initial configuration of the specific platform.
  */
 public class PlatformInit {
-    private Size2D gameResolution = new Size2D(1280, 720), resolution = new Size2D(1280, 720), uiResolution = new Size2D(1280, 720), windowSize = new Size2D(1280, 720);
+    private Size2D viewportSize = new Size2D(1280, 720), windowSize = new Size2D(1280, 720);
     private String title = "Yield Window";
     private int startPhysicsPpm = 16;
     private boolean fullscreen, undecorated, stretchViewport, verticalSync;
@@ -138,58 +138,22 @@ public class PlatformInit {
     }
 
     /**
-     * The function returns the UI resolution as a Size2D object.
+     * The function returns the size of the viewport as a Size2D object.
      *
      * @return The method is returning an object of type `Size2D`.
      */
-    public Size2D getUiResolution() {
-        return uiResolution;
+    public Size2D getViewportSize() {
+        return viewportSize;
     }
 
     /**
-     * This function sets the UI resolution to a specified Size2D object.
+     * This function sets the viewport size of the application.
      *
-     * @param uiResolution uiResolution is a variable of type Size2D that represents the resolution of the user interface
-     * (UI). It is used to set the size of the UI in two dimensions (width and height).
+     * @param viewportSize The parameter `viewportSize` is of type `Size2D`, which represents the size of a two-dimensional
+     * area. It is being used to set the size of a viewport, which is a visible area on a screen/window.
      */
-    public void setUiResolution(Size2D uiResolution) {
-        this.uiResolution = uiResolution;
-    }
-
-    /**
-     * The function returns the game resolution as a Size2D object.
-     *
-     * @return A Size2D object representing the game resolution is being returned.
-     */
-    public Size2D getGameResolution() {
-        return gameResolution;
-    }
-
-    /**
-     * This function sets the game resolution to a specified Size2D object.
-     *
-     * @param gameResolution The parameter `gameResolution` is of type `Size2D`, Is representing the dimensions of the game screen.
-     */
-    public void setGameResolution(Size2D gameResolution) {
-        this.gameResolution = gameResolution;
-    }
-
-    /**
-     * The function returns the resolution as a Size2D object.
-     *
-     * @return The method is returning an object of type `Size2D`, which represents the resolution of the window.
-     */
-    public Size2D getResolution() {
-        return resolution;
-    }
-
-    /**
-     * This function sets the resolution of a window to a specified Size2D value.
-     *
-     * @param resolution The parameter "resolution" is a Size2D object that represents the resolution of the window.
-     */
-    public void setResolution(Size2D resolution) {
-        this.resolution = resolution;
+    public void setViewportSize(Size2D viewportSize) {
+        this.viewportSize = viewportSize;
     }
 
     /**
