@@ -40,7 +40,7 @@ public final class Global {
                     (FontLoader) swingPlatform,
                     (TextureManager) swingPlatform,
                     (InputManager) swingPlatform,
-                    (CheckKey) swingPlatform,
+                    null,
                     (MouseCheck) swingPlatform,
                     (AudioManager) clipAudio,
                     (ViewportZoomScale) swingPlatform,
