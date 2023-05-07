@@ -16,6 +16,8 @@
 
 package com.xebisco.yield.openglimpl;
 
+import com.xebisco.yield.Texture;
+import com.xebisco.yield.TextureManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 
@@ -27,7 +29,7 @@ import java.nio.IntBuffer;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBImage.*;
 
-public class ImageLoader {
+public class ImageLoader implements TextureManager {
     public Image load(InputStream inputStream) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.mallocInt(1), height = stack.mallocInt(1), channels = stack.mallocInt(1);
@@ -61,5 +63,25 @@ public class ImageLoader {
         } catch (IOException e) {
             throw new ResourceException(e.getMessage());
         }
+    }
+
+    @Override
+    public Object loadTexture(Texture texture) {
+        return load(texture.getInputStream());
+    }
+
+    @Override
+    public void unloadTexture(Texture texture) {
+        glDeleteTextures(((Image) texture.getImageRef()).getId());
+    }
+
+    @Override
+    public int getImageWidth(Object imageRef) {
+        return ((Image) imageRef).getWidth();
+    }
+
+    @Override
+    public int getImageHeight(Object imageRef) {
+        return ((Image) imageRef).getHeight();
     }
 }

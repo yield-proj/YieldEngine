@@ -27,7 +27,7 @@ public class Main extends Scene {
         time.setTargetFPS(60);
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
-        Application application = new Application(applicationManager, Main.class, Global.swingPlatform(), platformInit);
+        Application application = new Application(applicationManager, Main.class, Global.openGLPlatform(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
     }

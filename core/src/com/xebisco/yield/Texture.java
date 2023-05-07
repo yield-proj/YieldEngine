@@ -51,34 +51,6 @@ public class Texture extends FileInput implements Disposable {
     }
 
     /**
-     * This function crops a texture image based on the given x, y, width, and height parameters.
-     *
-     * @param x The x-coordinate of the top-left corner of the rectangular area to be cropped from the original texture.
-     * @param y The "y" parameter in the "crop" method is the vertical coordinate of the top-left corner of the rectangular
-     * area to be cropped from the original image.
-     * @param w w stands for width. It is the width of the rectangular area that will be cropped from the original image.
-     * @param h h stands for height. It is the height of the rectangular area that will be cropped from the original image.
-     * @return A Texture object is being returned.
-     */
-    public Texture crop(int x, int y, int w, int h) {
-        return getTextureManager().cropTexture(imageRef, x, y, w, h);
-    }
-
-    /**
-     * This function returns a scaled texture with the specified width and height.
-     *
-     * @param w The width of the scaled texture in pixels.
-     * @param h The parameter "h" represents the desired height of the scaled texture.
-     * @return A Texture object is being returned. The method `scaled` takes in two parameters `w` and `h` which represent
-     * the width and height of the scaled texture. The method then calls the `scaledTexture` method of the texture manager,
-     * passing in the `imageRef` and the width and height parameters. The `scaledTexture` method returns a new Texture
-     * object that is a scaled version of
-     */
-    public Texture scaled(int w, int h) {
-        return getTextureManager().scaledTexture(imageRef, w, h);
-    }
-
-    /**
      * The `dispose()` method is used to release any resources or memory used by the `Texture` object.
      */
     @Override

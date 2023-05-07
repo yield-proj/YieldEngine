@@ -48,35 +48,4 @@ public interface TextureManager {
      * @return The texture height.
      */
     int getImageHeight(Object imageRef);
-
-    /**
-     * This function crops a texture from an image reference at the specified x, y coordinates with the specified width and
-     * height.
-     *
-     * @param imageRef The image reference or object that contains the texture to be cropped.
-     * @param x The x-coordinate of the top-left corner of the rectangular area to be cropped from the texture.
-     * @param y The parameter "y" in the method "cropTexture" represents the vertical starting position of the area to be
-     * cropped from the texture. It is the distance in pixels from the top edge of the texture to the top edge of the
-     * cropped area.
-     * @param w w stands for the width of the cropped texture. It determines how many pixels wide the cropped texture will
-     * be.
-     * @param h h stands for height. It is the height of the rectangular area that needs to be cropped from the texture.
-     * @return The method is returning a cropped texture of the input imageRef object, with the specified dimensions (x, y,
-     * w, h) for the cropped area. The returned value is of type Texture.
-     */
-    Texture cropTexture(Object imageRef, int x, int y, int w, int h);
-
-    /**
-     * The function scales an image to a specified width and height and returns a texture object.
-     *
-     * @param imageRef The image reference or object that needs to be scaled. It could be an image file or an object
-     * representing an image in memory.
-     * @param w The parameter "w" in the method signature represents the desired width of the scaled texture. It is an
-     * integer value that specifies the width in pixels.
-     * @param h The parameter "h" in the method signature "Texture scaledTexture(Object imageRef, int w, int h)" represents
-     * the desired height of the scaled texture. The method takes an image reference as input and returns a new texture
-     * object that is scaled to the specified width and height.
-     * @return The method `scaledTexture` is returning a `Texture` object.
-     */
-    Texture scaledTexture(Object imageRef, int w, int h);
 }

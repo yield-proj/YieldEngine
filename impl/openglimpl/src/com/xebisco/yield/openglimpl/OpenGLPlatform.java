@@ -58,8 +58,6 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, M
     private boolean setupThread = true;
     private PlatformInit platformInit;
 
-    private ImageLoader imageLoader = new ImageLoader();
-
     private Vector2D camera = new Vector2D();
 
     @Override

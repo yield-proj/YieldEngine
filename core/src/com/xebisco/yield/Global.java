@@ -27,15 +27,15 @@ public final class Global {
     public static final String HORIZONTAL = "Horizontal", VERTICAL = "Vertical";
 
     /**
-     * This function returns an instance of a ApplicationPlatform class for Java's Swing platform.
+     * This function returns an instance of ApplicationPlatform using classes from the com.xebisco.yield.swingimpl package.
      *
-     * @return An instance of the class `SwingPlatform` that implements the `PlatformGraphics` interface.
+     * @return An instance of the `ApplicationPlatform` class is being returned.
      */
     public static ApplicationPlatform swingPlatform() throws ClassNotFoundException {
-        Class<?> swingPlatformImplClass = Class.forName("com.xebisco.yield.swingimpl.SwingPlatform");
+        Class<?> swingPlatformClass = Class.forName("com.xebisco.yield.swingimpl.SwingPlatform");
         Class<?> clipAudioClass = Class.forName("com.xebisco.yield.swingimpl.ClipAudio");
         try {
-            Object swingPlatform = swingPlatformImplClass.getConstructor().newInstance(), clipAudio = clipAudioClass.getConstructor().newInstance();
+            Object swingPlatform = swingPlatformClass.getConstructor().newInstance(), clipAudio = clipAudioClass.getConstructor().newInstance();
             return new ApplicationPlatform(
                     (FontLoader) swingPlatform,
                     (TextureManager) swingPlatform,
@@ -55,18 +55,29 @@ public final class Global {
     }
 
     /**
-     * This function returns an instance of a class that implements the PlatformGraphics interface using OpenGL.
+     * This function returns an instance of ApplicationPlatform using classes from the com.xebisco.yield.openglimpl package.
      *
-     * @return The method is returning an instance of a class that implements the `PlatformGraphics` interface,
-     * specifically an instance of the `OpenGLPlatform` class.
+     * @return An instance of the `ApplicationPlatform` class is being returned.
      */
-    public static PlatformGraphics openGLPlatform() throws ClassNotFoundException {
-        //noinspection unchecked
-        Class<? extends PlatformGraphics> openGLPlatformImplClass = (Class<? extends PlatformGraphics>) Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
+    public static ApplicationPlatform openGLPlatform() throws ClassNotFoundException {
+        Class<?> openglPlatformClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
+        Class<?> imageLoaderClass = Class.forName("com.xebisco.yield.openglimpl.ImageLoader");
+        Class<?> openalAudioClass = Class.forName("com.xebisco.yield.openglimpl.OpenALAudio");
         try {
-            return openGLPlatformImplClass.getConstructor().newInstance();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
-                 IllegalAccessException e) {
+            Object openglPlatform = openglPlatformClass.getConstructor().newInstance(), imageLoader = imageLoaderClass.getConstructor().newInstance(), openalAudio = openalAudioClass.getConstructor().newInstance();
+            return new ApplicationPlatform(
+                    null,
+                    (TextureManager) imageLoader,
+                    null,
+                    (CheckKey) openglPlatform,
+                    (MouseCheck) openglPlatform,
+                    (AudioManager) openalAudio,
+                    (ViewportZoomScale) openglPlatform,
+                    (ToggleFullScreen) openglPlatform,
+                    (PlatformGraphics) openglPlatform
+            );
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                 InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }
