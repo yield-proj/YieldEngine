@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, AudioManager, ViewportZoomScale, ToggleFullScreen {
+public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, ViewportZoomScale, ToggleFullScreen {
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
     private final HashSet<Input.Key> pressingKeys = new HashSet<>();
     private final HashSet<Input.MouseButton> pressingMouseButtons = new HashSet<>();
@@ -899,82 +899,6 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         } else {
             pressingMouseButtons.add(Input.MouseButton.SCROLL_DOWN);
         }
-    }
-
-    @Override
-    public Object loadAudio(AudioPlayer audioPlayer) {
-        Clip clip;
-        try {
-            clip = AudioSystem.getClip();
-        } catch (LineUnavailableException e) {
-            throw new RuntimeException(e);
-        }
-        BufferedInputStream bis = new BufferedInputStream(audioPlayer.getAudioClip().getInputStream());
-        try {
-            clip.open(AudioSystem.getAudioInputStream(bis));
-        } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            bis.close();
-            audioPlayer.getAudioClip().getInputStream().close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return clip;
-    }
-
-    @Override
-    public void unloadAudio(AudioPlayer audioPlayer) {
-        ((Clip) audioPlayer.getClipRef()).close();
-        audioPlayer.setClipRef(null);
-    }
-
-    @Override
-    public void play(AudioPlayer audioPlayer) {
-        ((Clip) audioPlayer.getClipRef()).start();
-    }
-
-    @Override
-    public void loop(AudioPlayer audioPlayer) {
-        ((Clip) audioPlayer.getClipRef()).loop(Clip.LOOP_CONTINUOUSLY);
-    }
-
-    @Override
-    public void pause(AudioPlayer audioPlayer) {
-        ((Clip) audioPlayer.getClipRef()).stop();
-    }
-
-    @Override
-    public double getLength(AudioPlayer audioPlayer) {
-        return ((Clip) audioPlayer.getClipRef()).getMicrosecondLength() / 1000.0;
-    }
-
-    @Override
-    public double getPosition(AudioPlayer audioPlayer) {
-        return ((Clip) audioPlayer.getClipRef()).getMicrosecondPosition() / 1000.0;
-    }
-
-    @Override
-    public void setPosition(AudioPlayer audioPlayer, double position) {
-        ((Clip) audioPlayer.getClipRef()).setMicrosecondPosition((long) (position * 1000));
-    }
-
-    @Override
-    public void setGain(AudioPlayer audioPlayer, double gain) {
-        FloatControl gainControl = (FloatControl) ((Clip) audioPlayer.getClipRef()).getControl(FloatControl.Type.MASTER_GAIN);
-        gainControl.setValue(20f * (float) Math.log10(gain));
-    }
-
-    @Override
-    public void setPan(AudioPlayer audioPlayer, double pan) {
-        FloatControl panControl = (FloatControl) ((Clip) audioPlayer.getClipRef()).getControl(FloatControl.Type.PAN);
-        panControl.setValue((float) pan);
-    }
-
-    @Override
-    public boolean isPlaying(AudioPlayer audioPlayer) {
-        return false;
     }
 
     public Vector2D getMousePosition() {

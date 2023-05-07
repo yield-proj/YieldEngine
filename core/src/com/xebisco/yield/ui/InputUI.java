@@ -36,7 +36,7 @@ public class InputUI extends ComponentBehavior {
     public void onStart() {
         if (getApplication().getControllerManager() != null) {
             lastControllerNum = getApplication().getControllerManager().getNumControllers();
-            font = new Font("Pixeboy.ttf", 40, getApplication().getFontLoader());
+            font = new Font("Pixeboy.ttf", 40, getFontLoader());
             audioPlayer = getComponent(AudioPlayer.class);
         } else {
             getEntity().dispose();
@@ -97,7 +97,7 @@ public class InputUI extends ComponentBehavior {
                 instruction.setPosition(new Vector2D(getApplication().getScene().getCamera().getX() - getApplication().getViewportSize().getWidth() / 2.0 + 50 + getApplication().getControllerTexture().getSize().getWidth() / 2.0 * i - (target - f), -getApplication().getViewportSize().getHeight() / 2.0 + 50 + getApplication().getScene().getCamera().getY()));
                 graphics.draw(instruction);
             }
-            target = getApplication().getFontLoader().getStringWidth(msg, font.getFontRef()) + 80;
+            target = getFontLoader().getStringWidth(msg, font.getFontRef()) + 80;
             instruction.setType(DrawInstruction.Type.RECTANGLE);
             instruction.setInnerColor(Colors.DARK_PURPLE.darker());
             instruction.setBorderColor(Colors.PURPLE);
@@ -119,7 +119,7 @@ public class InputUI extends ComponentBehavior {
                 instruction.setInnerColor(new Color(Colors.WHITE));
                 instruction.getInnerColor().setAlpha(1 - (target - f) / 30.0);
                 instruction.setFont(font);
-                instruction.getSize().set(getApplication().getFontLoader().getStringWidth(msg, font.getFontRef()), getApplication().getFontLoader().getStringHeight(msg, font.getFontRef()));
+                instruction.getSize().set(getFontLoader().getStringWidth(msg, font.getFontRef()), getFontLoader().getStringHeight(msg, font.getFontRef()));
                 instruction.setPosition(new Vector2D(getApplication().getScene().getCamera().getX() + 30, -getApplication().getViewportSize().getHeight() / 2f + 48 + getApplication().getScene().getCamera().getY()));
                 graphics.draw(instruction);
             }

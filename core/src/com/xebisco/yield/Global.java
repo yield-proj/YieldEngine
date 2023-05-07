@@ -27,18 +27,31 @@ public final class Global {
     public static final String HORIZONTAL = "Horizontal", VERTICAL = "Vertical";
 
     /**
-     * This function returns an instance of a SwingPlatform class for Java's Swing graphics.
+     * This function returns an instance of a ApplicationPlatform class for Java's Swing platform.
      *
      * @return An instance of the class `SwingPlatform` that implements the `PlatformGraphics` interface.
      */
-    public static PlatformGraphics swingPlatform() throws ClassNotFoundException {
-        //noinspection unchecked
-        Class<? extends PlatformGraphics> swingPlatformImplClass = (Class<? extends PlatformGraphics>) Class.forName("com.xebisco.yield.swingimpl.SwingPlatform");
+    public static ApplicationPlatform swingPlatform() throws ClassNotFoundException {
+        Class<?> swingPlatformImplClass = Class.forName("com.xebisco.yield.swingimpl.SwingPlatform");
+        Class<?> clipAudioClass = Class.forName("com.xebisco.yield.swingimpl.ClipAudio");
         try {
-            return swingPlatformImplClass.getConstructor().newInstance();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            Object swingPlatform = swingPlatformImplClass.getConstructor().newInstance(), clipAudio = clipAudioClass.getConstructor().newInstance();
+            return new ApplicationPlatform(
+                    (FontLoader) swingPlatform,
+                    (TextureManager) swingPlatform,
+                    (InputManager) swingPlatform,
+                    (CheckKey) swingPlatform,
+                    (MouseCheck) swingPlatform,
+                    (AudioManager) clipAudio,
+                    (ViewportZoomScale) swingPlatform,
+                    (ToggleFullScreen) swingPlatform,
+                    (PlatformGraphics) swingPlatform
+            );
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                 InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     /**
@@ -52,7 +65,8 @@ public final class Global {
         Class<? extends PlatformGraphics> openGLPlatformImplClass = (Class<? extends PlatformGraphics>) Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
         try {
             return openGLPlatformImplClass.getConstructor().newInstance();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
+                 IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -130,9 +144,9 @@ public final class Global {
     /**
      * The function resizes a given size to fit within a specified boundary while maintaining its aspect ratio.
      *
-     * @param size The size of the object that needs to be resized to fit within the boundary.
+     * @param size     The size of the object that needs to be resized to fit within the boundary.
      * @param boundary The boundary parameter is a Size2D object that represents the maximum size that the input size can
-     * be scaled to while maintaining its aspect ratio.
+     *                 be scaled to while maintaining its aspect ratio.
      * @return A new Size2D object with the adjusted width and height values based on the given size and boundary.
      */
     public static Size2D onSizeBoundary(Size2D size, Size2D boundary) {

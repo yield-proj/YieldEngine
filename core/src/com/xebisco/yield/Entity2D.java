@@ -32,6 +32,7 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     private Entity2DContainer parent;
     private int index;
     private FontLoader fontLoader;
+    private TextureManager textureManager;
     private ContactAdapter contactAdapter;
 
     private String[] tags;
@@ -343,5 +344,13 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
      */
     public void setTags(String[] tags) {
         this.tags = tags;
+    }
+
+    public TextureManager getTextureManager() {
+        return textureManager;
+    }
+
+    public void setTextureManager(TextureManager textureManager) {
+        this.textureManager = textureManager;
     }
 }

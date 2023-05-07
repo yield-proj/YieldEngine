@@ -52,7 +52,7 @@ public class ApplicationManager implements Runnable {
                 }
                 application.onUpdate();
             }
-            boolean removed = applications.removeIf(a -> a.getPlatformGraphics().shouldClose());
+            boolean removed = applications.removeIf(a -> a.getApplicationPlatform().getPlatformGraphics().shouldClose());
             if(removed && applications.size() == 0) managerContext.getRunning().set(false);
         }
     }

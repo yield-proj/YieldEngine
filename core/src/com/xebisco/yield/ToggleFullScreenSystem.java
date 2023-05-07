@@ -35,7 +35,7 @@ public class ToggleFullScreenSystem extends SystemBehavior {
                 if (doAction) {
                     doAction = false;
                     onFullScreen = !onFullScreen;
-                    getScene().getApplication().getToggleFullScreen().setFullScreen(onFullScreen);
+                    getScene().getApplication().getApplicationPlatform().getToggleFullScreen().setFullScreen(onFullScreen);
                 }
             } else {
                 doAction = true;

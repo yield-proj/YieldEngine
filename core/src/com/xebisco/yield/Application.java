@@ -30,22 +30,15 @@ import java.util.function.Function;
  */
 public class Application implements Behavior {
     public final Vector2D mousePosition = new Vector2D();
-    private final PlatformGraphics platformGraphics;
+    private final ApplicationPlatform applicationPlatform;
     private final PlatformInit platformInit;
-    private final FontLoader fontLoader;
-    private final TextureManager textureManager;
-    private final InputManager inputManager;
-    private final CheckKey checkKey;
-    private final MouseCheck mouseCheck;
     private final DrawInstruction drawInstruction = new DrawInstruction();
     private final Set<Axis> axes = new HashSet<>();
     private final ApplicationManager applicationManager;
     private final Size2D viewportSize;
     private final Function<Scene, Void> renderer;
-    private final AudioManager audioManager;
     private Texture controllerTexture;
     private Texture translucentControllerTexture;
-    private final ViewportZoomScale viewportZoomScale;
     private final Function<Throwable, Void> exceptionThrowFunction = throwable -> {
         throwable.printStackTrace();
         return null;
@@ -56,42 +49,14 @@ public class Application implements Behavior {
     private double physicsPpm;
     private Font defaultFont;
     private Texture defaultTexture;
-
     private ChangeSceneTransition changeSceneTransition;
-
-    private ToggleFullScreen toggleFullScreen;
-
     private Scene toChangeScene;
 
-    public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, PlatformGraphics platformGraphics, PlatformInit platformInit) {
+    public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, ApplicationPlatform applicationPlatform, PlatformInit platformInit) {
         physicsPpm = platformInit.getStartPhysicsPpm();
         this.applicationManager = applicationManager;
         applicationManager.getApplications().add(this);
-        this.platformGraphics = platformGraphics;
-        if (platformGraphics instanceof ToggleFullScreen)
-            toggleFullScreen = (ToggleFullScreen) platformGraphics;
-        else toggleFullScreen = null;
-        if (platformGraphics instanceof FontLoader)
-            fontLoader = (FontLoader) platformGraphics;
-        else fontLoader = null;
-        if (platformGraphics instanceof TextureManager)
-            textureManager = (TextureManager) platformGraphics;
-        else textureManager = null;
-        if (platformGraphics instanceof InputManager)
-            inputManager = (InputManager) platformGraphics;
-        else inputManager = null;
-        if (platformGraphics instanceof CheckKey)
-            checkKey = (CheckKey) platformGraphics;
-        else checkKey = null;
-        if (platformGraphics instanceof MouseCheck)
-            mouseCheck = (MouseCheck) platformGraphics;
-        else mouseCheck = null;
-        if (platformGraphics instanceof AudioManager)
-            audioManager = (AudioManager) platformGraphics;
-        else audioManager = null;
-        if (platformGraphics instanceof ViewportZoomScale)
-            viewportZoomScale = (ViewportZoomScale) platformGraphics;
-        else viewportZoomScale = null;
+        this.applicationPlatform = applicationPlatform;
 
         setScene(new BlankScene(this));
         Timer t = new Timer();
@@ -110,15 +75,15 @@ public class Application implements Behavior {
 
         this.platformInit = platformInit;
         renderer = (scene) -> {
-            platformGraphics.frame();
-            platformGraphics.resetRotation();
+            Application.this.applicationPlatform.getPlatformGraphics().frame();
+            Application.this.applicationPlatform.getPlatformGraphics().resetRotation();
             drawInstruction.setBorderColor(null);
             drawInstruction.setFilled(true);
             drawInstruction.setInnerColor(scene.getBackGroundColor());
             drawInstruction.setType(DrawInstruction.Type.RECTANGLE);
-            drawInstruction.setPosition(platformGraphics.getCamera());
+            drawInstruction.setPosition(Application.this.applicationPlatform.getPlatformGraphics().getCamera());
             drawInstruction.setSize(platformInit.getViewportSize());
-            platformGraphics.draw(drawInstruction);
+            Application.this.applicationPlatform.getPlatformGraphics().draw(drawInstruction);
             try {
                 for (int i = 0; i < scene.getEntities().size(); i++) {
                     Entity2D e = null;
@@ -128,7 +93,7 @@ public class Application implements Behavior {
 
                     }
                     if (e != null)
-                        e.render(platformGraphics);
+                        e.render(Application.this.applicationPlatform.getPlatformGraphics());
                 }
             } catch (ConcurrentModificationException ignore) {
 
@@ -154,11 +119,11 @@ public class Application implements Behavior {
 
     @Override
     public void onStart() {
-        platformGraphics.init(platformInit);
-        defaultFont = new Font("OpenSans-Regular.ttf", 48, fontLoader);
+        applicationPlatform.getPlatformGraphics().init(platformInit);
+        defaultFont = new Font("OpenSans-Regular.ttf", 48, applicationPlatform.getFontLoader());
         if (platformInit.getWindowIcon() == null)
-            platformInit.setWindowIcon(new Texture(platformInit.getWindowIconPath(), getTextureManager()));
-        platformGraphics.updateWindowIcon(platformInit.getWindowIcon());
+            platformInit.setWindowIcon(new Texture(platformInit.getWindowIconPath(), applicationPlatform.getTextureManager()));
+        applicationPlatform.getPlatformGraphics().updateWindowIcon(platformInit.getWindowIcon());
         for (int i = 0; i < 4; i++) {
             String a = String.valueOf((i + 1));
             if (i == 0)
@@ -185,12 +150,10 @@ public class Application implements Behavior {
             axes.add(new Axis("LeftThumb" + a, null, null, null, null));
             axes.add(new Axis("View" + a, null, null, null, null));
         }
-        if (textureManager != null) {
-            defaultTexture = new Texture("yieldIcon.png", textureManager);
-        }
-        if (textureManager != null) {
-            controllerTexture = new Texture("controller.png", textureManager);
-            translucentControllerTexture = new Texture("controller.png", textureManager);
+        if (applicationPlatform.getTextureManager() != null) {
+            defaultTexture = new Texture("yieldIcon.png", applicationPlatform.getTextureManager());
+            controllerTexture = new Texture("controller.png", applicationPlatform.getTextureManager());
+            translucentControllerTexture = new Texture("controller.png", applicationPlatform.getTextureManager());
             translucentControllerTexture.process(pixel -> {
                 pixel.getColor().setAlpha(pixel.getColor().getAlpha() - .6);
                 return pixel;
@@ -234,7 +197,7 @@ public class Application implements Behavior {
      * This function updates the values of various input axes based on keyboard and controller inputs.
      */
     public void updateAxes() {
-        mousePosition.set(mouseCheck.getMouseX(), mouseCheck.getMouseY());
+        mousePosition.set(applicationPlatform.getMouseCheck().getMouseX(), applicationPlatform.getMouseCheck().getMouseY());
         for (Axis axis : axes) {
             if ((axis.getPositiveKey() != null && isPressingKey(axis.getPositiveKey())) || (axis.getAltPositiveKey() != null && isPressingKey(axis.getAltPositiveKey()))) {
                 axis.setValue(1);
@@ -345,7 +308,8 @@ public class Application implements Behavior {
                 scene.onUpdate();
                 try {
                     for (Entity2D entity : scene.getEntities()) {
-                        entity.setFontLoader(fontLoader);
+                        entity.setFontLoader(applicationPlatform.getFontLoader());
+                        entity.setTextureManager(applicationPlatform.getTextureManager());
                         entity.process();
 
                         if (scene != this.scene) {
@@ -360,9 +324,9 @@ public class Application implements Behavior {
 
 
             updateAxes();
-            if (inputManager != null) {
-                inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
-                inputManager.getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
+            if (applicationPlatform.getInputManager() != null) {
+                applicationPlatform.getInputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
+                applicationPlatform.getInputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
             }
             if (scene == this.scene && scene.getFrames() >= 2)
                 renderer.apply(scene);
@@ -373,7 +337,7 @@ public class Application implements Behavior {
                 changeSceneTransition.setDeltaTime(getApplicationManager().getManagerContext().getContextTime().getDeltaTime());
                 changeSceneTransition.setPassedTime(changeSceneTransition.getPassedTime() + changeSceneTransition.getDeltaTime());
                 changeSceneTransition.setFrames(changeSceneTransition.getFrames() + 1);
-                changeSceneTransition.render(platformGraphics);
+                changeSceneTransition.render(applicationPlatform.getPlatformGraphics());
                 if (changeSceneTransition.getPassedTime() >= changeSceneTransition.getTimeToWait() && toChangeScene != null) {
                     setScene(toChangeScene);
                     toChangeScene = null;
@@ -386,7 +350,7 @@ public class Application implements Behavior {
             }
 
             if (scene.getFrames() >= 2)
-                platformGraphics.conclude();
+                applicationPlatform.getPlatformGraphics().conclude();
         }
     }
 
@@ -395,7 +359,7 @@ public class Application implements Behavior {
         setScene(null);
         if (controllerManager != null)
             controllerManager.quitSDLGamepad();
-        platformGraphics.dispose();
+        applicationPlatform.getPlatformGraphics().dispose();
     }
 
     /**
@@ -456,24 +420,6 @@ public class Application implements Behavior {
     }
 
     /**
-     * Returns the platform graphics object for this application.
-     *
-     * @return The platformGraphics object.
-     */
-    public PlatformGraphics getPlatformGraphics() {
-        return platformGraphics;
-    }
-
-    /**
-     * The function returns the texture manager object.
-     *
-     * @return The method is returning this application texture manager.
-     */
-    public TextureManager getTextureManager() {
-        return textureManager;
-    }
-
-    /**
      * The function returns the size of the viewport as a Size2D object.
      *
      * @return The method is returning an object of type `Size2D`.
@@ -518,11 +464,11 @@ public class Application implements Behavior {
             this.scene.dispose();
         }
         this.scene = scene;
-        if (viewportZoomScale != null)
-            viewportZoomScale.getZoomScale().set(1, 1);
+        if (applicationPlatform.getViewportZoomScale() != null)
+            applicationPlatform.getViewportZoomScale().getZoomScale().set(1, 1);
         if (scene != null) {
             scene.setFrames(0);
-            platformGraphics.setCamera(scene.getCamera());
+            applicationPlatform.getPlatformGraphics().setCamera(scene.getCamera());
         }
     }
 
@@ -597,10 +543,10 @@ public class Application implements Behavior {
      * returns true if it does, false otherwise.
      */
     public boolean isPressingKey(Input.Key key) {
-        if (checkKey == null && inputManager != null)
-            return getInputManager().getPressingKeys().contains(key);
-        if (checkKey != null && inputManager == null)
-            return checkKey.checkKey(key);
+        if (applicationPlatform.getCheckKey() == null && applicationPlatform.getInputManager() != null)
+            return applicationPlatform.getInputManager().getPressingKeys().contains(key);
+        if (applicationPlatform.getCheckKey() != null && applicationPlatform.getInputManager() == null)
+            return applicationPlatform.getCheckKey().checkKey(key);
         return false;
     }
 
@@ -614,20 +560,11 @@ public class Application implements Behavior {
      * currently being pressed or not. It returns `true` if the button is being pressed and `false` otherwise.
      */
     public boolean isPressingButton(Input.MouseButton button) {
-        if (checkKey == null && inputManager != null)
-            return getInputManager().getPressingMouseButtons().contains(button);
-        if (checkKey != null && inputManager == null)
-            return checkKey.checkMouseButton(button);
+        if (applicationPlatform.getCheckKey() == null && applicationPlatform.getInputManager() != null)
+            return applicationPlatform.getInputManager().getPressingMouseButtons().contains(button);
+        if (applicationPlatform.getCheckKey() != null && applicationPlatform.getInputManager() == null)
+            return applicationPlatform.getCheckKey().checkMouseButton(button);
         return false;
-    }
-
-    /**
-     * This function returns a ViewportZoomScale object.
-     *
-     * @return The method is returning an object of type `ViewportZoomScale`.
-     */
-    public ViewportZoomScale getViewportZoomScale() {
-        return viewportZoomScale;
     }
 
     /**
@@ -637,24 +574,6 @@ public class Application implements Behavior {
      */
     public PlatformInit getPlatformInit() {
         return platformInit;
-    }
-
-    /**
-     * The function returns a FontLoader object.
-     *
-     * @return The `getFontLoader()` method is returning an object of type `FontLoader`.
-     */
-    public FontLoader getFontLoader() {
-        return fontLoader;
-    }
-
-    /**
-     * The function returns an instance of the InputManager class.
-     *
-     * @return The method is returning an object of type `InputManager`.
-     */
-    public InputManager getInputManager() {
-        return inputManager;
     }
 
     /**
@@ -713,15 +632,6 @@ public class Application implements Behavior {
      */
     public void setPhysicsPpm(double physicsPpm) {
         this.physicsPpm = physicsPpm;
-    }
-
-    /**
-     * This function returns an instance of the AudioManager class in Yield.
-     *
-     * @return The method is returning an instance of the AudioManager class.
-     */
-    public AudioManager getAudioManager() {
-        return audioManager;
     }
 
     /**
@@ -809,31 +719,12 @@ public class Application implements Behavior {
     }
 
     /**
-     * The function returns an object of type ToggleFullScreen.
+     * This function returns the application platform.
      *
-     * @return The method is returning an object of type `ToggleFullScreen`.
+     * @return The method is returning an object of type `ApplicationPlatform`.
      */
-    public ToggleFullScreen getToggleFullScreen() {
-        return toggleFullScreen;
-    }
-
-    /**
-     * This function sets the toggleFullScreen variable to the value passed as a parameter.
-     *
-     * @param toggleFullScreen toggleFullScreen is a variable of type ToggleFullScreen that is being set to the instance
-     *                         variable of the class using the "this" keyword. It is the class has a method or functionality related to
-     *                         toggling full screen mode.
-     */
-    public void setToggleFullScreen(ToggleFullScreen toggleFullScreen) {
-        this.toggleFullScreen = toggleFullScreen;
-    }
-
-    public CheckKey getCheckKey() {
-        return checkKey;
-    }
-
-    public MouseCheck getMouseCheck() {
-        return mouseCheck;
+    public ApplicationPlatform getApplicationPlatform() {
+        return applicationPlatform;
     }
 
     public void setControllerTexture(Texture controllerTexture) {

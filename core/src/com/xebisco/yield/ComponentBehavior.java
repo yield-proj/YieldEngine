@@ -167,4 +167,12 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
     public ContextTime getTime() {
         return getEntity().getApplication().getApplicationManager().getManagerContext().getContextTime();
     }
+
+    public TextureManager getTextureManager() {
+        return getEntity().getTextureManager();
+    }
+
+    public FontLoader getFontLoader() {
+        return getEntity().getFontLoader();
+    }
 }
