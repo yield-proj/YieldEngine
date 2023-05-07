@@ -623,8 +623,8 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     private void updateViewBuffer() {
         viewBuffer = graphicsConfiguration.createCompatibleVolatileImage(
-                canvas.getWidth(),
-                canvas.getHeight(),
+                bounds.width,
+                bounds.height,
                 Transparency.OPAQUE
         );
         viewBuffer.setAccelerationPriority(1);
@@ -640,6 +640,8 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         canvas = new SwingImplPanel();
 
         startFrame();
+
+        bounds.setSize(platformInit.getViewportSize().getWidth(), platformInit.getViewportSize().getHeight());
 
         updateViewBuffer();
     }
@@ -679,8 +681,11 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     @Override
     public void frame() {
         int w = viewBuffer.getWidth(canvas), h = viewBuffer.getHeight(canvas);
-        if(w != canvas.getWidth() || h != canvas.getHeight()) {
-
+        if (stretch)
+            bounds.setSize(canvas.getWidth(), canvas.getHeight());
+        else bounds.setSize(onSizeBoundary(viewBuffer, canvas.getSize()));
+        if(w != bounds.width || h != bounds.height) {
+            updateViewBuffer();
         }
         graphics = (Graphics2D) viewBuffer.getGraphics();
         defaultTransform = graphics.getTransform();
@@ -696,10 +701,12 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     @Override
     public void draw(DrawInstruction drawInstruction) {
-        int w = (int) (drawInstruction.getSize().getWidth() / platformInit.getViewportSize().getWidth() * canvas.getWidth()),
-                h = (int) (drawInstruction.getSize().getHeight() / platformInit.getViewportSize().getWidth() * canvas.getWidth()),
-                x = (int) ((drawInstruction.getPosition().getX() - w / 2.0 - camera.getX()) / platformInit.getViewportSize().getWidth() * canvas.getWidth()),
-                y = (int) ((-drawInstruction.getPosition().getY() - h / 2.0 + camera.getY()) / platformInit.getViewportSize().getHeight() * canvas.getHeight());
+        int w = (int) (drawInstruction.getSize().getWidth() / platformInit.getViewportSize().getWidth() * bounds.getWidth()),
+                h = (int) (drawInstruction.getSize().getHeight() / platformInit.getViewportSize().getHeight() * bounds.getHeight()),
+                x = (int) ((drawInstruction.getPosition().getX() - drawInstruction.getSize().getWidth() / 2.0 - camera.getX()) / platformInit.getViewportSize().getWidth() * bounds.getWidth()),
+                y = (int) ((-drawInstruction.getPosition().getY() - drawInstruction.getSize().getHeight() / 2.0 + camera.getY()) / platformInit.getViewportSize().getHeight() * bounds.getHeight());
+        x += viewBuffer.getWidth(canvas) / 2;
+        y += viewBuffer.getHeight(canvas) / 2;
         if (drawInstruction.getRotation() != 0)
             graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), x + w / 2.0, y + h / 2.0);
         switch (drawInstruction.getType()) {
@@ -1049,11 +1056,32 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
             super.paintComponent(g);
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, getWidth(), getHeight());
-            if (stretch)
-                bounds.setSize(getWidth(), getHeight());
-            else bounds.setSize(onSizeBoundary(viewBuffer, getSize()));
             g.drawImage(viewBuffer, (getWidth() - bounds.width) / 2, (getHeight() - bounds.height) / 2, bounds.width, bounds.height, canvas);
             g.dispose();
         }
+    }
+
+    public Image getViewBuffer() {
+        return viewBuffer;
+    }
+
+    public void setViewBuffer(Image viewBuffer) {
+        this.viewBuffer = viewBuffer;
+    }
+
+    public boolean isVerticalSync() {
+        return verticalSync;
+    }
+
+    public void setVerticalSync(boolean verticalSync) {
+        this.verticalSync = verticalSync;
+    }
+
+    public PlatformInit getPlatformInit() {
+        return platformInit;
+    }
+
+    public void setPlatformInit(PlatformInit platformInit) {
+        this.platformInit = platformInit;
     }
 }
