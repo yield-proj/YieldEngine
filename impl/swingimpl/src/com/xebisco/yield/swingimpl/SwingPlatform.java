@@ -146,7 +146,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         texture.setImageRef(null);
     }
 
-    @Override
+   /* @Override
     public void setPixel(Object imageRef, com.xebisco.yield.Color color, int x, int y) {
         BufferedImage image = (BufferedImage) imageRef;
         image.setRGB(x, y, color.getARGB());
@@ -156,7 +156,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     public int[] getPixel(Object imageRef, int x, int y) {
         BufferedImage image = (BufferedImage) imageRef;
         return image.getRaster().getPixel(x, y, new int[4]);
-    }
+    }*/
 
     @Override
     public int getImageWidth(Object imageRef) {

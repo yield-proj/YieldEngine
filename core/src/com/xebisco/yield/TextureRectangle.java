@@ -25,9 +25,6 @@ public class TextureRectangle extends Rectangle {
     private Texture texture;
 
     @VisibleOnInspector
-    private PixelProcessor pixelProcessor;
-
-    @VisibleOnInspector
     private boolean textureSized;
 
     @VisibleOnInspector
@@ -41,14 +38,6 @@ public class TextureRectangle extends Rectangle {
         super.onStart();
         if (texture == null) texture = getApplication().getDefaultTexture();
         getDrawInstruction().setType(DrawInstruction.Type.IMAGE);
-    }
-
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-        if (pixelProcessor != null) {
-            texture.process(pixelProcessor);
-        }
     }
 
     @Override
@@ -85,26 +74,6 @@ public class TextureRectangle extends Rectangle {
      */
     public void setTexture(Texture texture) {
         this.texture = texture;
-    }
-
-    /**
-     * The function returns a PixelProcessor object.
-     *
-     * @return The method is returning an object of type `PixelProcessor`.
-     */
-    public PixelProcessor getPixelProcessor() {
-        return pixelProcessor;
-    }
-
-    /**
-     * This function sets the pixel processor for an object.
-     *
-     * @param pixelProcessor The parameter `pixelProcessor` is an object of the class `PixelProcessor`. It is being passed
-     * as an argument to the method `setPixelProcessor()`. This method sets the value of the instance variable
-     * `pixelProcessor` to the value of the parameter `pixelProcessor`.
-     */
-    public void setPixelProcessor(PixelProcessor pixelProcessor) {
-        this.pixelProcessor = pixelProcessor;
     }
 
     /**

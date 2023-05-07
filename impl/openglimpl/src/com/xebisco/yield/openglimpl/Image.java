@@ -19,21 +19,14 @@ package com.xebisco.yield.openglimpl;
 import java.nio.ByteBuffer;
 
 public class Image {
-    private final ByteBuffer pixels;
     private final int id, width, height, channels;
 
-    public Image(ByteBuffer pixels, int id, int width, int height, int channels) {
-        this.pixels = pixels;
+    public Image(int id, int width, int height, int channels) {
         this.id = id;
         this.width = width;
         this.height = height;
         this.channels = channels;
     }
-
-    public ByteBuffer getPixels() {
-        return pixels;
-    }
-
     public int getWidth() {
         return width;
     }

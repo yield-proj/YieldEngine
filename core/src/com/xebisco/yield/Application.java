@@ -153,11 +153,7 @@ public class Application implements Behavior {
         if (applicationPlatform.getTextureManager() != null) {
             defaultTexture = new Texture("yieldIcon.png", applicationPlatform.getTextureManager());
             controllerTexture = new Texture("controller.png", applicationPlatform.getTextureManager());
-            translucentControllerTexture = new Texture("controller.png", applicationPlatform.getTextureManager());
-            translucentControllerTexture.process(pixel -> {
-                pixel.getColor().setAlpha(pixel.getColor().getAlpha() - .6);
-                return pixel;
-            });
+            translucentControllerTexture = new Texture("translucentController.png", applicationPlatform.getTextureManager());
         } else {
             controllerTexture = null;
             translucentControllerTexture = null;

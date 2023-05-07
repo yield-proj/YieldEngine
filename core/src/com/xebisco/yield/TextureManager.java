@@ -36,33 +36,6 @@ public interface TextureManager {
     void unloadTexture(Texture texture);
 
     /**
-     * The function sets the color of a pixel at a specific location in an image.
-     *
-     * @param imageRef The image reference is a variable that holds the reference to the image object that you want to
-     * modify.
-     * @param color The color parameter is of type Color and represents the color that will be used to set the pixel at the
-     * specified x and y coordinates in the image.
-     * @param x x is an integer value that represents the horizontal position of the pixel in the image.
-     * @param y x is an integer value that represents the vertical position of the pixel in the image.
-     */
-    void setPixel(Object imageRef, Color color, int x, int y);
-
-    /**
-     * The function returns an array of integers representing the pixel values at a specified (x,y) coordinate of an image.
-     *
-     * @param imageRef The image reference is an object that represents the image from which we want to retrieve the pixel
-     * value. It could be an instance of a class that represents an image file format, such as BufferedImage in Java or
-     * PIL.Image in Python.
-     * @param x The x-coordinate of the pixel you want to retrieve from the image. This represents the horizontal position
-     * of the pixel in the image.
-     * @param y The y-coordinate of the pixel you want to retrieve from the image. This represents the vertical position
-     * of the pixel in the image.
-     * @return An array of integers representing the color values of the pixel at the specified coordinates (x,y) in the
-     * image referenced by the object imageRef.
-     */
-    int[] getPixel(Object imageRef, int x, int y);
-
-    /**
      * Calculates the texture width.
      * @param imageRef The image.
      * @return The texture width.

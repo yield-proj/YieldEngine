@@ -41,14 +41,18 @@ import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.stb.STBImage.*;
+import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureManager, CheckKey, MouseCheck {
+public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, MouseCheck {
 
     private long windowID = -1;
     private boolean setupThread = true;
@@ -78,7 +82,33 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
     @Override
     public void updateWindowIcon(Texture icon) {
         GLFWImage.Buffer gb = GLFWImage.create(1);
-        GLFWImage iconGI = GLFWImage.create().set((int) icon.getSize().getWidth(), (int) icon.getSize().getWidth(), ((Image) icon.getImageRef()).getPixels());
+
+
+        byte[] imageInput;
+        try {
+            imageInput = icon.getInputStream().readAllBytes();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        ByteBuffer imageBuffer = BufferUtils.createByteBuffer(imageInput.length);
+
+        for (byte b : imageInput)
+            imageBuffer.put(b);
+
+        imageBuffer.flip();
+        GLFWImage iconGI;
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer w = stack.mallocInt(1), h = stack.mallocInt(1), c = stack.mallocInt(1);
+
+            ByteBuffer image = stbi_load_from_memory(imageBuffer, w, h, c, 0);
+
+            if (image == null)
+                throw new ResourceException("Failed to load window icon: " + stbi_failure_reason());
+
+            iconGI = GLFWImage.create().set((int) icon.getSize().getWidth(), (int) icon.getSize().getWidth(), image);
+
+        }
         gb.put(0, iconGI);
         glfwSetWindowIcon(windowID, gb);
         gb.close();
@@ -286,56 +316,6 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
         //TODO
         return ((STBTTFontinfo) fontRef).sizeof();
-    }
-
-    @Override
-    public Object loadTexture(Texture texture) {
-
-        return imageLoader.load(texture.getInputStream());
-    }
-
-    @Override
-    public void unloadTexture(Texture texture) {
-
-    }
-
-    @Override
-    public void setPixel(Object imageRef, Color color, int x, int y) {
-
-    }
-
-    @Override
-    public int[] getPixel(Object imageRef, int x, int y) {
-        int[] pixel = new int[4];
-
-        int index = (x + y * ((Image) imageRef).getWidth()) * 4;
-
-        pixel[0] = ((Image) imageRef).getPixels().get(index) & 0xFF;
-        pixel[1] = ((Image) imageRef).getPixels().get(index + 1) & 0xFF;
-        pixel[2] = ((Image) imageRef).getPixels().get(index + 2) & 0xFF;
-        pixel[3] = ((Image) imageRef).getPixels().get(index + 3) & 0xFF;
-
-        return pixel;
-    }
-
-    @Override
-    public int getImageWidth(Object imageRef) {
-        return ((Image) imageRef).getWidth();
-    }
-
-    @Override
-    public int getImageHeight(Object imageRef) {
-        return ((Image) imageRef).getHeight();
-    }
-
-    @Override
-    public Texture cropTexture(Object imageRef, int x, int y, int w, int h) {
-        return null;
-    }
-
-    @Override
-    public Texture scaledTexture(Object imageRef, int w, int h) {
-        return null;
     }
 
     @Override

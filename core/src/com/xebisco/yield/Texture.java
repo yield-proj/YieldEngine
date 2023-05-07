@@ -51,50 +51,6 @@ public class Texture extends FileInput implements Disposable {
     }
 
     /**
-     * The function processes pixels by getting their color values, processing them, and setting the resulting color values
-     * for each pixel.
-     *
-     * @param pixelProcessor The parameter `pixelProcessor` is an object of the `PixelProcessor` class, which is
-     * responsible for processing each pixel of an image. It contains a method `process` that takes a `Pixel` object as
-     * input and returns a modified `Pixel` object. The `process` method is called
-     */
-    public void process(PixelProcessor pixelProcessor) {
-        Pixel actPixel = new Pixel();
-        actPixel.setPosition(new Vector2D());
-        int size = (int) getSize().getWidth() * (int) getSize().getHeight() * 4;
-        for (int i = 0; i < size / 4; i++) {
-            int x = i, y = 0;
-            while (x > getSize().getWidth() - 1) {
-                x -= getSize().getWidth();
-                y++;
-            }
-
-            int[] pixel = getTextureManager().getPixel(getImageRef(), x, y);
-            actPixel.setColor(new Color(pixel[0] / 255.0, pixel[1] / 255.0, pixel[2] / 255.0, pixel[3] / 255.0));
-            actPixel.getPosition().set(x, y);
-            Pixel p = pixelProcessor.process(actPixel);
-
-            while (p.getPosition().getX() > getSize().getWidth() - 1) {
-                p.getPosition().setX(p.getPosition().getX() - getSize().getWidth());
-            }
-
-            while (p.getPosition().getX() < 0) {
-                p.getPosition().setX(p.getPosition().getX() + getSize().getWidth());
-            }
-
-            while (p.getPosition().getY() > getSize().getHeight() - 1) {
-                p.getPosition().setY(p.getPosition().getY() - getSize().getHeight());
-            }
-
-            while (p.getPosition().getY() < 0) {
-                p.getPosition().setY(p.getPosition().getY() + getSize().getHeight());
-            }
-
-            getTextureManager().setPixel(getImageRef(), actPixel.getColor(), (int) p.getPosition().getX(), (int) p.getPosition().getY());
-        }
-    }
-
-    /**
      * This function crops a texture image based on the given x, y, width, and height parameters.
      *
      * @param x The x-coordinate of the top-left corner of the rectangular area to be cropped from the original texture.

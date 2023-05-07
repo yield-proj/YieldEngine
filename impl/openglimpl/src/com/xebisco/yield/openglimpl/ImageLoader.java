@@ -18,16 +18,14 @@ package com.xebisco.yield.openglimpl;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.stb.STBImage.*;
 
 public class ImageLoader {
     public Image load(InputStream inputStream) {
@@ -59,7 +57,7 @@ public class ImageLoader {
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width.get(0), height.get(0), 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 
-            return new Image(image, id, width.get(0), height.get(0), channels.get(0));
+            return new Image(id, width.get(0), height.get(0), channels.get(0));
         } catch (IOException e) {
             throw new ResourceException(e.getMessage());
         }
