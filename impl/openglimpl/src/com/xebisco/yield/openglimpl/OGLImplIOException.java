@@ -16,36 +16,21 @@
 
 package com.xebisco.yield.openglimpl;
 
-import java.nio.ByteBuffer;
+import java.io.IOException;
 
-public class Image {
-    private final ByteBuffer pixels;
-    private final int id, width, height, channels;
-
-    public Image(ByteBuffer pixels, int id, int width, int height, int channels) {
-        this.pixels = pixels;
-        this.id = id;
-        this.width = width;
-        this.height = height;
-        this.channels = channels;
-    }
-    public int getWidth() {
-        return width;
+public class OGLImplIOException extends IOException {
+    public OGLImplIOException() {
     }
 
-    public int getHeight() {
-        return height;
+    public OGLImplIOException(String message) {
+        super(message);
     }
 
-    public int getChannels() {
-        return channels;
+    public OGLImplIOException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public ByteBuffer getPixels() {
-        return pixels;
+    public OGLImplIOException(Throwable cause) {
+        super(cause);
     }
 }

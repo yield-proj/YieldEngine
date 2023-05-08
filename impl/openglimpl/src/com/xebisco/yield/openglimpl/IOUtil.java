@@ -16,36 +16,26 @@
 
 package com.xebisco.yield.openglimpl;
 
+import org.lwjgl.system.MemoryStack;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-public class Image {
-    private final ByteBuffer pixels;
-    private final int id, width, height, channels;
+public class IOUtil {
+    public static ByteBuffer fromInputStream(InputStream inputStream) throws OGLImplIOException {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            byte[] bytes = inputStream.readAllBytes();
 
-    public Image(ByteBuffer pixels, int id, int width, int height, int channels) {
-        this.pixels = pixels;
-        this.id = id;
-        this.width = width;
-        this.height = height;
-        this.channels = channels;
-    }
-    public int getWidth() {
-        return width;
-    }
+            ByteBuffer buffer = stack.malloc(bytes.length);
+            for (byte b : bytes)
+                buffer.put(b);
 
-    public int getHeight() {
-        return height;
-    }
+            buffer.flip();
 
-    public int getChannels() {
-        return channels;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public ByteBuffer getPixels() {
-        return pixels;
+            return buffer;
+        } catch (IOException e) {
+            throw new OGLImplIOException(e);
+        }
     }
 }

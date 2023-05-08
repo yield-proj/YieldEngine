@@ -43,7 +43,7 @@ public class Main extends Scene {
         instantiate(new Entity2DPrefab(new ComponentCreation(Rectangle.class), new ComponentCreation(RectangleCollider.class), new ComponentCreation(PhysicsBody.class, c -> {
             ((PhysicsBody) c).setType(PhysicsType.STATIC);
         }), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class))).getTransform().translate(0, -200);
-        //instantiate(StandardPrefabs.texRectangle("yieldIcon.png"));
+        instantiate(StandardPrefabs.texRectangle("controller.png"));
     }
 
     public static boolean a;

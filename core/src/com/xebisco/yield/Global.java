@@ -63,10 +63,11 @@ public final class Global {
         Class<?> openglPlatformClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
         Class<?> imageLoaderClass = Class.forName("com.xebisco.yield.openglimpl.ImageLoader");
         Class<?> openalAudioClass = Class.forName("com.xebisco.yield.openglimpl.OpenALAudio");
+        Class<?> fontLoaderClass = Class.forName("com.xebisco.yield.openglimpl.FontLoader");
         try {
-            Object openglPlatform = openglPlatformClass.getConstructor().newInstance(), imageLoader = imageLoaderClass.getConstructor().newInstance(), openalAudio = openalAudioClass.getConstructor().newInstance();
+            Object openglPlatform = openglPlatformClass.getConstructor().newInstance(), imageLoader = imageLoaderClass.getConstructor().newInstance(), openalAudio = openalAudioClass.getConstructor().newInstance(), fontLoader = fontLoaderClass.getConstructor().newInstance();
             return new ApplicationPlatform(
-                    null,
+                    (FontLoader) fontLoader,
                     (TextureManager) imageLoader,
                     null,
                     (CheckKey) openglPlatform,

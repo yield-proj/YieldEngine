@@ -168,7 +168,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         return ((BufferedImage) imageRef).getHeight();
     }
 
-    @Override
+    /*@Override
     public Texture cropTexture(Object imageRef, int x, int y, int w, int h) {
         BufferedImage image = ((BufferedImage) imageRef).getSubimage(x, y, w, h);
         return new Texture(image, null, this);
@@ -181,7 +181,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         g.drawImage((Image) imageRef, 0, 0, w, h, canvas);
         g.dispose();
         return new Texture(image, null, this);
-    }
+    }*/
 
     @Override
     public Texture printScreenTexture() {

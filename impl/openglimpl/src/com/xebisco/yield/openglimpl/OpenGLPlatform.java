@@ -37,28 +37,25 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.stb.STBTTFontinfo;
-import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryStack;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.stb.STBImage.*;
-import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, MouseCheck {
+public class OpenGLPlatform implements PlatformGraphics, CheckKey, MouseCheck, ViewportZoomScale, ToggleFullScreen {
 
     private long windowID = -1;
     private boolean setupThread = true;
     private PlatformInit platformInit;
 
     private Vector2D camera = new Vector2D();
+    private boolean createdCapabilities;
+
+    private TwoAnchorRepresentation zoomScale = new TwoAnchorRepresentation(1, 1);
 
     @Override
     public void dispose() {
@@ -75,38 +72,18 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, M
         }
 
         updateWindow();
+
+        if (!createdCapabilities) {
+            createdCapabilities = true;
+            GL.createCapabilities();
+        }
     }
 
     @Override
     public void updateWindowIcon(Texture icon) {
         GLFWImage.Buffer gb = GLFWImage.create(1);
 
-
-        byte[] imageInput;
-        try {
-            imageInput = icon.getInputStream().readAllBytes();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        ByteBuffer imageBuffer = BufferUtils.createByteBuffer(imageInput.length);
-
-        for (byte b : imageInput)
-            imageBuffer.put(b);
-
-        imageBuffer.flip();
-        GLFWImage iconGI;
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer w = stack.mallocInt(1), h = stack.mallocInt(1), c = stack.mallocInt(1);
-
-            ByteBuffer image = stbi_load_from_memory(imageBuffer, w, h, c, 0);
-
-            if (image == null)
-                throw new ResourceException("Failed to load window icon: " + stbi_failure_reason());
-
-            iconGI = GLFWImage.create().set((int) icon.getSize().getWidth(), (int) icon.getSize().getWidth(), image);
-
-        }
+        GLFWImage iconGI = GLFWImage.create().set((int) icon.getSize().getWidth(), (int) icon.getSize().getWidth(), ((Image) icon.getImageRef()).getPixels());
         gb.put(0, iconGI);
         glfwSetWindowIcon(windowID, gb);
         gb.close();
@@ -145,17 +122,14 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, M
         glfwMakeContextCurrent(windowID);
     }
 
-    private IntBuffer windowWidthBuffer = BufferUtils.createIntBuffer(1), windowHeightBuffer = BufferUtils.createIntBuffer(1);
+    private final IntBuffer windowWidthBuffer = BufferUtils.createIntBuffer(1), windowHeightBuffer = BufferUtils.createIntBuffer(1);
 
-    private Size2D windowSize = new Size2D(0, 0);
+    private final Size2D windowSize = new Size2D(0, 0);
 
     @Override
     public void frame() {
         if (setupThread) {
             setupThread = false;
-            GL.createCapabilities();
-
-            glEnable(GL_TEXTURE_2D);
 
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
@@ -181,7 +155,7 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, M
 
 
         glfwPollEvents();
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     @Override
@@ -190,12 +164,7 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, M
 
         glLoadIdentity();
 
-        glColor4f(
-                (float) drawInstruction.getInnerColor().getRed(),
-                (float) drawInstruction.getInnerColor().getGreen(),
-                (float) drawInstruction.getInnerColor().getBlue(),
-                (float) drawInstruction.getInnerColor().getAlpha()
-        );
+        System.out.println(drawInstruction.getType());
         glTranslatef(x, y, 0);
 
         glRotatef((float) drawInstruction.getRotation(), 0, 0, 1);
@@ -204,6 +173,13 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, M
             case RECTANGLE:
                 w = (float) (drawInstruction.getSize().getWidth() / 2);
                 h = (float) (drawInstruction.getSize().getHeight() / 2);
+
+                glColor4f(
+                        (float) drawInstruction.getInnerColor().getRed(),
+                        (float) drawInstruction.getInnerColor().getGreen(),
+                        (float) drawInstruction.getInnerColor().getBlue(),
+                        (float) drawInstruction.getInnerColor().getAlpha()
+                );
 
                 glBegin(GL_QUADS);
 
@@ -216,6 +192,13 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, M
             case EQUILATERAL_TRIANGLE:
                 w = (float) (drawInstruction.getSize().getWidth() / 2);
                 h = (float) (drawInstruction.getSize().getHeight() / 2);
+
+                glColor4f(
+                        (float) drawInstruction.getInnerColor().getRed(),
+                        (float) drawInstruction.getInnerColor().getGreen(),
+                        (float) drawInstruction.getInnerColor().getBlue(),
+                        (float) drawInstruction.getInnerColor().getAlpha()
+                );
 
                 glBegin(GL_POLYGON);
 
@@ -230,6 +213,13 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, M
                 double ap = 6.28318 / 60.;
                 double theta = 0.;
 
+                glColor4f(
+                        (float) drawInstruction.getInnerColor().getRed(),
+                        (float) drawInstruction.getInnerColor().getGreen(),
+                        (float) drawInstruction.getInnerColor().getBlue(),
+                        (float) drawInstruction.getInnerColor().getAlpha()
+                );
+
                 glBegin(GL_POLYGON);
 
                 for (int i = 0; i < 60; i++) {
@@ -242,6 +232,11 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, M
                 w = (float) (drawInstruction.getSize().getWidth() / 2);
                 h = (float) (drawInstruction.getSize().getHeight() / 2);
 
+                glColor4f((float) 1, (float) 1, (float) 1, (float) drawInstruction.getInnerColor().getAlpha());
+
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+                glEnable(GL_TEXTURE_2D);
                 glBindTexture(GL_TEXTURE_2D, ((Image) drawInstruction.getRenderRef()).getId());
 
                 glBegin(GL_QUADS);
@@ -256,11 +251,12 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, M
                 break;
         }
         glEnd();
+        glDisable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
     }
 
     @Override
     public void conclude() {
-        glFlush();
         glfwSwapBuffers(windowID);
     }
 
@@ -286,17 +282,7 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, M
         this.camera = camera;
     }
 
-    @Override
-    public Object loadFont(Font font) {
-        return null;
-    }
-
-    @Override
-    public void unloadFont(Font font) {
-
-    }
-
-    @Override
+    /*@Override
     public double getStringWidth(String text, Object fontRef) {        //TODO
         float length = 0f;
         for (int i = 0; i < text.length(); i++) {
@@ -306,15 +292,7 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, M
             length += advancewidth.get(0);
         }
         return length;
-    }
-
-    @Override
-    public double getStringHeight(String text, Object fontRef) {
-
-
-        //TODO
-        return ((STBTTFontinfo) fontRef).sizeof();
-    }
+    }*/
 
     @Override
     public Texture printScreenTexture() {
@@ -554,5 +532,22 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, CheckKey, M
                 return GLFW_KEY_MENU;
         }
         return GLFW_KEY_UNKNOWN;
+    }
+
+    @Override
+    public void setZoomScale(TwoAnchorRepresentation zoomScale) {
+        this.zoomScale = zoomScale;
+    }
+
+    @Override
+    public TwoAnchorRepresentation getZoomScale() {
+        return zoomScale;
+    }
+
+    @Override
+    public void setFullScreen(boolean fullScreen) {
+        dispose();
+        platformInit.setFullscreen(fullScreen);
+        init(platformInit);
     }
 }

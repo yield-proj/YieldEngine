@@ -18,7 +18,6 @@ package com.xebisco.yield.openglimpl;
 
 import com.xebisco.yield.Texture;
 import com.xebisco.yield.TextureManager;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
@@ -34,20 +33,13 @@ public class ImageLoader implements TextureManager {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.mallocInt(1), height = stack.mallocInt(1), channels = stack.mallocInt(1);
 
-            byte[] imageInput = inputStream.readAllBytes();
-
-            ByteBuffer imageBuffer = BufferUtils.createByteBuffer(imageInput.length);
-
-            for (byte b : imageInput)
-                imageBuffer.put(b);
-
-            imageBuffer.flip();
+            ByteBuffer imageBuffer = IOUtil.fromInputStream(inputStream);
 
             if (!stbi_info_from_memory(imageBuffer, width, height, channels)) {
                 throw new ResourceException("Failed to read image information: " + stbi_failure_reason());
             }
 
-            ByteBuffer image = stbi_load_from_memory(imageBuffer, width, height, channels, 0);
+            ByteBuffer image = stbi_load_from_memory(imageBuffer, width, height, channels, 4);
             if (image == null)
                 throw new ResourceException("Failed to load image: " + stbi_failure_reason());
 
@@ -59,7 +51,7 @@ public class ImageLoader implements TextureManager {
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width.get(0), height.get(0), 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 
-            return new Image(id, width.get(0), height.get(0), channels.get(0));
+            return new Image(image, id, width.get(0), height.get(0), channels.get(0));
         } catch (IOException e) {
             throw new ResourceException(e.getMessage());
         }
