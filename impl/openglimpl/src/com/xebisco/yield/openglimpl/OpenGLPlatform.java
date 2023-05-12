@@ -100,21 +100,22 @@ public class OpenGLPlatform implements PlatformGraphics, CheckKey, MouseCheck, V
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
         windowID = glfwCreateWindow((int) platformInit.getWindowSize().getWidth(), (int) platformInit.getWindowSize().getHeight(), platformInit.getTitle(), monitor, NULL);
-        try (MemoryStack stack = stackPush()) {
-            IntBuffer pWidth = stack.mallocInt(1);
-            IntBuffer pHeight = stack.mallocInt(1);
+        if (!platformInit.isFullscreen())
+            try (MemoryStack stack = stackPush()) {
+                IntBuffer pWidth = stack.mallocInt(1);
+                IntBuffer pHeight = stack.mallocInt(1);
 
-            glfwGetWindowSize(windowID, pWidth, pHeight);
+                glfwGetWindowSize(windowID, pWidth, pHeight);
 
-            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+                GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-            assert vidmode != null;
-            glfwSetWindowPos(
-                    windowID,
-                    (vidmode.width() - pWidth.get(0)) / 2,
-                    (vidmode.height() - pHeight.get(0)) / 2
-            );
-        }
+                assert vidmode != null;
+                glfwSetWindowPos(
+                        windowID,
+                        (vidmode.width() - pWidth.get(0)) / 2,
+                        (vidmode.height() - pHeight.get(0)) / 2
+                );
+            }
         if (platformInit.isVerticalSync())
             glfwSwapInterval(1);
 
