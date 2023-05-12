@@ -17,6 +17,7 @@
 package com.xebisco.yield.openglimpl;
 
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,18 +25,19 @@ import java.nio.ByteBuffer;
 
 public class IOUtil {
     public static ByteBuffer fromInputStream(InputStream inputStream) throws OGLImplIOException {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            byte[] bytes = inputStream.readAllBytes();
+        byte[] bytes = new byte[0];
+        try {
+            bytes = inputStream.readAllBytes();
+        } catch (IOException e) {
+            throw new OGLImplIOException(e);
+        }
 
-            ByteBuffer buffer = stack.malloc(bytes.length);
+        ByteBuffer buffer = MemoryUtil.memAlloc(bytes.length);
             for (byte b : bytes)
                 buffer.put(b);
 
             buffer.flip();
 
             return buffer;
-        } catch (IOException e) {
-            throw new OGLImplIOException(e);
-        }
     }
 }

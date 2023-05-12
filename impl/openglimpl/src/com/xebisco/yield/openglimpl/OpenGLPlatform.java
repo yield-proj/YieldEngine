@@ -164,7 +164,6 @@ public class OpenGLPlatform implements PlatformGraphics, CheckKey, MouseCheck, V
 
         glLoadIdentity();
 
-        System.out.println(drawInstruction.getType());
         glTranslatef(x, y, 0);
 
         glRotatef((float) drawInstruction.getRotation(), 0, 0, 1);
@@ -174,37 +173,79 @@ public class OpenGLPlatform implements PlatformGraphics, CheckKey, MouseCheck, V
                 w = (float) (drawInstruction.getSize().getWidth() / 2);
                 h = (float) (drawInstruction.getSize().getHeight() / 2);
 
-                glColor4f(
-                        (float) drawInstruction.getInnerColor().getRed(),
-                        (float) drawInstruction.getInnerColor().getGreen(),
-                        (float) drawInstruction.getInnerColor().getBlue(),
-                        (float) drawInstruction.getInnerColor().getAlpha()
-                );
+                if (drawInstruction.isFilled()) {
+                    glColor4f(
+                            (float) drawInstruction.getInnerColor().getRed(),
+                            (float) drawInstruction.getInnerColor().getGreen(),
+                            (float) drawInstruction.getInnerColor().getBlue(),
+                            (float) drawInstruction.getInnerColor().getAlpha()
+                    );
 
-                glBegin(GL_QUADS);
+                    glBegin(GL_QUADS);
 
-                glVertex2f(-w, h);
-                glVertex2f(w, h);
-                glVertex2f(w, -h);
-                glVertex2f(-w, -h);
+                    glVertex2f(-w, h);
+                    glVertex2f(w, h);
+                    glVertex2f(w, -h);
+                    glVertex2f(-w, -h);
+
+                    glEnd();
+                }
+
+                if (drawInstruction.getBorderColor() != null) {
+                    glLineWidth((float) drawInstruction.getBorderThickness());
+                    glColor4f(
+                            (float) drawInstruction.getBorderColor().getRed(),
+                            (float) drawInstruction.getBorderColor().getGreen(),
+                            (float) drawInstruction.getBorderColor().getBlue(),
+                            (float) drawInstruction.getBorderColor().getAlpha()
+                    );
+                    glBegin(GL_LINE_LOOP);
+
+                    glVertex2f(-w, h);
+                    glVertex2f(w, h);
+                    glVertex2f(w, -h);
+                    glVertex2f(-w, -h);
+
+                    glEnd();
+                }
 
                 break;
             case EQUILATERAL_TRIANGLE:
                 w = (float) (drawInstruction.getSize().getWidth() / 2);
                 h = (float) (drawInstruction.getSize().getHeight() / 2);
+                if (drawInstruction.isFilled()) {
+                    glColor4f(
+                            (float) drawInstruction.getInnerColor().getRed(),
+                            (float) drawInstruction.getInnerColor().getGreen(),
+                            (float) drawInstruction.getInnerColor().getBlue(),
+                            (float) drawInstruction.getInnerColor().getAlpha()
+                    );
 
-                glColor4f(
-                        (float) drawInstruction.getInnerColor().getRed(),
-                        (float) drawInstruction.getInnerColor().getGreen(),
-                        (float) drawInstruction.getInnerColor().getBlue(),
-                        (float) drawInstruction.getInnerColor().getAlpha()
-                );
+                    glBegin(GL_POLYGON);
 
-                glBegin(GL_POLYGON);
+                    glVertex2f(-w, -h);
+                    glVertex2f(0, h);
+                    glVertex2f(w, -h);
 
-                glVertex2f(-w, -h);
-                glVertex2f(0, h);
-                glVertex2f(w, -h);
+                    glEnd();
+                }
+
+                if (drawInstruction.getBorderColor() != null) {
+                    glLineWidth((float) drawInstruction.getBorderThickness());
+                    glColor4f(
+                            (float) drawInstruction.getBorderColor().getRed(),
+                            (float) drawInstruction.getBorderColor().getGreen(),
+                            (float) drawInstruction.getBorderColor().getBlue(),
+                            (float) drawInstruction.getBorderColor().getAlpha()
+                    );
+                    glBegin(GL_LINE_LOOP);
+
+                    glVertex2f(-w, -h);
+                    glVertex2f(0, h);
+                    glVertex2f(w, -h);
+
+                    glEnd();
+                }
 
                 break;
             case OVAL:
@@ -212,19 +253,40 @@ public class OpenGLPlatform implements PlatformGraphics, CheckKey, MouseCheck, V
                 h = (float) drawInstruction.getSize().getHeight();
                 double ap = 6.28318 / 60.;
                 double theta = 0.;
+                if (drawInstruction.isFilled()) {
+                    glColor4f(
+                            (float) drawInstruction.getInnerColor().getRed(),
+                            (float) drawInstruction.getInnerColor().getGreen(),
+                            (float) drawInstruction.getInnerColor().getBlue(),
+                            (float) drawInstruction.getInnerColor().getAlpha()
+                    );
 
-                glColor4f(
-                        (float) drawInstruction.getInnerColor().getRed(),
-                        (float) drawInstruction.getInnerColor().getGreen(),
-                        (float) drawInstruction.getInnerColor().getBlue(),
-                        (float) drawInstruction.getInnerColor().getAlpha()
-                );
+                    glBegin(GL_POLYGON);
 
-                glBegin(GL_POLYGON);
+                    for (int i = 0; i < 60; i++) {
+                        glVertex2f((float) (w / 2f * Math.cos(theta)), (float) (h / 2f * Math.sin(theta)));
+                        theta += ap;
+                    }
 
-                for (int i = 0; i < 60; i++) {
-                    glVertex2f((float) (w / 2f * Math.cos(theta)), (float) (h / 2f * Math.sin(theta)));
-                    theta += ap;
+                    glEnd();
+                }
+
+                if (drawInstruction.getBorderColor() != null) {
+                    glLineWidth((float) drawInstruction.getBorderThickness());
+                    glColor4f(
+                            (float) drawInstruction.getBorderColor().getRed(),
+                            (float) drawInstruction.getBorderColor().getGreen(),
+                            (float) drawInstruction.getBorderColor().getBlue(),
+                            (float) drawInstruction.getBorderColor().getAlpha()
+                    );
+                    glBegin(GL_LINE_LOOP);
+
+                    for (int i = 0; i < 60; i++) {
+                        glVertex2f((float) (w / 2f * Math.cos(theta)), (float) (h / 2f * Math.sin(theta)));
+                        theta += ap;
+                    }
+
+                    glEnd();
                 }
 
                 break;
@@ -235,7 +297,7 @@ public class OpenGLPlatform implements PlatformGraphics, CheckKey, MouseCheck, V
                 glColor4f((float) 1, (float) 1, (float) 1, (float) drawInstruction.getInnerColor().getAlpha());
 
                 glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glEnable(GL_TEXTURE_2D);
                 glBindTexture(GL_TEXTURE_2D, ((Image) drawInstruction.getRenderRef()).getId());
 
@@ -248,11 +310,12 @@ public class OpenGLPlatform implements PlatformGraphics, CheckKey, MouseCheck, V
                 glVertex2f(w, -h);
                 glTexCoord2f(0, 1);
                 glVertex2f(-w, -h);
+
+                glEnd();
+                glDisable(GL_BLEND);
+                glDisable(GL_TEXTURE_2D);
                 break;
         }
-        glEnd();
-        glDisable(GL_BLEND);
-        glDisable(GL_TEXTURE_2D);
     }
 
     @Override

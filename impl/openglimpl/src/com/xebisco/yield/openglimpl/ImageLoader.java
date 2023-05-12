@@ -19,6 +19,7 @@ package com.xebisco.yield.openglimpl;
 import com.xebisco.yield.Texture;
 import com.xebisco.yield.TextureManager;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +43,8 @@ public class ImageLoader implements TextureManager {
             ByteBuffer image = stbi_load_from_memory(imageBuffer, width, height, channels, 4);
             if (image == null)
                 throw new ResourceException("Failed to load image: " + stbi_failure_reason());
+
+            MemoryUtil.memFree(imageBuffer);
 
             int id = glGenTextures();
 

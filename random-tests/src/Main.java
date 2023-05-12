@@ -27,6 +27,7 @@ public class Main extends Scene {
         time.setTargetFPS(60);
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
+        platformInit.setStretchViewport(true);
         Application application = new Application(applicationManager, Main.class, Global.openGLPlatform(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
@@ -37,13 +38,12 @@ public class Main extends Scene {
         getSystems().add(new ToggleFullScreenSystem());
         setBackGroundColor(Colors.RED);
         getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
-        Entity2D e = instantiate(new Entity2DPrefab(new ComponentCreation(Oval.class), new ComponentCreation(CircleCollider.class), new ComponentCreation(PhysicsBody.class), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class)));
+        Entity2D e = instantiate(new Entity2DPrefab(new ComponentCreation(TextureRectangle.class), new ComponentCreation(CircleCollider.class), new ComponentCreation(PhysicsBody.class), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class)));
         e.getTransform().rotate(40);
         e.getTransform().translate(0, 100);
         instantiate(new Entity2DPrefab(new ComponentCreation(Rectangle.class), new ComponentCreation(RectangleCollider.class), new ComponentCreation(PhysicsBody.class, c -> {
             ((PhysicsBody) c).setType(PhysicsType.STATIC);
         }), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class))).getTransform().translate(0, -200);
-        instantiate(StandardPrefabs.texRectangle("controller.png"));
     }
 
     public static boolean a;
