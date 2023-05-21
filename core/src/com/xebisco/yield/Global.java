@@ -25,6 +25,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public final class Global {
     public static final String HORIZONTAL = "Horizontal", VERTICAL = "Vertical";
+    public static String APP_SAVE_ID;
 
     /**
      * This function returns an instance of ApplicationPlatform using classes from the com.xebisco.yield.swingimpl package.
@@ -173,5 +174,21 @@ public final class Global {
         }
 
         return new Size2D(new_width, new_height);
+    }
+
+    /**
+     * This function returns the default directory for application data.
+     * @return The default directory for application data.
+     */
+    public static String defaultDirectory()
+    {
+        String OS = System.getProperty("os.name").toUpperCase();
+        if (OS.contains("WIN"))
+            return System.getenv("APPDATA");
+        else if (OS.contains("MAC"))
+            return System.getProperty("user.home") + "/Library/Application Support";
+        else if (OS.contains("NUX"))
+            return System.getProperty("user.home");
+        return System.getProperty("user.dir");
     }
 }
