@@ -16,6 +16,7 @@
 
 package com.xebisco.yield.editor;
 
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Assets {
-    public static final Map<String, BufferedImage> images = new HashMap<>();
+    public static final Map<String, ImageIcon> images = new HashMap<>();
     public static List<Project> projects;
 
     static {

@@ -26,6 +26,7 @@ import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -39,18 +40,14 @@ public class Entry {
         openProjects();
     }
 
-    private static void loadEverything() throws IOException {
+    private static void loadEverything() {
         List<String> images = getResources("/com/xebisco/yield/editor/assets/images/");
         Pattern namePattern = Pattern.compile("([^/]*)$");
-        for(String path : images) {
-            try {
-                Matcher m = namePattern.matcher(path);
-                m.find();
-                String name = m.group(0);
-                Assets.images.put(name, ImageIO.read(Objects.requireNonNull(Entry.class.getResource("/com/xebisco/yield/editor/assets/images/" + name))));
-            } catch (Exception e){
-                Utils.error(null, e);
-            }
+        for (String path : images) {
+            Matcher m = namePattern.matcher(path);
+            m.find();
+            String name = m.group(0);
+            Assets.images.put(name, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/com/xebisco/yield/editor/assets/images/" + name))));
         }
     }
 
@@ -65,7 +62,7 @@ public class Entry {
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
-                try(ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(Utils.defaultDirectory() + "/.yield_editor/projects.ser"))) {
+                try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(Utils.defaultDirectory() + "/.yield_editor/projects.ser"))) {
                     oo.writeObject(Assets.projects);
                 } catch (IOException ex) {
                     Utils.error(frame, ex);
@@ -73,7 +70,7 @@ public class Entry {
                 frame.dispose();
             }
         });
-        frame.setIconImage(Assets.images.get("yieldIcon.png"));
+        frame.setIconImage(Assets.images.get("yieldIcon.png").getImage());
 
         frame.add(new Projects());
 
@@ -95,9 +92,9 @@ public class Entry {
     private static List<String> getResources(final String element, final String contains) {
         final ArrayList<String> retval = new ArrayList<>();
         final File file = new File(element);
-        if(file.isDirectory()){
+        if (file.isDirectory()) {
             retval.addAll(getResourcesFromDirectory(file, contains));
-        } else{
+        } else {
             retval.addAll(getResourcesFromJarFile(file, contains));
         }
         return retval;
@@ -106,23 +103,23 @@ public class Entry {
     private static List<String> getResourcesFromJarFile(final File file, final String contains) {
         final ArrayList<String> retval = new ArrayList<>();
         ZipFile zf;
-        try{
+        try {
             zf = new ZipFile(file);
-        } catch(final IOException e){
+        } catch (final IOException e) {
             throw new Error(e);
         }
         final Enumeration<? extends ZipEntry> e = zf.entries();
-        while(e.hasMoreElements()){
+        while (e.hasMoreElements()) {
             final ZipEntry ze = e.nextElement();
             final String fileName = ze.getName();
             final boolean accept = fileName.contains(contains);
-            if(accept){
+            if (accept) {
                 retval.add(fileName);
             }
         }
-        try{
+        try {
             zf.close();
-        } catch(final IOException e1){
+        } catch (final IOException e1) {
             throw new Error(e1);
         }
         return retval;
@@ -130,20 +127,20 @@ public class Entry {
 
     private static List<String> getResourcesFromDirectory(
             final File directory,
-            final String contains){
+            final String contains) {
         final ArrayList<String> retval = new ArrayList<>();
         final File[] fileList = directory.listFiles();
-        for(final File file : fileList){
-            if(file.isDirectory()){
+        for (final File file : fileList) {
+            if (file.isDirectory()) {
                 retval.addAll(getResourcesFromDirectory(file, contains));
-            } else{
-                try{
+            } else {
+                try {
                     final String fileName = file.getCanonicalPath();
                     final boolean accept = fileName.contains(contains);
-                    if(accept){
+                    if (accept) {
                         retval.add(fileName);
                     }
-                } catch(final IOException e){
+                } catch (final IOException e) {
                     throw new Error(e);
                 }
             }
@@ -155,18 +152,18 @@ public class Entry {
         JDialog splashDialog = new JDialog();
         splashDialog.setTitle("Yield 5 Editor");
         splashDialog.setUndecorated(true);
-        splashDialog.add(new JLabel(new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/splash.png")))), BorderLayout.CENTER);
         JProgressBar progressBar = new JProgressBar();
         progressBar.setIndeterminate(true);
         splashDialog.add(progressBar, BorderLayout.SOUTH);
-        splashDialog.pack();
         splashDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        splashDialog.add(new JLabel(new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/splash.png")))), BorderLayout.CENTER);
+        splashDialog.pack();
         splashDialog.setLocationRelativeTo(null);
         splashDialog.setVisible(true);
         try {
             loadEverything();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (NullPointerException e) {
+            Utils.error(splashDialog, e);
         }
         splashDialog.dispose();
     }
