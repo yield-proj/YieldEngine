@@ -72,8 +72,7 @@ public class Entry {
         });
         frame.setIconImage(Assets.images.get("yieldIcon.png").getImage());
 
-        frame.add(new Projects());
-
+        frame.setContentPane(new Projects(frame));
 
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

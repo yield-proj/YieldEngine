@@ -17,35 +17,67 @@
 package com.xebisco.yield.editor;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 public class Projects extends JPanel {
 
-    public Projects() {
+    public Projects(JFrame frame) {
         setLayout(new BorderLayout());
 
         JPanel projectsAndTitlePanel = new JPanel();
         projectsAndTitlePanel.setLayout(new BorderLayout());
 
         JLabel title = new JLabel("Projects");
-        Color titleBkg = title.getBackground().brighter();
-        title.setBackground(titleBkg);
-        title.setOpaque(true);
         title.setFont(title.getFont().deriveFont(Font.BOLD).deriveFont(40f));
-        title.setBorder(BorderFactory.createLineBorder(titleBkg, 20, true));
+        title.setBorder(BorderFactory.createLineBorder(title.getBackground(), 20));
         projectsAndTitlePanel.add(title, BorderLayout.NORTH);
+        projectsAndTitlePanel.add(new ProjectListPanel(), BorderLayout.CENTER);
+        JPanel projectsControl = new JPanel();
+        projectsControl.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        JButton button = new JButton(new AbstractAction("New") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                newProjectFrame(frame);
+            }
+        });
+        projectsControl.add(button);
+        frame.getRootPane().setDefaultButton(button);
+
+        button = new JButton(new AbstractAction("Load") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Load Project");
+                fileChooser.setDialogType(JFileChooser.CUSTOM_DIALOG);
+                fileChooser.setFileFilter(new FileNameExtensionFilter("Yield Editor Project", "yep"));
+                if(fileChooser.showDialog(frame, "Load") == JFileChooser.APPROVE_OPTION) {
+                    try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileChooser.getSelectedFile()))) {
+                        Assets.projects.add((Project) ois.readObject());
+                    } catch (IOException | ClassNotFoundException ex) {
+                        Utils.error(frame, ex);
+                        Utils.error(frame, new InvalidProjectException("Project might be invalid"));
+                    }
+                }
+            }
+        });
+        projectsControl.add(button);
+
+        projectsAndTitlePanel.add(projectsControl, BorderLayout.SOUTH);
 
         add(projectsAndTitlePanel, BorderLayout.CENTER);
-
-
-
 
 
         JPanel logoAndOptions = new JPanel();
         logoAndOptions.setLayout(new BorderLayout());
         JLabel logo = new JLabel(Assets.images.get("editorLogoSmall.png"));
         logo.setMaximumSize(new Dimension(100, 100));
+        logo.setOpaque(true);
         logoAndOptions.add(logo, BorderLayout.NORTH);
         add(logoAndOptions, BorderLayout.WEST);
 
@@ -63,6 +95,7 @@ public class Projects extends JPanel {
                     }
                 })
         });
+        logo.setBackground(options.getBackground());
         options.setCellRenderer(new ButtonListCellRenderer<>());
         options.addListSelectionListener(new ButtonSelectionListener(options));
         options.setSelectedIndex(0);
@@ -70,10 +103,15 @@ public class Projects extends JPanel {
         logoAndOptions.add(options, BorderLayout.CENTER);
 
 
+    }
 
-
-        JFrame projectsList = new JFrame();
-
-
+    public static void newProjectFrame(Frame owner) {
+        JDialog newProjectDialog = new JDialog(owner);
+        newProjectDialog.setTitle("New Project");
+        newProjectDialog.setModal(true);
+        newProjectDialog.setContentPane(new NewProjectPanel(newProjectDialog));
+        newProjectDialog.setSize(500, 400);
+        newProjectDialog.setLocationRelativeTo(owner);
+        newProjectDialog.setVisible(true);
     }
 }

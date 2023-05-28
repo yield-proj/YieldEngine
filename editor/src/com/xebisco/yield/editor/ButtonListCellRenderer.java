@@ -19,7 +19,7 @@ package com.xebisco.yield.editor;
 import javax.swing.*;
 import java.awt.*;
 
-public class ButtonListCellRenderer<T extends JButton> extends JLabel implements ListCellRenderer<T> {
+public class ButtonListCellRenderer<T extends JButton> extends PrettyLabel implements ListCellRenderer<T> {
 
     @Override
     public Component getListCellRendererComponent(JList<? extends T> list, T value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -33,10 +33,8 @@ public class ButtonListCellRenderer<T extends JButton> extends JLabel implements
             background = list.getBackground();
         }
 
-        setHorizontalAlignment(SwingConstants.CENTER);
         setText(value.getText());
-        setIcon(value.getIcon());
-        setBorder(BorderFactory.createLineBorder(background, 4, true));
+        setPreferredSize(new Dimension(10, 30));
         setBackground(background);
         setForeground(foreground);
         return this;
