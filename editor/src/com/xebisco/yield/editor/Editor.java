@@ -18,8 +18,8 @@ package com.xebisco.yield.editor;
 
 import javax.swing.*;
 
-public class Editor extends JPanel {
-    public Editor(JFrame frame) {
+public class Editor extends JFrame {
+    public Editor(Project project) {
 
     }
 }

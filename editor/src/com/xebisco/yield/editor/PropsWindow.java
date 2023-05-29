@@ -36,7 +36,7 @@ public class PropsWindow extends JDialog {
 
     private static final Pattern keyPattern = Pattern.compile("^([^(]+)\\(([^)]*)\\)$");
 
-    public PropsWindow(Ini ini, File iniFile, ConditionalRunnable apply, Frame owner) {
+    public PropsWindow(Ini ini, File iniFile, Runnable apply, Frame owner) {
         super(owner);
         try {
             ini.load(new FileInputStream(iniFile));
@@ -55,8 +55,6 @@ public class PropsWindow extends JDialog {
         List<JButton> sections = new ArrayList<>();
         JList<JButton> sectionsJL;
 
-        Map<String, JComponent> sectionsPanels = new HashMap<>();
-
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.weightx = 1;
         gbc.insets = new Insets(10, 10, 0, 10);
@@ -67,7 +65,6 @@ public class PropsWindow extends JDialog {
         for (String section : ini.getSections().keySet()) {
             JPanel panel = new JPanel();
             panel.setLayout(new GridBagLayout());
-            sectionsPanels.put(section, panel);
             gbc.gridy = 0;
             for (Object k : ini.getSections().get(section).keySet()) {
                 String sk = ((String) k).replace("__", "\12").replace("_", " ").replace("\12", "_");
@@ -175,14 +172,13 @@ public class PropsWindow extends JDialog {
         JButton button = new JButton(new AbstractAction("OK") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (apply.run()) {
-                    try {
-                        ini.store(new FileOutputStream(iniFile));
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    dispose();
+                try {
+                    ini.store(new FileOutputStream(iniFile));
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
                 }
+                dispose();
+                apply.run();
             }
         });
         getRootPane().setDefaultButton(button);

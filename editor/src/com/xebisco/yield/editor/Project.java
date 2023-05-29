@@ -24,6 +24,7 @@ public class Project implements Serializable {
     private String name;
     private File projectLocation;
     private Date lastModifiedDate = new Date();
+    private final Date createdDate = new Date();
 
     public String getName() {
         return name;
@@ -47,5 +48,9 @@ public class Project implements Serializable {
 
     public void setLastModifiedDate(Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
     }
 }

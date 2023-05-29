@@ -48,7 +48,6 @@ public class ProjectListPanel extends JPanel implements MouseListener {
             for (int i = 0; i < Assets.projects.size(); i++) {
                 Project project = Assets.projects.get(i);
                 if (project == selectedProject) {
-                    System.out.println("aaa");
                     g.setColor(UIManager.getColor("List.selectionBackground"));
                 } else
                     g.setColor(brighterBkg);

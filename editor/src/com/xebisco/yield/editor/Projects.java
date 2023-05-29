@@ -84,13 +84,12 @@ public class Projects extends JPanel {
                 new JButton(new AbstractAction("Projects") {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        System.out.println("aaaa");
                     }
                 }),
                 new JButton(new AbstractAction("Options") {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        System.out.println("bbbb");
+
                     }
                 })
         });
@@ -116,7 +115,16 @@ public class Projects extends JPanel {
                 );
             }
             Ini ini = new Ini();
-            PropsWindow window = new PropsWindow(ini, file, () -> true, owner);
+            new PropsWindow(ini, file, () -> {
+                Project project = new Project();
+                project.setName(ini.getSections().get("New Project").getProperty("Name(STR)"));
+                project.setProjectLocation(new File(ini.getSections().get("New Project").getProperty("Path(PATH)")));
+                if(!project.getProjectLocation().exists()) {
+                    Utils.error(null, new IllegalStateException("Path is not valid."));
+                    newProjectFrame(owner);
+                }
+                Assets.projects.add(project);
+            }, owner);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
