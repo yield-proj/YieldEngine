@@ -16,14 +16,13 @@
 
 package com.xebisco.yield.editor;
 
+import com.xebisco.yield.ini.Ini;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 
 public class Projects extends JPanel {
 
@@ -56,8 +55,8 @@ public class Projects extends JPanel {
                 fileChooser.setDialogTitle("Load Project");
                 fileChooser.setDialogType(JFileChooser.CUSTOM_DIALOG);
                 fileChooser.setFileFilter(new FileNameExtensionFilter("Yield Editor Project", "yep"));
-                if(fileChooser.showDialog(frame, "Load") == JFileChooser.APPROVE_OPTION) {
-                    try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileChooser.getSelectedFile()))) {
+                if (fileChooser.showDialog(frame, "Load") == JFileChooser.APPROVE_OPTION) {
+                    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileChooser.getSelectedFile()))) {
                         Assets.projects.add((Project) ois.readObject());
                     } catch (IOException | ClassNotFoundException ex) {
                         Utils.error(frame, ex);
@@ -106,12 +105,20 @@ public class Projects extends JPanel {
     }
 
     public static void newProjectFrame(Frame owner) {
-        JDialog newProjectDialog = new JDialog(owner);
-        newProjectDialog.setTitle("New Project");
-        newProjectDialog.setModal(true);
-        newProjectDialog.setContentPane(new NewProjectPanel(newProjectDialog));
-        newProjectDialog.setSize(500, 400);
-        newProjectDialog.setLocationRelativeTo(owner);
-        newProjectDialog.setVisible(true);
+        try {
+            File file = File.createTempFile("newProject", "ini");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                writer.append(
+                        "[New Project]\n" +
+                                "Name(STR) = Project Name\n" +
+                                "Path(PATH) = Insert project path\n" +
+                                "Add_sample_scene(BOOL) = true\n"
+                );
+            }
+            Ini ini = new Ini();
+            PropsWindow window = new PropsWindow(ini, file, () -> true, owner);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

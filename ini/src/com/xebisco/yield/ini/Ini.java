@@ -36,30 +36,46 @@ public class Ini {
                 Matcher matcher = titlePattern.matcher(line);
                 boolean isHeader = matcher.matches();
                 if (props == null) {
-                    if (!isHeader)
-                        throw new IllegalStateException("Illegal start of ini file.");
-                    props = new ArrayList<>();
+                    if (isHeader)
+                        props = new ArrayList<>();
                 }
                 if (!isHeader) {
+                    assert props != null;
                     props.add(line);
                 } else {
-                    if (props.size() > 0) {
-                        IniProperties properties = new IniProperties();
-                        File temp = File.createTempFile("ini_section", "properties");
-                        try(BufferedWriter writer = new BufferedWriter(new FileWriter(temp))) {
-                            for(String l : props)
-                                writer.append(l);
-                        }
-                        properties.load(new BufferedReader(new FileReader(temp)));
-                        sections.put(header, properties);
-                        temp.delete();
-                    }
-                        header = matcher.group();
+                    createSection(props, header);
+                    header = matcher.group(1);
                     props.clear();
                 }
             }
+            assert props != null;
+            createSection(props, header);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void store(OutputStream outputStream) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+            for (String section : sections.keySet()) {
+                writer.append('[').append(section).append(']');
+                writer.newLine();
+                sections.get(section).store(writer, null);
+            }
+        }
+    }
+
+    private void createSection(ArrayList<String> props, String header) throws IOException {
+        if (props.size() > 0) {
+            IniProperties properties = new IniProperties();
+            File temp = File.createTempFile("ini_section", "properties");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(temp))) {
+                for (String l : props)
+                    writer.append(l).append('\n');
+            }
+            properties.load(new BufferedReader(new FileReader(temp)));
+            sections.put(header, properties);
+            temp.delete();
         }
     }
 

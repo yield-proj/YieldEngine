@@ -9,5 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="libs (4)" level="project" />
+    <orderEntry type="module" module-name="ini" />
   </component>
 </module>

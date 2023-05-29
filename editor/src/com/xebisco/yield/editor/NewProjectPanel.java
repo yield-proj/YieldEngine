@@ -26,7 +26,7 @@ public class NewProjectPanel extends JPanel {
     public NewProjectPanel(Dialog dialog) {
         setLayout(new BorderLayout());
 
-        JPanel panel = new JPanel(new GridBagLayout());
+        /*JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 0, 10);
 
@@ -51,6 +51,6 @@ public class NewProjectPanel extends JPanel {
         gbc.gridy = 1;
         panel.add(versionTextField, gbc);
 
-        add(panel, BorderLayout.NORTH);
+        add(panel, BorderLayout.NORTH);*/
     }
 }
