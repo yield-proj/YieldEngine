@@ -120,7 +120,7 @@ public class Application implements Behavior {
     @Override
     public void onStart() {
         applicationPlatform.getPlatformGraphics().init(platformInit);
-        defaultFont = new Font("OpenSans-Regular.ttf", 48, applicationPlatform.getFontLoader());
+        defaultFont = new Font("com/xebisco/yield/OpenSans-Regular.ttf", 48, applicationPlatform.getFontLoader());
         if (platformInit.getWindowIcon() == null)
             platformInit.setWindowIcon(new Texture(platformInit.getWindowIconPath(), applicationPlatform.getTextureManager()));
         applicationPlatform.getPlatformGraphics().updateWindowIcon(platformInit.getWindowIcon());
@@ -151,9 +151,9 @@ public class Application implements Behavior {
             axes.add(new Axis("View" + a, null, null, null, null));
         }
         if (applicationPlatform.getTextureManager() != null) {
-            defaultTexture = new Texture("yieldIcon.png", applicationPlatform.getTextureManager());
-            controllerTexture = new Texture("controller.png", applicationPlatform.getTextureManager());
-            translucentControllerTexture = new Texture("translucentController.png", applicationPlatform.getTextureManager());
+            defaultTexture = new Texture("com/xebisco/yield/yieldIcon.png", applicationPlatform.getTextureManager());
+            controllerTexture = new Texture("com/xebisco/yield/controller.png", applicationPlatform.getTextureManager());
+            translucentControllerTexture = new Texture("com/xebisco/yield/translucentController.png", applicationPlatform.getTextureManager());
         } else {
             controllerTexture = null;
             translucentControllerTexture = null;

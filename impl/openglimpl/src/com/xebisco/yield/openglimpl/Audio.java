@@ -16,27 +16,19 @@
 
 package com.xebisco.yield.openglimpl;
 
-import org.lwjgl.system.MemoryUtil;
+public class Audio {
+    private final int buffer, source;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
+    public Audio(int buffer, int source) {
+        this.buffer = buffer;
+        this.source = source;
+    }
 
-public class IOUtil {
-    public static ByteBuffer fromInputStream(InputStream inputStream) throws OGLImplIOException {
-        byte[] bytes;
-        try {
-            bytes = inputStream.readAllBytes();
-        } catch (IOException e) {
-            throw new OGLImplIOException(e);
-        }
+    public int getBuffer() {
+        return buffer;
+    }
 
-        ByteBuffer buffer = MemoryUtil.memAlloc(bytes.length);
-            for (byte b : bytes)
-                buffer.put(b);
-
-            buffer.flip();
-
-            return buffer;
+    public int getSource() {
+        return source;
     }
 }

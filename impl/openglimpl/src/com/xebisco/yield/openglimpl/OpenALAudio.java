@@ -21,6 +21,7 @@ import com.xebisco.yield.AudioPlayer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALC10;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.stb.STBVorbisInfo;
 import org.lwjgl.system.MemoryUtil;
@@ -43,23 +44,36 @@ public class OpenALAudio implements AudioManager {
     public Object loadAudio(AudioPlayer audio) {
         if (!started) {
             started = false;
-            long device = alcOpenDevice((CharSequence) null);
-            ALCCapabilities alcCaps = ALC.createCapabilities(device);
-            AL.createCapabilities(alcCaps, MemoryUtil::memCallocPointer);
+            long device = alcOpenDevice((ByteBuffer)null);
+            ALCCapabilities deviceCaps = ALC.createCapabilities(device);
+
+            long context = ALC10.alcCreateContext(device, (IntBuffer) null);
+            ALC10.alcMakeContextCurrent(context);
+            AL.createCapabilities(deviceCaps);
         }
         Audio out = new Audio(alGenBuffers(), alGenSources());
 
+        switch (audio.getAudioClip().getFileFormat()) {
+            case "WAV":
+                WaveData waveData = WaveData.create(audio.getAudioClip().getInputStream());
+                assert waveData != null;
+                alBufferData(out.getBuffer(), waveData.format, waveData.data, waveData.samplerate);
+                break;
+            case "OGG":
+                try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
+                    ShortBuffer pcm = readVorbis(audio.getAudioClip().getInputStream(), info);
 
-        try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
-            ShortBuffer pcm = readVorbis(audio.getAudioClip().getInputStream(), info);
-
-            alBufferData(out.getBuffer(), info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
+                    alBufferData(out.getBuffer(), info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
+                }
+                break;
+            default:
+                throw new IllegalStateException("Not supported audio extension. " + audio.getAudioClip().getFileFormat());
         }
 
         alSourcei(out.getSource(), AL_BUFFER, out.getBuffer());
         alSourcei(out.getSource(), AL_SOURCE_RELATIVE, AL_TRUE);
 
-        return null;
+        return out;
     }
 
     private static ShortBuffer readVorbis(InputStream inputStream, STBVorbisInfo info) {

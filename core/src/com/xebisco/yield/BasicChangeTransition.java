@@ -158,9 +158,9 @@ public class BasicChangeTransition {
         @Override
         public void render(PlatformGraphics graphics) {
             if (sliderUp == null)
-                sliderUp = new Texture("slideSceneChangeEffect.png", getApplication().getApplicationPlatform().getTextureManager());
+                sliderUp = new Texture("com/xebisco/yield/slideSceneChangeEffect.png", getApplication().getApplicationPlatform().getTextureManager());
             if (sliderDown == null)
-                sliderDown = new Texture("invertedSlideSceneChangeEffect.png", getApplication().getApplicationPlatform().getTextureManager());
+                sliderDown = new Texture("com/xebisco/yield/invertedSlideSceneChangeEffect.png", getApplication().getApplicationPlatform().getTextureManager());
             if (getPassedTime() >= getTimeToWait() * 2.0)
                 setFinished(true);
         }

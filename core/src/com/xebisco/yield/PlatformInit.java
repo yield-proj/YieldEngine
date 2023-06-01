@@ -25,7 +25,7 @@ public class PlatformInit {
     private int startPhysicsPpm = 16;
     private boolean fullscreen, undecorated, stretchViewport, verticalSync;
     private Texture windowIcon;
-    private String windowIconPath = "yieldIcon.png";
+    private String windowIconPath = "com/xebisco/yield/yieldIcon.png";
 
     /**
      * Returns the size of the window.
