@@ -46,7 +46,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class OpenGLPlatform implements PlatformGraphics, CheckKey, MouseCheck, ViewportZoomScale, ToggleFullScreen {
+public class OpenGLPlatform implements PlatformGraphics, CheckKey, MouseCheck, ViewportZoomScale, ToggleFullScreen, FontLoader {
 
     private long windowID = -1;
     private boolean setupThread = true;
@@ -138,6 +138,10 @@ public class OpenGLPlatform implements PlatformGraphics, CheckKey, MouseCheck, V
             glMatrixMode(GL_MODELVIEW);
 
             glClearColor(0, 0, 0, 1);
+
+            glDisable(GL_TEXTURE_2D);
+
+            glEnd();
         }
         glfwGetWindowSize(windowID, windowWidthBuffer, windowHeightBuffer);
 
@@ -297,8 +301,6 @@ public class OpenGLPlatform implements PlatformGraphics, CheckKey, MouseCheck, V
 
                 glColor4f((float) 1, (float) 1, (float) 1, (float) drawInstruction.getInnerColor().getAlpha());
 
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glEnable(GL_TEXTURE_2D);
                 glBindTexture(GL_TEXTURE_2D, ((Image) drawInstruction.getRenderRef()).getId());
 
@@ -312,8 +314,9 @@ public class OpenGLPlatform implements PlatformGraphics, CheckKey, MouseCheck, V
                 glTexCoord2f(0, 1);
                 glVertex2f(-w, -h);
 
+                glTexCoord2f(0, 0);
+
                 glEnd();
-                glDisable(GL_BLEND);
                 glDisable(GL_TEXTURE_2D);
                 break;
         }
@@ -613,5 +616,25 @@ public class OpenGLPlatform implements PlatformGraphics, CheckKey, MouseCheck, V
         dispose();
         platformInit.setFullscreen(fullScreen);
         init(platformInit);
+    }
+
+    @Override
+    public Object loadFont(com.xebisco.yield.Font font) {
+        return null;
+    }
+
+    @Override
+    public void unloadFont(com.xebisco.yield.Font font) {
+
+    }
+
+    @Override
+    public double getStringWidth(String text, Object fontRef) {
+        return 0;
+    }
+
+    @Override
+    public double getStringHeight(String text, Object fontRef) {
+        return ((Font) fontRef).getSize();
     }
 }

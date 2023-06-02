@@ -30,11 +30,17 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBImage.*;
 
 public class ImageLoader implements TextureManager {
-    public Image load(InputStream inputStream) {
+    public static Image load(InputStream inputStream) {
+        try {
+            return load(IOUtil.fromInputStream(inputStream));
+        } catch (OGLImplIOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Image load(ByteBuffer imageBuffer) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.mallocInt(1), height = stack.mallocInt(1), channels = stack.mallocInt(1);
-
-            ByteBuffer imageBuffer = IOUtil.fromInputStream(inputStream);
 
             if (!stbi_info_from_memory(imageBuffer, width, height, channels)) {
                 throw new ResourceException("Failed to read image information: " + stbi_failure_reason());
@@ -55,8 +61,6 @@ public class ImageLoader implements TextureManager {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width.get(0), height.get(0), 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 
             return new Image(image, id, width.get(0), height.get(0), channels.get(0));
-        } catch (IOException e) {
-            throw new ResourceException(e.getMessage());
         }
     }
 

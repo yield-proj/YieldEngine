@@ -36,7 +36,7 @@ public class InputUI extends ComponentBehavior {
     public void onStart() {
         if (getApplication().getControllerManager() != null) {
             lastControllerNum = getApplication().getControllerManager().getNumControllers();
-            font = new Font("Pixeboy.ttf", 40, getFontLoader());
+            font = new Font("com/xebisco/yield/Pixeboy.ttf", 40, getFontLoader());
             audioPlayer = getComponent(AudioPlayer.class);
         } else {
             getEntity().dispose();

@@ -36,14 +36,15 @@ public class Main extends Scene {
     @Override
     public void onStart() {
         getSystems().add(new ToggleFullScreenSystem());
-        setBackGroundColor(Colors.RED);
-        getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
+        //setBackGroundColor(Colors.BLACK);
+        /*getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
         Entity2D e = instantiate(new Entity2DPrefab(new ComponentCreation(TextureRectangle.class), new ComponentCreation(CircleCollider.class), new ComponentCreation(PhysicsBody.class), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class)));
         e.getTransform().rotate(40);
         e.getTransform().translate(0, 100);
         instantiate(new Entity2DPrefab(new ComponentCreation(Rectangle.class), new ComponentCreation(RectangleCollider.class), new ComponentCreation(PhysicsBody.class, c -> {
             ((PhysicsBody) c).setType(PhysicsType.STATIC);
-        }), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class))).getTransform().translate(0, -200);
+        }), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class))).getTransform().translate(0, -200);*/
+        instantiate(StandardPrefabs.text("Test"));
     }
 
     public static boolean a;
