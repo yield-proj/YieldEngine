@@ -186,10 +186,12 @@ public class YS10 {
     public static ReturnRunnable ysGetInstruction(String line, Function function) {
         Matcher matcher = SIMPLIFIED_VARIABLE_DECLARATION.matcher(line);
         if (matcher.matches()) {
-            ReturnRunnable value = ysGetInstruction(matcher.group(2), function);
-            assert value != null;
-            CastRet castRet = ysGetCast(line, function);
+            String v = matcher.group(2);
+            CastRet castRet = ysGetCast(v, function);
             Class<?> cast = castRet.getType();
+            v = castRet.getNewLine();
+            ReturnRunnable value = ysGetInstruction(v, function);
+            assert value != null;
             return () -> ysLoadVariable(function, matcher.group(1), new ObjectValue(new StandardGet(), new StandardSet(), value.run().getValue(), cast));
         }
         matcher.usePattern(IMPORT);

@@ -1,5 +1,3 @@
-test = ''
-func print(x)
-{
+func print(x) {
     system.out.println(x)
 }
