@@ -1,0 +1,2 @@
+import ys/io as io
+io.print('Hello, World!')
