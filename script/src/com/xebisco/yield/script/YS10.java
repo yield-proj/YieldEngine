@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 
 public class YS10 {
 
-    private static final Pattern SIMPLIFIED_VARIABLE_DECLARATION = Pattern.compile("^(\\w+) *= *([^}]*)$"), ISOLATED_FUNCTION_CALL = Pattern.compile("^([^()]+)\\(([^}]*)\\)$"), IMPORT = Pattern.compile("^import +(\\w+.*) +as +(\\w+)$"), STRING_REF = Pattern.compile("^\2(-?[0-9]+)$"), FUNCTION_REF = Pattern.compile("^\3(-?[0-9]+)$"), FUNCTION_CAST = Pattern.compile(".* +as +([a-zA-z0-9.]+)$"), FUNCTION_DECLARATION = Pattern.compile("func +(\\w+) *\\(([^}]*)\\)([^}]+)");
+    private static final Pattern SIMPLIFIED_VARIABLE_DECLARATION = Pattern.compile("^(\\w+) *= *([^}]*)$"), ISOLATED_FUNCTION_CALL = Pattern.compile("^([^()]+)\\(([^}]*)\\)$"), IMPORT = Pattern.compile("^import +(\\w+.*) +as +(\\w+)$"), STRING_REF = Pattern.compile("^\2(-?[0-9]+)$"), FUNCTION_REF = Pattern.compile("^\3(-?[0-9]+)$"), FUNCTION_CAST = Pattern.compile(".* +as +([a-zA-z0-9.]+)$"), FUNCTION_DECLARATION = Pattern.compile("^func +(\\w+) *\\(([^}]*)\\)([^}]+)$"), FUNCTION_RETURN = Pattern.compile("^return +([^}]+)$");
 
 
     public static String ysExtractStrings(String line) {
@@ -129,7 +129,7 @@ public class YS10 {
                 n = Long.parseLong(line.substring(0, line.length() - 1));
             } else {
                 try {
-                    if(line.contains("."))
+                    if (line.contains("."))
                         throw new NumberFormatException();
                     n = Integer.parseInt(line);
                 } catch (NumberFormatException e) {
@@ -239,7 +239,7 @@ public class YS10 {
                 }
             Matcher func = FUNCTION_REF.matcher(matcher.group(3));
             func.matches();
-            FunctionCall call = new FunctionCall(fArgs, YS.PROGRAMS.get(Integer.parseInt(func.group(1))));
+            FunctionCall call = new FunctionCall(fArgs, YS.FUNCTIONS.get(Integer.parseInt(func.group(1))));
             call.getFunction().getJavaImports().putAll(function.getJavaImports());
             call.getFunction().setDeleteVariablesAfterRun(true);
             return () -> ysLoadVariable(function, matcher.group(1), new ObjectValue(new StandardGet(), new ImmutableSet(), call, FunctionCall.class));
@@ -248,6 +248,22 @@ public class YS10 {
         if (matcher.matches()) {
             ObjectValue s = YS.STRINGS.get(Integer.parseInt(matcher.group(1)));
             return () -> s;
+        }
+        matcher.usePattern(FUNCTION_RETURN);
+        if(matcher.matches()) {
+            ReturnRunnable rr = ysGetInstruction(matcher.group(1), function);
+            assert rr != null;
+            return new ReturnRunnable() {
+                @Override
+                public ObjectValue run() {
+                    return rr.run();
+                }
+
+                @Override
+                public boolean isReturnCall() {
+                    return true;
+                }
+            };
         }
         Class<?> imp = function.getJavaImports().get(line);
         if (imp != null) return () -> new ObjectValue(new StandardGet(), new ImmutableSet(), imp, Class.class);
@@ -261,7 +277,7 @@ public class YS10 {
             }
             return rCalls[rCalls.length - 1];
         } else {
-            return ysGetFunctionCall(line, () -> function.getVariables().get("self"), function);
+            return ysGetFunctionCall(line, () -> ysGetVariable("self", function), function);
         }
     }
 
@@ -272,7 +288,7 @@ public class YS10 {
     }
 
     public static Object ysCastObject(Object o, Class<?> type) {
-        if(type.isPrimitive()) {
+        if (type.isPrimitive()) {
             //noinspection unchecked
             return ysCastNumber((Number) o, (Class<? extends Number>) type);
         } else {
@@ -282,12 +298,18 @@ public class YS10 {
 
     public static Number ysCastNumber(Number number, Class<? extends Number> primitive) {
         switch (primitive.getSimpleName()) {
-            case "int": return number.intValue();
-            case "float": return number.floatValue();
-            case "double": return number.doubleValue();
-            case "byte": return number.byteValue();
-            case "long": return number.longValue();
-            case "short": return number.shortValue();
+            case "int":
+                return number.intValue();
+            case "float":
+                return number.floatValue();
+            case "double":
+                return number.doubleValue();
+            case "byte":
+                return number.byteValue();
+            case "long":
+                return number.longValue();
+            case "short":
+                return number.shortValue();
         }
         throw new IllegalStateException("Not a primitive number type");
     }
@@ -300,7 +322,7 @@ public class YS10 {
             try {
                 if (!ext[i].equals("")) {
                     if (i < ext.length - 1 && ext[i + 1].contains("{")) {
-                        int id = YS.PROGRAMS.size();
+                        int id = YS.FUNCTIONS.size();
                         List<String> bLines = new ArrayList<>();
                         int l = 1;
                         int i1 = 2;
@@ -337,7 +359,7 @@ public class YS10 {
                         Function f = new Function(cast);
                         f.getJavaImports().putAll(function.getJavaImports());
                         ysCompileFunction(bLines.toArray(new String[0]), f);
-                        YS.PROGRAMS.put(id, f);
+                        YS.FUNCTIONS.put(id, f);
                         ext[i] = ext[i].trim() + "\3" + id;
                     }
                     ReturnRunnable instruction = ysGetInstruction(ext[i], function);
@@ -417,6 +439,7 @@ public class YS10 {
         function.getJavaImports().put("string", String.class);
         function.getJavaImports().put("string_builder", StringBuilder.class);
         function.getJavaImports().put("system", System.class);
+        function.getJavaImports().put("number", Number.class);
         function.getJavaImports().put("thread", Thread.class);
         function.getJavaImports().put("void", Void.class);
         function.getJavaImports().put("primitive_void", void.class);

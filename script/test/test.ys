@@ -1,3 +1,3 @@
 import ys/io as io
-var = 10 as primitive_int
-io.print(var)
+io.print('Hello, World!')
+io.print(10)

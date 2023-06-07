@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.script;
+package com.xebisco.yield.script.ys;
 
-import com.xebisco.yield.script.obj.ObjectValue;
+public class LangException extends RuntimeException {
+    public LangException() {
+    }
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+    public LangException(String message) {
+        super(message);
+    }
 
-public final class YS {
-    public static final List<ObjectValue> STRINGS = new ArrayList<>();
-    public static final Map<Integer, Function> FUNCTIONS = new HashMap<>();
+    public LangException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public LangException(Throwable cause) {
+        super(cause);
+    }
+
+    public LangException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }
