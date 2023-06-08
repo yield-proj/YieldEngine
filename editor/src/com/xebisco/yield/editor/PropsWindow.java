@@ -48,6 +48,8 @@ public class PropsWindow extends JDialog {
         JPanel contentPane = new JPanel();
         setContentPane(contentPane);
         setSize(600, 400);
+        setMaximumSize(new Dimension(1000, 400));
+        setMinimumSize(new Dimension(200, 100));
         setLocationRelativeTo(owner);
 
         contentPane.setLayout(new BorderLayout());
@@ -146,6 +148,11 @@ public class PropsWindow extends JDialog {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     pane.setViewportView(panel);
+                    SwingUtilities.invokeLater(() -> {
+                        if((int) (panel.getHeight() / 1.5) < getMaximumSize().height) {
+                            setBounds(getBounds().x, getBounds().y + (int) (panel.getHeight() / 1.5) / 4, getSize().width, (int) (panel.getHeight() / 1.5));
+                        }
+                    });
                 }
             }));
         }

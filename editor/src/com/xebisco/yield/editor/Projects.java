@@ -26,7 +26,10 @@ import java.io.*;
 
 public class Projects extends JPanel {
 
+    public static JFrame projectsFrame;
+
     public Projects(JFrame frame) {
+        projectsFrame = frame;
         setLayout(new BorderLayout());
 
         JPanel projectsAndTitlePanel = new JPanel();
@@ -36,7 +39,9 @@ public class Projects extends JPanel {
         title.setFont(title.getFont().deriveFont(Font.BOLD).deriveFont(40f));
         title.setBorder(BorderFactory.createLineBorder(title.getBackground(), 20));
         projectsAndTitlePanel.add(title, BorderLayout.NORTH);
-        projectsAndTitlePanel.add(new ProjectListPanel(), BorderLayout.CENTER);
+        JScrollPane projectListScrollPanel = new JScrollPane(new ProjectListPanel());
+        projectListScrollPanel.setBorder(null);
+        projectsAndTitlePanel.add(projectListScrollPanel, BorderLayout.CENTER);
         JPanel projectsControl = new JPanel();
         projectsControl.setLayout(new FlowLayout(FlowLayout.RIGHT));
         JButton button = new JButton(new AbstractAction("New") {
@@ -116,14 +121,15 @@ public class Projects extends JPanel {
             }
             Ini ini = new Ini();
             new PropsWindow(ini, file, () -> {
-                Project project = new Project();
-                project.setName(ini.getSections().get("New Project").getProperty("Name(STR)"));
-                project.setProjectLocation(new File(ini.getSections().get("New Project").getProperty("Path(PATH)")));
-                if(!project.getProjectLocation().exists()) {
+                Project project = new Project(ini.getSections().get("New Project").getProperty("Name(STR)"), new File(ini.getSections().get("New Project").getProperty("Path(PATH)")));
+                if (!project.getProjectLocation().exists()) {
                     Utils.error(null, new IllegalStateException("Path is not valid."));
                     newProjectFrame(owner);
+                } else if (!Assets.projects.contains(project)) {
+                    Assets.projects.add(project);
+                    owner.repaint();
                 }
-                Assets.projects.add(project);
+                else Utils.error(null, new IllegalStateException("Project already exists on the projects list"));
             }, owner);
         } catch (IOException e) {
             throw new RuntimeException(e);

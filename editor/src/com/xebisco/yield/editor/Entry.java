@@ -18,19 +18,14 @@ package com.xebisco.yield.editor;
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.*;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.Objects;
 
 public class Entry {
     public static void main(String[] args) {
@@ -41,14 +36,18 @@ public class Entry {
     }
 
     private static void loadEverything() {
-        List<String> images = getResources("/com/xebisco/yield/editor/assets/images/");
-        Pattern namePattern = Pattern.compile("([^/]*)$");
-        for (String path : images) {
-            Matcher m = namePattern.matcher(path);
-            m.find();
-            String name = m.group(0);
-            Assets.images.put(name, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/com/xebisco/yield/editor/assets/images/" + name))));
-        }
+        String n = "editorLogo.png";
+        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
+        n = "editorLogoSmall.png";
+        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
+        n = "yieldIcon.png";
+        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
+        n = "projectIcon0.png";
+        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
+        n = "projectIcon1.png";
+        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
+        n = "projectIcon2.png";
+        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
     }
 
     public static void openProjects() {
@@ -76,75 +75,6 @@ public class Entry {
 
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    public static List<String> getResources(String contains) {
-        final ArrayList<String> retval = new ArrayList<>();
-        final String classPath = System.getProperty("java.class.path", ".");
-        final String[] classPathElements = classPath.split(System.getProperty("path.separator"));
-        for (final String element : classPathElements) {
-            retval.addAll(getResources(element, contains));
-        }
-        return retval;
-    }
-
-    private static List<String> getResources(final String element, final String contains) {
-        final ArrayList<String> retval = new ArrayList<>();
-        final File file = new File(element);
-        if (file.isDirectory()) {
-            retval.addAll(getResourcesFromDirectory(file, contains));
-        } else {
-            retval.addAll(getResourcesFromJarFile(file, contains));
-        }
-        return retval;
-    }
-
-    private static List<String> getResourcesFromJarFile(final File file, final String contains) {
-        final ArrayList<String> retval = new ArrayList<>();
-        ZipFile zf;
-        try {
-            zf = new ZipFile(file);
-        } catch (final IOException e) {
-            throw new Error(e);
-        }
-        final Enumeration<? extends ZipEntry> e = zf.entries();
-        while (e.hasMoreElements()) {
-            final ZipEntry ze = e.nextElement();
-            final String fileName = ze.getName();
-            final boolean accept = fileName.contains(contains);
-            if (accept) {
-                retval.add(fileName);
-            }
-        }
-        try {
-            zf.close();
-        } catch (final IOException e1) {
-            throw new Error(e1);
-        }
-        return retval;
-    }
-
-    private static List<String> getResourcesFromDirectory(
-            final File directory,
-            final String contains) {
-        final ArrayList<String> retval = new ArrayList<>();
-        final File[] fileList = directory.listFiles();
-        for (final File file : fileList) {
-            if (file.isDirectory()) {
-                retval.addAll(getResourcesFromDirectory(file, contains));
-            } else {
-                try {
-                    final String fileName = file.getCanonicalPath();
-                    final boolean accept = fileName.contains(contains);
-                    if (accept) {
-                        retval.add(fileName);
-                    }
-                } catch (final IOException e) {
-                    throw new Error(e);
-                }
-            }
-        }
-        return retval;
     }
 
     private static void splashDialog() {

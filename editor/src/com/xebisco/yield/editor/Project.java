@@ -19,12 +19,18 @@ package com.xebisco.yield.editor;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Random;
 
 public class Project implements Serializable {
     private String name;
-    private File projectLocation;
-    private Date lastModifiedDate = new Date();
+    private final File projectLocation;
+    private final int logoVariation = new Random().nextInt(3);
     private final Date createdDate = new Date();
+
+    public Project(String name, File projectLocation) {
+        this.name = name;
+        this.projectLocation = projectLocation;
+    }
 
     public String getName() {
         return name;
@@ -38,19 +44,11 @@ public class Project implements Serializable {
         return projectLocation;
     }
 
-    public void setProjectLocation(File projectLocation) {
-        this.projectLocation = projectLocation;
-    }
-
-    public Date getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(Date lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
     public Date getCreatedDate() {
         return createdDate;
+    }
+
+    public int getLogoVariation() {
+        return logoVariation;
     }
 }

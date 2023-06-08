@@ -43,7 +43,7 @@ public class Assets {
             try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(projectsFile))) {
                 //noinspection unchecked
                 projects = (List<Project>) oi.readObject();
-            }  catch (EOFException e) {
+            } catch (EOFException e) {
                 projects = new ArrayList<>();
             } catch (IOException | ClassNotFoundException e) {
                 Utils.error(null, e);
