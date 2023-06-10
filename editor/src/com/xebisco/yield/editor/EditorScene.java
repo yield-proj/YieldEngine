@@ -16,24 +16,12 @@
 
 package com.xebisco.yield.editor;
 
-import java.io.File;
+import java.awt.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
-public class Project implements Serializable {
+public class EditorScene implements Serializable {
     private String name;
-    private final Map<String, EditorScene> scenes = new HashMap<>();
-    private final File projectLocation;
-    private final int logoVariation = new Random().nextInt(3);
-    private final Date createdDate = new Date();
-
-    public Project(String name, File projectLocation) {
-        this.name = name;
-        this.projectLocation = projectLocation;
-    }
+    private Color backgroundColor = Color.GRAY.darker();
 
     public String getName() {
         return name;
@@ -43,19 +31,11 @@ public class Project implements Serializable {
         this.name = name;
     }
 
-    public File getProjectLocation() {
-        return projectLocation;
+    public Color getBackgroundColor() {
+        return backgroundColor;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public int getLogoVariation() {
-        return logoVariation;
-    }
-
-    public Map<String, EditorScene> getScenes() {
-        return scenes;
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 }

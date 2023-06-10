@@ -147,12 +147,10 @@ public class PropsWindow extends JDialog {
             sections.add(new JButton(new AbstractAction(section) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    pane.setViewportView(panel);
-                    SwingUtilities.invokeLater(() -> {
-                        if((int) (panel.getHeight() / 1.5) < getMaximumSize().height) {
-                            setBounds(getBounds().x, getBounds().y + (int) (panel.getHeight() / 1.5) / 4, getSize().width, (int) (panel.getHeight() / 1.5));
-                        }
-                    });
+                    JPanel p = new JPanel();
+                    p.setLayout(new BorderLayout());
+                    p.add(panel, BorderLayout.NORTH);
+                    pane.setViewportView(p);
                 }
             }));
         }

@@ -33,10 +33,10 @@ public class PrettyLabel extends JPanel {
         ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g.setColor(getBackground());
-        g.fillRoundRect(5, 0, getWidth() - 10, getHeight(), 10, 10);
+        g.fillRoundRect(5, 2, getWidth() - 10, getHeight() - 4, 10, 10);
         g.setColor(getForeground());
         int sw = g.getFontMetrics().stringWidth(text);
-        g.drawString(text, getWidth() / 2 - sw / 2, (int) (g.getFont().getSize() * 1.5));
+        g.drawString(text, getWidth() / 2 - sw / 2, getHeight() / 2 + g.getFont().getSize() / 4);
     }
 
     public String getText() {

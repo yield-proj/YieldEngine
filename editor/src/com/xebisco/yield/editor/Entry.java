@@ -22,9 +22,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.Objects;
 
 public class Entry {
@@ -32,7 +30,18 @@ public class Entry {
         FlatMacDarkLaf.setup();
 
         splashDialog();
+        if(args.length == 1) {
+            Project project;
+            try(ObjectInputStream oi = new ObjectInputStream(new BufferedInputStream(new FileInputStream(args[0])))) {
+                project = (Project) oi.readObject();
+            } catch (IOException | ClassNotFoundException e){
+                throw new RuntimeException(e);
+            }
+            new Editor(project);
+        }
+            else if(args.length == 0)
         openProjects();
+        else throw new IllegalStateException("Wrong arguments");
     }
 
     private static void loadEverything() {
@@ -48,6 +57,10 @@ public class Entry {
         Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
         n = "projectIcon2.png";
         Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
+        n = "closeIcon.png";
+        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
+        n = "selectedCloseIcon.png";
+        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
     }
 
     public static void openProjects() {
@@ -61,11 +74,7 @@ public class Entry {
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
-                try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(Utils.defaultDirectory() + "/.yield_editor/projects.ser"))) {
-                    oo.writeObject(Assets.projects);
-                } catch (IOException ex) {
-                    Utils.error(frame, ex);
-                }
+                Projects.saveProjects();
                 frame.dispose();
             }
         });

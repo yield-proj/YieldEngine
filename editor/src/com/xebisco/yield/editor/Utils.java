@@ -36,4 +36,8 @@ public class Utils {
             return System.getProperty("user.home");
         return System.getProperty("user.dir");
     }
+
+    public static double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
 }

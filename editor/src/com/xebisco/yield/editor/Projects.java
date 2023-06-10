@@ -108,6 +108,14 @@ public class Projects extends JPanel {
 
     }
 
+    public static void saveProjects() {
+        try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(Utils.defaultDirectory() + "/.yield_editor/projects.ser"))) {
+            oo.writeObject(Assets.projects);
+        } catch (IOException ex) {
+            Utils.error(null, ex);
+        }
+    }
+
     public static void newProjectFrame(Frame owner) {
         try {
             File file = File.createTempFile("newProject", "ini");
