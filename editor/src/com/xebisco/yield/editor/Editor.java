@@ -16,6 +16,7 @@
 
 package com.xebisco.yield.editor;
 
+import com.formdev.flatlaf.FlatIconColors;
 import com.xebisco.yield.ini.Ini;
 
 import javax.swing.*;
@@ -32,6 +33,8 @@ public class Editor extends JFrame {
     private EditorScene openedScene;
     private final Project project;
     private int gridX = 10, gridY = 10;
+
+    private YieldTabbedPane central, northwest, southwest, east;
 
     public Editor(Project project) {
         this.project = project;
@@ -53,10 +56,11 @@ public class Editor extends JFrame {
         });
         setJMenuBar(menuBar());
         setIconImage(Assets.images.get("yieldIcon.png").getImage());
-        JSplitPane mainAndInfo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, createPaneWithTab(new SceneScroll(new SceneView(1)), "Scene View"), createPaneWithTab(new JPanel(), "Info"));
+        JSplitPane mainAndInfo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, central = new YieldTabbedPane(), east = new YieldTabbedPane());
+
         mainAndInfo.setResizeWeight(1);
         mainAndInfo.setDividerLocation(getSize().width - 650);
-        JSplitPane sourceAndConsole = new JSplitPane(JSplitPane.VERTICAL_SPLIT, createPaneWithTab(new JPanel(), "Source"), createPaneWithTab(new JPanel(), "Console"));
+        JSplitPane sourceAndConsole = new JSplitPane(JSplitPane.VERTICAL_SPLIT, northwest = new YieldTabbedPane(), southwest = new YieldTabbedPane());
         sourceAndConsole.setResizeWeight(1);
         sourceAndConsole.setDividerLocation(getSize().height - 300);
         JSplitPane mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sourceAndConsole, mainAndInfo);
@@ -64,6 +68,11 @@ public class Editor extends JFrame {
         add(mainSplit);
         setLocationRelativeTo(null);
         setVisible(true);
+
+        central.addTab("Scene View", new SceneScroll(new SceneView()));
+        east.addTab("Info", new JPanel());
+        northwest.addTab("Source", new JPanel());
+        southwest.addTab("Console", new JTextArea());
     }
 
     private YieldTabbedPane createPaneWithTab(Component tab, String name) {
@@ -164,32 +173,26 @@ public class Editor extends JFrame {
     class SceneView extends JPanel implements MouseWheelListener, MouseMotionListener, MouseListener {
         private double zoom = 1.0;
         public static final double SCALE_STEP = 0.1d;
-        private Dimension initialSize;
         private Point origin;
         private double previousZoom = zoom;
         private double scrollX = 0d;
         private double scrollY = 0d;
-        private float hexSize = 3f;
+        private final float hexSize = 3f;
 
-        public SceneView(double zoom) {
-            this.zoom = zoom;
+        public SceneView() {
             addMouseWheelListener(this);
             addMouseMotionListener(this);
             addMouseListener(this);
             setAutoscrolls(true);
         }
 
-        private String noSceneLoadedText = "No scenes loaded.";
-
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g;
             if (openedScene != null) {
+                g.setColor(openedScene.getBackgroundColor());
                 g2d.fillRect(0, 0, getWidth(), getHeight());
-                if (openedScene.getBackgroundColor() != Color.WHITE)
-                    g.setColor(openedScene.getBackgroundColor().brighter());
-                else g.setColor(Color.BLACK);
 
                 g2d.scale(zoom, zoom);
 
@@ -197,6 +200,11 @@ public class Editor extends JFrame {
                 double tx = ((size.getWidth() - getWidth() * zoom) / 2) / zoom;
                 double ty = ((size.getHeight() - getHeight() * zoom) / 2) / zoom;
                 g2d.translate(tx, ty);
+
+
+                float str = (float) (1 / zoom);
+                if(str < 0.05) str = 0.05f;
+                g2d.setStroke(new BasicStroke(str));
 
                 int gridX = Editor.this.gridX, gridY = Editor.this.gridY;
                 while (gridX * zoom < 50) {
@@ -206,48 +214,49 @@ public class Editor extends JFrame {
                 while (gridY * zoom < 50) {
                     gridY *= 2;
                 }
-                for (int i = 0; i < getWidth() / gridX / 2 + 1; i++) {
+
+                if (openedScene.getBackgroundColor() != Color.WHITE)
+                    g.setColor(openedScene.getBackgroundColor().brighter());
+                else g.setColor(Color.BLACK);
+
+                int h;
+                if(zoom < 1)
+                    h = (int) (getHeight() / zoom);
+                else h = (int) (getHeight() * zoom);
+
+                int w;
+                if(zoom < 1)
+                    w = (int) (getWidth() / zoom);
+                else w = (int) (getWidth() * zoom);
+
+
+                for (int i = 0; i < getWidth() / zoom / gridX / 2 + 1; i++) {
                     int x = getWidth() / 2 + gridX * i;
-                    g.drawLine(x, 0, x, getHeight());
+                    g.drawLine(x, getHeight() - h, x, h);
                 }
-                for (int i = 1; i < getWidth() / gridX / 2 + 1; i++) {
+                for (int i = 1; i < getWidth() / zoom / gridX / 2 + 1; i++) {
                     int x = getWidth() / 2 + gridX * -i;
-                    g.drawLine(x, 0, x, getHeight());
+                    g.drawLine(x, getHeight() - h, x, h);
                 }
 
-                for (int i = 0; i < getHeight() / gridY / 2 + 1; i++) {
+                for (int i = 0; i < getHeight() / zoom / gridY / 2 + 1; i++) {
                     int y = getHeight() / 2 + gridX * i;
-                    g.drawLine(0, y, getWidth(), y);
+                    g.drawLine(getWidth() - w, y, w, y);
                 }
-                for (int i = 1; i < getHeight() / gridY / 2 + 1; i++) {
+                for (int i = 1; i < getHeight() / zoom / gridY / 2 + 1; i++) {
                     int y = getHeight() / 2 + gridX * -i;
-                    g.drawLine(0, y, getWidth(), y);
+                    g.drawLine(getWidth() - w, y, w, y);
                 }
             } else {
                 g2d.setColor(getBackground());
                 g2d.fillRect(0, 0, getWidth(), getHeight());
                 g.setColor(Color.WHITE);
+                String noSceneLoadedText = "No scenes loaded.";
                 g.drawString(noSceneLoadedText, getWidth() / 2 - g.getFontMetrics().stringWidth(noSceneLoadedText) / 2, getHeight() / 2 + g.getFont().getSize() / 2);
             }
 
 
             g.dispose();
-        }
-
-        @Override
-        public void setSize(Dimension size) {
-            super.setSize(size);
-            if (initialSize == null) {
-                this.initialSize = size;
-            }
-        }
-
-        @Override
-        public void setPreferredSize(Dimension preferredSize) {
-            super.setPreferredSize(preferredSize);
-            if (initialSize == null) {
-                this.initialSize = preferredSize;
-            }
         }
 
         public void mouseWheelMoved(MouseWheelEvent e) {
@@ -256,15 +265,8 @@ public class Editor extends JFrame {
                 zoom = Math.abs(zoom + zoomFactor);
                 //Here we calculate new size of canvas relative to zoom.
                 Dimension d = new Dimension(
-                        (int) (initialSize.width * zoom),
-                        (int) (initialSize.height * zoom));
-                if (getParent().getSize().width > d.width || getParent().getSize().height > d.height) {
-
-                    //TODO fix
-                    d = new Dimension(
-                            getParent().getSize().width,
-                            getParent().getSize().height);
-                }
+                        (int) (openedScene.getViewSceneSize().width * zoom),
+                        (int) (openedScene.getViewSceneSize().height * zoom));
                 setPreferredSize(d);
                 setSize(d);
                 validate();

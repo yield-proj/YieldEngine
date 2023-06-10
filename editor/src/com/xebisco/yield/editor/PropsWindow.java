@@ -24,11 +24,9 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.*;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,7 +41,7 @@ public class PropsWindow extends JDialog {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-        setTitle("New Project");
+        setTitle("Properties");
         setModal(true);
         JPanel contentPane = new JPanel();
         setContentPane(contentPane);
@@ -56,6 +54,19 @@ public class PropsWindow extends JDialog {
 
         List<JButton> sections = new ArrayList<>();
         JList<JButton> sectionsJL;
+
+        boolean cn = true;
+        if (ini.getSections().size() == 1) {
+            int c = 0;
+            for (String s : ini.getSections().keySet()) {
+                for (Object ignored : ini.getSections().get(s).keySet())
+                    c++;
+            }
+            if (c == 1) {
+                cn = false;
+            }
+        }
+
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.weightx = 1;
@@ -144,15 +155,33 @@ public class PropsWindow extends JDialog {
                 panel.add(comp, gbc);
                 gbc.gridy++;
             }
+            boolean finalCn = cn;
             sections.add(new JButton(new AbstractAction(section) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     JPanel p = new JPanel();
                     p.setLayout(new BorderLayout());
-                    p.add(panel, BorderLayout.NORTH);
+                    if (finalCn)
+                        p.add(panel, BorderLayout.NORTH);
+                    else
+                        p.add(panel);
                     pane.setViewportView(p);
                 }
             }));
+        }
+
+        if (!cn) {
+            String s = "";
+            for (String i : ini.getSections().keySet()) {
+                s = i;
+            }
+            setTitle(s);
+            setUndecorated(true);
+            contentPane.setBorder(BorderFactory.createTitledBorder(s));
+            pane.setBorder(null);
+            setSize(new Dimension(350, 120));
+            setLocationRelativeTo(owner);
+            contentPane.add(pane, BorderLayout.CENTER);
         }
 
         Collections.reverse(sections);
@@ -164,13 +193,10 @@ public class PropsWindow extends JDialog {
         sectionsJL.setSelectedIndex(0);
         sectionsJL.getSelectedValue().getAction().actionPerformed(null);
 
-        contentPane.add(sectionsJL, BorderLayout.WEST);
-        /*JPanel np = new JPanel();
-        np.setLayout(new BorderLayout());
-        np.add(contents, BorderLayout.NORTH);
-        contentPane.add(np, BorderLayout.CENTER);*/
-
-        contentPane.add(pane, BorderLayout.CENTER);
+        if (cn) {
+            contentPane.add(sectionsJL, BorderLayout.WEST);
+            contentPane.add(pane, BorderLayout.CENTER);
+        }
 
         JPanel buttons = new JPanel();
         buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));
