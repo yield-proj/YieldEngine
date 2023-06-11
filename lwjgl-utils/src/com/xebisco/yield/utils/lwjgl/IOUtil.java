@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.openglimpl;
+package com.xebisco.yield.utils.lwjgl;
 
 import org.lwjgl.system.MemoryUtil;
 
@@ -23,20 +23,16 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 public class IOUtil {
-    public static ByteBuffer fromInputStream(InputStream inputStream) throws OGLImplIOException {
+    public static ByteBuffer fromInputStream(InputStream inputStream) throws IOException {
         byte[] bytes;
-        try {
-            bytes = inputStream.readAllBytes();
-        } catch (IOException e) {
-            throw new OGLImplIOException(e);
-        }
+        bytes = inputStream.readAllBytes();
 
         ByteBuffer buffer = MemoryUtil.memAlloc(bytes.length);
-            for (byte b : bytes)
-                buffer.put(b);
+        for (byte b : bytes)
+            buffer.put(b);
 
-            buffer.flip();
+        buffer.flip();
 
-            return buffer;
+        return buffer;
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.openglimpl;
+package com.xebisco.yield.openalimpl;
 
 import org.lwjgl.openal.AL10;
 

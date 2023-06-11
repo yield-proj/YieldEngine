@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.openglimpl;
+package com.xebisco.yield.utils;
 
-public class Audio {
-    private final int buffer, source;
+import java.util.List;
 
-    public Audio(int buffer, int source) {
-        this.buffer = buffer;
-        this.source = source;
-    }
+public class Logger {
+    public static final List<String> MESSAGES = new ImmutableList<>();
 
-    public int getBuffer() {
-        return buffer;
-    }
-
-    public int getSource() {
-        return source;
+    public static void print(Object x) {
+        MESSAGES.add(x.toString());
     }
 }

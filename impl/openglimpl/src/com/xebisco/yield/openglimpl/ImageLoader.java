@@ -18,6 +18,7 @@ package com.xebisco.yield.openglimpl;
 
 import com.xebisco.yield.Texture;
 import com.xebisco.yield.TextureManager;
+import com.xebisco.yield.utils.lwjgl.IOUtil;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
@@ -33,7 +34,7 @@ public class ImageLoader implements TextureManager {
     public static Image load(InputStream inputStream) {
         try {
             return load(IOUtil.fromInputStream(inputStream));
-        } catch (OGLImplIOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

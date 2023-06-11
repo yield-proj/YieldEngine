@@ -418,11 +418,10 @@ public class DnDTabbedPane extends JTabbedPane {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setPaint(m_lineColor);
-            if (getTabCount() > 0) {
-                g2.drawRoundRect(0, 0, getTabAreaBound().width - 1, getTabAreaBound().height - 1, (int) arc, (int) arc);
-            } else
+            if (getTabCount() == 0)
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, (int) arc, (int) arc);
-            g2.draw(m_lineRect);
+            else
+                g2.draw(m_lineRect);
         } // if
     }
 

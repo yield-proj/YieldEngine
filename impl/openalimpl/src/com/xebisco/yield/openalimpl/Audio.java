@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.openglimpl;
+package com.xebisco.yield.openalimpl;
 
-import java.io.IOException;
+public class Audio {
+    private final int buffer, source;
 
-public class OGLImplIOException extends IOException {
-    public OGLImplIOException() {
+    public Audio(int buffer, int source) {
+        this.buffer = buffer;
+        this.source = source;
     }
 
-    public OGLImplIOException(String message) {
-        super(message);
+    public int getBuffer() {
+        return buffer;
     }
 
-    public OGLImplIOException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public OGLImplIOException(Throwable cause) {
-        super(cause);
+    public int getSource() {
+        return source;
     }
 }
