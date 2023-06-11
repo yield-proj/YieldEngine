@@ -27,7 +27,7 @@ public class Main extends Scene {
         ApplicationManager manager = new ApplicationManager(new ContextTime());
         // Creating an instance of the `Application` class, the created object will be added to manager passed as a parameter,
         // the initial scene will be started after the engine starts. The call `Global.swingPlatform()` returns a class reference to
-        // an implementation of Yield's `PlatformGraphics` class. The `PlatformInit` instance contains configuration for the
+        // an implementation of Yield's `ApplicationPlatform` class. The `PlatformInit` instance contains configuration for the
         // application.
         new Application(manager, Main.class, Global.swingPlatform(), new PlatformInit());
         // `manager.run();` is starting the application main loop. This method is responsible for managing
