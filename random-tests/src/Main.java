@@ -28,7 +28,7 @@ public class Main extends Scene {
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
         //platformInit.setStretchViewport(true);
-        Application application = new Application(applicationManager, Main.class, Global.openGLPlatform(), platformInit);
+        Application application = new Application(applicationManager, Main.class, Global.openGLALPlatform(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
     }

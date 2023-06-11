@@ -12,5 +12,6 @@
     <orderEntry type="library" name="core-libs" level="project" />
     <orderEntry type="module" module-name="openglimpl" />
     <orderEntry type="module" module-name="swingimpl" />
+    <orderEntry type="module" module-name="openalimpl" />
   </component>
 </module>

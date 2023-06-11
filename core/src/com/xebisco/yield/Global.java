@@ -28,13 +28,14 @@ public final class Global {
     public static String APP_SAVE_ID;
 
     /**
-     * This function returns an instance of ApplicationPlatform using classes from the com.xebisco.yield.swingimpl package.
+     * The function returns an instance of an ApplicationPlatform using Java's Swing for rendering and JavaX Sound
+     * for audio.
      *
-     * @return An instance of the `ApplicationPlatform` class is being returned.
+     * @return The method is returning an instance of the `ApplicationPlatform` class.
      */
     public static ApplicationPlatform swingPlatform() throws ClassNotFoundException {
         Class<?> swingPlatformClass = Class.forName("com.xebisco.yield.swingimpl.SwingPlatform");
-        Class<?> clipAudioClass = Class.forName("com.xebisco.yield.swingimpl.ClipAudio");
+        Class<?> clipAudioClass = Class.forName("com.xebisco.yield.javaxsoundimpl.JavaXAudioManager");
         try {
             Object swingPlatform = swingPlatformClass.getConstructor().newInstance(), clipAudio = clipAudioClass.getConstructor().newInstance();
             return new ApplicationPlatform(
@@ -52,18 +53,47 @@ public final class Global {
                  InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     /**
-     * This function returns an instance of ApplicationPlatform using classes from the com.xebisco.yield.openglimpl package.
+     * The function returns an instance of an ApplicationPlatform using Java's Swing for rendering and OpenAL
+     * for audio.
      *
-     * @return An instance of the `ApplicationPlatform` class is being returned.
+     * @return The method is returning an instance of the `ApplicationPlatform` class.
      */
-    public static ApplicationPlatform openGLPlatform() throws ClassNotFoundException {
+    public static ApplicationPlatform swingALPlatform() throws ClassNotFoundException {
+        Class<?> swingPlatformClass = Class.forName("com.xebisco.yield.swingimpl.SwingPlatform");
+        Class<?> openalAudioClass = Class.forName("com.xebisco.yield.openalimpl.OpenALAudio");
+        try {
+            Object swingPlatform = swingPlatformClass.getConstructor().newInstance(), openalAudio = openalAudioClass.getConstructor().newInstance();
+            return new ApplicationPlatform(
+                    (FontLoader) swingPlatform,
+                    (TextureManager) swingPlatform,
+                    (InputManager) swingPlatform,
+                    null,
+                    (MouseCheck) swingPlatform,
+                    (AudioManager) openalAudio,
+                    (ViewportZoomScale) swingPlatform,
+                    (ToggleFullScreen) swingPlatform,
+                    (PlatformGraphics) swingPlatform
+            );
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                 InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * The function returns an instance of an ApplicationPlatform using OpenGL for rendering and OpenAL
+     * for audio.
+     *
+     * @return The method is returning an instance of the `ApplicationPlatform` class.
+     */
+    public static ApplicationPlatform openGLALPlatform() throws ClassNotFoundException {
         Class<?> openglPlatformClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
         Class<?> imageLoaderClass = Class.forName("com.xebisco.yield.openglimpl.ImageLoader");
-        Class<?> openalAudioClass = Class.forName("com.xebisco.yield.openglimpl.OpenALAudio");
+        Class<?> openalAudioClass = Class.forName("com.xebisco.yield.openalimpl.OpenALAudio");
         try {
             Object openglPlatform = openglPlatformClass.getConstructor().newInstance(), imageLoader = imageLoaderClass.getConstructor().newInstance(), openalAudio = openalAudioClass.getConstructor().newInstance();
             return new ApplicationPlatform(
@@ -73,6 +103,35 @@ public final class Global {
                     (CheckKey) openglPlatform,
                     (MouseCheck) openglPlatform,
                     (AudioManager) openalAudio,
+                    (ViewportZoomScale) openglPlatform,
+                    (ToggleFullScreen) openglPlatform,
+                    (PlatformGraphics) openglPlatform
+            );
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                 InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * The function returns an instance of an ApplicationPlatform using OpenGL for rendering and JavaX Sound
+     * for audio.
+     *
+     * @return The method is returning an instance of the `ApplicationPlatform` class.
+     */
+    public static ApplicationPlatform openGLJXAPlatform() throws ClassNotFoundException {
+        Class<?> openglPlatformClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
+        Class<?> imageLoaderClass = Class.forName("com.xebisco.yield.openglimpl.ImageLoader");
+        Class<?> javaxAudioClass = Class.forName("com.xebisco.yield.javaxsoundimpl.JavaXSoundManager");
+        try {
+            Object openglPlatform = openglPlatformClass.getConstructor().newInstance(), imageLoader = imageLoaderClass.getConstructor().newInstance(), javaxAudio = javaxAudioClass.getConstructor().newInstance();
+            return new ApplicationPlatform(
+                    (FontLoader) openglPlatform,
+                    (TextureManager) imageLoader,
+                    null,
+                    (CheckKey) openglPlatform,
+                    (MouseCheck) openglPlatform,
+                    (AudioManager) javaxAudio,
                     (ViewportZoomScale) openglPlatform,
                     (ToggleFullScreen) openglPlatform,
                     (PlatformGraphics) openglPlatform

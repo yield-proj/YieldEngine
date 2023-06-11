@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.swingimpl;
+package com.xebisco.yield.javaxsoundimpl;
 
 import com.xebisco.yield.AudioManager;
 import com.xebisco.yield.AudioPlayer;
@@ -23,7 +23,7 @@ import javax.sound.sampled.*;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
-public class ClipAudio implements AudioManager {
+public class JavaXSoundManager implements AudioManager {
     @Override
     public Object loadAudio(AudioPlayer audioPlayer) {
         Clip clip;
