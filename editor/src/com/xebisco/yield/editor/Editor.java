@@ -20,6 +20,8 @@ import com.formdev.flatlaf.FlatIconColors;
 import com.xebisco.yield.ini.Ini;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
@@ -27,6 +29,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 
 public class Editor extends JFrame {
 
@@ -35,6 +38,8 @@ public class Editor extends JFrame {
     private int gridX = 10, gridY = 10;
 
     private YieldTabbedPane central, northwest, southwest, east;
+
+    private final JTextArea console = new JTextArea();
 
     public Editor(Project project) {
         this.project = project;
@@ -54,7 +59,6 @@ public class Editor extends JFrame {
                 }
             }
         });
-        setJMenuBar(menuBar());
         setIconImage(Assets.images.get("yieldIcon.png").getImage());
         JSplitPane mainAndInfo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, central = new YieldTabbedPane(), east = new YieldTabbedPane());
 
@@ -66,13 +70,23 @@ public class Editor extends JFrame {
         JSplitPane mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sourceAndConsole, mainAndInfo);
         mainSplit.setDividerLocation(300);
         add(mainSplit);
-        setLocationRelativeTo(null);
-        setVisible(true);
 
-        central.addTab("Scene View", new SceneScroll(new SceneView()));
-        east.addTab("Info", new JPanel());
-        northwest.addTab("Source", new JPanel());
-        southwest.addTab("Console", new JTextArea());
+        console.setEditable(false);
+        console.setText("Yield Editor Console: " + new Date());
+
+
+        console.setBackground(console.getBackground().brighter());
+
+        setJMenuBar(menuBar());
+
+
+        setLocationRelativeTo(null);
+        //setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        setVisible(true);
+    }
+
+    public void printToConsole(String s) {
+        console.setText(console.getText() + '\n' + s);
     }
 
     private YieldTabbedPane createPaneWithTab(Component tab, String name) {
@@ -91,10 +105,7 @@ public class Editor extends JFrame {
                 try {
                     File file = File.createTempFile("newScene", "ini");
                     try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-                        writer.append(
-                                "[Scene Creation]\n" +
-                                        "Name(STR) = Empty Scene\n"
-                        );
+                        writer.append("[Scene Creation]\n" + "Name(STR) = Empty Scene\n");
                     }
                     Ini ini = new Ini();
                     new PropsWindow(ini, file, () -> {
@@ -125,8 +136,7 @@ public class Editor extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispatchEvent(new WindowEvent(Editor.this, WindowEvent.WINDOW_CLOSING));
-                if (!isVisible())
-                    Entry.openProjects();
+                if (!isVisible()) Entry.openProjects();
             }
         });
         menu.add(new AbstractAction("Exit") {
@@ -137,6 +147,40 @@ public class Editor extends JFrame {
         });
         menu.setMnemonic(KeyEvent.VK_F);
         menuBar.add(menu);
+
+        menu = new JMenu("Window");
+
+        central.addTab("Scene View", new SceneView());
+        east.addTab("Info", new JPanel());
+        northwest.addTab("Source", new JPanel());
+        southwest.addTab("Console", console);
+
+        menu.add(new AbstractAction("Scene View") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                central.addTab("Scene View", new SceneView());
+            }
+        });
+        menu.add(new AbstractAction("Info") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                east.addTab("Info", new JPanel());
+            }
+        });
+        menu.add(new AbstractAction("Source") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                northwest.addTab("Source", new JPanel());
+            }
+        });
+        menu.add(new AbstractAction("Console") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                southwest.addTab("Console", console);
+            }
+        });
+        menuBar.add(menu);
+
         item = new JMenuItem(new AbstractAction("Repaint") {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -158,168 +202,270 @@ public class Editor extends JFrame {
         return menuBar;
     }
 
-    class SceneScroll extends JScrollPane {
-        public SceneScroll(Component view) {
-            super(view);
-            setBorder(null);
-        }
+    class SceneView extends JPanel {
 
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-        }
-    }
-
-    class SceneView extends JPanel implements MouseWheelListener, MouseMotionListener, MouseListener {
         private double zoom = 1.0;
-        public static final double SCALE_STEP = 0.1d;
-        private Point origin;
-        private double previousZoom = zoom;
-        private double scrollX = 0d;
-        private double scrollY = 0d;
-        private final float hexSize = 3f;
+        private double posX = 0d;
+        private double posY = 0d;
+
+        private JTextField scaleField = new JTextField(), posXField = new JTextField(), posYField = new JTextField();
 
         public SceneView() {
-            addMouseWheelListener(this);
-            addMouseMotionListener(this);
-            addMouseListener(this);
-            setAutoscrolls(true);
+            setLayout(new BorderLayout());
+            add(new SceneViewProps(), BorderLayout.NORTH);
+            add(new SceneGameView());
         }
 
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D g2d = (Graphics2D) g;
-            if (openedScene != null) {
-                g.setColor(openedScene.getBackgroundColor());
-                g2d.fillRect(0, 0, getWidth(), getHeight());
+        class SceneViewProps extends JPanel {
+            public SceneViewProps() {
+                setLayout(new FlowLayout(FlowLayout.LEFT));
+                add(new JLabel("View Scale: "));
+                add(scaleField);
+                scaleField.getDocument().addDocumentListener(new DocumentListener() {
+                    @Override
+                    public void insertUpdate(DocumentEvent e) {
+                        try {
+                            zoom = Double.parseDouble(scaleField.getText());
+                            if (zoom < 0.5) zoom = 0.5;
+                        } catch (NumberFormatException ignore) {
 
-                g2d.scale(zoom, zoom);
+                        }
+                        SceneView.this.repaint();
+                    }
 
-                Rectangle size = getBounds();
-                double tx = ((size.getWidth() - getWidth() * zoom) / 2) / zoom;
-                double ty = ((size.getHeight() - getHeight() * zoom) / 2) / zoom;
-                g2d.translate(tx, ty);
+                    @Override
+                    public void removeUpdate(DocumentEvent e) {
+                        try {
+                            zoom = Double.parseDouble(scaleField.getText());
+                            if (zoom < 0.5) zoom = 0.5;
+                        } catch (NumberFormatException ignore) {
 
+                        }
+                        SceneView.this.repaint();
+                    }
 
-                float str = (float) (1 / zoom);
-                if(str < 0.05) str = 0.05f;
-                g2d.setStroke(new BasicStroke(str));
+                    @Override
+                    public void changedUpdate(DocumentEvent e) {
 
-                int gridX = Editor.this.gridX, gridY = Editor.this.gridY;
-                while (gridX * zoom < 50) {
-                    gridX *= 2;
+                    }
+                });
+                add(new JLabel("View Position: "));
+                add(posXField);
+                posXField.getDocument().addDocumentListener(new DocumentListener() {
+                    @Override
+                    public void insertUpdate(DocumentEvent e) {
+                        try {
+                            posX = Double.parseDouble(posXField.getText());
+                        } catch (NumberFormatException ignore) {
 
-                }
-                while (gridY * zoom < 50) {
-                    gridY *= 2;
-                }
+                        }
+                        SceneView.this.repaint();
+                    }
 
-                if (openedScene.getBackgroundColor() != Color.WHITE)
-                    g.setColor(openedScene.getBackgroundColor().brighter());
-                else g.setColor(Color.BLACK);
+                    @Override
+                    public void removeUpdate(DocumentEvent e) {
+                        try {
+                            posX = Double.parseDouble(posXField.getText());
+                        } catch (NumberFormatException ignore) {
 
-                int h;
-                if(zoom < 1)
-                    h = (int) (getHeight() / zoom);
-                else h = (int) (getHeight() * zoom);
+                        }
+                        SceneView.this.repaint();
+                    }
 
-                int w;
-                if(zoom < 1)
-                    w = (int) (getWidth() / zoom);
-                else w = (int) (getWidth() * zoom);
+                    @Override
+                    public void changedUpdate(DocumentEvent e) {
 
+                    }
+                });
+                add(new JLabel("x"));
+                add(posYField);
+                posYField.getDocument().addDocumentListener(new DocumentListener() {
+                    @Override
+                    public void insertUpdate(DocumentEvent e) {
+                        try {
+                            posY = Double.parseDouble(posYField.getText());
+                        } catch (NumberFormatException ignore) {
 
-                for (int i = 0; i < getWidth() / zoom / gridX / 2 + 1; i++) {
-                    int x = getWidth() / 2 + gridX * i;
-                    g.drawLine(x, getHeight() - h, x, h);
-                }
-                for (int i = 1; i < getWidth() / zoom / gridX / 2 + 1; i++) {
-                    int x = getWidth() / 2 + gridX * -i;
-                    g.drawLine(x, getHeight() - h, x, h);
-                }
+                        }
+                        SceneView.this.repaint();
+                    }
 
-                for (int i = 0; i < getHeight() / zoom / gridY / 2 + 1; i++) {
-                    int y = getHeight() / 2 + gridX * i;
-                    g.drawLine(getWidth() - w, y, w, y);
-                }
-                for (int i = 1; i < getHeight() / zoom / gridY / 2 + 1; i++) {
-                    int y = getHeight() / 2 + gridX * -i;
-                    g.drawLine(getWidth() - w, y, w, y);
-                }
-            } else {
-                g2d.setColor(getBackground());
-                g2d.fillRect(0, 0, getWidth(), getHeight());
-                g.setColor(Color.WHITE);
-                String noSceneLoadedText = "No scenes loaded.";
-                g.drawString(noSceneLoadedText, getWidth() / 2 - g.getFontMetrics().stringWidth(noSceneLoadedText) / 2, getHeight() / 2 + g.getFont().getSize() / 2);
-            }
+                    @Override
+                    public void removeUpdate(DocumentEvent e) {
+                        try {
+                            posY = Double.parseDouble(posYField.getText());
+                        } catch (NumberFormatException ignore) {
 
+                        }
+                        SceneView.this.repaint();
+                    }
 
-            g.dispose();
-        }
+                    @Override
+                    public void changedUpdate(DocumentEvent e) {
 
-        public void mouseWheelMoved(MouseWheelEvent e) {
-            if (openedScene != null) {
-                double zoomFactor = -SCALE_STEP * e.getPreciseWheelRotation() * zoom;
-                zoom = Math.abs(zoom + zoomFactor);
-                //Here we calculate new size of canvas relative to zoom.
-                Dimension d = new Dimension(
-                        (int) (openedScene.getViewSceneSize().width * zoom),
-                        (int) (openedScene.getViewSceneSize().height * zoom));
-                setPreferredSize(d);
-                setSize(d);
-                validate();
-                followMouseOrCenter(e.getPoint());
-                previousZoom = zoom;
-            }
-        }
-
-        public void followMouseOrCenter(Point point) {
-            Rectangle size = getBounds();
-            Rectangle visibleRect = getVisibleRect();
-            scrollX = size.getCenterX();
-            scrollY = size.getCenterY();
-            if (point != null) {
-                scrollX = point.getX() / previousZoom * zoom - (point.getX() - visibleRect.getX());
-                scrollY = point.getY() / previousZoom * zoom - (point.getY() - visibleRect.getY());
-            }
-
-            visibleRect.setRect(scrollX, scrollY, visibleRect.getWidth(), visibleRect.getHeight());
-            scrollRectToVisible(visibleRect);
-        }
-
-        public void mouseDragged(MouseEvent e) {
-            if (origin != null && openedScene != null) {
-                int deltaX = origin.x - e.getX();
-                int deltaY = origin.y - e.getY();
-                Rectangle view = getVisibleRect();
-                view.x += deltaX;
-                view.y += deltaY;
-                scrollRectToVisible(view);
+                    }
+                });
             }
         }
 
-        public void mouseMoved(MouseEvent e) {
-        }
+        class SceneGameView extends JPanel implements MouseWheelListener, MouseMotionListener, MouseListener {
 
-        public void mouseClicked(MouseEvent e) {
-        }
+            private Point moveStart = new Point();
 
-        public void mousePressed(MouseEvent e) {
-            if (openedScene != null)
-                origin = new Point(e.getPoint());
-        }
+            public SceneGameView() {
+                addMouseWheelListener(this);
+                addMouseMotionListener(this);
+                addMouseListener(this);
+            }
 
-        public void mouseReleased(MouseEvent e) {
-        }
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (!scaleField.hasFocus())
+                    scaleField.setText(String.format("%.1f", zoom));
+                if (!posXField.hasFocus())
+                    posXField.setText(String.format("%.1f", posX));
+                if (!posYField.hasFocus())
+                    posYField.setText(String.format("%.1f", posY));
+                Graphics2D g2d = (Graphics2D) g;
+                if (openedScene != null) {
+                    g.setColor(openedScene.getBackgroundColor());
+                    g2d.fillRect(0, 0, getWidth(), getHeight());
 
-        public void mouseEntered(MouseEvent e) {
-        }
+                    g2d.scale(zoom, zoom);
 
-        public void mouseExited(MouseEvent e) {
-        }
+                    Rectangle size = getBounds();
+                    double tx = ((size.getWidth() - getWidth() * zoom) / 2) / zoom;
+                    double ty = ((size.getHeight() - getHeight() * zoom) / 2) / zoom;
+                    g2d.translate(tx, ty);
 
+                    g2d.translate(posX, posY);
+
+
+                    float str = (float) (1 / zoom);
+                    if (str < 0.05) str = 0.05f;
+                    g2d.setStroke(new BasicStroke(str));
+
+                    g.setColor(Color.RED);
+                    g.fillRect(0, 0, 10, 10);
+
+                    if (openedScene.getBackgroundColor() != Color.WHITE) {
+                        Color osc = openedScene.getBackgroundColor().brighter();
+                        g.setColor(new Color(osc.getRed(), osc.getGreen(), osc.getBlue(), 50));
+                    } else g.setColor(new Color(0, 0, 0, 50));
+
+                    int w = getWidth();
+                    if (zoom < 1) w /= zoom;
+
+                    int h = getHeight();
+                    if (zoom < 1) h /= zoom;
+
+                    int lw = (int) -posX;
+
+                    int lh = (int) -posY;
+
+
+                    for (int i = 0; i < (lw + w) / gridX + 1; i++) {
+                        int x = gridX * i;
+                        g.drawLine(x, lh + h, x, lh - (h - getHeight()));
+                    }
+                    for (int i = 1; i < (getWidth() / 2 - lw + (w - getWidth())) / gridX + 1; i++) {
+                        int x = gridX * -i;
+                        g.drawLine(x, lh + h, x, lh - (h - getHeight()));
+                    }
+
+                    for (int i = 0; i < (lh + h) / gridY + 1; i++) {
+                        int y = gridX * i;
+                        g.drawLine(lw + w, y, lw - (w - getWidth()), y);
+                    }
+                    for (int i = 1; i < (getHeight() / 2 - lh + (h - getHeight())) / gridY + 1; i++) {
+                        int y = gridX * -i;
+                        g.drawLine(lw + w, y, lw - (w - getWidth()), y);
+                    }
+                } else {
+                    g2d.setColor(getBackground());
+                    g2d.fillRect(0, 0, getWidth(), getHeight());
+                    g.setColor(Color.WHITE);
+                    String noSceneLoadedText = "No scenes loaded.";
+                    g.drawString(noSceneLoadedText, getWidth() / 2 - g.getFontMetrics().stringWidth(noSceneLoadedText) / 2, getHeight() / 2 + g.getFont().getSize() / 2);
+                }
+
+
+                g.dispose();
+            }
+
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                if (openedScene != null) {
+                    if (-e.getPreciseWheelRotation() > 0) {
+                        zoom += .1;
+                    } else if (zoom > 0.5) {
+                        zoom -= .1;
+                    }
+
+                    if (zoom < 0.5) zoom = 0.5;
+
+                    SceneView.this.repaint();
+                }
+            }
+
+            private boolean mouseZooming;
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if (openedScene != null) {
+                    if (mouseZooming) {
+                        zoom -= (e.getY() - moveStart.y) / 100.0;
+                        if (zoom < 0.5) zoom = 0.5;
+                    } else {
+                        posX += (e.getX() - moveStart.x) / zoom;
+                        posY += (e.getY() - moveStart.y) / zoom;
+                    }
+                    moveStart = e.getPoint();
+                    SceneView.this.repaint();
+                }
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (openedScene != null) {
+                    if (e.getButton() == MouseEvent.BUTTON2) {
+                        mouseZooming = true;
+                    }
+                    moveStart = e.getPoint();
+                    requestFocus();
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (openedScene != null) {
+                    if (e.getButton() == MouseEvent.BUTTON2) {
+                        mouseZooming = false;
+                    }
+                }
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        }
     }
 }
 //getWidth() - zoomPointX / zoom + zoomPointX - getWidth()

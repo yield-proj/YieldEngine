@@ -23,10 +23,13 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
+import java.util.Locale;
 import java.util.Objects;
 
 public class Entry {
     public static void main(String[] args) {
+        System.setProperty("sun.java2d.opengl", "True");
+        Locale.setDefault(Locale.US);
         FlatMacDarkLaf.setup();
 
         splashDialog();

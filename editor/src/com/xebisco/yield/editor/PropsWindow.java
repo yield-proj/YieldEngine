@@ -177,7 +177,7 @@ public class PropsWindow extends JDialog {
             }
             setTitle(s);
             setUndecorated(true);
-            contentPane.setBorder(BorderFactory.createTitledBorder(s));
+            contentPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(getForeground()), s));
             pane.setBorder(null);
             setSize(new Dimension(350, 120));
             setLocationRelativeTo(owner);

@@ -22,7 +22,6 @@ import java.io.Serializable;
 public class EditorScene implements Serializable {
     private String name;
     private Color backgroundColor = Color.GRAY.darker();
-    private Dimension viewSceneSize = new Dimension(10000, 10000);
 
     public String getName() {
         return name;
@@ -38,13 +37,5 @@ public class EditorScene implements Serializable {
 
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
-    }
-
-    public Dimension getViewSceneSize() {
-        return viewSceneSize;
-    }
-
-    public void setViewSceneSize(Dimension viewSceneSize) {
-        this.viewSceneSize = viewSceneSize;
     }
 }
