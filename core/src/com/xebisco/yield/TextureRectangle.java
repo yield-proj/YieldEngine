@@ -37,12 +37,16 @@ public class TextureRectangle extends Rectangle {
     public void onStart() {
         super.onStart();
         if (texture == null) texture = getApplication().getDefaultTexture();
-        getDrawInstruction().setType(DrawInstruction.Type.IMAGE);
+    }
+
+    @Override
+    public void setup(Vector2D[] vertices) {
+        super.setup(vertices);
+        getDrawInstruction().setImageRef(texture.getImageRef());
     }
 
     @Override
     public void render(PlatformGraphics graphics) {
-        getDrawInstruction().setRenderRef(texture.getImageRef());
         if (textureSized) {
             if (textureScale == null)
                 getSize().set(texture.getSize());

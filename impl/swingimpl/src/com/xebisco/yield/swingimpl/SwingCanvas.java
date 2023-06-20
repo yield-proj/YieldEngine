@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield;
+package com.xebisco.yield.swingimpl;
 
-/**
- * The EquilateralTriangle class extends the Rectangle class and sets the draw instruction type to equilateral triangle.
- */
-public class EquilateralTriangle extends Rectangle {
-    @Override
-    public void onStart() {
-        super.onStart();
-        getDrawInstruction().setType(DrawInstruction.Type.EQUILATERAL_TRIANGLE);
+import java.awt.*;
+
+public class SwingCanvas extends Canvas {
+    public Graphics2D prepareRender() {
+        Graphics2D g = (Graphics2D) getBufferStrategy().getDrawGraphics();
+        g.setBackground(Color.BLACK);
+        g.clearRect(0, 0, getWidth(), getHeight());
+        return g;
     }
+
+    public void finishRender(Graphics2D g) {
+        g.dispose();
+        getBufferStrategy().show();
+    }
+
 }

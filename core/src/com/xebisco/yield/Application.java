@@ -32,7 +32,7 @@ public class Application implements Behavior {
     public final Vector2D mousePosition = new Vector2D();
     private final ApplicationPlatform applicationPlatform;
     private final PlatformInit platformInit;
-    private final DrawInstruction drawInstruction = new DrawInstruction();
+    private final DrawInstruction drawInstruction = new DrawInstruction(new int[4], new int[4]);
     private final Set<Axis> axes = new HashSet<>();
     private final ApplicationManager applicationManager;
     private final Size2D viewportSize;
@@ -76,13 +76,18 @@ public class Application implements Behavior {
         this.platformInit = platformInit;
         renderer = (scene) -> {
             Application.this.applicationPlatform.getPlatformGraphics().frame();
-            Application.this.applicationPlatform.getPlatformGraphics().resetRotation();
-            drawInstruction.setBorderColor(null);
-            drawInstruction.setFilled(true);
-            drawInstruction.setInnerColor(scene.getBackGroundColor());
-            drawInstruction.setType(DrawInstruction.Type.RECTANGLE);
-            drawInstruction.setPosition(Application.this.applicationPlatform.getPlatformGraphics().getCamera());
-            drawInstruction.setSize(platformInit.getViewportSize());
+            drawInstruction.setStroke(0);
+            drawInstruction.setColor(scene.getBackGroundColor());
+            Vector2D cam = Application.this.applicationPlatform.getPlatformGraphics().getCamera();
+            drawInstruction.getVerticesX()[0] = (int) (cam.getX() - getViewportSize().getWidth() / 2);
+            drawInstruction.getVerticesX()[1] = (int) (cam.getX() + getViewportSize().getWidth() / 2);
+            drawInstruction.getVerticesX()[2] = (int) (cam.getX() + getViewportSize().getWidth() / 2);
+            drawInstruction.getVerticesX()[3] = (int) (cam.getX() - getViewportSize().getWidth() / 2);
+
+            drawInstruction.getVerticesY()[0] = (int) (cam.getY() - getViewportSize().getHeight() / 2);
+            drawInstruction.getVerticesY()[1] = (int) (cam.getY() - getViewportSize().getHeight() / 2);
+            drawInstruction.getVerticesY()[2] = (int) (cam.getY() + getViewportSize().getHeight() / 2);
+            drawInstruction.getVerticesY()[3] = (int) (cam.getY() + getViewportSize().getHeight() / 2);
             Application.this.applicationPlatform.getPlatformGraphics().draw(drawInstruction);
             try {
                 for (int i = 0; i < scene.getEntities().size(); i++) {
@@ -315,7 +320,10 @@ public class Application implements Behavior {
                 } catch (ConcurrentModificationException ignore) {
                 }
 
-                scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex).reversed());
+                if (platformInit.isInvertZIndex())
+                    scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex));
+                else
+                    scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex).reversed());
             }
 
 

@@ -23,7 +23,7 @@ public class PlatformInit {
     private Size2D viewportSize = new Size2D(1280, 720), windowSize = new Size2D(1280, 720);
     private String title = "Yield Window";
     private int startPhysicsPpm = 16;
-    private boolean fullscreen, undecorated, stretchViewport, verticalSync;
+    private boolean fullscreen, undecorated, stretchViewport, verticalSync, invertZIndex;
     private Texture windowIcon;
     private String windowIconPath = "com/xebisco/yield/yieldIcon.png";
 
@@ -213,5 +213,26 @@ public class PlatformInit {
      */
     public void setStartPhysicsPpm(int startPhysicsPpm) {
         this.startPhysicsPpm = startPhysicsPpm;
+    }
+
+    /**
+     * The function returns the value of the boolean variable invertZIndex.
+     *
+     * @return The method `isInvertZIndex()` is returning a boolean value, which is the value of the variable
+     * `invertZIndex`.
+     */
+    public boolean isInvertZIndex() {
+        return invertZIndex;
+    }
+
+    /**
+     * This function sets the value of a boolean variable called invertZIndex.
+     *
+     * @param invertZIndex The parameter "invertZIndex" is a boolean variable that determines whether the Z-index of an
+     * element should be inverted or not. If set to true, the Z-index will be inverted, meaning that elements with a higher
+     * Z-index will appear in front elements with a lower Z-index.
+     */
+    public void setInvertZIndex(boolean invertZIndex) {
+        this.invertZIndex = invertZIndex;
     }
 }

@@ -19,7 +19,6 @@ package com.xebisco.yield.swingimpl;
 import com.xebisco.yield.*;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.Color;
 import java.awt.Font;
@@ -27,7 +26,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,38 +37,29 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     private final Vector2D mousePosition = new Vector2D();
     private final KeyAction addKeyAction = pressingKeys::add;
     private final KeyAction removeKeyAction = pressingKeys::remove;
-    private final Dimension bounds = new Dimension();
     private final MouseButtonAction addBtnAction = pressingMouseButtons::add;
     private final MouseButtonAction removeBtnAction = pressingMouseButtons::remove;
-    private Image viewBuffer;
-    private GraphicsDevice device;
-    private GraphicsConfiguration graphicsConfiguration;
-    private JComponent canvas;
+    private GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    private GraphicsConfiguration graphicsConfiguration = device.getDefaultConfiguration();
+    private DisplayMode defaultDisplayMode;
     private JFrame frame;
     private Graphics2D graphics;
-    private AffineTransform defaultTransform = new AffineTransform();
-    private boolean stretch, verticalSync;
+    private boolean stretch;
 
     private PlatformInit platformInit;
 
     private Vector2D camera;
+    private SwingCanvas canvas;
 
     private TwoAnchorRepresentation zoomScale = new TwoAnchorRepresentation(1, 1);
-
-    public SwingPlatform() {
-        System.setProperty("sun.java2d.opengl", "True");
-        System.setProperty("sun.java2d.accthreshold", "0");
-        device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        graphicsConfiguration = device.getDefaultConfiguration();
-    }
 
     public static Color awtColor(com.xebisco.yield.Color yieldColor) {
         return new Color(yieldColor.getARGB(), true);
     }
 
     public Dimension onSizeBoundary(Image image, Dimension boundary) {
-        int original_width = image.getWidth(canvas);
-        int original_height = image.getHeight(canvas);
+        int original_width = image.getWidth(frame);
+        int original_height = image.getHeight(frame);
         int bound_width = boundary.width;
         int bound_height = boundary.height;
         int new_width;
@@ -130,11 +119,11 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        BufferedImage out = graphicsConfiguration.createCompatibleImage(i.getWidth(), i.getHeight(), Transparency.TRANSLUCENT);
+        BufferedImage out = graphicsConfiguration.createCompatibleImage(i.getWidth(), i.getHeight(), i.getTransparency());
         Graphics2D g = out.createGraphics();
         g.setBackground(TRANSPARENT);
         g.clearRect(0, 0, out.getWidth(), out.getHeight());
-        g.drawImage(i, 0, 0, canvas);
+        g.drawImage(i, 0, 0, frame);
         g.dispose();
         i.flush();
         return out;
@@ -166,30 +155,6 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     @Override
     public int getImageHeight(Object imageRef) {
         return ((BufferedImage) imageRef).getHeight();
-    }
-
-    /*@Override
-    public Texture cropTexture(Object imageRef, int x, int y, int w, int h) {
-        BufferedImage image = ((BufferedImage) imageRef).getSubimage(x, y, w, h);
-        return new Texture(image, null, this);
-    }
-
-    @Override
-    public Texture scaledTexture(Object imageRef, int w, int h) {
-        BufferedImage image = graphicsConfiguration.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
-        Graphics g = image.getGraphics();
-        g.drawImage((Image) imageRef, 0, 0, w, h, canvas);
-        g.dispose();
-        return new Texture(image, null, this);
-    }*/
-
-    @Override
-    public Texture printScreenTexture() {
-        BufferedImage image = graphicsConfiguration.createCompatibleImage(viewBuffer.getWidth(canvas), viewBuffer.getHeight(canvas), Transparency.TRANSLUCENT);
-        Graphics g = image.getGraphics();
-        g.drawImage(viewBuffer, 0, 0, canvas);
-        g.dispose();
-        return new Texture(image, null, this);
     }
 
     @Override
@@ -615,19 +580,8 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     @Override
     public void dispose() {
-        viewBuffer.flush();
-        canvas = null;
         frame.dispose();
         frame = null;
-    }
-
-    private void updateViewBuffer() {
-        viewBuffer = graphicsConfiguration.createCompatibleVolatileImage(
-                bounds.width,
-                bounds.height,
-                Transparency.OPAQUE
-        );
-        viewBuffer.setAccelerationPriority(1);
     }
 
     @Override
@@ -637,22 +591,8 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         stretch = platformInit.isStretchViewport();
 
 
-        canvas = new SwingImplPanel();
+        canvas = new SwingCanvas();
 
-        startFrame();
-
-        bounds.setSize(platformInit.getViewportSize().getWidth(), platformInit.getViewportSize().getHeight());
-
-        updateViewBuffer();
-    }
-
-    @Override
-    public void updateWindowIcon(Texture icon) {
-        frame.setIconImage((Image) icon.getImageRef());
-    }
-
-    public void startFrame() {
-        verticalSync = platformInit.isVerticalSync();
         if (frame == null) {
             frame = new JFrame(graphicsConfiguration);
             frame.addKeyListener(this);
@@ -660,112 +600,117 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
             frame.addMouseWheelListener(this);
             frame.add(canvas);
         }
-
-        if (platformInit.isUndecorated() || (platformInit.isFullscreen() && device.isFullScreenSupported())) {
-            frame.setUndecorated(true);
-            frame.setSize((int) platformInit.getWindowSize().getWidth(), (int) platformInit.getWindowSize().getHeight());
-        } else {
-            frame.setUndecorated(false);
-            frame.setSize((int) platformInit.getWindowSize().getWidth(), (int) platformInit.getWindowSize().getHeight() + 31);
-        }
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setTitle(platformInit.getTitle());
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        if (platformInit.isFullscreen() && device.isFullScreenSupported()) {
-            device.setFullScreenWindow(frame);
-        }
 
+        updateScreenState(platformInit.isFullscreen() && device.isFullScreenSupported(), platformInit.isUndecorated());
+
+        frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
+        frame.setSize(frame.getWidth(), frame.getHeight() + frame.getInsets().top);
+
+        canvas.createBufferStrategy(2);
+    }
+
+    public void updateScreenState(boolean fullscreen, boolean undecorated) {
+        if (frame.isDisplayable())
+            frame.dispose();
+        if (fullscreen) {
+            frame.setUndecorated(true);
+            if (device.isDisplayChangeSupported())
+                device.setDisplayMode(new DisplayMode((int) platformInit.getViewportSize().getWidth(), (int) platformInit.getViewportSize().getHeight(), device.getDisplayMode().getBitDepth(), device.getDisplayMode().getRefreshRate()));
+            device.setFullScreenWindow(frame);
+        } else {
+            frame.setUndecorated(undecorated);
+            frame.setSize((int) platformInit.getWindowSize().getWidth(), (int) platformInit.getWindowSize().getHeight());
+            if (device.isDisplayChangeSupported())
+                device.setDisplayMode(defaultDisplayMode);
+        }
+    }
+
+    @Override
+    public void updateWindowIcon(Texture icon) {
+        frame.setIconImage((Image) icon.getImageRef());
     }
 
     @Override
     public void frame() {
-        int w = viewBuffer.getWidth(canvas), h = viewBuffer.getHeight(canvas);
+        if (!frame.isVisible())
+            return;
+        graphics = canvas.prepareRender();
         if (stretch)
-            bounds.setSize(canvas.getWidth(), canvas.getHeight());
-        else bounds.setSize(onSizeBoundary(viewBuffer, canvas.getSize()));
-        if(w != bounds.width || h != bounds.height) {
-            updateViewBuffer();
+            graphics.scale(canvas.getWidth() / platformInit.getViewportSize().getWidth(), canvas.getHeight() / platformInit.getViewportSize().getHeight());
+        else {
+            Size2D viewport = Global.onSizeBoundary(platformInit.getViewportSize(), new Size2D(canvas.getWidth(), canvas.getHeight()));
+            graphics.translate((int) (canvas.getWidth() / 2 - viewport.getWidth() / 2), (int) (canvas.getHeight() / 2 - viewport.getHeight() / 2));
+            graphics.scale(viewport.getWidth() / platformInit.getViewportSize().getWidth(), viewport.getHeight() / platformInit.getViewportSize().getHeight());
         }
-        graphics = (Graphics2D) viewBuffer.getGraphics();
-        defaultTransform = graphics.getTransform();
-        PointerInfo pointerInfo = MouseInfo.getPointerInfo();
-        if (pointerInfo != null) {
-            Point mousePoint = MouseInfo.getPointerInfo().getLocation();
-            mousePosition.set((mousePoint.x - frame.getX() - frame.getWidth() / 2.0) / bounds.getWidth() * w, -(mousePoint.y - frame.getY() - frame.getHeight() / 2.0 - frame.getInsets().top / 4.0) / bounds.getHeight() * h);
-            mousePosition.set(Global.clamp(mousePosition.getX(), -w / 2.0, w / 2.0), Global.clamp(mousePosition.getY(), -h / 2.0, h / 2.0));
-        } else {
-            mousePosition.set(0, 0);
-        }
+        graphics.translate(platformInit.getViewportSize().getWidth() / 2, platformInit.getViewportSize().getHeight() / 2);
+        graphics.translate(-camera.getX(), -camera.getY());
+
+        Point mouse = canvas.getMousePosition();
+        if (mouse != null)
+            mousePosition.set(mouse.getX() / canvas.getWidth() * platformInit.getViewportSize().getWidth() - platformInit.getViewportSize().getWidth() / 2., -mouse.getY() / canvas.getHeight() * platformInit.getViewportSize().getHeight() + platformInit.getViewportSize().getHeight() / 2.);
     }
 
     @Override
     public void draw(DrawInstruction drawInstruction) {
-        int w = (int) (drawInstruction.getSize().getWidth() / platformInit.getViewportSize().getWidth() * bounds.getWidth()),
-                h = (int) (drawInstruction.getSize().getHeight() / platformInit.getViewportSize().getHeight() * bounds.getHeight()),
-                x = (int) ((drawInstruction.getPosition().getX() - drawInstruction.getSize().getWidth() / 2.0 - camera.getX()) / platformInit.getViewportSize().getWidth() * bounds.getWidth()),
-                y = (int) ((-drawInstruction.getPosition().getY() - drawInstruction.getSize().getHeight() / 2.0 + camera.getY()) / platformInit.getViewportSize().getHeight() * bounds.getHeight());
-        x += viewBuffer.getWidth(canvas) / 2;
-        y += viewBuffer.getHeight(canvas) / 2;
-        if (drawInstruction.getRotation() != 0)
-            graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), x + w / 2.0, y + h / 2.0);
-        switch (drawInstruction.getType()) {
-            case RECTANGLE:
-                if (drawInstruction.isFilled()) {
-                    graphics.setColor(awtColor(drawInstruction.getInnerColor()));
-                    graphics.fillRect(x, y, w, h);
-                }
-                if (drawInstruction.getBorderColor() != null) {
-                    graphics.setColor(awtColor(drawInstruction.getBorderColor()));
-                    graphics.setStroke(new BasicStroke((float) drawInstruction.getBorderThickness()));
-                    graphics.drawRect(x, y, w, h);
-                }
-                break;
-            case OVAL:
-                if (drawInstruction.isFilled()) {
-                    graphics.setColor(awtColor(drawInstruction.getInnerColor()));
-                    graphics.fillOval(x, y, w, h);
-                }
-                if (drawInstruction.getBorderColor() != null) {
-                    graphics.setColor(awtColor(drawInstruction.getBorderColor()));
-                    graphics.setStroke(new BasicStroke((float) drawInstruction.getBorderThickness()));
-                    graphics.drawOval(x, y, w, h);
-                }
-                break;
-            case IMAGE:
-                graphics.drawImage((Image) drawInstruction.getRenderRef(), x, y, w, h, canvas);
-                break;
-            case TEXT:
-                graphics.setColor(awtColor(drawInstruction.getInnerColor()));
-                graphics.setFont((Font) drawInstruction.getFont().getFontRef());
-                graphics.drawString((String) drawInstruction.getRenderRef(), x, (int) (y + h / 1.5));
-                break;
-            case SIMPLE_LINE:
-                graphics.setColor(awtColor(drawInstruction.getBorderColor()));
-                graphics.setStroke(new BasicStroke((float) drawInstruction.getBorderThickness()));
-                graphics.drawLine(x, y, w + x, h + y);
-                break;
-            case EQUILATERAL_TRIANGLE:
-                int[] xs = new int[]{x, x + w / 2, x + w};
-                int[] ys = new int[]{y + h, y, y + h};
-                if (drawInstruction.isFilled()) {
-                    graphics.setColor(awtColor(drawInstruction.getInnerColor()));
-                    graphics.fillPolygon(xs, ys, 3);
-                }
-                if (drawInstruction.getBorderColor() != null) {
-                    graphics.setColor(awtColor(drawInstruction.getBorderColor()));
-                    graphics.setStroke(new BasicStroke((float) drawInstruction.getBorderThickness()));
-                    graphics.drawPolygon(xs, ys, 3);
-                }
-                break;
-            default:
-                throw new UnsupportedDrawInstructionException(drawInstruction.getType().name());
+        if (!frame.isVisible())
+            return;
+        AffineTransform savedTransform = new AffineTransform(graphics.getTransform());
+        double cX = 0, cY = 0;
+        for (int v : drawInstruction.getVerticesX())
+            cX += v;
+        for (int v : drawInstruction.getVerticesY())
+            cY -= v;
+        cX /= drawInstruction.getVerticesX().length;
+        cY /= drawInstruction.getVerticesY().length;
+        graphics.rotate(Math.toRadians(drawInstruction.getRotation()), cX, cY);
+        graphics.setClip(null);
+        Composite savedComposite = graphics.getComposite();
+        graphics.setColor(awtColor(drawInstruction.getColor()));
+
+        if (drawInstruction.getImageRef() != null) {
+            Image image = (Image) drawInstruction.getImageRef();
+            Polygon p = new Polygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
+            graphics.setClip(p);
+            int[] vx = drawInstruction.getVerticesX(), vy = negateIntArray(drawInstruction.getVerticesY());
+            int lx = vx[0], ly = vy[0], hx = lx, hy = ly;
+
+            for(int i = 0; i < vx.length; i++) {
+                int x = vx[i], y = vy[i];
+                if(x < lx)
+                    lx = x;
+                if(y < ly)
+                    ly = y;
+                if(x > hx)
+                    hx = x;
+                if(y > hy)
+                    hy = y;
+            }
+
+            graphics.drawImage(image, lx, ly, hx - lx, hy - ly, canvas);
+
+            //graphics.setClip(null);
+        } else {
+            if (drawInstruction.getStroke() == 0)
+                graphics.fillPolygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
+            else {
+                graphics.setStroke(new BasicStroke((float) drawInstruction.getStroke()));
+                graphics.drawPolygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
+            }
         }
+
+
+        graphics.setComposite(savedComposite);
+        graphics.setTransform(savedTransform);
     }
 
-    @Override
-    public void resetRotation() {
-        graphics.setTransform(new AffineTransform(defaultTransform));
+    private int[] negateIntArray(int[] array) {
+        final int[] newArray = new int[array.length];
+        for (int i = 0; i < newArray.length; i++)
+            newArray[i] = -array[i];
+        return newArray;
     }
 
     @Override
@@ -791,16 +736,63 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     @Override
     public void conclude() {
+        if (!frame.isVisible())
+            return;
         graphics.dispose();
-        if (verticalSync)
-            canvas.paintImmediately(0, 0, canvas.getWidth(), canvas.getHeight());
-        else
-            frame.repaint();
-        Toolkit.getDefaultToolkit().sync();
+        canvas.finishRender(graphics);
+        if (platformInit.isVerticalSync())
+            Toolkit.getDefaultToolkit().sync();
     }
 
     public GraphicsDevice getDevice() {
         return device;
+    }
+
+    public static BufferedImage modifyImageVertices(BufferedImage originalImage, int[][] vertexCoordinates) {
+        int width = originalImage.getWidth();
+        int height = originalImage.getHeight();
+
+        // Create a new BufferedImage with the same dimensions
+        BufferedImage modifiedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        // Create a Graphics2D object to draw on the new image
+        Graphics2D g2d = modifiedImage.createGraphics();
+
+        // Apply rendering hints for better quality
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+        // Create an AffineTransform object for transformation
+        AffineTransform transform = new AffineTransform();
+
+        // Set the vertices individually
+        for (int i = 0; i < vertexCoordinates.length; i++) {
+            int x = vertexCoordinates[i][0];
+            int y = vertexCoordinates[i][1];
+            int newX = vertexCoordinates[i][2];
+            int newY = vertexCoordinates[i][3];
+
+            // Calculate the translation required for the vertex
+            int dx = newX - x;
+            int dy = newY - y;
+
+            // Reset the transformation
+            transform.setToIdentity();
+
+            // Translate the Graphics2D object to the original vertex position
+            transform.translate(x, y);
+
+            // Apply the translation for the vertex
+            transform.translate(dx, dy);
+
+            // Draw the image with the applied vertex transformation
+            g2d.drawImage(originalImage, transform, null);
+        }
+
+        // Dispose of the Graphics2D object
+        g2d.dispose();
+
+        return modifiedImage;
     }
 
     public void setDevice(GraphicsDevice device) {
@@ -813,14 +805,6 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     public void setGraphicsConfiguration(GraphicsConfiguration graphicsConfiguration) {
         this.graphicsConfiguration = graphicsConfiguration;
-    }
-
-    public JComponent getCanvas() {
-        return canvas;
-    }
-
-    public void setCanvas(JComponent canvas) {
-        this.canvas = canvas;
     }
 
     public JFrame getFrame() {
@@ -837,14 +821,6 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     public void setGraphics(Graphics2D graphics) {
         this.graphics = graphics;
-    }
-
-    public AffineTransform getDefaultTransform() {
-        return defaultTransform;
-    }
-
-    public void setDefaultTransform(AffineTransform defaultTransform) {
-        this.defaultTransform = defaultTransform;
     }
 
     @Override
@@ -913,10 +889,6 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         return removeKeyAction;
     }
 
-    public Dimension getBounds() {
-        return bounds;
-    }
-
     public MouseButtonAction getAddBtnAction() {
         return addBtnAction;
     }
@@ -948,8 +920,9 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         if (platformInit != null) {
             platformInit.setFullscreen(fullScreen);
             if (frame != null) {
-                frame.dispose();
-                startFrame();
+                updateScreenState(fullScreen, platformInit.isUndecorated());
+                frame.setVisible(true);
+                frame.setLocationRelativeTo(null);
             }
         }
     }
@@ -960,52 +933,5 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     private interface MouseButtonAction {
         void call(Input.MouseButton button);
-    }
-
-    class SwingImplPanel extends JPanel {
-
-        public SwingImplPanel() {
-            setIgnoreRepaint(true);
-            setDoubleBuffered(true);
-            setOpaque(true);
-        }
-
-        @Override
-        public void update(Graphics g) {
-            paintComponent(g);
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            g.setColor(Color.BLACK);
-            g.fillRect(0, 0, getWidth(), getHeight());
-            g.drawImage(viewBuffer, (getWidth() - bounds.width) / 2, (getHeight() - bounds.height) / 2, bounds.width, bounds.height, canvas);
-            g.dispose();
-        }
-    }
-
-    public Image getViewBuffer() {
-        return viewBuffer;
-    }
-
-    public void setViewBuffer(Image viewBuffer) {
-        this.viewBuffer = viewBuffer;
-    }
-
-    public boolean isVerticalSync() {
-        return verticalSync;
-    }
-
-    public void setVerticalSync(boolean verticalSync) {
-        this.verticalSync = verticalSync;
-    }
-
-    public PlatformInit getPlatformInit() {
-        return platformInit;
-    }
-
-    public void setPlatformInit(PlatformInit platformInit) {
-        this.platformInit = platformInit;
     }
 }

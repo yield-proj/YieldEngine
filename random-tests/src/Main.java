@@ -23,12 +23,12 @@ public class Main extends Scene {
     }
 
     public static void main(String[] args) throws ClassNotFoundException {
+        System.setProperty("sun.java2d.opengl", "True");
         ContextTime time = new ContextTime();
-        time.setTargetFPS(60);
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
         //platformInit.setStretchViewport(true);
-        Application application = new Application(applicationManager, Main.class, Global.openGLALPlatform(), platformInit);
+        Application application = new Application(applicationManager, Main.class, Global.swingALPlatform(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
     }
@@ -37,24 +37,33 @@ public class Main extends Scene {
     public void onStart() {
         getSystems().add(new ToggleFullScreenSystem());
         //setBackGroundColor(Colors.BLACK);
-        /*getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
-        Entity2D e = instantiate(new Entity2DPrefab(new ComponentCreation(TextureRectangle.class), new ComponentCreation(CircleCollider.class), new ComponentCreation(PhysicsBody.class), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class)));
-        e.getTransform().rotate(40);
+        getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
+        Entity2D e = instantiate(new Entity2DPrefab(new ComponentCreation(TextureRectangle.class, c -> {
+            ((TextureRectangle) c).getVertexShaders().add(new VertexShader() {
+                @Override
+                public void run() {
+                    position.sumLocal(new Vector2D(Math.cos(getFrames() / 100.) * 100, Math.cos(getFrames() / 100.) * 100));
+                }
+            });
+        }), new ComponentCreation(TextureRectangleLoader.class, c -> {
+            ((TextureRectangleLoader) c).setTexturePath("com/xebisco/yield/yieldIcon.png");
+        }), new ComponentCreation(CircleCollider.class), new ComponentCreation(PhysicsBody.class), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class)));
         e.getTransform().translate(0, 100);
+        e.setIndex(-1);
         instantiate(new Entity2DPrefab(new ComponentCreation(Rectangle.class), new ComponentCreation(RectangleCollider.class), new ComponentCreation(PhysicsBody.class, c -> {
             ((PhysicsBody) c).setType(PhysicsType.STATIC);
-        }), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class))).getTransform().translate(0, -200);*/
-        instantiate(StandardPrefabs.text("Test"));
+        }), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class))).getTransform().translate(0, -200);
+        //instantiate(StandardPrefabs.text("Test"));
     }
 
     public static boolean a;
 
     @Override
     public void onUpdate() {
-        if (getApplication().isPressingKey(Input.Key.VK_SPACE)) {
+        /*if (getApplication().isPressingKey(Input.Key.VK_SPACE)) {
             if (a)
                 getApplication().changeScene(Main.class, new BasicChangeTransition.SlideUp(3, true));
             a = false;
-        } else a = true;
+        } else a = true;*/
     }
 }

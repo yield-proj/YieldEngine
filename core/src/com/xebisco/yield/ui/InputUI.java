@@ -86,7 +86,7 @@ public class InputUI extends ComponentBehavior {
     @Override
     public void render(PlatformGraphics graphics) {
         if (getApplication().getControllerManager() != null) {
-            if (stage == -1)
+            /*if (stage == -1)
                 return;
             instruction.setType(DrawInstruction.Type.IMAGE);
             for (int i = 0; i < 4; i++) {
@@ -122,7 +122,7 @@ public class InputUI extends ComponentBehavior {
                 instruction.getSize().set(getFontLoader().getStringWidth(msg, font.getFontRef()), getFontLoader().getStringHeight(msg, font.getFontRef()));
                 instruction.setPosition(new Vector2D(getApplication().getScene().getCamera().getX() + 30, -getApplication().getViewportSize().getHeight() / 2f + 48 + getApplication().getScene().getCamera().getY()));
                 graphics.draw(instruction);
-            }
+            }*/
         }
     }
 }

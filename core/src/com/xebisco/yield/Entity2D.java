@@ -96,7 +96,6 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
 
                 }
                 if (component != null && component.getFrames() > 1) {
-                    graphics.resetRotation();
                     component.render(graphics);
                 }
             }

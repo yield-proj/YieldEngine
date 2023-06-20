@@ -35,6 +35,10 @@ public class TwoAnchorRepresentation {
         return this;
     }
 
+    public TwoAnchorRepresentation reset() {
+        return set(0, 0);
+    }
+
     public TwoAnchorRepresentation set(TwoAnchorRepresentation a) {
         return set(a.getX(), a.getY());
     }

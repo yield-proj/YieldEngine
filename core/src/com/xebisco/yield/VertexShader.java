@@ -16,13 +16,30 @@
 
 package com.xebisco.yield;
 
-/**
- * Oval extends Rectangle and overrides onStart() to set the DrawInstruction's type to OVAL.
- */
-public class Oval extends Rectangle {
-    @Override
-    public void onStart() {
-        super.onStart();
-        getDrawInstruction().setType(DrawInstruction.Type.OVAL);
+public abstract class VertexShader implements Runnable {
+
+    protected Vector2D position = new Vector2D();
+    protected int index;
+
+    public final void run(double x, double y, int index) {
+        position.set(x, y);
+        this.index = index;
+        run();
+    }
+
+    public Vector2D getPosition() {
+        return position;
+    }
+
+    public void setPosition(Vector2D position) {
+        this.position = position;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 }
