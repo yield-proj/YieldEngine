@@ -32,7 +32,7 @@ public class StandardPrefabs {
      * @param tags     An array of strings that can be used to tag and identify the entity.
      * @return An instance of the class Entity2DPrefab is being returned.
      */
-    /*public static Entity2DPrefab text(String contents, Color color, Font font, String[] tags) {
+    public static Entity2DPrefab text(String contents, Color color, Font font, String[] tags) {
         return new Entity2DPrefab(
                 tags,
                 new ComponentCreation(Text.class, c -> {
@@ -44,7 +44,7 @@ public class StandardPrefabs {
                         ((Text) c).setFont(font);
                 })
         );
-    }*/
+    }
 
     /**
      * This Java function returns a 2D entity prefab for text with specified contents, color, and font.
@@ -55,9 +55,9 @@ public class StandardPrefabs {
      * @param font     The font parameter is of type Font and represents the font to be used for the text.
      * @return The method is returning an instance of the Entity2DPrefab class.
      */
-    /*public static Entity2DPrefab text(String contents, Color color, Font font) {
+    public static Entity2DPrefab text(String contents, Color color, Font font) {
         return text(contents, color, font, new String[0]);
-    }*/
+    }
 
     /**
      * This Java function returns a 2D entity prefab for text with specified contents and color.
@@ -67,9 +67,9 @@ public class StandardPrefabs {
      *                 color of the text to any desired color.
      * @return The method is returning an instance of the Entity2DPrefab class.
      */
-    /*public static Entity2DPrefab text(String contents, Color color) {
+    public static Entity2DPrefab text(String contents, Color color) {
         return text(contents, color, null, new String[0]);
-    }*/
+    }
 
     /**
      * This Java function returns a 2D entity prefab for text with specified contents.
@@ -77,9 +77,9 @@ public class StandardPrefabs {
      * @param contents The text contents that will be displayed by the Text component.
      * @return The method is returning an instance of the Entity2DPrefab class.
      */
-    /*public static Entity2DPrefab text(String contents) {
+    public static Entity2DPrefab text(String contents) {
         return text(contents, null, null, new String[0]);
-    }*/
+    }
 
     /**
      * This function creates a rectangle entity with specified properties.

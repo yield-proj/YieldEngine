@@ -27,43 +27,26 @@ public class Main extends Scene {
         ContextTime time = new ContextTime();
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
-        //platformInit.setStretchViewport(true);
         Application application = new Application(applicationManager, Main.class, Global.swingALPlatform(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
     }
 
+    private Vector2D pos = new Vector2D();
+
     @Override
     public void onStart() {
-        getSystems().add(new ToggleFullScreenSystem());
-        //setBackGroundColor(Colors.BLACK);
-        getApplication().getScene().getSystems().add(new ExitWithEscapeKey());
-        Entity2D e = instantiate(new Entity2DPrefab(new ComponentCreation(TextureRectangle.class, c -> {
-            ((TextureRectangle) c).getVertexShaders().add(new VertexShader() {
-                @Override
-                public void run() {
-                    position.sumLocal(new Vector2D(Math.cos(getFrames() / 100.) * 100, Math.cos(getFrames() / 100.) * 100));
-                }
-            });
-        }), new ComponentCreation(TextureRectangleLoader.class, c -> {
-            ((TextureRectangleLoader) c).setTexturePath("com/xebisco/yield/yieldIcon.png");
-        }), new ComponentCreation(CircleCollider.class), new ComponentCreation(PhysicsBody.class), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class)));
-        e.getTransform().translate(0, 100);
-        e.setIndex(-1);
-        instantiate(new Entity2DPrefab(new ComponentCreation(Rectangle.class), new ComponentCreation(RectangleCollider.class), new ComponentCreation(PhysicsBody.class, c -> {
-            ((PhysicsBody) c).setType(PhysicsType.STATIC);
-        }), new ComponentCreation(AnimationPlayer.class), new ComponentCreation(A.class))).getTransform().translate(0, -200);
-        //instantiate(StandardPrefabs.text("Test"));
+        instantiate(StandardPrefabs.texRectangle("com/xebisco/yield/img.png")).getComponent(TextureRectangle.class).getVertexShaders().add(new VertexShader() {
+            @Override
+            public void run() {
+                if (index == 3)
+                    position.sumLocal(pos);
+            }
+        });
     }
-
-    public static boolean a;
 
     @Override
     public void onUpdate() {
-        /*if (getApplication().isPressingKey(Input.Key.VK_SPACE)) {
-            if (a)
-                getApplication().changeScene(Main.class, new BasicChangeTransition.SlideUp(3, true));
-            a = false;
-        } else a = true;*/
+        pos.sumLocal(getApplication().getAxis(HORIZONTAL, VERTICAL));
     }
 }

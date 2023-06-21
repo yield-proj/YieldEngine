@@ -19,6 +19,50 @@ package com.xebisco.yield;
 /**
  * This is a class for rendering text with customizable font, color, and content.
  */
-//TODO REDO
-public class Text extends ComponentBehavior {
+public class Text extends AbstractRenderable {
+
+    @VisibleOnInspector
+    private String contents = "";
+
+    @VisibleOnInspector
+    private Font font;
+
+    @Override
+    public int verticesCount() {
+        return 1;
+    }
+
+    @Override
+    public void onStart() {
+        if(font == null) font = getApplication().getDefaultFont();
+    }
+
+    @Override
+    public void setup(Vector2D[] vertices) {
+        vertices[0].set(getEntity().getTransform().getPosition());
+        getDrawInstruction().setText(contents);
+        getDrawInstruction().setFontRef(font.getFontRef());
+    }
+
+    @Override
+    public void render(PlatformGraphics graphics) {
+        super.render(graphics);
+        getSize().set(((FontLoader) graphics).getStringWidth(contents, font.getFontRef()), ((FontLoader) graphics).getStringHeight(contents, font.getFontRef()));
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
+    public Font getFont() {
+        return font;
+    }
+
+    public void setFont(Font font) {
+        this.font = font;
+    }
 }

@@ -595,11 +595,13 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
         if (frame == null) {
             frame = new JFrame(graphicsConfiguration);
-            frame.addKeyListener(this);
-            frame.addMouseListener(this);
-            frame.addMouseWheelListener(this);
             frame.add(canvas);
         }
+
+        canvas.addKeyListener(this);
+        canvas.addMouseListener(this);
+        canvas.addMouseWheelListener(this);
+
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setTitle(platformInit.getTitle());
 
@@ -608,6 +610,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
         frame.setSize(frame.getWidth(), frame.getHeight() + frame.getInsets().top);
+        canvas.requestFocus();
 
         canvas.createBufferStrategy(2);
     }
@@ -669,29 +672,31 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         graphics.setClip(null);
         Composite savedComposite = graphics.getComposite();
         graphics.setColor(awtColor(drawInstruction.getColor()));
+        graphics.setFont(null);
 
-        if (drawInstruction.getImageRef() != null) {
+        if (drawInstruction.getText() != null && drawInstruction.getFontRef() != null) {
+            graphics.setFont((Font) drawInstruction.getFontRef());
+            graphics.drawString(drawInstruction.getText(), drawInstruction.getVerticesX()[0] - graphics.getFontMetrics().stringWidth(drawInstruction.getText()) / 2, -drawInstruction.getVerticesY()[0] + graphics.getFont().getSize() / 2);
+        } else if (drawInstruction.getImageRef() != null) {
             Image image = (Image) drawInstruction.getImageRef();
             Polygon p = new Polygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
             graphics.setClip(p);
             int[] vx = drawInstruction.getVerticesX(), vy = negateIntArray(drawInstruction.getVerticesY());
             int lx = vx[0], ly = vy[0], hx = lx, hy = ly;
 
-            for(int i = 0; i < vx.length; i++) {
+            for (int i = 0; i < vx.length; i++) {
                 int x = vx[i], y = vy[i];
-                if(x < lx)
+                if (x < lx)
                     lx = x;
-                if(y < ly)
+                if (y < ly)
                     ly = y;
-                if(x > hx)
+                if (x > hx)
                     hx = x;
-                if(y > hy)
+                if (y > hy)
                     hy = y;
             }
 
             graphics.drawImage(image, lx, ly, hx - lx, hy - ly, canvas);
-
-            //graphics.setClip(null);
         } else {
             if (drawInstruction.getStroke() == 0)
                 graphics.fillPolygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);

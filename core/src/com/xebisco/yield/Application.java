@@ -106,20 +106,20 @@ public class Application implements Behavior {
             return null;
         };
         viewportSize = new ImmutableSize2D(platformInit.getWindowSize().getWidth(), platformInit.getViewportSize().getHeight());
-        axes.add(new Axis(Global.HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
-        axes.add(new Axis(Global.VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
-        axes.add(new Axis("HorizontalPad", Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
-        axes.add(new Axis("VerticalPad", Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
-        axes.add(new Axis("Fire", Input.Key.VK_SPACE, null, null, null));
-        axes.add(new Axis("Back", Input.Key.VK_BACK_SPACE, null, null, null));
-        axes.add(new Axis("Action", Input.Key.VK_E, null, null, null));
-        axes.add(new Axis("Inventory", Input.Key.VK_TAB, null, null, null));
-        axes.add(new Axis("Start", Input.Key.VK_ESCAPE, null, null, null));
-        axes.add(new Axis("RightFire", Input.Key.VK_3, null, null, null));
-        axes.add(new Axis("LeftFire", Input.Key.VK_1, null, null, null));
-        axes.add(new Axis("RightBumper", Input.Key.VK_F, null, null, null));
-        axes.add(new Axis("Run", Input.Key.VK_SHIFT, null, null, null));
-        axes.add(new Axis("LeftBumper", Input.Key.VK_G, null, null, null));
+        axes.add(new Axis(HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
+        axes.add(new Axis(VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
+        axes.add(new Axis(HORIZONTAL_PAD, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
+        axes.add(new Axis(VERTICAL_PAD, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
+        axes.add(new Axis(FIRE, Input.Key.VK_SPACE, null, null, null));
+        axes.add(new Axis(BACK, Input.Key.VK_BACK_SPACE, null, null, null));
+        axes.add(new Axis(ACTION, Input.Key.VK_E, null, null, null));
+        axes.add(new Axis(INVENTORY, Input.Key.VK_TAB, null, null, null));
+        axes.add(new Axis(START, Input.Key.VK_ESCAPE, null, null, null));
+        axes.add(new Axis(RIGHT_FIRE, Input.Key.VK_3, null, null, null));
+        axes.add(new Axis(LEFT_FIRE, Input.Key.VK_1, null, null, null));
+        axes.add(new Axis(RIGHT_BUMPER, Input.Key.VK_F, null, null, null));
+        axes.add(new Axis(RUN, Input.Key.VK_SHIFT, null, null, null));
+        axes.add(new Axis(LEFT_BUMPER, Input.Key.VK_G, null, null, null));
     }
 
     @Override
@@ -134,26 +134,14 @@ public class Application implements Behavior {
             if (i == 0)
                 a = "";
             if (i > 0) {
-                axes.add(new Axis(Global.HORIZONTAL + a, null, null, null, null));
-                axes.add(new Axis(Global.VERTICAL + a, null, null, null, null));
-                axes.add(new Axis("Fire" + a, null, null, null, null));
-                axes.add(new Axis("Back" + a, null, null, null, null));
-                axes.add(new Axis("Action" + a, null, null, null, null));
-                axes.add(new Axis("Inventory" + a, null, null, null, null));
-                axes.add(new Axis("Start" + a, null, null, null, null));
-                axes.add(new Axis("RightFire" + a, null, null, null, null));
-                axes.add(new Axis("LeftFire" + a, null, null, null, null));
-                axes.add(new Axis("HorizontalPad" + a, null, null, null, null));
-                axes.add(new Axis("VerticalPad" + a, null, null, null, null));
-                axes.add(new Axis("RightBumper" + a, null, null, null, null));
-                axes.add(new Axis("LeftBumper" + a, null, null, null, null));
-                axes.add(new Axis("Run" + a, null, null, null, null));
+                createNullAxis(a, HORIZONTAL, VERTICAL, FIRE, BACK, ACTION, INVENTORY, START);
+                createNullAxis(a, RIGHT_FIRE, LEFT_FIRE, HORIZONTAL_PAD, VERTICAL_PAD, RIGHT_BUMPER, LEFT_BUMPER, RUN);
             }
-            axes.add(new Axis("HorizontalCam" + a, null, null, null, null));
-            axes.add(new Axis("VerticalCam" + a, null, null, null, null));
-            axes.add(new Axis("RightThumb" + a, null, null, null, null));
-            axes.add(new Axis("LeftThumb" + a, null, null, null, null));
-            axes.add(new Axis("View" + a, null, null, null, null));
+            axes.add(new Axis(HORIZONTAL_CAM + a, null, null, null, null));
+            axes.add(new Axis(VERTICAL_CAM + a, null, null, null, null));
+            axes.add(new Axis(RIGHT_THUMB + a, null, null, null, null));
+            axes.add(new Axis(LEFT_THUMB + a, null, null, null, null));
+            axes.add(new Axis(VIEW + a, null, null, null, null));
         }
         if (applicationPlatform.getTextureManager() != null) {
             defaultTexture = new Texture("com/xebisco/yield/yieldIcon.png", applicationPlatform.getTextureManager());
@@ -171,6 +159,16 @@ public class Application implements Behavior {
         }
         if (controllerManager != null)
             controllerManager.initSDLGamepad();
+    }
+
+    private void createNullAxis(String a, String horizontal, String vertical, String fire, String back, String action, String inventory, String start) {
+        axes.add(new Axis(horizontal + a, null, null, null, null));
+        axes.add(new Axis(vertical + a, null, null, null, null));
+        axes.add(new Axis(fire + a, null, null, null, null));
+        axes.add(new Axis(back + a, null, null, null, null));
+        axes.add(new Axis(action + a, null, null, null, null));
+        axes.add(new Axis(inventory + a, null, null, null, null));
+        axes.add(new Axis(start + a, null, null, null, null));
     }
 
     /**
@@ -217,64 +215,64 @@ public class Application implements Behavior {
                     if (i == 0)
                         a = "";
                     for (Axis axis : this.axes) {
-                        if (axis.getName().equals(Global.HORIZONTAL + a)) {
+                        if (axis.getName().equals(HORIZONTAL + a)) {
                             axis.setValue(device.leftStickX);
                             if (Math.abs(axis.getValue()) < 0.1)
                                 axis.setValue(0);
-                        } else if (axis.getName().equals(Global.VERTICAL + a)) {
+                        } else if (axis.getName().equals(VERTICAL + a)) {
                             axis.setValue(device.leftStickY);
                             if (Math.abs(axis.getValue()) < 0.1)
                                 axis.setValue(0);
-                        } else if (axis.getName().equals("HorizontalCam" + a)) {
+                        } else if (axis.getName().equals(HORIZONTAL_CAM + a)) {
                             axis.setValue(device.rightStickX);
                             if (Math.abs(axis.getValue()) < 0.1)
                                 axis.setValue(0);
-                        } else if (axis.getName().equals("VerticalCam" + a)) {
+                        } else if (axis.getName().equals(VERTICAL_CAM + a)) {
                             axis.setValue(device.rightStickY);
                             if (Math.abs(axis.getValue()) < 0.1)
                                 axis.setValue(0);
-                        } else if (axis.getName().equals("RightFire" + a)) {
+                        } else if (axis.getName().equals(RIGHT_FIRE + a)) {
                             axis.setValue(device.rightTrigger);
-                        } else if (axis.getName().equals("Run" + a)) {
+                        } else if (axis.getName().equals(RUN + a)) {
                             axis.setValue(device.rightTrigger);
-                        } else if (axis.getName().equals("LeftFire" + a)) {
+                        } else if (axis.getName().equals(LEFT_FIRE + a)) {
                             axis.setValue(device.leftTrigger);
-                        } else if (axis.getName().equals("HorizontalPad" + a)) {
+                        } else if (axis.getName().equals(HORIZONTAL_PAD + a)) {
                             if (device.dpadRight) axis.setValue(1);
                             else if (device.dpadLeft) axis.setValue(-1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals("VerticalPad" + a)) {
+                        } else if (axis.getName().equals(VERTICAL_PAD + a)) {
                             if (device.dpadUp) axis.setValue(1);
                             else if (device.dpadDown) axis.setValue(-1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals("Fire" + a)) {
+                        } else if (axis.getName().equals(FIRE + a)) {
                             if (device.a) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals("Action" + a)) {
+                        } else if (axis.getName().equals(ACTION + a)) {
                             if (device.x) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals("Back" + a)) {
+                        } else if (axis.getName().equals(BACK + a)) {
                             if (device.b) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals("Inventory" + a)) {
+                        } else if (axis.getName().equals(INVENTORY + a)) {
                             if (device.y) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals("RightBumper" + a)) {
+                        } else if (axis.getName().equals(RIGHT_BUMPER + a)) {
                             if (device.rb) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals("LeftBumper" + a)) {
+                        } else if (axis.getName().equals(LEFT_BUMPER + a)) {
                             if (device.lb) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals("RightThumb" + a)) {
+                        } else if (axis.getName().equals(RIGHT_THUMB + a)) {
                             if (device.rightStickClick) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals("LeftThumb" + a)) {
+                        } else if (axis.getName().equals(LEFT_THUMB + a)) {
                             if (device.leftStickClick) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals("Start" + a)) {
+                        } else if (axis.getName().equals(START + a)) {
                             if (device.start) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals("View" + a)) {
+                        } else if (axis.getName().equals(VIEW + a)) {
                             if (device.back) axis.setValue(1);
                             else axis.setValue(0);
                         }
@@ -449,15 +447,6 @@ public class Application implements Behavior {
      *              systems that make up an application scene. This method sets the current scene to the specified scene object.
      */
     public void setScene(Scene scene) {
-        try {
-            Class<?> debugComponent = Class.forName("com.xebisco.yield.debugger.DebugUI");
-            System.out.println("Started scene: " + scene + " with DebugUI");
-            if (debugComponent.getSuperclass().equals(ComponentBehavior.class)) {
-                scene.instantiate((Entity2DPrefab) debugComponent.getField("DEBUG_UI_PREFAB").get(null));
-            }
-        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException ignore) {
-        }
-
         if (this.scene != null) {
             for (int i = this.scene.getEntities().size() - 1; i >= 0; i--) {
                 this.scene.getEntities().get(i).dispose();

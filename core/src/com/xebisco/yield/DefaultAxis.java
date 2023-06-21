@@ -16,17 +16,14 @@
 
 package com.xebisco.yield;
 
-
-/**
- * The Behavior is the main interface of the Yield Game Engine, almost all elements of an application implements this interface.
- */
-public interface Behavior extends Disposable, DefaultAxis {
-    /**
-     * This function is called when the object starts
-     */
-    void onStart();
-    /**
-     * This function is called every time the application updates
-     */
-    void onUpdate();
+public interface DefaultAxis {
+    String HORIZONTAL = "Horizontal", VERTICAL = "Vertical",
+            HORIZONTAL_PAD = "HorizontalPad", VERTICAL_PAD = "VerticalPad",
+            HORIZONTAL_CAM = "HorizontalCam", VERTICAL_CAM = "VerticalCam",
+            RIGHT_THUMB = "RightThumb", LEFT_THUMB = "LeftThumb",
+            FIRE = "Fire", BACK = "Back",
+            ACTION = "Action", INVENTORY = "Inventory",
+            START = "Start", RIGHT_FIRE = "RightFire",
+            LEFT_FIRE = "LeftFire", RUN = "Run",
+            RIGHT_BUMPER = "RightBumper", LEFT_BUMPER = "LeftBumper", VIEW = "View";
 }

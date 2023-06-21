@@ -9,6 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="core" />
     <orderEntry type="module" module-name="swingimpl" />
-    <orderEntry type="module" module-name="debugger" />
+    <orderEntry type="module" module-name="javaxsoundimpl" />
   </component>
 </module>

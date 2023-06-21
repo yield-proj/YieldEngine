@@ -24,7 +24,6 @@ import com.xebisco.yield.physics.RayCast;
  * is only meant to be extended by other classes
  */
 public abstract class ComponentBehavior implements Behavior, Renderable {
-    public static final String HORIZONTAL = Global.HORIZONTAL, VERTICAL = Global.VERTICAL;
     private int frames;
     private Entity2D entity;
 
