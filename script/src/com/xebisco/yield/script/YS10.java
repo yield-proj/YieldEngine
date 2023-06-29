@@ -21,16 +21,40 @@ import com.xebisco.yield.script.obj.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class YS10 {
 
-    private static final Pattern SIMPLIFIED_VARIABLE_DECLARATION = Pattern.compile("^(\\w+) *= *([^}]*)$"), ISOLATED_FUNCTION_CALL = Pattern.compile("^([^()]+)\\(([^}]*)\\)$"), IMPORT = Pattern.compile("^import +(\\w+.*) +as +(\\w+)$"), STRING_REF = Pattern.compile("^\2(-?[0-9]+)$"), FUNCTION_REF = Pattern.compile("^\3(-?[0-9]+)$"), FUNCTION_CAST = Pattern.compile(".* +as +([a-zA-z0-9.]+)$"), FUNCTION_DECLARATION = Pattern.compile("^func +(\\w+) *\\(([^}]*)\\)([^}]+)$"), FUNCTION_RETURN = Pattern.compile("^return +([^}]+)$");
+    private static final Pattern SIMPLIFIED_VARIABLE_DECLARATION = Pattern.compile("^(\\w+) *= *([^}]*)$"), ISOLATED_FUNCTION_CALL = Pattern.compile("^([^()]+)\\(([^}]*)\\)$"), MACRO_CALL = Pattern.compile("^([^()]+)!\\(([^}]*)\\)$"), NO_ARGS_MACRO_CALL = Pattern.compile("^([^()]+)!$"), IMPORT = Pattern.compile("^import +(\\w+.*) +as +(\\w+)$"), STRING_REF = Pattern.compile("^\2(-?[0-9]+)$"), FUNCTION_REF = Pattern.compile("^\3(-?[0-9]+)$"), FUNCTION_CAST = Pattern.compile(".* +as +([a-zA-z0-9.]+)$"), FUNCTION_DECLARATION = Pattern.compile("^func +(\\w+) *\\(([^}]*)\\)([^}]+)$"), FUNCTION_RETURN = Pattern.compile("^return +([^}]+)$");
+    public static final Macro[] STANDARD_MACROS = new Macro[]{
+            new Macro() {
+                @Override
+                public String name() {
+                    return "println";
+                }
+
+                @Override
+                public void run(ObjectValue[] args) {
+                    if (args.length == 0) System.out.println();
+                    else if (args.length == 1) System.out.println(args[0].getValue());
+                    else throw new IllegalArgumentException("Unexpected argument count");
+                }
+            },
+            new Macro() {
+                @Override
+                public String name() {
+                    return "print";
+                }
+
+                @Override
+                public void run(ObjectValue[] args) {
+                    if (args.length == 1) System.out.print(args[0].getValue());
+                    else throw new IllegalArgumentException("Unexpected argument count");
+                }
+            }
+    };
 
 
     public static String ysExtractStrings(String line) {
@@ -56,118 +80,147 @@ public class YS10 {
         Class<?> cast = castRet.getType();
         line = castRet.getNewLine();
 
-        Matcher matcher = ISOLATED_FUNCTION_CALL.matcher(line);
+        Matcher matcher = NO_ARGS_MACRO_CALL.matcher(line);
         if (matcher.matches()) {
-            List<String> args;
-            if (matcher.group(2).equals(""))
-                args = new ArrayList<>();
-            else
-                args = ysGetSplitOutsideParenthesis(matcher.group(2), ',');
-            ReturnRunnable[] argumentsRunnables = new ReturnRunnable[args.size()];
-            for (int i = 0; i < argumentsRunnables.length; i++) {
-                argumentsRunnables[i] = ysGetInstruction(args.get(i), function);
-            }
             return () -> {
-                Object contextObj = context.run().getValue();
-                ObjectValue[] arguments = new ObjectValue[argumentsRunnables.length];
-                for (int i = 0; i < arguments.length; i++) {
-                    arguments[i] = argumentsRunnables[i].run();
-                }
-                Object ret;
-                if (contextObj instanceof YSObject) {
-                    try {
-                        FunctionCall call;
-                        try {
-                            call = (FunctionCall) ((YSObject) contextObj).getVariables().get(matcher.group(1)).getValue();
-                        } catch (NullPointerException e) {
-                            throw new IllegalStateException("Could not find '" + matcher.group(1) + "'");
-                        }
-                        int i = 0;
-                        for (String arg : call.getArgs().keySet()) {
-                            call.getFunction().getVariables().put(arg, arguments[i]);
-                            i++;
-                        }
-                        if (i > arguments.length) throw new IllegalSyntaxException("Wrong arguments length");
-                        ret = ysRunFunction(call.getFunction());
-                    } catch (ClassCastException e) {
-                        throw new IllegalStateException(e);
-                    }
-                } else {
-                    Object[] argumentsObj = new Object[arguments.length];
-                    for (int i = 0; i < argumentsObj.length; i++) {
-                        argumentsObj[i] = arguments[i].getValue();
-                    }
-                    Class<?>[] argumentsClasses = new Class<?>[argumentsObj.length];
-                    for (int i = 0; i < argumentsClasses.length; i++) {
-                        if (arguments[i].getCast() != null)
-                            argumentsClasses[i] = arguments[i].getCast();
-                        else try {
-                            argumentsClasses[i] = argumentsObj[i].getClass();
-                        } catch (NullPointerException e) {
-                            throw new IllegalSyntaxException("'" + args.get(i) + "'. Cannot get class of null objects");
-                        }
-                    }
-                    try {
-                        Class<?> c;
-                        if (contextObj instanceof Class<?>)
-                            c = (Class<?>) contextObj;
-                        else c = contextObj.getClass();
-                        Method method = c.getMethod(matcher.group(1), argumentsClasses);
-                        method.setAccessible(true);
-                        ret = method.invoke(contextObj, argumentsObj);
-                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                return new ObjectValue(new StandardGet(), new StandardSet(), ret, cast);
+                function.getMacros().get(matcher.group(1)).run(new ObjectValue[0]);
+                return new ObjectValue(new StandardGet(), new ImmutableSet(), null, Object.class);
             };
-        } else if (line.toLowerCase().matches("^-?[0-9.]+[fl]?$")) {
-            Number n;
-            if (line.toLowerCase().endsWith("f")) {
-                n = Float.parseFloat(line.substring(0, line.length() - 1));
-            } else if (line.toLowerCase().endsWith("l")) {
-                n = Long.parseLong(line.substring(0, line.length() - 1));
-            } else {
-                try {
-                    if (line.contains("."))
-                        throw new NumberFormatException();
-                    n = Integer.parseInt(line);
-                } catch (NumberFormatException e) {
-                    try {
-                        n = Double.parseDouble(line);
-                    } catch (NumberFormatException e1) {
-                        throw new NumberFormatException(line);
-                    }
-                }
-            }
-            Number finalN = n;
-            return () -> new ObjectValue(new StandardGet(), new ImmutableSet(), finalN, cast);
-        } else if (line.contains("+") || line.contains("-") || line.contains("/") || line.contains("*") || line.contains("^")) {
-            return null;
-            //TODO
         } else {
-            String finalLine = line;
-            return () -> {
-                ObjectValue ret;
-                Object contextObj = context.run().getValue();
-                if (contextObj instanceof YSObject) {
-                    ObjectValue objectValue = ysGetVariable(finalLine, function);
-                    if (cast == null)
-                        ret = objectValue;
-                    else
-                        ret = new ObjectValue(objectValue.getObjectValueGet(), objectValue.getObjectValueSet(), objectValue.getValue(), cast);
-                } else {
-                    try {
-                        if (contextObj instanceof Class<?>) {
-                            ret = new ObjectValue(new StandardGet(), new ImmutableSet(), ((Class<?>) contextObj).getField(finalLine).get(null), cast);
-                        } else
-                            ret = new ObjectValue(new StandardGet(), new ImmutableSet(), contextObj.getClass().getField(finalLine).get(contextObj), cast);
-                    } catch (IllegalAccessException | NoSuchFieldException e) {
-                        throw new RuntimeException(e);
-                    }
+            matcher.usePattern(MACRO_CALL);
+            if (matcher.matches()) {
+                List<String> args;
+                if (matcher.group(2).equals(""))
+                    args = new ArrayList<>();
+                else
+                    args = ysGetSplitOutsideParenthesis(matcher.group(2), ',');
+                ReturnRunnable[] argumentsRunnables = new ReturnRunnable[args.size()];
+                for (int i = 0; i < argumentsRunnables.length; i++) {
+                    argumentsRunnables[i] = ysGetInstruction(args.get(i), function);
                 }
-                return ret;
-            };
+                return () -> {
+                    ObjectValue[] arguments = new ObjectValue[argumentsRunnables.length];
+                    for (int i = 0; i < arguments.length; i++) {
+                        arguments[i] = argumentsRunnables[i].run();
+                    }
+                    function.getMacros().get(matcher.group(1)).run(arguments);
+                    return new ObjectValue(new StandardGet(), new ImmutableSet(), null, Object.class);
+                };
+            } else {
+                matcher.usePattern(ISOLATED_FUNCTION_CALL);
+                if (matcher.matches()) {
+                    List<String> args;
+                    if (matcher.group(2).equals(""))
+                        args = new ArrayList<>();
+                    else
+                        args = ysGetSplitOutsideParenthesis(matcher.group(2), ',');
+                    ReturnRunnable[] argumentsRunnables = new ReturnRunnable[args.size()];
+                    for (int i = 0; i < argumentsRunnables.length; i++) {
+                        argumentsRunnables[i] = ysGetInstruction(args.get(i), function);
+                    }
+                    return () -> {
+                        Object contextObj = context.run().getValue();
+                        ObjectValue[] arguments = new ObjectValue[argumentsRunnables.length];
+                        for (int i = 0; i < arguments.length; i++) {
+                            arguments[i] = argumentsRunnables[i].run();
+                        }
+                        Object ret;
+                        if (contextObj instanceof YSObject) {
+                            try {
+                                FunctionCall call;
+                                try {
+                                    call = (FunctionCall) ((YSObject) contextObj).getVariables().get(matcher.group(1)).getValue();
+                                } catch (NullPointerException e) {
+                                    throw new IllegalStateException("Could not find '" + matcher.group(1) + "'");
+                                }
+                                int i = 0;
+                                for (String arg : call.getArgs().keySet()) {
+                                    call.getFunction().getVariables().put(arg, arguments[i]);
+                                    i++;
+                                }
+                                if (i > arguments.length) throw new IllegalSyntaxException("Wrong arguments length");
+                                ret = ysRunFunction(call.getFunction(), function);
+                            } catch (ClassCastException e) {
+                                throw new IllegalStateException(e);
+                            }
+                        } else {
+                            Object[] argumentsObj = new Object[arguments.length];
+                            for (int i = 0; i < argumentsObj.length; i++) {
+                                argumentsObj[i] = arguments[i].getValue();
+                            }
+                            Class<?>[] argumentsClasses = new Class<?>[argumentsObj.length];
+                            for (int i = 0; i < argumentsClasses.length; i++) {
+                                if (arguments[i].getCast() != null)
+                                    argumentsClasses[i] = arguments[i].getCast();
+                                else try {
+                                    argumentsClasses[i] = argumentsObj[i].getClass();
+                                } catch (NullPointerException e) {
+                                    throw new IllegalSyntaxException("'" + args.get(i) + "'. Cannot get class of null objects");
+                                }
+                            }
+                            try {
+                                Class<?> c;
+                                if (contextObj instanceof Class<?>)
+                                    c = (Class<?>) contextObj;
+                                else c = contextObj.getClass();
+                                Method method = c.getMethod(matcher.group(1), argumentsClasses);
+                                method.setAccessible(true);
+                                ret = method.invoke(contextObj, argumentsObj);
+                            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        return new ObjectValue(new StandardGet(), new StandardSet(), ret, cast);
+                    };
+                } else if (line.toLowerCase().matches("^-?[0-9.]+[fl]?$")) {
+                    Number n;
+                    if (line.toLowerCase().endsWith("f")) {
+                        n = Float.parseFloat(line.substring(0, line.length() - 1));
+                    } else if (line.toLowerCase().endsWith("l")) {
+                        n = Long.parseLong(line.substring(0, line.length() - 1));
+                    } else {
+                        try {
+                            if (line.contains("."))
+                                throw new NumberFormatException();
+                            n = Integer.parseInt(line);
+                        } catch (NumberFormatException e) {
+                            try {
+                                n = Double.parseDouble(line);
+                            } catch (NumberFormatException e1) {
+                                throw new NumberFormatException(line);
+                            }
+                        }
+                    }
+                    Number finalN = n;
+                    return () -> new ObjectValue(new StandardGet(), new ImmutableSet(), finalN, cast);
+                } else if (line.contains("+") || line.contains("-") || line.contains("/") || line.contains("*") || line.contains("^")) {
+                    return null;
+                    //TODO
+                } else {
+                    String finalLine = line;
+                    return () -> {
+                        ObjectValue ret;
+                        Object contextObj = context.run().getValue();
+                        if (contextObj instanceof YSObject) {
+                            ObjectValue objectValue = ysGetVariable(finalLine, function);
+                            if (cast == null)
+                                ret = objectValue;
+                            else
+                                ret = new ObjectValue(objectValue.getObjectValueGet(), objectValue.getObjectValueSet(), objectValue.getValue(), cast);
+                        } else {
+                            try {
+                                if (contextObj instanceof Class<?>) {
+                                    ret = new ObjectValue(new StandardGet(), new ImmutableSet(), ((Class<?>) contextObj).getField(finalLine).get(null), cast);
+                                } else
+                                    ret = new ObjectValue(new StandardGet(), new ImmutableSet(), contextObj.getClass().getField(finalLine).get(contextObj), cast);
+                            } catch (IllegalAccessException | NoSuchFieldException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        return ret;
+                    };
+                }
+            }
         }
     }
 
@@ -214,7 +267,7 @@ public class YS10 {
                     }
                     ysCompileFunction(ysReadInputStream(inputStream), imported);
                     return () -> {
-                        ysRunFunction(imported);
+                        ysRunFunction(imported, function);
                         return null;
                     };
                 } catch (Exception e1) {
@@ -250,7 +303,7 @@ public class YS10 {
             return () -> s;
         }
         matcher.usePattern(FUNCTION_RETURN);
-        if(matcher.matches()) {
+        if (matcher.matches()) {
             ReturnRunnable rr = ysGetInstruction(matcher.group(1), function);
             assert rr != null;
             return new ReturnRunnable() {
@@ -357,7 +410,7 @@ public class YS10 {
                         Class<?> cast = castRet.getType();
                         ext[i] = castRet.getNewLine();
                         Function f = new Function(cast);
-                        f.getJavaImports().putAll(function.getJavaImports());
+                        ysInherit(f, function);
                         ysCompileFunction(bLines.toArray(new String[0]), f);
                         YS.FUNCTIONS.put(id, f);
                         ext[i] = ext[i].trim() + "\3" + id;
@@ -372,7 +425,9 @@ public class YS10 {
         }
     }
 
-    public static Object ysRunFunction(Function function) {
+    public static Object ysRunFunction(Function function, Function caller) {
+        Map<String, ObjectValue> copy = new HashMap<>(function.getVariables());
+        ysInherit(function, caller);
         Object ret = null;
         for (ReturnRunnable r : function.getInstructions()) {
             try {
@@ -387,7 +442,16 @@ public class YS10 {
         }
         if (function.isDeleteVariablesAfterRun())
             function.getVariables().clear();
+        function.getVariables().putAll(copy);
+        System.gc();
         return ret;
+    }
+
+    public static void ysInherit(Function function, Function superF) {
+        if (superF != null) {
+            function.getMacros().putAll(superF.getMacros());
+            function.getJavaImports().putAll(superF.getJavaImports());
+        }
     }
 
     public static List<String> ysGetSplitOutsideParenthesis(String s, char match) {
@@ -443,6 +507,11 @@ public class YS10 {
         function.getJavaImports().put("thread", Thread.class);
         function.getJavaImports().put("void", Void.class);
         function.getJavaImports().put("primitive_void", void.class);
+    }
+
+    public static void ysLoadStandardMacros(Function function) {
+        for (Macro macro : STANDARD_MACROS)
+            function.getMacros().put(macro.name(), macro);
     }
 
     public static String[] ysReadInputStream(InputStream inputStream) {

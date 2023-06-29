@@ -53,6 +53,9 @@ public class ObjectValue {
     }
 
     public Class<?> getCast() {
-        return cast;
+        if (cast == null)
+            return value.getClass();
+        else
+            return cast;
     }
 }

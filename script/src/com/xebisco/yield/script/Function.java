@@ -24,6 +24,7 @@ import java.util.*;
 public class Function extends YSObject {
     private final Collection<ReturnRunnable> instructions = new ArrayDeque<>();
     private final Map<String, Class<?>> javaImports = new HashMap<>();
+    private final Map<String, Macro> macros = new HashMap<>();
     private boolean deleteVariablesAfterRun = true;
     private File directory = new File(".");
     private final Class<?> returnType;
@@ -58,5 +59,9 @@ public class Function extends YSObject {
 
     public Class<?> getReturnType() {
         return returnType;
+    }
+
+    public Map<String, Macro> getMacros() {
+        return macros;
     }
 }

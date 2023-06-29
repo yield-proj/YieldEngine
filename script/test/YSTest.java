@@ -24,7 +24,8 @@ public class YSTest {
     public static void main(String[] args) {
         Function function = new Function(null);
         ysLoadBasicJavaLang(function);
+        ysLoadStandardMacros(function);
         ysCompileFunction(ysReadInputStream(YSTest.class.getResourceAsStream("/test.ys")), function);
-        ysRunFunction(function);
+        ysRunFunction(function, null);
     }
 }
