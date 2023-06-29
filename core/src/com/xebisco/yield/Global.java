@@ -54,6 +54,28 @@ public final class Global {
         }
     }
 
+    public static ApplicationPlatform openGLPlatform() throws ClassNotFoundException {
+        Class<?> swingPlatformClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
+        Class<?> clipAudioClass = Class.forName("com.xebisco.yield.javaxsoundimpl.JavaXSoundManager");
+        try {
+            Object swingPlatform = swingPlatformClass.getConstructor().newInstance(), clipAudio = clipAudioClass.getConstructor().newInstance();
+            return new ApplicationPlatform(
+                    (FontLoader) swingPlatform,
+                    (TextureManager) swingPlatform,
+                    (InputManager) swingPlatform,
+                    null,
+                    (MouseCheck) swingPlatform,
+                    (AudioManager) clipAudio,
+                    (ViewportZoomScale) swingPlatform,
+                    (ToggleFullScreen) swingPlatform,
+                    (PlatformGraphics) swingPlatform
+            );
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                 InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * The function returns an instance of an ApplicationPlatform using Java's Swing for rendering and OpenAL
      * for audio.

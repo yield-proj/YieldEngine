@@ -23,11 +23,10 @@ public class Main extends Scene {
     }
 
     public static void main(String[] args) throws ClassNotFoundException {
-        System.setProperty("sun.java2d.opengl", "True");
         ContextTime time = new ContextTime();
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
-        Application application = new Application(applicationManager, Main.class, Global.swingALPlatform(), platformInit);
+        Application application = new Application(applicationManager, Main.class, Global.openGLPlatform(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
     }
