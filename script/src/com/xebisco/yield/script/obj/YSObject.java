@@ -25,6 +25,8 @@ public class YSObject {
     public YSObject() {
         variables.put("null", new ObjectValue(new StandardGet(), new ImmutableSet(), null, null));
         variables.put("self", new ObjectValue(new StandardGet(), new ImmutableSet(), this, YSObject.class));
+        variables.put("true", new ObjectValue(new StandardGet(), new ImmutableSet(), true, null));
+        variables.put("false", new ObjectValue(new StandardGet(), new ImmutableSet(), false, null));
     }
 
     public Map<String, ObjectValue> getVariables() {

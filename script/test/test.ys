@@ -1,3 +1,3 @@
 main(args) {
-    println!(args[0])
+    println!(concat!(args))
 }
