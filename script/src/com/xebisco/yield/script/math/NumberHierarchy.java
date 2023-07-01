@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-import com.xebisco.yield.script.Function;
+package com.xebisco.yield.script.math;
 
-import static com.xebisco.yield.script.YS10.*;
-
-public class YSTest {
-    public static void main(String[] args) {
-        Function function = new Function(null);
-        ysLoadBasicJavaLang(function);
-        ysLoadStandardMacros(function);
-        ysCompileFunction(ysReadInputStream(YSTest.class.getResourceAsStream("/test.ys")), function);
-        function.setDeleteVariablesAfterRun(false);
-        ysRunFunction(function, null);
-        ysRunMainFunction(function, new Object[] {"Hello, World!"});
-    }
+public enum NumberHierarchy {
+    DOUBLE,
+    FLOAT,
+    INT,
+    LONG
 }

@@ -21,7 +21,7 @@ import com.xebisco.yield.script.obj.ObjectValue;
 public interface Macro {
     String name();
 
-    void run(ObjectValue[] args);
+    Object run(ObjectValue[] args);
 
     static void checkArgs(ObjectValue[] args, Class<?>... types) {
         if (args.length != types.length) throw new IllegalArgumentException("Unexpected argument count");

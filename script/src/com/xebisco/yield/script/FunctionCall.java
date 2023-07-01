@@ -16,18 +16,18 @@
 
 package com.xebisco.yield.script;
 
-import java.util.HashMap;
+import java.util.List;
 
 public class FunctionCall {
-    private final HashMap<String, Class<?>> args;
+    private final String[] args;
     private final Function function;
 
-    public FunctionCall(HashMap<String, Class<?>> args, Function function) {
+    public FunctionCall(String[] args, Function function) {
         this.args = args;
         this.function = function;
     }
 
-    public HashMap<String, Class<?>> getArgs() {
+    public String[] getArgs() {
         return args;
     }
 
