@@ -31,14 +31,17 @@ public class Main extends Scene {
         applicationManager.run();
     }
     private Entity2D e;
+    public double s;
 
     @Override
     public void onStart() {
-        e = instantiate(StandardPrefabs.text("Hello, World!"));
+        getSystems().add(new ToggleFullScreenSystem());
+        e = instantiate(StandardPrefabs.text("Hello, World!", Colors.WHITE, new Font("com/xebisco/yield/Pixeboy.ttf", 100, getApplication().getApplicationPlatform().getFontLoader())));
     }
 
     @Override
     public void onUpdate() {
-        e.getTransform().rotate(getApplication().getAxis(HORIZONTAL));
+        s += getApplication().getAxis(HORIZONTAL);
+        e.getTransform().rotate(s);
     }
 }

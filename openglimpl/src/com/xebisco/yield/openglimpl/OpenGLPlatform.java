@@ -65,24 +65,29 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
     public void init(PlatformInit platformInit) {
         this.platformInit = platformInit;
 
+        System.setProperty("newt.window.icons", platformInit.getWindowIconPath() + " " + platformInit.getWindowIconPath());
+
         window = GLWindow.create(new GLCapabilities(profile = GLProfile.get(GLProfile.GL2)));
-        window.setSize((int) platformInit.getViewportSize().getWidth(), (int) platformInit.getViewportSize().getHeight());
+        window.setSize((int) platformInit.getWindowSize().getWidth(), (int) platformInit.getWindowSize().getHeight());
         window.setUndecorated(platformInit.isUndecorated());
-        window.setFullscreen(platformInit.isFullscreen());
         window.setTitle(platformInit.getTitle());
-        window.setDefaultCloseOperation(WindowClosingProtocol.WindowClosingMode.DISPOSE_ON_CLOSE);
 
         window.addKeyListener(this);
         window.addMouseListener(this);
         window.addGLEventListener(this);
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        window.setPosition(screen.width / 2 - window.getWidth() / 2, screen.height / 2 - window.getHeight() / 2);
 
         window.setVisible(true);
+
+        setFullScreen(platformInit.isFullscreen());
     }
 
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         GL2 gl = glAutoDrawable.getGL().getGL2();
         gl.setSwapInterval(0);
+        gl.glClearColor(0, 0, 0, 1);
     }
 
     @Override
@@ -93,11 +98,6 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
     @Override
     public void display(GLAutoDrawable glAutoDrawable) {
         GL2 gl = glAutoDrawable.getGL().getGL2();
-
-        if (drawInstructions.size() > 0)
-            gl.glClearColor((float) drawInstructions.get(0).getColor().getRed(), (float) drawInstructions.get(0).getColor().getGreen(), (float) drawInstructions.get(0).getColor().getBlue(), (float) drawInstructions.get(0).getColor().getAlpha());
-        else gl.glClearColor(0, 0, 0, 1);
-        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
         toLoadImages.removeIf(image -> {
             image.setTexture(TextureIO.newTexture(image.getTextureData()));
@@ -114,51 +114,59 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
         gl.glTranslated(-camera.getX(), -camera.getY(), 0);
         gl.glScaled(scale.getX(), scale.getY(), 1);
 
-        for (int i = 1; i < drawInstructions.size(); i++) {
-            DrawInstruction di = drawInstructions.get(i);
-            gl.glColor4d(di.getColor().getRed(), di.getColor().getGreen(), di.getColor().getBlue(), di.getColor().getAlpha());
-            double sx = 0, sy = 0;
-            for (int i1 : di.getVerticesX()) sx += i1;
-            for (int i1 : di.getVerticesY()) sy += i1;
-            sx /= di.getVerticesX().length;
-            sy /= di.getVerticesY().length;
-            gl.glRotated(-di.getRotation(), sx, sy, 1);
-
-            if (di.getImageRef() != null) {
-                gl.glEnable(GL2.GL_TEXTURE_2D);
-                gl.glBindTexture(GL2.GL_TEXTURE_2D, ((OpenGLImage) di.getImageRef()).getTexture().getTextureObject());
-                gl.glBegin(GL2.GL_QUADS);
-                if (di.getVerticesX().length != 4 || di.getVerticesY().length != 4)
-                    throw new IllegalVerticesCountException("OpenGL image rendering supports only rectangles");
-                gl.glTexCoord2i(0, 0);
-                gl.glVertex2i(di.getVerticesX()[0], di.getVerticesY()[0]);
-                gl.glTexCoord2i(1, 0);
-                gl.glVertex2i(di.getVerticesX()[1], di.getVerticesY()[1]);
-                gl.glTexCoord2i(1, 1);
-                gl.glVertex2i(di.getVerticesX()[2], di.getVerticesY()[2]);
-                gl.glTexCoord2i(0, 1);
-                gl.glVertex2i(di.getVerticesX()[3], di.getVerticesY()[3]);
-                gl.glEnd();
-                gl.glFlush();
-                gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
-                gl.glDisable(GL2.GL_TEXTURE_2D);
-            } else if (di.getFontRef() != null) {
-                TextRenderer renderer = (TextRenderer) di.getFontRef();
-                gl.glEnable(GL2.GL_TEXTURE_2D);
-                renderer.begin3DRendering();
-                Rectangle2D bounds = renderer.getBounds(di.getText());
-                renderer.draw(di.getText(), (int) (di.getVerticesX()[0] - bounds.getWidth() / 2), (int) (di.getVerticesY()[0] - bounds.getHeight() / 4));
-                renderer.end3DRendering();
-                gl.glDisable(GL2.GL_TEXTURE_2D);
-            } else {
-                gl.glBegin(GL2.GL_POLYGON);
-                for (int i1 = 0; i1 < di.getVerticesX().length; i1++) {
-                    gl.glVertex2i(di.getVerticesX()[i1], di.getVerticesY()[i1]);
+        try {
+            for (DrawInstruction di : drawInstructions) {
+                if (di.getVerticesX() == null && di.getVerticesY() == null) {
+                    gl.glClearColor((float) drawInstructions.get(0).getColor().getRed(), (float) drawInstructions.get(0).getColor().getGreen(), (float) drawInstructions.get(0).getColor().getBlue(), (float) drawInstructions.get(0).getColor().getAlpha());
+                    gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+                    continue;
                 }
-                gl.glEnd();
-                gl.glFlush();
+                gl.glColor4d(di.getColor().getRed(), di.getColor().getGreen(), di.getColor().getBlue(), di.getColor().getAlpha());
+                double sx = 0, sy = 0;
+                for (int i1 : di.getVerticesX()) sx += i1;
+                for (int i1 : di.getVerticesY()) sy += i1;
+                sx /= di.getVerticesX().length;
+                sy /= di.getVerticesY().length;
+                gl.glRotated(-di.getRotation(), sx, sy, 1);
+
+                if (di.getImageRef() != null) {
+                    gl.glEnable(GL2.GL_TEXTURE_2D);
+                    gl.glBindTexture(GL2.GL_TEXTURE_2D, ((OpenGLImage) di.getImageRef()).getTexture().getTextureObject());
+                    gl.glBegin(GL2.GL_QUADS);
+                    if (di.getVerticesX().length != 4 || di.getVerticesY().length != 4)
+                        throw new IllegalVerticesCountException("OpenGL image rendering supports only rectangles");
+                    gl.glTexCoord2i(0, 0);
+                    gl.glVertex2i(di.getVerticesX()[0], di.getVerticesY()[0]);
+                    gl.glTexCoord2i(1, 0);
+                    gl.glVertex2i(di.getVerticesX()[1], di.getVerticesY()[1]);
+                    gl.glTexCoord2i(1, 1);
+                    gl.glVertex2i(di.getVerticesX()[2], di.getVerticesY()[2]);
+                    gl.glTexCoord2i(0, 1);
+                    gl.glVertex2i(di.getVerticesX()[3], di.getVerticesY()[3]);
+                    gl.glEnd();
+                    gl.glFlush();
+                    gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+                    gl.glDisable(GL2.GL_TEXTURE_2D);
+                } else if (di.getFontRef() != null) {
+                    TextRenderer renderer = (TextRenderer) di.getFontRef();
+                    gl.glEnable(GL2.GL_TEXTURE_2D);
+                    renderer.begin3DRendering();
+                    Rectangle2D bounds = renderer.getBounds(di.getText());
+                    renderer.draw(di.getText(), (int) (di.getVerticesX()[0] - bounds.getWidth() / 2), (int) (di.getVerticesY()[0] - bounds.getHeight() / 4));
+                    renderer.end3DRendering();
+                    gl.glDisable(GL2.GL_TEXTURE_2D);
+                } else {
+                    gl.glBegin(GL2.GL_POLYGON);
+                    for (int i1 = 0; i1 < di.getVerticesX().length; i1++) {
+                        gl.glVertex2i(di.getVerticesX()[i1], di.getVerticesY()[i1]);
+                    }
+                    gl.glEnd();
+                    gl.glFlush();
+                }
+                gl.glRotated(di.getRotation(), sx, sy, 1);
             }
-            gl.glRotated(di.getRotation(), sx, sy, 1);
+        } catch (ConcurrentModificationException ignore) {
+
         }
     }
 
@@ -190,7 +198,7 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
     @Override
     public void dispose() {
-
+        window.destroy();
     }
 
     @Override
