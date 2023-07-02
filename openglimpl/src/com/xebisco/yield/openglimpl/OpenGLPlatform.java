@@ -23,9 +23,18 @@ import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
+import com.jogamp.opengl.util.awt.TextRenderer;
+import com.jogamp.opengl.util.texture.TextureIO;
+import com.xebisco.yield.Font;
 import com.xebisco.yield.*;
-import java.util.Collection;
-import java.util.HashSet;
+
+import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.util.List;
+import java.util.*;
 
 public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureManager, InputManager, ViewportZoomScale, ToggleFullScreen, GLEventListener, KeyListener, MouseListener {
 
@@ -34,16 +43,19 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
     private Vector2D camera = new Vector2D();
     private PlatformInit platformInit;
 
+    private final FontRenderContext frc = new FontRenderContext(new AffineTransform(), false, true);
+
+    private final Set<OpenGLImage> toLoadImages = new HashSet<>(), toDestroyImages = new HashSet<>();
+
     private final HashSet<Input.Key> pressingKeys = new HashSet<>();
     private final HashSet<Input.MouseButton> pressingMouseButtons = new HashSet<>();
     private final KeyAction addKeyAction = pressingKeys::add, removeKeyAction = pressingKeys::remove;
+    private GLProfile profile;
+
+    private final List<DrawInstruction> drawInstructions = new ArrayList<>();
 
     private interface KeyAction {
         void call(Input.Key key);
-    }
-
-    private interface MouseButtonAction {
-        void call(Input.MouseButton button);
     }
 
     private TwoAnchorRepresentation scale = new TwoAnchorRepresentation(1, 1);
@@ -51,10 +63,9 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
     @Override
     public void init(PlatformInit platformInit) {
-
         this.platformInit = platformInit;
 
-        window = GLWindow.create(new GLCapabilities(GLProfile.get(GLProfile.GL2)));
+        window = GLWindow.create(new GLCapabilities(profile = GLProfile.get(GLProfile.GL2)));
         window.setSize((int) platformInit.getViewportSize().getWidth(), (int) platformInit.getViewportSize().getHeight());
         window.setUndecorated(platformInit.isUndecorated());
         window.setFullscreen(platformInit.isFullscreen());
@@ -63,6 +74,7 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
         window.addKeyListener(this);
         window.addMouseListener(this);
+        window.addGLEventListener(this);
 
         window.setVisible(true);
     }
@@ -70,9 +82,7 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         GL2 gl = glAutoDrawable.getGL().getGL2();
-
-        if (platformInit.isVerticalSync())
-            gl.setSwapInterval(1);
+        gl.setSwapInterval(0);
     }
 
     @Override
@@ -82,12 +92,82 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
     @Override
     public void display(GLAutoDrawable glAutoDrawable) {
+        GL2 gl = glAutoDrawable.getGL().getGL2();
 
+        if (drawInstructions.size() > 0)
+            gl.glClearColor((float) drawInstructions.get(0).getColor().getRed(), (float) drawInstructions.get(0).getColor().getGreen(), (float) drawInstructions.get(0).getColor().getBlue(), (float) drawInstructions.get(0).getColor().getAlpha());
+        else gl.glClearColor(0, 0, 0, 1);
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+
+        toLoadImages.removeIf(image -> {
+            image.setTexture(TextureIO.newTexture(image.getTextureData()));
+            return true;
+        });
+
+        toDestroyImages.removeIf(image -> {
+            image.getTexture().destroy(gl);
+            return true;
+        });
+
+        gl.glLoadIdentity();
+
+        gl.glTranslated(-camera.getX(), -camera.getY(), 0);
+        gl.glScaled(scale.getX(), scale.getY(), 1);
+
+        for (int i = 1; i < drawInstructions.size(); i++) {
+            DrawInstruction di = drawInstructions.get(i);
+            gl.glColor4d(di.getColor().getRed(), di.getColor().getGreen(), di.getColor().getBlue(), di.getColor().getAlpha());
+            double sx = 0, sy = 0;
+            for (int i1 : di.getVerticesX()) sx += i1;
+            for (int i1 : di.getVerticesY()) sy += i1;
+            sx /= di.getVerticesX().length;
+            sy /= di.getVerticesY().length;
+            gl.glRotated(-di.getRotation(), sx, sy, 1);
+
+            if (di.getImageRef() != null) {
+                gl.glEnable(GL2.GL_TEXTURE_2D);
+                gl.glBindTexture(GL2.GL_TEXTURE_2D, ((OpenGLImage) di.getImageRef()).getTexture().getTextureObject());
+                gl.glBegin(GL2.GL_QUADS);
+                if (di.getVerticesX().length != 4 || di.getVerticesY().length != 4)
+                    throw new IllegalVerticesCountException("OpenGL image rendering supports only rectangles");
+                gl.glTexCoord2i(0, 0);
+                gl.glVertex2i(di.getVerticesX()[0], di.getVerticesY()[0]);
+                gl.glTexCoord2i(1, 0);
+                gl.glVertex2i(di.getVerticesX()[1], di.getVerticesY()[1]);
+                gl.glTexCoord2i(1, 1);
+                gl.glVertex2i(di.getVerticesX()[2], di.getVerticesY()[2]);
+                gl.glTexCoord2i(0, 1);
+                gl.glVertex2i(di.getVerticesX()[3], di.getVerticesY()[3]);
+                gl.glEnd();
+                gl.glFlush();
+                gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+                gl.glDisable(GL2.GL_TEXTURE_2D);
+            } else if (di.getFontRef() != null) {
+                TextRenderer renderer = (TextRenderer) di.getFontRef();
+                gl.glEnable(GL2.GL_TEXTURE_2D);
+                renderer.begin3DRendering();
+                Rectangle2D bounds = renderer.getBounds(di.getText());
+                renderer.draw(di.getText(), (int) (di.getVerticesX()[0] - bounds.getWidth() / 2), (int) (di.getVerticesY()[0] - bounds.getHeight() / 4));
+                renderer.end3DRendering();
+                gl.glDisable(GL2.GL_TEXTURE_2D);
+            } else {
+                gl.glBegin(GL2.GL_POLYGON);
+                for (int i1 = 0; i1 < di.getVerticesX().length; i1++) {
+                    gl.glVertex2i(di.getVerticesX()[i1], di.getVerticesY()[i1]);
+                }
+                gl.glEnd();
+                gl.glFlush();
+            }
+            gl.glRotated(di.getRotation(), sx, sy, 1);
+        }
     }
 
     @Override
     public void reshape(GLAutoDrawable glAutoDrawable, int x, int y, int w, int h) {
         GL2 gl = glAutoDrawable.getGL().getGL2();
+
+        gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glLoadIdentity();
 
         gl.glOrtho(
                 -platformInit.getViewportSize().getWidth() / 2.,
@@ -97,6 +177,15 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
                 -1,
                 1
         );
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+
+        if (platformInit.isStretchViewport()) {
+            gl.glViewport(0, 0, window.getWidth(), window.getHeight());
+        } else {
+            Size2D viewport = Global.onSizeBoundary(platformInit.getViewportSize(), new Size2D(window.getWidth(), window.getHeight()));
+
+            gl.glViewport((int) (window.getWidth() / 2 - viewport.getWidth() / 2), (int) (window.getHeight() / 2 - viewport.getHeight() / 2), (int) viewport.getWidth(), (int) viewport.getHeight());
+        }
     }
 
     @Override
@@ -106,22 +195,26 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
     @Override
     public Object loadFont(Font font) {
-        return null;
+        try {
+            return new TextRenderer(java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, font.getInputStream()).deriveFont((float) font.getSize()));
+        } catch (FontFormatException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void unloadFont(Font font) {
-
+        ((TextRenderer) font.getFontRef()).dispose();
     }
 
     @Override
     public double getStringWidth(String text, Object fontRef) {
-        return 0;
+        return ((TextRenderer) fontRef).getFont().getStringBounds(text, frc).getWidth();
     }
 
     @Override
     public double getStringHeight(String text, Object fontRef) {
-        return 0;
+        return ((TextRenderer) fontRef).getFont().getStringBounds(text, frc).getHeight();
     }
 
     @Override
@@ -136,12 +229,12 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
     @Override
     public double getMouseX() {
-        return 0;
+        return mousePosition.getX();
     }
 
     @Override
     public double getMouseY() {
-        return 0;
+        return mousePosition.getY();
     }
 
     @Override
@@ -151,12 +244,12 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
     @Override
     public void frame() {
-
+        drawInstructions.clear();
     }
 
     @Override
     public void draw(DrawInstruction drawInstruction) {
-
+        drawInstructions.add(drawInstruction);
     }
 
     @Override
@@ -166,12 +259,7 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
     @Override
     public void conclude() {
-        window.display();
-    }
-
-    @Override
-    public Vector2D getCamera() {
-        return camera;
+        window.windowRepaint(0, 0, window.getWidth(), window.getHeight());
     }
 
     @Override
@@ -181,37 +269,38 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
     @Override
     public Object loadTexture(Texture texture) {
-        return null;
+        try {
+            OpenGLImage image = new OpenGLImage(TextureIO.newTextureData(profile, texture.getInputStream(), false, texture.getFileFormat()));
+            toLoadImages.add(image);
+            return image;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void unloadTexture(Texture texture) {
-
+        toDestroyImages.add((OpenGLImage) texture.getImageRef());
     }
 
     @Override
     public int getImageWidth(Object imageRef) {
-        return 0;
+        return ((OpenGLImage) imageRef).getTextureData().getWidth();
     }
 
     @Override
     public int getImageHeight(Object imageRef) {
-        return 0;
+        return ((OpenGLImage) imageRef).getTextureData().getHeight();
     }
 
     @Override
     public void setFullScreen(boolean fullScreen) {
-
+        window.setFullscreen(fullScreen);
     }
 
     @Override
     public void setZoomScale(TwoAnchorRepresentation scale) {
         this.scale = scale;
-    }
-
-    @Override
-    public TwoAnchorRepresentation getZoomScale() {
-        return scale;
     }
 
     public void key(KeyAction keyAction, KeyEvent keyEvent) {
@@ -595,7 +684,8 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
     @Override
     public void keyReleased(KeyEvent e) {
-        key(removeKeyAction, e);
+        if (!e.isAutoRepeat())
+            key(removeKeyAction, e);
     }
 
     @Override
@@ -630,24 +720,25 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        switch (e.getButton()) {
-            case MouseEvent.BUTTON1:
-                pressingMouseButtons.remove(Input.MouseButton.BUTTON1);
-                break;
-            case MouseEvent.BUTTON2:
-                pressingMouseButtons.remove(Input.MouseButton.BUTTON2);
-                break;
-            case MouseEvent.BUTTON3:
-                pressingMouseButtons.remove(Input.MouseButton.BUTTON3);
-                break;
-        }
+        if (!e.isAutoRepeat())
+            switch (e.getButton()) {
+                case MouseEvent.BUTTON1:
+                    pressingMouseButtons.remove(Input.MouseButton.BUTTON1);
+                    break;
+                case MouseEvent.BUTTON2:
+                    pressingMouseButtons.remove(Input.MouseButton.BUTTON2);
+                    break;
+                case MouseEvent.BUTTON3:
+                    pressingMouseButtons.remove(Input.MouseButton.BUTTON3);
+                    break;
+            }
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
         mousePosition.set(
-                (double) e.getX() / window.getWidth() * platformInit.getViewportSize().getWidth(),
-                (double) e.getY() / window.getHeight() * platformInit.getViewportSize().getHeight()
+                (double) e.getX() / window.getWidth() * platformInit.getViewportSize().getWidth() - platformInit.getViewportSize().getWidth() / 2.,
+                (double) e.getY() / window.getHeight() * platformInit.getViewportSize().getHeight() - platformInit.getViewportSize().getHeight() / 2.
         );
     }
 

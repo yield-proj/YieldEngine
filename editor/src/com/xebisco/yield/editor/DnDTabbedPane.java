@@ -34,7 +34,7 @@ public class DnDTabbedPane extends JTabbedPane {
     public static final long serialVersionUID = 1L;
     private static final int LINEWIDTH = 3;
     private static final String NAME = "TabTransferData";
-    private static GhostGlassPane s_glassPane = new GhostGlassPane();
+    private static final GhostGlassPane s_glassPane = new GhostGlassPane();
     private final DataFlavor FLAVOR = new DataFlavor(
             DataFlavor.javaJVMLocalObjectMimeType, NAME);
     private final RoundRectangle2D m_lineRect = new RoundRectangle2D.Double();
@@ -42,7 +42,7 @@ public class DnDTabbedPane extends JTabbedPane {
     private boolean m_isDrawRect = false;
     private TabAcceptor m_acceptor = null;
     private boolean m_hasGhost = true;
-    private double arc = 10;
+    private final double arc = 10;
 
     public DnDTabbedPane() {
         super();
@@ -338,7 +338,6 @@ public class DnDTabbedPane extends JTabbedPane {
         } else if (getTabCount() == 0) {
             m_lineRect.setRoundRect(0, 0, 0, 0, arc, arc);
             m_isDrawRect = true;
-            return;
         } else if (next == 0) {
             Rectangle rect = getBoundsAt(0);
             m_lineRect.setRoundRect(-LINEWIDTH / 2., rect.y, s_glassPane.getGhostWidth(), rect.height, arc, arc);
@@ -371,7 +370,6 @@ public class DnDTabbedPane extends JTabbedPane {
         } else if (getTabCount() == 0) {
             m_lineRect.setRoundRect(0, 0, 0, 0, arc, arc);
             m_isDrawRect = false;
-            return;
         } else if (next == getTabCount()) {
             Rectangle rect = getBoundsAt(getTabCount() - 1);
             m_lineRect.setRoundRect(rect.x, rect.y + rect.height - LINEWIDTH / 2.,
@@ -588,7 +586,7 @@ class GhostGlassPane extends JPanel {
     public static final long serialVersionUID = 1L;
     private final AlphaComposite m_composite;
 
-    private Point m_location = new Point(0, 0);
+    private final Point m_location = new Point(0, 0);
 
     private BufferedImage m_draggingGhost = null;
 

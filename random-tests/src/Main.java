@@ -30,22 +30,15 @@ public class Main extends Scene {
         applicationManager.getApplications().add(application);
         applicationManager.run();
     }
-
-    private Vector2D pos = new Vector2D();
+    private Entity2D e;
 
     @Override
     public void onStart() {
-        instantiate(StandardPrefabs.texRectangle("com/xebisco/yield/img.png")).getComponent(TextureRectangle.class).getVertexShaders().add(new VertexShader() {
-            @Override
-            public void run() {
-                if (index == 3)
-                    position.sumLocal(pos);
-            }
-        });
+        e = instantiate(StandardPrefabs.text("Hello, World!"));
     }
 
     @Override
     public void onUpdate() {
-        pos.sumLocal(getApplication().getAxis(HORIZONTAL, VERTICAL));
+        e.getTransform().rotate(getApplication().getAxis(HORIZONTAL));
     }
 }

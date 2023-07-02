@@ -78,16 +78,6 @@ public class Application implements Behavior {
             Application.this.applicationPlatform.getPlatformGraphics().frame();
             drawInstruction.setStroke(0);
             drawInstruction.setColor(scene.getBackGroundColor());
-            Vector2D cam = Application.this.applicationPlatform.getPlatformGraphics().getCamera();
-            drawInstruction.getVerticesX()[0] = (int) (cam.getX() - getViewportSize().getWidth() / 2);
-            drawInstruction.getVerticesX()[1] = (int) (cam.getX() + getViewportSize().getWidth() / 2);
-            drawInstruction.getVerticesX()[2] = (int) (cam.getX() + getViewportSize().getWidth() / 2);
-            drawInstruction.getVerticesX()[3] = (int) (cam.getX() - getViewportSize().getWidth() / 2);
-
-            drawInstruction.getVerticesY()[0] = (int) (cam.getY() - getViewportSize().getHeight() / 2);
-            drawInstruction.getVerticesY()[1] = (int) (cam.getY() - getViewportSize().getHeight() / 2);
-            drawInstruction.getVerticesY()[2] = (int) (cam.getY() + getViewportSize().getHeight() / 2);
-            drawInstruction.getVerticesY()[3] = (int) (cam.getY() + getViewportSize().getHeight() / 2);
             Application.this.applicationPlatform.getPlatformGraphics().draw(drawInstruction);
             try {
                 for (int i = 0; i < scene.getEntities().size(); i++) {
@@ -125,7 +115,7 @@ public class Application implements Behavior {
     @Override
     public void onStart() {
         applicationPlatform.getPlatformGraphics().init(platformInit);
-        defaultFont = new Font("com/xebisco/yield/OpenSans-Regular.ttf", 48, applicationPlatform.getFontLoader());
+        defaultFont = new Font("com/xebisco/yield/OpenSans-Regular.ttf", 100, applicationPlatform.getFontLoader());
         if (platformInit.getWindowIcon() == null)
             platformInit.setWindowIcon(new Texture(platformInit.getWindowIconPath(), applicationPlatform.getTextureManager()));
         applicationPlatform.getPlatformGraphics().updateWindowIcon(platformInit.getWindowIcon());
@@ -457,11 +447,10 @@ public class Application implements Behavior {
             this.scene.dispose();
         }
         this.scene = scene;
-        if (applicationPlatform.getViewportZoomScale() != null)
-            applicationPlatform.getViewportZoomScale().getZoomScale().set(1, 1);
         if (scene != null) {
             scene.setFrames(0);
             applicationPlatform.getPlatformGraphics().setCamera(scene.getCamera());
+            applicationPlatform.getViewportZoomScale().setZoomScale(scene.getZoomScale());
         }
     }
 

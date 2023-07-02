@@ -35,9 +35,13 @@ public class Editor extends JFrame {
 
     private EditorScene openedScene;
     private final Project project;
-    private int gridX = 10, gridY = 10;
+    private final int gridX = 10;
+    private final int gridY = 10;
 
-    private YieldTabbedPane central, northwest, southwest, east;
+    private final YieldTabbedPane central;
+    private final YieldTabbedPane northwest;
+    private final YieldTabbedPane southwest;
+    private final YieldTabbedPane east;
 
     private final JTextArea console = new JTextArea();
 
@@ -208,7 +212,9 @@ public class Editor extends JFrame {
         private double posX = 0d;
         private double posY = 0d;
 
-        private JTextField scaleField = new JTextField(), posXField = new JTextField(), posYField = new JTextField();
+        private final JTextField scaleField = new JTextField();
+        private final JTextField posXField = new JTextField();
+        private final JTextField posYField = new JTextField();
 
         public SceneView() {
             setLayout(new BorderLayout());

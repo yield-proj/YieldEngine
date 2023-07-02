@@ -146,8 +146,8 @@ public class YieldTabbedPane extends DnDTabbedPane {
 
     private class CloseButtonTab extends JPanel {
         private Component tab;
-        private JLabel label;
-        private JLabel closingLabel;
+        private final JLabel label;
+        private final JLabel closingLabel;
 
         public CloseButtonTab(Component aTab, String aTitle, Icon aIcon) {
             tab = aTab;

@@ -28,7 +28,7 @@ import java.util.Set;
  */
 public abstract class Scene extends Entity2DContainer implements Behavior {
     private int frames;
-    private final Vector2D camera = new Vector2D();
+    private final Vector2D camera = new Vector2D(), zoomScale = new Vector2D(1, 1);
     private Color backGroundColor = Colors.GRAY.darker();
     private Set<SystemBehavior> systems = new HashSet<>();
     private final PhysicsSystem physicsSystem = new PhysicsSystem();
@@ -126,5 +126,14 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
      */
     public Vector2D getCamera() {
         return camera;
+    }
+
+    /**
+     * The function returns the zoom scale as a Vector2D.
+     *
+     * @return The method is returning a Vector2D object named zoomScale.
+     */
+    public Vector2D getZoomScale() {
+        return zoomScale;
     }
 }

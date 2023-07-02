@@ -14,8 +14,28 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield;import com.xebisco.yield.TwoAnchorRepresentation;
+package com.xebisco.yield.openglimpl;
 
-public interface ViewportZoomScale {
-    void setZoomScale(TwoAnchorRepresentation zoomScale);
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureData;
+
+public class OpenGLImage {
+    private final TextureData textureData;
+    private Texture texture;
+
+    public OpenGLImage(TextureData textureData) {
+        this.textureData = textureData;
+    }
+
+    public TextureData getTextureData() {
+        return textureData;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
+    }
 }

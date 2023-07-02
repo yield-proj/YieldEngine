@@ -51,7 +51,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
     private Vector2D camera;
     private SwingCanvas canvas;
 
-    private TwoAnchorRepresentation zoomScale = new TwoAnchorRepresentation(1, 1);
+    private TwoAnchorRepresentation zoomScale;
 
     public static Color awtColor(com.xebisco.yield.Color yieldColor) {
         return new Color(yieldColor.getARGB(), true);
@@ -73,11 +73,6 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
         }
 
         return new Dimension(new_width, new_height);
-    }
-
-    @Override
-    public Vector2D getCamera() {
-        return camera;
     }
 
     @Override
@@ -658,6 +653,14 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     @Override
     public void draw(DrawInstruction drawInstruction) {
+        if(drawInstruction.getVerticesX() == null && drawInstruction.getVerticesY() == null) {
+            graphics.setColor(awtColor(drawInstruction.getColor()));
+            AffineTransform t = graphics.getTransform();
+            graphics.setTransform(new AffineTransform());
+            graphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            graphics.setTransform(t);
+            return;
+        }
         if (!frame.isVisible())
             return;
         AffineTransform savedTransform = new AffineTransform(graphics.getTransform());
@@ -745,8 +748,6 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
             return;
         graphics.dispose();
         canvas.finishRender(graphics);
-        if (platformInit.isVerticalSync())
-            Toolkit.getDefaultToolkit().sync();
     }
 
     public GraphicsDevice getDevice() {
@@ -908,11 +909,6 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
     public void setStretch(boolean stretch) {
         this.stretch = stretch;
-    }
-
-    @Override
-    public TwoAnchorRepresentation getZoomScale() {
-        return zoomScale;
     }
 
     @Override

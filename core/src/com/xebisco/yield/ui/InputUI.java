@@ -28,7 +28,9 @@ public class InputUI extends ComponentBehavior {
     private final DrawInstruction instruction = new DrawInstruction();
     private int stage = -1, lastControllerNum;
     private String msg;
-    private double f, target = 150, onMessage;
+    private double f;
+    private final double target = 150;
+    private double onMessage;
     private Font font;
     private AudioPlayer audioPlayer;
 

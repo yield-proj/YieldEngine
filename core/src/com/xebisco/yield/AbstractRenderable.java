@@ -38,7 +38,7 @@ public abstract class AbstractRenderable extends ComponentBehavior {
     @VisibleOnInspector
     private Size2D size = new Size2D(100, 100);
     @VisibleOnInspector
-    private Color color = Colors.LIGHT_BLUE.brighter();
+    private Color color = new Color(Colors.WHITE);
     @VisibleOnInspector
     private double borderThickness;
     @VisibleOnInspector
