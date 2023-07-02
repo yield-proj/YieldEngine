@@ -55,20 +55,42 @@ public final class Global {
     }
 
     public static ApplicationPlatform openGLPlatform() throws ClassNotFoundException {
-        Class<?> swingPlatformClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
+        Class<?> openGLPlatformClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
         Class<?> clipAudioClass = Class.forName("com.xebisco.yield.javaxsoundimpl.JavaXSoundManager");
         try {
-            Object swingPlatform = swingPlatformClass.getConstructor().newInstance(), clipAudio = clipAudioClass.getConstructor().newInstance();
+            Object openGLPlatform = openGLPlatformClass.getConstructor().newInstance(), clipAudio = clipAudioClass.getConstructor().newInstance();
             return new ApplicationPlatform(
-                    (FontLoader) swingPlatform,
-                    (TextureManager) swingPlatform,
-                    (InputManager) swingPlatform,
+                    (FontLoader) openGLPlatform,
+                    (TextureManager) openGLPlatform,
+                    (InputManager) openGLPlatform,
                     null,
-                    (MouseCheck) swingPlatform,
+                    (MouseCheck) openGLPlatform,
                     (AudioManager) clipAudio,
-                    (ViewportZoomScale) swingPlatform,
-                    (ToggleFullScreen) swingPlatform,
-                    (PlatformGraphics) swingPlatform
+                    (ViewportZoomScale) openGLPlatform,
+                    (ToggleFullScreen) openGLPlatform,
+                    (PlatformGraphics) openGLPlatform
+            );
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                 InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ApplicationPlatform openGLALPlatform() throws ClassNotFoundException {
+        Class<?> openGLPlatformClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
+        Class<?> alAudioClass = Class.forName("com.xebisco.yield.openalimpl.OpenALAudio");
+        try {
+            Object openGLPlatform = openGLPlatformClass.getConstructor().newInstance(), alAudio = alAudioClass.getConstructor().newInstance();
+            return new ApplicationPlatform(
+                    (FontLoader) openGLPlatform,
+                    (TextureManager) openGLPlatform,
+                    (InputManager) openGLPlatform,
+                    null,
+                    (MouseCheck) openGLPlatform,
+                    (AudioManager) alAudio,
+                    (ViewportZoomScale) openGLPlatform,
+                    (ToggleFullScreen) openGLPlatform,
+                    (PlatformGraphics) openGLPlatform
             );
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
                  InvocationTargetException e) {
