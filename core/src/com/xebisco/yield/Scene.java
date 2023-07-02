@@ -136,4 +136,8 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
     public Vector2D getZoomScale() {
         return zoomScale;
     }
+
+    public ContextTime getTime() {
+        return getApplication().getApplicationManager().getManagerContext().getContextTime();
+    }
 }

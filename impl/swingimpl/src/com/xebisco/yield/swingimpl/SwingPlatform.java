@@ -679,7 +679,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
 
         if (drawInstruction.getText() != null && drawInstruction.getFontRef() != null) {
             graphics.setFont((Font) drawInstruction.getFontRef());
-            graphics.drawString(drawInstruction.getText(), drawInstruction.getVerticesX()[0] - graphics.getFontMetrics().stringWidth(drawInstruction.getText()) / 2, -drawInstruction.getVerticesY()[0] + graphics.getFont().getSize() / 2);
+            graphics.drawString(drawInstruction.getText(), drawInstruction.getVerticesX()[0] - graphics.getFontMetrics().stringWidth(drawInstruction.getText()) / 2, -drawInstruction.getVerticesY()[0] + graphics.getFont().getSize() / 4);
         } else if (drawInstruction.getImageRef() != null) {
             Image image = (Image) drawInstruction.getImageRef();
             Polygon p = new Polygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);

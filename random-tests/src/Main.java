@@ -26,7 +26,7 @@ public class Main extends Scene {
         ContextTime time = new ContextTime();
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
-        Application application = new Application(applicationManager, Main.class, Global.openGLALPlatform(), platformInit);
+        Application application = new Application(applicationManager, Main.class, Global.swingPlatform(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
     }
@@ -41,7 +41,7 @@ public class Main extends Scene {
 
     @Override
     public void onUpdate() {
-        s += getApplication().getAxis(HORIZONTAL);
+        s += getApplication().getAxis(HORIZONTAL) * getTime().getDeltaTime();
         e.getTransform().rotate(s);
     }
 }
