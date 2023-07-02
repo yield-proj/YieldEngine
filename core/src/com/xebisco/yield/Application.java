@@ -32,7 +32,7 @@ public class Application implements Behavior {
     public final Vector2D mousePosition = new Vector2D();
     private final ApplicationPlatform applicationPlatform;
     private final PlatformInit platformInit;
-    private final DrawInstruction drawInstruction = new DrawInstruction(new int[4], new int[4]);
+    private final DrawInstruction backGroundDrawInstruction = new DrawInstruction(null, null);
     private final Set<Axis> axes = new HashSet<>();
     private final ApplicationManager applicationManager;
     private final Size2D viewportSize;
@@ -76,9 +76,9 @@ public class Application implements Behavior {
         this.platformInit = platformInit;
         renderer = (scene) -> {
             Application.this.applicationPlatform.getPlatformGraphics().frame();
-            drawInstruction.setStroke(0);
-            drawInstruction.setColor(scene.getBackGroundColor());
-            Application.this.applicationPlatform.getPlatformGraphics().draw(drawInstruction);
+            backGroundDrawInstruction.setStroke(0);
+            backGroundDrawInstruction.setColor(scene.getBackGroundColor());
+            Application.this.applicationPlatform.getPlatformGraphics().draw(backGroundDrawInstruction);
             try {
                 for (int i = 0; i < scene.getEntities().size(); i++) {
                     Entity2D e = null;
@@ -115,7 +115,7 @@ public class Application implements Behavior {
     @Override
     public void onStart() {
         applicationPlatform.getPlatformGraphics().init(platformInit);
-        defaultFont = new Font("com/xebisco/yield/OpenSans-Regular.ttf", 100, applicationPlatform.getFontLoader());
+        defaultFont = new Font("com/xebisco/yield/OpenSans-Regular.ttf", 48, applicationPlatform.getFontLoader());
         if (platformInit.getWindowIcon() == null)
             platformInit.setWindowIcon(new Texture(platformInit.getWindowIconPath(), applicationPlatform.getTextureManager()));
         applicationPlatform.getPlatformGraphics().updateWindowIcon(platformInit.getWindowIcon());
@@ -563,8 +563,8 @@ public class Application implements Behavior {
      *
      * @return The method is returning an object of type `DrawInstruction`.
      */
-    public DrawInstruction getDrawInstruction() {
-        return drawInstruction;
+    public DrawInstruction getBackGroundDrawInstruction() {
+        return backGroundDrawInstruction;
     }
 
     /**
