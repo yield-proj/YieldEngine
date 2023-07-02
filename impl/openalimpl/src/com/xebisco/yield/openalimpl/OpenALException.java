@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.utils.lwjgl;
+package com.xebisco.yield.openalimpl;
 
-import org.lwjgl.system.MemoryUtil;
+public class OpenALException extends RuntimeException {
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
+    public OpenALException() {
+    }
 
-public class IOUtil {
-    public static ByteBuffer fromInputStream(InputStream inputStream) throws IOException {
-        byte[] bytes;
-        bytes = inputStream.readAllBytes();
+    public OpenALException(String message) {
+        super(message);
+    }
 
-        ByteBuffer buffer = MemoryUtil.memAlloc(bytes.length);
-        for (byte b : bytes)
-            buffer.put(b);
+    public OpenALException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-        buffer.flip();
+    public OpenALException(Throwable cause) {
+        super(cause);
+    }
 
-        return buffer;
+    public OpenALException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

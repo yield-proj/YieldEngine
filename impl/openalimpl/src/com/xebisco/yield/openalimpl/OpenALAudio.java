@@ -16,148 +16,116 @@
 
 package com.xebisco.yield.openalimpl;
 
+import com.jogamp.openal.AL;
+import com.jogamp.openal.ALFactory;
+import com.jogamp.openal.util.ALut;
 import com.xebisco.yield.AudioManager;
 import com.xebisco.yield.AudioPlayer;
-import com.xebisco.yield.utils.lwjgl.IOUtil;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.openal.*;
-import org.lwjgl.stb.STBVorbis;
-import org.lwjgl.stb.STBVorbisInfo;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
 
 public class OpenALAudio implements AudioManager {
 
+    private static final AL al = ALFactory.getAL();
     private boolean started;
 
     @Override
     public Object loadAudio(AudioPlayer audio) {
-        if (!started) {
-            started = true;
-            long device = ALC10.alcOpenDevice((ByteBuffer)null);
-            ALCCapabilities deviceCaps = ALC.createCapabilities(device);
 
-            long context = ALC10.alcCreateContext(device, (IntBuffer) null);
-            ALC10.alcMakeContextCurrent(context);
-            AL.createCapabilities(deviceCaps);
-        }
-        Audio out = new Audio(AL10.alGenBuffers(), AL10.alGenSources());
+        Audio out = new Audio();
 
-        switch (audio.getAudioClip().getFileFormat()) {
-            case "WAV":
-                WaveData waveData = WaveData.create(audio.getAudioClip().getInputStream());
-                assert waveData != null;
-                AL10.alBufferData(out.getBuffer(), waveData.format, waveData.data, waveData.samplerate);
-                break;
-            case "OGG":
-                try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
-                    ShortBuffer pcm = readVorbis(audio.getAudioClip().getInputStream(), info);
+        al.alGenBuffers(1, out.getBuffer(), 0);
 
-                    AL10.alBufferData(out.getBuffer(), info.channels() == 1 ? AL10.AL_FORMAT_MONO16 : AL10.AL_FORMAT_STEREO16, pcm, info.sample_rate());
-                }
-                break;
-            default:
-                throw new IllegalStateException("Not supported audio extension. " + audio.getAudioClip().getFileFormat());
+        if (al.alGetError() != AL.AL_NO_ERROR)
+            throw new OpenALException();
+
+        al.alGenSources(1, out.getSource(), 0);
+
+        if (al.alGetError() != AL.AL_NO_ERROR)
+            throw new OpenALException();
+
+        if (audio.getAudioClip().getFileFormat().equals("WAV")) {
+            ALut.alutLoadWAVFile(audio.getAudioClip().getInputStream(), out.getFormat(), out.getData(), out.getSize(), out.getFreq(), out.getLoop());
+            al.alBufferData(out.getBuffer()[0], out.getFormat()[0], out.getData()[0], out.getSize()[0], out.getFreq()[0]);
+        } else {
+            throw new IllegalStateException("Not supported audio extension. " + audio.getAudioClip().getFileFormat());
         }
 
-        AL10.alSourcei(out.getSource(), AL10.AL_BUFFER, out.getBuffer());
-        AL10.alSourcei(out.getSource(), AL10.AL_SOURCE_RELATIVE, AL10.AL_TRUE);
+        al.alSourcei(out.getSource()[0], al.AL_BUFFER, out.getBuffer()[0]);
+        al.alSourcei(out.getSource()[0], al.AL_SOURCE_RELATIVE, AL.AL_TRUE);
 
         return out;
     }
 
-    private static ShortBuffer readVorbis(InputStream inputStream, STBVorbisInfo info) {
-        IntBuffer error = BufferUtils.createIntBuffer(1);
-        long decoder;
-        try {
-            decoder = STBVorbis.stb_vorbis_open_memory(IOUtil.fromInputStream(inputStream), error, null);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        if (decoder == 0) {
-            throw new RuntimeException("Failed to open Ogg Vorbis file. Error: " + error.get(0));
-        }
-
-        STBVorbis.stb_vorbis_get_info(decoder, info);
-
-        int channels = info.channels();
-
-        ShortBuffer pcm = BufferUtils.createShortBuffer(STBVorbis.stb_vorbis_stream_length_in_samples(decoder) * channels);
-
-        STBVorbis.stb_vorbis_get_samples_short_interleaved(decoder, channels, pcm);
-        STBVorbis.stb_vorbis_close(decoder);
-
-        return pcm;
-    }
-
     @Override
     public void unloadAudio(AudioPlayer audioPlayer) {
-        AL10.alDeleteSources(((Audio) audioPlayer.getClipRef()).getSource());
-        AL10.alDeleteBuffers(((Audio) audioPlayer.getClipRef()).getBuffer());
+        al.alDeleteSources((((Audio) audioPlayer.getClipRef()).getSource())[0], null);
+        al.alDeleteBuffers((((Audio) audioPlayer.getClipRef()).getBuffer())[0], null);
     }
 
     @Override
     public void play(AudioPlayer audioPlayer) {
-        AL10.alSourcei(((Audio) audioPlayer.getClipRef()).getSource(), AL10.AL_LOOPING, AL10.AL_FALSE);
-        AL10.alSourcePlay(((Audio) audioPlayer.getClipRef()).getSource());
+        al.alSourcei((((Audio) audioPlayer.getClipRef()).getSource())[0], AL.AL_LOOPING, AL.AL_FALSE);
+        al.alSourcePlay((((Audio) audioPlayer.getClipRef()).getSource())[0]);
     }
 
     @Override
     public void loop(AudioPlayer audioPlayer) {
         play(audioPlayer);
-        AL10.alSourcei(((Audio) audioPlayer.getClipRef()).getSource(), AL10.AL_LOOPING, AL10.AL_TRUE);
+        al.alSourcei((((Audio) audioPlayer.getClipRef()).getSource())[0], AL.AL_LOOPING, AL.AL_TRUE);
     }
 
     @Override
     public void pause(AudioPlayer audioPlayer) {
-        AL10.alSourcePause(((Audio) audioPlayer.getClipRef()).getSource());
+        al.alSourcePause((((Audio) audioPlayer.getClipRef()).getSource())[0]);
     }
 
     @Override
     public double getLength(AudioPlayer audioPlayer) {
-        int bufferID, bufferSize, frequency, bitsPerSample, channels;
-        bufferID = ((Audio) audioPlayer.getClipRef()).getBuffer();
-        bufferSize = AL10.alGetBufferi(bufferID, AL10.AL_SIZE);
-        frequency = AL10.alGetBufferi(bufferID, AL10.AL_FREQUENCY);
-        channels = AL10.alGetBufferi(bufferID, AL10.AL_CHANNELS);
-        bitsPerSample = AL10.alGetBufferi(bufferID, AL10.AL_BITS);
+        IntBuffer bufferSize = IntBuffer.allocate(1), frequency = IntBuffer.allocate(1), bitsPerSample = IntBuffer.allocate(1), channels = IntBuffer.allocate(1);
+        int bufferID = (((Audio) audioPlayer.getClipRef()).getSource())[0];
+        al.alGetBufferi(bufferID, AL.AL_SIZE, bufferSize);
+        al.alGetBufferi(bufferID, AL.AL_FREQUENCY, frequency);
+        al.alGetBufferi(bufferID, AL.AL_CHANNELS, bitsPerSample);
+        al.alGetBufferi(bufferID, AL.AL_BITS, channels);
 
 
-        return (bufferSize) / (frequency * channels * (bitsPerSample / 8.));
+        return (bufferSize.get()) / (frequency.get() * channels.get() * (bitsPerSample.get() / 8.));
     }
 
     @Override
     public double getPosition(AudioPlayer audioPlayer) {
-        return AL10.alGetSourcef(((Audio) audioPlayer.getClipRef()).getSource(), AL11.AL_SEC_OFFSET);
+        FloatBuffer pos = FloatBuffer.allocate(1);
+        al.alGetSourcef((((Audio) audioPlayer.getClipRef()).getSource())[0], AL.AL_SEC_OFFSET, pos);
+        return pos.get();
     }
 
     @Override
     public void setPosition(AudioPlayer audioPlayer, double position) {
-        AL10.alSourcef(((Audio) audioPlayer.getClipRef()).getSource(), AL11.AL_SEC_OFFSET, (float) position);
+        al.alSourcef((((Audio) audioPlayer.getClipRef()).getSource())[0], AL.AL_SEC_OFFSET, (float) position);
     }
 
     @Override
     public void setGain(AudioPlayer audioPlayer, double gain) {
-        AL10.alSourcef(((Audio) audioPlayer.getClipRef()).getSource(), AL10.AL_GAIN, (float) gain);
+        al.alSourcef((((Audio) audioPlayer.getClipRef()).getSource())[0], AL.AL_GAIN, (float) gain);
     }
 
     @Override
     public void setPan(AudioPlayer audioPlayer, double pan) {
-        AL10.alDistanceModel(AL11.AL_LINEAR_DISTANCE_CLAMPED);
-        int sourceID = ((Audio) audioPlayer.getClipRef()).getBuffer();
+        al.alDistanceModel(AL.AL_LINEAR_DISTANCE_CLAMPED);
+        int sourceID = (((Audio) audioPlayer.getClipRef()).getSource())[0];
 
-        AL10.alSourcefv(sourceID, AL10.AL_POSITION, new float[]{(float) pan, 0.f, 0.f});
-        AL10.alSourcei(sourceID, AL10.AL_SOURCE_RELATIVE, AL10.AL_FALSE);
-        AL10.alSourcef(sourceID, AL10.AL_MAX_DISTANCE, 1f);
-        AL10.alSourcef(sourceID, AL10.AL_REFERENCE_DISTANCE, 0.5f);
+        al.alSourcefv(sourceID, AL.AL_POSITION, FloatBuffer.wrap(new float[]{(float) pan, 0.f, 0.f}));
+        al.alSourcei(sourceID, AL.AL_SOURCE_RELATIVE, AL.AL_FALSE);
+        al.alSourcef(sourceID, AL.AL_MAX_DISTANCE, 1f);
+        al.alSourcef(sourceID, AL.AL_REFERENCE_DISTANCE, 0.5f);
     }
 
     @Override
     public boolean isPlaying(AudioPlayer audioPlayer) {
-        return AL10.alGetSourcei(((Audio) audioPlayer.getClipRef()).getSource(), AL10.AL_PLAYING) == AL10.AL_TRUE;
+        IntBuffer playing = IntBuffer.allocate(1);
+        al.alGetSourcei((((Audio) audioPlayer.getClipRef()).getSource())[0], AL.AL_PLAYING, playing);
+        return playing.get() == AL.AL_TRUE;
     }
 }

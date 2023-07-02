@@ -26,7 +26,7 @@ public class Main extends Scene {
         ContextTime time = new ContextTime();
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit();
-        Application application = new Application(applicationManager, Main.class, Global.openGLPlatform(), platformInit);
+        Application application = new Application(applicationManager, Main.class, Global.swingALPlatform(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
     }
