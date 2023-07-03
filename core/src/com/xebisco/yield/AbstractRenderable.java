@@ -101,7 +101,7 @@ public abstract class AbstractRenderable extends ComponentBehavior {
         });
         for (int i = 0; i < drawInstruction.getVerticesX().length; i++) {
             drawInstruction.getVerticesX()[i] += anchorSum.getX() + offset.getX();
-            drawInstruction.getVerticesY()[i] += anchorSum.getX() + offset.getX();
+            drawInstruction.getVerticesY()[i] += anchorSum.getY() + offset.getY();
         }
         graphics.draw(drawInstruction);
     }
