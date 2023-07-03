@@ -16,6 +16,7 @@
 
 package com.xebisco.yield.editor;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 import javax.swing.*;
@@ -63,6 +64,10 @@ public class Entry {
         n = "closeIcon.png";
         Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
         n = "selectedCloseIcon.png";
+        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
+        n = "uploadIcon.png";
+        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
+        n = "uploadIcon16.png";
         Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
     }
 

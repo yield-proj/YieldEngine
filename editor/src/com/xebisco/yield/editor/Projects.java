@@ -16,6 +16,8 @@
 
 package com.xebisco.yield.editor;
 
+import com.xebisco.yield.editor.prop.Prop;
+import com.xebisco.yield.editor.prop.Props;
 import com.xebisco.yield.ini.Ini;
 
 import javax.swing.*;
@@ -23,6 +25,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class Projects extends JPanel {
 
@@ -117,30 +122,22 @@ public class Projects extends JPanel {
     }
 
     public static void newProjectFrame(Frame owner) {
-        try {
-            File file = File.createTempFile("newProject", "ini");
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-                writer.append(
-                        "[New Project]\n" +
-                                "Name(STR) = Project Name\n" +
-                                "Path(PATH) = Insert project path\n" +
-                                "Add_sample_scene(BOOL) = true\n"
-                );
+        Map<String, Prop[]> sections = new HashMap<>();
+        sections.put("New Project", Props.newProject());
+        new PropsWindow(sections, () -> {
+            Project project = new Project((String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Name")).getValue(), new File((String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Location")).getValue()));
+            if (project.getName().equals("")) {
+                Utils.error(null, new IllegalStateException("Project requires a name."));
+                newProjectFrame(owner);
+            } else
+            if (!project.getProjectLocation().exists()) {
+                Utils.error(null, new IllegalStateException("Path is not valid."));
+                newProjectFrame(owner);
+            } else if (!Assets.projects.contains(project)) {
+                Assets.projects.add(project);
+                owner.repaint();
             }
-            Ini ini = new Ini();
-            new PropsWindow(ini, file, () -> {
-                Project project = new Project(ini.getSections().get("New Project").getProperty("Name(STR)"), new File(ini.getSections().get("New Project").getProperty("Path(PATH)")));
-                if (!project.getProjectLocation().exists()) {
-                    Utils.error(null, new IllegalStateException("Path is not valid."));
-                    newProjectFrame(owner);
-                } else if (!Assets.projects.contains(project)) {
-                    Assets.projects.add(project);
-                    owner.repaint();
-                }
-                else Utils.error(null, new IllegalStateException("Project already exists on the projects list"));
-            }, owner);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            else Utils.error(null, new IllegalStateException("Project already exists on the projects list"));
+        }, owner);
     }
 }

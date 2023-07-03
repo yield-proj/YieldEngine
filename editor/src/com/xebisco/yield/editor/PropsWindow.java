@@ -16,36 +16,26 @@
 
 package com.xebisco.yield.editor;
 
-import com.xebisco.yield.ini.Ini;
+import com.xebisco.yield.editor.prop.Prop;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.io.*;
 import java.util.*;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PropsWindow extends JDialog {
 
     private static final Pattern keyPattern = Pattern.compile("^([^(]+)\\(([^)]*)\\)$");
 
-    public PropsWindow(Ini ini, File iniFile, Runnable apply, Frame owner) {
+    public PropsWindow(Map<String, Prop[]> s, Runnable apply, Frame owner) {
         super(owner);
-        try {
-            ini.load(new FileInputStream(iniFile));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
         setTitle("Properties");
         setModal(true);
         JPanel contentPane = new JPanel();
         setContentPane(contentPane);
-        setSize(600, 400);
+        setSize(650, 400);
         setMaximumSize(new Dimension(1000, 400));
         setMinimumSize(new Dimension(200, 100));
         setLocationRelativeTo(owner);
@@ -53,19 +43,6 @@ public class PropsWindow extends JDialog {
         contentPane.setLayout(new BorderLayout());
 
         List<JButton> sections = new ArrayList<>();
-        JList<JButton> sectionsJL;
-
-        boolean cn = true;
-        if (ini.getSections().size() == 1) {
-            int c = 0;
-            for (String s : ini.getSections().keySet()) {
-                for (Object ignored : ini.getSections().get(s).keySet())
-                    c++;
-            }
-            if (c == 1) {
-                cn = false;
-            }
-        }
 
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -73,111 +50,47 @@ public class PropsWindow extends JDialog {
         gbc.insets = new Insets(10, 10, 0, 10);
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        JScrollPane pane = new JScrollPane();
+        JScrollPane pane = new JScrollPane() {};
         pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        for (String section : ini.getSections().keySet()) {
+        for (String section : s.keySet()) {
             JPanel panel = new JPanel();
             panel.setLayout(new GridBagLayout());
             gbc.gridy = 0;
-            for (Object k : ini.getSections().get(section).keySet()) {
-                String sk = ((String) k).replace("__", "\12").replace("_", " ").replace("\12", "_");
-                Matcher matcher = keyPattern.matcher(sk);
-                matcher.matches();
-
-                PropType pt = null;
-                try {
-                    pt = PropType.valueOf(matcher.group(2));
-                } catch (IllegalArgumentException ignore) {
-                }
-                JComponent comp = null;
-                if (pt == null) {
-                    gbc.gridx = 0;
-                    panel.add(new JLabel(matcher.group(1)), gbc);
-                    gbc.gridx = 1;
-                    comp = new JComboBox<>(matcher.group(2).split(";"));
-                    //noinspection unchecked
-                    ((JComboBox<String>) comp).setSelectedItem(ini.getSections().get(section).get(k));
-                    //noinspection unchecked
-                    JComboBox<String> finalComp2 = (JComboBox<String>) comp;
-                    //noinspection unchecked
-                    ((JComboBox<String>) comp).addActionListener(e -> ini.getSections().get(section).replace(k, String.valueOf(finalComp2.getSelectedItem())));
-                } else
-                    switch (pt) {
-                        case STR:
-                            gbc.gridx = 0;
-                            panel.add(new JLabel(matcher.group(1)), gbc);
-                            gbc.gridx = 1;
-                            comp = new JTextField(ini.getSections().get(section).getProperty(sk));
-                            comp.setToolTipText(ini.getSections().get(section).getProperty(sk, sk));
-                            JTextField finalComp = (JTextField) comp;
-                            ((JTextField) comp).getDocument().addDocumentListener(new DocumentListener() {
-                                @Override
-                                public void insertUpdate(DocumentEvent e) {
-                                    ini.getSections().get(section).replace(k, finalComp.getText());
-                                }
-
-                                @Override
-                                public void removeUpdate(DocumentEvent e) {
-                                    ini.getSections().get(section).replace(k, finalComp.getText());
-                                }
-
-                                @Override
-                                public void changedUpdate(DocumentEvent e) {
-                                    ini.getSections().get(section).replace(k, finalComp.getText());
-                                }
-                            });
-                            break;
-                        case BOOL:
-                            gbc.gridx = 1;
-                            comp = new JCheckBox(matcher.group(1), ini.getSections().get(section).getBoolean(String.valueOf(k)));
-                            ((JCheckBox) comp).addItemListener(e -> ini.getSections().get(section).replace(k, String.valueOf(e.getStateChange() == ItemEvent.SELECTED)));
-                            break;
-                        case PATH:
-                            gbc.gridx = 0;
-                            panel.add(new JLabel(matcher.group(1)), gbc);
-                            gbc.gridx = 1;
-                            comp = new JButton();
-                            JComponent finalComp1 = comp;
-                            ((JButton) comp).setAction(new AbstractAction() {
-                                @Override
-                                public void actionPerformed(ActionEvent e) {
-                                    JFileChooser fileChooser = new JFileChooser();
-                                    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                                    if (fileChooser.showDialog(PropsWindow.this, null) == JFileChooser.APPROVE_OPTION) {
-                                        ((JButton) finalComp1).setText(fileChooser.getSelectedFile().getPath());
-                                        ini.getSections().get(section).replace(k, fileChooser.getSelectedFile().getPath());
-                                    }
-                                }
-                            });
-                            ((JButton) comp).setText(ini.getSections().get(section).getProperty(sk));
-                            break;
-                    }
-                panel.add(comp, gbc);
+            for (Prop prop : s.get(section)) {
+                panel.add(prop.panel(), gbc);
                 gbc.gridy++;
             }
-            boolean finalCn = cn;
+
+
             sections.add(new JButton(new AbstractAction(section) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     JPanel p = new JPanel();
                     p.setLayout(new BorderLayout());
-                    if (finalCn)
-                        p.add(panel, BorderLayout.NORTH);
-                    else
-                        p.add(panel);
+                    p.add(panel, BorderLayout.NORTH);
                     pane.setViewportView(p);
                 }
             }));
         }
 
-        if (!cn) {
-            String s = "";
-            for (String i : ini.getSections().keySet()) {
-                s = i;
+        String one = null;
+        int a = 0;
+
+        for (String ss : s.keySet()) {
+            one = ss;
+            for (Prop ignored : s.get(ss))
+                a++;
+            if (a > 1) {
+                one = null;
+                break;
             }
-            setTitle(s);
+            break;
+        }
+
+        if (one != null) {
+            setTitle(one);
             setUndecorated(true);
-            contentPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(getForeground()), s));
+            contentPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(getForeground()), one));
             pane.setBorder(null);
             setSize(new Dimension(350, 120));
             setLocationRelativeTo(owner);
@@ -186,40 +99,30 @@ public class PropsWindow extends JDialog {
 
         Collections.reverse(sections);
 
-        sectionsJL = new JList<>(sections.toArray(new JButton[0]));
-        sectionsJL.setCellRenderer(new ButtonListCellRenderer<>());
+        if (one == null) {
+            JList<JButton> sectionsJL = new JList<>(sections.toArray(new JButton[0]));
+            sectionsJL.setCellRenderer(new ButtonListCellRenderer<>());
 
-        sectionsJL.addListSelectionListener(new ButtonSelectionListener(sectionsJL));
-        sectionsJL.setSelectedIndex(0);
-        sectionsJL.getSelectedValue().getAction().actionPerformed(null);
+            sectionsJL.addListSelectionListener(new ButtonSelectionListener(sectionsJL));
+            sectionsJL.setSelectedIndex(0);
+            sectionsJL.getSelectedValue().getAction().actionPerformed(null);
 
-        if (cn) {
             contentPane.add(sectionsJL, BorderLayout.WEST);
-            contentPane.add(pane, BorderLayout.CENTER);
+        } else {
+            sections.get(0).getAction().actionPerformed(null);
         }
+        contentPane.add(pane, BorderLayout.CENTER);
 
         JPanel buttons = new JPanel();
         buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));
         JButton button = new JButton(new AbstractAction("OK") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    ini.store(new FileOutputStream(iniFile));
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
                 dispose();
                 apply.run();
             }
         });
         getRootPane().setDefaultButton(button);
-        buttons.add(button);
-        button = new JButton(new AbstractAction("Cancel") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
         buttons.add(button);
 
         contentPane.add(buttons, BorderLayout.SOUTH);

@@ -17,6 +17,8 @@
 package com.xebisco.yield.editor;
 
 import com.formdev.flatlaf.FlatIconColors;
+import com.xebisco.yield.editor.prop.Prop;
+import com.xebisco.yield.editor.prop.Props;
 import com.xebisco.yield.ini.Ini;
 
 import javax.swing.*;
@@ -30,6 +32,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class Editor extends JFrame {
 
@@ -106,22 +111,15 @@ public class Editor extends JFrame {
         submenu1.add(new AbstractAction("Scene") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    File file = File.createTempFile("newScene", "ini");
-                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-                        writer.append("[Scene Creation]\n" + "Name(STR) = Empty Scene\n");
-                    }
-                    Ini ini = new Ini();
-                    new PropsWindow(ini, file, () -> {
-                        EditorScene scene = new EditorScene();
-                        scene.setName(ini.getSections().get("Scene Creation").getProperty("Name(STR)"));
-                        project.getScenes().put(scene.getName(), scene);
-                        openedScene = scene;
-                        repaint();
-                    }, Editor.this);
-                } catch (IOException e1) {
-                    throw new RuntimeException(e1);
-                }
+                Map<String, Prop[]> sections = new HashMap<>();
+                sections.put("New Scene", Props.newScene());
+                new PropsWindow(sections, () -> {
+                    EditorScene scene = new EditorScene();
+                    scene.setName((String) Objects.requireNonNull(Props.get(sections.get("New Scene"), "Name")).getValue());
+                    project.getScenes().put(scene.getName(), scene);
+                    openedScene = scene;
+                    repaint();
+                }, Editor.this);
             }
         });
         submenu1.setMnemonic(KeyEvent.VK_M);
