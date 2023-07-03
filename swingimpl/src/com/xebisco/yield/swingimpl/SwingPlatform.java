@@ -644,7 +644,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
             graphics.scale(viewport.getWidth() / platformInit.getViewportSize().getWidth(), viewport.getHeight() / platformInit.getViewportSize().getHeight());
         }
         graphics.translate(platformInit.getViewportSize().getWidth() / 2, platformInit.getViewportSize().getHeight() / 2);
-        graphics.translate(-camera.getX(), -camera.getY());
+        graphics.translate(-camera.getX(), camera.getY());
 
         Point mouse = canvas.getMousePosition();
         if (mouse != null)
@@ -671,7 +671,7 @@ public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManag
             cY -= v;
         cX /= drawInstruction.getVerticesX().length;
         cY /= drawInstruction.getVerticesY().length;
-        graphics.rotate(Math.toRadians(drawInstruction.getRotation()), cX, cY);
+        graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), cX, cY);
         graphics.setClip(null);
         Composite savedComposite = graphics.getComposite();
         graphics.setColor(awtColor(drawInstruction.getColor()));
