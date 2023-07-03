@@ -37,7 +37,7 @@ public class PropsWindow extends JDialog {
         setContentPane(contentPane);
         setSize(650, 400);
         setMaximumSize(new Dimension(1000, 400));
-        setMinimumSize(new Dimension(200, 100));
+        setMinimumSize(new Dimension(500, 100));
         setLocationRelativeTo(owner);
 
         contentPane.setLayout(new BorderLayout());

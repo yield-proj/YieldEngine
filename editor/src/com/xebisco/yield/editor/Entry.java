@@ -28,46 +28,41 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class Entry {
+    private static JDialog splashDialog;
+
     public static void main(String[] args) {
         System.setProperty("sun.java2d.opengl", "True");
         Locale.setDefault(Locale.US);
         FlatMacDarkLaf.setup();
 
         splashDialog();
-        if(args.length == 1) {
+        if (args.length == 1) {
             Project project;
-            try(ObjectInputStream oi = new ObjectInputStream(new BufferedInputStream(new FileInputStream(args[0])))) {
+            try (ObjectInputStream oi = new ObjectInputStream(new BufferedInputStream(new FileInputStream(args[0])))) {
                 project = (Project) oi.readObject();
-            } catch (IOException | ClassNotFoundException e){
+            } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
             new Editor(project);
-        }
-            else if(args.length == 0)
-        openProjects();
+        } else if (args.length == 0)
+            openProjects();
         else throw new IllegalStateException("Wrong arguments");
     }
 
     private static void loadEverything() {
-        String n = "editorLogo.png";
-        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
-        n = "editorLogoSmall.png";
-        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
-        n = "yieldIcon.png";
-        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
-        n = "projectIcon0.png";
-        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
-        n = "projectIcon1.png";
-        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
-        n = "projectIcon2.png";
-        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
-        n = "closeIcon.png";
-        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
-        n = "selectedCloseIcon.png";
-        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
-        n = "uploadIcon.png";
-        Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
-        n = "uploadIcon16.png";
+        loadImage("editorLogo.png");
+        loadImage("editorLogoSmall.png");
+        loadImage("yieldIcon.png");
+        loadImage("projectIcon0.png");
+        loadImage("projectIcon1.png");
+        loadImage("projectIcon2.png");
+        loadImage("closeIcon.png");
+        loadImage("selectedCloseIcon.png");
+        loadImage("uploadIcon.png");
+        loadImage("uploadIcon16.png");
+    }
+
+    private static void loadImage(String n) {
         Assets.images.put(n, new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/" + n))));
     }
 
@@ -92,10 +87,12 @@ public class Entry {
 
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        if (splashDialog != null)
+            splashDialog.dispose();
     }
 
     private static void splashDialog() {
-        JDialog splashDialog = new JDialog();
+        splashDialog = new JDialog();
         splashDialog.setTitle("Yield 5 Editor");
         splashDialog.setUndecorated(true);
         JProgressBar progressBar = new JProgressBar();
@@ -111,6 +108,5 @@ public class Entry {
         } catch (NullPointerException e) {
             Utils.error(splashDialog, e);
         }
-        splashDialog.dispose();
     }
 }

@@ -40,19 +40,22 @@ public class Editor extends JFrame {
 
     private EditorScene openedScene;
     private final Project project;
-    private final int gridX = 10;
-    private final int gridY = 10;
+    private int gridX = 10;
+    private int gridY = 10;
 
     private final YieldTabbedPane central;
     private final YieldTabbedPane northwest;
     private final YieldTabbedPane southwest;
     private final YieldTabbedPane east;
 
+    private final String titleBase;
+
     private final JTextArea console = new JTextArea();
 
     public Editor(Project project) {
         this.project = project;
-        setTitle("Yield 5 Editor | " + project.getName());
+        titleBase = "Yield 5 Editor | " + project.getName();
+        setTitle(titleBase);
         setMinimumSize(new Dimension(800, 600));
         setPreferredSize(new Dimension(1280, 720));
         setSize(new Dimension(1280, 720));
@@ -117,7 +120,7 @@ public class Editor extends JFrame {
                     EditorScene scene = new EditorScene();
                     scene.setName((String) Objects.requireNonNull(Props.get(sections.get("New Scene"), "Name")).getValue());
                     project.getScenes().put(scene.getName(), scene);
-                    openedScene = scene;
+                    setOpenedScene(scene);
                     repaint();
                 }, Editor.this);
             }
@@ -471,69 +474,53 @@ public class Editor extends JFrame {
             }
         }
     }
-}
-//getWidth() - zoomPointX / zoom + zoomPointX - getWidth()
 
-/*
-class SceneView extends JPanel implements MouseWheelListener {
-
-        private String noSceneLoadedText = "No scenes loaded.";
-        private double zoom = 1, zoomPointX, zoomPointY;
-
-        public SceneView() {
-            addMouseWheelListener(this);
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D g2 = (Graphics2D) g;
-            //if (openedScene != null) {
-            //}
-            AffineTransform at = g2.getTransform();
-            at.translate(zoomPointX, zoomPointY);
-            at.scale(zoom, zoom);
-            at.translate(-zoomPointX, -zoomPointY);
-            g2.setTransform(at);
-            g.setColor(Color.BLACK);
-            for(int i = 0; i < getWidth() / gridX / 2; i++) {
-                int x = getWidth() / 2 + gridX * i;
-                g.drawLine(x, (int) (getHeight() - getHeight() * zoom), x, (int) (getHeight() * zoom));
-            }
-            g.setColor(Color.RED);
-            //g.fillRect((int) (getWidth() - zoomPointX / zoom + zoomPointX - getWidth()), (int) (getHeight() - zoomPointY / zoom + zoomPointY - getHeight()), 10, 10);
-            System.out.println((int) getWidth() + (-getWidth() - zoomPointX / zoom + zoomPointX - getWidth()));
-            g.fillRect((int) (-getWidth() - zoomPointX / zoom + zoomPointX - getWidth()) - 10, (int) (getHeight() - zoomPointY / zoom + zoomPointY - getHeight()) , 10, 10);
-            if (openedScene != null) {
-                g.setColor(openedScene.getBackgroundColor());
-                g.fillRect(0, 0, getWidth(), getHeight());
-                if(!openedScene.getBackgroundColor().equals(Color.WHITE)) {
-                    g.setColor(openedScene.getBackgroundColor().brighter());
-                } else {
-                    g.setColor(Color.BLACK);
-                }
-
-            } else {
-                g.setColor(Color.WHITE);
-                g.drawString(noSceneLoadedText, getWidth() / 2 - g.getFontMetrics().stringWidth(noSceneLoadedText) / 2, getHeight() / 2 + g.getFont().getSize() / 2);
-            }
-        }
-
-
-
-        @Override
-        public void mouseWheelMoved(MouseWheelEvent e) {
-            zoomPointX = e.getX();
-            zoomPointY = e.getY();
-            if (-e.getPreciseWheelRotation() < 0) {
-                zoom -= 0.1;
-            } else {
-                zoom += 0.1;
-            }
-            if (zoom < 0.01) {
-                zoom = 0.01;
-            }
-            repaint();
-        }
+    public EditorScene getOpenedScene() {
+        return openedScene;
     }
- */
+
+    public void setOpenedScene(EditorScene openedScene) {
+        setTitle(titleBase + " | " + openedScene.getName());
+        this.openedScene = openedScene;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public int getGridX() {
+        return gridX;
+    }
+
+    public void setGridX(int gridX) {
+        this.gridX = gridX;
+    }
+
+    public int getGridY() {
+        return gridY;
+    }
+
+    public void setGridY(int gridY) {
+        this.gridY = gridY;
+    }
+
+    public YieldTabbedPane getCentral() {
+        return central;
+    }
+
+    public YieldTabbedPane getNorthwest() {
+        return northwest;
+    }
+
+    public YieldTabbedPane getSouthwest() {
+        return southwest;
+    }
+
+    public YieldTabbedPane getEast() {
+        return east;
+    }
+
+    public JTextArea getConsole() {
+        return console;
+    }
+}
