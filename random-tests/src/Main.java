@@ -42,6 +42,8 @@ public class Main extends Scene {
     @Override
     public void onUpdate() {
         s += getApplication().getAxis(HORIZONTAL) * getTime().getDeltaTime();
+        e.getTransform().translate(0, getApplication().getAxis(VERTICAL));
         e.getTransform().rotate(s);
+        System.out.println(s);
     }
 }

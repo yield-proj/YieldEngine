@@ -25,9 +25,11 @@ import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.TextureIO;
+import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import com.xebisco.yield.Font;
 import com.xebisco.yield.*;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
@@ -127,25 +129,35 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
                 for (int i1 : di.getVerticesY()) sy += i1;
                 sx /= di.getVerticesX().length;
                 sy /= di.getVerticesY().length;
-                gl.glRotated(-di.getRotation(), sx, sy, 1);
+
+                gl.glTranslated(sx, sy, 0);
+                gl.glRotated(di.getRotation(), 0, 0, 1);
+                gl.glTranslated(-sx, -sy, 0);
+
+                gl.glEnable(GL2.GL_BLEND);
 
                 if (di.getImageRef() != null) {
                     gl.glEnable(GL2.GL_TEXTURE_2D);
-                    gl.glBindTexture(GL2.GL_TEXTURE_2D, ((OpenGLImage) di.getImageRef()).getTexture().getTextureObject());
+                    gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE_MINUS_SRC_ALPHA);
+                    com.jogamp.opengl.util.texture.Texture t = ((OpenGLImage) di.getImageRef()).getTexture();
+                    t.enable(gl);
+                    t.bind(gl);
+                    gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
+                    gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+                    gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
                     gl.glBegin(GL2.GL_QUADS);
                     if (di.getVerticesX().length != 4 || di.getVerticesY().length != 4)
                         throw new IllegalVerticesCountException("OpenGL image rendering supports only rectangles");
-                    gl.glTexCoord2i(0, 0);
-                    gl.glVertex2i(di.getVerticesX()[0], di.getVerticesY()[0]);
-                    gl.glTexCoord2i(1, 0);
-                    gl.glVertex2i(di.getVerticesX()[1], di.getVerticesY()[1]);
-                    gl.glTexCoord2i(1, 1);
-                    gl.glVertex2i(di.getVerticesX()[2], di.getVerticesY()[2]);
                     gl.glTexCoord2i(0, 1);
+                    gl.glVertex2i(di.getVerticesX()[0], di.getVerticesY()[0]);
+                    gl.glTexCoord2i(1, 1);
+                    gl.glVertex2i(di.getVerticesX()[1], di.getVerticesY()[1]);
+                    gl.glTexCoord2i(1, 0);
+                    gl.glVertex2i(di.getVerticesX()[2], di.getVerticesY()[2]);
+                    gl.glTexCoord2i(0, 0);
                     gl.glVertex2i(di.getVerticesX()[3], di.getVerticesY()[3]);
                     gl.glEnd();
-                    gl.glFlush();
-                    gl.glBindTexture(GL2.GL_TEXTURE_2D, 0);
+                    t.disable(gl);
                     gl.glDisable(GL2.GL_TEXTURE_2D);
                 } else if (di.getFontRef() != null) {
                     TextRenderer renderer = (TextRenderer) di.getFontRef();
@@ -161,13 +173,17 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
                         gl.glVertex2i(di.getVerticesX()[i1], di.getVerticesY()[i1]);
                     }
                     gl.glEnd();
-                    gl.glFlush();
                 }
-                gl.glRotated(di.getRotation(), sx, sy, 1);
+                gl.glTranslated(sx, sy, 0);
+                gl.glRotated(-di.getRotation(), 0, 0, 1);
+                gl.glTranslated(-sx, -sy, 0);
+
+                gl.glDisable(GL2.GL_BLEND);
             }
         } catch (ConcurrentModificationException ignore) {
 
         }
+        gl.glFlush();
     }
 
     @Override
@@ -278,7 +294,7 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
     @Override
     public Object loadTexture(Texture texture) {
         try {
-            OpenGLImage image = new OpenGLImage(TextureIO.newTextureData(profile, texture.getInputStream(), false, texture.getFileFormat()));
+            OpenGLImage image = new OpenGLImage(AWTTextureIO.newTextureData(profile, ImageIO.read(texture.getInputStream()), false));
             toLoadImages.add(image);
             return image;
         } catch (IOException e) {
