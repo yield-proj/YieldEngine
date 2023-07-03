@@ -27,7 +27,6 @@ public class Project implements Serializable {
     private String name;
     private final Map<String, EditorScene> scenes = new HashMap<>();
     private final File projectLocation;
-    private final int logoVariation = new Random().nextInt(3);
     private final Date createdDate = new Date();
 
     public Project(String name, File projectLocation) {
@@ -49,10 +48,6 @@ public class Project implements Serializable {
 
     public Date getCreatedDate() {
         return createdDate;
-    }
-
-    public int getLogoVariation() {
-        return logoVariation;
     }
 
     public Map<String, EditorScene> getScenes() {

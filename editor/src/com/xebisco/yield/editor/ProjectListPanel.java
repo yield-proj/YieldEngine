@@ -16,11 +16,15 @@
 
 package com.xebisco.yield.editor;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +61,19 @@ public class ProjectListPanel extends JPanel implements MouseListener {
                 int y = i * h + (i * s), w = getWidth() - s * 2;
                 projectsPos.add(new ProjectPos(project, y));
                 g.fillRoundRect(s, y, w, h, 10, 10);
-                g.drawImage(Assets.images.get("projectIcon" + project.getLogoVariation() + ".png").getImage(), s, y, h, h, null);
+                BufferedImage image;
+                try {
+                    Image img = ImageIO.read(new File(project.getProjectLocation(), "icon.png"));
+                    img = img.getScaledInstance(h, (int) (h * ((double) img.getHeight(null) / img.getWidth(null))), Image.SCALE_SMOOTH);
+                    image = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                    Graphics g1 = image.getGraphics();
+                    g1.drawImage(img, 0, 0, image.getWidth(), image.getHeight(), null);
+                    g1.dispose();
+                } catch (IOException e) {
+                    Assets.projects.remove(project);
+                    break;
+                }
+                g.drawImage(image, s, y + h / 2 - image.getHeight() / 2, null);
                 g.setColor(getForeground());
                 g.setFont(bigFont);
                 g.drawString(project.getName(), s + 10 + h, y + bigFont.getSize() + 10);

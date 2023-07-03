@@ -20,11 +20,16 @@ import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
 import com.xebisco.yield.ini.Ini;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -68,6 +73,7 @@ public class Projects extends JPanel {
                 if (fileChooser.showDialog(frame, "Load") == JFileChooser.APPROVE_OPTION) {
                     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileChooser.getSelectedFile()))) {
                         Assets.projects.add((Project) ois.readObject());
+                        Projects.this.repaint();
                     } catch (IOException | ClassNotFoundException ex) {
                         Utils.error(frame, ex);
                         Utils.error(frame, new InvalidProjectException("Project might be invalid"));
@@ -125,16 +131,49 @@ public class Projects extends JPanel {
         Map<String, Prop[]> sections = new HashMap<>();
         sections.put("New Project", Props.newProject());
         new PropsWindow(sections, () -> {
-            Project project = new Project((String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Name")).getValue(), new File((String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Location")).getValue()));
+            Project project = new Project(
+                    (String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Name")).getValue(),
+                    new File((String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Location")).getValue(), (String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Name")).getValue()));
             if (project.getName().equals("")) {
                 Utils.error(null, new IllegalStateException("Project requires a name."));
                 newProjectFrame(owner);
             } else
-            if (!project.getProjectLocation().exists()) {
+            if (!project.getProjectLocation().getParentFile().exists()) {
                 Utils.error(null, new IllegalStateException("Path is not valid."));
                 newProjectFrame(owner);
             } else if (!Assets.projects.contains(project)) {
                 Assets.projects.add(project);
+                project.getProjectLocation().mkdir();
+                Image image = Assets.images.get("yieldIcon.png").getImage();
+                if(Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Icon")).getValue() != null) {
+                    try {
+                        image = ImageIO.read(new File((String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Icon")).getValue()));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                BufferedImage i = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                Graphics g = i.getGraphics();
+                g.drawImage(image, 0, 0, null);
+                g.dispose();
+                try {
+                    ImageIO.write(i, "PNG", new File(project.getProjectLocation(), "icon.png"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                File projectFile = new File(project.getProjectLocation(), "project.yep");
+                try {
+                    projectFile.createNewFile();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                try(ObjectOutputStream oo = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(projectFile)))) {
+                    oo.writeObject(project);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 owner.repaint();
             }
             else Utils.error(null, new IllegalStateException("Project already exists on the projects list"));
