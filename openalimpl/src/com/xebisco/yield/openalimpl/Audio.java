@@ -16,42 +16,19 @@
 
 package com.xebisco.yield.openalimpl;
 
-import java.nio.ByteBuffer;
-
 public class Audio {
-    private int[] buffer = new int[1];;
-    private int[] source = new int[1];
-    private final int[] format = new int[1];
-    private final int[] size = new int[1];
-    private final ByteBuffer[] data = new ByteBuffer[1];
-    private final int[] freq = new int[1];
-    private final int[] loop = new int[1];
+    private final int buffer, source;
 
-    public int[] getFormat() {
-        return format;
+    public Audio(int buffer, int source) {
+        this.buffer = buffer;
+        this.source = source;
     }
 
-    public int[] getSize() {
-        return size;
-    }
-
-    public ByteBuffer[] getData() {
-        return data;
-    }
-
-    public int[] getFreq() {
-        return freq;
-    }
-
-    public int[] getLoop() {
-        return loop;
-    }
-
-    public int[] getBuffer() {
+    public int getBuffer() {
         return buffer;
     }
 
-    public int[] getSource() {
+    public int getSource() {
         return source;
     }
 }

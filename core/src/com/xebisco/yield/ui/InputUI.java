@@ -43,6 +43,9 @@ public class InputUI extends ComponentBehavior {
         } else {
             getEntity().dispose();
         }
+        audioPlayer.setAudioClip(new FileInput("ioconnected.wav"));
+        audioPlayer.setGain(.1);
+        audioPlayer.play();
     }
 
     @Override
