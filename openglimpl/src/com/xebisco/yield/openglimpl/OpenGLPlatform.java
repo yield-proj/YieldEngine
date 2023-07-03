@@ -101,10 +101,13 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
     public void display(GLAutoDrawable glAutoDrawable) {
         GL2 gl = glAutoDrawable.getGL().getGL2();
 
-        toLoadImages.removeIf(image -> {
-            image.setTexture(TextureIO.newTexture(image.getTextureData()));
-            return true;
-        });
+        try {
+            toLoadImages.removeIf(image -> {
+                image.setTexture(TextureIO.newTexture(image.getTextureData()));
+                return true;
+            });
+        } catch (ConcurrentModificationException ignore) {
+        }
 
         toDestroyImages.removeIf(image -> {
             image.getTexture().destroy(gl);
@@ -136,7 +139,7 @@ public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureMana
 
                 gl.glEnable(GL2.GL_BLEND);
 
-                if (di.getImageRef() != null) {
+                if (di.getImageRef() != null && ((OpenGLImage) di.getImageRef()).getTexture() != null) {
                     gl.glEnable(GL2.GL_TEXTURE_2D);
                     gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE_MINUS_SRC_ALPHA);
                     com.jogamp.opengl.util.texture.Texture t = ((OpenGLImage) di.getImageRef()).getTexture();
