@@ -29,7 +29,7 @@ public class PropsWindow extends JDialog {
 
     private static final Pattern keyPattern = Pattern.compile("^([^(]+)\\(([^)]*)\\)$");
 
-    public PropsWindow(Map<String, Prop[]> s, Runnable apply, Frame owner) {
+    public PropsWindow(Map<String, Prop[]> s, Runnable apply, Frame owner, String title) {
         super(owner);
         setTitle("Properties");
         setModal(true);
@@ -126,6 +126,9 @@ public class PropsWindow extends JDialog {
         buttons.add(button);
 
         contentPane.add(buttons, BorderLayout.SOUTH);
+
+        if(title != null)
+            setTitle(title);
 
         setVisible(true);
     }

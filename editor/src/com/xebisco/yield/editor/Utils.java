@@ -20,9 +20,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Utils {
-    public static void error(Component component, Exception exception) {
-        exception.printStackTrace();
-        JOptionPane.showMessageDialog(component, exception.getMessage(), exception.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+    public static void error(Component component, Throwable e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(component, e.getMessage(), e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
     }
 
     public static String defaultDirectory()

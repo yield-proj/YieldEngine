@@ -16,21 +16,16 @@
 
 package com.xebisco.yield.editor;
 
-import com.formdev.flatlaf.FlatIconColors;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
-import com.xebisco.yield.ini.Ini;
+import com.xebisco.yield.editor.scene.EditorScene;
+import com.xebisco.yield.editor.scene.SceneObject;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -122,7 +117,7 @@ public class Editor extends JFrame {
                     project.getScenes().put(scene.getName(), scene);
                     setOpenedScene(scene);
                     repaint();
-                }, Editor.this);
+                }, Editor.this, null);
             }
         });
         submenu1.setMnemonic(KeyEvent.VK_M);
@@ -318,6 +313,8 @@ public class Editor extends JFrame {
         class SceneGameView extends JPanel implements MouseWheelListener, MouseMotionListener, MouseListener {
 
             private Point moveStart = new Point();
+            private SceneObject selectedObject;
+            private int x, y;
 
             public SceneGameView() {
                 addMouseWheelListener(this);
@@ -328,6 +325,8 @@ public class Editor extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+                if (zoom > 24)
+                    zoom = 24;
                 if (!scaleField.hasFocus())
                     scaleField.setText(String.format("%.1f", zoom));
                 if (!posXField.hasFocus())
@@ -348,13 +347,16 @@ public class Editor extends JFrame {
 
                     g2d.translate(posX, posY);
 
+                    /*g.setColor(Color.RED);
+                    g.fillRect(x, y, 10, 10);*/
 
                     float str = (float) (1 / zoom);
                     if (str < 0.05) str = 0.05f;
                     g2d.setStroke(new BasicStroke(str));
 
-                    g.setColor(Color.RED);
-                    g.fillRect(0, 0, 10, 10);
+                    for (SceneObject object : openedScene.getSceneObjects()) {
+                        object.render(g);
+                    }
 
                     if (openedScene.getBackgroundColor() != Color.WHITE) {
                         Color osc = openedScene.getBackgroundColor().brighter();
@@ -388,6 +390,13 @@ public class Editor extends JFrame {
                     for (int i = 1; i < (getHeight() / 2 - lh + (h - getHeight())) / gridY + 1; i++) {
                         int y = gridX * -i;
                         g.drawLine(lw + w, y, lw - (w - getWidth()), y);
+                    }
+
+                    if (selectedObject != null) {
+
+                        g2d.drawImage(Assets.images.get("yarrow.png").getImage(), 100, 100, (int) (Assets.images.get("yarrow.png").getIconWidth() / zoom), (int) (Assets.images.get("yarrow.png").getIconHeight() / zoom), null);
+                        g2d.drawImage(Assets.images.get("xarrow.png").getImage(), 100, 100, (int) (Assets.images.get("xarrow.png").getIconWidth() / zoom), (int) (Assets.images.get("xarrow.png").getIconHeight() / zoom), null);
+
                     }
                 } else {
                     g2d.setColor(getBackground());
@@ -435,7 +444,9 @@ public class Editor extends JFrame {
 
             @Override
             public void mouseMoved(MouseEvent e) {
-
+                System.out.println((getWidth() - getWidth() / zoom) / 2);
+                x = (int) (((e.getX() - posX) + (getWidth() - getWidth() / zoom) / 2));
+                y = (int) (((e.getY() - posY) + (getHeight() - getHeight() / zoom) / 2));
             }
 
             @Override

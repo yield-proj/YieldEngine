@@ -177,6 +177,6 @@ public class Projects extends JPanel {
                 owner.repaint();
             }
             else Utils.error(null, new IllegalStateException("Project already exists on the projects list"));
-        }, owner);
+        }, owner, "New Project");
     }
 }

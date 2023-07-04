@@ -24,6 +24,7 @@ import org.lwjgl.openal.*;
 import org.lwjgl.stb.STBVorbis;
 import org.lwjgl.stb.STBVorbisInfo;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -49,13 +50,13 @@ public class OpenALAudio implements AudioManager {
 
         switch (audio.getAudioClip().getFileFormat()) {
             case "WAV":
-                WaveData waveData = WaveData.create(audio.getAudioClip().getInputStream());
+                WaveData waveData = WaveData.create(new BufferedInputStream(audio.getAudioClip().getInputStream()));
                 assert waveData != null;
                 AL10.alBufferData(out.getBuffer(), waveData.format, waveData.data, waveData.samplerate);
                 break;
             case "OGG":
                 try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
-                    ShortBuffer pcm = readVorbis(audio.getAudioClip().getInputStream(), info);
+                    ShortBuffer pcm = readVorbis(new BufferedInputStream(audio.getAudioClip().getInputStream()), info);
 
                     AL10.alBufferData(out.getBuffer(), info.channels() == 1 ? AL10.AL_FORMAT_MONO16 : AL10.AL_FORMAT_STEREO16, pcm, info.sample_rate());
                 }

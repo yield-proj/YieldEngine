@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.editor;
+package com.xebisco.yield.editor.scene;
 
-import com.xebisco.yield.editor.scene.EditorScene;
+import com.xebisco.yield.editor.scene.SceneObject;
 
-import java.io.File;
+import java.awt.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Project implements Serializable {
+public class EditorScene implements Serializable {
     private String name;
-    private final Map<String, EditorScene> scenes = new HashMap<>();
-    private final File projectLocation;
-    private final Date createdDate = new Date();
-
-    public Project(String name, File projectLocation) {
-        this.name = name;
-        this.projectLocation = projectLocation;
-    }
+    private Color backgroundColor = Color.GRAY.darker();
+    private java.util.List<SceneObject> sceneObjects = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -43,15 +36,19 @@ public class Project implements Serializable {
         this.name = name;
     }
 
-    public File getProjectLocation() {
-        return projectLocation;
+    public Color getBackgroundColor() {
+        return backgroundColor;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 
-    public Map<String, EditorScene> getScenes() {
-        return scenes;
+    public List<SceneObject> getSceneObjects() {
+        return sceneObjects;
+    }
+
+    public void setSceneObjects(List<SceneObject> sceneObjects) {
+        this.sceneObjects = sceneObjects;
     }
 }

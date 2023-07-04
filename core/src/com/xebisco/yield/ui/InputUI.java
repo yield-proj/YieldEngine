@@ -43,9 +43,6 @@ public class InputUI extends ComponentBehavior {
         } else {
             getEntity().dispose();
         }
-        audioPlayer.setAudioClip(new FileInput("ioconnected.wav"));
-        audioPlayer.setGain(.1);
-        audioPlayer.play();
     }
 
     @Override
@@ -54,20 +51,16 @@ public class InputUI extends ComponentBehavior {
             if (getApplication().getControllerManager().getNumControllers() > lastControllerNum) {
                 stage = 0;
                 msg = "Controller Connected";
-                CompletableFuture.runAsync(() -> {
-                    audioPlayer.setAudioClip(new FileInput("ioconnected.wav"));
-                    audioPlayer.setGain(.1);
-                    audioPlayer.play();
-                });
+                audioPlayer.setAudioClip(new FileInput("com/xebisco/yield/ioconnected.wav"));
+                audioPlayer.setGain(.1);
+                audioPlayer.play();
             }
             if (getApplication().getControllerManager().getNumControllers() < lastControllerNum) {
                 stage = 0;
                 msg = "Controller Disconnected";
-                CompletableFuture.runAsync(() -> {
-                    audioPlayer.setAudioClip(new FileInput("iodisconnected.wav"));
-                    audioPlayer.setGain(.1);
-                    audioPlayer.play();
-                });
+                audioPlayer.setAudioClip(new FileInput("com/xebisco/yield/iodisconnected.wav"));
+                audioPlayer.setGain(.1);
+                audioPlayer.play();
             }
             if (stage == 0) {
                 onMessage += getTime().getDeltaTime();

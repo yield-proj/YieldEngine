@@ -14,28 +14,43 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.editor;
+package com.xebisco.yield.editor.scene;
 
 import java.awt.*;
-import java.io.Serializable;
 
-public class EditorScene implements Serializable {
-    private String name;
-    private Color backgroundColor = Color.GRAY.darker();
+public abstract class SceneObject {
+    private int x, y, width, height;
+    public abstract void render(Graphics g);
 
-    public String getName() {
-        return name;
+    public int getX() {
+        return x;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setX(int x) {
+        this.x = x;
     }
 
-    public Color getBackgroundColor() {
-        return backgroundColor;
+    public int getY() {
+        return y;
     }
 
-    public void setBackgroundColor(Color backgroundColor) {
-        this.backgroundColor = backgroundColor;
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 }

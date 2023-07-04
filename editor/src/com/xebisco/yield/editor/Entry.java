@@ -16,14 +16,18 @@
 
 package com.xebisco.yield.editor;
 
-import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.xebisco.yield.editor.prop.BooleanProp;
+import com.xebisco.yield.editor.prop.ImageProp;
+import com.xebisco.yield.editor.prop.Prop;
+import com.xebisco.yield.editor.prop.Props;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -60,6 +64,10 @@ public class Entry {
         loadImage("selectedCloseIcon.png");
         loadImage("uploadIcon.png");
         loadImage("uploadIcon16.png");
+        loadImage("xarrow.png");
+        loadImage("yarrow.png");
+        loadImage("sxarrow.png");
+        loadImage("syarrow.png");
     }
 
     private static void loadImage(String n) {
@@ -105,8 +113,23 @@ public class Entry {
         splashDialog.setVisible(true);
         try {
             loadEverything();
-        } catch (NullPointerException e) {
-            Utils.error(splashDialog, e);
+        } catch (Error e) {
+            HashMap<String, Prop[]> props = new HashMap<>();
+            props.put("Resolve launch error", new Prop[]{new BooleanProp("Delete recent projects list", true), new BooleanProp("Delete editor data", false)});
+            new PropsWindow(props, () -> {
+                if((boolean) Objects.requireNonNull(Props.get(props.get("Resolve launch error"), "Delete recent projects list")).getValue()) {
+                    new File(Utils.defaultDirectory() + "/.yield_editor");
+                    File projectsFile = new File(Utils.defaultDirectory() + "/.yield_editor", "projects.ser");
+                    projectsFile.delete();
+                }
+
+                if((boolean) Objects.requireNonNull(Props.get(props.get("Resolve launch error"), "Delete editor data")).getValue()) {
+                    new File(Utils.defaultDirectory() + "/.yield_editor").delete();
+                }
+
+                JOptionPane.showMessageDialog(null, "Please restart the editor.");
+                System.exit(0);
+            }, null, "Error in editor launch: " + e.getClass().getSimpleName());
         }
     }
 }
