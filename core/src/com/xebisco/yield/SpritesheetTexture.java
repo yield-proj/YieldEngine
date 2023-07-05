@@ -46,6 +46,17 @@ public class SpritesheetTexture extends FileInput implements Disposable {
     }
 
     /**
+     * The function "getTextureFromRegion" takes in a position and size and retrieves a texture from a specified region.
+     *
+     * @param position The position parameter is a Vector2D object that represents the position of the region from which
+     * the texture is to be retrieved. From the top-left point of the image.
+     * @param size The size of the region from which to get the texture.
+     */
+    public Texture getTextureFromRegion(Vector2D position, Size2D size) {
+        return spritesheetTextureManager.getTextureFromRegion((int) position.getX(), (int) position.getY(), (int) size.getWidth(), (int) size.getHeight(), this);
+    }
+
+    /**
      * The `dispose()` method is used to release any resources or memory used by the `Texture` object.
      */
     @Override

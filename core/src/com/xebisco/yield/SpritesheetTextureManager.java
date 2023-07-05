@@ -21,6 +21,8 @@ public interface SpritesheetTextureManager {
 
     void unloadSpritesheetTexture(SpritesheetTexture spritesheetTexture);
 
+    Texture getTextureFromRegion(int x, int y, int width, int height, SpritesheetTexture spritesheetTexture);
+
     int getSpritesheetImageWidth(Object imageRef);
 
     int getSpritesheetImageHeight(Object imageRef);
