@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
-public class OpenGLManager implements GraphicsManager, FontManager, TextureManager, InputManager, ViewportZoomScale, ToggleFullScreen, GLEventListener, KeyListener, MouseListener {
+public class OpenGLPlatform implements GraphicsManager, FontManager, TextureManager, InputManager, ViewportZoomScale, ToggleFullScreen, GLEventListener, KeyListener, MouseListener {
 
     private GLWindow window;
     private final Vector2D mousePosition = new Vector2D();
