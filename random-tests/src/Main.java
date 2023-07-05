@@ -36,6 +36,7 @@ public class Main extends Scene {
         getSystems().add(new ToggleFullScreenSystem());
         instantiate(INPUT_UI_PREFAB);
         e = instantiate(StandardPrefabs.text("Hello, World!", Colors.WHITE, new Font("com/xebisco/yield/Pixeboy.ttf", 100, getApplication().getApplicationPlatform().getFontManager())));
+        instantiate(StandardPrefabs.texRectangle("com/xebisco/yield/yieldIcon.png"));
         //for(int i = 0; i < 1000; i++)instantiate(StandardPrefabs.text("Hello, World!", Colors.WHITE, new Font("com/xebisco/yield/Pixeboy.ttf", 100, getApplication().getApplicationPlatform().getFontManager())));
     }
 

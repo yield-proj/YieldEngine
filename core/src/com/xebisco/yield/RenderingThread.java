@@ -54,11 +54,7 @@ public class RenderingThread extends Thread {
                 }
             }
         }
-        try {
-            join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        interrupt();
     }
 
     public void renderAsync(List<DrawInstruction> drawInstructions) {
