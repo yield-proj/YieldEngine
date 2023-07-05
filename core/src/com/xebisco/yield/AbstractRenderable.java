@@ -42,7 +42,7 @@ public abstract class AbstractRenderable extends ComponentBehavior {
     @VisibleOnInspector
     private double borderThickness;
     @VisibleOnInspector
-    private boolean filled = true, absoluteScaled;
+    private boolean filled = true, absoluteScaled, ignoreOffsetScaling;
 
     @VisibleOnInspector
     private Vector2D offset = new Vector2D();
@@ -87,8 +87,13 @@ public abstract class AbstractRenderable extends ComponentBehavior {
             drawInstruction.getVerticesY()[i] = (int) y;
         });
         for (int i = 0; i < drawInstruction.getVerticesX().length; i++) {
-            drawInstruction.getVerticesX()[i] += anchorSum.getX() + offset.getX();
-            drawInstruction.getVerticesY()[i] += anchorSum.getY() + offset.getY();
+            double ox = offset.getX(), oy = offset.getY();
+            if(!ignoreOffsetScaling) {
+                ox *= getTransform().getScale().getX();
+                oy += getTransform().getScale().getY();
+            }
+            drawInstruction.getVerticesX()[i] += anchorSum.getX() + ox;
+            drawInstruction.getVerticesY()[i] += anchorSum.getY() + oy;
         }
         return drawInstruction;
     }
@@ -253,5 +258,13 @@ public abstract class AbstractRenderable extends ComponentBehavior {
 
     public Vector2D getAnchorSum() {
         return anchorSum;
+    }
+
+    public boolean isIgnoreOffsetScaling() {
+        return ignoreOffsetScaling;
+    }
+
+    public void setIgnoreOffsetScaling(boolean ignoreOffsetScaling) {
+        this.ignoreOffsetScaling = ignoreOffsetScaling;
     }
 }
