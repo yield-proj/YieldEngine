@@ -163,7 +163,6 @@ public class DrawInstruction implements Cloneable {
             DrawInstruction clone = (DrawInstruction) super.clone();
             clone.setChildrenInstructions(new ArrayList<>());
             getChildrenInstructions().forEach(di -> clone.getChildrenInstructions().add(di.clone()));
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
