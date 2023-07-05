@@ -88,7 +88,7 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     }
 
     @Override
-    public DrawInstruction render(GraphicsManager graphics) {
+    public DrawInstruction render() {
         if (visible) {
             entityDrawInstruction.setX(getTransform().getPosition().getX());
             entityDrawInstruction.setY(getTransform().getPosition().getY());
@@ -97,7 +97,7 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
             entityDrawInstruction.setRotation(getTransform().getzRotation());
             entityDrawInstruction.getChildrenInstructions().clear();
             for(Entity2D child : getEntities()) {
-                entityDrawInstruction.getChildrenInstructions().add(child.render(graphics));
+                entityDrawInstruction.getChildrenInstructions().add(child.render());
             }
             for (int i = 0; i < components.size(); i++) {
                 ComponentBehavior component = null;
@@ -107,7 +107,7 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
 
                 }
                 if (component != null && component.getFrames() > 1) {
-                    DrawInstruction di = component.render(graphics);
+                    DrawInstruction di = component.render();
                     if (di != null)
                         entityDrawInstruction.getChildrenInstructions().add(di);
                 }

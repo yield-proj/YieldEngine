@@ -55,7 +55,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     private final KeyAction addKeyAction = pressingKeys::add, removeKeyAction = pressingKeys::remove;
     private GLProfile profile;
 
-    private final List<DrawInstruction> drawInstructions = new ArrayList<>();
+    private List<DrawInstruction> drawInstructions;
 
     @Override
     public Object loadSpritesheetTexture(SpritesheetTexture spritesheetTexture) {
@@ -157,17 +157,18 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
             return true;
         });
 
-        try {
-            for (DrawInstruction di : drawInstructions) {
-                gl.glLoadIdentity();
+        if (drawInstructions != null)
+            try {
+                for (DrawInstruction di : drawInstructions) {
+                    gl.glLoadIdentity();
 
-                gl.glTranslated(-camera.getX(), -camera.getY(), 0);
-                gl.glScaled(scale.getX(), scale.getY(), 1);
-                draw(di, gl);
+                    gl.glTranslated(-camera.getX(), -camera.getY(), 0);
+                    gl.glScaled(scale.getX(), scale.getY(), 1);
+                    draw(di, gl);
+                }
+            } catch (ConcurrentModificationException ignore) {
+
             }
-        } catch (ConcurrentModificationException ignore) {
-
-        }
         gl.glFlush();
     }
 
@@ -319,22 +320,19 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     @Override
     public void frame() {
-        drawInstructions.clear();
+
     }
 
     @Override
-    public void draw(DrawInstruction drawInstruction) {
-        drawInstructions.add(drawInstruction);
+    public void draw(List<DrawInstruction> drawInstructions) {
+        setDrawInstructions(drawInstructions);
+
+        window.windowRepaint(0, 0, window.getWidth(), window.getHeight());
     }
 
     @Override
     public boolean shouldClose() {
         return !window.isVisible();
-    }
-
-    @Override
-    public void conclude() {
-        window.windowRepaint(0, 0, window.getWidth(), window.getHeight());
     }
 
     @Override
@@ -877,5 +875,9 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     public List<DrawInstruction> getDrawInstructions() {
         return drawInstructions;
+    }
+
+    public void setDrawInstructions(List<DrawInstruction> drawInstructions) {
+        this.drawInstructions = drawInstructions;
     }
 }

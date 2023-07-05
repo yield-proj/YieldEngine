@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import java.util.List;
+
 /**
  * The `GraphicsManager` interface is a wrapper around the platform's graphics API. It's a simple class that provides a
  * few functions for drawing to the screen
@@ -43,12 +45,7 @@ public interface GraphicsManager extends Disposable {
      */
     void frame();
 
-    /**
-     * Draws the given draw instruction.
-     *
-     * @param drawInstruction A DrawInstruction object that contains all the information needed to draw the object.
-     */
-    void draw(DrawInstruction drawInstruction);
+    void draw(List<DrawInstruction> drawInstructions);
 
     /**
      * Returns true if the user has requested that the application close.
@@ -56,12 +53,6 @@ public interface GraphicsManager extends Disposable {
      * @return A boolean value.
      */
     boolean shouldClose();
-
-    /**
-     * This function is called once per frame.
-     * This is the last function called in render.
-     */
-    void conclude();
 
     /**
      * The function sets the position of the camera in a 2D space.

@@ -80,7 +80,7 @@ public class InputUI extends ComponentBehavior {
     }
 
     @Override
-    public DrawInstruction render(GraphicsManager graphics) {
+    public DrawInstruction render() {
         if (getApplication().getControllerManager() != null) {
             //TODO
             /*if (stage == -1)

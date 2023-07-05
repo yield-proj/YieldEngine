@@ -17,5 +17,5 @@
 package com.xebisco.yield;
 
 public interface Renderable {
-    DrawInstruction render(GraphicsManager graphics);
+    DrawInstruction render();
 }

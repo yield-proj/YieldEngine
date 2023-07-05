@@ -53,7 +53,7 @@ public abstract class AbstractRenderable extends ComponentBehavior {
     private final Vector2D anchorSum = new Vector2D();
 
     @Override
-    public DrawInstruction render(GraphicsManager graphics) {
+    public DrawInstruction render() {
         if (filled)
             drawInstruction.setStroke(0);
         else drawInstruction.setStroke(borderThickness);

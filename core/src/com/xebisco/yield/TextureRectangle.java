@@ -46,14 +46,14 @@ public class TextureRectangle extends Rectangle {
     }
 
     @Override
-    public DrawInstruction render(GraphicsManager graphics) {
+    public DrawInstruction render() {
         if (textureSized) {
             if (textureScale == null)
                 getSize().set(texture.getSize());
             else
                 getSize().set(texture.getSize().multiply(textureScale));
         }
-        return super.render(graphics);
+        return super.render();
     }
 
     @Override

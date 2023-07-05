@@ -30,6 +30,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 public class SwingPlatform implements GraphicsManager, FontManager, TextureManager, SpritesheetTextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, ViewportZoomScale, ToggleFullScreen {
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
@@ -657,6 +658,17 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     }
 
     @Override
+    public void draw(List<DrawInstruction> drawInstructions) {
+        if (!frame.isVisible())
+            return;
+
+        for(DrawInstruction drawInstruction : drawInstructions)
+            draw(drawInstruction);
+
+        graphics.dispose();
+        canvas.finishRender(graphics);
+    }
+
     public void draw(DrawInstruction drawInstruction) {
         if (!frame.isVisible())
             return;
@@ -758,17 +770,6 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     @Override
     public double getStringHeight(String text, Object fontRef) {
         return graphics.getFontMetrics((Font) fontRef).getHeight();
-    }
-
-    @Override
-    public void conclude() {
-        if (!frame.isVisible())
-            return;
-
-
-        graphics.dispose();
-        canvas.finishRender(graphics);
-
     }
 
     public GraphicsDevice getDevice() {

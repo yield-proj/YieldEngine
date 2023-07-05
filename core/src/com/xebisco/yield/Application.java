@@ -36,7 +36,7 @@ public class Application implements Behavior {
     private final Set<Axis> axes = new HashSet<>();
     private final ApplicationManager applicationManager;
     private final Size2D viewportSize;
-    private final Function<Scene, Void> renderer;
+    private final RenderingThread renderingThread;
     private Texture controllerTexture;
     private Texture translucentControllerTexture;
     private final Function<Throwable, Void> exceptionThrowFunction = throwable -> {
@@ -50,6 +50,7 @@ public class Application implements Behavior {
     private Font defaultFont;
     private Texture defaultTexture;
     private ChangeSceneTransition changeSceneTransition;
+    private final List<DrawInstruction> drawInstructions = new ArrayList<>(), toSendDrawInstructions = new ArrayList<>();
     private Scene toChangeScene;
 
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, ApplicationPlatform applicationPlatform, PlatformInit platformInit) {
@@ -76,29 +77,7 @@ public class Application implements Behavior {
         }, 2000L);
 
         this.platformInit = platformInit;
-        renderer = (scene) -> {
-            Application.this.applicationPlatform.getGraphicsManager().frame();
-            backGroundDrawInstruction.setStroke(0);
-            backGroundDrawInstruction.setColor(scene.getBackGroundColor());
-            Application.this.applicationPlatform.getGraphicsManager().draw(backGroundDrawInstruction);
-            try {
-                for (int i = 0; i < scene.getEntities().size(); i++) {
-                    Entity2D e = null;
-                    try {
-                        e = scene.getEntities().get(i);
-                    } catch (IndexOutOfBoundsException ignore) {
-
-                    }
-                    if (e != null) {
-                        DrawInstruction di = e.render(Application.this.applicationPlatform.getGraphicsManager());
-                        if(di != null) Application.this.applicationPlatform.getGraphicsManager().draw(di);
-                    }
-                }
-            } catch (ConcurrentModificationException ignore) {
-
-            }
-            return null;
-        };
+        renderingThread = new RenderingThread(applicationPlatform.getGraphicsManager());
         viewportSize = new ImmutableSize2D(platformInit.getWindowSize().getWidth(), platformInit.getViewportSize().getHeight());
         axes.add(new Axis(HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
         axes.add(new Axis(VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
@@ -157,6 +136,7 @@ public class Application implements Behavior {
     @Override
     public void onStart() {
         applicationPlatform.getGraphicsManager().init(platformInit);
+        renderingThread.start();
         defaultFont = new Font("com/xebisco/yield/OpenSans-Regular.ttf", 48, applicationPlatform.getFontManager());
         if (platformInit.getWindowIcon() == null)
             platformInit.setWindowIcon(new Texture(platformInit.getWindowIconPath(), applicationPlatform.getTextureManager()));
@@ -317,6 +297,11 @@ public class Application implements Behavior {
     @Override
     public void onUpdate() {
         if (scene != null && !(scene instanceof BlankScene)) {
+
+            toSendDrawInstructions.clear();
+            toSendDrawInstructions.addAll(drawInstructions);
+            renderingThread.renderAsync(toSendDrawInstructions);
+
             Scene scene = this.scene;
             scene.setFrames(scene.getFrames() + 1);
             if (scene.getFrames() == 1) {
@@ -362,8 +347,29 @@ public class Application implements Behavior {
                 applicationPlatform.getInputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
                 applicationPlatform.getInputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
             }
-            if (scene == this.scene && scene.getFrames() >= 2)
-                renderer.apply(scene);
+            if (scene == this.scene && scene.getFrames() >= 2) {
+                drawInstructions.clear();
+                backGroundDrawInstruction.setStroke(0);
+                backGroundDrawInstruction.setColor(scene.getBackGroundColor());
+                drawInstructions.add(backGroundDrawInstruction);
+                try {
+                    for (int i = 0; i < scene.getEntities().size(); i++) {
+                        Entity2D e = null;
+                        try {
+                            e = scene.getEntities().get(i);
+                        } catch (IndexOutOfBoundsException ignore) {
+
+                        }
+                        if (e != null) {
+                            DrawInstruction di = e.render();
+                            if (di != null) drawInstructions.add(di);
+                        }
+                    }
+                } catch (ConcurrentModificationException ignore) {
+
+                }
+                //renderer.apply(scene);
+            }
 
 
             if (changeSceneTransition != null) {
@@ -371,7 +377,7 @@ public class Application implements Behavior {
                 changeSceneTransition.setDeltaTime(getApplicationManager().getManagerContext().getContextTime().getDeltaTime());
                 changeSceneTransition.setPassedTime(changeSceneTransition.getPassedTime() + changeSceneTransition.getDeltaTime());
                 changeSceneTransition.setFrames(changeSceneTransition.getFrames() + 1);
-                changeSceneTransition.render(applicationPlatform.getGraphicsManager());
+                changeSceneTransition.render();
                 if (changeSceneTransition.getPassedTime() >= changeSceneTransition.getTimeToWait() && toChangeScene != null) {
                     setScene(toChangeScene);
                     toChangeScene = null;
@@ -383,13 +389,17 @@ public class Application implements Behavior {
                 toChangeScene = null;
             }
 
-            if (scene.getFrames() >= 2)
-                applicationPlatform.getGraphicsManager().conclude();
+            renderingThread.aWait();
         }
     }
 
     @Override
     public void dispose() {
+        try {
+            renderingThread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         setScene(null);
         if (controllerManager != null)
             controllerManager.quitSDLGamepad();
@@ -609,14 +619,12 @@ public class Application implements Behavior {
         return backGroundDrawInstruction;
     }
 
-    /**
-     * The function returns a renderer for a Java Scene object.
-     *
-     * @return A `Function` object that takes a `Scene` parameter and returns `Void`. The `renderer` variable is being
-     * returned.
-     */
-    public Function<Scene, Void> getRenderer() {
-        return renderer;
+    public RenderingThread getRenderingThread() {
+        return renderingThread;
+    }
+
+    public List<DrawInstruction> getDrawInstructions() {
+        return drawInstructions;
     }
 
     /**
