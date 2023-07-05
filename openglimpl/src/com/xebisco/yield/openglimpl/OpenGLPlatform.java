@@ -781,4 +781,52 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
             pressingMouseButtons.add(Input.MouseButton.SCROLL_DOWN);
         }
     }
+
+    public GLWindow getWindow() {
+        return window;
+    }
+
+    public void setWindow(GLWindow window) {
+        this.window = window;
+    }
+
+    public PlatformInit getPlatformInit() {
+        return platformInit;
+    }
+
+    public void setPlatformInit(PlatformInit platformInit) {
+        this.platformInit = platformInit;
+    }
+
+    public FontRenderContext getFrc() {
+        return frc;
+    }
+
+    public Set<OpenGLImage> getToLoadImages() {
+        return toLoadImages;
+    }
+
+    public Set<OpenGLImage> getToDestroyImages() {
+        return toDestroyImages;
+    }
+
+    public KeyAction getAddKeyAction() {
+        return addKeyAction;
+    }
+
+    public KeyAction getRemoveKeyAction() {
+        return removeKeyAction;
+    }
+
+    public GLProfile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(GLProfile profile) {
+        this.profile = profile;
+    }
+
+    public List<DrawInstruction> getDrawInstructions() {
+        return drawInstructions;
+    }
 }
