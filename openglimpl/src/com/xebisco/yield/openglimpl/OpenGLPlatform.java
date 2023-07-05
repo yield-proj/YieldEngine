@@ -130,6 +130,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     @Override
     public void init(GLAutoDrawable glAutoDrawable) {
         GL2 gl = glAutoDrawable.getGL().getGL2();
+        gl.glEnable(GL2.GL_BLEND);
         gl.setSwapInterval(0);
         gl.glClearColor(0, 0, 0, 1);
     }
@@ -156,74 +157,13 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
             return true;
         });
 
-        gl.glLoadIdentity();
-
-        gl.glTranslated(-camera.getX(), -camera.getY(), 0);
-        gl.glScaled(scale.getX(), scale.getY(), 1);
-
         try {
             for (DrawInstruction di : drawInstructions) {
-                if (di.getVerticesX() == null && di.getVerticesY() == null) {
-                    gl.glClearColor((float) drawInstructions.get(0).getColor().getRed(), (float) drawInstructions.get(0).getColor().getGreen(), (float) drawInstructions.get(0).getColor().getBlue(), (float) drawInstructions.get(0).getColor().getAlpha());
-                    gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
-                    continue;
-                }
-                gl.glColor4d(di.getColor().getRed(), di.getColor().getGreen(), di.getColor().getBlue(), di.getColor().getAlpha());
-                double sx = 0, sy = 0;
-                for (int i1 : di.getVerticesX()) sx += i1;
-                for (int i1 : di.getVerticesY()) sy += i1;
-                sx /= di.getVerticesX().length;
-                sy /= di.getVerticesY().length;
+                gl.glLoadIdentity();
 
-                gl.glTranslated(sx, sy, 0);
-                gl.glRotated(di.getRotation(), 0, 0, 1);
-                gl.glTranslated(-sx, -sy, 0);
-
-                gl.glEnable(GL2.GL_BLEND);
-
-                if (di.getImageRef() != null && ((OpenGLImage) di.getImageRef()).getTexture() != null) {
-                    gl.glEnable(GL2.GL_TEXTURE_2D);
-                    gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE_MINUS_SRC_ALPHA);
-                    com.jogamp.opengl.util.texture.Texture t = ((OpenGLImage) di.getImageRef()).getTexture();
-                    t.enable(gl);
-                    t.bind(gl);
-                    gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
-                    gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
-                    gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
-                    gl.glBegin(GL2.GL_QUADS);
-                    if (di.getVerticesX().length != 4 || di.getVerticesY().length != 4)
-                        throw new IllegalVerticesCountException("OpenGL image rendering supports only rectangles");
-                    gl.glTexCoord2i(0, 1);
-                    gl.glVertex2i(di.getVerticesX()[0], di.getVerticesY()[0]);
-                    gl.glTexCoord2i(1, 1);
-                    gl.glVertex2i(di.getVerticesX()[1], di.getVerticesY()[1]);
-                    gl.glTexCoord2i(1, 0);
-                    gl.glVertex2i(di.getVerticesX()[2], di.getVerticesY()[2]);
-                    gl.glTexCoord2i(0, 0);
-                    gl.glVertex2i(di.getVerticesX()[3], di.getVerticesY()[3]);
-                    gl.glEnd();
-                    t.disable(gl);
-                    gl.glDisable(GL2.GL_TEXTURE_2D);
-                } else if (di.getFontRef() != null) {
-                    TextRenderer renderer = (TextRenderer) di.getFontRef();
-                    gl.glEnable(GL2.GL_TEXTURE_2D);
-                    renderer.begin3DRendering();
-                    Rectangle2D bounds = renderer.getBounds(di.getText());
-                    renderer.draw(di.getText(), (int) (di.getVerticesX()[0] - bounds.getWidth() / 2), (int) (di.getVerticesY()[0] - bounds.getHeight() / 4));
-                    renderer.end3DRendering();
-                    gl.glDisable(GL2.GL_TEXTURE_2D);
-                } else {
-                    gl.glBegin(GL2.GL_POLYGON);
-                    for (int i1 = 0; i1 < di.getVerticesX().length; i1++) {
-                        gl.glVertex2i(di.getVerticesX()[i1], di.getVerticesY()[i1]);
-                    }
-                    gl.glEnd();
-                }
-                gl.glTranslated(sx, sy, 0);
-                gl.glRotated(-di.getRotation(), 0, 0, 1);
-                gl.glTranslated(-sx, -sy, 0);
-
-                gl.glDisable(GL2.GL_BLEND);
+                gl.glTranslated(-camera.getX(), -camera.getY(), 0);
+                gl.glScaled(scale.getX(), scale.getY(), 1);
+                draw(di, gl);
             }
         } catch (ConcurrentModificationException ignore) {
 
@@ -254,6 +194,64 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
             Size2D viewport = Global.onSizeBoundary(platformInit.getViewportSize(), new Size2D(window.getWidth(), window.getHeight()));
 
             gl.glViewport((int) (window.getWidth() / 2 - viewport.getWidth() / 2), (int) (window.getHeight() / 2 - viewport.getHeight() / 2), (int) viewport.getWidth(), (int) viewport.getHeight());
+        }
+    }
+
+    public void draw(DrawInstruction di, GL2 gl) {
+        gl.glTranslatef((float) di.getX(), (float) di.getY(), 0);
+        gl.glRotatef((float) di.getRotation(), 0, 0, 1);
+
+        if (di.getVerticesX() == null && di.getVerticesY() == null) {
+            if (di.getColor() != null) {
+                gl.glClearColor((float) di.getColor().getRed(), (float) di.getColor().getGreen(), (float) di.getColor().getBlue(), (float) di.getColor().getAlpha());
+                gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+            }
+        } else {
+            gl.glColor4d(di.getColor().getRed(), di.getColor().getGreen(), di.getColor().getBlue(), di.getColor().getAlpha());
+
+            if (di.getImageRef() != null && ((OpenGLImage) di.getImageRef()).getTexture() != null) {
+                gl.glEnable(GL2.GL_TEXTURE_2D);
+                gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE_MINUS_SRC_ALPHA);
+                com.jogamp.opengl.util.texture.Texture t = ((OpenGLImage) di.getImageRef()).getTexture();
+                t.enable(gl);
+                t.bind(gl);
+                gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+                gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+                gl.glBegin(GL2.GL_QUADS);
+                if (di.getVerticesX().length != 4 || di.getVerticesY().length != 4)
+                    throw new IllegalVerticesCountException("OpenGL image rendering supports only rectangles");
+                gl.glTexCoord2i(0, 1);
+                gl.glVertex2i(di.getVerticesX()[0], di.getVerticesY()[0]);
+                gl.glTexCoord2i(1, 1);
+                gl.glVertex2i(di.getVerticesX()[1], di.getVerticesY()[1]);
+                gl.glTexCoord2i(1, 0);
+                gl.glVertex2i(di.getVerticesX()[2], di.getVerticesY()[2]);
+                gl.glTexCoord2i(0, 0);
+                gl.glVertex2i(di.getVerticesX()[3], di.getVerticesY()[3]);
+                gl.glEnd();
+                t.disable(gl);
+                gl.glDisable(GL2.GL_TEXTURE_2D);
+            } else if (di.getFontRef() != null) {
+                TextRenderer renderer = (TextRenderer) di.getFontRef();
+                gl.glEnable(GL2.GL_TEXTURE_2D);
+                renderer.begin3DRendering();
+                Rectangle2D bounds = renderer.getBounds(di.getText());
+                renderer.draw(di.getText(), (int) (-bounds.getWidth() / 2), (int) (-bounds.getHeight() / 4));
+                renderer.end3DRendering();
+                gl.glDisable(GL2.GL_TEXTURE_2D);
+            } else {
+                gl.glBegin(GL2.GL_POLYGON);
+                for (int i1 = 0; i1 < di.getVerticesX().length; i1++) {
+                    gl.glVertex2i(di.getVerticesX()[i1], di.getVerticesY()[i1]);
+                }
+                gl.glEnd();
+            }
+        }
+
+        for (DrawInstruction child : di.getChildrenInstructions()) {
+            System.out.println(child.getText());
+            draw(child, gl);
         }
     }
 

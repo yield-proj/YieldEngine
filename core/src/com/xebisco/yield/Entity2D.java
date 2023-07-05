@@ -95,6 +95,7 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
             entityDrawInstruction.setScaleX(getTransform().getScale().getX());
             entityDrawInstruction.setScaleY(getTransform().getScale().getY());
             entityDrawInstruction.setRotation(getTransform().getzRotation());
+            entityDrawInstruction.getChildrenInstructions().clear();
             for(Entity2D child : getEntities()) {
                 entityDrawInstruction.getChildrenInstructions().add(child.render(graphics));
             }
