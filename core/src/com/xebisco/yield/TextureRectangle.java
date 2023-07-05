@@ -46,7 +46,7 @@ public class TextureRectangle extends Rectangle {
     }
 
     @Override
-    public void render(PlatformGraphics graphics) {
+    public void render(GraphicsManager graphics) {
         if (textureSized) {
             if (textureScale == null)
                 getSize().set(texture.getSize());

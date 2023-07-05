@@ -55,7 +55,7 @@ public abstract class AbstractRenderable extends ComponentBehavior {
     private final Vector2D anchorSum = new Vector2D();
 
     @Override
-    public void render(PlatformGraphics graphics) {
+    public void render(GraphicsManager graphics) {
         drawInstruction.setRotation(getEntity().getTransform().getzRotation());
         if (filled)
             drawInstruction.setStroke(0);

@@ -43,7 +43,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
     }
 
     @Override
-    public void render(PlatformGraphics graphics) {
+    public void render(GraphicsManager graphics) {
 
     }
 
@@ -171,7 +171,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
         return getEntity().getTextureManager();
     }
 
-    public FontLoader getFontLoader() {
+    public FontManager getFontLoader() {
         return getEntity().getFontLoader();
     }
 }

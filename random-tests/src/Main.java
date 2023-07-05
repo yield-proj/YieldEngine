@@ -15,7 +15,6 @@
  */
 
 import com.xebisco.yield.*;
-import com.xebisco.yield.physics.*;
 
 public class Main extends Scene {
     public Main(Application application) {
@@ -25,7 +24,7 @@ public class Main extends Scene {
     public static void main(String[] args) throws ClassNotFoundException {
         ContextTime time = new ContextTime();
         ApplicationManager applicationManager = new ApplicationManager(time);
-        PlatformInit platformInit = new PlatformInit();
+        PlatformInit platformInit = new PlatformInit(PlatformInit.INPUT_DEFAULT);
         Application application = new Application(applicationManager, Main.class, Global.swingPlatform(), platformInit);
         applicationManager.getApplications().add(application);
         applicationManager.run();
@@ -37,7 +36,7 @@ public class Main extends Scene {
     public void onStart() {
         getSystems().add(new ToggleFullScreenSystem());
         instantiate(INPUT_UI_PREFAB);
-        e = instantiate(StandardPrefabs.text("Hello, World!", Colors.WHITE, new Font("com/xebisco/yield/Pixeboy.ttf", 100, getApplication().getApplicationPlatform().getFontLoader())));
+        e = instantiate(StandardPrefabs.text("Hello, World!", Colors.WHITE, new Font("com/xebisco/yield/Pixeboy.ttf", 100, getApplication().getApplicationPlatform().getFontManager())));
     }
 
     @Override

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield;import com.xebisco.yield.TwoAnchorRepresentation;
+package com.xebisco.yield;
 
 public interface ViewportZoomScale {
     void setZoomScale(TwoAnchorRepresentation zoomScale);

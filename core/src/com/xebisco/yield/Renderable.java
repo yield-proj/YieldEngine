@@ -18,10 +18,10 @@ package com.xebisco.yield;
 
 public interface Renderable {
     /**
-     * The `PlatformGraphics` class is a wrapper around the platform's graphics API. It's a simple class that provides a
+     * The `GraphicsManager` class is a wrapper around the platform's graphics API. It's a simple class that provides a
      * few functions for drawing to the screen
      *
      * @param graphics The graphics object to draw on.
      */
-    void render(PlatformGraphics graphics);
+    void render(GraphicsManager graphics);
 }

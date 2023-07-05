@@ -21,8 +21,8 @@ public interface ToggleFullScreen {
      * The function sets the full screen mode of a display.
      *
      * @param fullScreen A boolean parameter that determines whether the application should be displayed in full screen
-     * mode or not. If the value is true, the application will be displayed in full screen mode, otherwise it will be
-     * displayed in windowed mode.
+     *                   mode or not. If the value is true, the application will be displayed in full screen mode, otherwise it will be
+     *                   displayed in windowed mode.
      */
     void setFullScreen(boolean fullScreen);
 }

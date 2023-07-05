@@ -38,7 +38,7 @@ public final class Global {
         try {
             Object swingPlatform = swingPlatformClass.getConstructor().newInstance(), clipAudio = clipAudioClass.getConstructor().newInstance();
             return new ApplicationPlatform(
-                    (FontLoader) swingPlatform,
+                    (FontManager) swingPlatform,
                     (TextureManager) swingPlatform,
                     (InputManager) swingPlatform,
                     null,
@@ -46,8 +46,8 @@ public final class Global {
                     (AudioManager) clipAudio,
                     (ViewportZoomScale) swingPlatform,
                     (ToggleFullScreen) swingPlatform,
-                    (PlatformGraphics) swingPlatform
-            );
+                    (GraphicsManager) swingPlatform,
+                    (SpritesheetTextureManager) swingPlatform);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
                  InvocationTargetException e) {
             throw new RuntimeException(e);
@@ -60,7 +60,7 @@ public final class Global {
         try {
             Object openGLPlatform = openGLPlatformClass.getConstructor().newInstance(), clipAudio = clipAudioClass.getConstructor().newInstance();
             return new ApplicationPlatform(
-                    (FontLoader) openGLPlatform,
+                    (FontManager) openGLPlatform,
                     (TextureManager) openGLPlatform,
                     (InputManager) openGLPlatform,
                     null,
@@ -68,8 +68,8 @@ public final class Global {
                     (AudioManager) clipAudio,
                     (ViewportZoomScale) openGLPlatform,
                     (ToggleFullScreen) openGLPlatform,
-                    (PlatformGraphics) openGLPlatform
-            );
+                    (GraphicsManager) openGLPlatform,
+                    (SpritesheetTextureManager) openGLPlatform);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
                  InvocationTargetException e) {
             throw new RuntimeException(e);
@@ -82,7 +82,7 @@ public final class Global {
         try {
             Object openGLPlatform = openGLPlatformClass.getConstructor().newInstance(), alAudio = alAudioClass.getConstructor().newInstance();
             return new ApplicationPlatform(
-                    (FontLoader) openGLPlatform,
+                    (FontManager) openGLPlatform,
                     (TextureManager) openGLPlatform,
                     (InputManager) openGLPlatform,
                     null,
@@ -90,8 +90,8 @@ public final class Global {
                     (AudioManager) alAudio,
                     (ViewportZoomScale) openGLPlatform,
                     (ToggleFullScreen) openGLPlatform,
-                    (PlatformGraphics) openGLPlatform
-            );
+                    (GraphicsManager) openGLPlatform,
+                    (SpritesheetTextureManager) openGLPlatform);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
                  InvocationTargetException e) {
             throw new RuntimeException(e);
@@ -110,7 +110,7 @@ public final class Global {
         try {
             Object swingPlatform = swingPlatformClass.getConstructor().newInstance(), openalAudio = openalAudioClass.getConstructor().newInstance();
             return new ApplicationPlatform(
-                    (FontLoader) swingPlatform,
+                    (FontManager) swingPlatform,
                     (TextureManager) swingPlatform,
                     (InputManager) swingPlatform,
                     null,
@@ -118,8 +118,8 @@ public final class Global {
                     (AudioManager) openalAudio,
                     (ViewportZoomScale) swingPlatform,
                     (ToggleFullScreen) swingPlatform,
-                    (PlatformGraphics) swingPlatform
-            );
+                    (GraphicsManager) swingPlatform,
+                    (SpritesheetTextureManager) swingPlatform);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
                  InvocationTargetException e) {
             throw new RuntimeException(e);

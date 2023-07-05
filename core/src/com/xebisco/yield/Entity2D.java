@@ -31,7 +31,7 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     private List<ComponentBehavior> components = new ArrayList<>();
     private Entity2DContainer parent;
     private int index;
-    private FontLoader fontLoader;
+    private FontManager fontManager;
     private TextureManager textureManager;
     private ContactAdapter contactAdapter;
 
@@ -86,7 +86,7 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     }
 
     @Override
-    public void render(PlatformGraphics graphics) {
+    public void render(GraphicsManager graphics) {
         if (visible)
             for (int i = 0; i < components.size(); i++) {
                 ComponentBehavior component = null;
@@ -242,22 +242,22 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     }
 
     /**
-     * This function returns the fontLoader of this entity.
+     * This function returns the fontManager of this entity.
      *
-     * @return The fontLoader of this entity.
+     * @return The fontManager of this entity.
      */
-    public FontLoader getFontLoader() {
-        return fontLoader;
+    public FontManager getFontLoader() {
+        return fontManager;
     }
 
     /**
-     * This function sets the fontLoader of this entity.
+     * This function sets the fontManager of this entity.
      *
-     * @param fontLoader The fontLoader of this entity.
+     * @param fontManager The fontManager of this entity.
      */
 
-    public void setFontLoader(FontLoader fontLoader) {
-        this.fontLoader = fontLoader;
+    public void setFontLoader(FontManager fontManager) {
+        this.fontManager = fontManager;
     }
 
     /**

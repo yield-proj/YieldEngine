@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class SwingPlatform implements PlatformGraphics, FontLoader, TextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, ViewportZoomScale, ToggleFullScreen {
+public class SwingPlatform implements GraphicsManager, FontManager, TextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, ViewportZoomScale, ToggleFullScreen {
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
     private final HashSet<Input.Key> pressingKeys = new HashSet<>();
     private final HashSet<Input.MouseButton> pressingMouseButtons = new HashSet<>();

@@ -17,10 +17,10 @@
 package com.xebisco.yield;
 
 /**
- * The `PlatformGraphics` interface is a wrapper around the platform's graphics API. It's a simple class that provides a
+ * The `GraphicsManager` interface is a wrapper around the platform's graphics API. It's a simple class that provides a
  * few functions for drawing to the screen
  */
-public interface PlatformGraphics extends Disposable {
+public interface GraphicsManager extends Disposable {
 
     /**
      * Initializes the platform graphics
@@ -33,20 +33,23 @@ public interface PlatformGraphics extends Disposable {
      * This function updates the icon the window using a texture.
      *
      * @param icon The "icon" parameter is a Texture object that represents the image that will be used as the icon for the
-     * window. This function updates the icon of the window to the specified texture.
+     *             window. This function updates the icon of the window to the specified texture.
      */
     void updateWindowIcon(Texture icon);
+
     /**
      * This function is called once per frame.
      * This is the first function called in render, it's used to prepare the graphics for the incoming draw calls.
      */
     void frame();
+
     /**
      * Draws the given draw instruction.
      *
      * @param drawInstruction A DrawInstruction object that contains all the information needed to draw the object.
      */
     void draw(DrawInstruction drawInstruction);
+
     /**
      * Returns true if the user has requested that the application close.
      *

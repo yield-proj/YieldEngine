@@ -16,7 +16,7 @@
 
 package com.xebisco.yield;
 
-public interface FontLoader {
+public interface FontManager {
     /**
      * The function loads a font object in Java.
      *

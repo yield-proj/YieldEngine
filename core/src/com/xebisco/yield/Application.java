@@ -58,6 +58,8 @@ public class Application implements Behavior {
         applicationManager.getApplications().add(this);
         this.applicationPlatform = applicationPlatform;
 
+        checkPlatform(applicationPlatform, platformInit);
+
         setScene(new BlankScene(this));
         Timer t = new Timer();
         t.schedule(new TimerTask() {
@@ -75,10 +77,10 @@ public class Application implements Behavior {
 
         this.platformInit = platformInit;
         renderer = (scene) -> {
-            Application.this.applicationPlatform.getPlatformGraphics().frame();
+            Application.this.applicationPlatform.getGraphicsManager().frame();
             backGroundDrawInstruction.setStroke(0);
             backGroundDrawInstruction.setColor(scene.getBackGroundColor());
-            Application.this.applicationPlatform.getPlatformGraphics().draw(backGroundDrawInstruction);
+            Application.this.applicationPlatform.getGraphicsManager().draw(backGroundDrawInstruction);
             try {
                 for (int i = 0; i < scene.getEntities().size(); i++) {
                     Entity2D e = null;
@@ -88,7 +90,7 @@ public class Application implements Behavior {
 
                     }
                     if (e != null)
-                        e.render(Application.this.applicationPlatform.getPlatformGraphics());
+                        e.render(Application.this.applicationPlatform.getGraphicsManager());
                 }
             } catch (ConcurrentModificationException ignore) {
 
@@ -112,13 +114,48 @@ public class Application implements Behavior {
         axes.add(new Axis(LEFT_BUMPER, Input.Key.VK_G, null, null, null));
     }
 
+    private void checkPlatform(ApplicationPlatform platform, PlatformInit init) {
+        for (Class<?> c : init.getRequiredPlatformModules()) {
+            if (c.equals(FontManager.class)) {
+                if (platform.getFontManager() == null)
+                    throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
+            } else if (c.equals(TextureManager.class)) {
+                if (platform.getTextureManager() == null)
+                    throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
+            } else if (c.equals(InputManager.class)) {
+                if (platform.getInputManager() == null)
+                    throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
+            } else if (c.equals(KeyCheck.class)) {
+                if (platform.getKeyCheck() == null)
+                    throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
+            } else if (c.equals(MouseCheck.class)) {
+                if (platform.getMouseCheck() == null)
+                    throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
+            } else if (c.equals(AudioManager.class)) {
+                if (platform.getAudioManager() == null)
+                    throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
+            } else if (c.equals(ViewportZoomScale.class)) {
+                if (platform.getViewportZoomScale() == null)
+                    throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
+            } else if (c.equals(ToggleFullScreen.class)) {
+                if (platform.getToggleFullScreen() == null)
+                    throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
+            } else if (c.equals(GraphicsManager.class)) {
+                if (platform.getGraphicsManager() == null)
+                    throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
+            } else {
+                throw new ApplicationPlatformModuleException("Not supported application module. '" + c.getSimpleName() + "'");
+            }
+        }
+    }
+
     @Override
     public void onStart() {
-        applicationPlatform.getPlatformGraphics().init(platformInit);
-        defaultFont = new Font("com/xebisco/yield/OpenSans-Regular.ttf", 48, applicationPlatform.getFontLoader());
+        applicationPlatform.getGraphicsManager().init(platformInit);
+        defaultFont = new Font("com/xebisco/yield/OpenSans-Regular.ttf", 48, applicationPlatform.getFontManager());
         if (platformInit.getWindowIcon() == null)
             platformInit.setWindowIcon(new Texture(platformInit.getWindowIconPath(), applicationPlatform.getTextureManager()));
-        applicationPlatform.getPlatformGraphics().updateWindowIcon(platformInit.getWindowIcon());
+        applicationPlatform.getGraphicsManager().updateWindowIcon(platformInit.getWindowIcon());
         for (int i = 0; i < 4; i++) {
             String a = String.valueOf((i + 1));
             if (i == 0)
@@ -297,7 +334,7 @@ public class Application implements Behavior {
                 scene.onUpdate();
                 try {
                     for (Entity2D entity : scene.getEntities()) {
-                        entity.setFontLoader(applicationPlatform.getFontLoader());
+                        entity.setFontLoader(applicationPlatform.getFontManager());
                         entity.setTextureManager(applicationPlatform.getTextureManager());
                         entity.process();
 
@@ -329,7 +366,7 @@ public class Application implements Behavior {
                 changeSceneTransition.setDeltaTime(getApplicationManager().getManagerContext().getContextTime().getDeltaTime());
                 changeSceneTransition.setPassedTime(changeSceneTransition.getPassedTime() + changeSceneTransition.getDeltaTime());
                 changeSceneTransition.setFrames(changeSceneTransition.getFrames() + 1);
-                changeSceneTransition.render(applicationPlatform.getPlatformGraphics());
+                changeSceneTransition.render(applicationPlatform.getGraphicsManager());
                 if (changeSceneTransition.getPassedTime() >= changeSceneTransition.getTimeToWait() && toChangeScene != null) {
                     setScene(toChangeScene);
                     toChangeScene = null;
@@ -342,7 +379,7 @@ public class Application implements Behavior {
             }
 
             if (scene.getFrames() >= 2)
-                applicationPlatform.getPlatformGraphics().conclude();
+                applicationPlatform.getGraphicsManager().conclude();
         }
     }
 
@@ -351,7 +388,7 @@ public class Application implements Behavior {
         setScene(null);
         if (controllerManager != null)
             controllerManager.quitSDLGamepad();
-        applicationPlatform.getPlatformGraphics().dispose();
+        applicationPlatform.getGraphicsManager().dispose();
     }
 
     /**
@@ -449,7 +486,7 @@ public class Application implements Behavior {
         this.scene = scene;
         if (scene != null) {
             scene.setFrames(0);
-            applicationPlatform.getPlatformGraphics().setCamera(scene.getCamera());
+            applicationPlatform.getGraphicsManager().setCamera(scene.getCamera());
             applicationPlatform.getViewportZoomScale().setZoomScale(scene.getZoomScale());
         }
     }
@@ -525,10 +562,10 @@ public class Application implements Behavior {
      * returns true if it does, false otherwise.
      */
     public boolean isPressingKey(Input.Key key) {
-        if (applicationPlatform.getCheckKey() == null && applicationPlatform.getInputManager() != null)
+        if (applicationPlatform.getKeyCheck() == null && applicationPlatform.getInputManager() != null)
             return applicationPlatform.getInputManager().getPressingKeys().contains(key);
-        if (applicationPlatform.getCheckKey() != null && applicationPlatform.getInputManager() == null)
-            return applicationPlatform.getCheckKey().checkKey(key);
+        if (applicationPlatform.getKeyCheck() != null && applicationPlatform.getInputManager() == null)
+            return applicationPlatform.getKeyCheck().checkKey(key);
         return false;
     }
 
@@ -542,10 +579,10 @@ public class Application implements Behavior {
      * currently being pressed or not. It returns `true` if the button is being pressed and `false` otherwise.
      */
     public boolean isPressingButton(Input.MouseButton button) {
-        if (applicationPlatform.getCheckKey() == null && applicationPlatform.getInputManager() != null)
+        if (applicationPlatform.getKeyCheck() == null && applicationPlatform.getInputManager() != null)
             return applicationPlatform.getInputManager().getPressingMouseButtons().contains(button);
-        if (applicationPlatform.getCheckKey() != null && applicationPlatform.getInputManager() == null)
-            return applicationPlatform.getCheckKey().checkMouseButton(button);
+        if (applicationPlatform.getKeyCheck() != null && applicationPlatform.getInputManager() == null)
+            return applicationPlatform.getKeyCheck().checkMouseButton(button);
         return false;
     }
 

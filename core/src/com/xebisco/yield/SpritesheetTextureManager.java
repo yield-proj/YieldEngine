@@ -16,20 +16,12 @@
 
 package com.xebisco.yield;
 
-import java.util.Collection;
+public interface SpritesheetTextureManager {
+    Object loadSpritesheetTexture(SpritesheetTexture spritesheetTexture);
 
-public interface InputManager extends MouseCheck {
-    /**
-     * The function returns a collection of currently pressed keys.
-     *
-     * @return A collection of currently pressing keys is being returned.
-     */
-    Collection<Input.Key> getPressingKeys();
+    void unloadSpritesheetTexture(SpritesheetTexture spritesheetTexture);
 
-    /**
-     * This function returns a collection of currently pressing mouse buttons.
-     *
-     * @return A collection of currently pressing mouse buttons.
-     */
-    Collection<Input.MouseButton> getPressingMouseButtons();
+    int getSpritesheetImageWidth(Object imageRef);
+
+    int getSpritesheetImageHeight(Object imageRef);
 }

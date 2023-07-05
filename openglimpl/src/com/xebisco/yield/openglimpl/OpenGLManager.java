@@ -16,7 +16,6 @@
 
 package com.xebisco.yield.openglimpl;
 
-import com.jogamp.nativewindow.WindowClosingProtocol;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseEvent;
@@ -38,7 +37,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
-public class OpenGLPlatform implements PlatformGraphics, FontLoader, TextureManager, InputManager, ViewportZoomScale, ToggleFullScreen, GLEventListener, KeyListener, MouseListener {
+public class OpenGLManager implements GraphicsManager, FontManager, TextureManager, InputManager, ViewportZoomScale, ToggleFullScreen, GLEventListener, KeyListener, MouseListener {
 
     private GLWindow window;
     private final Vector2D mousePosition = new Vector2D();

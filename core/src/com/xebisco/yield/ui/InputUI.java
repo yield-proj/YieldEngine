@@ -18,8 +18,6 @@ package com.xebisco.yield.ui;
 
 import com.xebisco.yield.*;
 
-import java.util.concurrent.CompletableFuture;
-
 /**
  * The InputUI class is responsible for displaying a message and visual feedback when a controller is connected or
  * disconnected in a Yield application.
@@ -82,20 +80,20 @@ public class InputUI extends ComponentBehavior {
     }
 
     @Override
-    public void render(PlatformGraphics graphics) {
+    public void render(GraphicsManager graphics) {
         if (getApplication().getControllerManager() != null) {
             /*if (stage == -1)
                 return;
             instruction.setType(DrawInstruction.Type.IMAGE);
             for (int i = 0; i < 4; i++) {
                 if (getApplication().getControllerManager().getControllerIndex(i).isConnected())
-                    instruction.setRenderRef(getApplication().getControllerTexture().getImageRef());
-                else instruction.setRenderRef(getApplication().getTranslucentControllerTexture().getImageRef());
+                    instruction.setRenderRef(getApplication().getControllerTexture().getSpritesheetImageRef());
+                else instruction.setRenderRef(getApplication().getTranslucentControllerTexture().getSpritesheetImageRef());
                 instruction.setSize(new Size2D(50, 50));
                 instruction.setPosition(new Vector2D(getApplication().getScene().getCamera().getX() - getApplication().getViewportSize().getWidth() / 2.0 + 50 + getApplication().getControllerTexture().getSize().getWidth() / 2.0 * i - (target - f), -getApplication().getViewportSize().getHeight() / 2.0 + 50 + getApplication().getScene().getCamera().getY()));
                 graphics.draw(instruction);
             }
-            target = getFontLoader().getStringWidth(msg, font.getFontRef()) + 80;
+            target = getFontManager().getStringWidth(msg, font.getFontRef()) + 80;
             instruction.setType(DrawInstruction.Type.RECTANGLE);
             instruction.setInnerColor(Colors.DARK_PURPLE.darker());
             instruction.setBorderColor(Colors.PURPLE);
@@ -106,7 +104,7 @@ public class InputUI extends ComponentBehavior {
             graphics.draw(instruction);
             if (f > 50) {
                 instruction.setType(DrawInstruction.Type.IMAGE);
-                instruction.setRenderRef(getApplication().getControllerTexture().getImageRef());
+                instruction.setRenderRef(getApplication().getControllerTexture().getSpritesheetImageRef());
                 instruction.setSize(new Size2D(50, 50));
                 instruction.setPosition(new Vector2D(getApplication().getScene().getCamera().getX() - f / 2.0 + 30, -getApplication().getViewportSize().getHeight() / 2.0 + 50 + getApplication().getScene().getCamera().getY()));
                 graphics.draw(instruction);
@@ -117,7 +115,7 @@ public class InputUI extends ComponentBehavior {
                 instruction.setInnerColor(new Color(Colors.WHITE));
                 instruction.getInnerColor().setAlpha(1 - (target - f) / 30.0);
                 instruction.setFont(font);
-                instruction.getSize().set(getFontLoader().getStringWidth(msg, font.getFontRef()), getFontLoader().getStringHeight(msg, font.getFontRef()));
+                instruction.getSize().set(getFontManager().getStringWidth(msg, font.getFontRef()), getFontManager().getStringHeight(msg, font.getFontRef()));
                 instruction.setPosition(new Vector2D(getApplication().getScene().getCamera().getX() + 30, -getApplication().getViewportSize().getHeight() / 2f + 48 + getApplication().getScene().getCamera().getY()));
                 graphics.draw(instruction);
             }*/

@@ -26,16 +26,16 @@ public class Font extends FileInput {
     private Object fontRef;
     private final double size;
 
-    public Font(String relativePath, double size, FontLoader fontLoader) {
+    public Font(String relativePath, double size, FontManager fontManager) {
         super(relativePath);
         this.size = size;
-        fontRef = fontLoader.loadFont(this);
+        fontRef = fontManager.loadFont(this);
     }
 
-    public Font(InputStream inputStream, double size, FontLoader fontLoader) {
+    public Font(InputStream inputStream, double size, FontManager fontManager) {
         super(inputStream);
         this.size = size;
-        fontRef = fontLoader.loadFont(this);
+        fontRef = fontManager.loadFont(this);
     }
 
     /**

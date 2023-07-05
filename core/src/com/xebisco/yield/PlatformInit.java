@@ -27,6 +27,31 @@ public class PlatformInit {
     private Texture windowIcon;
     private String windowIconPath = "com/xebisco/yield/yieldIcon.png";
 
+    private final Class<?>[] requiredPlatformModules;
+
+    public static final Class<?>[] INPUT_DEFAULT = new Class<?>[]{
+            FontManager.class,
+            TextureManager.class,
+            SpritesheetTexture.class,
+            InputManager.class,
+            AudioManager.class,
+            ViewportZoomScale.class,
+            GraphicsManager.class
+    }, CHECKS_DEFAULT = new Class<?>[]{
+            FontManager.class,
+            TextureManager.class,
+            SpritesheetTexture.class,
+            KeyCheck.class,
+            MouseCheck.class,
+            AudioManager.class,
+            ViewportZoomScale.class,
+            GraphicsManager.class
+    };
+
+    public PlatformInit(Class<?>[] requiredPlatformModules) {
+        this.requiredPlatformModules = requiredPlatformModules;
+    }
+
     /**
      * Returns the size of the window.
      *
@@ -131,7 +156,7 @@ public class PlatformInit {
      * This function sets the path of the window icon in a Yield application.
      *
      * @param windowIconPath The parameter "windowIconPath" is a string that represents the file path of the icon that will
-     * be displayed in the window.
+     *                       be displayed in the window.
      */
     public void setWindowIconPath(String windowIconPath) {
         this.windowIconPath = windowIconPath;
@@ -150,7 +175,7 @@ public class PlatformInit {
      * This function sets the viewport size of the application.
      *
      * @param viewportSize The parameter `viewportSize` is of type `Size2D`, which represents the size of a two-dimensional
-     * area. It is being used to set the size of a viewport, which is a visible area on a screen/window.
+     *                     area. It is being used to set the size of a viewport, which is a visible area on a screen/window.
      */
     public void setViewportSize(Size2D viewportSize) {
         this.viewportSize = viewportSize;
@@ -169,7 +194,7 @@ public class PlatformInit {
      * This function sets the window icon of a Yield application.
      *
      * @param windowIcon The parameter "windowIcon" is a Texture object that represents the icon of a window in a Yield application. The method "setWindowIcon" sets the value of the windowIcon instance variable to the value passed as
-     * a parameter.
+     *                   a parameter.
      */
     public void setWindowIcon(Texture windowIcon) {
         this.windowIcon = windowIcon;
@@ -188,7 +213,7 @@ public class PlatformInit {
      * This is a method that sets the value of a variable called "startPhysicsPpm".
      *
      * @param startPhysicsPpm startPhysicsPpm is a variable of type integer that represents the starting value of the
-     * physics pixels per meter (ppm) for the physics simulation.
+     *                        physics pixels per meter (ppm) for the physics simulation.
      */
     public void setStartPhysicsPpm(int startPhysicsPpm) {
         this.startPhysicsPpm = startPhysicsPpm;
@@ -208,10 +233,14 @@ public class PlatformInit {
      * This function sets the value of a boolean variable called invertZIndex.
      *
      * @param invertZIndex The parameter "invertZIndex" is a boolean variable that determines whether the Z-index of an
-     * element should be inverted or not. If set to true, the Z-index will be inverted, meaning that elements with a higher
-     * Z-index will appear in front elements with a lower Z-index.
+     *                     element should be inverted or not. If set to true, the Z-index will be inverted, meaning that elements with a higher
+     *                     Z-index will appear in front elements with a lower Z-index.
      */
     public void setInvertZIndex(boolean invertZIndex) {
         this.invertZIndex = invertZIndex;
+    }
+
+    public Class<?>[] getRequiredPlatformModules() {
+        return requiredPlatformModules;
     }
 }

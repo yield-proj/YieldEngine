@@ -45,9 +45,9 @@ public class Text extends AbstractRenderable {
     }
 
     @Override
-    public void render(PlatformGraphics graphics) {
+    public void render(GraphicsManager graphics) {
         super.render(graphics);
-        getSize().set(((FontLoader) graphics).getStringWidth(contents, font.getFontRef()), ((FontLoader) graphics).getStringHeight(contents, font.getFontRef()));
+        getSize().set(((FontManager) graphics).getStringWidth(contents, font.getFontRef()), ((FontManager) graphics).getStringHeight(contents, font.getFontRef()));
     }
 
     public String getContents() {

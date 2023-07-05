@@ -20,30 +20,33 @@ package com.xebisco.yield;
  * The class ApplicationPlatform contains various managers and utilities for a Yield application.
  */
 public class ApplicationPlatform {
-    private final FontLoader fontLoader;
+    private final FontManager fontManager;
     private final TextureManager textureManager;
     private final InputManager inputManager;
-    private final CheckKey checkKey;
+    private final KeyCheck keyCheck;
     private final MouseCheck mouseCheck;
     private final AudioManager audioManager;
     private final ViewportZoomScale viewportZoomScale;
     private final ToggleFullScreen toggleFullScreen;
-    private final PlatformGraphics platformGraphics;
+    private final GraphicsManager graphicsManager;
 
-    public ApplicationPlatform(FontLoader fontLoader, TextureManager textureManager, InputManager inputManager, CheckKey checkKey, MouseCheck mouseCheck, AudioManager audioManager, ViewportZoomScale viewportZoomScale, ToggleFullScreen toggleFullScreen, PlatformGraphics platformGraphics) {
-        this.fontLoader = fontLoader;
+    private final SpritesheetTextureManager spritesheetTextureManager;
+
+    public ApplicationPlatform(FontManager fontManager, TextureManager textureManager, InputManager inputManager, KeyCheck keyCheck, MouseCheck mouseCheck, AudioManager audioManager, ViewportZoomScale viewportZoomScale, ToggleFullScreen toggleFullScreen, GraphicsManager graphicsManager, SpritesheetTextureManager spritesheetTextureManager) {
+        this.fontManager = fontManager;
         this.textureManager = textureManager;
         this.inputManager = inputManager;
-        this.checkKey = checkKey;
+        this.keyCheck = keyCheck;
         this.mouseCheck = mouseCheck;
         this.audioManager = audioManager;
         this.viewportZoomScale = viewportZoomScale;
         this.toggleFullScreen = toggleFullScreen;
-        this.platformGraphics = platformGraphics;
+        this.graphicsManager = graphicsManager;
+        this.spritesheetTextureManager = spritesheetTextureManager;
     }
 
-    public FontLoader getFontLoader() {
-        return fontLoader;
+    public FontManager getFontManager() {
+        return fontManager;
     }
 
     public TextureManager getTextureManager() {
@@ -54,8 +57,8 @@ public class ApplicationPlatform {
         return inputManager;
     }
 
-    public CheckKey getCheckKey() {
-        return checkKey;
+    public KeyCheck getKeyCheck() {
+        return keyCheck;
     }
 
     public MouseCheck getMouseCheck() {
@@ -74,7 +77,11 @@ public class ApplicationPlatform {
         return toggleFullScreen;
     }
 
-    public PlatformGraphics getPlatformGraphics() {
-        return platformGraphics;
+    public GraphicsManager getGraphicsManager() {
+        return graphicsManager;
+    }
+
+    public SpritesheetTextureManager getSpritesheetTextureManager() {
+        return spritesheetTextureManager;
     }
 }
