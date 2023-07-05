@@ -87,14 +87,16 @@ public abstract class AbstractRenderable extends ComponentBehavior {
             drawInstruction.getVerticesY()[i] = (int) y;
         });
         for (int i = 0; i < drawInstruction.getVerticesX().length; i++) {
-            double ox = offset.getX(), oy = offset.getY();
-            if(!ignoreOffsetScaling) {
-                ox *= getTransform().getScale().getX();
-                oy += getTransform().getScale().getY();
-            }
-            drawInstruction.getVerticesX()[i] += anchorSum.getX() + ox;
-            drawInstruction.getVerticesY()[i] += anchorSum.getY() + oy;
+            drawInstruction.getVerticesX()[i] += anchorSum.getX();
+            drawInstruction.getVerticesY()[i] += anchorSum.getY();
         }
+        double ox = offset.getX(), oy = offset.getY();
+        if(!ignoreOffsetScaling) {
+            ox *= getTransform().getScale().getX();
+            oy += getTransform().getScale().getY();
+        }
+        drawInstruction.setX(ox);
+        drawInstruction.setY(oy);
         return drawInstruction;
     }
 
