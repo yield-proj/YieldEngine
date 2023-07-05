@@ -31,8 +31,6 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     private List<ComponentBehavior> components = new ArrayList<>();
     private Entity2DContainer parent;
     private int index;
-    private FontManager fontManager;
-    private TextureManager textureManager;
     private ContactAdapter contactAdapter;
 
     private String[] tags;
@@ -258,25 +256,6 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     }
 
     /**
-     * This function returns the fontManager of this entity.
-     *
-     * @return The fontManager of this entity.
-     */
-    public FontManager getFontLoader() {
-        return fontManager;
-    }
-
-    /**
-     * This function sets the fontManager of this entity.
-     *
-     * @param fontManager The fontManager of this entity.
-     */
-
-    public void setFontLoader(FontManager fontManager) {
-        this.fontManager = fontManager;
-    }
-
-    /**
      * The function returns an instance of the Application class.
      *
      * @return The method is returning an object of type `Application`.
@@ -361,11 +340,7 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
         this.tags = tags;
     }
 
-    public TextureManager getTextureManager() {
-        return textureManager;
-    }
-
-    public void setTextureManager(TextureManager textureManager) {
-        this.textureManager = textureManager;
+    public DrawInstruction getEntityDrawInstruction() {
+        return entityDrawInstruction;
     }
 }

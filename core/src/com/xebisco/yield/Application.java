@@ -326,8 +326,6 @@ public class Application implements Behavior {
                 scene.onUpdate();
                 try {
                     for (Entity2D entity : scene.getEntities()) {
-                        entity.setFontLoader(applicationPlatform.getFontManager());
-                        entity.setTextureManager(applicationPlatform.getTextureManager());
                         entity.process();
 
                         if (scene != this.scene) {
