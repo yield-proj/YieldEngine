@@ -674,7 +674,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
                     graphics.translate(-camera.getX(), camera.getY());
 
                 if (!drawInstruction.isIgnoreViewportScale())
-                    graphics.scale(zoomScale.getX(), -zoomScale.getY());
+                    graphics.scale(zoomScale.getX(), zoomScale.getY());
 
                 draw(drawInstruction);
                 graphics.setTransform(savedTransform);
