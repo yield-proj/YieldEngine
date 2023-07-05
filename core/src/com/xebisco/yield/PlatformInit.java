@@ -32,7 +32,7 @@ public class PlatformInit {
     public static final Class<?>[] INPUT_DEFAULT = new Class<?>[]{
             FontManager.class,
             TextureManager.class,
-            SpritesheetTexture.class,
+            SpritesheetTextureManager.class,
             InputManager.class,
             AudioManager.class,
             ViewportZoomScale.class,
@@ -40,7 +40,7 @@ public class PlatformInit {
     }, CHECKS_DEFAULT = new Class<?>[]{
             FontManager.class,
             TextureManager.class,
-            SpritesheetTexture.class,
+            SpritesheetTextureManager.class,
             KeyCheck.class,
             MouseCheck.class,
             AudioManager.class,

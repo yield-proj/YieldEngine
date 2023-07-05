@@ -143,6 +143,9 @@ public class Application implements Behavior {
             } else if (c.equals(GraphicsManager.class)) {
                 if (platform.getGraphicsManager() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
+            } else if (c.equals(SpritesheetTextureManager.class)) {
+                if (platform.getSpritesheetTextureManager() == null)
+                    throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else {
                 throw new ApplicationPlatformModuleException("Not supported application module. '" + c.getSimpleName() + "'");
             }
