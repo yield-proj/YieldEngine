@@ -39,6 +39,8 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     private int frames;
     private boolean visible = true;
 
+    private final DrawInstruction entityDrawInstruction = new DrawInstruction();
+
     Entity2D(Application application, ComponentBehavior[] components) {
         super(application);
         this.application = application;
@@ -86,8 +88,16 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     }
 
     @Override
-    public void render(GraphicsManager graphics) {
-        if (visible)
+    public DrawInstruction render(GraphicsManager graphics) {
+        if (visible) {
+            entityDrawInstruction.setX(getTransform().getPosition().getX());
+            entityDrawInstruction.setY(getTransform().getPosition().getY());
+            entityDrawInstruction.setScaleX(getTransform().getScale().getX());
+            entityDrawInstruction.setScaleY(getTransform().getScale().getY());
+            entityDrawInstruction.setRotation(getTransform().getzRotation());
+            for(Entity2D child : getEntities()) {
+                entityDrawInstruction.getChildrenInstructions().add(child.render(graphics));
+            }
             for (int i = 0; i < components.size(); i++) {
                 ComponentBehavior component = null;
                 try {
@@ -96,21 +106,26 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
 
                 }
                 if (component != null && component.getFrames() > 1) {
-                    component.render(graphics);
+                    DrawInstruction di = component.render(graphics);
+                    if (di != null)
+                        entityDrawInstruction.getChildrenInstructions().add(di);
                 }
             }
+            return entityDrawInstruction;
+        }
+        return null;
     }
 
     /**
      * This function checks if a given tag is present in an array of tags.
      *
      * @param tag The parameter "tag" is a String representing the tag that we want to check if it exists in the "tags"
-     * array.
+     *            array.
      * @return A boolean value is being returned.
      */
     public boolean containsTag(String tag) {
-        for(String t : tags) {
-            if(t.hashCode() == tag.hashCode() && t.equals(tag))
+        for (String t : tags) {
+            if (t.hashCode() == tag.hashCode() && t.equals(tag))
                 return true;
         }
         return false;
@@ -301,8 +316,8 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
      * This function sets the visibility of this entity.
      *
      * @param visible The "visible" parameter is a boolean variable that determines whether this entity should
-     * be visible or not. If the value of "visible" is true, the object will be visible on the screen. If the
-     * value is false, the object or component will be hidden from view.
+     *                be visible or not. If the value of "visible" is true, the object will be visible on the screen. If the
+     *                value is false, the object or component will be hidden from view.
      */
     public void setVisible(boolean visible) {
         this.visible = visible;
@@ -321,7 +336,7 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
      * This function sets the parent of a 2D entity container.
      *
      * @param parent The parameter "parent" is an object of type Entity2DContainer, which represents the parent container
-     * of the current object. This method sets the parent container of the current object to the specified parent object.
+     *               of the current object. This method sets the parent container of the current object to the specified parent object.
      */
     public void setParent(Entity2DContainer parent) {
         this.parent = parent;

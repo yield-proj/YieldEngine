@@ -29,7 +29,7 @@ public class Text extends AbstractRenderable {
 
     @Override
     public int verticesCount() {
-        return 1;
+        return 0;
     }
 
     @Override
@@ -39,15 +39,15 @@ public class Text extends AbstractRenderable {
 
     @Override
     public void setup(Vector2D[] vertices) {
-        vertices[0].set(getEntity().getTransform().getPosition());
         getDrawInstruction().setText(contents);
         getDrawInstruction().setFontRef(font.getFontRef());
     }
 
     @Override
-    public void render(GraphicsManager graphics) {
-        super.render(graphics);
+    public DrawInstruction render(GraphicsManager graphics) {
+        DrawInstruction r = super.render(graphics);
         getSize().set(((FontManager) graphics).getStringWidth(contents, font.getFontRef()), ((FontManager) graphics).getStringHeight(contents, font.getFontRef()));
+        return r;
     }
 
     public String getContents() {

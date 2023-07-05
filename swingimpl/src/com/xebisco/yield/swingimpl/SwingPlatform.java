@@ -658,64 +658,69 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public void draw(DrawInstruction drawInstruction) {
-        if(drawInstruction.getVerticesX() == null && drawInstruction.getVerticesY() == null) {
-            graphics.setColor(awtColor(drawInstruction.getColor()));
-            AffineTransform t = graphics.getTransform();
-            graphics.setTransform(new AffineTransform());
-            graphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-            graphics.setTransform(t);
-            return;
-        }
         if (!frame.isVisible())
             return;
+
         AffineTransform savedTransform = new AffineTransform(graphics.getTransform());
-        double cX = 0, cY = 0;
-        for (int v : drawInstruction.getVerticesX())
-            cX += v;
-        for (int v : drawInstruction.getVerticesY())
-            cY -= v;
-        cX /= drawInstruction.getVerticesX().length;
-        cY /= drawInstruction.getVerticesY().length;
-        graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), cX, cY);
-        graphics.setClip(null);
-        Composite savedComposite = graphics.getComposite();
-        graphics.setColor(awtColor(drawInstruction.getColor()));
-        graphics.setFont(null);
 
-        if (drawInstruction.getText() != null && drawInstruction.getFontRef() != null) {
-            graphics.setFont((Font) drawInstruction.getFontRef());
-            graphics.drawString(drawInstruction.getText(), drawInstruction.getVerticesX()[0] - graphics.getFontMetrics().stringWidth(drawInstruction.getText()) / 2, -drawInstruction.getVerticesY()[0] + graphics.getFont().getSize() / 4);
-        } else if (drawInstruction.getImageRef() != null) {
-            Image image = (Image) drawInstruction.getImageRef();
-            Polygon p = new Polygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
-            graphics.setClip(p);
-            int[] vx = drawInstruction.getVerticesX(), vy = negateIntArray(drawInstruction.getVerticesY());
-            int lx = vx[0], ly = vy[0], hx = lx, hy = ly;
+        graphics.translate(drawInstruction.getX(), -drawInstruction.getY());
+        graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), 0, 0);
 
-            for (int i = 0; i < vx.length; i++) {
-                int x = vx[i], y = vy[i];
-                if (x < lx)
-                    lx = x;
-                if (y < ly)
-                    ly = y;
-                if (x > hx)
-                    hx = x;
-                if (y > hy)
-                    hy = y;
+        if (drawInstruction.getVerticesX() == null && drawInstruction.getVerticesY() == null) {
+            if (drawInstruction.getColor() != null) {
+                graphics.setColor(awtColor(drawInstruction.getColor()));
+                AffineTransform t = graphics.getTransform();
+                graphics.setTransform(new AffineTransform());
+                graphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                graphics.setTransform(t);
             }
-
-            graphics.drawImage(image, lx, ly, hx - lx, hy - ly, canvas);
         } else {
-            if (drawInstruction.getStroke() == 0)
-                graphics.fillPolygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
-            else {
-                graphics.setStroke(new BasicStroke((float) drawInstruction.getStroke()));
-                graphics.drawPolygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
+
+            graphics.setClip(null);
+            Composite savedComposite = graphics.getComposite();
+            graphics.setColor(awtColor(drawInstruction.getColor()));
+            graphics.setFont(null);
+
+            if (drawInstruction.getText() != null && drawInstruction.getFontRef() != null) {
+                graphics.setFont((Font) drawInstruction.getFontRef());
+                graphics.drawString(drawInstruction.getText(), - graphics.getFontMetrics().stringWidth(drawInstruction.getText()) / 2, graphics.getFont().getSize() / 4);
+            } else if (drawInstruction.getImageRef() != null) {
+                Image image = (Image) drawInstruction.getImageRef();
+                Polygon p = new Polygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
+                graphics.setClip(p);
+                int[] vx = drawInstruction.getVerticesX(), vy = negateIntArray(drawInstruction.getVerticesY());
+                int lx = vx[0], ly = vy[0], hx = lx, hy = ly;
+
+                for (int i = 0; i < vx.length; i++) {
+                    int x = vx[i], y = vy[i];
+                    if (x < lx)
+                        lx = x;
+                    if (y < ly)
+                        ly = y;
+                    if (x > hx)
+                        hx = x;
+                    if (y > hy)
+                        hy = y;
+                }
+
+                graphics.drawImage(image, lx, ly, hx - lx, hy - ly, canvas);
+            } else {
+                if (drawInstruction.getStroke() == 0)
+                    graphics.fillPolygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
+                else {
+                    graphics.setStroke(new BasicStroke((float) drawInstruction.getStroke()));
+                    graphics.drawPolygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
+                }
             }
+
+
+            graphics.setComposite(savedComposite);
         }
 
+        for(DrawInstruction di : drawInstruction.getChildrenInstructions()) {
+            draw(di);
+        }
 
-        graphics.setComposite(savedComposite);
         graphics.setTransform(savedTransform);
     }
 
@@ -751,8 +756,11 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     public void conclude() {
         if (!frame.isVisible())
             return;
+
+
         graphics.dispose();
         canvas.finishRender(graphics);
+
     }
 
     public GraphicsDevice getDevice() {

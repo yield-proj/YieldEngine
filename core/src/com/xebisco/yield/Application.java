@@ -89,8 +89,10 @@ public class Application implements Behavior {
                     } catch (IndexOutOfBoundsException ignore) {
 
                     }
-                    if (e != null)
-                        e.render(Application.this.applicationPlatform.getGraphicsManager());
+                    if (e != null) {
+                        DrawInstruction di = e.render(Application.this.applicationPlatform.getGraphicsManager());
+                        if(di != null) Application.this.applicationPlatform.getGraphicsManager().draw(di);
+                    }
                 }
             } catch (ConcurrentModificationException ignore) {
 

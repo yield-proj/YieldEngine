@@ -25,8 +25,7 @@ public class Main extends Scene {
         ContextTime time = new ContextTime();
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit(PlatformInit.INPUT_DEFAULT);
-        Application application = new Application(applicationManager, Main.class, Global.swingPlatform(), platformInit);
-        applicationManager.getApplications().add(application);
+        new Application(applicationManager, Main.class, Global.swingPlatform(), platformInit);
         applicationManager.run();
     }
     private Entity2D e;
@@ -44,5 +43,6 @@ public class Main extends Scene {
         s += getApplication().getAxis(HORIZONTAL) * getTime().getDeltaTime();
         e.getTransform().translate(0, getApplication().getAxis(VERTICAL));
         e.getTransform().rotate(s);
+        System.out.println(getTime().getDeltaTime());
     }
 }

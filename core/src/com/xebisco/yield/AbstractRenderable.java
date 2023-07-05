@@ -50,41 +50,28 @@ public abstract class AbstractRenderable extends ComponentBehavior {
     @VisibleOnInspector
     private RectangleAnchor anchor = RectangleAnchor.CENTER;
 
-    private Size2D drawSize = new Size2D(0, 0);
-
     private final Vector2D anchorSum = new Vector2D();
 
     @Override
-    public void render(GraphicsManager graphics) {
-        drawInstruction.setRotation(getEntity().getTransform().getzRotation());
+    public DrawInstruction render(GraphicsManager graphics) {
         if (filled)
             drawInstruction.setStroke(0);
         else drawInstruction.setStroke(borderThickness);
         drawInstruction.setColor(color);
-        if (absoluteScaled)
-            drawSize.set(
-                    size.getWidth() * Math.abs(getEntity().getTransform().getScale().getX()),
-                    size.getHeight() * Math.abs(getEntity().getTransform().getScale().getY())
-            );
-        else
-            drawSize.set(
-                    size.getWidth() * getEntity().getTransform().getScale().getX(),
-                    size.getHeight() * getEntity().getTransform().getScale().getY()
-            );
 
         anchorSum.reset();
         switch (anchor) {
             case UP:
-                anchorSum.setY(-drawSize.getHeight() / 2.);
+                anchorSum.setY(-getSize().getHeight() / 2.);
                 break;
             case DOWN:
-                anchorSum.setY(drawSize.getHeight() / 2.);
+                anchorSum.setY(getSize().getHeight() / 2.);
                 break;
             case RIGHT:
-                anchorSum.setX(-drawSize.getWidth() / 2.);
+                anchorSum.setX(-getSize().getWidth() / 2.);
                 break;
             case LEFT:
-                anchorSum.setX(drawSize.getWidth() / 2.);
+                anchorSum.setX(getSize().getWidth() / 2.);
                 break;
         }
         setup(vertices);
@@ -103,7 +90,7 @@ public abstract class AbstractRenderable extends ComponentBehavior {
             drawInstruction.getVerticesX()[i] += anchorSum.getX() + offset.getX();
             drawInstruction.getVerticesY()[i] += anchorSum.getY() + offset.getY();
         }
-        graphics.draw(drawInstruction);
+        return drawInstruction;
     }
 
     /**
@@ -254,14 +241,6 @@ public abstract class AbstractRenderable extends ComponentBehavior {
      */
     public void setAbsoluteScaled(boolean absoluteScaled) {
         this.absoluteScaled = absoluteScaled;
-    }
-
-    public Size2D getDrawSize() {
-        return drawSize;
-    }
-
-    public void setDrawSize(Size2D drawSize) {
-        this.drawSize = drawSize;
     }
 
     public List<VertexShader> getVertexShaders() {

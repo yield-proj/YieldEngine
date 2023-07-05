@@ -43,8 +43,8 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
     }
 
     @Override
-    public void render(GraphicsManager graphics) {
-
+    public DrawInstruction render(GraphicsManager graphics) {
+        return null;
     }
 
     /**

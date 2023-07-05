@@ -27,9 +27,9 @@ public class Rectangle extends AbstractRenderable {
 
     @Override
     public void setup(Vector2D[] vertices) {
-        vertices[0].set(getEntity().getTransform().getPosition().getX() - getSize().getWidth() / 2. * getTransform().getScale().getX(), getEntity().getTransform().getPosition().getY() - getSize().getHeight() / 2. * getTransform().getScale().getY());
-        vertices[1].set(getEntity().getTransform().getPosition().getX() + getSize().getWidth() / 2. * getTransform().getScale().getX(), getEntity().getTransform().getPosition().getY() - getSize().getHeight() / 2. * getTransform().getScale().getY());
-        vertices[2].set(getEntity().getTransform().getPosition().getX() + getSize().getWidth() / 2. * getTransform().getScale().getX(), getEntity().getTransform().getPosition().getY() + getSize().getHeight() / 2. * getTransform().getScale().getY());
-        vertices[3].set(getEntity().getTransform().getPosition().getX() - getSize().getWidth() / 2. * getTransform().getScale().getX(), getEntity().getTransform().getPosition().getY() + getSize().getHeight() / 2. * getTransform().getScale().getY());
+        vertices[0].set(-getSize().getWidth() / 2., -getSize().getHeight() / 2.);
+        vertices[1].set(getSize().getWidth() / 2., -getSize().getHeight() / 2.);
+        vertices[2].set(getSize().getWidth() / 2., getSize().getHeight() / 2.);
+        vertices[3].set(-getSize().getWidth() / 2., getSize().getHeight() / 2.);
     }
 }

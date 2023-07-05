@@ -80,8 +80,9 @@ public class InputUI extends ComponentBehavior {
     }
 
     @Override
-    public void render(GraphicsManager graphics) {
+    public DrawInstruction render(GraphicsManager graphics) {
         if (getApplication().getControllerManager() != null) {
+            //TODO
             /*if (stage == -1)
                 return;
             instruction.setType(DrawInstruction.Type.IMAGE);
@@ -120,5 +121,6 @@ public class InputUI extends ComponentBehavior {
                 graphics.draw(instruction);
             }*/
         }
+        return null;
     }
 }
