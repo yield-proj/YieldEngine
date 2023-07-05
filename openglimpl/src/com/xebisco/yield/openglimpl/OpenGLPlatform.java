@@ -237,7 +237,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
                 gl.glEnable(GL2.GL_TEXTURE_2D);
                 renderer.begin3DRendering();
                 Rectangle2D bounds = renderer.getBounds(di.getText());
-                renderer.draw(di.getText(), (int) (-bounds.getWidth() / 2), (int) (-bounds.getHeight() / 4));
+                renderer.draw(di.getText(), (int) (-bounds.getWidth() / 2), (int) (-bounds.getHeight() / 2));
                 renderer.end3DRendering();
                 gl.glDisable(GL2.GL_TEXTURE_2D);
             } else {
