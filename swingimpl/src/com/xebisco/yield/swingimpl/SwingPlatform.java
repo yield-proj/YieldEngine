@@ -45,7 +45,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     private GraphicsConfiguration graphicsConfiguration = device.getDefaultConfiguration();
     private DisplayMode defaultDisplayMode;
     private JFrame frame;
-    private Graphics2D graphics;
+    private Graphics2D graphics, fontSizeGraphics;
     private boolean stretch;
 
     private PlatformInit platformInit;
@@ -588,6 +588,9 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     @Override
     public void init(PlatformInit platformInit) {
         this.platformInit = platformInit;
+
+        fontSizeGraphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB).createGraphics();
+
         Toolkit.getDefaultToolkit().setDynamicLayout(false);
         stretch = platformInit.isStretchViewport();
 
@@ -680,9 +683,6 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     }
 
     public void draw(DrawInstruction drawInstruction) {
-        if (!frame.isVisible())
-            return;
-
         AffineTransform savedTransform = new AffineTransform(graphics.getTransform());
 
         graphics.translate(drawInstruction.getX(), -drawInstruction.getY());
@@ -774,12 +774,12 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public double getStringWidth(String text, Object fontRef) {
-        return graphics.getFontMetrics((Font) fontRef).stringWidth(text);
+        return fontSizeGraphics.getFontMetrics((Font) fontRef).stringWidth(text);
     }
 
     @Override
     public double getStringHeight(String text, Object fontRef) {
-        return graphics.getFontMetrics((Font) fontRef).getHeight();
+        return fontSizeGraphics.getFontMetrics((Font) fontRef).getHeight();
     }
 
     public GraphicsDevice getDevice() {
