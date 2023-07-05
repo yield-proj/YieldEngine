@@ -664,7 +664,15 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         AffineTransform savedTransform = new AffineTransform(graphics.getTransform());
 
         graphics.translate(drawInstruction.getX(), -drawInstruction.getY());
-        graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), 0, 0);
+
+        if (drawInstruction.isRotateBeforeScale()) {
+            graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), 0, 0);
+            graphics.scale(drawInstruction.getScaleX(), drawInstruction.getScaleY());
+        } else {
+            graphics.scale(drawInstruction.getScaleX(), drawInstruction.getScaleY());
+            graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), 0, 0);
+        }
+
 
         if (drawInstruction.getVerticesX() == null && drawInstruction.getVerticesY() == null) {
             if (drawInstruction.getColor() != null) {
@@ -683,7 +691,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
             if (drawInstruction.getText() != null && drawInstruction.getFontRef() != null) {
                 graphics.setFont((Font) drawInstruction.getFontRef());
-                graphics.drawString(drawInstruction.getText(), - graphics.getFontMetrics().stringWidth(drawInstruction.getText()) / 2, graphics.getFont().getSize() / 4);
+                graphics.drawString(drawInstruction.getText(), -graphics.getFontMetrics().stringWidth(drawInstruction.getText()) / 2, graphics.getFont().getSize() / 4);
             } else if (drawInstruction.getImageRef() != null) {
                 Image image = (Image) drawInstruction.getImageRef();
                 Polygon p = new Polygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
@@ -717,7 +725,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
             graphics.setComposite(savedComposite);
         }
 
-        for(DrawInstruction di : drawInstruction.getChildrenInstructions()) {
+        for (DrawInstruction di : drawInstruction.getChildrenInstructions()) {
             draw(di);
         }
 

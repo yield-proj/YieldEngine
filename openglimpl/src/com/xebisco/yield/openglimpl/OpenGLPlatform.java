@@ -199,7 +199,13 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     public void draw(DrawInstruction di, GL2 gl) {
         gl.glTranslatef((float) di.getX(), (float) di.getY(), 0);
-        gl.glRotatef((float) di.getRotation(), 0, 0, 1);
+        if (di.isRotateBeforeScale()) {
+            gl.glRotatef((float) di.getRotation(), 0, 0, 1);
+            gl.glScalef((float) di.getScaleX(), (float) di.getScaleY(), 0);
+        } else {
+            gl.glScalef((float) di.getScaleX(), (float) di.getScaleY(), 0);
+            gl.glRotatef((float) di.getRotation(), 0, 0, 1);
+        }
 
         if (di.getVerticesX() == null && di.getVerticesY() == null) {
             if (di.getColor() != null) {

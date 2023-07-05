@@ -31,7 +31,9 @@ public class DrawInstruction {
     private Color color;
     private double rotation;
 
-    private double x, y, scaleX, scaleY;
+    private boolean rotateBeforeScale = true;
+
+    private double x, y, scaleX = 1, scaleY = 1;
 
     private List<DrawInstruction> childrenInstructions = new ArrayList<>();
 
@@ -145,5 +147,13 @@ public class DrawInstruction {
 
     public void setScaleY(double scaleY) {
         this.scaleY = scaleY;
+    }
+
+    public boolean isRotateBeforeScale() {
+        return rotateBeforeScale;
+    }
+
+    public void setRotateBeforeScale(boolean rotateBeforeScale) {
+        this.rotateBeforeScale = rotateBeforeScale;
     }
 }
