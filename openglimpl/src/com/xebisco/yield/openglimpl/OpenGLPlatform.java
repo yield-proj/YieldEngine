@@ -241,7 +241,12 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
                 renderer.end3DRendering();
                 gl.glDisable(GL2.GL_TEXTURE_2D);
             } else {
-                gl.glBegin(GL2.GL_POLYGON);
+                if (di.getStroke() == 0)
+                    gl.glBegin(GL2.GL_POLYGON);
+                else {
+                    gl.glLineWidth((float) di.getStroke());
+                    gl.glBegin(GL2.GL_LINE_LOOP);
+                }
                 for (int i1 = 0; i1 < di.getVerticesX().length; i1++) {
                     gl.glVertex2i(di.getVerticesX()[i1], di.getVerticesY()[i1]);
                 }
