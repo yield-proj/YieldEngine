@@ -162,8 +162,10 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
                 for (DrawInstruction di : drawInstructions) {
                     gl.glLoadIdentity();
 
-                    gl.glTranslated(-camera.getX(), -camera.getY(), 0);
-                    gl.glScaled(scale.getX(), scale.getY(), 1);
+                    if (!di.isIgnoreCameraPosition())
+                        gl.glTranslated(-camera.getX(), -camera.getY(), 0);
+                    if (!di.isIgnoreViewportScale())
+                        gl.glScaled(scale.getX(), scale.getY(), 1);
                     draw(di, gl);
                 }
             } catch (ConcurrentModificationException ignore) {

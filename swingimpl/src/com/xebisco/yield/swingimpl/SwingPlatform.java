@@ -649,8 +649,8 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
             graphics.translate((int) (canvas.getWidth() / 2 - viewport.getWidth() / 2), (int) (canvas.getHeight() / 2 - viewport.getHeight() / 2));
             graphics.scale(viewport.getWidth() / platformInit.getViewportSize().getWidth(), viewport.getHeight() / platformInit.getViewportSize().getHeight());
         }
+
         graphics.translate(platformInit.getViewportSize().getWidth() / 2, platformInit.getViewportSize().getHeight() / 2);
-        graphics.translate(-camera.getX(), camera.getY());
 
         Point mouse = canvas.getMousePosition();
         if (mouse != null)
@@ -662,8 +662,18 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         if (!frame.isVisible())
             return;
 
-        for(DrawInstruction drawInstruction : drawInstructions)
+        for (DrawInstruction drawInstruction : drawInstructions) {
+            AffineTransform savedTransform = new AffineTransform(graphics.getTransform());
+
+            if (!drawInstruction.isIgnoreCameraPosition())
+                graphics.translate(-camera.getX(), camera.getY());
+
+            if (!drawInstruction.isIgnoreViewportScale())
+                graphics.scale(zoomScale.getX(), -zoomScale.getY());
+
             draw(drawInstruction);
+            graphics.setTransform(savedTransform);
+        }
 
         graphics.dispose();
         canvas.finishRender(graphics);

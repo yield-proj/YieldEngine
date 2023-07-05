@@ -29,6 +29,8 @@ public class DrawInstruction implements Cloneable {
     private String text;
     private double stroke;
     private Color color;
+    //Only work on top-level entities
+    private boolean ignoreCameraPosition, ignoreViewportScale;
     private double rotation;
 
     private boolean rotateBeforeScale = true;
@@ -155,6 +157,22 @@ public class DrawInstruction implements Cloneable {
 
     public void setRotateBeforeScale(boolean rotateBeforeScale) {
         this.rotateBeforeScale = rotateBeforeScale;
+    }
+
+    public boolean isIgnoreCameraPosition() {
+        return ignoreCameraPosition;
+    }
+
+    public void setIgnoreCameraPosition(boolean ignoreCameraPosition) {
+        this.ignoreCameraPosition = ignoreCameraPosition;
+    }
+
+    public boolean isIgnoreViewportScale() {
+        return ignoreViewportScale;
+    }
+
+    public void setIgnoreViewportScale(boolean ignoreViewportScale) {
+        this.ignoreViewportScale = ignoreViewportScale;
     }
 
     @Override
