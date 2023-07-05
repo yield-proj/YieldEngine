@@ -29,6 +29,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.List;
 
@@ -665,17 +666,20 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         if (!frame.isVisible())
             return;
 
-        for (DrawInstruction drawInstruction : drawInstructions) {
-            AffineTransform savedTransform = new AffineTransform(graphics.getTransform());
+        try {
+            for (DrawInstruction drawInstruction : drawInstructions) {
+                AffineTransform savedTransform = new AffineTransform(graphics.getTransform());
 
-            if (!drawInstruction.isIgnoreCameraPosition())
-                graphics.translate(-camera.getX(), camera.getY());
+                if (!drawInstruction.isIgnoreCameraPosition())
+                    graphics.translate(-camera.getX(), camera.getY());
 
-            if (!drawInstruction.isIgnoreViewportScale())
-                graphics.scale(zoomScale.getX(), -zoomScale.getY());
+                if (!drawInstruction.isIgnoreViewportScale())
+                    graphics.scale(zoomScale.getX(), -zoomScale.getY());
 
-            draw(drawInstruction);
-            graphics.setTransform(savedTransform);
+                draw(drawInstruction);
+                graphics.setTransform(savedTransform);
+            }
+        } catch (ConcurrentModificationException ignore) {
         }
 
         graphics.dispose();
