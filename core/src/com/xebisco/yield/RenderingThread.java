@@ -45,12 +45,19 @@ public class RenderingThread extends Thread {
                     throw new RuntimeException(e);
                 }
             }
-            graphicsManager.frame();
-            graphicsManager.draw(drawInstructions);
-            synchronized (otherLock) {
-                otherLock.notify();
-                finishedRendering = true;
+            if(drawInstructions != null) {
+                graphicsManager.frame();
+                graphicsManager.draw(drawInstructions);
+                synchronized (otherLock) {
+                    otherLock.notify();
+                    finishedRendering = true;
+                }
             }
+        }
+        try {
+            join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

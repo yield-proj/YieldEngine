@@ -395,11 +395,9 @@ public class Application implements Behavior {
 
     @Override
     public void dispose() {
-        try {
-            renderingThread.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        renderingThread.getRunning().set(false);
+        //Wake up thread
+        renderingThread.renderAsync(null);
         setScene(null);
         if (controllerManager != null)
             controllerManager.quitSDLGamepad();
