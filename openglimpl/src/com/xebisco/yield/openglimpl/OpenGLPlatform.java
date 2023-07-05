@@ -250,7 +250,6 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
         }
 
         for (DrawInstruction child : di.getChildrenInstructions()) {
-            System.out.println(child.getText());
             draw(child, gl);
         }
     }
