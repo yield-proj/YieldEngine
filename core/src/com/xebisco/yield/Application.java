@@ -298,9 +298,11 @@ public class Application implements Behavior {
     public void onUpdate() {
         if (scene != null && !(scene instanceof BlankScene)) {
 
-            toSendDrawInstructions.clear();
-            toSendDrawInstructions.addAll(drawInstructions);
-            renderingThread.renderAsync(toSendDrawInstructions);
+            if (scene.getFrames() >= 1) {
+                toSendDrawInstructions.clear();
+                drawInstructions.forEach((di) -> toSendDrawInstructions.add(di.clone()));
+                renderingThread.renderAsync(toSendDrawInstructions);
+            }
 
             Scene scene = this.scene;
             scene.setFrames(scene.getFrames() + 1);
@@ -368,28 +370,26 @@ public class Application implements Behavior {
                 } catch (ConcurrentModificationException ignore) {
 
                 }
-                //renderer.apply(scene);
-            }
 
-
-            if (changeSceneTransition != null) {
-                changeSceneTransition.setApplication(this);
-                changeSceneTransition.setDeltaTime(getApplicationManager().getManagerContext().getContextTime().getDeltaTime());
-                changeSceneTransition.setPassedTime(changeSceneTransition.getPassedTime() + changeSceneTransition.getDeltaTime());
-                changeSceneTransition.setFrames(changeSceneTransition.getFrames() + 1);
-                changeSceneTransition.render();
-                if (changeSceneTransition.getPassedTime() >= changeSceneTransition.getTimeToWait() && toChangeScene != null) {
+                if (changeSceneTransition != null) {
+                    changeSceneTransition.setApplication(this);
+                    changeSceneTransition.setDeltaTime(getApplicationManager().getManagerContext().getContextTime().getDeltaTime());
+                    changeSceneTransition.setPassedTime(changeSceneTransition.getPassedTime() + changeSceneTransition.getDeltaTime());
+                    changeSceneTransition.setFrames(changeSceneTransition.getFrames() + 1);
+                    changeSceneTransition.render();
+                    if (changeSceneTransition.getPassedTime() >= changeSceneTransition.getTimeToWait() && toChangeScene != null) {
+                        setScene(toChangeScene);
+                        toChangeScene = null;
+                    }
+                    if (changeSceneTransition.isFinished())
+                        changeSceneTransition = null;
+                } else if (toChangeScene != null) {
                     setScene(toChangeScene);
                     toChangeScene = null;
                 }
-                if (changeSceneTransition.isFinished())
-                    changeSceneTransition = null;
-            } else if (toChangeScene != null) {
-                setScene(toChangeScene);
-                toChangeScene = null;
-            }
 
-            renderingThread.aWait();
+                renderingThread.aWait();
+            }
         }
     }
 

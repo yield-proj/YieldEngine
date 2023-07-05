@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * It's a data structure that holds all the information needed to draw a rectangle, oval, text, line, or image
  */
-public class DrawInstruction {
+public class DrawInstruction implements Cloneable {
     private int[] verticesX;
     private int[] verticesY;
     private Object imageRef, fontRef;
@@ -155,5 +155,18 @@ public class DrawInstruction {
 
     public void setRotateBeforeScale(boolean rotateBeforeScale) {
         this.rotateBeforeScale = rotateBeforeScale;
+    }
+
+    @Override
+    public DrawInstruction clone() {
+        try {
+            DrawInstruction clone = (DrawInstruction) super.clone();
+            clone.setChildrenInstructions(new ArrayList<>());
+            getChildrenInstructions().forEach(di -> clone.getChildrenInstructions().add(di.clone()));
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
