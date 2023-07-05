@@ -33,11 +33,13 @@ import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
-public class OpenGLPlatform implements GraphicsManager, FontManager, TextureManager, InputManager, ViewportZoomScale, ToggleFullScreen, GLEventListener, KeyListener, MouseListener {
+public class OpenGLPlatform implements GraphicsManager, FontManager, TextureManager, SpritesheetTextureManager, InputManager, ViewportZoomScale, ToggleFullScreen, GLEventListener, KeyListener, MouseListener {
 
     private GLWindow window;
     private final Vector2D mousePosition = new Vector2D();
@@ -54,6 +56,47 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     private GLProfile profile;
 
     private final List<DrawInstruction> drawInstructions = new ArrayList<>();
+
+    @Override
+    public Object loadSpritesheetTexture(SpritesheetTexture spritesheetTexture) {
+        return loadAWTBufferedImage(new BufferedInputStream(spritesheetTexture.getInputStream()));
+    }
+
+    private BufferedImage loadAWTBufferedImage(BufferedInputStream inputStream) {
+        BufferedImage i;
+        try {
+            i = ImageIO.read(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return i;
+    }
+
+    @Override
+    public void unloadSpritesheetTexture(SpritesheetTexture spritesheetTexture) {
+        ((Image) spritesheetTexture.getSpritesheetImageRef()).flush();
+        spritesheetTexture.setSpritesheetImageRef(null);
+    }
+
+    @Override
+    public Texture getTextureFromRegion(int x, int y, int width, int height, SpritesheetTexture spritesheetTexture) {
+        return new Texture(AWTTextureIO.newTexture(profile, ((BufferedImage) spritesheetTexture.getSpritesheetTextureManager()).getSubimage(x, y, width, height), false), null, this);
+    }
+
+    @Override
+    public int getSpritesheetImageWidth(Object imageRef) {
+        return ((BufferedImage) imageRef).getWidth();
+    }
+
+    @Override
+    public int getSpritesheetImageHeight(Object imageRef) {
+        return ((BufferedImage) imageRef).getHeight();
+    }
 
     private interface KeyAction {
         void call(Input.Key key);

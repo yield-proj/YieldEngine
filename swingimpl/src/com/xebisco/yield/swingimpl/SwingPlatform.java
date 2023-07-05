@@ -26,11 +26,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class SwingPlatform implements GraphicsManager, FontManager, TextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, ViewportZoomScale, ToggleFullScreen {
+public class SwingPlatform implements GraphicsManager, FontManager, TextureManager, SpritesheetTextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, ViewportZoomScale, ToggleFullScreen {
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
     private final HashSet<Input.Key> pressingKeys = new HashSet<>();
     private final HashSet<Input.MouseButton> pressingMouseButtons = new HashSet<>();
@@ -103,14 +104,18 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public Object loadTexture(Texture texture) {
+        return loadAWTBufferedImage(new BufferedInputStream(texture.getInputStream()));
+    }
+
+    private BufferedImage loadAWTBufferedImage(BufferedInputStream inputStream) {
         BufferedImage i;
         try {
-            i = ImageIO.read(texture.getInputStream());
+            i = ImageIO.read(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         try {
-            texture.getInputStream().close();
+            inputStream.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -926,6 +931,32 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
                 frame.setLocationRelativeTo(null);
             }
         }
+    }
+
+    @Override
+    public Object loadSpritesheetTexture(SpritesheetTexture spritesheetTexture) {
+        return loadAWTBufferedImage(new BufferedInputStream(spritesheetTexture.getInputStream()));
+    }
+
+    @Override
+    public void unloadSpritesheetTexture(SpritesheetTexture spritesheetTexture) {
+        ((Image) spritesheetTexture.getSpritesheetImageRef()).flush();
+        spritesheetTexture.setSpritesheetImageRef(null);
+    }
+
+    @Override
+    public Texture getTextureFromRegion(int x, int y, int width, int height, SpritesheetTexture spritesheetTexture) {
+        return new Texture(((BufferedImage) spritesheetTexture.getSpritesheetTextureManager()).getSubimage(x, y, width, height), null, this);
+    }
+
+    @Override
+    public int getSpritesheetImageWidth(Object imageRef) {
+        return ((BufferedImage) imageRef).getWidth();
+    }
+
+    @Override
+    public int getSpritesheetImageHeight(Object imageRef) {
+        return ((BufferedImage) imageRef).getHeight();
     }
 
     private interface KeyAction {
