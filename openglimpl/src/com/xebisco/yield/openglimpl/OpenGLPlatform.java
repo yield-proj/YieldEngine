@@ -266,7 +266,8 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     @Override
     public void dispose() {
-        window.destroy();
+        if (window.isVisible())
+            window.destroy();
     }
 
     @Override

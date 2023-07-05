@@ -52,7 +52,11 @@ public class ApplicationManager implements Runnable {
                 }
                 application.onUpdate();
             }
-            boolean removed = applications.removeIf(a -> a.getApplicationPlatform().getGraphicsManager().shouldClose());
+            boolean removed = applications.removeIf(a -> {
+                boolean remove = a.getApplicationPlatform().getGraphicsManager().shouldClose();
+                if(remove) a.dispose();
+                return remove;
+            });
             if(removed && applications.size() == 0) managerContext.getRunning().set(false);
         }
     }
@@ -62,10 +66,6 @@ public class ApplicationManager implements Runnable {
     class ApplicationManagerContextDisposable implements Disposable {
         @Override
         public void dispose() {
-            for(Application application : applications) {
-                application.dispose();
-            }
-            applications.clear();
             applications = null;
             managerContext = null;
         }
