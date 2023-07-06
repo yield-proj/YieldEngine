@@ -133,7 +133,9 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     public void init(GLAutoDrawable glAutoDrawable) {
         GL2 gl = glAutoDrawable.getGL().getGL2();
         gl.glEnable(GL2.GL_BLEND);
-        gl.setSwapInterval(0);
+        if (platformInit.isVerticalSync()) gl.setSwapInterval(1);
+        else
+            gl.setSwapInterval(0);
         gl.glClearColor(0, 0, 0, 1);
     }
 

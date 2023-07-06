@@ -23,7 +23,7 @@ public class PlatformInit {
     private Size2D viewportSize = new Size2D(1280, 720), windowSize = new Size2D(1280, 720);
     private String title = "Yield Window";
     private int startPhysicsPpm = 16;
-    private boolean fullscreen, undecorated, stretchViewport, invertZIndex;
+    private boolean fullscreen, undecorated, stretchViewport, invertZIndex, verticalSync;
     private Texture windowIcon;
     private String windowIconPath = "com/xebisco/yield/yieldIcon.png";
 
@@ -243,5 +243,13 @@ public class PlatformInit {
 
     public Class<?>[] getRequiredPlatformModules() {
         return requiredPlatformModules;
+    }
+
+    public boolean isVerticalSync() {
+        return verticalSync;
+    }
+
+    public void setVerticalSync(boolean verticalSync) {
+        this.verticalSync = verticalSync;
     }
 }
