@@ -32,7 +32,7 @@ public final class Global {
          *
          * @return The method is returning an instance of the `ApplicationPlatform` class.
          */
-        public static ApplicationPlatform swingXAudio() throws ClassNotFoundException {
+        public static ApplicationPlatform swingXSound() throws ClassNotFoundException {
             Class<?> swingPlatformClass = Class.forName("com.xebisco.yield.swingimpl.SwingPlatform");
             Class<?> clipAudioClass = Class.forName("com.xebisco.yield.javaxsoundimpl.JavaXSoundManager");
             try {
@@ -54,7 +54,7 @@ public final class Global {
             }
         }
 
-        public static ApplicationPlatform openGLXAudio() throws ClassNotFoundException {
+        public static ApplicationPlatform openGLXSound() throws ClassNotFoundException {
             Class<?> openGLPlatformClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
             Class<?> clipAudioClass = Class.forName("com.xebisco.yield.javaxsoundimpl.JavaXSoundManager");
             try {
