@@ -670,11 +670,11 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
             for (DrawInstruction drawInstruction : drawInstructions) {
                 AffineTransform savedTransform = new AffineTransform(graphics.getTransform());
 
-                if (!drawInstruction.isIgnoreCameraPosition())
-                    graphics.translate(-camera.getX(), camera.getY());
-
                 if (!drawInstruction.isIgnoreViewportScale())
                     graphics.scale(zoomScale.getX(), zoomScale.getY());
+
+                if (!drawInstruction.isIgnoreCameraPosition())
+                    graphics.translate(-camera.getX(), camera.getY());
 
                 draw(drawInstruction);
                 graphics.setTransform(savedTransform);
