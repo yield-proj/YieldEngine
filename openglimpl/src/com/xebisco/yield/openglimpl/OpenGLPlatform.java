@@ -85,7 +85,9 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     @Override
     public Texture getTextureFromRegion(int x, int y, int width, int height, SpritesheetTexture spritesheetTexture) {
-        return new Texture(AWTTextureIO.newTexture(profile, ((BufferedImage) spritesheetTexture.getSpritesheetTextureManager()).getSubimage(x, y, width, height), false), null, this);
+        OpenGLImage image = new OpenGLImage(AWTTextureIO.newTextureData(profile, ((BufferedImage) spritesheetTexture.getSpritesheetImageRef()).getSubimage(x, y, width, height), false));
+        toLoadImages.add(image);
+        return new Texture(image, null, this);
     }
 
     @Override

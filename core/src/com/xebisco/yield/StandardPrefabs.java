@@ -190,6 +190,17 @@ public class StandardPrefabs {
         );
     }
 
+    public static Entity2DPrefab texRectangle(Size2D size, Texture texture, String[] tags) {
+        return new Entity2DPrefab(
+                tags,
+                new ComponentCreation(TextureRectangle.class, c -> {
+                    if (size != null)
+                        ((TextureRectangle) c).setSize(size);
+                    ((TextureRectangle) c).setTexture(texture);
+                })
+        );
+    }
+
     /**
      * This function creates a 2D entity prefab with a texture rectangle component of a specified size and texture path.
      *
@@ -207,6 +218,16 @@ public class StandardPrefabs {
                 }),
                 new ComponentCreation(TextureRectangleLoader.class, c -> {
                     ((TextureRectangleLoader) c).setTexturePath(texturePath);
+                })
+        );
+    }
+
+    public static Entity2DPrefab texRectangle(Size2D size, Texture texture) {
+        return new Entity2DPrefab(
+                new ComponentCreation(TextureRectangle.class, c -> {
+                    if (size != null)
+                        ((TextureRectangle) c).setSize(size);
+                    ((TextureRectangle) c).setTexture(texture);
                 })
         );
     }
@@ -232,6 +253,16 @@ public class StandardPrefabs {
         );
     }
 
+    public static Entity2DPrefab texRectangle(Texture texture, String[] tags) {
+        return new Entity2DPrefab(
+                tags,
+                new ComponentCreation(TextureRectangle.class, c -> {
+                    ((TextureRectangle) c).setTextureSized(true);
+                    ((TextureRectangle) c).setTexture(texture);
+                })
+        );
+    }
+
     /**
      * This function creates a 2D entity prefab with a texture rectangle component of a texture path.
      *
@@ -246,6 +277,15 @@ public class StandardPrefabs {
                 }),
                 new ComponentCreation(TextureRectangleLoader.class, c -> {
                     ((TextureRectangleLoader) c).setTexturePath(texturePath);
+                })
+        );
+    }
+
+    public static Entity2DPrefab texRectangle(Texture texture) {
+        return new Entity2DPrefab(
+                new ComponentCreation(TextureRectangle.class, c -> {
+                    ((TextureRectangle) c).setTextureSized(true);
+                    ((TextureRectangle) c).setTexture(texture);
                 })
         );
     }

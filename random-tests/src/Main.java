@@ -25,7 +25,7 @@ public class Main extends Scene {
         ContextTime time = new ContextTime();
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit(PlatformInit.INPUT_DEFAULT);
-        new Application(applicationManager, Main.class, Global.Platforms.openGLopenAL(), platformInit);
+        new Application(applicationManager, Main.class, Global.Platforms.openGLOpenAL(), platformInit);
         applicationManager.run();
     }
     private Entity2D e;
@@ -35,14 +35,14 @@ public class Main extends Scene {
     public void onStart() {
         getSystems().add(new ToggleFullScreenSystem());
         instantiate(INPUT_UI_PREFAB);
-        e = instantiate(StandardPrefabs.text("Hello, World!", Colors.WHITE, new Font("com/xebisco/yield/Pixeboy.ttf", 100, getApplication().getApplicationPlatform().getFontManager())));
-        instantiate(StandardPrefabs.texRectangle("com/xebisco/yield/yieldIcon.png"));
+        SpritesheetTexture spritesheetTexture = new SpritesheetTexture("com/xebisco/yield/img.png", getApplication().getApplicationPlatform().getSpritesheetTextureManager());
+        e = instantiate(StandardPrefabs.texRectangle(spritesheetTexture.getTextureFromRegion(new Vector2D(0, 0), new Size2D(200, 200))));
         //for(int i = 0; i < 1000; i++)instantiate(StandardPrefabs.text("Hello, World!", Colors.WHITE, new Font("com/xebisco/yield/Pixeboy.ttf", 100, getApplication().getApplicationPlatform().getFontManager())));
     }
 
     @Override
     public void onUpdate() {
-        s += getApplication().getAxis(HORIZONTAL) * getTime().getDeltaTime();
+        s += getApplication().getAxis(HORIZONTAL) * getTime().getDeltaTime() * 50;
         e.getTransform().translate(0, getApplication().getAxis(VERTICAL));
         e.getTransform().rotate(s);
         //System.out.println(getTime().getDeltaTime());

@@ -76,7 +76,7 @@ public final class Global {
             }
         }
 
-        public static ApplicationPlatform openGLopenAL() throws ClassNotFoundException {
+        public static ApplicationPlatform openGLOpenAL() throws ClassNotFoundException {
             Class<?> openGLPlatformClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
             Class<?> alAudioClass = Class.forName("com.xebisco.yield.openalimpl.OpenALAudio");
             try {
