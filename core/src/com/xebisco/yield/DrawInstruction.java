@@ -175,15 +175,34 @@ public class DrawInstruction implements Cloneable {
         this.ignoreViewportScale = ignoreViewportScale;
     }
 
+
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public DrawInstruction clone() {
-        try {
-            DrawInstruction clone = (DrawInstruction) super.clone();
-            clone.setChildrenInstructions(new ArrayList<>());
-            getChildrenInstructions().forEach(di -> clone.getChildrenInstructions().add(di.clone()));
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
+        DrawInstruction clone = new DrawInstruction();
+        if (getVerticesX() != null) {
+            clone.setVerticesX(new int[getVerticesX().length]);
+            System.arraycopy(getVerticesX(), 0, clone.getVerticesX(), 0, getVerticesX().length);
         }
+        if (getVerticesY() != null) {
+            clone.setVerticesY(new int[getVerticesY().length]);
+            System.arraycopy(getVerticesY(), 0, clone.getVerticesY(), 0, getVerticesY().length);
+        }
+        clone.setX(getX());
+        clone.setY(getY());
+        clone.setText(getText());
+        clone.setIgnoreViewportScale(isIgnoreViewportScale());
+        clone.setIgnoreCameraPosition(isIgnoreCameraPosition());
+        clone.setRotation(getRotation());
+        clone.setScaleX(getScaleX());
+        clone.setScaleY(getScaleY());
+        clone.setFontRef(getFontRef());
+        clone.setImageRef(getImageRef());
+        if (getColor() != null)
+            clone.setColor(getColor().clone());
+        clone.setStroke(getStroke());
+        clone.setRotateBeforeScale(isRotateBeforeScale());
+        getChildrenInstructions().forEach(di -> clone.getChildrenInstructions().add(di.clone()));
+        return clone;
     }
 }

@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * A color stored in a separated RGB values.
  */
-public class Color {
+public class Color implements Cloneable {
 
     private double red, green, blue, alpha;
 
@@ -260,6 +260,15 @@ public class Color {
                 ", blue=" + blue +
                 ", a=" + alpha +
                 '}';
+    }
+
+    @Override
+    public Color clone() {
+        try {
+            return (Color) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
     /**

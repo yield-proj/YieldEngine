@@ -40,14 +40,16 @@ public class RenderingThread extends Thread {
         while (running.get()) {
             synchronized (lockObject) {
                 try {
-                    lockObject.wait();
+                    if (drawInstructions == null)
+                        lockObject.wait();
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
-            if(drawInstructions != null) {
+            if (drawInstructions != null) {
                 graphicsManager.frame();
                 graphicsManager.draw(drawInstructions);
+                setDrawInstructions(null);
                 synchronized (otherLock) {
                     otherLock.notify();
                     finishedRendering = true;

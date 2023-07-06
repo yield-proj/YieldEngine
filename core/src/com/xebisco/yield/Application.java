@@ -298,7 +298,14 @@ public class Application implements Behavior {
     public void onUpdate() {
         if (scene != null && !(scene instanceof BlankScene)) {
 
-            if (scene.getFrames() >= 1) {
+            if (platformInit.isInvertZIndex())
+                scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex));
+            else
+                scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex).reversed());
+
+            boolean rendering = false;
+            if (drawInstructions.size() > 0) {
+                rendering = true;
                 toSendDrawInstructions.clear();
                 drawInstructions.forEach((di) -> toSendDrawInstructions.add(di.clone()));
                 renderingThread.renderAsync(toSendDrawInstructions);
@@ -322,11 +329,20 @@ public class Application implements Behavior {
 
             }
 
+            updateAxes();
+
             if (changeSceneTransition == null || !changeSceneTransition.isStopUpdatingScene() || toChangeScene == null) {
                 scene.onUpdate();
+                drawInstructions.clear();
+                if (scene.getFrames() >= 2) {
+                    backGroundDrawInstruction.setStroke(0);
+                    backGroundDrawInstruction.setColor(scene.getBackGroundColor());
+                    drawInstructions.add(backGroundDrawInstruction);
+                }
                 try {
                     for (Entity2D entity : scene.getEntities()) {
-                        entity.process();
+                        DrawInstruction di = entity.process();
+                        if (di != null && scene.getFrames() >= 2) drawInstructions.add(di);
 
                         if (scene != this.scene) {
                             return;
@@ -334,60 +350,33 @@ public class Application implements Behavior {
                     }
                 } catch (ConcurrentModificationException ignore) {
                 }
-
-                if (platformInit.isInvertZIndex())
-                    scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex));
-                else
-                    scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex).reversed());
             }
 
-
-            updateAxes();
             if (applicationPlatform.getInputManager() != null) {
                 applicationPlatform.getInputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
                 applicationPlatform.getInputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
             }
-            if (scene == this.scene && scene.getFrames() >= 2) {
-                drawInstructions.clear();
-                backGroundDrawInstruction.setStroke(0);
-                backGroundDrawInstruction.setColor(scene.getBackGroundColor());
-                drawInstructions.add(backGroundDrawInstruction);
-                try {
-                    for (int i = 0; i < scene.getEntities().size(); i++) {
-                        Entity2D e = null;
-                        try {
-                            e = scene.getEntities().get(i);
-                        } catch (IndexOutOfBoundsException ignore) {
 
-                        }
-                        if (e != null) {
-                            DrawInstruction di = e.render();
-                            if (di != null) drawInstructions.add(di);
-                        }
-                    }
-                } catch (ConcurrentModificationException ignore) {
 
-                }
-
-                if (changeSceneTransition != null) {
-                    changeSceneTransition.setApplication(this);
-                    changeSceneTransition.setDeltaTime(getApplicationManager().getManagerContext().getContextTime().getDeltaTime());
-                    changeSceneTransition.setPassedTime(changeSceneTransition.getPassedTime() + changeSceneTransition.getDeltaTime());
-                    changeSceneTransition.setFrames(changeSceneTransition.getFrames() + 1);
-                    changeSceneTransition.render();
-                    if (changeSceneTransition.getPassedTime() >= changeSceneTransition.getTimeToWait() && toChangeScene != null) {
-                        setScene(toChangeScene);
-                        toChangeScene = null;
-                    }
-                    if (changeSceneTransition.isFinished())
-                        changeSceneTransition = null;
-                } else if (toChangeScene != null) {
+            if (changeSceneTransition != null) {
+                changeSceneTransition.setApplication(this);
+                changeSceneTransition.setDeltaTime(getApplicationManager().getManagerContext().getContextTime().getDeltaTime());
+                changeSceneTransition.setPassedTime(changeSceneTransition.getPassedTime() + changeSceneTransition.getDeltaTime());
+                changeSceneTransition.setFrames(changeSceneTransition.getFrames() + 1);
+                drawInstructions.add(changeSceneTransition.render());
+                if (changeSceneTransition.getPassedTime() >= changeSceneTransition.getTimeToWait() && toChangeScene != null) {
                     setScene(toChangeScene);
                     toChangeScene = null;
                 }
-
-                renderingThread.aWait();
+                if (changeSceneTransition.isFinished())
+                    changeSceneTransition = null;
+            } else if (toChangeScene != null) {
+                setScene(toChangeScene);
+                toChangeScene = null;
             }
+
+            if (rendering)
+                renderingThread.aWait();
         }
     }
 

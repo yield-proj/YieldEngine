@@ -25,7 +25,7 @@ import java.util.List;
  * The Entity2D class is a final class that extends Entity2DContainer and implements Renderable and Disposable, and
  * contains various methods and properties for managing components and rendering.
  */
-public final class Entity2D extends Entity2DContainer implements Renderable, Disposable {
+public final class Entity2D extends Entity2DContainer implements Disposable {
     private final Transform2D transform = new Transform2D();
     private final Application application;
     private List<ComponentBehavior> components = new ArrayList<>();
@@ -51,24 +51,44 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
     /**
      * For each component, set the entity and frames, and call onStart and onUpdate.
      */
-    public void process() {
+    public DrawInstruction process() {
         frames++;
-        for (ComponentBehavior component : components) {
-            component.setEntity(this);
-            component.setFrames(component.getFrames() + 1);
-            if (component.getFrames() == 1)
-                component.onStart();
-            component.onUpdate();
+        if (visible) {
+            entityDrawInstruction.setX(getTransform().getPosition().getX());
+            entityDrawInstruction.setY(getTransform().getPosition().getY());
+            entityDrawInstruction.setScaleX(getTransform().getScale().getX());
+            entityDrawInstruction.setScaleY(getTransform().getScale().getY());
+            entityDrawInstruction.setRotation(getTransform().getzRotation());
+            entityDrawInstruction.getChildrenInstructions().clear();
         }
-        for (int i = 0; i < getEntities().size(); i++) {
-            Entity2D e = null;
+        for (Entity2D child : getEntities()) {
+            DrawInstruction di = child.process();
+            if (visible)
+                entityDrawInstruction.getChildrenInstructions().add(di);
+        }
+        for (int i = 0; i < components.size(); i++) {
+            ComponentBehavior component = null;
             try {
-                e = getEntities().get(i);
+                component = components.get(i);
             } catch (IndexOutOfBoundsException ignore) {
 
             }
-            e.process();
+            if (component != null) {
+                component.setEntity(this);
+                component.setFrames(component.getFrames() + 1);
+                if (component.getFrames() == 1)
+                    component.onStart();
+                component.onUpdate();
+                if (visible) {
+                    DrawInstruction di = component.render();
+                    if (di != null)
+                        entityDrawInstruction.getChildrenInstructions().add(di);
+                }
+            }
         }
+        if (visible)
+            return entityDrawInstruction;
+        return null;
     }
 
     @Override
@@ -83,36 +103,6 @@ public final class Entity2D extends Entity2DContainer implements Renderable, Dis
             getParent().getEntities().remove(this);
             setParent(null);
         }
-    }
-
-    @Override
-    public DrawInstruction render() {
-        if (visible) {
-            entityDrawInstruction.setX(getTransform().getPosition().getX());
-            entityDrawInstruction.setY(getTransform().getPosition().getY());
-            entityDrawInstruction.setScaleX(getTransform().getScale().getX());
-            entityDrawInstruction.setScaleY(getTransform().getScale().getY());
-            entityDrawInstruction.setRotation(getTransform().getzRotation());
-            entityDrawInstruction.getChildrenInstructions().clear();
-            for(Entity2D child : getEntities()) {
-                entityDrawInstruction.getChildrenInstructions().add(child.render());
-            }
-            for (int i = 0; i < components.size(); i++) {
-                ComponentBehavior component = null;
-                try {
-                    component = components.get(i);
-                } catch (IndexOutOfBoundsException ignore) {
-
-                }
-                if (component != null && component.getFrames() > 1) {
-                    DrawInstruction di = component.render();
-                    if (di != null)
-                        entityDrawInstruction.getChildrenInstructions().add(di);
-                }
-            }
-            return entityDrawInstruction;
-        }
-        return null;
     }
 
     /**
