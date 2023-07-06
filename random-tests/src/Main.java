@@ -25,7 +25,7 @@ public class Main extends Scene {
         ContextTime time = new ContextTime();
         ApplicationManager applicationManager = new ApplicationManager(time);
         PlatformInit platformInit = new PlatformInit(PlatformInit.INPUT_DEFAULT);
-        new Application(applicationManager, Main.class, Global.openGLPlatform(), platformInit);
+        new Application(applicationManager, Main.class, Global.Platforms.openGLopenAL(), platformInit);
         applicationManager.run();
     }
     private Entity2D e;
