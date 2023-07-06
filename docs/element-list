@@ -1,7 +1,19 @@
 unnamed package
 com.xebisco.yield
-com.xebisco.yield.debugger
 com.xebisco.yield.editor
+com.xebisco.yield.editor.prop
+com.xebisco.yield.editor.scene
+com.xebisco.yield.ini
+com.xebisco.yield.javaxsoundimpl
+com.xebisco.yield.openalimpl
+com.xebisco.yield.openglimpl
 com.xebisco.yield.physics
+com.xebisco.yield.save
+com.xebisco.yield.script
+com.xebisco.yield.script.math
+com.xebisco.yield.script.obj
+com.xebisco.yield.script.ys
 com.xebisco.yield.swingimpl
 com.xebisco.yield.ui
+com.xebisco.yield.utils
+com.xebisco.yield.utils.lwjgl
