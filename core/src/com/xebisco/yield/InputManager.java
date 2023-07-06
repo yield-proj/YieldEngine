@@ -18,7 +18,7 @@ package com.xebisco.yield;
 
 import java.util.Collection;
 
-public interface InputManager extends MouseCheck {
+public interface InputManager {
     /**
      * The function returns a collection of currently pressed keys.
      *

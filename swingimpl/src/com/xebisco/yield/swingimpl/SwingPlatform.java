@@ -33,7 +33,7 @@ import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.List;
 
-public class SwingPlatform implements GraphicsManager, FontManager, TextureManager, SpritesheetTextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, ViewportZoomScale, ToggleFullScreen {
+public class SwingPlatform implements GraphicsManager, FontManager, TextureManager, MouseCheck, SpritesheetTextureManager, InputManager, KeyListener, MouseListener, MouseWheelListener, ViewportZoomScale, ToggleFullScreen {
     private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
     private final HashSet<Input.Key> pressingKeys = new HashSet<>();
     private final HashSet<Input.MouseButton> pressingMouseButtons = new HashSet<>();
@@ -617,7 +617,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         frame.setSize(frame.getWidth(), frame.getHeight() + frame.getInsets().top);
         canvas.requestFocus();
 
-        canvas.createBufferStrategy(1);
+        canvas.createBufferStrategy(2);
     }
 
     public void updateScreenState(boolean fullscreen, boolean undecorated) {

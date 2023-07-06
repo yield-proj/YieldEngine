@@ -34,6 +34,7 @@ public class PlatformInit {
             TextureManager.class,
             SpritesheetTextureManager.class,
             InputManager.class,
+            MouseCheck.class,
             AudioManager.class,
             ViewportZoomScale.class,
             GraphicsManager.class
