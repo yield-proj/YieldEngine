@@ -1,45 +1,42 @@
 <img align="right" src="assets/logo/logo.png" height="200" width="200">
 
-![image](https://img.shields.io/github/license/xebisco/YieldEngine?style=flat-square)
-![image](https://img.shields.io/github/languages/top/xebisco/YieldEngine?style=flat-square)
-![image](https://img.shields.io/github/downloads/xebisco/YieldEngine/total?style=flat-square)
-![image](https://img.shields.io/github/contributors/xebisco/yieldengine?style=flat-square)
+![image](https://img.shields.io/github/languages/top/xebisco/YieldEngine?style=round-square)
+![image](https://img.shields.io/github/downloads/xebisco/YieldEngine/total?style=round-square)
+![image](https://img.shields.io/github/contributors/xebisco/yieldengine?style=round-square)
+  <a href="https://yield-proj.github.io/YieldEngine/index.html" target="_blank">
+    <img alt="Documentation" src="https://img.shields.io/badge/Documentation-javadoc-brightgreen.svg" />
+  </a>
+  <a href="http://www.apache.org/licenses/" target="_blank">
+    <img alt="License: Apache License 2.0" src="https://img.shields.io/badge/License-Apache License 2.0-yellow.svg" />
+  </a>
 
-# Yield
-**Yield** is a powerful scene-oriented JVM game framework, created with the objective of being a simple and efficient engine for creating 2d games in Java ☕
+<h1>Welcome to the official YieldEngine repo 👋</h1>
+A powerful scene-oriented JVM game engine☕, created with the objective of being a simple and efficient engine for creating 2d games in any JVM capable language.
 
-## Summary
-1. [Why Yield?](#why-yield)
-2. [Download](#download)
-3. [License](#license)
-4. [Links](#links)
-5. [Tutorials](#tutorials)
+### 🏠 [Website](https://yield.xebisco.com/)
 
-## Why Yield?
-### Portability
-- Running on the JVM, Yield Games can run on a lot of different operating systems with a single executable.
+### 🪧 [Hello, World! Demo](https://github.com/yield-proj/YieldEngine/tree/master/hello-world)
 
-### Comfort
-- In Yield, you can easy develop incredible games in almost any JVM language, with high level abstractions.
+## 😁 Getting the engine
+### Compiled jar
+A compiled version of every main release is hosted here on github, check [Releases](https://github.com/yield-proj/YieldEngine/releases), to choose witch version of the engine to download.
+### Compile it yourself
+If you really want, you can also compile the [YieldEngine](https://github.com/yield-proj/YieldEngine/archive/refs/heads/master.zip) to fit your needs.
 
-### Simplicity
-- The Yield Game Engine is very simple to learn yet powerfull for serious projects.
+## Contributing
 
-### Scene-Oriented
-- Yield has a scene-oriented system similar to engines/frameworks like **Unity**, **Unreal**, **OGRE** and **Irrlicht**
+Contributions, issues and feature requests are welcome!🤝<br />To start take a look at the [contributing guide](https://github.com/yield-proj/YieldEngine/blob/master/CONTRIBUTING.md).
 
-### Compatibility
-- To develop Yield Games you can use from a big IDE to a simple code editor.
+## 📝 License
 
-## Download
-Latest Release: [GitHub Release](https://github.com/xebisco/YieldEngine/releases/latest) <br>
+Copyright © 2023 [Xebisco](https://github.com/Xebisco).
+This project is [Apache License 2.0](LICENSE) licensed 📝.
 
-## Tutorials
-Check the [Hello, World!](https://github.com/yield-proj/YieldEngine/blob/master/hello-world/src/Main.java) example. Check the [Yield Project youtube channel](https://www.youtube.com/@yieldproject).
+## Author
 
-## License
-[Apache 2.0](LICENSE)
+👤 **Xebisco**
 
-## Links
-[Website](https://yield.xebisco.com)
-
+* Website: xebisco.com
+* Twitter: [@Xebisco](https://twitter.com/Xebisco)
+* Github: [@Xebisco](https://github.com/Xebisco)
+* LinkedIn: [Vítor Toledo de Oliveira](https://www.linkedin.com/in/v%C3%ADtor-toledo-077438213/)
