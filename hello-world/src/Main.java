@@ -25,11 +25,9 @@ public class Main extends Scene {
         // The `ContextTime` class is a class that provides timing information for the application.
         // The `ApplicationManager` class is responsible for managing the lifecycle of the application, including starting and stopping it.
         ApplicationManager manager = new ApplicationManager(new ContextTime());
-        // Creating an instance of the `Application` class, the created object will be added to manager passed as a parameter,
-        // the initial scene will be started after the engine starts. The call `Global.swingPlatform()` returns a class reference to
-        // an implementation of Yield's `ApplicationPlatform` class. The `PlatformInit` instance contains configuration for the
-        // application.
-        new Application(manager, Main.class, Global.swingPlatform(), new PlatformInit());
+        // The line `new Application(manager, Main.class, Global.Platforms.openGLOpenAL(), new
+        // PlatformInit(PlatformInit.INPUT_DEFAULT));` is creating a new instance of the `Application` class.
+        new Application(manager, Main.class, Global.Platforms.openGLOpenAL(), new PlatformInit(PlatformInit.INPUT_DEFAULT));
         // `manager.run();` is starting the application main loop. This method is responsible for managing
         // the lifecycle of the application, including starting and stopping it. Once this method is called, the
         // application will start running and the initial scene will be displayed.
