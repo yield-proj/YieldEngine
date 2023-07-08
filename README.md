@@ -21,7 +21,7 @@ The engine can produce executables capable of running in a number of platforms, 
 ### 🪧 [Hello, World! Demo](https://github.com/yield-proj/YieldEngine/tree/master/hello-world)
 
 ## 🪪 Documentation
-The Yield Engine documentation is hosted on github websites and is contained in this repository. [Check the docs](https://yield-proj.github.io/YieldEngine/index.html) or [Check the docs folder](https://github.com/yield-proj/YieldEngine/tree/master/docs);
+The Yield Engine documentation is hosted on github websites and is contained in this repository. [Check the docs](https://yield-proj.github.io/YieldEngine/index.html) or [Check the docs folder](https://github.com/yield-proj/YieldEngine/tree/master/docs).
 
 ## 😁 Getting the engine
 ### Compiled jar
