@@ -4,18 +4,24 @@
 ![image](https://img.shields.io/github/downloads/xebisco/YieldEngine/total?style=round-square)
 ![image](https://img.shields.io/github/contributors/xebisco/yieldengine?style=round-square)
   <a href="https://yield-proj.github.io/YieldEngine/index.html" target="_blank">
-    <img alt="Documentation" src="https://img.shields.io/badge/Documentation-javadoc-brightgreen.svg" />
+    <img alt="Documentation" src="https://img.shields.io/badge/documentation-javadoc-brightgreen.svg" />
   </a>
   <a href="http://www.apache.org/licenses/" target="_blank">
     <img alt="License: Apache License 2.0" src="https://img.shields.io/badge/License-Apache License 2.0-yellow.svg" />
   </a>
 
 <h1>Welcome to the official YieldEngine repo 👋</h1>
+
+## 🎮 A 2D cross-platfotm game engine
 A powerful scene-oriented JVM game engine☕, created with the objective of being a simple and efficient engine for creating 2d games in any JVM capable language.
+The engine can produce executables capable of running in a number of platforms, including the major desktop platforms (Linux, macOS, Windows).
 
 ### 🏠 [Website](https://yield.xebisco.com/)
 
 ### 🪧 [Hello, World! Demo](https://github.com/yield-proj/YieldEngine/tree/master/hello-world)
+
+## 🪪 Documentation
+The Yield Engine documentation is hosted on github websites and is contained in this repository. [Check the docs](https://yield-proj.github.io/YieldEngine/index.html) or [Check the docs folder](https://github.com/yield-proj/YieldEngine/tree/master/docs);
 
 ## 😁 Getting the engine
 ### Compiled jar
