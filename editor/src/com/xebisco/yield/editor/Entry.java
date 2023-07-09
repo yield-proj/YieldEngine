@@ -16,6 +16,8 @@
 
 package com.xebisco.yield.editor;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.IntelliJTheme;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.xebisco.yield.editor.prop.BooleanProp;
 import com.xebisco.yield.editor.prop.ImageProp;
@@ -37,7 +39,7 @@ public class Entry {
     public static void main(String[] args) {
         System.setProperty("sun.java2d.opengl", "True");
         Locale.setDefault(Locale.US);
-        FlatMacDarkLaf.setup();
+        IntelliJTheme.setup(Entry.class.getResourceAsStream("/DarkPurple.theme.json"));
 
         splashDialog();
         if (args.length == 1) {
@@ -68,6 +70,7 @@ public class Entry {
         loadImage("yarrow.png");
         loadImage("sxarrow.png");
         loadImage("syarrow.png");
+        loadImage("reloadIcon.png");
     }
 
     private static void loadImage(String n) {

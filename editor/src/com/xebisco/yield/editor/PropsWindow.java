@@ -19,8 +19,12 @@ package com.xebisco.yield.editor;
 import com.xebisco.yield.editor.prop.Prop;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.geom.RoundRectangle2D;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -50,7 +54,8 @@ public class PropsWindow extends JDialog {
         gbc.insets = new Insets(10, 10, 0, 10);
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        JScrollPane pane = new JScrollPane() {};
+        JScrollPane pane = new JScrollPane();
+        pane.setBorder(null);
         pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         for (String section : s.keySet()) {
             JPanel panel = new JPanel();
@@ -90,9 +95,20 @@ public class PropsWindow extends JDialog {
         if (one != null) {
             setTitle(one);
             setUndecorated(true);
-            contentPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(getForeground()), one));
-            pane.setBorder(null);
-            setSize(new Dimension(350, 120));
+            JLabel label = new JLabel(one);
+            label.setFont(getFont().deriveFont(Font.BOLD));
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+            label.setVerticalAlignment(SwingConstants.CENTER);
+            contentPane.add(label, BorderLayout.NORTH);
+            pane.setBorder(new YieldBorder());
+            addComponentListener(new ComponentAdapter() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 10, 10));
+                }
+            });
+            setMinimumSize(new Dimension(250, 100));
+            setSize(new Dimension(250, 100));
             setLocationRelativeTo(owner);
             contentPane.add(pane, BorderLayout.CENTER);
         }
@@ -108,6 +124,9 @@ public class PropsWindow extends JDialog {
             sectionsJL.getSelectedValue().getAction().actionPerformed(null);
 
             contentPane.add(sectionsJL, BorderLayout.WEST);
+            JMenuBar menuBar = new JMenuBar();
+            menuBar.add(new JMenu(""));
+            setJMenuBar(menuBar);
         } else {
             sections.get(0).getAction().actionPerformed(null);
         }
@@ -125,9 +144,16 @@ public class PropsWindow extends JDialog {
         getRootPane().setDefaultButton(button);
         buttons.add(button);
 
+        buttons.add(new JButton(new AbstractAction("Cancel") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        }));
+
         contentPane.add(buttons, BorderLayout.SOUTH);
 
-        if(title != null)
+        if (title != null)
             setTitle(title);
 
         setVisible(true);

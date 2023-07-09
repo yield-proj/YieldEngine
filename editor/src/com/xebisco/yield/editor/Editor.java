@@ -16,9 +16,12 @@
 
 package com.xebisco.yield.editor;
 
+import com.formdev.flatlaf.ui.FlatBorder;
+import com.xebisco.yield.editor.explorer.Explorer;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
 import com.xebisco.yield.editor.scene.EditorScene;
+import com.xebisco.yield.editor.scene.Renderable;
 import com.xebisco.yield.editor.scene.SceneObject;
 
 import javax.swing.*;
@@ -26,6 +29,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -150,35 +154,36 @@ public class Editor extends JFrame {
 
         menu = new JMenu("Window");
 
-        central.addTab("Scene View", new SceneView());
-        east.addTab("Info", new JPanel());
-        northwest.addTab("Source", new JPanel());
-        southwest.addTab("Console", console);
-
-        menu.add(new AbstractAction("Scene View") {
+        Action a = new AbstractAction("Scene View") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 central.addTab("Scene View", new SceneView());
             }
-        });
-        menu.add(new AbstractAction("Info") {
+        };
+
+        menu.add(a);
+        a.actionPerformed(null);
+        menu.add(a = new AbstractAction("Info") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 east.addTab("Info", new JPanel());
             }
         });
-        menu.add(new AbstractAction("Source") {
+        a.actionPerformed(null);
+        menu.add(a = new AbstractAction("Explorer") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                northwest.addTab("Source", new JPanel());
+                northwest.addTab("Explorer", new Explorer(project.getProjectLocation()));
             }
         });
-        menu.add(new AbstractAction("Console") {
+        a.actionPerformed(null);
+        menu.add(a = new AbstractAction("Console") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 southwest.addTab("Console", console);
             }
         });
+        a.actionPerformed(null);
         menuBar.add(menu);
 
         item = new JMenuItem(new AbstractAction("Repaint") {
@@ -215,7 +220,7 @@ public class Editor extends JFrame {
         public SceneView() {
             setLayout(new BorderLayout());
             add(new SceneViewProps(), BorderLayout.NORTH);
-            add(new SceneGameView());
+            add(new SceneGameView(), BorderLayout.CENTER);
         }
 
         class SceneViewProps extends JPanel {
@@ -314,7 +319,9 @@ public class Editor extends JFrame {
 
             private Point moveStart = new Point();
             private SceneObject selectedObject;
-            private int x, y;
+            private double mouseX, mouseY;
+
+            private double tx, ty;
 
             public SceneGameView() {
                 addMouseWheelListener(this);
@@ -325,8 +332,8 @@ public class Editor extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                if (zoom > 24)
-                    zoom = 24;
+                if (zoom > 6)
+                    zoom = 6;
                 if (!scaleField.hasFocus())
                     scaleField.setText(String.format("%.1f", zoom));
                 if (!posXField.hasFocus())
@@ -341,21 +348,19 @@ public class Editor extends JFrame {
                     g2d.scale(zoom, zoom);
 
                     Rectangle size = getBounds();
-                    double tx = ((size.getWidth() - getWidth() * zoom) / 2) / zoom;
-                    double ty = ((size.getHeight() - getHeight() * zoom) / 2) / zoom;
+                    tx = ((size.getWidth() - getWidth() * zoom) / 2) / zoom;
+                    ty = ((size.getHeight() - getHeight() * zoom) / 2) / zoom;
                     g2d.translate(tx, ty);
 
                     g2d.translate(posX, posY);
-
-                    /*g.setColor(Color.RED);
-                    g.fillRect(x, y, 10, 10);*/
 
                     float str = (float) (1 / zoom);
                     if (str < 0.05) str = 0.05f;
                     g2d.setStroke(new BasicStroke(str));
 
                     for (SceneObject object : openedScene.getSceneObjects()) {
-                        object.render(g);
+                        for (Renderable r : object.getRenderableList())
+                            r.render(g);
                     }
 
                     if (openedScene.getBackgroundColor() != Color.WHITE) {
@@ -394,8 +399,8 @@ public class Editor extends JFrame {
 
                     if (selectedObject != null) {
 
-                        g2d.drawImage(Assets.images.get("yarrow.png").getImage(), 100, 100, (int) (Assets.images.get("yarrow.png").getIconWidth() / zoom), (int) (Assets.images.get("yarrow.png").getIconHeight() / zoom), null);
-                        g2d.drawImage(Assets.images.get("xarrow.png").getImage(), 100, 100, (int) (Assets.images.get("xarrow.png").getIconWidth() / zoom), (int) (Assets.images.get("xarrow.png").getIconHeight() / zoom), null);
+                        g2d.drawImage(Assets.images.get("yarrow.png").getImage(), selectedObject.getX() - (int) (12 / zoom), selectedObject.getY() - (int) (100 / zoom), (int) (Assets.images.get("yarrow.png").getIconWidth() / zoom), (int) (Assets.images.get("yarrow.png").getIconHeight() / zoom), null);
+                        g2d.drawImage(Assets.images.get("xarrow.png").getImage(), selectedObject.getX(), selectedObject.getY() - (int) (12 / zoom), (int) (Assets.images.get("xarrow.png").getIconWidth() / zoom), (int) (Assets.images.get("xarrow.png").getIconHeight() / zoom), null);
 
                     }
                 } else {
@@ -444,14 +449,37 @@ public class Editor extends JFrame {
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                System.out.println((getWidth() - getWidth() / zoom) / 2);
-                x = (int) (((e.getX() - posX) + (getWidth() - getWidth() / zoom) / 2));
-                y = (int) (((e.getY() - posY) + (getHeight() - getHeight() / zoom) / 2));
+                mouseX = e.getX() / zoom - posX - tx;
+                mouseY = e.getY() / zoom - posY - ty;
             }
 
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (openedScene != null) {
+                    if (e.getButton() == MouseEvent.BUTTON3) {
+                        final double smx = mouseX, smy = mouseY;
+                        JPopupMenu popupMenu = new JPopupMenu();
+                        JMenu menu = new JMenu("New"), menu2 = new JMenu("Entity2D");
+                        menu2.add(new JMenuItem(new AbstractAction("Empty") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                SceneObject sceneObject = new SceneObject();
+                                sceneObject.setX((int) smx);
+                                sceneObject.setY((int) smy);
+                                openedScene.getSceneObjects().add(sceneObject);
+                                selectedObject = sceneObject;
+                            }
+                        }));
+                        menu.add(menu2);
 
+                        popupMenu.add(menu);
+
+                        Point mouse = getMousePosition();
+                        popupMenu.show(this, mouse.x, mouse.y);
+                    } else {
+
+                    }
+                }
             }
 
             @Override

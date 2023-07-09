@@ -16,8 +16,12 @@
 
 package com.xebisco.yield.editor.prop;
 
+import com.xebisco.yield.editor.YieldBorder;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.AbstractBorder;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -74,7 +78,7 @@ public class ImageProp extends PathProp {
 
     public void loadNull() {
         super.setValue(null);
-        imagePanel.setBorder(BorderFactory.createTitledBorder("Preview:"));
+        imagePanel.setBorder(BorderFactory.createTitledBorder(new YieldBorder(), "Preview:"));
         try {
             image = ImageIO.read(Objects.requireNonNull(ImageProp.class.getResourceAsStream("/yieldIcon.png")));
         } catch (IOException e) {

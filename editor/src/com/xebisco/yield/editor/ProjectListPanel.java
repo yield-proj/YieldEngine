@@ -58,9 +58,10 @@ public class ProjectListPanel extends JPanel implements MouseListener {
                     g.setColor(UIManager.getColor("List.selectionBackground"));
                 } else
                     g.setColor(brighterBkg);
-                int y = i * h + (i * s), w = getWidth() - s * 2;
+                int y = i * h + (i * s), w = getWidth() - s;
                 projectsPos.add(new ProjectPos(project, y));
-                g.fillRoundRect(s, y, w, h, 10, 10);
+                g.fillRoundRect(s, y, w, h, 20, 20);
+                g.fillRect(w, y, s, h);
                 BufferedImage image;
                 try {
                     Image img = ImageIO.read(new File(project.getProjectLocation(), "icon.png"));

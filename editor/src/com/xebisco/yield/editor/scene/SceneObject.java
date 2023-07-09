@@ -16,11 +16,13 @@
 
 package com.xebisco.yield.editor.scene;
 
-import java.awt.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class SceneObject {
+public class SceneObject implements Serializable {
     private int x, y, width, height;
-    public abstract void render(Graphics g);
+    private final List<Renderable> renderableList = new ArrayList<>();
 
     public int getX() {
         return x;
@@ -52,5 +54,9 @@ public abstract class SceneObject {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public List<Renderable> getRenderableList() {
+        return renderableList;
     }
 }
