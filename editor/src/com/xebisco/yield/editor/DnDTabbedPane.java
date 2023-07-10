@@ -45,8 +45,11 @@ public class DnDTabbedPane extends JTabbedPane {
     private boolean m_hasGhost = true;
     private final double arc = 10;
 
-    public DnDTabbedPane() {
+    private final JFrame frame;
+
+    public DnDTabbedPane(JFrame frame) {
         super();
+        this.frame = frame;
         final DragSourceListener dsl = new DragSourceListener() {
             public void dragEnter(DragSourceDragEvent e) {
                 e.getDragSourceContext().setCursor(DragSource.DefaultMoveDrop);
@@ -114,21 +117,21 @@ public class DnDTabbedPane extends JTabbedPane {
                         Component tab = c.getTabbedPane().getComponentAt(c.getTabIndex());
                         Dimension s = new Dimension(tab.getSize());
                         String title = c.getTabbedPane().getTitleAt(c.getTabIndex());
-                        JFrame frame = new JFrame();
-                        frame.setIconImage(Assets.images.get("yieldIcon.png").getImage());
-                        YieldTabbedPane tp = new YieldTabbedPane(true);
+                        JDialog dialog = new JDialog(frame);
+                        dialog.setIconImage(Assets.images.get("yieldIcon.png").getImage());
+                        YieldTabbedPane tp = new YieldTabbedPane(true, frame);
                         tp.addTab(title, tab);
-                        frame.add(tp);
+                        dialog.add(tp);
 
-                        frame.setTitle("Yield Editor");
-                        frame.setSize(s);
-                        frame.setLocation(MouseInfo.getPointerInfo().getLocation());
+                        dialog.setTitle("Yield Editor");
+                        dialog.setSize(s);
+                        dialog.setLocation(MouseInfo.getPointerInfo().getLocation());
                         JMenuBar mb = new JMenuBar();
                         mb.add(new JMenuItem(""));
-                        frame.setJMenuBar(mb);
-                        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                        frame.setVisible(true);
-                        frame.requestFocus();
+                        dialog.setJMenuBar(mb);
+                        dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                        dialog.setVisible(true);
+                        dialog.requestFocus();
                     } catch (UnsupportedFlavorException | IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -144,7 +147,7 @@ public class DnDTabbedPane extends JTabbedPane {
                             Component c1 = c.getTabbedPane();
                             do {
                                 c1 = c1.getParent();
-                            } while (c1.getParent() != null);
+                            } while (!(c1 instanceof JDialog));
                             ((Window) c1).dispose();
                         }
                 }

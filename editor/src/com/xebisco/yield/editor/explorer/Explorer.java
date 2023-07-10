@@ -124,7 +124,7 @@ public class Explorer extends JPanel implements ActionListener {
                                         String title = ((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()).getName().split("\\.java")[0] + " (Script)";
                                         JFrame frame = new JFrame();
                                         frame.setIconImage(Assets.images.get("yieldIcon.png").getImage());
-                                        YieldTabbedPane tp = new YieldTabbedPane(true);
+                                        YieldTabbedPane tp = new YieldTabbedPane(true, frame);
                                         tp.addTab(title, codePanel);
                                         frame.add(tp);
 

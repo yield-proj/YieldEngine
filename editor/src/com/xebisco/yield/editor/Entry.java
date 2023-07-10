@@ -31,16 +31,35 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class Entry {
-    private static JDialog splashDialog;
+    public static JDialog splashDialog;
 
     public static void main(String[] args) {
         //System.setProperty("sun.java2d.opengl", "True");
         Locale.setDefault(Locale.US);
-        SwingUtilities.invokeLater(() -> {
-            IntelliJTheme.setup(Entry.class.getResourceAsStream("/DarkPurple.theme.json"));
+        IntelliJTheme.setup(Entry.class.getResourceAsStream("/DarkPurple.theme.json"));
+        splashDialog(null);
+        try {
+            loadEverything();
+        } catch (Error e) {
+            HashMap<String, Prop[]> props = new HashMap<>();
+            props.put("Resolve launch error", new Prop[]{new BooleanProp("Delete recent projects list", true), new BooleanProp("Delete editor data", false)});
+            new PropsWindow(props, () -> {
+                if ((boolean) Objects.requireNonNull(Props.get(props.get("Resolve launch error"), "Delete recent projects list")).getValue()) {
+                    new File(Utils.defaultDirectory() + "/.yield_editor");
+                    File projectsFile = new File(Utils.defaultDirectory() + "/.yield_editor", "projects.ser");
+                    projectsFile.delete();
+                }
 
-            splashDialog();
-            Assets.init();
+                if ((boolean) Objects.requireNonNull(Props.get(props.get("Resolve launch error"), "Delete editor data")).getValue()) {
+                    new File(Utils.defaultDirectory() + "/.yield_editor").delete();
+                }
+
+                JOptionPane.showMessageDialog(null, "Please restart the editor.");
+                System.exit(0);
+            }, null, "Error in editor launch: " + e.getClass().getSimpleName());
+        }
+        Assets.init();
+        SwingUtilities.invokeLater(() -> {
             if (args.length == 1) {
                 Project project;
                 try (ObjectInputStream oi = new ObjectInputStream(new BufferedInputStream(new FileInputStream(args[0])))) {
@@ -49,9 +68,13 @@ public class Entry {
                     throw new RuntimeException(e);
                 }
                 new Editor(project);
-            } else if (args.length == 0)
+                if (splashDialog != null)
+                    splashDialog.dispose();
+            } else if (args.length == 0) {
                 openProjects();
-            else throw new IllegalStateException("Wrong arguments");
+                if (splashDialog != null)
+                    splashDialog.dispose();
+            } else throw new IllegalStateException("Wrong arguments");
         });
     }
 
@@ -98,11 +121,9 @@ public class Entry {
 
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        if (splashDialog != null)
-            splashDialog.dispose();
     }
 
-    private static void splashDialog() {
+    public static void splashDialog(String title) {
         splashDialog = new JDialog();
         splashDialog.setTitle("Yield 5 Editor");
         splashDialog.setUndecorated(true);
@@ -110,29 +131,11 @@ public class Entry {
         progressBar.setIndeterminate(true);
         splashDialog.add(progressBar, BorderLayout.SOUTH);
         splashDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        if (title != null)
+            splashDialog.add(new JLabel(title), BorderLayout.LINE_END);
         splashDialog.add(new JLabel(new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/splash.png")))), BorderLayout.CENTER);
         splashDialog.pack();
         splashDialog.setLocationRelativeTo(null);
         splashDialog.setVisible(true);
-        try {
-            loadEverything();
-        } catch (Error e) {
-            HashMap<String, Prop[]> props = new HashMap<>();
-            props.put("Resolve launch error", new Prop[]{new BooleanProp("Delete recent projects list", true), new BooleanProp("Delete editor data", false)});
-            new PropsWindow(props, () -> {
-                if((boolean) Objects.requireNonNull(Props.get(props.get("Resolve launch error"), "Delete recent projects list")).getValue()) {
-                    new File(Utils.defaultDirectory() + "/.yield_editor");
-                    File projectsFile = new File(Utils.defaultDirectory() + "/.yield_editor", "projects.ser");
-                    projectsFile.delete();
-                }
-
-                if((boolean) Objects.requireNonNull(Props.get(props.get("Resolve launch error"), "Delete editor data")).getValue()) {
-                    new File(Utils.defaultDirectory() + "/.yield_editor").delete();
-                }
-
-                JOptionPane.showMessageDialog(null, "Please restart the editor.");
-                System.exit(0);
-            }, null, "Error in editor launch: " + e.getClass().getSimpleName());
-        }
     }
 }

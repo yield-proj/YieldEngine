@@ -16,6 +16,8 @@
 
 package com.xebisco.yield.editor;
 
+import com.xebisco.yield.editor.prop.EngineInstallProp;
+import com.xebisco.yield.editor.prop.NullProp;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
 import com.xebisco.yield.ini.Ini;
@@ -28,11 +30,15 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class Projects extends JPanel {
 
@@ -61,6 +67,7 @@ public class Projects extends JPanel {
             }
         });
         projectsControl.add(button);
+        JButton newPb = button;
         frame.getRootPane().setDefaultButton(button);
 
         button = new JButton(new AbstractAction("Load") {
@@ -97,7 +104,55 @@ public class Projects extends JPanel {
         JPanel installsPanel = new JPanel();
 
         installsPanel.setLayout(new BorderLayout());
-        installsPanel.add(new JPanel(), BorderLayout.CENTER);
+
+        JScrollPane installsList = new JScrollPane();
+        installsList.setBorder(null);
+
+        installsPanel.add(installsList, BorderLayout.CENTER);
+
+        JPanel installsControl = new JPanel();
+        installsControl.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        button = new JButton(new AbstractAction("Add") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Entry.splashDialog("Downloading engine list");
+
+                CompletableFuture.runAsync(() -> {
+                    List<EngineInstall> engines = new ArrayList<>();
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://raw.githubusercontent.com/yield-proj/yield-engine-downloads/master/list.txt").openStream()))) {
+                        String l;
+                        while ((l = reader.readLine()) != null) {
+                            String[] pcs = l.split("/");
+                            engines.add(new EngineInstall(pcs[0], pcs[1], pcs[2]));
+                        }
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                    Map<String, Prop[]> props = new HashMap<>();
+                    List<Prop> p = new ArrayList<>();
+
+                    for(EngineInstall engineInstall : engines) {
+                        p.add(new EngineInstallProp(engineInstall));
+                    }
+
+                    p.add(new NullProp());
+
+                    props.put("Download Engine", p.toArray(new Prop[0]));
+
+                    Entry.splashDialog.dispose();
+
+                    PropsWindow listWindow = new PropsWindow(props, () -> {
+
+                    }, null, "New Install");
+                });
+            }
+        });
+        installsControl.add(button);
+        frame.getRootPane().setDefaultButton(button);
+        JButton newEd = button;
+
+        installsPanel.add(installsControl, BorderLayout.SOUTH);
 
         title = new JLabel("Installs");
         title.setFont(title.getFont().deriveFont(Font.BOLD).deriveFont(40f));
@@ -115,6 +170,7 @@ public class Projects extends JPanel {
                     public void actionPerformed(ActionEvent e) {
                         main.removeAll();
                         main.add(projectsAndTitlePanel);
+                        frame.getRootPane().setDefaultButton(newPb);
                         main.validate();
                         main.repaint();
                     }
@@ -124,6 +180,7 @@ public class Projects extends JPanel {
                     public void actionPerformed(ActionEvent e) {
                         main.removeAll();
                         main.add(installsPanel);
+                        frame.getRootPane().setDefaultButton(newEd);
                         main.validate();
                         main.repaint();
                     }

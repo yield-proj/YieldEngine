@@ -69,11 +69,11 @@ public class Editor extends JFrame {
             }
         });
         setIconImage(Assets.images.get("yieldIcon.png").getImage());
-        JSplitPane mainAndInfo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, central = new YieldTabbedPane(false), east = new YieldTabbedPane(false));
+        JSplitPane mainAndInfo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, central = new YieldTabbedPane(false, this), east = new YieldTabbedPane(false, this));
 
         mainAndInfo.setResizeWeight(1);
         mainAndInfo.setDividerLocation(getSize().width - 650);
-        JSplitPane sourceAndConsole = new JSplitPane(JSplitPane.VERTICAL_SPLIT, northwest = new YieldTabbedPane(false), southwest = new YieldTabbedPane(false));
+        JSplitPane sourceAndConsole = new JSplitPane(JSplitPane.VERTICAL_SPLIT, northwest = new YieldTabbedPane(false, this), southwest = new YieldTabbedPane(false, this));
         sourceAndConsole.setResizeWeight(1);
         sourceAndConsole.setDividerLocation(getSize().height - 300);
         JSplitPane mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sourceAndConsole, mainAndInfo);
@@ -99,7 +99,7 @@ public class Editor extends JFrame {
     }
 
     private YieldTabbedPane createPaneWithTab(Component tab, String name) {
-        YieldTabbedPane pane = new YieldTabbedPane(false);
+        YieldTabbedPane pane = new YieldTabbedPane(false, this);
         pane.addTab(name, tab);
         return pane;
     }

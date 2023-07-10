@@ -33,13 +33,13 @@ public class YieldTabbedPane extends DnDTabbedPane {
 
     private String emptyText = "No open tabs";
 
-    public YieldTabbedPane(boolean closeAfterEmpty) {
-        super();
+    public YieldTabbedPane(boolean closeAfterEmpty, JFrame frame) {
+        super(frame);
         this.closeAfterEmpty = closeAfterEmpty;
     }
 
-    public YieldTabbedPane(boolean closeAfterEmpty, TabClosingListener aTabClosingListener) {
-        super();
+    public YieldTabbedPane(boolean closeAfterEmpty, TabClosingListener aTabClosingListener, JFrame frame) {
+        super(frame);
         this.closeAfterEmpty = closeAfterEmpty;
         tabClosingListener = aTabClosingListener;
     }
