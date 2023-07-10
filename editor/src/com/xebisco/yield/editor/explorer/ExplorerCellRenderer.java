@@ -45,15 +45,11 @@ public class ExplorerCellRenderer  extends DefaultTreeCellRenderer {
         setOpenIcon(getDefaultOpenIcon());
         setClosedIcon(getDefaultClosedIcon());
         setLeafIcon(getDefaultLeafIcon());
+        File f = (File) ((DefaultMutableTreeNode) value).getUserObject();
         super.getTreeCellRendererComponent(
-                tree, value, sel, exp, leaf, row, hasFocus);
-        String s = value.toString();
-        s = s.replace("[", "");
-        s = s.replace("]", "");
-        s = s.replace(", ", "\\");
+                tree, f.getName(), sel, exp, leaf, row, hasFocus);
 
-        File f = Explorer.fPath(tree.getPathForRow(row), mainDir);
-        if(f != null && f.isDirectory()) {
+        if(f.isDirectory()) {
             setIcon(getDefaultClosedIcon());
         }
 

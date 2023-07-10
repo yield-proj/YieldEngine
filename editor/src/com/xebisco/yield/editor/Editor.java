@@ -16,7 +16,6 @@
 
 package com.xebisco.yield.editor;
 
-import com.formdev.flatlaf.ui.FlatBorder;
 import com.xebisco.yield.editor.explorer.Explorer;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
@@ -29,7 +28,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,11 +69,11 @@ public class Editor extends JFrame {
             }
         });
         setIconImage(Assets.images.get("yieldIcon.png").getImage());
-        JSplitPane mainAndInfo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, central = new YieldTabbedPane(), east = new YieldTabbedPane());
+        JSplitPane mainAndInfo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, central = new YieldTabbedPane(false), east = new YieldTabbedPane(false));
 
         mainAndInfo.setResizeWeight(1);
         mainAndInfo.setDividerLocation(getSize().width - 650);
-        JSplitPane sourceAndConsole = new JSplitPane(JSplitPane.VERTICAL_SPLIT, northwest = new YieldTabbedPane(), southwest = new YieldTabbedPane());
+        JSplitPane sourceAndConsole = new JSplitPane(JSplitPane.VERTICAL_SPLIT, northwest = new YieldTabbedPane(false), southwest = new YieldTabbedPane(false));
         sourceAndConsole.setResizeWeight(1);
         sourceAndConsole.setDividerLocation(getSize().height - 300);
         JSplitPane mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sourceAndConsole, mainAndInfo);
@@ -101,7 +99,7 @@ public class Editor extends JFrame {
     }
 
     private YieldTabbedPane createPaneWithTab(Component tab, String name) {
-        YieldTabbedPane pane = new YieldTabbedPane();
+        YieldTabbedPane pane = new YieldTabbedPane(false);
         pane.addTab(name, tab);
         return pane;
     }
@@ -114,7 +112,7 @@ public class Editor extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Map<String, Prop[]> sections = new HashMap<>();
-                sections.put("New Scene", Props.newScene());
+                sections.put("New Scene", Props.newSimple());
                 new PropsWindow(sections, () -> {
                     EditorScene scene = new EditorScene();
                     scene.setName((String) Objects.requireNonNull(Props.get(sections.get("New Scene"), "Name")).getValue());
@@ -173,7 +171,7 @@ public class Editor extends JFrame {
         menu.add(a = new AbstractAction("Explorer") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                northwest.addTab("Explorer", new Explorer(project.getProjectLocation()));
+                northwest.addTab("Explorer", new Explorer(project.getProjectLocation(), "Project Source (" + project.getProjectLocation().getName() + ")"));
             }
         });
         a.actionPerformed(null);
@@ -241,7 +239,7 @@ public class Editor extends JFrame {
                     }
 
                     @Override
-                    public void removeUpdate(DocumentEvent e) {
+                        public void removeUpdate(DocumentEvent e) {
                         try {
                             zoom = Double.parseDouble(scaleField.getText());
                             if (zoom < 0.5) zoom = 0.5;
@@ -334,14 +332,14 @@ public class Editor extends JFrame {
                 super.paintComponent(g);
                 if (zoom > 6)
                     zoom = 6;
-                if (!scaleField.hasFocus())
-                    scaleField.setText(String.format("%.1f", zoom));
-                if (!posXField.hasFocus())
-                    posXField.setText(String.format("%.1f", posX));
-                if (!posYField.hasFocus())
-                    posYField.setText(String.format("%.1f", posY));
                 Graphics2D g2d = (Graphics2D) g;
                 if (openedScene != null) {
+                    if (!scaleField.hasFocus())
+                        scaleField.setText(String.format("%.1f", zoom));
+                    if (!posXField.hasFocus())
+                        posXField.setText(String.format("%.1f", posX));
+                    if (!posYField.hasFocus())
+                        posYField.setText(String.format("%.1f", posY));
                     g.setColor(openedScene.getBackgroundColor());
                     g2d.fillRect(0, 0, getWidth(), getHeight());
 
@@ -448,9 +446,10 @@ public class Editor extends JFrame {
             }
 
             @Override
-            public void mouseMoved(MouseEvent e) {
+            public void mouseMoved(MouseEvent e) {if (openedScene != null) {
                 mouseX = e.getX() / zoom - posX - tx;
                 mouseY = e.getY() / zoom - posY - ty;
+            }
             }
 
             @Override

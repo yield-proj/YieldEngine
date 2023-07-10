@@ -85,8 +85,6 @@ public class Projects extends JPanel {
 
         projectsAndTitlePanel.add(projectsControl, BorderLayout.SOUTH);
 
-        add(projectsAndTitlePanel, BorderLayout.CENTER);
-
 
         JPanel logoAndOptions = new JPanel();
         logoAndOptions.setLayout(new BorderLayout());
@@ -96,16 +94,38 @@ public class Projects extends JPanel {
         logoAndOptions.add(logo, BorderLayout.NORTH);
         add(logoAndOptions, BorderLayout.WEST);
 
+        JPanel installsPanel = new JPanel();
+
+        installsPanel.setLayout(new BorderLayout());
+        installsPanel.add(new JPanel(), BorderLayout.CENTER);
+
+        title = new JLabel("Installs");
+        title.setFont(title.getFont().deriveFont(Font.BOLD).deriveFont(40f));
+        title.setBorder(BorderFactory.createLineBorder(title.getBackground(), 20));
+        installsPanel.add(title, BorderLayout.NORTH);
+
+        JPanel main = new JPanel();
+        main.setLayout(new BorderLayout());
+        add(main, BorderLayout.CENTER);
+
+
         JList<JButton> options = new JList<>(new JButton[]{
                 new JButton(new AbstractAction("Projects") {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        main.removeAll();
+                        main.add(projectsAndTitlePanel);
+                        main.validate();
+                        main.repaint();
                     }
                 }),
-                new JButton(new AbstractAction("Options") {
+                new JButton(new AbstractAction("Installs") {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-
+                        main.removeAll();
+                        main.add(installsPanel);
+                        main.validate();
+                        main.repaint();
                     }
                 })
         });
@@ -120,7 +140,7 @@ public class Projects extends JPanel {
     }
 
     public static void saveProjects() {
-        try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(Utils.defaultDirectory() + "/.yield_editor/projects.ser"))) {
+        try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(new File(Utils.defaultDirectory() + "/.yield_editor", "projects.ser")))) {
             oo.writeObject(Assets.projects);
         } catch (IOException ex) {
             Utils.error(null, ex);
@@ -137,15 +157,14 @@ public class Projects extends JPanel {
             if (project.getName().equals("")) {
                 Utils.error(null, new IllegalStateException("Project requires a name."));
                 newProjectFrame(owner);
-            } else
-            if (!project.getProjectLocation().getParentFile().exists()) {
+            } else if (!project.getProjectLocation().getParentFile().exists()) {
                 Utils.error(null, new IllegalStateException("Path is not valid."));
                 newProjectFrame(owner);
             } else if (!Assets.projects.contains(project)) {
                 Assets.projects.add(project);
                 project.getProjectLocation().mkdir();
                 Image image = Assets.images.get("yieldIcon.png").getImage();
-                if(Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Icon")).getValue() != null) {
+                if (Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Icon")).getValue() != null) {
                     try {
                         image = ImageIO.read(new File((String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Icon")).getValue()));
                     } catch (IOException e) {
@@ -169,14 +188,13 @@ public class Projects extends JPanel {
                     throw new RuntimeException(e);
                 }
 
-                try(ObjectOutputStream oo = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(projectFile)))) {
+                try (ObjectOutputStream oo = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(projectFile)))) {
                     oo.writeObject(project);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
                 owner.repaint();
-            }
-            else Utils.error(null, new IllegalStateException("Project already exists on the projects list"));
+            } else Utils.error(null, new IllegalStateException("Project already exists on the projects list"));
         }, owner, "New Project");
     }
 }

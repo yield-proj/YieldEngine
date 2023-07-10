@@ -20,12 +20,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.net.URL;
 
 public class YieldTabbedPane extends DnDTabbedPane {
 
     static int count = 0;
     private static Icon CLOSING_ICON;
+    private final boolean closeAfterEmpty;
     private static Icon CLOSING_ICON_SELECTED;
     private TabClosingListener tabClosingListener;
     private String iconFileName = "closeIcon.png";
@@ -33,12 +33,14 @@ public class YieldTabbedPane extends DnDTabbedPane {
 
     private String emptyText = "No open tabs";
 
-    public YieldTabbedPane() {
+    public YieldTabbedPane(boolean closeAfterEmpty) {
         super();
+        this.closeAfterEmpty = closeAfterEmpty;
     }
 
-    public YieldTabbedPane(TabClosingListener aTabClosingListener) {
+    public YieldTabbedPane(boolean closeAfterEmpty, TabClosingListener aTabClosingListener) {
         super();
+        this.closeAfterEmpty = closeAfterEmpty;
         tabClosingListener = aTabClosingListener;
     }
 
@@ -204,5 +206,9 @@ public class YieldTabbedPane extends DnDTabbedPane {
             gbc.insets = new Insets(0, 0, 0, 0);
             add(closingLabel, gbc);
         }
+    }
+
+    public boolean isCloseAfterEmpty() {
+        return closeAfterEmpty;
     }
 }

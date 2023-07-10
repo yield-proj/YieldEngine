@@ -16,11 +16,8 @@
 
 package com.xebisco.yield.editor;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.IntelliJTheme;
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.xebisco.yield.editor.prop.BooleanProp;
-import com.xebisco.yield.editor.prop.ImageProp;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
 
@@ -37,22 +34,25 @@ public class Entry {
     private static JDialog splashDialog;
 
     public static void main(String[] args) {
-        System.setProperty("sun.java2d.opengl", "True");
+        //System.setProperty("sun.java2d.opengl", "True");
         Locale.setDefault(Locale.US);
-        IntelliJTheme.setup(Entry.class.getResourceAsStream("/DarkPurple.theme.json"));
+        SwingUtilities.invokeLater(() -> {
+            IntelliJTheme.setup(Entry.class.getResourceAsStream("/DarkPurple.theme.json"));
 
-        splashDialog();
-        if (args.length == 1) {
-            Project project;
-            try (ObjectInputStream oi = new ObjectInputStream(new BufferedInputStream(new FileInputStream(args[0])))) {
-                project = (Project) oi.readObject();
-            } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            new Editor(project);
-        } else if (args.length == 0)
-            openProjects();
-        else throw new IllegalStateException("Wrong arguments");
+            splashDialog();
+            Assets.init();
+            if (args.length == 1) {
+                Project project;
+                try (ObjectInputStream oi = new ObjectInputStream(new BufferedInputStream(new FileInputStream(args[0])))) {
+                    project = (Project) oi.readObject();
+                } catch (IOException | ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                new Editor(project);
+            } else if (args.length == 0)
+                openProjects();
+            else throw new IllegalStateException("Wrong arguments");
+        });
     }
 
     private static void loadEverything() {

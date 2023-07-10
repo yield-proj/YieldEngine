@@ -18,26 +18,27 @@ package com.xebisco.yield.editor.explorer;
 
 import com.formdev.flatlaf.ui.FlatBorder;
 import com.sun.source.tree.Tree;
-import com.xebisco.yield.editor.Assets;
-import com.xebisco.yield.editor.PropsWindow;
-import com.xebisco.yield.editor.Utils;
+import com.xebisco.yield.editor.*;
+import com.xebisco.yield.editor.code.CodePanel;
+import com.xebisco.yield.editor.prop.BooleanProp;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
 import com.xebisco.yield.editor.prop.StringProp;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
+import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class Explorer extends JPanel implements ActionListener {
@@ -54,7 +55,7 @@ public class Explorer extends JPanel implements ActionListener {
 
     private final File mainDir;
 
-    public Explorer(File mainDir) {
+    public Explorer(File mainDir, String mainName) {
         this.mainDir = mainDir;
 
         setLayout(new BorderLayout());
@@ -65,23 +66,8 @@ public class Explorer extends JPanel implements ActionListener {
 
         JPanel p = new JPanel();
         p.setLayout(new FlowLayout(FlowLayout.LEFT));
-        p.add(new JLabel("Project Explorer", UIManager.getIcon("FileChooser.homeFolderIcon"), SwingConstants.CENTER));
+        p.add(new JLabel(mainName, UIManager.getIcon("FileChooser.homeFolderIcon"), SwingConstants.CENTER));
         p.add(refresh);
-        p.add(new JButton(new AbstractAction("", UIManager.getIcon("Tree.closedIcon")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (currDirectory == null) {
-                    JOptionPane.showMessageDialog(null, "This requires to select a directory");
-                } else {
-                    Map<String, Prop[]> props = new HashMap<>();
-                    props.put("New Directory", new Prop[]{new StringProp("Name", "")});
-                    new PropsWindow(props, () -> {
-                        new File(currDirectory, (String) Objects.requireNonNull(Props.get(props.get("New Directory"), "Name")).getValue()).mkdir();
-                        Explorer.this.actionPerformed(null);
-                    }, null, "New Directory");
-                }
-            }
-        }));
         add(p, BorderLayout.NORTH);
 
         actionPerformed(null);
@@ -93,6 +79,7 @@ public class Explorer extends JPanel implements ActionListener {
         DefaultMutableTreeNode newtop = createTree(mainDir);
         if (newtop != null) {
             tree = new JTree(newtop);
+
             tree.setCellRenderer(new ExplorerCellRenderer(mainDir));
         }
         if (jsp != null)
@@ -105,20 +92,157 @@ public class Explorer extends JPanel implements ActionListener {
                         if (me.getButton() == MouseEvent.BUTTON3) {
                             JPopupMenu popupMenu = new JPopupMenu();
 
-                            File f = fPath(tree.getSelectionModel().getLeadSelectionPath(), mainDir);
+                            TreePath[] tps = tree.getSelectionPaths();
+                            if (tps == null)
+                                tps = new TreePath[]{tree.getPathForLocation(me.getX(), me.getY())};
 
-                            popupMenu.add(new JMenuItem(new AbstractAction("Open" + (f.isDirectory() ? " in Explorer" : "")) {
+                            if (tps[0] == null)
+                                return;
+
+                            boolean isDir = false, isScript = false, multiple = tps.length > 1, includeRoot = false;
+
+                            if (!multiple) {
+                                if (((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).isDirectory())
+                                    isDir = true;
+                                if(((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).getName().endsWith(".java"))
+                                    isScript = true;
+                            }
+
+                            for (TreePath tp : tps)
+                                if (tp.getParentPath() == null) {
+                                    includeRoot = true;
+                                    break;
+                                }
+
+                            TreePath[] finalTps = tps;
+
+                            if(isScript) {
+                                popupMenu.add(new JMenuItem(new AbstractAction("Open script") {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        CodePanel codePanel = new CodePanel((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject());
+                                        String title = ((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()).getName().split("\\.java")[0] + " (Script)";
+                                        JFrame frame = new JFrame();
+                                        frame.setIconImage(Assets.images.get("yieldIcon.png").getImage());
+                                        YieldTabbedPane tp = new YieldTabbedPane(true);
+                                        tp.addTab(title, codePanel);
+                                        frame.add(tp);
+
+                                        frame.setTitle("Yield Editor");
+                                        frame.setSize(600, 500);
+                                        frame.setLocation(MouseInfo.getPointerInfo().getLocation());
+                                        JMenuBar mb = new JMenuBar();
+                                        mb.add(new JMenuItem(""));
+                                        frame.setJMenuBar(mb);
+                                        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                                        frame.setVisible(true);
+                                        frame.requestFocus();
+                                    }
+                                }));
+                            }
+
+                            popupMenu.add(new JMenuItem(new AbstractAction("Open" + (isDir ? " in Explorer" : " in Desktop")) {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                    if (JOptionPane.showConfirmDialog(null, "Open " + f.getName() + "?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                                        try {
-                                            Desktop.getDesktop().open(f);
-                                        } catch (IOException ex) {
-                                            Utils.error(null, ex);
-                                        }
+
+                                    boolean open = true;
+                                    if (multiple) {
+                                        open = JOptionPane.showConfirmDialog(null, "Open " + finalTps.length + " files?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
                                     }
+                                    if (open) {
+                                        for (TreePath tp : finalTps)
+                                            try {
+                                                Desktop.getDesktop().open(((File) ((DefaultMutableTreeNode) tp.getLastPathComponent()).getUserObject()));
+                                            } catch (IOException ex) {
+                                                throw new RuntimeException(ex);
+                                            }
+                                    }
+
                                 }
                             }));
+
+                            if (isDir) {
+                                popupMenu.add(new JMenuItem(new AbstractAction("Create folder") {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        Map<String, Prop[]> props = new HashMap<>();
+                                        props.put("New Directory", new Prop[]{new StringProp("Name", "")});
+                                        new PropsWindow(props, () -> {
+                                            new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), (String) Objects.requireNonNull(Props.get(props.get("New Directory"), "Name")).getValue()).mkdir();
+                                            Explorer.this.actionPerformed(null);
+                                        }, null, "New Directory");
+                                    }
+                                }));
+                                popupMenu.add(new JMenuItem(new AbstractAction("Create script") {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        Map<String, Prop[]> props = new HashMap<>();
+                                        props.put("New Script", new Prop[]{new StringProp("Name", ""), new BooleanProp("Create default methods", true)});
+                                        new PropsWindow(props, () -> {
+                                            if (Objects.requireNonNull(Props.get(props.get("New Script"), "Name")).getValue().equals("")) {
+                                                JOptionPane.showMessageDialog(null, "Script needs a name");
+                                                actionPerformed(e);
+                                            } else {
+                                                File f = new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), Objects.requireNonNull(Props.get(props.get("New Script"), "Name")).getValue() + ".java");
+                                                try {
+                                                    f.createNewFile();
+
+                                                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(f))) {
+                                                        writer.append("import com.xebisco.yield.*;\n\npublic class ").append(f.getName().split("\\.java")[0]).append(" extends ComponentBehavior {\n");
+                                                        if ((boolean) Objects.requireNonNull(Props.get(props.get("New Script"), "Create default methods")).getValue()) {
+                                                            writer.append("\n\t//This method is called before the first update of the entity\n\t@Override\n\tpublic void onStart() {\n\t\t\n\t}\n\n\t//This method is called every frame\n\t@Override\n\tpublic void onUpdate() {\n\t\t\n\t}\n");
+                                                        }
+                                                        writer.append("\n}");
+                                                    } catch (IOException ex) {
+                                                        Utils.error(null, ex);
+                                                    }
+                                                } catch (IOException ex) {
+                                                    Utils.error(null, ex);
+                                                }
+                                            }
+                                            Explorer.this.actionPerformed(null);
+                                        }, null, "New Script");
+                                    }
+                                }));
+                            }
+
+                            if (!includeRoot)
+                                popupMenu.add(new JMenuItem(new AbstractAction("Delete") {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        if (JOptionPane.showConfirmDialog(null, "Delete " + finalTps.length + " file?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                                            for (TreePath tp : finalTps) {
+                                                Path path = ((File) ((DefaultMutableTreeNode) tp.getLastPathComponent()).getUserObject()).toPath();
+
+                                                try {
+                                                    Files.walkFileTree(path,
+                                                            new SimpleFileVisitor<>() {
+
+                                                                @Override
+                                                                public FileVisitResult postVisitDirectory(Path dir,
+                                                                                                          IOException exc)
+                                                                        throws IOException {
+                                                                    Files.delete(dir);
+                                                                    return FileVisitResult.CONTINUE;
+                                                                }
+
+                                                                @Override
+                                                                public FileVisitResult visitFile(Path file,
+                                                                                                 BasicFileAttributes attrs)
+                                                                        throws IOException {
+                                                                    Files.delete(file);
+                                                                    return FileVisitResult.CONTINUE;
+                                                                }
+                                                            }
+                                                    );
+                                                } catch (IOException ex) {
+                                                    throw new RuntimeException(ex);
+                                                }
+                                            }
+                                            Explorer.this.actionPerformed(null);
+                                        }
+                                    }
+                                }));
 
                             popupMenu.show(Explorer.this, me.getX() + 2, me.getY() + 42);
                         } else
@@ -128,28 +252,26 @@ public class Explorer extends JPanel implements ActionListener {
     }
 
     DefaultMutableTreeNode createTree(File temp) {
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode("Project Root");
+        DefaultMutableTreeNode top = new DefaultMutableTreeNode(temp);
         if (!(temp.exists() && temp.isDirectory()))
             return top;
 
-        fillTree(top, temp.getPath());
+        fillTree(top, temp);
 
         return top;
     }
 
-    void fillTree(DefaultMutableTreeNode root, String filename) {
-        File temp = new File(filename);
-
-        if (!(temp.exists() && temp.isDirectory()))
+    void fillTree(DefaultMutableTreeNode root, File file) {
+        if (!(file.exists() && file.isDirectory()))
             return;
-        File[] filelist = temp.listFiles();
+        File[] filelist = file.listFiles();
 
-        for (File file : filelist) {
-            final DefaultMutableTreeNode tempDmtn = new DefaultMutableTreeNode(file.getName());
+        assert filelist != null;
+        for (File c : filelist) {
+            final DefaultMutableTreeNode tempDmtn = new DefaultMutableTreeNode(c);
 
             root.add(tempDmtn);
-            final String newfilename = new String(filename + "\\" + file.getName());
-            fillTree(tempDmtn, newfilename);
+            fillTree(tempDmtn, c);
         }
     }
 
@@ -171,7 +293,7 @@ public class Explorer extends JPanel implements ActionListener {
     }
 
     void doMouseClicked(MouseEvent me) {
-        TreePath tp = tree.getSelectionModel().getLeadSelectionPath();
+        TreePath tp = tree.getSelectionPath();
         if (tp == null) return;
 
         if (tp.getParentPath() == null) {

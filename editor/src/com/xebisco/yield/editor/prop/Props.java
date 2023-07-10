@@ -28,7 +28,7 @@ public final class Props {
         };
     }
 
-    public static Prop[] newScene() {
+    public static Prop[] newSimple() {
         return new Prop[] {
                 new StringProp("Name", "")
         };

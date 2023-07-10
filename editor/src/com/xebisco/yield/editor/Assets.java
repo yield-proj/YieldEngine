@@ -19,17 +19,26 @@ package com.xebisco.yield.editor;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.*;
 
 public class Assets {
     public static final Map<String, ImageIcon> images = new HashMap<>();
     public static List<Project> projects;
 
-    static {
+    public static void init() {
         new File(Utils.defaultDirectory() + "/.yield_editor").mkdir();
+        File jre6 = new File(Utils.defaultDirectory() + "/.yield_editor", "jre6-rt.jar");
+        if(!jre6.exists()) {
+            try {
+                jre6.createNewFile();
+                Files.copy(Objects.requireNonNull(Assets.class.getResourceAsStream("/jre6-rt.jar")), jre6.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         File projectsFile = new File(Utils.defaultDirectory() + "/.yield_editor", "projects.ser");
         if (!projectsFile.exists()) {
             try {

@@ -26,7 +26,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProjectListPanel extends JPanel implements MouseListener {
 
@@ -36,6 +38,8 @@ public class ProjectListPanel extends JPanel implements MouseListener {
     public ProjectListPanel() {
         addMouseListener(this);
     }
+
+    private final Map<Project, BufferedImage> imageMap = new HashMap<>();
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -62,17 +66,20 @@ public class ProjectListPanel extends JPanel implements MouseListener {
                 projectsPos.add(new ProjectPos(project, y));
                 g.fillRoundRect(s, y, w, h, 20, 20);
                 g.fillRect(w, y, s, h);
-                BufferedImage image;
-                try {
-                    Image img = ImageIO.read(new File(project.getProjectLocation(), "icon.png"));
-                    img = img.getScaledInstance(h, (int) (h * ((double) img.getHeight(null) / img.getWidth(null))), Image.SCALE_SMOOTH);
-                    image = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-                    Graphics g1 = image.getGraphics();
-                    g1.drawImage(img, 0, 0, image.getWidth(), image.getHeight(), null);
-                    g1.dispose();
-                } catch (IOException e) {
-                    Assets.projects.remove(project);
-                    break;
+                BufferedImage image = imageMap.get(project);
+                if (image == null) {
+                    try {
+                        Image img = ImageIO.read(new File(project.getProjectLocation(), "icon.png"));
+                        img = img.getScaledInstance(h, (int) (h * ((double) img.getHeight(null) / img.getWidth(null))), Image.SCALE_SMOOTH);
+                        image = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                        Graphics g1 = image.getGraphics();
+                        g1.drawImage(img, 0, 0, image.getWidth(), image.getHeight(), null);
+                        g1.dispose();
+                        imageMap.put(project, image);
+                    } catch (IOException e) {
+                        Assets.projects.remove(project);
+                        break;
+                    }
                 }
                 g.drawImage(image, s, y + h / 2 - image.getHeight() / 2, null);
                 g.setColor(getForeground());
@@ -125,7 +132,8 @@ public class ProjectListPanel extends JPanel implements MouseListener {
                 }
             });
             popupMenu.add(item);
-            popupMenu.show(this, getWidth() - 80, e.getY());repaint();
+            popupMenu.show(this, getWidth() - 80, e.getY());
+            repaint();
         }
 
         repaint();
