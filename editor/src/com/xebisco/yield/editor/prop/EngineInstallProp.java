@@ -16,17 +16,21 @@
 
 package com.xebisco.yield.editor.prop;
 
-import com.xebisco.yield.editor.Assets;
 import com.xebisco.yield.editor.EngineInstall;
+import com.xebisco.yield.editor.Utils;
 import com.xebisco.yield.editor.YieldBorder;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
+import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
 public class EngineInstallProp extends Prop {
@@ -92,6 +96,29 @@ public class EngineInstallProp extends Prop {
             }
         });
         panel.add(mainP, BorderLayout.CENTER);
+
+        JPanel buttons = new JPanel();
+        buttons.setLayout(new FlowLayout(FlowLayout.LEFT));
+        buttons.add(new JButton(new AbstractAction("Get") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                URL core;
+                try {
+                    core = new URL("");
+                } catch (MalformedURLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                try (InputStream in = core.openStream()) {
+                    File dir = new File(Utils.defaultDirectory() + "/.yield_editor", install.getInstall());
+                    dir.mkdir();
+                    File file = new File(dir, "core.jar");
+                    file.createNewFile();
+                    Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException ex) {
+                    Utils.error(null, ex);
+                }
+            }
+        }));
         return panel;
     }
 }

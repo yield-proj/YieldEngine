@@ -17,6 +17,7 @@
 package com.xebisco.yield;
 
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RenderingThread extends Thread {
@@ -28,6 +29,8 @@ public class RenderingThread extends Thread {
     private final Object lockObject = new Object(), otherLock = new Object();
     private boolean finishedRendering;
 
+    private final Semaphore semaphore = new Semaphore(0);
+
     public RenderingThread(GraphicsManager graphicsManager) {
         setName("Yield Rendering Thread");
         this.graphicsManager = graphicsManager;
@@ -36,8 +39,8 @@ public class RenderingThread extends Thread {
     @Override
     public void run() {
         running.set(true);
-        finishedRendering = false;
         while (running.get()) {
+            finishedRendering = false;
             synchronized (lockObject) {
                 try {
                     if (drawInstructions == null)
@@ -50,16 +53,14 @@ public class RenderingThread extends Thread {
                 graphicsManager.frame();
                 graphicsManager.draw(drawInstructions);
                 setDrawInstructions(null);
-                synchronized (otherLock) {
-                    otherLock.notify();
-                    finishedRendering = true;
-                }
             }
+            finishedRendering = true;
+            semaphore.release();
         }
         interrupt();
     }
 
-    public void renderAsync(List<DrawInstruction> drawInstructions) {
+    public synchronized void renderAsync(List<DrawInstruction> drawInstructions) {
         setDrawInstructions(drawInstructions);
         synchronized (lockObject) {
             lockObject.notify();
@@ -70,13 +71,8 @@ public class RenderingThread extends Thread {
         if (finishedRendering)
             return;
 
-        synchronized (otherLock) {
-            try {
-                otherLock.wait();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        semaphore.acquireUninterruptibly();
+
     }
 
     public AtomicBoolean getRunning() {

@@ -142,7 +142,7 @@ public class Projects extends JPanel {
 
                     Entry.splashDialog.dispose();
 
-                    PropsWindow listWindow = new PropsWindow(props, () -> {
+                    new PropsWindow(props, () -> {
 
                     }, null, "New Install");
                 });
