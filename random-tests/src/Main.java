@@ -13,7 +13,7 @@ public class Main extends Scene {
 
     @Override
     public void onStart() {
-        
+        instantiate(HELLO_WORLD_TEXT_PREFAB);
     }
 
     @Override

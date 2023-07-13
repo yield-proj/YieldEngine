@@ -22,6 +22,7 @@ import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
+import com.jogamp.opengl.math.Matrix4;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.TextureIO;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
@@ -36,6 +37,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.*;
 
@@ -133,6 +135,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     public void init(GLAutoDrawable glAutoDrawable) {
         GL2 gl = glAutoDrawable.getGL().getGL2();
         gl.glEnable(GL2.GL_BLEND);
+        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
         if (platformInit.isVerticalSync()) gl.setSwapInterval(1);
         else
             gl.setSwapInterval(0);
@@ -206,6 +209,8 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     }
 
     public void draw(DrawInstruction di, GL2 gl) {
+        Matrix4 matrix4 = new Matrix4();
+        gl.glGetFloatv(GL2.GL_MODELVIEW_MATRIX, matrix4.getMatrix(), 0);
         gl.glTranslatef((float) di.getX(), (float) di.getY(), 0);
         if (di.isRotateBeforeScale()) {
             gl.glRotatef((float) di.getRotation(), 0, 0, 1);
@@ -224,7 +229,6 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
             gl.glColor4d(di.getColor().getRed(), di.getColor().getGreen(), di.getColor().getBlue(), di.getColor().getAlpha());
 
             if (di.getImageRef() != null && ((OpenGLImage) di.getImageRef()).getTexture() != null) {
-                gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE_MINUS_SRC_ALPHA);
                 com.jogamp.opengl.util.texture.Texture t = ((OpenGLImage) di.getImageRef()).getTexture();
                 t.enable(gl);
                 t.bind(gl);
@@ -269,6 +273,8 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
         for (DrawInstruction child : di.getChildrenInstructions()) {
             draw(child, gl);
         }
+
+        gl.glLoadMatrixf(matrix4.getMatrix(), 0);
     }
 
     @Override
