@@ -17,10 +17,7 @@
 package com.xebisco.yield;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * This is a class that represents a container for 2D entities, allowing for instantiation and removal of entities.
@@ -28,6 +25,7 @@ import java.util.List;
 public class Entity2DContainer {
     private final Application application;
     private List<Entity2D> entities = new ArrayList<>();
+    private final Set<Entity2D> toAddEntities = new HashSet<>(), toRemoveEntities = new HashSet<>();
 
     public Entity2DContainer(Application application) {
         this.application = application;
@@ -64,10 +62,21 @@ public class Entity2DContainer {
         for (Entity2DPrefab p : prefab.getChildren()) {
             entity.instantiate(p);
         }
-        entities.add(entity);
+        toAddEntities.add(entity);
         if (entityStarter != null)
             entityStarter.start(entity);
         return entity;
+    }
+
+    protected void updateEntityList() {
+        entities.addAll(toAddEntities);
+
+        entities.removeAll(toRemoveEntities);
+
+        entities.sort(Comparator.comparing(Entity2D::getIndex).reversed());
+
+        toAddEntities.clear();
+        toRemoveEntities.clear();
     }
 
     /**
@@ -83,7 +92,7 @@ public class Entity2DContainer {
 
     public boolean remove(Entity2D entity) {
         entity.dispose();
-        return getEntities().remove(entity);
+        return toRemoveEntities.add(entity);
     }
 
     public List<Entity2D> getEntities() {
@@ -96,5 +105,13 @@ public class Entity2DContainer {
 
     public Application getApplication() {
         return application;
+    }
+
+    public Set<Entity2D> getToAddEntities() {
+        return toAddEntities;
+    }
+
+    public Set<Entity2D> getToRemoveEntities() {
+        return toRemoveEntities;
     }
 }

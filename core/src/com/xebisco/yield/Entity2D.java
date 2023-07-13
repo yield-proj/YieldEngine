@@ -67,6 +67,7 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
         }
         for (Entity2D child : getEntities()) {
             DrawInstruction di = child.process();
+            child.updateEntityList();
             if (visible)
                 entityDrawInstruction.getChildrenInstructions().add(di);
         }
@@ -104,7 +105,7 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
             component.dispose();
         }
         if (getParent() != null) {
-            getParent().getEntities().remove(this);
+            getParent().getToRemoveEntities().add(this);
             setParent(null);
         }
     }
@@ -256,27 +257,6 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
      */
     public Application getApplication() {
         return application;
-    }
-
-    /**
-     * The function returns a ContactAdapter object.
-     *
-     * @return The method is returning an object of type `ContactAdapter`.
-     * @deprecated will be removed on next release.
-     */
-    @Deprecated
-    public ContactAdapter getContactAdapter() {
-        return null;
-    }
-
-    /**
-     * This function sets the contact adapter for a class.
-     *
-     * @param contactAdapter The contactAdapter value to set.
-     * @deprecated See addContactListener() instead.
-     */
-    @Deprecated
-    public void setContactAdapter(ContactAdapter contactAdapter) {
     }
 
     public void addContactListener(ContactListener contactListener) {

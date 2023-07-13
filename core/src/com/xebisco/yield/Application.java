@@ -297,12 +297,6 @@ public class Application implements Behavior {
     @Override
     public void onUpdate() {
         if (scene != null && !(scene instanceof BlankScene)) {
-
-            if (platformInit.isInvertZIndex())
-                scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex));
-            else
-                scene.getEntities().sort(Comparator.comparing(Entity2D::getIndex).reversed());
-
             boolean rendering = false;
             if (drawInstructions.size() > 0) {
                 rendering = true;
@@ -339,18 +333,18 @@ public class Application implements Behavior {
                     backGroundDrawInstruction.setColor(scene.getBackGroundColor());
                     drawInstructions.add(backGroundDrawInstruction);
                 }
-                try {
-                    for (Entity2D entity : scene.getEntities()) {
-                        DrawInstruction di = entity.process();
-                        if (di != null && scene.getFrames() >= 2) drawInstructions.add(di);
+                for (Entity2D entity : scene.getEntities()) {
+                    DrawInstruction di = entity.process();
+                    entity.updateEntityList();
+                    if (di != null && scene.getFrames() >= 2) drawInstructions.add(di);
 
-                        if (scene != this.scene) {
-                            return;
-                        }
+                    if (scene != this.scene) {
+                        return;
                     }
-                } catch (ConcurrentModificationException ignore) {
                 }
             }
+
+            scene.updateEntityList();
 
             if (applicationPlatform.getInputManager() != null) {
                 applicationPlatform.getInputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
@@ -478,6 +472,7 @@ public class Application implements Behavior {
             for (int i = this.scene.getEntities().size() - 1; i >= 0; i--) {
                 this.scene.getEntities().get(i).dispose();
             }
+            this.scene.updateEntityList();
             for (SystemBehavior system : this.scene.getSystems()) {
                 system.dispose();
             }
