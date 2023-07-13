@@ -198,6 +198,8 @@ public class DrawInstruction implements Cloneable {
         clone.setScaleY(getScaleY());
         clone.setFontRef(getFontRef());
         clone.setImageRef(getImageRef());
+        clone.setCenterOffsetX(getCenterOffsetX());
+        clone.setCenterOffsetY(getCenterOffsetY());
         if (getColor() != null)
             clone.setColor(getColor().clone());
         clone.setStroke(getStroke());

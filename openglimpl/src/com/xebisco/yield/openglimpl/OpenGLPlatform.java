@@ -212,6 +212,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
         Matrix4 matrix4 = new Matrix4();
         gl.glGetFloatv(GL2.GL_MODELVIEW_MATRIX, matrix4.getMatrix(), 0);
         gl.glTranslatef((float) di.getX(), (float) di.getY(), 0);
+        gl.glTranslatef((float) di.getCenterOffsetX(), (float) di.getCenterOffsetY(), 0);
         if (di.isRotateBeforeScale()) {
             gl.glRotatef((float) di.getRotation(), 0, 0, 1);
             gl.glScalef((float) di.getScaleX(), (float) di.getScaleY(), 0);
@@ -219,6 +220,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
             gl.glScalef((float) di.getScaleX(), (float) di.getScaleY(), 0);
             gl.glRotatef((float) di.getRotation(), 0, 0, 1);
         }
+        gl.glTranslatef((float) -di.getCenterOffsetX(), (float) -di.getCenterOffsetY(), 0);
 
         if (di.getVerticesX() == null && di.getVerticesY() == null) {
             if (di.getColor() != null) {

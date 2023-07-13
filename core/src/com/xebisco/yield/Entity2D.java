@@ -62,6 +62,8 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
             entityDrawInstruction.setScaleY(getTransform().getScale().getY());
             entityDrawInstruction.setRotation(getTransform().getzRotation());
             entityDrawInstruction.getChildrenInstructions().clear();
+            entityDrawInstruction.setCenterOffsetX(getTransform().getCenterOffset().getX());
+            entityDrawInstruction.setCenterOffsetY(getTransform().getCenterOffset().getY());
         }
         for (Entity2D child : getEntities()) {
             DrawInstruction di = child.process();
