@@ -27,6 +27,7 @@ public class PlatformInit {
     private Texture windowIcon;
     private String windowIconPath = "com/xebisco/yield/yieldIcon.png";
 
+    private ContextTime physicsContextTime = new ContextTime(40);
     private final Class<?>[] requiredPlatformModules;
 
     public static final Class<?>[] INPUT_DEFAULT = new Class<?>[]{
@@ -251,5 +252,13 @@ public class PlatformInit {
 
     public void setVerticalSync(boolean verticalSync) {
         this.verticalSync = verticalSync;
+    }
+
+    public ContextTime getPhysicsContextTime() {
+        return physicsContextTime;
+    }
+
+    public void setPhysicsContextTime(ContextTime physicsContextTime) {
+        this.physicsContextTime = physicsContextTime;
     }
 }

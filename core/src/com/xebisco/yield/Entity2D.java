@@ -20,6 +20,7 @@ import com.xebisco.yield.physics.ContactAdapter;
 import com.xebisco.yield.physics.ContactListener;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /**
@@ -50,6 +51,27 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
         this.components.addAll(List.of(components));
     }
 
+    public void processPhysics() {
+        try {
+            for (Entity2D child : getEntities()) {
+                child.processPhysics();
+            }
+        } catch (ConcurrentModificationException ignore) {
+
+        }
+        try {
+            for (int i = 0; i < components.size(); i++) {
+                ComponentBehavior component = null;
+
+                component = components.get(i);
+                if (component != null)
+                    component.onPhysicsUpdate();
+            }
+        } catch (IndexOutOfBoundsException ignore) {
+
+        }
+    }
+
     /**
      * For each component, set the entity and frames, and call onStart and onUpdate.
      */
@@ -71,25 +93,27 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
             if (visible)
                 entityDrawInstruction.getChildrenInstructions().add(di);
         }
-        for (int i = 0; i < components.size(); i++) {
-            ComponentBehavior component = null;
-            try {
-                component = components.get(i);
-            } catch (IndexOutOfBoundsException ignore) {
+        try {
+            for (int i = 0; i < components.size(); i++) {
+                ComponentBehavior component = null;
 
-            }
-            if (component != null) {
-                component.setEntity(this);
-                component.setFrames(component.getFrames() + 1);
-                if (component.getFrames() == 1)
-                    component.onStart();
-                component.onUpdate();
-                if (visible) {
-                    DrawInstruction di = component.render();
-                    if (di != null)
-                        entityDrawInstruction.getChildrenInstructions().add(di);
+                component = components.get(i);
+
+                if (component != null) {
+                    component.setEntity(this);
+                    component.setFrames(component.getFrames() + 1);
+                    if (component.getFrames() == 1)
+                        component.onStart();
+                    component.onUpdate();
+                    if (visible) {
+                        DrawInstruction di = component.render();
+                        if (di != null)
+                            entityDrawInstruction.getChildrenInstructions().add(di);
+                    }
                 }
             }
+        } catch (IndexOutOfBoundsException ignore) {
+
         }
         if (visible)
             return entityDrawInstruction;

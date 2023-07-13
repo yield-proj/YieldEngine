@@ -53,11 +53,28 @@ public class Application implements Behavior {
     private final List<DrawInstruction> drawInstructions = new ArrayList<>(), toSendDrawInstructions = new ArrayList<>();
     private Scene toChangeScene;
 
+    private final Context physicsContext;
+
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, ApplicationPlatform applicationPlatform, PlatformInit platformInit) {
         physicsPpm = platformInit.getStartPhysicsPpm();
         this.applicationManager = applicationManager;
         applicationManager.getApplications().add(this);
         this.applicationPlatform = applicationPlatform;
+
+        physicsContext = new Context(platformInit.getPhysicsContextTime(), () -> {
+            if(scene != null) {
+                scene.getPhysicsMain().onUpdate();
+                try {
+                    for (Entity2D entity : scene.getEntities()) {
+
+                        for(ComponentBehavior c : entity.getComponents())
+                            c.onPhysicsUpdate();
+                    }
+                } catch (ConcurrentModificationException ignore) {
+
+                }
+            }
+        }, null, "PhysicsMain");
 
         checkPlatform(applicationPlatform, platformInit);
 
@@ -164,6 +181,8 @@ public class Application implements Behavior {
         }
         if (controllerManager != null)
             controllerManager.initSDLGamepad();
+
+        physicsContext.getThread().start();
     }
 
     private void createNullAxis(String a, String horizontal, String vertical, String fire, String back, String action, String inventory, String start) {
@@ -371,6 +390,7 @@ public class Application implements Behavior {
         renderingThread.getRunning().set(false);
         //Wake up thread
         renderingThread.renderAsync(null);
+        physicsContext.getRunning().set(false);
         setScene(null);
         if (controllerManager != null)
             controllerManager.quitSDLGamepad();

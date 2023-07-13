@@ -23,6 +23,13 @@ public class ContextTime {
     private double timeScale = 1, deltaTime;
     private long targetSleepTime = 16666;
 
+    public ContextTime(double targetFPS) {
+        setTargetFPS(targetFPS);
+    }
+
+    public ContextTime() {
+    }
+
     /**
      * This function sets the target sleep time based on the desired frames per second.
      *

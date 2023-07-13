@@ -40,11 +40,11 @@ public class PhysicsBody extends ComponentBehavior {
         def.position = Global.toVec2(getTransform().getPosition().divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm())));
         def.angle = (float) Math.toRadians(getTransform().getzRotation());
         def.userData = getEntity();
-        setB2Body(getApplication().getScene().getPhysicsSystem().getB2World().createBody(def));
+        setB2Body(getApplication().getScene().getPhysicsMain().getB2World().createBody(def));
     }
 
     @Override
-    public void onUpdate() {
+    public void onPhysicsUpdate() {
         for (int i = 0; i < getEntity().getComponents().size(); i++) {
             ComponentBehavior c = getEntity().getComponents().get(i);
             if (c instanceof Collider) {
@@ -99,7 +99,7 @@ public class PhysicsBody extends ComponentBehavior {
     @Override
     public void dispose() {
         if (b2Body != null)
-            getApplication().getScene().getPhysicsSystem().getB2World().destroyBody(b2Body);
+            getApplication().getScene().getPhysicsMain().getB2World().destroyBody(b2Body);
     }
 
     public void addForce(Vector2D force, ForceType forceType) {

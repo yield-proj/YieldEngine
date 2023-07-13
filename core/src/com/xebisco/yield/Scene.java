@@ -16,7 +16,7 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.physics.PhysicsSystem;
+import com.xebisco.yield.physics.PhysicsMain;
 import com.xebisco.yield.ui.InputUI;
 
 import java.util.HashSet;
@@ -31,13 +31,13 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
     private final Vector2D camera = new Vector2D(), zoomScale = new Vector2D(1, 1);
     private Color backGroundColor = Colors.GRAY.darker();
     private Set<SystemBehavior> systems = new HashSet<>();
-    private final PhysicsSystem physicsSystem = new PhysicsSystem();
+    private final PhysicsMain physicsMain = new PhysicsMain(this);
     public static final Entity2DPrefab INPUT_UI_PREFAB = new Entity2DPrefab(new ComponentCreation(AudioPlayer.class), new ComponentCreation(InputUI.class));
 
     public Scene(Application application) {
         super(application);
-        getSystems().add(physicsSystem);
         instantiate(INPUT_UI_PREFAB).setIndex(-1);
+        physicsMain.onStart();
     }
 
     @Override
@@ -111,15 +111,6 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
     }
 
     /**
-     * The function returns the physics system.
-     *
-     * @return The method is returning an object of type `PhysicsSystem`.
-     */
-    public PhysicsSystem getPhysicsSystem() {
-        return physicsSystem;
-    }
-
-    /**
      * The function returns a Vector2D representing the camera position.
      *
      * @return A Vector2D object representing the camera position.
@@ -139,5 +130,9 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
 
     public ContextTime getTime() {
         return getApplication().getApplicationManager().getManagerContext().getContextTime();
+    }
+
+    public PhysicsMain getPhysicsMain() {
+        return physicsMain;
     }
 }

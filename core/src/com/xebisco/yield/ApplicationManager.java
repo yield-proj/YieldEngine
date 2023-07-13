@@ -31,7 +31,7 @@ public class ApplicationManager implements Runnable {
     private final ApplicationManagerContextDisposable contextDisposable = new ApplicationManagerContextDisposable();
 
     public ApplicationManager(ContextTime contextTime) {
-        managerContext = new Context(contextTime, contextRunnable, contextDisposable);
+        managerContext = new Context(contextTime, contextRunnable, contextDisposable, "Application Manager");
     }
 
     @Override

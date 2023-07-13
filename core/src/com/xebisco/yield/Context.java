@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class Context implements Runnable {
 
-    private final Thread thread = new Thread(this);
+    private final Thread thread;
     private final ContextTime contextTime;
     private final AtomicBoolean running = new AtomicBoolean();
     private final Object lockObject = new Object();
@@ -31,10 +31,11 @@ public class Context implements Runnable {
     private final Disposable disposable;
     private boolean lightweight;
 
-    public Context(ContextTime contextTime, Runnable runnable, Disposable disposable) {
+    public Context(ContextTime contextTime, Runnable runnable, Disposable disposable, String name) {
         this.contextTime = contextTime;
         this.runnable = runnable;
         this.disposable = disposable;
+        thread = new Thread(this, "Yield Context: " + name);
     }
 
     @Override

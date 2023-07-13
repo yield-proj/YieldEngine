@@ -37,6 +37,10 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
 
     }
 
+    public void onPhysicsUpdate() {
+
+    }
+
     @Override
     public void dispose() {
 
@@ -55,7 +59,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      * @return A RayCast object.
      */
     public final RayCast rayCast(Vector2D point1, Vector2D point2) {
-        return getApplication().getScene().getPhysicsSystem().rayCast(getEntity(), point1, point2);
+        return getApplication().getScene().getPhysicsMain().rayCast(getEntity(), point1, point2);
     }
 
     /**

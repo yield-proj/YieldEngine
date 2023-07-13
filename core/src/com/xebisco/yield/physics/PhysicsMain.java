@@ -16,10 +16,7 @@
 
 package com.xebisco.yield.physics;
 
-import com.xebisco.yield.Entity2D;
-import com.xebisco.yield.Global;
-import com.xebisco.yield.SystemBehavior;
-import com.xebisco.yield.Vector2D;
+import com.xebisco.yield.*;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
@@ -27,20 +24,22 @@ import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 
 /**
- * The PhysicsSystem class is a Java class that handles physics simulation using the Box2D engine.
+ * The PhysicsMain class is a Java class that handles physics simulation using the Box2D engine.
  */
-public class PhysicsSystem extends SystemBehavior {
+public class PhysicsMain implements Behavior {
     private World b2World;
     private Vector2D gravity = new Vector2D(0, -10);
     private int velocityIterations = 6;
+    private final Scene scene;
     private int positionIterations = 2;
+
+    public PhysicsMain(Scene scene) {
+        this.scene = scene;
+    }
 
     @Override
     public void onStart() {
-        if (gravity == null)
-            gravity = new Vector2D(0, -10);
         b2World = new World(Global.toVec2(gravity));
-
 
         b2World.setContactListener(new ContactListener() {
             @Override
@@ -174,5 +173,9 @@ public class PhysicsSystem extends SystemBehavior {
      */
     public void setPositionIterations(int positionIterations) {
         this.positionIterations = positionIterations;
+    }
+
+    public Scene getScene() {
+        return scene;
     }
 }
