@@ -20,8 +20,7 @@ package com.xebisco.yield;
  * It represents the position, size, scale, and rotation of a 2D object
  */
 public class Transform2D {
-    private final Vector2D position = new Vector2D();
-    private final Vector2D scale = new Vector2D(1, 1);
+    private final Vector2D position = new Vector2D(), scale = new Vector2D(1, 1), centerOffset = new Vector2D();
     private double zRotation;
 
     /**
@@ -106,5 +105,14 @@ public class Transform2D {
      */
     public Vector2D getScale() {
         return scale;
+    }
+
+    /**
+     * The function returns the center offset as a Vector2D.
+     *
+     * @return The method is returning a Vector2D object called centerOffset.
+     */
+    public Vector2D getCenterOffset() {
+        return centerOffset;
     }
 }

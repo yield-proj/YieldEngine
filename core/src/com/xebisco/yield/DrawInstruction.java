@@ -35,7 +35,7 @@ public class DrawInstruction implements Cloneable {
 
     private boolean rotateBeforeScale = true;
 
-    private double x, y, scaleX = 1, scaleY = 1;
+    private double x, y, scaleX = 1, scaleY = 1, centerOffsetX, centerOffsetY;
 
     private List<DrawInstruction> childrenInstructions = new ArrayList<>();
 
@@ -204,5 +204,21 @@ public class DrawInstruction implements Cloneable {
         clone.setRotateBeforeScale(isRotateBeforeScale());
         getChildrenInstructions().forEach(di -> clone.getChildrenInstructions().add(di.clone()));
         return clone;
+    }
+
+    public double getCenterOffsetX() {
+        return centerOffsetX;
+    }
+
+    public void setCenterOffsetX(double centerOffsetX) {
+        this.centerOffsetX = centerOffsetX;
+    }
+
+    public double getCenterOffsetY() {
+        return centerOffsetY;
+    }
+
+    public void setCenterOffsetY(double centerOffsetY) {
+        this.centerOffsetY = centerOffsetY;
     }
 }

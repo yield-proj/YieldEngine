@@ -54,6 +54,9 @@ public abstract class AbstractRenderable extends ComponentBehavior {
 
     @Override
     public DrawInstruction render() {
+        drawInstruction.setCenterOffsetX(getTransform().getCenterOffset().getX());
+        drawInstruction.setCenterOffsetY(getTransform().getCenterOffset().getY());
+
         if (filled)
             drawInstruction.setStroke(0);
         else drawInstruction.setStroke(borderThickness);
