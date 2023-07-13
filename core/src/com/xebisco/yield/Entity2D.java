@@ -17,6 +17,7 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.physics.ContactAdapter;
+import com.xebisco.yield.physics.ContactListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,8 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
     private List<ComponentBehavior> components = new ArrayList<>();
     private Entity2DContainer parent;
     private int index;
-    private ContactAdapter contactAdapter;
+
+    private List<ContactListener> contactListeners = new ArrayList<>();
 
     private String[] tags;
     private int frames;
@@ -258,18 +260,33 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
      * The function returns a ContactAdapter object.
      *
      * @return The method is returning an object of type `ContactAdapter`.
+     * @deprecated will be removed on next release.
      */
+    @Deprecated
     public ContactAdapter getContactAdapter() {
-        return contactAdapter;
+        return null;
     }
 
     /**
      * This function sets the contact adapter for a class.
      *
      * @param contactAdapter The contactAdapter value to set.
+     * @deprecated See addContactListener() instead.
      */
+    @Deprecated
     public void setContactAdapter(ContactAdapter contactAdapter) {
-        this.contactAdapter = contactAdapter;
+    }
+
+    public void addContactListener(ContactListener contactListener) {
+        getContactListeners().add(contactListener);
+    }
+
+    public List<ContactListener> getContactListeners() {
+        return contactListeners;
+    }
+
+    public void setContactListeners(List<ContactListener> contactListeners) {
+        this.contactListeners = contactListeners;
     }
 
     /**

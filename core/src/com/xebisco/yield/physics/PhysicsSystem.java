@@ -46,29 +46,25 @@ public class PhysicsSystem extends SystemBehavior {
             @Override
             public void beginContact(Contact contact) {
                 Collider c = ((Collider) contact.m_fixtureA.getUserData());
-                if (c.getEntity().getContactAdapter() != null)
-                    c.getEntity().getContactAdapter().onContactBegin(c, ((Collider) contact.m_fixtureB.getUserData()));
+                c.getEntity().getContactListeners().forEach(l -> l.onContactBegin(c, ((Collider) contact.m_fixtureB.getUserData())));
             }
 
             @Override
             public void endContact(Contact contact) {
                 Collider c = ((Collider) contact.m_fixtureA.getUserData());
-                if (c.getEntity().getContactAdapter() != null)
-                    c.getEntity().getContactAdapter().onContactEnd(c, ((Collider) contact.m_fixtureB.getUserData()));
+                c.getEntity().getContactListeners().forEach(l -> l.onContactEnd(c, ((Collider) contact.m_fixtureB.getUserData())));
             }
 
             @Override
             public void preSolve(Contact contact, Manifold manifold) {
                 Collider c = ((Collider) contact.m_fixtureA.getUserData());
-                if (c.getEntity().getContactAdapter() != null)
-                    c.getEntity().getContactAdapter().preSolve(contact, manifold);
+                c.getEntity().getContactListeners().forEach(l -> l.preSolve(contact, manifold));
             }
 
             @Override
             public void postSolve(Contact contact, ContactImpulse contactImpulse) {
                 Collider c = ((Collider) contact.m_fixtureA.getUserData());
-                if (c.getEntity().getContactAdapter() != null)
-                    c.getEntity().getContactAdapter().postSolve(contact, contactImpulse);
+                c.getEntity().getContactListeners().forEach(l -> l.postSolve(contact, contactImpulse));
             }
         });
     }
