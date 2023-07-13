@@ -88,7 +88,7 @@ public class PhysicsSystem extends SystemBehavior {
     public void onUpdate() {
         if(b2World.getGravity().x != gravity.getX() || b2World.getGravity().y != gravity.getY())
             b2World.setGravity(Global.toVec2(gravity));
-        b2World.step((float) getScene().getApplication().getApplicationManager().getManagerContext().getContextTime().getDeltaTime(), velocityIterations, positionIterations);
+        b2World.step((float) ((getScene().getApplication().getApplicationManager().getManagerContext().getContextTime().getTargetSleepTime() * getScene().getApplication().getApplicationManager().getManagerContext().getContextTime().getTimeScale()) / 1_000_000.), velocityIterations, positionIterations);
     }
 
     @Override
