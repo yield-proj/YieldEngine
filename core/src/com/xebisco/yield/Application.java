@@ -62,19 +62,8 @@ public class Application implements Behavior {
         checkPlatform(applicationPlatform, platformInit);
 
         setScene(new BlankScene(this));
-        Timer t = new Timer();
-        t.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    setScene(initialScene.getConstructor(Application.class).newInstance(Application.this));
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                         NoSuchMethodException e) {
-                    throw new RuntimeException(e);
-                }
-                t.cancel();
-            }
-        }, 2000L);
+
+        changeScene(initialScene);
 
         this.platformInit = platformInit;
         renderingThread = new RenderingThread(applicationPlatform.getGraphicsManager());
@@ -94,6 +83,10 @@ public class Application implements Behavior {
         axes.add(new Axis(RUN, Input.Key.VK_SHIFT, null, null, null));
         axes.add(new Axis(LEFT_BUMPER, Input.Key.VK_G, null, null, null));
     }
+    public Application(ApplicationManager applicationManager, ApplicationPlatform applicationPlatform, PlatformInit platformInit) {
+        this(applicationManager, BlankScene.class, applicationPlatform, platformInit);
+    }
+
 
     private void checkPlatform(ApplicationPlatform platform, PlatformInit init) {
         for (Class<?> c : init.getRequiredPlatformModules()) {
@@ -296,8 +289,8 @@ public class Application implements Behavior {
 
     @Override
     public void onUpdate() {
-        if (scene != null && !(scene instanceof BlankScene)) {
-            boolean rendering = false;
+        boolean rendering = false;
+        if (scene != null) {
             if (drawInstructions.size() > 0) {
                 rendering = true;
                 toSendDrawInstructions.clear();
@@ -351,27 +344,26 @@ public class Application implements Behavior {
                 applicationPlatform.getInputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
             }
 
-
-            if (changeSceneTransition != null) {
-                changeSceneTransition.setApplication(this);
-                changeSceneTransition.setDeltaTime(getApplicationManager().getManagerContext().getContextTime().getDeltaTime());
-                changeSceneTransition.setPassedTime(changeSceneTransition.getPassedTime() + changeSceneTransition.getDeltaTime());
-                changeSceneTransition.setFrames(changeSceneTransition.getFrames() + 1);
-                drawInstructions.add(changeSceneTransition.render());
-                if (changeSceneTransition.getPassedTime() >= changeSceneTransition.getTimeToWait() && toChangeScene != null) {
-                    setScene(toChangeScene);
-                    toChangeScene = null;
-                }
-                if (changeSceneTransition.isFinished())
-                    changeSceneTransition = null;
-            } else if (toChangeScene != null) {
+        }
+        if (changeSceneTransition != null) {
+            changeSceneTransition.setApplication(this);
+            changeSceneTransition.setDeltaTime(getApplicationManager().getManagerContext().getContextTime().getDeltaTime());
+            changeSceneTransition.setPassedTime(changeSceneTransition.getPassedTime() + changeSceneTransition.getDeltaTime());
+            changeSceneTransition.setFrames(changeSceneTransition.getFrames() + 1);
+            drawInstructions.add(changeSceneTransition.render());
+            if (changeSceneTransition.getPassedTime() >= changeSceneTransition.getTimeToWait() && toChangeScene != null) {
                 setScene(toChangeScene);
                 toChangeScene = null;
             }
-
-            if (rendering)
-                renderingThread.aWait();
+            if (changeSceneTransition.isFinished())
+                changeSceneTransition = null;
+        } else if (toChangeScene != null) {
+            setScene(toChangeScene);
+            toChangeScene = null;
         }
+
+        if (rendering)
+            renderingThread.aWait();
     }
 
     @Override

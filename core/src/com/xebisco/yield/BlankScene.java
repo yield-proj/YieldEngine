@@ -22,6 +22,10 @@ package com.xebisco.yield;
 public class BlankScene extends Scene {
     public BlankScene(Application application) {
         super(application);
+    }
+
+    @Override
+    public void onStart() {
         setBackGroundColor(Colors.BLACK);
     }
 }
