@@ -36,7 +36,12 @@ public class RectangleCollider extends Collider {
     @Override
     public Shape getShape() {
         PolygonShape s = new PolygonShape();
-        s.setAsBox((float) (size.getWidth() * Math.abs(getTransform().getScale().getX()) / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() * Math.abs(getTransform().getScale().getY()) / getApplication().getPhysicsPpm() / 2.0), Global.toVec2(centroid.divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))), (float) Math.toRadians(angle));
+        if(!isIgnoreScaling()) {
+            s.setAsBox((float) (size.getWidth() * Math.abs(getTransform().getScale().getX()) / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() * Math.abs(getTransform().getScale().getY()) / getApplication().getPhysicsPpm() / 2.0), Global.toVec2(centroid.divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))), (float) Math.toRadians(angle));
+        } else {
+            s.setAsBox((float) (size.getWidth() / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() / getApplication().getPhysicsPpm() / 2.0), Global.toVec2(centroid.divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))), (float) Math.toRadians(angle));
+
+        }
         s.m_centroid.set(Global.toVec2(centroid.divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))));
         return s;
     }

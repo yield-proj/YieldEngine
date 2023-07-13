@@ -32,7 +32,11 @@ public class EdgeCollider extends Collider {
     @Override
     public Shape getShape() {
         EdgeShape s = new EdgeShape();
-        s.set(Global.toVec2(point1.multiply(getTransform().getScale().absolute())), Global.toVec2(point2.multiply(getTransform().getScale().absolute())));
+        if(!isIgnoreScaling()) {
+            s.set(Global.toVec2(point1.multiply(getTransform().getScale().absolute())), Global.toVec2(point2.multiply(getTransform().getScale().absolute())));
+        } else {
+            s.set(Global.toVec2(point1), Global.toVec2(point2));
+        }
         return s;
     }
 

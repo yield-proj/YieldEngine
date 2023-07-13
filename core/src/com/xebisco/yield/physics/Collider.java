@@ -37,7 +37,7 @@ public abstract class Collider extends ComponentBehavior {
     @VisibleOnInspector
     private String collisionMask = "default";
     @VisibleOnInspector
-    private boolean sensor;
+    private boolean sensor, ignoreScaling;
 
     /**
      * This function returns a Shape object and is declared as abstract.
@@ -140,5 +140,13 @@ public abstract class Collider extends ComponentBehavior {
      */
     public void setCollisionMask(String collisionMask) {
         this.collisionMask = collisionMask;
+    }
+
+    public boolean isIgnoreScaling() {
+        return ignoreScaling;
+    }
+
+    public void setIgnoreScaling(boolean ignoreScaling) {
+        this.ignoreScaling = ignoreScaling;
     }
 }

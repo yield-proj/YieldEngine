@@ -39,7 +39,11 @@ public class TriangleCollider extends Collider {
     public Shape getShape() {
         PolygonShape s = new PolygonShape();
         TwoAnchorRepresentation dppm = new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm());
-        s.set(new Vec2[]{Global.toVec2(vertices[0].divide(dppm).multiply(getTransform().getScale().absolute())), Global.toVec2(vertices[1].divide(dppm).multiply(getTransform().getScale().absolute())), Global.toVec2(vertices[2].divide(dppm).multiply(getTransform().getScale()))}, 3);
+        if (!isIgnoreScaling()) {
+            s.set(new Vec2[]{Global.toVec2(vertices[0].divide(dppm).multiply(getTransform().getScale().absolute())), Global.toVec2(vertices[1].divide(dppm).multiply(getTransform().getScale().absolute())), Global.toVec2(vertices[2].divide(dppm).multiply(getTransform().getScale()))}, 3);
+        } else {
+            s.set(new Vec2[]{Global.toVec2(vertices[0].divide(dppm)), Global.toVec2(vertices[1].divide(dppm)), Global.toVec2(vertices[2].divide(dppm))}, 3);
+        }
         s.m_centroid.set(Global.toVec2(centroid.divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))));
         return s;
     }
