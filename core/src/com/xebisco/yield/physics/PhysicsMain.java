@@ -26,7 +26,7 @@ import org.jbox2d.dynamics.contacts.Contact;
 /**
  * The PhysicsMain class is a Java class that handles physics simulation using the Box2D engine.
  */
-public class PhysicsMain implements Behavior {
+public class PhysicsMain {
     private World b2World;
     private Vector2D gravity = new Vector2D(0, -10);
     private int velocityIterations = 6;
@@ -35,10 +35,7 @@ public class PhysicsMain implements Behavior {
 
     public PhysicsMain(Scene scene) {
         this.scene = scene;
-    }
 
-    @Override
-    public void onStart() {
         b2World = new World(Global.toVec2(gravity));
 
         b2World.setContactListener(new ContactListener() {
@@ -83,16 +80,10 @@ public class PhysicsMain implements Behavior {
         return rayCastCallback;
     }
 
-    @Override
-    public void onUpdate() {
-        if(b2World.getGravity().x != gravity.getX() || b2World.getGravity().y != gravity.getY())
+    public void process(float dt) {
+        if (b2World.getGravity().x != gravity.getX() || b2World.getGravity().y != gravity.getY())
             b2World.setGravity(Global.toVec2(gravity));
-        b2World.step((float) ((getScene().getApplication().getApplicationManager().getManagerContext().getContextTime().getTargetSleepTime() * getScene().getApplication().getApplicationManager().getManagerContext().getContextTime().getTimeScale()) / 1_000_000.), velocityIterations, positionIterations);
-    }
-
-    @Override
-    public void dispose() {
-        b2World = null;
+        b2World.step(dt, velocityIterations, positionIterations);
     }
 
     /**
@@ -108,7 +99,7 @@ public class PhysicsMain implements Behavior {
      * This function sets the gravity vector for an object.
      *
      * @param gravity The "gravity" parameter is a Vector2D object that represents the gravitational force acting on an
-     * object in a 2D space. This method sets the value of the "gravity" instance variable to the provided Vector2D object.
+     *                object in a 2D space. This method sets the value of the "gravity" instance variable to the provided Vector2D object.
      */
     public void setGravity(Vector2D gravity) {
         this.gravity = gravity;
@@ -127,7 +118,7 @@ public class PhysicsMain implements Behavior {
      * This function sets the value of a variable named "b2World" to the value passed as a parameter.
      *
      * @param b2World b2World is an object of the Box2D physics engine's World class. It represents the simulation world in
-     * which physical bodies interact with each other according to the laws of physics.
+     *                which physical bodies interact with each other according to the laws of physics.
      */
     public void setB2World(World b2World) {
         this.b2World = b2World;
@@ -146,9 +137,9 @@ public class PhysicsMain implements Behavior {
      * This function sets the number of velocity iterations for a physics simulation in Box2D.
      *
      * @param velocityIterations The parameter "velocityIterations" is an integer value that represents the number of
-     * iterations the physics engine will perform to calculate the velocity of objects in a simulation. Increasing the
-     * number of velocity iterations can improve the accuracy of the simulation, but it can also increase the computational
-     * cost.
+     *                           iterations the physics engine will perform to calculate the velocity of objects in a simulation. Increasing the
+     *                           number of velocity iterations can improve the accuracy of the simulation, but it can also increase the computational
+     *                           cost.
      */
     public void setVelocityIterations(int velocityIterations) {
         this.velocityIterations = velocityIterations;
@@ -168,8 +159,8 @@ public class PhysicsMain implements Behavior {
      * This function sets the number of position iterations for a physics simulation in Box2D.
      *
      * @param positionIterations positionIterations is an integer parameter that represents the number of iterations the
-     * physics engine will perform to calculate the positions of objects in a simulation. Increasing the number of position
-     * iterations can improve the accuracy of the simulation, but it can also increase the computational cost.
+     *                           physics engine will perform to calculate the positions of objects in a simulation. Increasing the number of position
+     *                           iterations can improve the accuracy of the simulation, but it can also increase the computational cost.
      */
     public void setPositionIterations(int positionIterations) {
         this.positionIterations = positionIterations;

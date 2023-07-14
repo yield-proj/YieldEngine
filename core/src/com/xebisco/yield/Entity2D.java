@@ -52,6 +52,8 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
     }
 
     public void processPhysics() {
+        if(frames <= 1)
+            return;
         try {
             for (Entity2D child : getEntities()) {
                 child.processPhysics();

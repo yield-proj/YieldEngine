@@ -62,13 +62,11 @@ public class Application implements Behavior {
         this.applicationPlatform = applicationPlatform;
 
         physicsContext = new Context(platformInit.getPhysicsContextTime(), () -> {
-            if(scene != null) {
-                scene.getPhysicsMain().onUpdate();
+            if (scene != null) {
+                scene.getPhysicsMain().process((float) (platformInit.getPhysicsContextTime().getTargetSleepTime() * platformInit.getPhysicsContextTime().getTimeScale() / 1_000_000.));
                 try {
                     for (Entity2D entity : scene.getEntities()) {
-
-                        for(ComponentBehavior c : entity.getComponents())
-                            c.onPhysicsUpdate();
+                        entity.processPhysics();
                     }
                 } catch (ConcurrentModificationException ignore) {
 
@@ -100,6 +98,7 @@ public class Application implements Behavior {
         axes.add(new Axis(RUN, Input.Key.VK_SHIFT, null, null, null));
         axes.add(new Axis(LEFT_BUMPER, Input.Key.VK_G, null, null, null));
     }
+
     public Application(ApplicationManager applicationManager, ApplicationPlatform applicationPlatform, PlatformInit platformInit) {
         this(applicationManager, BlankScene.class, applicationPlatform, platformInit);
     }

@@ -37,7 +37,6 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
     public Scene(Application application) {
         super(application);
         instantiate(INPUT_UI_PREFAB).setIndex(-1);
-        physicsMain.onStart();
     }
 
     @Override
