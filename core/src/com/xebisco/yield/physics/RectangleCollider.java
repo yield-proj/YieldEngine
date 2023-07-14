@@ -18,6 +18,7 @@ package com.xebisco.yield.physics;
 
 import com.xebisco.yield.*;
 import org.jbox2d.collision.shapes.*;
+import org.jbox2d.common.Vec2;
 
 /**
  * This is a Java class for a rectangle collider that extends a Collider class and includes properties for size, centroid,
@@ -37,9 +38,9 @@ public class RectangleCollider extends Collider {
     public Shape getShape() {
         PolygonShape s = new PolygonShape();
         if(!isIgnoreScaling()) {
-            s.setAsBox((float) (size.getWidth() * Math.abs(getTransform().getScale().getX()) / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() * Math.abs(getTransform().getScale().getY()) / getApplication().getPhysicsPpm() / 2.0), Global.toVec2(size.divide(new Vector2D(2, 2)).divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))), (float) Math.toRadians(angle));
+            s.setAsBox((float) (size.getWidth() * Math.abs(getTransform().getScale().getX()) / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() * Math.abs(getTransform().getScale().getY()) / getApplication().getPhysicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
         } else {
-            s.setAsBox((float) (size.getWidth() / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() / getApplication().getPhysicsPpm() / 2.0), Global.toVec2(size.divide(new Vector2D(2, 2)).divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))), (float) Math.toRadians(angle));
+            s.setAsBox((float) (size.getWidth() / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() / getApplication().getPhysicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
         }
         s.m_centroid.set(Global.toVec2(centroid.divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))));
         return s;
