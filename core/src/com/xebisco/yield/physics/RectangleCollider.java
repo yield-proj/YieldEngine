@@ -28,7 +28,7 @@ public class RectangleCollider extends Collider {
     private Size2D size = new Size2D(100, 100);
 
     @VisibleOnInspector
-    private Vector2D centroid = new Vector2D(), center = new Vector2D();
+    private Vector2D centroid = new Vector2D();
 
     @VisibleOnInspector
     private double angle;
@@ -37,10 +37,9 @@ public class RectangleCollider extends Collider {
     public Shape getShape() {
         PolygonShape s = new PolygonShape();
         if(!isIgnoreScaling()) {
-            s.setAsBox((float) (size.getWidth() * Math.abs(getTransform().getScale().getX()) / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() * Math.abs(getTransform().getScale().getY()) / getApplication().getPhysicsPpm() / 2.0), Global.toVec2(centroid.divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))), (float) Math.toRadians(angle));
+            s.setAsBox((float) (size.getWidth() * Math.abs(getTransform().getScale().getX()) / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() * Math.abs(getTransform().getScale().getY()) / getApplication().getPhysicsPpm() / 2.0), Global.toVec2(size.divide(new Vector2D(2, 2)).divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))), (float) Math.toRadians(angle));
         } else {
-            s.setAsBox((float) (size.getWidth() / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() / getApplication().getPhysicsPpm() / 2.0), Global.toVec2(centroid.divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))), (float) Math.toRadians(angle));
-
+            s.setAsBox((float) (size.getWidth() / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() / getApplication().getPhysicsPpm() / 2.0), Global.toVec2(size.divide(new Vector2D(2, 2)).divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))), (float) Math.toRadians(angle));
         }
         s.m_centroid.set(Global.toVec2(centroid.divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))));
         return s;
@@ -81,24 +80,6 @@ public class RectangleCollider extends Collider {
      */
     public void setCentroid(Vector2D centroid) {
         this.centroid = centroid;
-    }
-
-    /**
-     * The function returns a Vector2D representing the center point.
-     *
-     * @return A Vector2D object representing the center of the rectangle collider.
-     */
-    public Vector2D getCenter() {
-        return center;
-    }
-
-    /**
-     * This function sets the center of a Vector2D object.
-     *
-     * @param center The parameter "center" is a Vector2D object that represents the center point of the rectangle collider. The method "setCenter" sets the value of the center point to the specified Vector2D object.
-     */
-    public void setCenter(Vector2D center) {
-        this.center = center;
     }
 
     /**
