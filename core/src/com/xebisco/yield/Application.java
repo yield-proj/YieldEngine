@@ -65,7 +65,7 @@ public class Application implements Behavior {
 
         physicsProcess = () -> {
             if (scene != null) {
-                scene.getPhysicsMain().process(platformInit.isPhysicsOnMainContext() ? (float) (platformInit.getPhysicsContextTime().getTargetSleepTime() * platformInit.getPhysicsContextTime().getTimeScale() * getApplicationManager().getManagerContext().getContextTime().getTimeScale() / 1_000_000.) : (float) (getApplicationManager().getManagerContext().getContextTime().getTargetSleepTime() * getApplicationManager().getManagerContext().getContextTime().getTimeScale() / 1_000_000.));
+                scene.getPhysicsMain().process(!platformInit.isPhysicsOnMainContext() ? (float) (platformInit.getPhysicsContextTime().getTargetSleepTime() * platformInit.getPhysicsContextTime().getTimeScale() * getApplicationManager().getManagerContext().getContextTime().getTimeScale() / 1_000_000.) : (float) (getApplicationManager().getManagerContext().getContextTime().getTargetSleepTime() * getApplicationManager().getManagerContext().getContextTime().getTimeScale() / 1_000_000.));
                 try {
                     for (Entity2D entity : scene.getEntities()) {
                         entity.processPhysics();
