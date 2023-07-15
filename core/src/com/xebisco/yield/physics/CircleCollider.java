@@ -17,6 +17,7 @@
 package com.xebisco.yield.physics;
 
 import com.xebisco.yield.Global;
+import com.xebisco.yield.TwoAnchorRepresentation;
 import com.xebisco.yield.Vector2D;
 import com.xebisco.yield.VisibleOnInspector;
 import org.jbox2d.collision.shapes.CircleShape;
@@ -39,7 +40,7 @@ public class CircleCollider extends Collider {
         if(isIgnoreScaling())
             largerScale = 1;
         s.setRadius((float) (radius * largerScale / getApplication().getPhysicsPpm()));
-        s.m_p.set(Global.toVec2(center));
+        s.m_p.set(Global.toVec2(center.divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))));
         return s;
     }
 
