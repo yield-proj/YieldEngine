@@ -53,6 +53,8 @@ public class Application implements Behavior {
     private final List<DrawInstruction> drawInstructions = new ArrayList<>(), toSendDrawInstructions = new ArrayList<>();
     private Scene toChangeScene;
 
+    private Runnable physicsProcess;
+
     private final Context physicsContext;
 
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, ApplicationPlatform applicationPlatform, PlatformInit platformInit) {
@@ -61,7 +63,7 @@ public class Application implements Behavior {
         applicationManager.getApplications().add(this);
         this.applicationPlatform = applicationPlatform;
 
-        physicsContext = new Context(platformInit.getPhysicsContextTime(), () -> {
+        physicsProcess = () -> {
             if (scene != null) {
                 scene.getPhysicsMain().process((float) (platformInit.getPhysicsContextTime().getTargetSleepTime() * platformInit.getPhysicsContextTime().getTimeScale() / 1_000_000.));
                 try {
@@ -72,7 +74,14 @@ public class Application implements Behavior {
 
                 }
             }
-        }, null, "PhysicsMain");
+        };
+
+        if (!platformInit.isPhysicsOnMainContext()) {
+            physicsContext = new Context(platformInit.getPhysicsContextTime(), physicsProcess, null, "PhysicsMain");
+            physicsProcess = null;
+        } else {
+            physicsContext = null;
+        }
 
         checkPlatform(applicationPlatform, platformInit);
 
@@ -181,7 +190,8 @@ public class Application implements Behavior {
         if (controllerManager != null)
             controllerManager.initSDLGamepad();
 
-        physicsContext.getThread().start();
+        if (physicsContext != null)
+            physicsContext.getThread().start();
     }
 
     private void createNullAxis(String a, String horizontal, String vertical, String fire, String back, String action, String inventory, String start) {
@@ -353,6 +363,9 @@ public class Application implements Behavior {
                         return;
                     }
                 }
+
+                if(physicsProcess != null)
+                    physicsProcess.run();
             }
 
             scene.updateEntityList();
@@ -389,7 +402,8 @@ public class Application implements Behavior {
         renderingThread.getRunning().set(false);
         //Wake up thread
         renderingThread.renderAsync(null);
-        physicsContext.getRunning().set(false);
+        if (physicsContext != null)
+            physicsContext.getRunning().set(false);
         setScene(null);
         if (controllerManager != null)
             controllerManager.quitSDLGamepad();

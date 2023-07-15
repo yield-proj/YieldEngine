@@ -23,7 +23,7 @@ public class PlatformInit {
     private Size2D viewportSize = new Size2D(1280, 720), windowSize = new Size2D(1280, 720);
     private String title = "Yield Window";
     private int startPhysicsPpm = 16;
-    private boolean fullscreen, undecorated, stretchViewport, invertZIndex, verticalSync;
+    private boolean fullscreen, undecorated, stretchViewport, invertZIndex, verticalSync, physicsOnMainContext;
     private Texture windowIcon;
     private String windowIconPath = "com/xebisco/yield/yieldIcon.png";
 
@@ -260,5 +260,13 @@ public class PlatformInit {
 
     public void setPhysicsContextTime(ContextTime physicsContextTime) {
         this.physicsContextTime = physicsContextTime;
+    }
+
+    public boolean isPhysicsOnMainContext() {
+        return physicsOnMainContext;
+    }
+
+    public void setPhysicsOnMainContext(boolean physicsOnMainContext) {
+        this.physicsOnMainContext = physicsOnMainContext;
     }
 }
