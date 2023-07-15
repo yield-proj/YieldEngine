@@ -55,13 +55,6 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
         if(frames <= 1)
             return;
         try {
-            for (Entity2D child : getEntities()) {
-                child.processPhysics();
-            }
-        } catch (ConcurrentModificationException ignore) {
-
-        }
-        try {
             for (int i = 0; i < components.size(); i++) {
                 ComponentBehavior component = null;
 
@@ -70,6 +63,13 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
                     component.onPhysicsUpdate();
             }
         } catch (IndexOutOfBoundsException ignore) {
+
+        }
+        try {
+            for (Entity2D child : getEntities()) {
+                child.processPhysics();
+            }
+        } catch (ConcurrentModificationException ignore) {
 
         }
     }
@@ -88,12 +88,6 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
             entityDrawInstruction.getChildrenInstructions().clear();
             entityDrawInstruction.setCenterOffsetX(getTransform().getCenterOffset().getX());
             entityDrawInstruction.setCenterOffsetY(getTransform().getCenterOffset().getY());
-        }
-        for (Entity2D child : getEntities()) {
-            DrawInstruction di = child.process();
-            child.updateEntityList();
-            if (visible)
-                entityDrawInstruction.getChildrenInstructions().add(di);
         }
         try {
             for (int i = 0; i < components.size(); i++) {
@@ -116,6 +110,12 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
             }
         } catch (IndexOutOfBoundsException ignore) {
 
+        }
+        for (Entity2D child : getEntities()) {
+            DrawInstruction di = child.process();
+            child.updateEntityList();
+            if (visible)
+                entityDrawInstruction.getChildrenInstructions().add(di);
         }
         if (visible)
             return entityDrawInstruction;
