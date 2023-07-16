@@ -14,7 +14,7 @@
 
 ## 🎮 A 2D cross-platfotm game engine
 A powerful scene-oriented JVM game engine☕, created with the objective of being a simple and efficient engine for creating 2d games in any JVM capable language.
-The engine can produce executables capable of running in a number of platforms, including the major desktop platforms (Linux, macOS, Windows).
+The engine can produce executables capable of running in a number of platforms, including the major desktop platforms (Linux, macOS, Windows), and mobile platforms in the future 😉.
 
 ### 🏠 [Website](https://yield.xebisco.com/)
 
