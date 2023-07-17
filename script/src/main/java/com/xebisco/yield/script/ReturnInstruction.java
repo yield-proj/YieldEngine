@@ -16,22 +16,5 @@
 
 package com.xebisco.yield.script;
 
-import com.xebisco.yield.script.obj.ObjectValue;
-
-public interface Macro {
-    String name();
-
-    Object run(ObjectValue[] args);
-
-    static void checkArgs(ObjectValue[] args, Class<?>... types) {
-        if (args.length != types.length) throw new IllegalArgumentException("Unexpected argument count");
-        else {
-            for (int i = 0; i < args.length; i++) {
-                Class<?> at = args[i].getCast();
-                if (!at.equals(types[i])) {
-                    throw new IllegalArgumentException("Unexpected argument type");
-                }
-            }
-        }
-    }
+public abstract class ReturnInstruction implements Instruction {
 }

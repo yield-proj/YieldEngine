@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.script.math;
+import com.xebisco.yield.script.compiler.CompileException;
+import com.xebisco.yield.script.Program;
+import com.xebisco.yield.script.compiler.Utils;
 
-public enum NumberHierarchy {
-    DOUBLE,
-    FLOAT,
-    INT,
-    LONG
+public class YSTest {
+    public static void main(String[] args) throws CompileException {
+        Program program = new Program();
+        program.attach(Utils.instructions("""
+                let test = "aaa";
+                {
+                    let test2 = "bbbb";
+                };
+                """));
+        System.out.println(program.objectMap());
+    }
 }

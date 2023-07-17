@@ -16,22 +16,7 @@
 
 package com.xebisco.yield.script;
 
-import java.util.List;
-
-public class FunctionCall {
-    private final String[] args;
-    private final Function function;
-
-    public FunctionCall(String[] args, Function function) {
-        this.args = args;
-        this.function = function;
-    }
-
-    public String[] getArgs() {
-        return args;
-    }
-
-    public Function getFunction() {
-        return function;
-    }
+@FunctionalInterface
+public interface Instruction {
+    Object run(final Bank bank);
 }

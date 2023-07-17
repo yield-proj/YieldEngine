@@ -16,8 +16,8 @@
 
 package com.xebisco.yield.script;
 
-public class CompileException extends RuntimeException {
-    public CompileException(String line, int lineIndex, Throwable cause) {
-        super("In line " + lineIndex + ". " + line, cause);
+public class SealedValueProcess implements ValueProcess {
+    public Object value(Object value) {
+        throw new SealedException("Value is sealed");
     }
 }

@@ -14,11 +14,25 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.script.obj;
+package com.xebisco.yield.script;
 
-public class StandardGet implements ObjectValueGet {
-    @Override
-    public Object get(Object value) {
-        return value;
+public class SealedException extends RuntimeException {
+    public SealedException() {
+    }
+
+    public SealedException(String message) {
+        super(message);
+    }
+
+    public SealedException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public SealedException(Throwable cause) {
+        super(cause);
+    }
+
+    public SealedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }
