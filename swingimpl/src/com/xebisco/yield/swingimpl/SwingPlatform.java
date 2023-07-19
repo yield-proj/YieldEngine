@@ -26,6 +26,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.RGBImageFilter;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Collection;
@@ -106,7 +108,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public Object loadTexture(Texture texture) {
-        return loadAWTBufferedImage(new BufferedInputStream(texture.getInputStream()));
+        return new SwingImage(loadAWTBufferedImage(new BufferedInputStream(texture.getInputStream())));
     }
 
     private BufferedImage loadAWTBufferedImage(BufferedInputStream inputStream) {
@@ -151,12 +153,12 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public int getImageWidth(Object imageRef) {
-        return ((BufferedImage) imageRef).getWidth();
+        return ((SwingImage) imageRef).originalImage().getWidth();
     }
 
     @Override
     public int getImageHeight(Object imageRef) {
-        return ((BufferedImage) imageRef).getHeight();
+        return ((SwingImage) imageRef).originalImage().getHeight();
     }
 
     @Override
@@ -638,7 +640,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public void updateWindowIcon(Texture icon) {
-        frame.setIconImage((Image) icon.getImageRef());
+        frame.setIconImage(((SwingImage) icon.getImageRef()).originalImage());
     }
 
     @Override
@@ -690,6 +692,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         AffineTransform savedTransform = new AffineTransform(graphics.getTransform());
 
         graphics.translate(drawInstruction.getX(), -drawInstruction.getY());
+        graphics.translate(drawInstruction.getCenterOffsetX(), -drawInstruction.getCenterOffsetY());
 
         if (drawInstruction.isRotateBeforeScale()) {
             graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), 0, 0);
@@ -698,6 +701,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
             graphics.scale(drawInstruction.getScaleX(), drawInstruction.getScaleY());
             graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), 0, 0);
         }
+        graphics.translate(-drawInstruction.getCenterOffsetX(), drawInstruction.getCenterOffsetY());
 
 
         if (drawInstruction.getVerticesX() == null && drawInstruction.getVerticesY() == null) {
@@ -719,7 +723,11 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
                 graphics.setFont((Font) drawInstruction.getFontRef());
                 graphics.drawString(drawInstruction.getText(), -graphics.getFontMetrics().stringWidth(drawInstruction.getText()) / 2, graphics.getFont().getSize() / 4);
             } else if (drawInstruction.getImageRef() != null) {
-                Image image = (Image) drawInstruction.getImageRef();
+                SwingImage swingImage = (SwingImage) drawInstruction.getImageRef();
+                swingImage.updateImage(drawInstruction.getColor());
+                Image image = swingImage.filteredImage();
+
+
                 Polygon p = new Polygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
                 graphics.setClip(p);
                 int[] vx = drawInstruction.getVerticesX(), vy = negateIntArray(drawInstruction.getVerticesY());
@@ -769,11 +777,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     public boolean shouldClose() {
         if (frame == null)
             return true;
-        if (!frame.isDisplayable()) {
-            dispose();
-            return true;
-        }
-        return false;
+        return !frame.isDisplayable();
     }
 
     @Override

@@ -19,6 +19,7 @@ package com.xebisco.yield;
 import org.jbox2d.common.Vec2;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Random;
 
 /**
  * Static collection of util methods.
@@ -126,6 +127,8 @@ public final class Global {
             }
         }
     }
+
+    public static final Random RANDOM = new Random();
 
     public static String APP_SAVE_ID;
 

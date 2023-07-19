@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import java.util.Random;
+
 /**
  * It's a collection of static final Color objects that represent the default colors used by GrADS
  */
@@ -40,4 +42,12 @@ public class Colors {
             AQUA = new ImmutableColor(0, 0.82, 0.55),
             DARK_PURPLE = new ImmutableColor(0.5, 0, 0.86),
             GRAY = new ImmutableColor(0.67, 0.67, 0.67);
+
+    public static Color random(Random random) {
+         return new Color(random.nextDouble(), random.nextDouble(), random.nextDouble());
+    }
+
+    public static Color random() {
+        return random(Global.RANDOM);
+    }
 }

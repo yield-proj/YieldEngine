@@ -2,7 +2,7 @@ import com.xebisco.yield.*;
 
 public class Main extends Scene {
 
-    public static final Entity2DPrefab HELLO_WORLD_TEXT_PREFAB = StandardPrefabs.text("Hello, World!");
+    public static final Entity2DPrefab HELLO_WORLD_TEXT_PREFAB = StandardPrefabs.texRectangle("com/xebisco/yield/img.png");
 
 
     public Main(Application application) {
@@ -13,11 +13,16 @@ public class Main extends Scene {
 
     @Override
     public void onStart() {
-        instantiate(HELLO_WORLD_TEXT_PREFAB);
+        e = instantiate(HELLO_WORLD_TEXT_PREFAB);
+        e.getComponent(TextureRectangle.class);
     }
+
+    private double a;
 
     @Override
     public void onUpdate() {
+        a += getApplication().getAxis(HORIZONTAL) / 100.0;
+        e.getComponent(TextureRectangle.class).getColor().setRed(Global.clamp(a, 0, 1));
         System.out.println(1 / getTime().getDeltaTime());
     }
 
@@ -25,7 +30,7 @@ public class Main extends Scene {
         ContextTime time = new ContextTime();
         time.setTargetSleepTime(0);
         ApplicationManager manager = new ApplicationManager(time);
-        new Application(manager, Main.class, Global.Platforms.openGLOpenAL(), new PlatformInit(PlatformInit.INPUT_DEFAULT));
+        new Application(manager, Main.class, Global.Platforms.swingOpenAL(), new PlatformInit(PlatformInit.INPUT_DEFAULT));
         manager.run();
     }
 }
