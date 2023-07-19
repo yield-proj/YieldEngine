@@ -16,11 +16,16 @@
 
 package com.xebisco.yield.script;
 
-public class Program extends Bank {
+public class Standard {
+    public static void println(Object o) {
+        System.out.println(o);
+    }
 
-    public Program() {
-        super(null);
-        objectMap().put(new NameArgs("true", null), new ScriptObject(true, Boolean.class, new DefaultValueProcess(), new SealedValueProcess()));
-        objectMap().put(new NameArgs("false", null), new ScriptObject(false, Boolean.class, new DefaultValueProcess(), new SealedValueProcess()));
+    public static Class<?> java_class(String c) {
+        try {
+            return Class.forName(c);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

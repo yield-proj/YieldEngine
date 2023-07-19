@@ -16,5 +16,20 @@
 
 package com.xebisco.yield.script;
 
-public record NameArgs(String name, Class<?>[] args) {
+public record NameArgs(String name, Integer args) {
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        if(args != null) {
+            for (int i = 0; i < args; i++) {
+                if (i > 0)
+                    builder.append(", ");
+                else builder.append("(");
+                builder.append("Object");
+            }
+            if (builder.length() > 0)
+                builder.append(")");
+        }
+        return name + builder;
+    }
 }

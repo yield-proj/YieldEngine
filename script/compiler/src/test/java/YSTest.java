@@ -22,10 +22,9 @@ public class YSTest {
     public static void main(String[] args) throws CompileException {
         Program program = new Program();
         program.attach(Utils.instructions("""
-                let test = "aaa";
-                {
-                    let test2 = "bbbb";
-                };
+                if(false) {
+                    println("Hello, World!");
+                }
                 """));
         System.out.println(program.objectMap());
     }

@@ -16,7 +16,9 @@
 
 package com.xebisco.yield.script;
 
+import java.io.Serializable;
+
 @FunctionalInterface
-public interface Instruction {
+public interface Instruction extends Serializable {
     Object run(final Bank bank);
 }

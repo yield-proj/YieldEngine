@@ -16,15 +16,17 @@
 
 package com.xebisco.yield.script;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Bank {
+public class Bank implements Serializable {
     private final Map<NameArgs, ScriptObject> objectMap;
     private final Bank parent;
 
     public Bank(final Bank parent) {
         this.objectMap = new HashMap<>();
+        this.objectMap.put(new NameArgs("this", null), new ScriptObject(this, Bank.class, new DefaultValueProcess(), new SealedValueProcess()));
         this.parent = parent;
     }
 

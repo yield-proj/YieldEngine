@@ -22,36 +22,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
-    public static Instruction[] instructions(final String source) throws CompileException {
+    public static Instruction[] instructions(final String source) {
         Compiler compiler = new DefaultCompiler();
         final var output = new DefaultParser().output(source);
         return instructions(output, compiler);
     }
 
-    public static Instruction[] instructions(final ParserOutput output, final Compiler compiler) throws CompileException {
+    public static Instruction[] instructions(final ParserOutput output, final Compiler compiler) {
         final var partInstructions = new ArrayList<Instruction[]>();
         for (int i = 0; i < output.parts().length; i++)
             partInstructions.add(instructions(output.parts()[i], compiler));
-        return compiler.createInstructions(output.formatted(), output.strings(), partInstructions.toArray(new Instruction[0][0]));
-    }
 
-    public static List<String> split(String source, char match) {
-        final List<String> out = new ArrayList<>();
-        StringBuilder builder = new StringBuilder();
-        int p = 0, h = 0;
-        for (char c : source.toCharArray()) {
-            if (c == '(') p++;
-            else if (c == ')') p--;
-            else if (c == '[') h++;
-            else if (c == ']') h--;
-            else if (p == 0 && h == 0) if (c == match) {
-                out.add(builder.toString());
-                builder = new StringBuilder();
+        final Instruction[] instructions = new Instruction[output.formatted().length];
+        for (int i = 0; i < instructions.length; i++) {
+            try {
+                instructions[i] = compiler.createInstruction(compiler.createSepInstruction(output.formatted()[i]), output.strings(), partInstructions.toArray(new Instruction[0][0]));
+            } catch (CompileException e) {
+                e.printStackTrace();
+                throw new IllegalStateException(e.getClass().getSimpleName() + " in: " + output.originalLines()[i]);
             }
-            if (p > 0 || h > 0 || c != match)
-                builder.append(c);
         }
-        out.add(builder.toString());
-        return out;
+        return instructions;
     }
 }
