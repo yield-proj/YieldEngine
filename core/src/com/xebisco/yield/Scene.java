@@ -17,7 +17,6 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.physics.PhysicsMain;
-import com.xebisco.yield.ui.InputUI;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,11 +31,8 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
     private Color backGroundColor = Colors.GRAY.darker();
     private Set<SystemBehavior> systems = new HashSet<>();
     private final PhysicsMain physicsMain = new PhysicsMain(this);
-    public static final Entity2DPrefab INPUT_UI_PREFAB = new Entity2DPrefab(new ComponentCreation(AudioPlayer.class), new ComponentCreation(InputUI.class));
-
     public Scene(Application application) {
         super(application);
-        instantiate(INPUT_UI_PREFAB).setIndex(-1);
     }
 
     @Override
