@@ -39,6 +39,7 @@ public class PropsWindow extends JDialog {
         setModal(true);
         JPanel contentPane = new JPanel();
         setContentPane(contentPane);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(650, 400);
         setMaximumSize(new Dimension(1000, 400));
         setMinimumSize(new Dimension(500, 100));

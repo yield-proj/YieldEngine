@@ -18,23 +18,26 @@ package com.xebisco.yield.editor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class Utils {
+    public static final File EDITOR_DIR = editorDirectory();
+
     public static void error(Component component, Throwable e) {
         e.printStackTrace();
         JOptionPane.showMessageDialog(component, e.getMessage(), e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
     }
 
-    public static String defaultDirectory()
+    private static File editorDirectory()
     {
         String OS = System.getProperty("os.name").toUpperCase();
         if (OS.contains("WIN"))
-            return System.getenv("APPDATA");
+            return new File(System.getenv("APPDATA"), ".yield_editor");
         else if (OS.contains("MAC"))
-            return System.getProperty("user.home") + "/Library/Application Support";
+            return new File(System.getProperty("user.home") + "/Library/Application Support", ".yield_editor");
         else if (OS.contains("NUX"))
-            return System.getProperty("user.home");
-        return System.getProperty("user.dir");
+            return new File(System.getProperty("user.home"), ".yield_editor");
+        return new File(System.getProperty("user.dir"), ".yield_editor");
     }
 
     public static double clamp(double value, double min, double max) {

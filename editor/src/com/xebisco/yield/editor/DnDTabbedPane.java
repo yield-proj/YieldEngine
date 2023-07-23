@@ -16,13 +16,14 @@
 
 package com.xebisco.yield.editor;
 
-import java.awt.*;
-import java.awt.datatransfer.*;
-import java.awt.dnd.*;
-import java.awt.geom.*;
-import java.awt.image.*;
-import java.io.IOException;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.*;
+import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
 
 /**
  * Modified DnDTabbedPane.java
@@ -109,47 +110,6 @@ public class DnDTabbedPane extends JTabbedPane {
                 if (hasGhost()) {
                     s_glassPane.setVisible(false);
                     s_glassPane.setImage(null);
-                }
-
-                if (!e.getDropSuccess()) {
-                    try {
-                        TabTransferData c = ((TabTransferData) e.getDragSourceContext().getTransferable().getTransferData(FLAVOR));
-                        Component tab = c.getTabbedPane().getComponentAt(c.getTabIndex());
-                        Dimension s = new Dimension(tab.getSize());
-                        String title = c.getTabbedPane().getTitleAt(c.getTabIndex());
-                        JDialog dialog = new JDialog(frame);
-                        dialog.setIconImage(Assets.images.get("yieldIcon.png").getImage());
-                        YieldTabbedPane tp = new YieldTabbedPane(true, frame);
-                        tp.addTab(title, tab);
-                        dialog.add(tp);
-
-                        dialog.setTitle("Yield Editor");
-                        dialog.setSize(s);
-                        dialog.setLocation(MouseInfo.getPointerInfo().getLocation());
-                        JMenuBar mb = new JMenuBar();
-                        mb.add(new JMenuItem(""));
-                        dialog.setJMenuBar(mb);
-                        dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                        dialog.setVisible(true);
-                        dialog.requestFocus();
-                    } catch (UnsupportedFlavorException | IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                } else {
-                    TabTransferData c;
-                    try {
-                        c = ((TabTransferData) e.getDragSourceContext().getTransferable().getTransferData(FLAVOR));
-                    } catch (UnsupportedFlavorException | IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    if (c.getTabbedPane() instanceof YieldTabbedPane && ((YieldTabbedPane) c.getTabbedPane()).isCloseAfterEmpty())
-                        if (c.getTabbedPane().getTabCount() == 0) {
-                            Component c1 = c.getTabbedPane();
-                            do {
-                                c1 = c1.getParent();
-                            } while (!(c1 instanceof JDialog));
-                            ((Window) c1).dispose();
-                        }
                 }
             }
 
@@ -313,12 +273,28 @@ public class DnDTabbedPane extends JTabbedPane {
         int sourceIndex = a_data.getTabIndex();
         if (sourceIndex < 0) {
             return;
-        } // if
+        }
 
         Component cmp = source.getComponentAt(sourceIndex);
         String str = source.getTitleAt(sourceIndex);
         if (this != source) {
             source.remove(sourceIndex);
+            if (source instanceof YieldTabbedPane tp) {
+                if (tp.isCloseAfterEmpty())
+                    if (source.getTabCount() == 0) {
+                        Component c = source.getParent();
+                        while (true) {
+                            if (c instanceof JFrame r) {
+                                r.dispose();
+                                break;
+                            } else if (c instanceof JInternalFrame r) {
+                                r.dispose();
+                                break;
+                            }
+                            c = c.getParent();
+                        }
+                    }
+            }
 
             if (a_targetIndex == getTabCount()) {
                 addTab(str, cmp);

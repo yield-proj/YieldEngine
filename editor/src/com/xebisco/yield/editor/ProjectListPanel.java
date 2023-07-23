@@ -81,12 +81,12 @@ public class ProjectListPanel extends JPanel implements MouseListener {
                         break;
                     }
                 }
-                g.drawImage(image, s, y + h / 2 - image.getHeight() / 2, null);
+                g.drawImage(image, s + 10, y + h / 2 - image.getHeight() / 2, null);
                 g.setColor(getForeground());
                 g.setFont(bigFont);
-                g.drawString(project.getName(), s + 10 + h, y + bigFont.getSize() + 10);
+                g.drawString(project.getName(), s + 20 + h, y + bigFont.getSize() + 10);
                 g.setFont(font);
-                g.drawString(project.getProjectLocation().toString(), s + 10 + h, y + h - 10);
+                g.drawString(project.getProjectLocation().toString(), s + 20 + h, y + h - 10);
                 g.setColor(getForeground().darker());
                 g.fillOval(w - 10, y + h / 2 - 2, 4, 4);
                 g.fillOval(w - 16, y + h / 2 - 2, 4, 4);

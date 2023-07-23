@@ -16,33 +16,20 @@
 
 package com.xebisco.yield.editor;
 
-public class EngineInstall {
-    private final String install, name, description;
+import java.io.Serializable;
+import java.util.Objects;
 
-    public EngineInstall(String install, String name, String description) {
-        this.install = install;
-        this.name = name;
-        this.description = description;
-    }
-
-    public String getInstall() {
-        return install;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
+public record EngineInstall(String install, String name, String description) implements Serializable {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EngineInstall that = (EngineInstall) o;
+        return Objects.equals(install, that.install);
     }
 
     @Override
-    public String toString() {
-        return "EngineInstall{" +
-                "install='" + install + '\'' +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+    public int hashCode() {
+        return Objects.hash(install);
     }
 }

@@ -27,10 +27,11 @@ import java.util.*;
 public class Assets {
     public static final Map<String, ImageIcon> images = new HashMap<>();
     public static List<Project> projects;
+    public static List<EngineInstall> engineInstalls;
 
     public static void init() {
-        new File(Utils.defaultDirectory() + "/.yield_editor").mkdir();
-        File jre6 = new File(Utils.defaultDirectory() + "/.yield_editor", "jre6-rt.jar");
+        Utils.EDITOR_DIR.mkdir();
+        File jre6 = new File(Utils.EDITOR_DIR, "jre6-rt.jar");
         if(!jre6.exists()) {
             try {
                 jre6.createNewFile();
@@ -39,7 +40,7 @@ public class Assets {
                 throw new RuntimeException(e);
             }
         }
-        File projectsFile = new File(Utils.defaultDirectory() + "/.yield_editor", "projects.ser");
+        File projectsFile = new File(Utils.EDITOR_DIR, "projects.ser");
         if (!projectsFile.exists()) {
             try {
                 projectsFile.createNewFile();
@@ -54,6 +55,28 @@ public class Assets {
                 projects = (List<Project>) oi.readObject();
             } catch (EOFException e) {
                 projects = new ArrayList<>();
+            } catch (IOException | ClassNotFoundException e) {
+                Utils.error(null, e);
+                throw new RuntimeException(e);
+            }
+        }
+
+        File installs = new File(Utils.EDITOR_DIR, "installs.ser");
+
+        if (!installs.exists()) {
+            try {
+                installs.createNewFile();
+            } catch (IOException e) {
+                Utils.error(null, e);
+                throw new RuntimeException(e);
+            }
+            engineInstalls = new ArrayList<>();
+        } else {
+            try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(installs))) {
+                //noinspection unchecked
+                engineInstalls = (List<EngineInstall>) oi.readObject();
+            } catch (EOFException e) {
+                engineInstalls = new ArrayList<>();
             } catch (IOException | ClassNotFoundException e) {
                 Utils.error(null, e);
                 throw new RuntimeException(e);

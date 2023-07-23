@@ -23,8 +23,8 @@ import com.xebisco.yield.editor.prop.Props;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Locale;
@@ -34,8 +34,13 @@ public class Entry {
     public static JDialog splashDialog;
 
     public static void main(String[] args) {
-        //System.setProperty("sun.java2d.opengl", "True");
         Locale.setDefault(Locale.US);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (Assets.projects != null)
+                Projects.saveProjects();
+            if (Assets.engineInstalls != null)
+                Projects.saveInstalls();
+        }, "Editor Save"));
         IntelliJTheme.setup(Entry.class.getResourceAsStream("/DarkPurple.theme.json"));
         splashDialog(null);
         try {
@@ -45,13 +50,12 @@ public class Entry {
             props.put("Resolve launch error", new Prop[]{new BooleanProp("Delete recent projects list", true), new BooleanProp("Delete editor data", false)});
             new PropsWindow(props, () -> {
                 if ((boolean) Objects.requireNonNull(Props.get(props.get("Resolve launch error"), "Delete recent projects list")).getValue()) {
-                    new File(Utils.defaultDirectory() + "/.yield_editor");
-                    File projectsFile = new File(Utils.defaultDirectory() + "/.yield_editor", "projects.ser");
+                    File projectsFile = new File(Utils.EDITOR_DIR, "projects.ser");
                     projectsFile.delete();
                 }
 
                 if ((boolean) Objects.requireNonNull(Props.get(props.get("Resolve launch error"), "Delete editor data")).getValue()) {
-                    new File(Utils.defaultDirectory() + "/.yield_editor").delete();
+                    Utils.EDITOR_DIR.delete();
                 }
 
                 JOptionPane.showMessageDialog(null, "Please restart the editor.");
@@ -82,9 +86,7 @@ public class Entry {
         loadImage("editorLogo.png");
         loadImage("editorLogoSmall.png");
         loadImage("yieldIcon.png");
-        loadImage("projectIcon0.png");
-        loadImage("projectIcon1.png");
-        loadImage("projectIcon2.png");
+        loadImage("yieldSmallIcon.png");
         loadImage("closeIcon.png");
         loadImage("selectedCloseIcon.png");
         loadImage("uploadIcon.png");
@@ -94,6 +96,12 @@ public class Entry {
         loadImage("sxarrow.png");
         loadImage("syarrow.png");
         loadImage("reloadIcon.png");
+        loadImage("runIcon.png");
+        loadImage("searchIcon.png");
+        loadImage("workspaceIcon.png");
+        loadImage("bkg.png");
+        loadImage("addIcon.png");
+        loadImage("backIcon.png");
     }
 
     private static void loadImage(String n) {
@@ -106,18 +114,21 @@ public class Entry {
         frame.setMinimumSize(new Dimension(800, 650));
         frame.setMaximumSize(new Dimension(1000, 720));
 
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-                Projects.saveProjects();
-                frame.dispose();
-            }
-        });
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setIconImage(Assets.images.get("yieldIcon.png").getImage());
 
         frame.setContentPane(new Projects(frame));
+        frame.addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                frame.repaint();
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+
+            }
+        });
 
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -125,15 +136,18 @@ public class Entry {
 
     public static void splashDialog(String title) {
         splashDialog = new JDialog();
+        splashDialog.setAlwaysOnTop(true);
         splashDialog.setTitle("Yield 5 Editor");
         splashDialog.setUndecorated(true);
         JProgressBar progressBar = new JProgressBar();
         progressBar.setIndeterminate(true);
         splashDialog.add(progressBar, BorderLayout.SOUTH);
         splashDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        if (title != null)
-            splashDialog.add(new JLabel(title), BorderLayout.LINE_END);
-        splashDialog.add(new JLabel(new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/splash.png")))), BorderLayout.CENTER);
+        if (title != null) {
+            splashDialog.add(new JLabel(title), BorderLayout.CENTER);
+        } else {
+            splashDialog.add(new JLabel(new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/splash.png")))), BorderLayout.CENTER);
+        }
         splashDialog.pack();
         splashDialog.setLocationRelativeTo(null);
         splashDialog.setVisible(true);

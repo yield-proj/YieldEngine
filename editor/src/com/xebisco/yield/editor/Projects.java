@@ -27,6 +27,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.*;
@@ -105,14 +107,14 @@ public class Projects extends JPanel {
 
         installsPanel.setLayout(new BorderLayout());
 
-        JScrollPane installsList = new JScrollPane();
+        JScrollPane installsList = new JScrollPane(new EngineInstallsListPanel());
         installsList.setBorder(null);
 
         installsPanel.add(installsList, BorderLayout.CENTER);
 
         JPanel installsControl = new JPanel();
         installsControl.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        button = new JButton(new AbstractAction("Add") {
+        button = new JButton(new AbstractAction("Edit") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Entry.splashDialog("Downloading engine list");
@@ -138,13 +140,11 @@ public class Projects extends JPanel {
 
                     p.add(new NullProp());
 
-                    props.put("Download Engine", p.toArray(new Prop[0]));
+                    props.put("Edit Installs", p.toArray(new Prop[0]));
 
                     Entry.splashDialog.dispose();
 
-                    new PropsWindow(props, () -> {
-
-                    }, null, "New Install");
+                    new PropsWindow(props, () -> {}, null, "New Install");
                 });
             }
         });
@@ -197,8 +197,16 @@ public class Projects extends JPanel {
     }
 
     public static void saveProjects() {
-        try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(new File(Utils.defaultDirectory() + "/.yield_editor", "projects.ser")))) {
+        try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(new File(Utils.EDITOR_DIR, "projects.ser")))) {
             oo.writeObject(Assets.projects);
+        } catch (IOException ex) {
+            Utils.error(null, ex);
+        }
+    }
+
+    public static void saveInstalls() {
+        try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(new File(Utils.EDITOR_DIR, "installs.ser")))) {
+            oo.writeObject(Assets.engineInstalls);
         } catch (IOException ex) {
             Utils.error(null, ex);
         }

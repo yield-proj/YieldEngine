@@ -64,8 +64,7 @@ public class Explorer extends JPanel implements ActionListener {
         refresh = new JButton(Assets.images.get("reloadIcon.png"));
         JButton newFolder = new JButton(UIManager.getIcon("Tree.closedIcon"));
 
-        JPanel p = new JPanel();
-        p.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JToolBar p = new JToolBar();
         p.add(new JLabel(mainName, UIManager.getIcon("FileChooser.homeFolderIcon"), SwingConstants.CENTER));
         p.add(refresh);
         add(p, BorderLayout.NORTH);

@@ -20,15 +20,16 @@ import com.xebisco.yield.editor.explorer.Explorer;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
 import com.xebisco.yield.editor.scene.EditorScene;
-import com.xebisco.yield.editor.scene.Renderable;
-import com.xebisco.yield.editor.scene.SceneObject;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.Date;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -40,19 +41,18 @@ public class Editor extends JFrame {
     private int gridX = 10;
     private int gridY = 10;
 
-    private final YieldTabbedPane central;
-    private final YieldTabbedPane northwest;
-    private final YieldTabbedPane southwest;
-    private final YieldTabbedPane east;
-
-    private final String titleBase;
-
-    private final JTextArea console = new JTextArea();
+    private final Workspace workspace = new Workspace();
+    private final JTextArea console;
 
     public Editor(Project project) {
         this.project = project;
-        titleBase = "Yield 5 Editor | " + project.getName();
-        setTitle(titleBase);
+
+        if(Assets.projects != null && Assets.projects.contains(project)) {
+            Assets.projects.remove(project);
+            Assets.projects.add(0, project);
+        }
+
+        setTitle("Yield Editor");
         setMinimumSize(new Dimension(800, 600));
         setPreferredSize(new Dimension(1280, 720));
         setSize(new Dimension(1280, 720));
@@ -61,30 +61,102 @@ public class Editor extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
-                int opt = JOptionPane.showConfirmDialog(Editor.this, "Be sure to check if you saved all your work!", "Confirm Close", JOptionPane.YES_NO_OPTION);
+                int opt = JOptionPane.showConfirmDialog(Editor.this, "Are you sure you want to close?", "Confirm Close", JOptionPane.YES_NO_OPTION);
                 if (opt == JOptionPane.YES_OPTION) {
-                    Projects.saveProjects();
                     dispose();
                 }
             }
         });
         setIconImage(Assets.images.get("yieldIcon.png").getImage());
-        JSplitPane mainAndInfo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, central = new YieldTabbedPane(false, this), east = new YieldTabbedPane(false, this));
 
-        mainAndInfo.setResizeWeight(1);
-        mainAndInfo.setDividerLocation(getSize().width - 650);
-        JSplitPane sourceAndConsole = new JSplitPane(JSplitPane.VERTICAL_SPLIT, northwest = new YieldTabbedPane(false, this), southwest = new YieldTabbedPane(false, this));
-        sourceAndConsole.setResizeWeight(1);
-        sourceAndConsole.setDividerLocation(getSize().height - 300);
-        JSplitPane mainSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sourceAndConsole, mainAndInfo);
-        mainSplit.setDividerLocation(300);
-        add(mainSplit);
-
+        JSplitPane left0SplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new YieldTabbedPane(false, this).addNewTab("Explorer", new Explorer(project.getProjectLocation(), "Project Root")), new YieldTabbedPane(false, this));
+        JSplitPane left1SplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, left0SplitPane, new YieldTabbedPane(false, this).addNewTab("Console", console = new JTextArea()));
         console.setEditable(false);
-        console.setText("Yield Editor Console: " + new Date());
+        left0SplitPane.setResizeWeight(1);
+        left1SplitPane.setResizeWeight(.5);
+        JPanel left = new JPanel();
+        left.setLayout(new BorderLayout());
 
+        left.add(left1SplitPane);
 
-        console.setBackground(console.getBackground().brighter());
+        JToolBar toolBar = new JToolBar();
+        toolBar.setBorderPainted(false);
+        toolBar.setFloatable(true);
+        toolBar.setRollover(true);
+        JMenuBar menuBarTb = new JMenuBar();
+        menuBarTb.setBorderPainted(false);
+
+        JMenu menu = new JMenu(project.getName());
+        menu.setIcon(UIManager.getIcon("Tree.expandedIcon"));
+
+        menu.add(new AbstractAction("New project", Assets.images.get("addIcon.png")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Projects.newProjectFrame(Editor.this);
+            }
+        });
+
+        menu.add(new AbstractAction("Back to projects window", Assets.images.get("backIcon.png")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispatchEvent(new WindowEvent(Editor.this, WindowEvent.WINDOW_CLOSING));
+                if (!isVisible()) Entry.openProjects();
+            }
+        });
+
+        menu.addSeparator();
+
+        JLabel label = new JLabel("This editor project");
+        label.setForeground(new Color(108, 101, 119));
+
+        menu.add(label);
+
+        try {
+            menu.add(new AbstractAction(project.getProjectLocation().getPath(), new ImageIcon(ImageIO.read(new File(project.getProjectLocation(), "icon.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH))) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (JOptionPane.showConfirmDialog(null, "Open in new Editor?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+                        dispatchEvent(new WindowEvent(Editor.this, WindowEvent.WINDOW_CLOSING));
+                    }
+                    new Editor(project);
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        menu.addSeparator();
+
+        label = new JLabel("All projects");
+        label.setForeground(new Color(108, 101, 119));
+
+        menu.add(label);
+
+        for (Project p : Assets.projects) {
+            try {
+                menu.add(new AbstractAction(p.getProjectLocation().getPath(), new ImageIcon(ImageIO.read(new File(p.getProjectLocation(), "icon.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH))) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (JOptionPane.showConfirmDialog(null, "Open in new Editor?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+                            dispatchEvent(new WindowEvent(Editor.this, WindowEvent.WINDOW_CLOSING));
+                        }
+                        new Editor(p);
+                    }
+                });
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        menuBarTb.add(menu);
+
+        toolBar.add(menuBarTb);
+
+        left.add(toolBar, BorderLayout.NORTH);
+
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, workspace);
+
+        setContentPane(mainSplitPane);
 
         setJMenuBar(menuBar());
 
@@ -92,10 +164,9 @@ public class Editor extends JFrame {
         setLocationRelativeTo(null);
         //setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
         setVisible(true);
-    }
-
-    public void printToConsole(String s) {
-        console.setText(console.getText() + '\n' + s);
+        mainSplitPane.setDividerLocation(.25);
+        left1SplitPane.setDividerLocation(.7);
+        left0SplitPane.setDividerLocation(.6);
     }
 
     private YieldTabbedPane createPaneWithTab(Component tab, String name) {
@@ -134,13 +205,6 @@ public class Editor extends JFrame {
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
         menu.add(item);
         menu.addSeparator();
-        menu.add(new AbstractAction("Back to Projects") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispatchEvent(new WindowEvent(Editor.this, WindowEvent.WINDOW_CLOSING));
-                if (!isVisible()) Entry.openProjects();
-            }
-        });
         menu.add(new AbstractAction("Exit") {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -148,40 +212,6 @@ public class Editor extends JFrame {
             }
         });
         menu.setMnemonic(KeyEvent.VK_F);
-        menuBar.add(menu);
-
-        menu = new JMenu("Window");
-
-        Action a = new AbstractAction("Scene View") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                central.addTab("Scene View", new SceneView());
-            }
-        };
-
-        menu.add(a);
-        a.actionPerformed(null);
-        menu.add(a = new AbstractAction("Info") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                east.addTab("Info", new JPanel());
-            }
-        });
-        a.actionPerformed(null);
-        menu.add(a = new AbstractAction("Explorer") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                northwest.addTab("Explorer", new Explorer(project.getProjectLocation(), "Project Source (" + project.getProjectLocation().getName() + ")"));
-            }
-        });
-        a.actionPerformed(null);
-        menu.add(a = new AbstractAction("Console") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                southwest.addTab("Console", console);
-            }
-        });
-        a.actionPerformed(null);
         menuBar.add(menu);
 
         item = new JMenuItem(new AbstractAction("Repaint") {
@@ -205,360 +235,34 @@ public class Editor extends JFrame {
         return menuBar;
     }
 
-    class SceneView extends JPanel {
-
-        private double zoom = 1.0;
-        private double posX = 0d;
-        private double posY = 0d;
-
-        private final JTextField scaleField = new JTextField();
-        private final JTextField posXField = new JTextField();
-        private final JTextField posYField = new JTextField();
-
-        public SceneView() {
-            setLayout(new BorderLayout());
-            add(new SceneViewProps(), BorderLayout.NORTH);
-            add(new SceneGameView(), BorderLayout.CENTER);
-        }
-
-        class SceneViewProps extends JPanel {
-            public SceneViewProps() {
-                setLayout(new FlowLayout(FlowLayout.LEFT));
-                add(new JLabel("View Scale: "));
-                add(scaleField);
-                scaleField.getDocument().addDocumentListener(new DocumentListener() {
-                    @Override
-                    public void insertUpdate(DocumentEvent e) {
-                        try {
-                            zoom = Double.parseDouble(scaleField.getText());
-                            if (zoom < 0.5) zoom = 0.5;
-                        } catch (NumberFormatException ignore) {
-
-                        }
-                        SceneView.this.repaint();
-                    }
-
-                    @Override
-                        public void removeUpdate(DocumentEvent e) {
-                        try {
-                            zoom = Double.parseDouble(scaleField.getText());
-                            if (zoom < 0.5) zoom = 0.5;
-                        } catch (NumberFormatException ignore) {
-
-                        }
-                        SceneView.this.repaint();
-                    }
-
-                    @Override
-                    public void changedUpdate(DocumentEvent e) {
-
-                    }
-                });
-                add(new JLabel("View Position: "));
-                add(posXField);
-                posXField.getDocument().addDocumentListener(new DocumentListener() {
-                    @Override
-                    public void insertUpdate(DocumentEvent e) {
-                        try {
-                            posX = Double.parseDouble(posXField.getText());
-                        } catch (NumberFormatException ignore) {
-
-                        }
-                        SceneView.this.repaint();
-                    }
-
-                    @Override
-                    public void removeUpdate(DocumentEvent e) {
-                        try {
-                            posX = Double.parseDouble(posXField.getText());
-                        } catch (NumberFormatException ignore) {
-
-                        }
-                        SceneView.this.repaint();
-                    }
-
-                    @Override
-                    public void changedUpdate(DocumentEvent e) {
-
-                    }
-                });
-                add(new JLabel("x"));
-                add(posYField);
-                posYField.getDocument().addDocumentListener(new DocumentListener() {
-                    @Override
-                    public void insertUpdate(DocumentEvent e) {
-                        try {
-                            posY = Double.parseDouble(posYField.getText());
-                        } catch (NumberFormatException ignore) {
-
-                        }
-                        SceneView.this.repaint();
-                    }
-
-                    @Override
-                    public void removeUpdate(DocumentEvent e) {
-                        try {
-                            posY = Double.parseDouble(posYField.getText());
-                        } catch (NumberFormatException ignore) {
-
-                        }
-                        SceneView.this.repaint();
-                    }
-
-                    @Override
-                    public void changedUpdate(DocumentEvent e) {
-
-                    }
-                });
-            }
-        }
-
-        class SceneGameView extends JPanel implements MouseWheelListener, MouseMotionListener, MouseListener {
-
-            private Point moveStart = new Point();
-            private SceneObject selectedObject;
-            private double mouseX, mouseY;
-
-            private double tx, ty;
-
-            public SceneGameView() {
-                addMouseWheelListener(this);
-                addMouseMotionListener(this);
-                addMouseListener(this);
-            }
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                if (zoom > 6)
-                    zoom = 6;
-                Graphics2D g2d = (Graphics2D) g;
-                if (openedScene != null) {
-                    if (!scaleField.hasFocus())
-                        scaleField.setText(String.format("%.1f", zoom));
-                    if (!posXField.hasFocus())
-                        posXField.setText(String.format("%.1f", posX));
-                    if (!posYField.hasFocus())
-                        posYField.setText(String.format("%.1f", posY));
-                    g.setColor(openedScene.getBackgroundColor());
-                    g2d.fillRect(0, 0, getWidth(), getHeight());
-
-                    g2d.scale(zoom, zoom);
-
-                    Rectangle size = getBounds();
-                    tx = ((size.getWidth() - getWidth() * zoom) / 2) / zoom;
-                    ty = ((size.getHeight() - getHeight() * zoom) / 2) / zoom;
-                    g2d.translate(tx, ty);
-
-                    g2d.translate(posX, posY);
-
-                    float str = (float) (1 / zoom);
-                    if (str < 0.05) str = 0.05f;
-                    g2d.setStroke(new BasicStroke(str));
-
-                    for (SceneObject object : openedScene.getSceneObjects()) {
-                        for (Renderable r : object.getRenderableList())
-                            r.render(g);
-                    }
-
-                    if (openedScene.getBackgroundColor() != Color.WHITE) {
-                        Color osc = openedScene.getBackgroundColor().brighter();
-                        g.setColor(new Color(osc.getRed(), osc.getGreen(), osc.getBlue(), 50));
-                    } else g.setColor(new Color(0, 0, 0, 50));
-
-                    int w = getWidth();
-                    if (zoom < 1) w /= zoom;
-
-                    int h = getHeight();
-                    if (zoom < 1) h /= zoom;
-
-                    int lw = (int) -posX;
-
-                    int lh = (int) -posY;
-
-
-                    for (int i = 0; i < (lw + w) / gridX + 1; i++) {
-                        int x = gridX * i;
-                        g.drawLine(x, lh + h, x, lh - (h - getHeight()));
-                    }
-                    for (int i = 1; i < (getWidth() / 2 - lw + (w - getWidth())) / gridX + 1; i++) {
-                        int x = gridX * -i;
-                        g.drawLine(x, lh + h, x, lh - (h - getHeight()));
-                    }
-
-                    for (int i = 0; i < (lh + h) / gridY + 1; i++) {
-                        int y = gridX * i;
-                        g.drawLine(lw + w, y, lw - (w - getWidth()), y);
-                    }
-                    for (int i = 1; i < (getHeight() / 2 - lh + (h - getHeight())) / gridY + 1; i++) {
-                        int y = gridX * -i;
-                        g.drawLine(lw + w, y, lw - (w - getWidth()), y);
-                    }
-
-                    if (selectedObject != null) {
-
-                        g2d.drawImage(Assets.images.get("yarrow.png").getImage(), selectedObject.getX() - (int) (12 / zoom), selectedObject.getY() - (int) (100 / zoom), (int) (Assets.images.get("yarrow.png").getIconWidth() / zoom), (int) (Assets.images.get("yarrow.png").getIconHeight() / zoom), null);
-                        g2d.drawImage(Assets.images.get("xarrow.png").getImage(), selectedObject.getX(), selectedObject.getY() - (int) (12 / zoom), (int) (Assets.images.get("xarrow.png").getIconWidth() / zoom), (int) (Assets.images.get("xarrow.png").getIconHeight() / zoom), null);
-
-                    }
-                } else {
-                    g2d.setColor(getBackground());
-                    g2d.fillRect(0, 0, getWidth(), getHeight());
-                    g.setColor(Color.WHITE);
-                    String noSceneLoadedText = "No scenes loaded.";
-                    g.drawString(noSceneLoadedText, getWidth() / 2 - g.getFontMetrics().stringWidth(noSceneLoadedText) / 2, getHeight() / 2 + g.getFont().getSize() / 2);
-                }
-
-
-                g.dispose();
-            }
-
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                if (openedScene != null) {
-                    if (-e.getPreciseWheelRotation() > 0) {
-                        zoom += .1;
-                    } else if (zoom > 0.5) {
-                        zoom -= .1;
-                    }
-
-                    if (zoom < 0.5) zoom = 0.5;
-
-                    SceneView.this.repaint();
-                }
-            }
-
-            private boolean mouseZooming;
-
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                if (openedScene != null) {
-                    if (mouseZooming) {
-                        zoom -= (e.getY() - moveStart.y) / 100.0;
-                        if (zoom < 0.5) zoom = 0.5;
-                    } else {
-                        posX += (e.getX() - moveStart.x) / zoom;
-                        posY += (e.getY() - moveStart.y) / zoom;
-                    }
-                    moveStart = e.getPoint();
-                    SceneView.this.repaint();
-                }
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent e) {if (openedScene != null) {
-                mouseX = e.getX() / zoom - posX - tx;
-                mouseY = e.getY() / zoom - posY - ty;
-            }
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (openedScene != null) {
-                    if (e.getButton() == MouseEvent.BUTTON3) {
-                        final double smx = mouseX, smy = mouseY;
-                        JPopupMenu popupMenu = new JPopupMenu();
-                        JMenu menu = new JMenu("New"), menu2 = new JMenu("Entity2D");
-                        menu2.add(new JMenuItem(new AbstractAction("Empty") {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                SceneObject sceneObject = new SceneObject();
-                                sceneObject.setX((int) smx);
-                                sceneObject.setY((int) smy);
-                                openedScene.getSceneObjects().add(sceneObject);
-                                selectedObject = sceneObject;
-                            }
-                        }));
-                        menu.add(menu2);
-
-                        popupMenu.add(menu);
-
-                        Point mouse = getMousePosition();
-                        popupMenu.show(this, mouse.x, mouse.y);
-                    } else {
-
-                    }
-                }
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (openedScene != null) {
-                    if (e.getButton() == MouseEvent.BUTTON2) {
-                        mouseZooming = true;
-                    }
-                    moveStart = e.getPoint();
-                    requestFocus();
-                }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (openedScene != null) {
-                    if (e.getButton() == MouseEvent.BUTTON2) {
-                        mouseZooming = false;
-                    }
-                }
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
-        }
-    }
-
-    public EditorScene getOpenedScene() {
+    public EditorScene openedScene() {
         return openedScene;
     }
 
-    public void setOpenedScene(EditorScene openedScene) {
-        setTitle(titleBase + " | " + openedScene.getName());
+    public Editor setOpenedScene(EditorScene openedScene) {
         this.openedScene = openedScene;
+        return this;
     }
 
-    public Project getProject() {
+    public Project project() {
         return project;
     }
 
-    public int getGridX() {
+    public int gridX() {
         return gridX;
     }
 
-    public void setGridX(int gridX) {
+    public Editor setGridX(int gridX) {
         this.gridX = gridX;
+        return this;
     }
 
-    public int getGridY() {
+    public int gridY() {
         return gridY;
     }
 
-    public void setGridY(int gridY) {
+    public Editor setGridY(int gridY) {
         this.gridY = gridY;
-    }
-
-    public YieldTabbedPane getCentral() {
-        return central;
-    }
-
-    public YieldTabbedPane getNorthwest() {
-        return northwest;
-    }
-
-    public YieldTabbedPane getSouthwest() {
-        return southwest;
-    }
-
-    public YieldTabbedPane getEast() {
-        return east;
-    }
-
-    public JTextArea getConsole() {
-        return console;
+        return this;
     }
 }

@@ -44,6 +44,11 @@ public class YieldTabbedPane extends DnDTabbedPane {
         tabClosingListener = aTabClosingListener;
     }
 
+    public YieldTabbedPane addNewTab(String title, Component component) {
+        super.addTab(title, component);
+        return this;
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);

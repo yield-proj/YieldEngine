@@ -46,7 +46,7 @@ public class CodePanel extends JPanel {
         jls.setAutoCompleteEnabled(true);
 
         try {
-            jls.getJarManager().addClassFileSource(new File(Utils.defaultDirectory() + "/.yield_editor", "jre6-rt.jar"));
+            jls.getJarManager().addClassFileSource(new File(Utils.EDITOR_DIR, "jre6-rt.jar"));
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
