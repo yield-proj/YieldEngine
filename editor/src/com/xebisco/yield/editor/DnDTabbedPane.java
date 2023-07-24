@@ -46,9 +46,9 @@ public class DnDTabbedPane extends JTabbedPane {
     private boolean m_hasGhost = true;
     private final double arc = 10;
 
-    private final JFrame frame;
+    private final Object frame;
 
-    public DnDTabbedPane(JFrame frame) {
+    public DnDTabbedPane(Object frame) {
         super();
         this.frame = frame;
         final DragSourceListener dsl = new DragSourceListener() {

@@ -16,25 +16,13 @@
 
 package com.xebisco.yield.editor;
 
-import java.io.Serializable;
-import java.util.Objects;
+import javax.swing.*;
 
-public record EngineInstall(String install, String name, String description) implements Serializable {
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EngineInstall that = (EngineInstall) o;
-        return Objects.equals(install, that.install);
-    }
+public class YieldInternalFrame extends JInternalFrame {
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(install);
-    }
+    private final YieldInternalFrame parent;
 
-    @Override
-    public String toString() {
-        return name + '(' + install + ')';
+    public YieldInternalFrame(YieldInternalFrame parent) {
+        this.parent = parent;
     }
 }

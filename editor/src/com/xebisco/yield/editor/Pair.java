@@ -17,24 +17,6 @@
 package com.xebisco.yield.editor;
 
 import java.io.Serializable;
-import java.util.Objects;
 
-public record EngineInstall(String install, String name, String description) implements Serializable {
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EngineInstall that = (EngineInstall) o;
-        return Objects.equals(install, that.install);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(install);
-    }
-
-    @Override
-    public String toString() {
-        return name + '(' + install + ')';
-    }
+public record Pair<F, S>(F first, S second) implements Serializable {
 }

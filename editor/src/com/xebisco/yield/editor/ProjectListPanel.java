@@ -118,8 +118,13 @@ public class ProjectListPanel extends JPanel implements MouseListener {
             JMenuItem item = new JMenuItem(new AbstractAction("Open") {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Projects.projectsFrame.dispose();
-                    new Editor(selectedProject);
+                    if (Projects.checkInstalls()) {
+                        Projects.projectsFrame.dispose();
+                        new Editor(selectedProject);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "There is no engine installed on this machine");
+                        Projects.editInstalls();
+                    }
                 }
             });
             popupMenu.add(item);

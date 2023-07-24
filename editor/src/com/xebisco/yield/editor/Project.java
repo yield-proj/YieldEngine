@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Project implements Serializable {
+public class Project extends PreferredInstall implements Serializable {
     private String name;
     private final Map<String, EditorScene> scenes = new HashMap<>();
     private final File projectLocation;

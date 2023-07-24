@@ -15,6 +15,7 @@
  */
 package com.xebisco.yield.editor.code;
 
+import com.xebisco.yield.editor.EngineInstall;
 import com.xebisco.yield.editor.Utils;
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.rsta.ac.java.JavaLanguageSupport;
@@ -37,7 +38,7 @@ public class CodePanel extends JPanel {
     private final File file;
 
 
-    public CodePanel(File file) {
+    public CodePanel(File file, EngineInstall engineInstall) {
         this.file = file;
 
         setLayout(new BorderLayout());
@@ -47,6 +48,10 @@ public class CodePanel extends JPanel {
 
         try {
             jls.getJarManager().addClassFileSource(new File(Utils.EDITOR_DIR, "jre6-rt.jar"));
+            File[] engine = new File(Utils.EDITOR_DIR + "/installs/" + engineInstall.install()).listFiles();
+            assert engine != null;
+            for(File jar : engine)
+                jls.getJarManager().addClassFileSource(jar);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }

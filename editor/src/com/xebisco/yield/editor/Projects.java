@@ -20,6 +20,7 @@ import com.xebisco.yield.editor.prop.EngineInstallProp;
 import com.xebisco.yield.editor.prop.NullProp;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
+import com.xebisco.yield.editor.scene.EntityPrefab;
 import com.xebisco.yield.ini.Ini;
 
 import javax.imageio.ImageIO;
@@ -117,35 +118,7 @@ public class Projects extends JPanel {
         button = new JButton(new AbstractAction("Edit") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Entry.splashDialog("Downloading engine list");
-
-                CompletableFuture.runAsync(() -> {
-                    List<EngineInstall> engines = new ArrayList<>();
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://raw.githubusercontent.com/yield-proj/yield-engine-downloads/master/list.txt").openStream()))) {
-                        String l;
-                        while ((l = reader.readLine()) != null) {
-                            String[] pcs = l.split("/");
-                            engines.add(new EngineInstall(pcs[0], pcs[1], pcs[2]));
-                        }
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-
-                    Map<String, Prop[]> props = new HashMap<>();
-                    List<Prop> p = new ArrayList<>();
-
-                    for(EngineInstall engineInstall : engines) {
-                        p.add(new EngineInstallProp(engineInstall));
-                    }
-
-                    p.add(new NullProp());
-
-                    props.put("Edit Installs", p.toArray(new Prop[0]));
-
-                    Entry.splashDialog.dispose();
-
-                    new PropsWindow(props, () -> {}, null, "New Install");
-                });
+                editInstalls();
             }
         });
         installsControl.add(button);
@@ -196,6 +169,42 @@ public class Projects extends JPanel {
 
     }
 
+    public static void editInstalls() {
+        Entry.splashDialog("Downloading engine list");
+
+        CompletableFuture.runAsync(() -> {
+            List<EngineInstall> engines = new ArrayList<>();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://raw.githubusercontent.com/yield-proj/yield-engine-downloads/master/list.txt").openStream()))) {
+                String l;
+                while ((l = reader.readLine()) != null) {
+                    String[] pcs = l.split("/");
+                    engines.add(new EngineInstall(pcs[0], pcs[1], pcs[2]));
+                }
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+            Map<String, Prop[]> props = new HashMap<>();
+            List<Prop> p = new ArrayList<>();
+
+            for(EngineInstall engineInstall : engines) {
+                p.add(new EngineInstallProp(engineInstall));
+            }
+
+            p.add(new NullProp());
+
+            props.put("Edit Installs", p.toArray(new Prop[0]));
+
+            Entry.splashDialog.dispose();
+
+            new PropsWindow(props, () -> {}, null, "New Install");
+        });
+    }
+
+    public static boolean checkInstalls() {
+        return Assets.engineInstalls.size() > 0;
+    }
+
     public static void saveProjects() {
         try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(new File(Utils.EDITOR_DIR, "projects.ser")))) {
             oo.writeObject(Assets.projects);
@@ -228,6 +237,39 @@ public class Projects extends JPanel {
             } else if (!Assets.projects.contains(project)) {
                 Assets.projects.add(project);
                 project.getProjectLocation().mkdir();
+                File scriptsDir = new File(project.getProjectLocation(), "Scripts");
+                scriptsDir.mkdir();
+                File objectsDir = new File(project.getProjectLocation(), "Objects");
+                objectsDir.mkdir();
+                if((boolean) Objects.requireNonNull(Props.get(sections.get("New Project"), "Create sample files")).getValue()) {
+                    File hw = new File(scriptsDir, "HelloScript.java");
+                    try {
+                        hw.createNewFile();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try(FileWriter os = new FileWriter(hw)) {
+                        os.append("import com.xebisco.yield.*;\n\npublic class HelloScript extends ComponentBehavior {\n\n\t@Override\n\tpublic void onStart() {\n\t\tSystem.out.println(\"Hello, World. On Console!\");\n\t}\n\n}");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    EntityPrefab prefab = new EntityPrefab();
+                    prefab.setName("hello_world");
+                    Map<String, Serializable> fields = new HashMap<>();
+                    fields.put("contents", "Hello, World!");
+                    prefab.components().add(new Pair<>("com.xebisco.yield.Text", fields));
+                    File ohw = new File(objectsDir, "HelloWorld.ypfb");
+                    try {
+                        ohw.createNewFile();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try(ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(ohw))) {
+                        oo.writeObject(prefab);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 Image image = Assets.images.get("yieldIcon.png").getImage();
                 if (Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Icon")).getValue() != null) {
                     try {

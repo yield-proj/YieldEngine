@@ -41,11 +41,12 @@ public class Editor extends JFrame {
     private int gridX = 10;
     private int gridY = 10;
 
-    private final Workspace workspace = new Workspace();
+    private final Workspace workspace;
     private final JTextArea console;
 
     public Editor(Project project) {
         this.project = project;
+        workspace = new Workspace(project);
 
         if(Assets.projects != null && Assets.projects.contains(project)) {
             Assets.projects.remove(project);
@@ -69,7 +70,7 @@ public class Editor extends JFrame {
         });
         setIconImage(Assets.images.get("yieldIcon.png").getImage());
 
-        JSplitPane left0SplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new YieldTabbedPane(false, this).addNewTab("Explorer", new Explorer(project.getProjectLocation(), "Project Root")), new YieldTabbedPane(false, this));
+        JSplitPane left0SplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new YieldTabbedPane(false, this).addNewTab("Explorer", new Explorer(project.getProjectLocation(), "Project Root", workspace)), new YieldTabbedPane(false, this));
         JSplitPane left1SplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, left0SplitPane, new YieldTabbedPane(false, this).addNewTab("Console", console = new JTextArea()));
         console.setEditable(false);
         left0SplitPane.setResizeWeight(1);
@@ -106,7 +107,7 @@ public class Editor extends JFrame {
 
         menu.addSeparator();
 
-        JLabel label = new JLabel("This editor project");
+        JLabel label = new JLabel("  This editor project");
         label.setForeground(new Color(108, 101, 119));
 
         menu.add(label);
@@ -127,7 +128,7 @@ public class Editor extends JFrame {
 
         menu.addSeparator();
 
-        label = new JLabel("All projects");
+        label = new JLabel("  All projects");
         label.setForeground(new Color(108, 101, 119));
 
         menu.add(label);

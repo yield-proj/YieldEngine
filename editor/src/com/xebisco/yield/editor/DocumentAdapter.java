@@ -16,25 +16,22 @@
 
 package com.xebisco.yield.editor;
 
-import java.io.Serializable;
-import java.util.Objects;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
-public record EngineInstall(String install, String name, String description) implements Serializable {
+public class DocumentAdapter implements DocumentListener {
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EngineInstall that = (EngineInstall) o;
-        return Objects.equals(install, that.install);
+    public void insertUpdate(DocumentEvent e) {
+
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(install);
+    public void removeUpdate(DocumentEvent e) {
+
     }
 
     @Override
-    public String toString() {
-        return name + '(' + install + ')';
+    public void changedUpdate(DocumentEvent e) {
+
     }
 }

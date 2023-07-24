@@ -35,14 +35,14 @@ public class Entry {
 
     public static void main(String[] args) {
         Locale.setDefault(Locale.US);
+        splashDialog(null);
+        IntelliJTheme.setup(Entry.class.getResourceAsStream("/DarkPurple.theme.json"));
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (Assets.projects != null)
                 Projects.saveProjects();
             if (Assets.engineInstalls != null)
                 Projects.saveInstalls();
         }, "Editor Save"));
-        IntelliJTheme.setup(Entry.class.getResourceAsStream("/DarkPurple.theme.json"));
-        splashDialog(null);
         try {
             loadEverything();
         } catch (Error e) {
@@ -71,14 +71,16 @@ public class Entry {
                 } catch (IOException | ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
-                new Editor(project);
-                if (splashDialog != null)
-                    splashDialog.dispose();
+                if(Projects.checkInstalls()) {
+                    new Editor(project);
+                } else {
+                    openProjects();
+                }
             } else if (args.length == 0) {
                 openProjects();
-                if (splashDialog != null)
-                    splashDialog.dispose();
             } else throw new IllegalStateException("Wrong arguments");
+            if (splashDialog != null)
+                splashDialog.dispose();
         });
     }
 
@@ -102,6 +104,7 @@ public class Entry {
         loadImage("bkg.png");
         loadImage("addIcon.png");
         loadImage("backIcon.png");
+        loadImage("windowIcon.png");
     }
 
     private static void loadImage(String n) {

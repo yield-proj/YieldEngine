@@ -8,7 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="core" />
-    <orderEntry type="module" module-name="swingimpl" />
-    <orderEntry type="module" module-name="javaxsoundimpl" />
+    <orderEntry type="module" module-name="openalimpl" />
+    <orderEntry type="module" module-name="openglimpl" />
   </component>
 </module>

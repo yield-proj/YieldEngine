@@ -12,5 +12,6 @@
     <orderEntry type="module" module-name="ini" />
     <orderEntry type="library" name="libs" level="project" />
     <orderEntry type="library" name="libs" level="project" />
+    <orderEntry type="module" module-name="editor_annotations" />
   </component>
 </module>

@@ -24,7 +24,7 @@ public final class Props {
                 new StringProp("Project Name", ""),
                 new PathProp("Project Location" , System.getProperty("user.home") + "\\", JFileChooser.DIRECTORIES_ONLY),
                 new ImageProp("Project Icon"),
-                new BooleanProp("Create sample scene", true)
+                new BooleanProp("Create sample files", true)
         };
     }
 

@@ -16,30 +16,32 @@
 
 package com.xebisco.yield.editor.explorer;
 
-import com.formdev.flatlaf.ui.FlatBorder;
-import com.sun.source.tree.Tree;
 import com.xebisco.yield.editor.*;
 import com.xebisco.yield.editor.code.CodePanel;
 import com.xebisco.yield.editor.prop.BooleanProp;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
 import com.xebisco.yield.editor.prop.StringProp;
+import com.xebisco.yield.editor.scene.EntityPrefab;
+import com.xebisco.yield.editor.scene.ObjectEditor;
 
 import javax.swing.*;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.*;
+import java.io.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class Explorer extends JPanel implements ActionListener {
     private JTextArea jta;
@@ -55,8 +57,11 @@ public class Explorer extends JPanel implements ActionListener {
 
     private final File mainDir;
 
-    public Explorer(File mainDir, String mainName) {
+    private final Workspace workspace;
+
+    public Explorer(File mainDir, String mainName, Workspace workspace) {
         this.mainDir = mainDir;
+        this.workspace = workspace;
 
         setLayout(new BorderLayout());
 
@@ -98,13 +103,15 @@ public class Explorer extends JPanel implements ActionListener {
                             if (tps[0] == null)
                                 return;
 
-                            boolean isDir = false, isScript = false, multiple = tps.length > 1, includeRoot = false;
+                            boolean isDir = false, isScript = false, isPrefab = false, multiple = tps.length > 1, includeRoot = false;
 
                             if (!multiple) {
                                 if (((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).isDirectory())
                                     isDir = true;
-                                if(((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).getName().endsWith(".java"))
+                                if (((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).getName().endsWith(".java"))
                                     isScript = true;
+                                if (((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).getName().endsWith(".ypfb"))
+                                    isPrefab = true;
                             }
 
                             for (TreePath tp : tps)
@@ -115,27 +122,54 @@ public class Explorer extends JPanel implements ActionListener {
 
                             TreePath[] finalTps = tps;
 
-                            if(isScript) {
+                            if (isScript) {
                                 popupMenu.add(new JMenuItem(new AbstractAction("Open script") {
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
-                                        CodePanel codePanel = new CodePanel((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject());
+                                        CodePanel codePanel = new CodePanel((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), workspace.install());
                                         String title = ((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()).getName().split("\\.java")[0] + " (Script)";
-                                        JFrame frame = new JFrame();
-                                        frame.setIconImage(Assets.images.get("yieldIcon.png").getImage());
+                                        JInternalFrame frame = new JInternalFrame();
+                                        frame.setFrameIcon(Assets.images.get("windowIcon.png"));
                                         YieldTabbedPane tp = new YieldTabbedPane(true, frame);
                                         tp.addTab(title, codePanel);
                                         frame.add(tp);
 
                                         frame.setTitle("Yield Editor");
-                                        frame.setSize(600, 500);
-                                        frame.setLocation(MouseInfo.getPointerInfo().getLocation());
-                                        JMenuBar mb = new JMenuBar();
-                                        mb.add(new JMenuItem(""));
-                                        frame.setJMenuBar(mb);
+                                        frame.setClosable(true);
+                                        frame.setMaximizable(true);
+                                        frame.setIconifiable(true);
                                         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+                                        workspace.desktopPane().add(frame);
+                                        frame.setBounds(100, 100, 600, 500);
                                         frame.setVisible(true);
-                                        frame.requestFocus();
+                                    }
+                                }));
+                            }
+
+                            if (isPrefab) {
+                                popupMenu.add(new JMenuItem(new AbstractAction("Open prefab") {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        JInternalFrame frame = new JInternalFrame();
+                                        frame.setFrameIcon(Assets.images.get("windowIcon.png"));
+                                        EntityPrefab prefab;
+                                        try(ObjectInputStream oi = new ObjectInputStream(new FileInputStream((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()))) {
+                                            prefab = (EntityPrefab) oi.readObject();
+                                        } catch (IOException | ClassNotFoundException ex) {
+                                            throw new RuntimeException(ex);
+                                        }
+                                        add(new ObjectEditor(prefab, workspace));
+
+                                        frame.setTitle("Yield Editor");
+                                        frame.setClosable(true);
+                                        frame.setMaximizable(true);
+                                        frame.setIconifiable(true);
+                                        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+                                        workspace.desktopPane().add(frame);
+                                        frame.setBounds(100, 100, 600, 500);
+                                        frame.setVisible(true);
                                     }
                                 }));
                             }

@@ -17,15 +17,16 @@
 package com.xebisco.yield.editor;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicToolBarUI;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
+import java.awt.event.*;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class Workspace extends JPanel {
     private final JDesktopPane desktopPane;
+    private EngineInstall install;
 
-    public Workspace() {
+    public Workspace(PreferredInstall preferredInstall) {
 
         setLayout(new BorderLayout());
 
@@ -44,6 +45,25 @@ public class Workspace extends JPanel {
             }
         }, BorderLayout.CENTER);
 
+        desktopPane.setFocusable(true);
+        desktopPane.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                for(JInternalFrame internalFrame : desktopPane.getAllFrames()) {
+                    if(internalFrame.getX() + internalFrame.getWidth() / 2 > desktopPane.getWidth())
+                        internalFrame.setLocation(desktopPane.getWidth() - internalFrame.getWidth() / 2, internalFrame.getY());
+                    if(internalFrame.getY()  + internalFrame.getHeight() / 2> desktopPane.getHeight())
+                        internalFrame.setLocation(internalFrame.getX(), desktopPane.getHeight() - internalFrame.getHeight() / 2);
+                }
+            }
+        });
+        desktopPane.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                requestFocus();
+            }
+        });
+
         desktopPane.setOpaque(false);
 
         JToolBar toolBar = new JToolBar("Workspace Tool Bar");
@@ -52,6 +72,26 @@ public class Workspace extends JPanel {
         toolBar.setBorderPainted(false);
         toolBar.add(new JLabel("Workspace", Assets.images.get("workspaceIcon.png"), JLabel.LEFT));
         toolBar.add(Box.createHorizontalGlue());
+
+        toolBar.add(new JLabel(" "));
+
+        JComboBox<EngineInstall> installs = new JComboBox<>(Assets.engineInstalls.toArray(new EngineInstall[0]));
+        installs.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setInstall((EngineInstall) installs.getSelectedItem());
+            }
+        });
+        installs.setMaximumSize(new Dimension(200, 100));
+
+        if(preferredInstall.preferredInstall() != null) {
+            if(Assets.engineInstalls.contains(preferredInstall.preferredInstall()))
+                installs.setSelectedItem(preferredInstall.preferredInstall());
+        } else {
+            setInstall(Assets.engineInstalls.get(0));
+        }
+
+        toolBar.add(installs);
 
         JButton run = new JButton();
         Color savedBkg = new Color(run.getBackground().getRGB());
@@ -63,8 +103,6 @@ public class Workspace extends JPanel {
             }
         });
 
-        toolBar.add(new JLabel(" "));
-
         toolBar.add(run);
         toolBar.add(new JButton(new AbstractAction("", Assets.images.get("searchIcon.png")) {
             @Override
@@ -73,5 +111,18 @@ public class Workspace extends JPanel {
             }
         }));
         add(toolBar, BorderLayout.NORTH);
+    }
+
+    public JDesktopPane desktopPane() {
+        return desktopPane;
+    }
+
+    public EngineInstall install() {
+        return install;
+    }
+
+    public Workspace setInstall(EngineInstall install) {
+        this.install = install;
+        return this;
     }
 }

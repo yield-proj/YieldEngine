@@ -17,6 +17,7 @@
 package com.xebisco.yield.editor;
 
 import com.xebisco.yield.editor.prop.Prop;
+import com.xebisco.yield.editor.prop.Props;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -32,6 +33,22 @@ import java.util.regex.Pattern;
 public class PropsWindow extends JDialog {
 
     private static final Pattern keyPattern = Pattern.compile("^([^(]+)\\(([^)]*)\\)$");
+
+    public static JPanel propsPanel(Prop[] props) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.weightx = 1;
+        gbc.insets = new Insets(10, 10, 0, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        gbc.gridy = 0;
+        for (Prop prop : props) {
+            panel.add(prop.panel(), gbc);
+            gbc.gridy++;
+        }
+        return panel;
+    }
 
     public PropsWindow(Map<String, Prop[]> s, Runnable apply, Frame owner, String title) {
         super(owner);
@@ -49,25 +66,11 @@ public class PropsWindow extends JDialog {
 
         List<JButton> sections = new ArrayList<>();
 
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.weightx = 1;
-        gbc.insets = new Insets(10, 10, 0, 10);
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         JScrollPane pane = new JScrollPane();
         pane.setBorder(null);
         pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         for (String section : s.keySet()) {
-            JPanel panel = new JPanel();
-            panel.setLayout(new GridBagLayout());
-            gbc.gridy = 0;
-            for (Prop prop : s.get(section)) {
-                panel.add(prop.panel(), gbc);
-                gbc.gridy++;
-            }
-
-
+            JPanel panel = propsPanel(s.get(section));
             sections.add(new JButton(new AbstractAction(section) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
