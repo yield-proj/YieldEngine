@@ -17,7 +17,6 @@
 package com.xebisco.yield.physics;
 
 import com.xebisco.yield.*;
-import com.xebisco.yield.VisibleOnInspector;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -27,11 +26,11 @@ import org.jbox2d.dynamics.Fixture;
 public class PhysicsBody extends ComponentBehavior {
 
     private Body b2Body;
-    @VisibleOnInspector
+    @VisibleOnEditor
     private PhysicsType type = PhysicsType.DYNAMIC;
-    @VisibleOnInspector
+    @VisibleOnEditor
     private double gravityScale = 1, mass = 1;
-    @VisibleOnInspector
+    @VisibleOnEditor
     private boolean bullet, fixedRotation;
 
     @Override

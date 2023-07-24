@@ -18,19 +18,19 @@ package com.xebisco.yield.physics;
 
 import com.xebisco.yield.ComponentBehavior;
 import com.xebisco.yield.Entity2D;
-import com.xebisco.yield.VisibleOnInspector;
+import com.xebisco.yield.VisibleOnEditor;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.JointDef;
 import org.jbox2d.dynamics.joints.JointType;
 
 public class PhysicsJoint extends ComponentBehavior {
 
-    @VisibleOnInspector
+    @VisibleOnEditor
     private Entity2D entity1, entity2;
 
     private Joint b2Joint;
 
-    @VisibleOnInspector
+    @VisibleOnEditor
     private PhysicsJointType type = PhysicsJointType.DISTANCE;
 
     @Override

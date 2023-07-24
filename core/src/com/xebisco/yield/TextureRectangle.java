@@ -21,16 +21,16 @@ package com.xebisco.yield;
  * scaling and processing pixels.
  */
 public class TextureRectangle extends Rectangle {
-    @VisibleOnInspector
+    @VisibleOnEditor
     private Texture texture;
 
-    @VisibleOnInspector
+    @VisibleOnEditor
     private boolean textureSized;
 
-    @VisibleOnInspector
+    @VisibleOnEditor
     private boolean disposeTexture;
 
-    @VisibleOnInspector
+    @VisibleOnEditor
     private TwoAnchorRepresentation textureScale = null;
 
     @Override

@@ -21,10 +21,10 @@ package com.xebisco.yield;
  */
 public class Text extends AbstractRenderable {
 
-    @VisibleOnInspector
+    @VisibleOnEditor
     private String contents = "";
 
-    @VisibleOnInspector
+    @VisibleOnEditor
     private Font font;
 
     @Override

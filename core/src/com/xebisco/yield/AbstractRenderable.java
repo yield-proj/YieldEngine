@@ -35,19 +35,19 @@ public abstract class AbstractRenderable extends ComponentBehavior {
             vertices[i] = new Vector2D();
     }
 
-    @VisibleOnInspector
+    @VisibleOnEditor
     private Size2D size = new Size2D(100, 100);
-    @VisibleOnInspector
+    @VisibleOnEditor
     private Color color = new Color(Colors.WHITE);
-    @VisibleOnInspector
+    @VisibleOnEditor
     private double borderThickness;
-    @VisibleOnInspector
+    @VisibleOnEditor
     private boolean filled = true, absoluteScaled, ignoreOffsetScaling;
 
-    @VisibleOnInspector
+    @VisibleOnEditor
     private Vector2D offset = new Vector2D();
 
-    @VisibleOnInspector
+    @VisibleOnEditor
     private RectangleAnchor anchor = RectangleAnchor.CENTER;
 
     private final Vector2D anchorSum = new Vector2D();

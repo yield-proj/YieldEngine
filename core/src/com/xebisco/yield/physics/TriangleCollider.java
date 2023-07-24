@@ -19,7 +19,7 @@ package com.xebisco.yield.physics;
 import com.xebisco.yield.Global;
 import com.xebisco.yield.TwoAnchorRepresentation;
 import com.xebisco.yield.Vector2D;
-import com.xebisco.yield.VisibleOnInspector;
+import com.xebisco.yield.VisibleOnEditor;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
@@ -29,10 +29,11 @@ import org.jbox2d.common.Vec2;
  * vertices and centroid.
  */
 public class TriangleCollider extends Collider {
+    @VisibleOnEditor
     private final Vector2D[] vertices = new Vector2D[]{new Vector2D(-50, -50), new Vector2D(0, 50), new Vector2D(50, -50)};
 
 
-    @VisibleOnInspector
+    @VisibleOnEditor
     private Vector2D centroid = new Vector2D();
 
     @Override

@@ -159,7 +159,7 @@ public class Explorer extends JPanel implements ActionListener {
                                         } catch (IOException | ClassNotFoundException ex) {
                                             throw new RuntimeException(ex);
                                         }
-                                        add(new ObjectEditor(prefab, workspace));
+                                        frame.add(new ObjectEditor(prefab, workspace));
 
                                         frame.setTitle("Yield Editor");
                                         frame.setClosable(true);

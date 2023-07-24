@@ -104,7 +104,14 @@ public class ComponentProp extends Prop {
 
     @Override
     public JPanel panel() {
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.setColor(getBackground().brighter());
+                g.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+            }
+        };
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.weightx = 1;
         gbc.insets = new Insets(10, 10, 0, 10);
@@ -112,6 +119,10 @@ public class ComponentProp extends Prop {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel.setLayout(new GridBagLayout());
         gbc.gridy = 0;
+        JLabel label = new JLabel(getName());
+        label.setFont(label.getFont().deriveFont(Font.BOLD).deriveFont(label.getFont().getSize2D() + 2));
+        panel.add(label, gbc);
+        gbc.gridy++;
         for (Field field : fields) {
             panel.add(fieldPanel(field), gbc);
             gbc.gridy++;

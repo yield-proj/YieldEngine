@@ -18,7 +18,7 @@ package com.xebisco.yield.physics;
 
 import com.xebisco.yield.Global;
 import com.xebisco.yield.Vector2D;
-import com.xebisco.yield.VisibleOnInspector;
+import com.xebisco.yield.VisibleOnEditor;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.Shape;
 
@@ -26,7 +26,7 @@ import org.jbox2d.collision.shapes.Shape;
  * The EdgeCollider class defines an edge shape collider with two points in a 2D space.
  */
 public class EdgeCollider extends Collider {
-    @VisibleOnInspector
+    @VisibleOnEditor
     private Vector2D point1 = new Vector2D(-50, 0), point2 = new Vector2D(50, 0);
 
     @Override

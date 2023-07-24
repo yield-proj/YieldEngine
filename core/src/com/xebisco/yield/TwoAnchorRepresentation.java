@@ -16,10 +16,12 @@
 
 package com.xebisco.yield;
 
+import java.io.Serializable;
+
 /**
  * It's a representation of a point in 2D space
  */
-public class TwoAnchorRepresentation {
+public class TwoAnchorRepresentation implements Serializable {
     private double x, y;
     public TwoAnchorRepresentation(double x, double y) {
         set(x, y);

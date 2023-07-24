@@ -57,5 +57,6 @@ public class ObjectEditor extends JPanel {
 
             }
         }));
+        add(buttonPanel, BorderLayout.SOUTH);
     }
 }

@@ -17,7 +17,8 @@
 package com.xebisco.yield.physics;
 
 import com.xebisco.yield.*;
-import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
 /**
@@ -25,13 +26,13 @@ import org.jbox2d.common.Vec2;
  * center, and angle.
  */
 public class RectangleCollider extends Collider {
-    @VisibleOnInspector
+    @VisibleOnEditor
     private Size2D size = new Size2D(100, 100);
 
-    @VisibleOnInspector
+    @VisibleOnEditor
     private Vector2D centroid = new Vector2D();
 
-    @VisibleOnInspector
+    @VisibleOnEditor
     private double angle;
 
     @Override
