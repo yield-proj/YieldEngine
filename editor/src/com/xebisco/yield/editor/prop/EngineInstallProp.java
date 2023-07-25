@@ -20,7 +20,6 @@ import com.xebisco.yield.editor.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.text.html.Option;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
@@ -35,6 +34,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class EngineInstallProp extends Prop {
     private Image image;
+    private static boolean installingEngine;
 
     private final JPanel imagePanel = new JPanel() {
         @Override
@@ -102,15 +102,20 @@ public class EngineInstallProp extends Prop {
             custom.setAction(new AbstractAction("Custom Install") {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    if(installingEngine) {
+                        JOptionPane.showMessageDialog(null, "There is another install operation in this editor, please wait for it to finishes.");
+                        return;
+                    }
                     String[][] optionsDefault = options();
                     Map<String, Prop[]> props = new HashMap<>();
                     OptionsProp[] pA = new OptionsProp[optionsDefault.length];
-                    for(int i = 0; i < pA.length; i++) {
+                    for (int i = 0; i < pA.length; i++) {
                         pA[i] = new OptionsProp(i == 0 ? "Core Module" : "Implementation " + i, optionsDefault[i]);
                     }
                     props.put("Install Options", pA);
                     new PropsWindow(props, () -> {
                         Entry.splashDialog("Downloading and installing engine");
+                        installingEngine = true;
                         CompletableFuture.runAsync(() -> {
                             File dir = new File(Utils.EDITOR_DIR, "installs/" + install.install());
                             custom.setEnabled(false);
@@ -124,6 +129,7 @@ public class EngineInstallProp extends Prop {
                             }
                             Assets.engineInstalls.add(install);
                             Entry.splashDialog.dispose();
+                            installingEngine = false;
                         });
                     }, null, "Custom Install");
                 }
@@ -133,8 +139,13 @@ public class EngineInstallProp extends Prop {
             def.setAction(new AbstractAction("Default Install") {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    if(installingEngine) {
+                        JOptionPane.showMessageDialog(null, "There is another install operation in this editor, please wait for it to finishes.");
+                        return;
+                    }
                     String[][] options = options();
                     Entry.splashDialog("Downloading and installing engine");
+                    installingEngine = true;
                     CompletableFuture.runAsync(() -> {
                         File dir = new File(Utils.EDITOR_DIR, "installs/" + install.install());
                         custom.setEnabled(false);
@@ -148,6 +159,7 @@ public class EngineInstallProp extends Prop {
                         }
                         Assets.engineInstalls.add(install);
                         Entry.splashDialog.dispose();
+                        installingEngine = false;
                     });
                 }
             });

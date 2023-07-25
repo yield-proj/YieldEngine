@@ -16,22 +16,5 @@
 
 package com.xebisco.yield.editor;
 
-import java.awt.*;
-
-public class ProjectPos {
-    private final Project project;
-    private final double position;
-
-    public ProjectPos(Project project, double position) {
-        this.project = project;
-        this.position = position;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public double getPosition() {
-        return position;
-    }
+public record ObjPos(Object obj, double position) {
 }

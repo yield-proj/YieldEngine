@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class ProjectListPanel extends JPanel implements MouseListener {
 
-    private final List<ProjectPos> projectsPos = new ArrayList<>();
+    private final List<ObjPos> projectsPos = new ArrayList<>();
     private Project selectedProject;
 
     public ProjectListPanel() {
@@ -63,7 +63,7 @@ public class ProjectListPanel extends JPanel implements MouseListener {
                 } else
                     g.setColor(brighterBkg);
                 int y = i * h + (i * s), w = getWidth() - s;
-                projectsPos.add(new ProjectPos(project, y));
+                projectsPos.add(new ObjPos(project, y));
                 g.fillRoundRect(s, y, w, h, 20, 20);
                 g.fillRect(w, y, s, h);
                 BufferedImage image = imageMap.get(project);
@@ -106,9 +106,9 @@ public class ProjectListPanel extends JPanel implements MouseListener {
     public void mousePressed(MouseEvent e) {
         selectedProject = null;
 
-        for (ProjectPos pp : projectsPos) {
-            if (e.getY() >= pp.getPosition() && e.getY() <= pp.getPosition() + 80) {
-                selectedProject = pp.getProject();
+        for (ObjPos pp : projectsPos) {
+            if (e.getY() >= pp.position() && e.getY() <= pp.position() + 80) {
+                selectedProject = (Project) pp.obj();
                 break;
             }
         }

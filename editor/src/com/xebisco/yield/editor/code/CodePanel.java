@@ -15,8 +15,7 @@
  */
 package com.xebisco.yield.editor.code;
 
-import com.xebisco.yield.editor.EngineInstall;
-import com.xebisco.yield.editor.Utils;
+import com.xebisco.yield.editor.*;
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.rsta.ac.java.JavaLanguageSupport;
 import org.fife.rsta.ac.java.classreader.attributes.Code;
@@ -26,11 +25,11 @@ import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.io.*;
 
 public class CodePanel extends JPanel {
 
@@ -70,11 +69,86 @@ public class CodePanel extends JPanel {
             Utils.error(null, e);
         }
 
-        textArea.setText(stringBuilder.toString().substring(0, stringBuilder.length() - 1));
+        textArea.setText(stringBuilder.substring(0, stringBuilder.length() - 1));
 
         RTextScrollPane scrollPane = new RTextScrollPane(textArea, true);
 
         add(scrollPane);
+    }
+
+    public static YieldInternalFrame newCodeFrame(JDesktopPane desktopPane, EngineInstall engineInstall, File file, YieldInternalFrame parent) {
+        CodePanel codePanel = new CodePanel(file, engineInstall);
+        String title = file.getName().split("\\.java")[0] + " (Script)";
+        YieldInternalFrame frame = new YieldInternalFrame(parent);
+        frame.setFrameIcon(Assets.images.get("windowIcon.png"));
+        frame.add(codePanel);
+
+        frame.setTitle(file.getName() + " - Script Editor");
+        frame.setJMenuBar(codePanel.codeMenuBar());
+        frame.setClosable(true);
+        frame.setMaximizable(true);
+        frame.setIconifiable(true);
+        frame.setResizable(true);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        frame.setBounds(100, 100, 600, 500);
+
+        desktopPane.add(frame);
+        frame.setVisible(true);
+        return frame;
+    }
+
+    private JMenuBar codeMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("File");
+        JMenuItem item;
+        menu.add(item = new JMenuItem(new AbstractAction("Save") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try(FileWriter writer = new FileWriter(file)) {
+                    writer.append(textArea.getText());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }));
+        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
+        menuBar.add(menu);
+        menu = new JMenu("View");
+        JMenu menu2 = new JMenu("Font size");
+        menu2.add(new AbstractAction("10px") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setFont(textArea.getFont().deriveFont(10f));
+            }
+        });
+        menu2.add(new AbstractAction("12px") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setFont(textArea.getFont().deriveFont(12f));
+            }
+        });
+        menu2.add(new AbstractAction("14px") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setFont(textArea.getFont().deriveFont(14f));
+            }
+        });
+        menu2.add(new AbstractAction("16px") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setFont(textArea.getFont().deriveFont(16f));
+            }
+        });
+        menu2.add(new AbstractAction("20px") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setFont(textArea.getFont().deriveFont(20f));
+            }
+        });
+        menu.add(menu2);
+        menuBar.add(menu);
+        return menuBar;
     }
 
 

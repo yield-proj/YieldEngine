@@ -16,13 +16,17 @@
 
 package com.xebisco.yield.editor.prop;
 
+import com.xebisco.yield.ComponentIcon;
+import com.xebisco.yield.ComponentIconType;
 import com.xebisco.yield.VisibleOnEditor;
-import com.xebisco.yield.editor.DocumentAdapter;
-import com.xebisco.yield.editor.Utils;
+import com.xebisco.yield.editor.*;
+import com.xebisco.yield.editor.code.CodePanel;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
+import javax.tools.ToolProvider;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -37,32 +41,28 @@ import java.util.List;
 import java.util.Map;
 
 public class ComponentProp extends Prop {
-    public static final File DEST = new File(Utils.EDITOR_DIR + "/out/");
-    public static final ClassLoader loader;
-
-
-    static {
-        if (!DEST.exists()) DEST.mkdir();
-        try {
-            loader = new URLClassLoader(new URL[]{new URL("file://" + DEST.getPath())});
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public static final File DEST = new File(Utils.EDITOR_DIR + "/out/" + Entry.RUN);
 
     private final Class<?> componentClass;
     private final List<Field> fields = new ArrayList<>();
+    private final YieldInternalFrame frame;
 
-    public ComponentProp(File comp) {
+    private final File comp;
+
+    private final EngineInstall install;
+
+    public ComponentProp(File comp, EngineInstall install, YieldInternalFrame frame) {
         super(comp.getName().replace(".java", ""), null);
-        try {
-            Runtime.getRuntime().exec(new String[]{"javac", "-d", DEST.getPath(), comp.getPath()});
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            componentClass = loader.loadClass(getName());
-        } catch (ClassNotFoundException e) {
+        this.comp = comp;
+        this.frame = frame;
+        this.install = install;
+        File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + install.install() + "/yield-core.jar");
+
+        ToolProvider.getSystemJavaCompiler().run(null, null, null, "-cp", core.getPath(),  "-d", DEST.getPath(), comp.getPath());
+
+        try(URLClassLoader loader = new URLClassLoader(new URL[]{DEST.toURI().toURL(), core.toURI().toURL()});) {
+            componentClass = loader.loadClass(comp.getName().replace(".java", ""));
+        } catch (ClassNotFoundException | IOException e) {
             throw new RuntimeException(e);
         }
         set();
@@ -70,6 +70,9 @@ public class ComponentProp extends Prop {
 
     public ComponentProp(Class<?> componentClass) {
         super(componentClass.getSimpleName(), null);
+        frame = null;
+        install = null;
+        comp = null;
         this.componentClass = componentClass;
         set();
     }
@@ -120,20 +123,62 @@ public class ComponentProp extends Prop {
         panel.setLayout(new GridBagLayout());
         gbc.gridy = 0;
         JLabel label = new JLabel(getName());
+        if (componentClass.isAnnotationPresent(ComponentIcon.class)) {
+            ComponentIconType icon = componentClass.getAnnotation(ComponentIcon.class).iconType();
+            label.setIcon(switch (icon) {
+                case TRANSFORM -> Assets.images.get("transformIcon.png");
+                case PHYSICS -> null;
+                case GRAPHICAL -> null;
+            });
+        }
         label.setFont(label.getFont().deriveFont(Font.BOLD).deriveFont(label.getFont().getSize2D() + 2));
-        panel.add(label, gbc);
+        JPanel namePanel = new JPanel();
+        namePanel.setOpaque(false);
+        namePanel.setLayout(new BorderLayout());
+        namePanel.add(label);
+
+
+        JPanel editButtonPanel = new JPanel();
+        editButtonPanel.setOpaque(false);
+        JButton editButton;
+        editButtonPanel.add(editButton = new JButton(new AbstractAction("", Assets.images.get("editIcon.png")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CodePanel.newCodeFrame(frame.getDesktopPane(), install, comp, frame).setLocation(frame.getX() + frame.getWidth() + 100, frame.getY() + 100);
+            }
+        }));
+
+        if (frame == null) editButton.setEnabled(false);
+
+        namePanel.add(editButtonPanel, BorderLayout.EAST);
+
+        panel.add(namePanel, gbc);
+        gbc.gridy++;
+        namePanel = new JPanel();
+        namePanel.setLayout(new BorderLayout());
+        namePanel.setOpaque(false);
+        namePanel.add(label = new JLabel("Class "), BorderLayout.WEST);
+        label.setEnabled(false);
+        JTextField tf = new JTextField(componentClass.getName());
+        tf.setEnabled(false);
+        namePanel.add(tf);
+        panel.add(namePanel, gbc);
         gbc.gridy++;
         for (Field field : fields) {
             panel.add(fieldPanel(field), gbc);
             gbc.gridy++;
         }
+        label = new JLabel();
+        label.setFont(label.getFont().deriveFont(5f));
+        panel.add(label, gbc);
         return panel;
     }
 
     private JPanel fieldPanel(Field field) {
         JPanel panel = new JPanel();
+        panel.setOpaque(false);
         panel.setLayout(new BorderLayout());
-        panel.add(new JLabel(field.getName() + ' '), BorderLayout.WEST);
+        panel.add(new JLabel("<html>" + field.getName() + ": <em>" + field.getType().getSimpleName() + "</em></html>"), BorderLayout.WEST);
         if (field.getType().equals(String.class) ||
                 field.getType().equals(Integer.class) ||
                 field.getType().equals(int.class) ||
@@ -149,6 +194,8 @@ public class ComponentProp extends Prop {
                 field.getType().equals(byte.class)
         ) {
             JTextField textField = new JTextField();
+            //noinspection unchecked
+            textField.setText(String.valueOf(((Map<String, Serializable>) getValue()).get(field.getName())));
             textField.getDocument().addDocumentListener(new DocumentAdapter() {
                 @Override
                 public void insertUpdate(DocumentEvent e) {

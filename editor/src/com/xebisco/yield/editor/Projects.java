@@ -236,6 +236,7 @@ public class Projects extends JPanel {
                 newProjectFrame(owner);
             } else if (!Assets.projects.contains(project)) {
                 Assets.projects.add(project);
+                project.setPreferredInstall((EngineInstall) Objects.requireNonNull(Props.get(sections.get("New Project"), "Preferred engine")).getValue());
                 project.getProjectLocation().mkdir();
                 File scriptsDir = new File(project.getProjectLocation(), "Scripts");
                 scriptsDir.mkdir();

@@ -23,9 +23,9 @@ import java.io.Serializable;
 
 public class OptionsProp extends Prop {
 
-    private final String[] options;
+    private final Serializable[] options;
 
-    public OptionsProp(String name, String[] options) {
+    public OptionsProp(String name, Serializable[] options) {
         super(name, options[0]);
         this.options = options;
     }
@@ -34,12 +34,12 @@ public class OptionsProp extends Prop {
     public JPanel panel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        panel.add(new JLabel(getName()), BorderLayout.WEST);
-        JComboBox<String> comboBox = new JComboBox<>(options);
+        panel.add(new JLabel(getName() + " "), BorderLayout.WEST);
+        JComboBox<Serializable> comboBox = new JComboBox<>(options);
         comboBox.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setValue((String) comboBox.getSelectedItem());
+                setValue((Serializable) comboBox.getSelectedItem());
             }
         });
         panel.add(comboBox);

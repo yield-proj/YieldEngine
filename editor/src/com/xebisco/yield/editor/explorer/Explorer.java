@@ -24,6 +24,7 @@ import com.xebisco.yield.editor.prop.Props;
 import com.xebisco.yield.editor.prop.StringProp;
 import com.xebisco.yield.editor.scene.EntityPrefab;
 import com.xebisco.yield.editor.scene.ObjectEditor;
+import org.fife.rsta.ac.java.classreader.attributes.Code;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -126,23 +127,7 @@ public class Explorer extends JPanel implements ActionListener {
                                 popupMenu.add(new JMenuItem(new AbstractAction("Open script") {
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
-                                        CodePanel codePanel = new CodePanel((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), workspace.install());
-                                        String title = ((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()).getName().split("\\.java")[0] + " (Script)";
-                                        JInternalFrame frame = new JInternalFrame();
-                                        frame.setFrameIcon(Assets.images.get("windowIcon.png"));
-                                        YieldTabbedPane tp = new YieldTabbedPane(true, frame);
-                                        tp.addTab(title, codePanel);
-                                        frame.add(tp);
-
-                                        frame.setTitle("Yield Editor");
-                                        frame.setClosable(true);
-                                        frame.setMaximizable(true);
-                                        frame.setIconifiable(true);
-                                        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-                                        workspace.desktopPane().add(frame);
-                                        frame.setBounds(100, 100, 600, 500);
-                                        frame.setVisible(true);
+                                        CodePanel.newCodeFrame(workspace.desktopPane(), workspace.install(), (File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), null);
                                     }
                                 }));
                             }
@@ -151,7 +136,7 @@ public class Explorer extends JPanel implements ActionListener {
                                 popupMenu.add(new JMenuItem(new AbstractAction("Open prefab") {
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
-                                        JInternalFrame frame = new JInternalFrame();
+                                        YieldInternalFrame frame = new YieldInternalFrame(null);;
                                         frame.setFrameIcon(Assets.images.get("windowIcon.png"));
                                         EntityPrefab prefab;
                                         try(ObjectInputStream oi = new ObjectInputStream(new FileInputStream((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()))) {
@@ -159,16 +144,17 @@ public class Explorer extends JPanel implements ActionListener {
                                         } catch (IOException | ClassNotFoundException ex) {
                                             throw new RuntimeException(ex);
                                         }
-                                        frame.add(new ObjectEditor(prefab, workspace));
+                                        frame.add(new ObjectEditor(prefab, workspace, frame));
 
-                                        frame.setTitle("Yield Editor");
+                                        frame.setTitle("Object Editor");
                                         frame.setClosable(true);
                                         frame.setMaximizable(true);
                                         frame.setIconifiable(true);
+                                        frame.setResizable(true);
                                         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
                                         workspace.desktopPane().add(frame);
-                                        frame.setBounds(100, 100, 600, 500);
+                                        frame.setBounds(100, 100, 400, 600);
                                         frame.setVisible(true);
                                     }
                                 }));

@@ -17,12 +17,29 @@
 package com.xebisco.yield.editor;
 
 import javax.swing.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class YieldInternalFrame extends JInternalFrame {
 
-    private final YieldInternalFrame parent;
+    private final JInternalFrame parent;
 
-    public YieldInternalFrame(YieldInternalFrame parent) {
+    public YieldInternalFrame(JInternalFrame parent) {
         this.parent = parent;
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                getParent().repaint();
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                getParent().repaint();
+            }
+        });
+    }
+
+    public JInternalFrame parent() {
+        return parent;
     }
 }

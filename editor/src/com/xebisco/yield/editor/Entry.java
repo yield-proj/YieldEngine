@@ -29,9 +29,14 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Random;
 
 public class Entry {
     public static JDialog splashDialog;
+    public final static String RUN;
+    static {
+        RUN = "run_" + Integer.toHexString(new Random().nextInt());
+    }
 
     public static void main(String[] args) {
         Locale.setDefault(Locale.US);
@@ -105,6 +110,8 @@ public class Entry {
         loadImage("addIcon.png");
         loadImage("backIcon.png");
         loadImage("windowIcon.png");
+        loadImage("transformIcon.png");
+        loadImage("editIcon.png");
     }
 
     private static void loadImage(String n) {
