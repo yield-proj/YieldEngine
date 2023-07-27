@@ -220,7 +220,7 @@ public class Explorer extends JPanel implements ActionListener {
                                                 prefab.setName((String) Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue());
                                                 try {
                                                     Class<?> transform = core.loadClass("com.xebisco.yield.Transform2D");
-                                                    prefab.components().add(new ComponentProp(transform, false, null));
+                                                    prefab.components().add(new ComponentProp(transform, false).set(null));
                                                 } catch (ClassNotFoundException e1) {
                                                     Utils.error(null, e1);
                                                 }

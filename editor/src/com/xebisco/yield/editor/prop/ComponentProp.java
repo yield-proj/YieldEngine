@@ -54,7 +54,7 @@ public class ComponentProp extends Prop {
     private final boolean showAddButton;
     private boolean addComp = true;
 
-    public ComponentProp(File comp, EngineInstall install, YieldInternalFrame frame, Map<String, Serializable> value) {
+    public ComponentProp(File comp, EngineInstall install, YieldInternalFrame frame) {
         super(comp.getName().replace(".java", ""), null);
         this.showAddButton = true;
         this.comp = comp;
@@ -68,20 +68,18 @@ public class ComponentProp extends Prop {
         } catch (ClassNotFoundException | IOException e) {
             throw new RuntimeException(e);
         }
-        set(value);
     }
 
-    public ComponentProp(Class<?> componentClass, boolean showAddButton, Map<String, Serializable> value) {
+    public ComponentProp(Class<?> componentClass, boolean showAddButton) {
         super(componentClass.getSimpleName(), null);
         this.showAddButton = showAddButton;
         frame = null;
         install = null;
         comp = null;
         this.componentClass = componentClass;
-        set(value);
     }
 
-    private void set(Map<String, Serializable> value) {
+    public ComponentProp set(Map<String, Serializable> value) {
         Object o = null;
         if (value == null) {
             try {
@@ -97,6 +95,9 @@ public class ComponentProp extends Prop {
         for (Field field : componentClass.getDeclaredFields()) {
             field.setAccessible(true);
             if (field.isAnnotationPresent(VisibleOnEditor.class)) {
+                //noinspection unchecked
+                if(((Map<String, Serializable>) getValue()).containsKey(field.getName()))
+                    continue;
                 fields.add(new Pair<>(field.getName(), field.getType()));
                 if (value == null) {
                     try {
@@ -116,10 +117,13 @@ public class ComponentProp extends Prop {
                 }
             }
         }
+        return this;
     }
 
     @Override
     public JPanel panel() {
+        //noinspection unchecked
+        set((Map<String, Serializable>) getValue());
         JPanel panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
