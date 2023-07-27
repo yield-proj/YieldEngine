@@ -46,7 +46,7 @@ public class ComponentProp extends Prop {
 
     private final Class<?> componentClass;
     private final List<Pair<String, Class<?>>> fields = new ArrayList<>();
-    private final YieldInternalFrame frame;
+    //private final YieldInternalFrame frame;
 
     private final File comp;
 
@@ -54,11 +54,10 @@ public class ComponentProp extends Prop {
     private final boolean showAddButton;
     private boolean addComp = true;
 
-    public ComponentProp(File comp, EngineInstall install, YieldInternalFrame frame) {
+    public ComponentProp(File comp, EngineInstall install) {
         super(comp.getName().replace(".java", ""), null);
         this.showAddButton = true;
         this.comp = comp;
-        this.frame = frame;
         this.install = install;
 
         File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + install.install() + "/yield-core.jar");
@@ -73,7 +72,6 @@ public class ComponentProp extends Prop {
     public ComponentProp(Class<?> componentClass, boolean showAddButton) {
         super(componentClass.getSimpleName(), null);
         this.showAddButton = showAddButton;
-        frame = null;
         install = null;
         comp = null;
         this.componentClass = componentClass;
@@ -96,7 +94,7 @@ public class ComponentProp extends Prop {
             field.setAccessible(true);
             if (field.isAnnotationPresent(VisibleOnEditor.class)) {
                 //noinspection unchecked
-                if(((Map<String, Serializable>) getValue()).containsKey(field.getName()))
+                if (((Map<String, Serializable>) getValue()).containsKey(field.getName()))
                     continue;
                 fields.add(new Pair<>(field.getName(), field.getType()));
                 if (value == null) {
@@ -120,8 +118,7 @@ public class ComponentProp extends Prop {
         return this;
     }
 
-    @Override
-    public JPanel panel() {
+    public JPanel panel(YieldInternalFrame frame) {
         //noinspection unchecked
         set((Map<String, Serializable>) getValue());
         JPanel panel = new JPanel() {
@@ -198,6 +195,11 @@ public class ComponentProp extends Prop {
         label.setFont(label.getFont().deriveFont(5f));
         panel.add(label, gbc);
         return panel;
+    }
+
+    @Override
+    public JPanel panel() {
+        return panel(null);
     }
 
     private JPanel fieldPanel(Pair<String, Class<?>> field) {
@@ -365,10 +367,6 @@ public class ComponentProp extends Prop {
 
     public List<Pair<String, Class<?>>> fields() {
         return fields;
-    }
-
-    public YieldInternalFrame frame() {
-        return frame;
     }
 
     public File comp() {

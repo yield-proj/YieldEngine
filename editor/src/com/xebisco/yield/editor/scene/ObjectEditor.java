@@ -41,8 +41,12 @@ import java.util.TimerTask;
 public class ObjectEditor extends JPanel {
 
     private final Timer timer;
+    private final YieldInternalFrame frame;
 
     public ObjectEditor(File file, EntityPrefab prefab, Workspace workspace, YieldInternalFrame frame) {
+
+        this.frame = frame;
+
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         Prop nameProp = new StringProp("Name", prefab.name());
@@ -133,7 +137,7 @@ public class ObjectEditor extends JPanel {
     private JPanel update(List<ComponentProp> props) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        panel.add(PropsWindow.propsPanel(props.toArray(new ComponentProp[0])), BorderLayout.NORTH);
+        panel.add(PropsWindow.compPropsPanel(props.toArray(new ComponentProp[0]), frame), BorderLayout.NORTH);
         return panel;
     }
 

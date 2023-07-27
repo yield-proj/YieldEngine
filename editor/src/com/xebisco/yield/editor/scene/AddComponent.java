@@ -157,7 +157,7 @@ public class AddComponent extends JPanel implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
             if (selectedFile != null)
-                props.add(new ComponentProp(selectedFile, install, frame).set(null));
+                props.add(new ComponentProp(selectedFile, install).set(null));
             else
                 props.add(new ComponentProp(selectedClass, true).set(null));
             SwingUtilities.getWindowAncestor(this).dispose();

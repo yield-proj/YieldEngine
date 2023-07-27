@@ -13,5 +13,6 @@
     <orderEntry type="library" name="libs" level="project" />
     <orderEntry type="library" name="libs" level="project" />
     <orderEntry type="module" module-name="editor_annotations" />
+    <orderEntry type="library" name="libs" level="project" />
   </component>
 </module>

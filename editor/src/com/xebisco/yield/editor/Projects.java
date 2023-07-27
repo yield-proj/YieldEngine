@@ -16,28 +16,21 @@
 
 package com.xebisco.yield.editor;
 
-import com.xebisco.yield.editor.prop.*;
-import com.xebisco.yield.editor.scene.EntityPrefab;
-import com.xebisco.yield.ini.Ini;
+import com.xebisco.yield.editor.prop.EngineInstallProp;
+import com.xebisco.yield.editor.prop.NullProp;
+import com.xebisco.yield.editor.prop.Prop;
+import com.xebisco.yield.editor.prop.Props;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class Projects extends JPanel {

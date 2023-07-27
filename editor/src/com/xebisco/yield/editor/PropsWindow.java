@@ -16,6 +16,7 @@
 
 package com.xebisco.yield.editor;
 
+import com.xebisco.yield.editor.prop.ComponentProp;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
 
@@ -45,6 +46,22 @@ public class PropsWindow extends JDialog {
         gbc.gridy = 0;
         for (Prop prop : props) {
             panel.add(prop.panel(), gbc);
+            gbc.gridy++;
+        }
+        return panel;
+    }
+
+    public static JPanel compPropsPanel(ComponentProp[] props, YieldInternalFrame frame) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.weightx = 1;
+        gbc.insets = new Insets(10, 10, 0, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        gbc.gridy = 0;
+        for (ComponentProp prop : props) {
+            panel.add(prop.panel(prop.comp() == null ? null : frame), gbc);
             gbc.gridy++;
         }
         return panel;
