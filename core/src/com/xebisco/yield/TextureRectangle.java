@@ -20,6 +20,7 @@ package com.xebisco.yield;
  * This is a class that extends the Rectangle class and adds functionality for rendering textures with options for
  * scaling and processing pixels.
  */
+@ComponentIcon(iconType = ComponentIconType.GRAPHICAL)
 public class TextureRectangle extends Rectangle {
     @VisibleOnEditor
     private Texture texture;

@@ -16,16 +16,15 @@
 
 package com.xebisco.yield.editor.scene;
 
-import com.xebisco.yield.editor.Pair;
+import com.xebisco.yield.editor.prop.ComponentProp;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class EntityPrefab implements Serializable {
     private double x, y, sx, sy, rz;
-    private final List<Pair<String, Map<String, Serializable>>> components = new ArrayList<>();
+    private final List<ComponentProp> components = new ArrayList<>();
 
     private String name;
     private int zIndex;
@@ -50,7 +49,7 @@ public class EntityPrefab implements Serializable {
         return this;
     }
 
-    public List<Pair<String, Map<String, Serializable>>> components() {
+    public List<ComponentProp> components() {
         return components;
     }
 

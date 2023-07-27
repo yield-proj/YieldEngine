@@ -15,17 +15,23 @@
  */
 package com.xebisco.yield.editor.code;
 
-import com.xebisco.yield.editor.*;
+import com.xebisco.yield.editor.Assets;
+import com.xebisco.yield.editor.EngineInstall;
+import com.xebisco.yield.editor.Utils;
+import com.xebisco.yield.editor.YieldInternalFrame;
+import com.xebisco.yield.editor.prop.ComponentProp;
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.rsta.ac.java.JavaLanguageSupport;
-import org.fife.rsta.ac.java.classreader.attributes.Code;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.DefaultHighlighter;
+import javax.tools.ToolProvider;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -33,12 +39,22 @@ import java.io.*;
 
 public class CodePanel extends JPanel {
 
-    private RSyntaxTextArea textArea;
+    private final RSyntaxTextArea textArea;
     private final File file;
 
+    private final EngineInstall engineInstall;
+    private boolean saved;
 
-    public CodePanel(File file, EngineInstall engineInstall) {
+    private final String savedTitle, unsavedTitle;
+    private final YieldInternalFrame frame;
+
+    public CodePanel(File file, EngineInstall engineInstall, YieldInternalFrame frame) {
         this.file = file;
+        this.engineInstall = engineInstall;
+        this.frame = frame;
+        savedTitle = file.getName() + " (Script)";
+        unsavedTitle = file.getName() + " (Script) UNSAVED";
+        frame.setTitle(savedTitle);
 
         setLayout(new BorderLayout());
 
@@ -49,7 +65,7 @@ public class CodePanel extends JPanel {
             jls.getJarManager().addClassFileSource(new File(Utils.EDITOR_DIR, "jre6-rt.jar"));
             File[] engine = new File(Utils.EDITOR_DIR + "/installs/" + engineInstall.install()).listFiles();
             assert engine != null;
-            for(File jar : engine)
+            for (File jar : engine)
                 jls.getJarManager().addClassFileSource(jar);
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -60,7 +76,7 @@ public class CodePanel extends JPanel {
         jls.install(textArea);
         StringBuilder stringBuilder = new StringBuilder();
 
-        try(BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String l;
             while ((l = reader.readLine()) != null) {
                 stringBuilder.append(l).append("\n");
@@ -70,17 +86,48 @@ public class CodePanel extends JPanel {
         }
 
         textArea.setText(stringBuilder.substring(0, stringBuilder.length() - 1));
+        textArea.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                frame.setTitle(unsavedTitle);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                frame.setTitle(unsavedTitle);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+
+            }
+        });
 
         RTextScrollPane scrollPane = new RTextScrollPane(textArea, true);
+        scrollPane.setIconRowHeaderEnabled(true);
+        scrollPane.getGutter().setBookmarkingEnabled(true);
 
         add(scrollPane);
     }
 
+    class ToggleLayeredHighlightsAction extends AbstractAction {
+
+        ToggleLayeredHighlightsAction() {
+            putValue(NAME, "Layered Selection Highlights");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            DefaultHighlighter h = (DefaultHighlighter) textArea.getHighlighter();
+            h.setDrawsLayeredHighlights(!h.getDrawsLayeredHighlights());
+        }
+
+    }
+
     public static YieldInternalFrame newCodeFrame(JDesktopPane desktopPane, EngineInstall engineInstall, File file, YieldInternalFrame parent) {
-        CodePanel codePanel = new CodePanel(file, engineInstall);
-        String title = file.getName().split("\\.java")[0] + " (Script)";
         YieldInternalFrame frame = new YieldInternalFrame(parent);
-        frame.setFrameIcon(Assets.images.get("windowIcon.png"));
+        CodePanel codePanel = new CodePanel(file, engineInstall, frame);
+        frame.setFrameIcon(Assets.images.get("scriptIcon.png"));
         frame.add(codePanel);
 
         frame.setTitle(file.getName() + " - Script Editor");
@@ -105,16 +152,35 @@ public class CodePanel extends JPanel {
         menu.add(item = new JMenuItem(new AbstractAction("Save") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try(FileWriter writer = new FileWriter(file)) {
+                try (FileWriter writer = new FileWriter(file)) {
                     writer.append(textArea.getText());
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
+                saved = true;
+                frame.setTitle(savedTitle);
+                final StringBuilder builder = new StringBuilder();
+                OutputStream error = new OutputStream() {
+                    @Override
+                    public void write(int b) {
+                        builder.append((char) b);
+                    }
+                };
+                File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + engineInstall.install() + "/yield-core.jar");
+                ToolProvider.getSystemJavaCompiler().run(null, null, error, "-cp", core.getPath(),  "-d", ComponentProp.DEST.getPath(), file.getPath());
+                try {
+                    error.close();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                if(builder.length() > 0)
+                    Utils.errorNoStackTrace(CodePanel.this, new CompilationException(builder.toString()));
             }
         }));
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
         menuBar.add(menu);
         menu = new JMenu("View");
+        menu.add(new JCheckBoxMenuItem(new ToggleLayeredHighlightsAction()));
         JMenu menu2 = new JMenu("Font size");
         menu2.add(new AbstractAction("10px") {
             @Override

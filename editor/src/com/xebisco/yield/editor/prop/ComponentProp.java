@@ -21,6 +21,7 @@ import com.xebisco.yield.ComponentIconType;
 import com.xebisco.yield.VisibleOnEditor;
 import com.xebisco.yield.editor.*;
 import com.xebisco.yield.editor.code.CodePanel;
+import com.xebisco.yield.editor.code.CompilationException;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -29,10 +30,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -44,62 +45,74 @@ public class ComponentProp extends Prop {
     public static final File DEST = new File(Utils.EDITOR_DIR + "/out/" + Entry.RUN);
 
     private final Class<?> componentClass;
-    private final List<Field> fields = new ArrayList<>();
+    private final List<Pair<String, Class<?>>> fields = new ArrayList<>();
     private final YieldInternalFrame frame;
 
     private final File comp;
 
     private final EngineInstall install;
+    private final boolean showAddButton;
+    private boolean addComp = true;
 
-    public ComponentProp(File comp, EngineInstall install, YieldInternalFrame frame) {
+    public ComponentProp(File comp, EngineInstall install, YieldInternalFrame frame, Map<String, Serializable> value) {
         super(comp.getName().replace(".java", ""), null);
+        this.showAddButton = true;
         this.comp = comp;
         this.frame = frame;
         this.install = install;
+
         File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + install.install() + "/yield-core.jar");
 
-        ToolProvider.getSystemJavaCompiler().run(null, null, null, "-cp", core.getPath(),  "-d", DEST.getPath(), comp.getPath());
-
-        try(URLClassLoader loader = new URLClassLoader(new URL[]{DEST.toURI().toURL(), core.toURI().toURL()});) {
+        try (URLClassLoader loader = new URLClassLoader(new URL[]{DEST.toURI().toURL(), core.toURI().toURL()});) {
             componentClass = loader.loadClass(comp.getName().replace(".java", ""));
         } catch (ClassNotFoundException | IOException e) {
             throw new RuntimeException(e);
         }
-        set();
+        set(value);
     }
 
-    public ComponentProp(Class<?> componentClass) {
+    public ComponentProp(Class<?> componentClass, boolean showAddButton, Map<String, Serializable> value) {
         super(componentClass.getSimpleName(), null);
+        this.showAddButton = showAddButton;
         frame = null;
         install = null;
         comp = null;
         this.componentClass = componentClass;
-        set();
+        set(value);
     }
 
-    private void set() {
-        Object o;
-        try {
-            o = componentClass.getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new RuntimeException(e);
+    private void set(Map<String, Serializable> value) {
+        Object o = null;
+        if (value == null) {
+            try {
+                o = componentClass.getConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+            setValue(new HashMap<String, Serializable>());
+        } else {
+            setValue((Serializable) value);
         }
-        setValue(new HashMap<String, Serializable>());
         for (Field field : componentClass.getDeclaredFields()) {
             field.setAccessible(true);
             if (field.isAnnotationPresent(VisibleOnEditor.class)) {
-                fields.add(field);
-                try {
-                    Object v = field.get(o);
-                    if (v instanceof Serializable vs) {
-                        //noinspection unchecked
-                        ((Map<String, Serializable>) getValue()).put(field.getName(), vs);
-                    } else {
-                        JOptionPane.showMessageDialog(null, componentClass.getName() + " " + field.getName() + " need to be serializable.");
+                fields.add(new Pair<>(field.getName(), field.getType()));
+                if (value == null) {
+                    try {
+                        Object v = field.get(o);
+                        if (v instanceof Serializable vs) {
+                            //noinspection unchecked
+                            ((Map<String, Serializable>) getValue()).put(field.getName(), vs);
+                        } else if (v == null) {
+                            //noinspection unchecked
+                            ((Map<String, Serializable>) getValue()).put(field.getName(), null);
+                        } else {
+                            JOptionPane.showMessageDialog(null, componentClass.getName() + " " + field.getName() + " need to be serializable.");
+                        }
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
                 }
             }
         }
@@ -115,28 +128,31 @@ public class ComponentProp extends Prop {
                 g.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
             }
         };
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.weightx = 1;
-        gbc.insets = new Insets(10, 10, 0, 10);
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
         panel.setLayout(new GridBagLayout());
-        gbc.gridy = 0;
         JLabel label = new JLabel(getName());
         if (componentClass.isAnnotationPresent(ComponentIcon.class)) {
             ComponentIconType icon = componentClass.getAnnotation(ComponentIcon.class).iconType();
             label.setIcon(switch (icon) {
                 case TRANSFORM -> Assets.images.get("transformIcon.png");
-                case PHYSICS -> null;
-                case GRAPHICAL -> null;
+                case PHYSICS -> Assets.images.get("physicsIcon.png");
+                case GRAPHICAL -> Assets.images.get("graphicalIcon.png");
+                case ANIMATION -> Assets.images.get("animationIcon.png");
+                case AUDIO -> Assets.images.get("audioIcon.png");
             });
+        } else {
+            label.setIcon(Assets.images.get("scriptIcon.png"));
         }
         label.setFont(label.getFont().deriveFont(Font.BOLD).deriveFont(label.getFont().getSize2D() + 2));
         JPanel namePanel = new JPanel();
         namePanel.setOpaque(false);
         namePanel.setLayout(new BorderLayout());
         namePanel.add(label);
-
+        if (showAddButton) {
+            JCheckBox checkBox;
+            namePanel.add(checkBox = new JCheckBox(), BorderLayout.WEST);
+            checkBox.setSelected(true);
+            checkBox.addItemListener(e -> addComp = checkBox.isSelected());
+        }
 
         JPanel editButtonPanel = new JPanel();
         editButtonPanel.setOpaque(false);
@@ -152,6 +168,12 @@ public class ComponentProp extends Prop {
 
         namePanel.add(editButtonPanel, BorderLayout.EAST);
 
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.weightx = 1;
+        gbc.insets = new Insets(10, 10, 0, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridy = 0;
         panel.add(namePanel, gbc);
         gbc.gridy++;
         namePanel = new JPanel();
@@ -164,7 +186,7 @@ public class ComponentProp extends Prop {
         namePanel.add(tf);
         panel.add(namePanel, gbc);
         gbc.gridy++;
-        for (Field field : fields) {
+        for (Pair<String, Class<?>> field : fields) {
             panel.add(fieldPanel(field), gbc);
             gbc.gridy++;
         }
@@ -174,34 +196,37 @@ public class ComponentProp extends Prop {
         return panel;
     }
 
-    private JPanel fieldPanel(Field field) {
+    private JPanel fieldPanel(Pair<String, Class<?>> field) {
         JPanel panel = new JPanel();
         panel.setOpaque(false);
         panel.setLayout(new BorderLayout());
-        panel.add(new JLabel("<html>" + field.getName() + ": <em>" + field.getType().getSimpleName() + "</em></html>"), BorderLayout.WEST);
-        if (field.getType().equals(String.class) ||
-                field.getType().equals(Integer.class) ||
-                field.getType().equals(int.class) ||
-                field.getType().equals(Float.class) ||
-                field.getType().equals(float.class) ||
-                field.getType().equals(Double.class) ||
-                field.getType().equals(double.class) ||
-                field.getType().equals(Long.class) ||
-                field.getType().equals(long.class) ||
-                field.getType().equals(Short.class) ||
-                field.getType().equals(short.class) ||
-                field.getType().equals(Byte.class) ||
-                field.getType().equals(byte.class)
+        JLabel n = new JLabel("<html>" + field.first() + ": <em>" + field.second().getSimpleName() + "</em></html>");
+        n.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+        panel.add(n, BorderLayout.WEST);
+        if (field.second().equals(String.class) ||
+                field.second().equals(Integer.class) ||
+                field.second().equals(int.class) ||
+                field.second().equals(Float.class) ||
+                field.second().equals(float.class) ||
+                field.second().equals(Double.class) ||
+                field.second().equals(double.class) ||
+                field.second().equals(Long.class) ||
+                field.second().equals(long.class) ||
+                field.second().equals(Short.class) ||
+                field.second().equals(short.class) ||
+                field.second().equals(Byte.class) ||
+                field.second().equals(byte.class)
         ) {
             JTextField textField = new JTextField();
             //noinspection unchecked
-            textField.setText(String.valueOf(((Map<String, Serializable>) getValue()).get(field.getName())));
+            Serializable value = ((Map<String, Serializable>) getValue()).get(field.first());
+            textField.setText(String.valueOf(value == null ? "" : value));
             textField.getDocument().addDocumentListener(new DocumentAdapter() {
                 @Override
                 public void insertUpdate(DocumentEvent e) {
                     try {
                         //noinspection unchecked
-                        ((Map<String, Serializable>) getValue()).put(field.getName(), castP(textField.getText(), field.getType()));
+                        ((Map<String, Serializable>) getValue()).put(field.first(), castP(textField.getText(), field.second()));
                         textField.setBorder(null);
                     } catch (NumberFormatException ex) {
                         textField.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
@@ -212,7 +237,7 @@ public class ComponentProp extends Prop {
                 public void removeUpdate(DocumentEvent e) {
                     try {
                         //noinspection unchecked
-                        ((Map<String, Serializable>) getValue()).put(field.getName(), castP(textField.getText(), field.getType()));
+                        ((Map<String, Serializable>) getValue()).put(field.first(), castP(textField.getText(), field.second()));
                         textField.setBorder(null);
                     } catch (NumberFormatException ex) {
                         textField.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
@@ -220,6 +245,98 @@ public class ComponentProp extends Prop {
                 }
             });
             panel.add(textField);
+        } else if (field.second().getName().equals("com.xebisco.yield.Vector2D")) {
+            //noinspection unchecked
+            Serializable value = ((Map<String, Serializable>) getValue()).get(field.first());
+            double xValue, yValue;
+            try {
+                xValue = (double) value.getClass().getMethod("getX").invoke(value);
+                yValue = (double) value.getClass().getMethod("getY").invoke(value);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+            JPanel values = new JPanel();
+            values.setOpaque(false);
+            values.setLayout(new GridLayout(1, 2));
+            JPanel xPanel = new JPanel();
+            xPanel.setOpaque(false);
+            xPanel.setLayout(new BorderLayout());
+            JLabel label = new JLabel();
+            label.setText("<html><strong>X</strong></html>");
+            label.setForeground(Color.RED);
+            xPanel.add(label, BorderLayout.WEST);
+            values.add(xPanel);
+
+            JTextField textField = new JTextField();
+            xPanel.add(textField);
+            textField.setText(String.valueOf(xValue));
+            JTextField finalTextField1 = textField;
+            textField.getDocument().addDocumentListener(new DocumentAdapter() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    try {
+                        value.getClass().getMethod("setX", double.class).invoke(value, Double.parseDouble(finalTextField1.getText()));
+                        finalTextField1.setBorder(null);
+                    } catch (NumberFormatException ex) {
+                        finalTextField1.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                    } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    try {
+                        value.getClass().getMethod("setX", double.class).invoke(value, Double.parseDouble(finalTextField1.getText()));
+                        finalTextField1.setBorder(null);
+                    } catch (NumberFormatException ex) {
+                        finalTextField1.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                    } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            });
+
+            JPanel yPanel = new JPanel();
+            yPanel.setOpaque(false);
+            yPanel.setLayout(new BorderLayout());
+            label = new JLabel();
+            label.setText("<html><strong>Y</strong></html>");
+            label.setForeground(Color.GREEN);
+            yPanel.add(label, BorderLayout.WEST);
+            values.add(yPanel);
+
+            textField = new JTextField();
+            yPanel.add(textField);
+            textField.setText(String.valueOf(yValue));
+            JTextField finalTextField = textField;
+            textField.getDocument().addDocumentListener(new DocumentAdapter() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    try {
+                        value.getClass().getMethod("setY", double.class).invoke(value, Double.parseDouble(finalTextField.getText()));
+                        finalTextField.setBorder(null);
+                    } catch (NumberFormatException ex) {
+                        finalTextField.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                    } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    try {
+                        value.getClass().getMethod("setY", double.class).invoke(value, Double.parseDouble(finalTextField.getText()));
+                        finalTextField.setBorder(null);
+                    } catch (NumberFormatException ex) {
+                        finalTextField.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                    } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            });
+
+            panel.add(values);
         }
         return panel;
     }
@@ -236,5 +353,38 @@ public class ComponentProp extends Prop {
         } else if (c.equals(Byte.class) || c.equals(byte.class)) {
             return Byte.parseByte(s);
         } else return s;
+    }
+
+    public Class<?> componentClass() {
+        return componentClass;
+    }
+
+    public List<Pair<String, Class<?>>> fields() {
+        return fields;
+    }
+
+    public YieldInternalFrame frame() {
+        return frame;
+    }
+
+    public File comp() {
+        return comp;
+    }
+
+    public EngineInstall install() {
+        return install;
+    }
+
+    public boolean showAddButton() {
+        return showAddButton;
+    }
+
+    public boolean addComp() {
+        return addComp;
+    }
+
+    public ComponentProp setAddComp(boolean addComp) {
+        this.addComp = addComp;
+        return this;
     }
 }

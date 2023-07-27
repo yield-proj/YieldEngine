@@ -20,6 +20,7 @@ package com.xebisco.yield;
  * The AudioPlayer class is a component behavior that allows for playing, pausing, and manipulating audio clips in a Yield
  * application.
  */
+@ComponentIcon(iconType = ComponentIconType.AUDIO)
 public class AudioPlayer extends ComponentBehavior {
     private FileInput audioClip;
     private Object clipRef;

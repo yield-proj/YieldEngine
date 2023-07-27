@@ -16,10 +16,7 @@
 
 package com.xebisco.yield.editor;
 
-import com.xebisco.yield.editor.prop.EngineInstallProp;
-import com.xebisco.yield.editor.prop.NullProp;
-import com.xebisco.yield.editor.prop.Prop;
-import com.xebisco.yield.editor.prop.Props;
+import com.xebisco.yield.editor.prop.*;
 import com.xebisco.yield.editor.scene.EntityPrefab;
 import com.xebisco.yield.ini.Ini;
 
@@ -254,19 +251,12 @@ public class Projects extends JPanel {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    EntityPrefab prefab = new EntityPrefab();
-                    prefab.setName("hello_world");
-                    Map<String, Serializable> fields = new HashMap<>();
-                    fields.put("contents", "Hello, World!");
-                    prefab.components().add(new Pair<>("com.xebisco.yield.Text", fields));
+
+
+
                     File ohw = new File(objectsDir, "HelloWorld.ypfb");
                     try {
                         ohw.createNewFile();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try(ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(ohw))) {
-                        oo.writeObject(prefab);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

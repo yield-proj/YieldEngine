@@ -16,13 +16,12 @@
 
 package com.xebisco.yield.physics;
 
-import com.xebisco.yield.ComponentBehavior;
-import com.xebisco.yield.Entity2D;
-import com.xebisco.yield.VisibleOnEditor;
+import com.xebisco.yield.*;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.JointDef;
 import org.jbox2d.dynamics.joints.JointType;
 
+@ComponentIcon(iconType = ComponentIconType.PHYSICS)
 public class PhysicsJoint extends ComponentBehavior {
 
     @VisibleOnEditor

@@ -17,6 +17,8 @@
 package com.xebisco.yield.physics;
 
 import com.xebisco.yield.ComponentBehavior;
+import com.xebisco.yield.ComponentIcon;
+import com.xebisco.yield.ComponentIconType;
 import com.xebisco.yield.VisibleOnEditor;
 import org.jbox2d.collision.shapes.Shape;
 
@@ -27,6 +29,7 @@ import java.util.Set;
  * The abstract class Collider defines properties and methods for objects that can collide with other objects in a game or
  * simulation.
  */
+@ComponentIcon(iconType = ComponentIconType.PHYSICS)
 public abstract class Collider extends ComponentBehavior {
     @VisibleOnEditor
     private double density = 1, friction = 1;

@@ -16,16 +16,15 @@
 
 package com.xebisco.yield.physics;
 
-import com.xebisco.yield.Global;
-import com.xebisco.yield.TwoAnchorRepresentation;
-import com.xebisco.yield.Vector2D;
-import com.xebisco.yield.VisibleOnEditor;
+import com.xebisco.yield.*;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.Shape;
 
 /**
  * The CircleCollider class defines a circle collider with a radius and center point that can be set and retrieved.
  */
+
+@ComponentIcon(iconType = ComponentIconType.PHYSICS)
 public class CircleCollider extends Collider {
     @VisibleOnEditor
     private double radius = 50;

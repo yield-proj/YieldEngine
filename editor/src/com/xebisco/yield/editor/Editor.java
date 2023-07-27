@@ -16,13 +16,17 @@
 
 package com.xebisco.yield.editor;
 
+import com.xebisco.yield.editor.code.CodePanel;
+import com.xebisco.yield.editor.code.CompilationException;
 import com.xebisco.yield.editor.explorer.Explorer;
+import com.xebisco.yield.editor.prop.ComponentProp;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
 import com.xebisco.yield.editor.scene.EditorScene;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.tools.ToolProvider;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -30,9 +34,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.io.OutputStream;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Editor extends JFrame {
 
@@ -44,9 +50,49 @@ public class Editor extends JFrame {
     private final Workspace workspace;
     private final JTextArea console;
 
+    public static List<File> getFilesByExtension(File dir, String extension) {
+        List<File> out = new ArrayList<>();
+        File[] files = dir.listFiles();
+        assert files != null;
+        for(File f : files) {
+            if(f.isDirectory())
+                out.addAll(getFilesByExtension(f, extension));
+            else if(f.getName().endsWith("." + extension)) out.add(f);
+        }
+        return out;
+    }
+
     public Editor(Project project) {
         this.project = project;
         workspace = new Workspace(project);
+
+        Entry.splashDialog(null);
+
+        CompletableFuture.runAsync(() -> {
+            AtomicReference<StringBuilder> builder = new AtomicReference<>();
+            OutputStream error = new OutputStream() {
+                @Override
+                public void write(int b) {
+                    builder.get().append((char) b);
+                }
+            };
+            File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + project.preferredInstall().install() + "/yield-core.jar");
+            List<File> scripts = getFilesByExtension(new File(project.getProjectLocation(), "Scripts"), "java");
+
+            for(File file : scripts) {
+                builder.set(new StringBuilder());
+                ToolProvider.getSystemJavaCompiler().run(null, null, error, "-cp", core.getPath(),  "-d", ComponentProp.DEST.getPath(), file.getPath());
+                if(builder.get().length() > 0)
+                    Utils.errorNoStackTrace(Entry.splashDialog, new CompilationException(builder.toString()));
+            }
+            try {
+                error.close();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+            Entry.splashDialog.dispose();
+        });
 
         if(Assets.projects != null && Assets.projects.contains(project)) {
             Assets.projects.remove(project);

@@ -18,10 +18,7 @@ package com.xebisco.yield.editor.explorer;
 
 import com.xebisco.yield.editor.*;
 import com.xebisco.yield.editor.code.CodePanel;
-import com.xebisco.yield.editor.prop.BooleanProp;
-import com.xebisco.yield.editor.prop.Prop;
-import com.xebisco.yield.editor.prop.Props;
-import com.xebisco.yield.editor.prop.StringProp;
+import com.xebisco.yield.editor.prop.*;
 import com.xebisco.yield.editor.scene.EntityPrefab;
 import com.xebisco.yield.editor.scene.ObjectEditor;
 import org.fife.rsta.ac.java.classreader.attributes.Code;
@@ -35,6 +32,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -127,7 +127,7 @@ public class Explorer extends JPanel implements ActionListener {
                                 popupMenu.add(new JMenuItem(new AbstractAction("Open script") {
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
-                                        CodePanel.newCodeFrame(workspace.desktopPane(), workspace.install(), (File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), null);
+                                        CodePanel.newCodeFrame(workspace.desktopPane(), workspace.project().preferredInstall(), (File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), null);
                                     }
                                 }));
                             }
@@ -139,19 +139,21 @@ public class Explorer extends JPanel implements ActionListener {
                                         YieldInternalFrame frame = new YieldInternalFrame(null);;
                                         frame.setFrameIcon(Assets.images.get("windowIcon.png"));
                                         EntityPrefab prefab;
-                                        try(ObjectInputStream oi = new ObjectInputStream(new FileInputStream((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()))) {
+                                        try(ObjectInputStream oi = new CustomObjectInputStream(new FileInputStream((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), new URLClassLoader(new URL[]{new File(Utils.EDITOR_DIR.getPath() + "/installs/" + workspace.project().preferredInstall().install(), "yield-core.jar").toURI().toURL(), ComponentProp.DEST.toURI().toURL()}))) {
                                             prefab = (EntityPrefab) oi.readObject();
                                         } catch (IOException | ClassNotFoundException ex) {
                                             throw new RuntimeException(ex);
                                         }
-                                        frame.add(new ObjectEditor(prefab, workspace, frame));
+                                        frame.add(new ObjectEditor((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), prefab, workspace, frame));
+
+
 
                                         frame.setTitle("Object Editor");
                                         frame.setClosable(true);
                                         frame.setMaximizable(true);
                                         frame.setIconifiable(true);
                                         frame.setResizable(true);
-                                        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                                        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
                                         workspace.desktopPane().add(frame);
                                         frame.setBounds(100, 100, 400, 600);
@@ -190,6 +192,51 @@ public class Explorer extends JPanel implements ActionListener {
                                             new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), (String) Objects.requireNonNull(Props.get(props.get("New Directory"), "Name")).getValue()).mkdir();
                                             Explorer.this.actionPerformed(null);
                                         }, null, "New Directory");
+                                    }
+                                }));
+                                popupMenu.add(new JMenuItem(new AbstractAction("Create prefab") {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        Map<String, Prop[]> props = new HashMap<>();
+                                        props.put("New Prefab", new Prop[]{new StringProp("Name", "")});
+                                        new PropsWindow(props, () -> {
+                                            if (Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue().equals("")) {
+                                                JOptionPane.showMessageDialog(null, "Prefab needs a name");
+                                                actionPerformed(e);
+                                            } else {
+                                                File f = new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue() + ".ypfb");
+                                                try {
+                                                    f.createNewFile();
+                                                } catch (IOException ex) {
+                                                    Utils.error(null, ex);
+                                                }
+                                                URLClassLoader core;
+                                                try {
+                                                    core = new URLClassLoader(new URL[]{new File(Utils.EDITOR_DIR.getPath() + "/installs/" + workspace.project().preferredInstall().install(), "yield-core.jar").toURI().toURL()});
+                                                } catch (MalformedURLException ex) {
+                                                    throw new RuntimeException(ex);
+                                                }
+                                                EntityPrefab prefab = new EntityPrefab();
+                                                prefab.setName((String) Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue());
+                                                try {
+                                                    Class<?> transform = core.loadClass("com.xebisco.yield.Transform2D");
+                                                    prefab.components().add(new ComponentProp(transform, false, null));
+                                                } catch (ClassNotFoundException e1) {
+                                                    Utils.error(null, e1);
+                                                }
+                                                try {
+                                                    core.close();
+                                                } catch (IOException ex) {
+                                                    throw new RuntimeException(ex);
+                                                }
+                                                try(ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(f))) {
+                                                    oo.writeObject(prefab);
+                                                } catch (IOException ex) {
+                                                    Utils.error(null, ex);
+                                                }
+                                            }
+                                            Explorer.this.actionPerformed(null);
+                                        }, null, "New Prefab");
                                     }
                                 }));
                                 popupMenu.add(new JMenuItem(new AbstractAction("Create script") {

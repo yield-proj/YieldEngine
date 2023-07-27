@@ -19,6 +19,7 @@ package com.xebisco.yield;
 /**
  * This is a class for rendering text with customizable font, color, and content.
  */
+@ComponentIcon(iconType = ComponentIconType.GRAPHICAL)
 public class Text extends AbstractRenderable {
 
     @VisibleOnEditor

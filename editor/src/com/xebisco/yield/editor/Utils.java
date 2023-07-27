@@ -25,6 +25,10 @@ public class Utils {
 
     public static void error(Component component, Throwable e) {
         e.printStackTrace();
+        errorNoStackTrace(component, e);
+    }
+
+    public static void errorNoStackTrace(Component component, Throwable e) {
         JOptionPane.showMessageDialog(component, e.getMessage(), e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
     }
 

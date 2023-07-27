@@ -40,8 +40,8 @@ public class Entry {
 
     public static void main(String[] args) {
         Locale.setDefault(Locale.US);
-        splashDialog(null);
         IntelliJTheme.setup(Entry.class.getResourceAsStream("/DarkPurple.theme.json"));
+        splashDialog(null);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (Assets.projects != null)
                 Projects.saveProjects();
@@ -112,6 +112,11 @@ public class Entry {
         loadImage("windowIcon.png");
         loadImage("transformIcon.png");
         loadImage("editIcon.png");
+        loadImage("scriptIcon.png");
+        loadImage("physicsIcon.png");
+        loadImage("animationIcon.png");
+        loadImage("graphicalIcon.png");
+        loadImage("audioIcon.png");
     }
 
     private static void loadImage(String n) {

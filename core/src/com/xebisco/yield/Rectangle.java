@@ -19,6 +19,7 @@ package com.xebisco.yield;
 /**
  * It's a behavior that draws a rectangle
  */
+@ComponentIcon(iconType = ComponentIconType.GRAPHICAL)
 public class Rectangle extends AbstractRenderable {
     @Override
     public int verticesCount() {

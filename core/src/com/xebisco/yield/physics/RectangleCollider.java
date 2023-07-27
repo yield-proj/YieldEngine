@@ -25,6 +25,7 @@ import org.jbox2d.common.Vec2;
  * This is a Java class for a rectangle collider that extends a Collider class and includes properties for size, centroid,
  * center, and angle.
  */
+@ComponentIcon(iconType = ComponentIconType.PHYSICS)
 public class RectangleCollider extends Collider {
     @VisibleOnEditor
     private Size2D size = new Size2D(100, 100);

@@ -23,10 +23,10 @@ import java.awt.geom.Path2D;
 
 public class Workspace extends JPanel {
     private final JDesktopPane desktopPane;
-    private final EngineInstall install;
+    private final Project project;
 
     public Workspace(Project project) {
-        this.install = project.preferredInstall();
+        this.project = project;
 
         setLayout(new BorderLayout());
 
@@ -46,8 +46,8 @@ public class Workspace extends JPanel {
                 g.setColor(Color.YELLOW);
                 ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 for (JInternalFrame internalFrame : getAllFrames()) {
-                    if (internalFrame.isVisible() && internalFrame instanceof YieldInternalFrame i) {
-                        if (i.parent() != null && i.parent().isVisible()) {
+                    if (internalFrame.isVisible() && !internalFrame.isIcon() && internalFrame instanceof YieldInternalFrame i) {
+                        if (i.parent() != null && i.parent().isVisible() && !i.parent().isIcon()) {
                             int x1 = i.getX(), x3 = i.parent().getX(), y1 = i.getY() + i.getHeight() / 2, y3 = i.parent().getY() + i.parent().getHeight() / 2;
                             if (x3 > x1) x1 += i.getWidth();
                             else x3 += i.parent().getWidth();
@@ -115,7 +115,7 @@ public class Workspace extends JPanel {
         return desktopPane;
     }
 
-    public EngineInstall install() {
-        return install;
+    public Project project() {
+        return project;
     }
 }

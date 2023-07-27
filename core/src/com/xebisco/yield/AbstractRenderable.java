@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+@ComponentIcon(iconType = ComponentIconType.GRAPHICAL)
 public abstract class AbstractRenderable extends ComponentBehavior {
     private final List<VertexShader> vertexShaders = new ArrayList<>();
     public abstract int verticesCount();

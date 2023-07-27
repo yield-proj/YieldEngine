@@ -23,6 +23,7 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 
+@ComponentIcon(iconType = ComponentIconType.PHYSICS)
 public class PhysicsBody extends ComponentBehavior {
 
     private Body b2Body;

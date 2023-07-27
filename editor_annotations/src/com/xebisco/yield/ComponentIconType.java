@@ -17,5 +17,5 @@
 package com.xebisco.yield;
 
 public enum ComponentIconType {
-    TRANSFORM, PHYSICS, GRAPHICAL
+    TRANSFORM, PHYSICS, GRAPHICAL, ANIMATION, AUDIO
 }
