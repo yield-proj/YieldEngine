@@ -2,8 +2,17 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/editor/editor.iml" filepath="$PROJECT_DIR$/editor/editor.iml" />
       <module fileurl="file://$PROJECT_DIR$/editor_annotations/editor_annotations.iml" filepath="$PROJECT_DIR$/editor_annotations/editor_annotations.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ini/ini.iml" filepath="$PROJECT_DIR$/ini/ini.iml" />
+      <module fileurl="file://$PROJECT_DIR$/javaxsoundimpl/javaxsoundimpl.iml" filepath="$PROJECT_DIR$/javaxsoundimpl/javaxsoundimpl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lwjgl-utils/lwjgl-utils.iml" filepath="$PROJECT_DIR$/lwjgl-utils/lwjgl-utils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/openalimpl/openalimpl.iml" filepath="$PROJECT_DIR$/openalimpl/openalimpl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/openglimpl/openglimpl.iml" filepath="$PROJECT_DIR$/openglimpl/openglimpl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/random-tests/random-tests.iml" filepath="$PROJECT_DIR$/random-tests/random-tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swingimpl/swingimpl.iml" filepath="$PROJECT_DIR$/swingimpl/swingimpl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/utils/utils.iml" filepath="$PROJECT_DIR$/utils/utils.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/yieldengine.iml" filepath="$PROJECT_DIR$/.idea/yieldengine.iml" />
     </modules>
   </component>
