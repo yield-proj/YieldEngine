@@ -18,8 +18,9 @@ public class ObjectValue {
         return valueGetProcess.process(value);
     }
 
-    public void setValue(Object value) {
-        this.value = valueSetProcess.process(value);
+    public ObjectValue setValue(Object value) {
+        this.value = cast.cast(valueSetProcess.process(value));
+        return this;
     }
 
     public Class<?> cast() {

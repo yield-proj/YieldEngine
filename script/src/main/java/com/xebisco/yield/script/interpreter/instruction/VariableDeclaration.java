@@ -1,6 +1,7 @@
 package com.xebisco.yield.script.interpreter.instruction;
 
 import com.xebisco.yield.script.interpreter.Declaration;
+import com.xebisco.yield.script.interpreter.ValueAlreadyExistsRuntimeException;
 import com.xebisco.yield.script.interpreter.value.IValueGetProcess;
 import com.xebisco.yield.script.interpreter.value.IValueSetProcess;
 import com.xebisco.yield.script.interpreter.value.ObjectValue;
@@ -27,6 +28,11 @@ public class VariableDeclaration implements IInstruction {
 
     @Override
     public Object run(Map<Declaration, ObjectValue> declarations) {
-        return declarations.put(new Declaration(variableName, null), new ObjectValue(variableValue.run(new HashMap<>(declarations)), cast, valueGetProcess, valueSetProcess));
+        final var declaration = new Declaration(variableName, null);
+        if(declarations.containsKey(declaration))
+            throw new ValueAlreadyExistsRuntimeException(variableName);
+        final var value = new ObjectValue(variableValue.run(new HashMap<>(declarations)), cast, valueGetProcess, valueSetProcess);
+        declarations.put(declaration, value);
+        return value.value();
     }
 }
