@@ -21,7 +21,6 @@ import com.xebisco.yield.editor.code.CodePanel;
 import com.xebisco.yield.editor.prop.*;
 import com.xebisco.yield.editor.scene.EntityPrefab;
 import com.xebisco.yield.editor.scene.ObjectEditor;
-import org.fife.rsta.ac.java.classreader.attributes.Code;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -32,7 +31,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.FileVisitResult;
@@ -43,6 +41,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Explorer extends JPanel implements ActionListener {
     private JTextArea jta;
@@ -78,6 +77,46 @@ public class Explorer extends JPanel implements ActionListener {
         actionPerformed(null);
 
         refresh.addActionListener(this);
+    }
+
+
+    public static String getDefaultScript(String name) {
+        return "import com.xebisco.yield.*;\n\npublic class " + name + " extends ComponentBehavior {\n\n\t//This method is called before the first update of the entity\n\t@Override\n\tpublic void onStart() {\n\t\t\n\t}\n\n\t//This method is called every frame\n\t@Override\n\tpublic void onUpdate() {\n\t\t\n\t}\n\n}";
+    }
+
+    public static String getEmptyScript(String name) {
+        return "import com.xebisco.yield.*;\n\npublic class " + name + " extends ComponentBehavior {\n\n}";
+    }
+
+    public static File newScript(File dir) {
+        AtomicReference<File> toReturn = new AtomicReference<>();
+        Map<String, Prop[]> props = new HashMap<>();
+        props.put("New Script", new Prop[]{new StringProp("Name", ""), new BooleanProp("Create default methods", true)});
+        new PropsWindow(props, () -> {
+            if (Objects.requireNonNull(Props.get(props.get("New Script"), "Name")).getValue().equals("")) {
+                JOptionPane.showMessageDialog(null, "Script needs a name");
+            } else {
+                File f = new File(dir, Objects.requireNonNull(Props.get(props.get("New Script"), "Name")).getValue() + ".java");
+                toReturn.set(f);
+                try {
+                    f.createNewFile();
+
+                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(f))) {
+                        if ((boolean) Objects.requireNonNull(Props.get(props.get("New Script"), "Create default methods")).getValue()) {
+                            writer.append(getDefaultScript(f.getName().split("\\.java")[0]));
+                        } else {
+                            writer.append(getEmptyScript(f.getName().split("\\.java")[0]));
+                        }
+                    } catch (IOException ex) {
+                        Utils.error(null, ex);
+                    }
+                } catch (IOException ex) {
+                    Utils.error(null, ex);
+                }
+
+            }
+        }, null, "New Script");
+        return toReturn.get();
     }
 
     public void actionPerformed(ActionEvent ev) {
@@ -127,7 +166,7 @@ public class Explorer extends JPanel implements ActionListener {
                                 popupMenu.add(new JMenuItem(new AbstractAction("Open script") {
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
-                                        CodePanel.newCodeFrame(workspace.desktopPane(), workspace.project().preferredInstall(), (File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), null);
+                                        CodePanel.newCodeFrame(workspace.desktopPane(), workspace.project().preferredInstall(), (File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), null, workspace.recompile());
                                     }
                                 }));
                             }
@@ -136,16 +175,16 @@ public class Explorer extends JPanel implements ActionListener {
                                 popupMenu.add(new JMenuItem(new AbstractAction("Open prefab") {
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
-                                        YieldInternalFrame frame = new YieldInternalFrame(null);;
+                                        YieldInternalFrame frame = new YieldInternalFrame(null);
+                                        ;
                                         frame.setFrameIcon(Assets.images.get("windowIcon.png"));
                                         EntityPrefab prefab;
-                                        try(ObjectInputStream oi = new CustomObjectInputStream(new FileInputStream((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), new URLClassLoader(new URL[]{new File(Utils.EDITOR_DIR.getPath() + "/installs/" + workspace.project().preferredInstall().install(), "yield-core.jar").toURI().toURL(), ComponentProp.DEST.toURI().toURL()}))) {
+                                        try (ObjectInputStream oi = new CustomObjectInputStream(new FileInputStream((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), new URLClassLoader(new URL[]{new File(Utils.EDITOR_DIR.getPath() + "/installs/" + workspace.project().preferredInstall().install(), "yield-core.jar").toURI().toURL(), ComponentProp.DEST.toURI().toURL()}))) {
                                             prefab = (EntityPrefab) oi.readObject();
                                         } catch (IOException | ClassNotFoundException ex) {
                                             throw new RuntimeException(ex);
                                         }
                                         frame.add(new ObjectEditor((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), prefab, workspace, frame));
-
 
 
                                         frame.setTitle("Object Editor");
@@ -212,7 +251,7 @@ public class Explorer extends JPanel implements ActionListener {
                                                 }
                                                 EntityPrefab prefab = new EntityPrefab(workspace.project().preferredInstall());
                                                 prefab.setName((String) Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue());
-                                                try(ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(f))) {
+                                                try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(f))) {
                                                     oo.writeObject(prefab);
                                                 } catch (IOException ex) {
                                                     Utils.error(null, ex);
@@ -225,32 +264,8 @@ public class Explorer extends JPanel implements ActionListener {
                                 popupMenu.add(new JMenuItem(new AbstractAction("Create script") {
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
-                                        Map<String, Prop[]> props = new HashMap<>();
-                                        props.put("New Script", new Prop[]{new StringProp("Name", ""), new BooleanProp("Create default methods", true)});
-                                        new PropsWindow(props, () -> {
-                                            if (Objects.requireNonNull(Props.get(props.get("New Script"), "Name")).getValue().equals("")) {
-                                                JOptionPane.showMessageDialog(null, "Script needs a name");
-                                                actionPerformed(e);
-                                            } else {
-                                                File f = new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), Objects.requireNonNull(Props.get(props.get("New Script"), "Name")).getValue() + ".java");
-                                                try {
-                                                    f.createNewFile();
-
-                                                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(f))) {
-                                                        writer.append("import com.xebisco.yield.*;\n\npublic class ").append(f.getName().split("\\.java")[0]).append(" extends ComponentBehavior {\n");
-                                                        if ((boolean) Objects.requireNonNull(Props.get(props.get("New Script"), "Create default methods")).getValue()) {
-                                                            writer.append("\n\t//This method is called before the first update of the entity\n\t@Override\n\tpublic void onStart() {\n\t\t\n\t}\n\n\t//This method is called every frame\n\t@Override\n\tpublic void onUpdate() {\n\t\t\n\t}\n");
-                                                        }
-                                                        writer.append("\n}");
-                                                    } catch (IOException ex) {
-                                                        Utils.error(null, ex);
-                                                    }
-                                                } catch (IOException ex) {
-                                                    Utils.error(null, ex);
-                                                }
-                                            }
-                                            Explorer.this.actionPerformed(null);
-                                        }, null, "New Script");
+                                        newScript(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()));
+                                        workspace.recompile().recompileProject();
                                     }
                                 }));
                             }

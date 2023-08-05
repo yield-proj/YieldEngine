@@ -61,11 +61,12 @@ public class ComponentProp extends Prop {
 
         File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + install.install() + "/yield-core.jar");
 
-        try (URLClassLoader loader = new URLClassLoader(new URL[]{DEST.toURI().toURL(), core.toURI().toURL()});) {
+        try (URLClassLoader loader = new URLClassLoader(new URL[]{DEST.toURI().toURL(), core.toURI().toURL()})) {
             componentClass = loader.loadClass(comp.getName().replace(".java", ""));
         } catch (ClassNotFoundException | IOException e) {
             throw new RuntimeException(e);
         }
+        init();
     }
 
     public ComponentProp(Class<?> componentClass, boolean showAddButton) {
@@ -74,50 +75,49 @@ public class ComponentProp extends Prop {
         install = null;
         comp = null;
         this.componentClass = componentClass;
+        init();
     }
 
-    public ComponentProp set(Map<String, Serializable> value) {
-        Object o = null;
-        if (value == null) {
-            try {
-                o = componentClass.getConstructor().newInstance();
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                     NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            }
-            setValue(new HashMap<String, Serializable>());
-        } else {
-            setValue((Serializable) value);
+    private void init() {
+        setValue(new HashMap<String, Serializable>());
+        Object o;
+        try {
+            o = componentClass.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
         for (Field field : componentClass.getDeclaredFields()) {
             field.setAccessible(true);
             if (field.isAnnotationPresent(VisibleOnEditor.class)) {
-                //noinspection unchecked
-                if (((Map<String, Serializable>) getValue()).containsKey(field.getName()))
-                    continue;
                 fields.add(new Pair<>(field.getName(), field.getType()));
-                if (value == null) {
-                    try {
-                        Object v = field.get(o);
-                        if (v instanceof Serializable vs) {
-                            //noinspection unchecked
-                            ((Map<String, Serializable>) getValue()).put(field.getName(), vs);
-                        } else if (v == null) {
-                            //noinspection unchecked
-                            ((Map<String, Serializable>) getValue()).put(field.getName(), null);
-                        } else {
-                            JOptionPane.showMessageDialog(null, componentClass.getName() + " " + field.getName() + " need to be serializable.");
-                        }
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
+                try {
+                    Object v = field.get(o);
+                    if (v instanceof Serializable vs) {
+                        //noinspection unchecked
+                        ((Map<String, Serializable>) getValue()).put(field.getName(), vs);
+                    } else if (v == null) {
+                        //noinspection unchecked
+                        ((Map<String, Serializable>) getValue()).put(field.getName(), null);
+                    } else {
+                        JOptionPane.showMessageDialog(null, componentClass.getName() + " " + field.getName() + " need to be serializable.");
                     }
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
                 }
             }
+        }
+    }
+
+    public ComponentProp set(Map<String, Serializable> value) {
+        if (value != null) {
+            //noinspection unchecked
+            ((Map<String, Serializable>) getValue()).putAll(value);
         }
         return this;
     }
 
-    public JPanel panel(YieldInternalFrame frame) {
+    public JPanel panel(YieldInternalFrame frame, IRecompile recompile) {
         //noinspection unchecked
         set((Map<String, Serializable>) getValue());
         JPanel panel = new JPanel() {
@@ -160,7 +160,7 @@ public class ComponentProp extends Prop {
         editButtonPanel.add(editButton = new JButton(new AbstractAction("", Assets.images.get("editIcon.png")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                CodePanel.newCodeFrame(frame.getDesktopPane(), install, comp, frame).setLocation(frame.getX() + frame.getWidth() + 100, frame.getY() + 100);
+                CodePanel.newCodeFrame(frame.getDesktopPane(), install, comp, frame, recompile).setLocation(frame.getX() + frame.getWidth() + 100, frame.getY() + 100);
             }
         }));
 
@@ -198,7 +198,7 @@ public class ComponentProp extends Prop {
 
     @Override
     public JPanel panel() {
-        return panel(null);
+        return panel(null, null);
     }
 
     private JPanel fieldPanel(Pair<String, Class<?>> field) {

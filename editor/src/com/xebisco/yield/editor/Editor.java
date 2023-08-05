@@ -16,7 +16,6 @@
 
 package com.xebisco.yield.editor;
 
-import com.xebisco.yield.editor.code.CodePanel;
 import com.xebisco.yield.editor.code.CompilationException;
 import com.xebisco.yield.editor.explorer.Explorer;
 import com.xebisco.yield.editor.prop.ComponentProp;
@@ -40,7 +39,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Editor extends JFrame {
+public class Editor extends JFrame implements IRecompile {
 
     private EditorScene openedScene;
     private final Project project;
@@ -64,32 +63,12 @@ public class Editor extends JFrame {
 
     public Editor(Project project) {
         this.project = project;
-        workspace = new Workspace(project);
+        workspace = new Workspace(project, this);
 
         Entry.splashDialog(null);
 
         CompletableFuture.runAsync(() -> {
-            AtomicReference<StringBuilder> builder = new AtomicReference<>();
-            OutputStream error = new OutputStream() {
-                @Override
-                public void write(int b) {
-                    builder.get().append((char) b);
-                }
-            };
-            File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + project.preferredInstall().install() + "/yield-core.jar");
-            List<File> scripts = getFilesByExtension(new File(project.getProjectLocation(), "Scripts"), "java");
-
-            for(File file : scripts) {
-                builder.set(new StringBuilder());
-                ToolProvider.getSystemJavaCompiler().run(null, null, error, "-cp", core.getPath(),  "-d", ComponentProp.DEST.getPath(), file.getPath());
-                if(builder.get().length() > 0)
-                    Utils.errorNoStackTrace(Entry.splashDialog, new CompilationException(builder.toString()));
-            }
-            try {
-                error.close();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            recompileProject();
 
             Entry.splashDialog.dispose();
         });
@@ -214,6 +193,31 @@ public class Editor extends JFrame {
         mainSplitPane.setDividerLocation(.25);
         left1SplitPane.setDividerLocation(.7);
         left0SplitPane.setDividerLocation(.6);
+    }
+
+    @Override
+    public void recompileProject() {
+        AtomicReference<StringBuilder> builder = new AtomicReference<>();
+        OutputStream error = new OutputStream() {
+            @Override
+            public void write(int b) {
+                builder.get().append((char) b);
+            }
+        };
+        File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + project.preferredInstall().install() + "/yield-core.jar");
+        List<File> scripts = getFilesByExtension(new File(project.getProjectLocation(), "Scripts"), "java");
+
+        for(File file : scripts) {
+            builder.set(new StringBuilder());
+            ToolProvider.getSystemJavaCompiler().run(null, null, error, "-cp", core.getPath(),  "-d", ComponentProp.DEST.getPath(), file.getPath());
+            if(!builder.get().isEmpty())
+                Utils.errorNoStackTrace(Entry.splashDialog, new CompilationException(builder.toString()));
+        }
+        try {
+            error.close();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     private YieldTabbedPane createPaneWithTab(Component tab, String name) {

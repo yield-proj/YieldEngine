@@ -51,7 +51,7 @@ public class PropsWindow extends JDialog {
         return panel;
     }
 
-    public static JPanel compPropsPanel(ComponentProp[] props, YieldInternalFrame frame) {
+    public static JPanel compPropsPanel(ComponentProp[] props, YieldInternalFrame frame, IRecompile recompile) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.weightx = 1;
         gbc.insets = new Insets(10, 10, 0, 10);
@@ -61,7 +61,7 @@ public class PropsWindow extends JDialog {
         panel.setLayout(new GridBagLayout());
         gbc.gridy = 0;
         for (ComponentProp prop : props) {
-            panel.add(prop.panel(prop.comp() == null ? null : frame), gbc);
+            panel.add(prop.panel(frame, recompile), gbc);
             gbc.gridy++;
         }
         return panel;

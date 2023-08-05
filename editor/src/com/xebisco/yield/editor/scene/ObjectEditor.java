@@ -43,9 +43,12 @@ public class ObjectEditor extends JPanel {
     private final Timer timer;
     private final YieldInternalFrame frame;
 
+    private final Workspace workspace;
+
     public ObjectEditor(File file, EntityPrefab prefab, Workspace workspace, YieldInternalFrame frame) {
 
         this.frame = frame;
+        this.workspace = workspace;
 
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -91,7 +94,7 @@ public class ObjectEditor extends JPanel {
                 dialog.setTitle("Add Script");
                 dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 dialog.setLocation(addButtonPanel.getLocationOnScreen());
-                dialog.add(new AddComponent(workspace.project().getProjectLocation(), workspace.project().preferredInstall(), frame, props));
+                dialog.add(new AddComponent(workspace.project().getProjectLocation(), workspace.project().preferredInstall(), frame, props, workspace.recompile()));
                 dialog.setSize(300, 300);
                 dialog.setVisible(true);
                 scrollPane.setViewportView(update(props));
@@ -114,7 +117,6 @@ public class ObjectEditor extends JPanel {
             @Override
             public void run() {
                 prefab.setName((String) nameProp.getValue());
-                List<Class<?>> passed = new ArrayList<>();
                 prefab.components().clear();
                 prefab.components().addAll(props);
 
@@ -137,7 +139,7 @@ public class ObjectEditor extends JPanel {
     private JPanel update(List<ComponentProp> props) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        panel.add(PropsWindow.compPropsPanel(props.toArray(new ComponentProp[0]), frame), BorderLayout.NORTH);
+        panel.add(PropsWindow.compPropsPanel(props.toArray(new ComponentProp[0]), frame, workspace.recompile()), BorderLayout.NORTH);
         return panel;
     }
 

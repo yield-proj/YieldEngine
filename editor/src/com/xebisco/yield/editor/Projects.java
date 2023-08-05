@@ -16,10 +16,7 @@
 
 package com.xebisco.yield.editor;
 
-import com.xebisco.yield.editor.prop.EngineInstallProp;
-import com.xebisco.yield.editor.prop.NullProp;
-import com.xebisco.yield.editor.prop.Prop;
-import com.xebisco.yield.editor.prop.Props;
+import com.xebisco.yield.editor.prop.*;
 import com.xebisco.yield.editor.scene.EntityPrefab;
 
 import javax.imageio.ImageIO;
@@ -29,7 +26,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -256,8 +255,20 @@ public class Projects extends JPanel {
                         throw new RuntimeException(e);
                     }
 
+                    EntityPrefab prefab = new EntityPrefab(install);
+
+                    Map<String, Serializable> values = new HashMap<>();
+
+                    values.put("contents", "Hello, World!");
+
+                    try(URLClassLoader cl = new URLClassLoader(new URL[] {new File(Utils.EDITOR_DIR + "/installs/" + install.install(), "yield-core.jar").toURI().toURL()})) {
+                        prefab.components().add(new ComponentProp(cl.loadClass("com.xebisco.yield.Text"), true).set(values));
+                    } catch (IOException | ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+
                     try(ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(ohw))) {
-                        oo.writeObject(new EntityPrefab(install));
+                        oo.writeObject(prefab);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

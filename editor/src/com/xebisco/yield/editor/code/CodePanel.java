@@ -15,10 +15,7 @@
  */
 package com.xebisco.yield.editor.code;
 
-import com.xebisco.yield.editor.Assets;
-import com.xebisco.yield.editor.EngineInstall;
-import com.xebisco.yield.editor.Utils;
-import com.xebisco.yield.editor.YieldInternalFrame;
+import com.xebisco.yield.editor.*;
 import com.xebisco.yield.editor.prop.ComponentProp;
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.rsta.ac.java.JavaLanguageSupport;
@@ -48,7 +45,7 @@ public class CodePanel extends JPanel {
     private final String savedTitle, unsavedTitle;
     private final YieldInternalFrame frame;
 
-    public CodePanel(File file, EngineInstall engineInstall, YieldInternalFrame frame) {
+    public CodePanel(File file, EngineInstall engineInstall, YieldInternalFrame frame, IRecompile recompile) {
         this.file = file;
         this.engineInstall = engineInstall;
         this.frame = frame;
@@ -124,9 +121,9 @@ public class CodePanel extends JPanel {
 
     }
 
-    public static YieldInternalFrame newCodeFrame(JDesktopPane desktopPane, EngineInstall engineInstall, File file, YieldInternalFrame parent) {
+    public static YieldInternalFrame newCodeFrame(JDesktopPane desktopPane, EngineInstall engineInstall, File file, YieldInternalFrame parent, IRecompile recompile) {
         YieldInternalFrame frame = new YieldInternalFrame(parent);
-        CodePanel codePanel = new CodePanel(file, engineInstall, frame);
+        CodePanel codePanel = new CodePanel(file, engineInstall, frame, recompile);
         frame.setFrameIcon(Assets.images.get("scriptIcon.png"));
         frame.add(codePanel);
 
@@ -152,6 +149,7 @@ public class CodePanel extends JPanel {
         menu.add(item = new JMenuItem(new AbstractAction("Save") {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 try (FileWriter writer = new FileWriter(file)) {
                     writer.append(textArea.getText());
                 } catch (IOException ex) {

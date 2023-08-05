@@ -25,8 +25,11 @@ public class Workspace extends JPanel {
     private final JDesktopPane desktopPane;
     private final Project project;
 
-    public Workspace(Project project) {
+    private final IRecompile recompile;
+
+    public Workspace(Project project, IRecompile recompile) {
         this.project = project;
+        this.recompile = recompile;
 
         setLayout(new BorderLayout());
 
@@ -117,5 +120,9 @@ public class Workspace extends JPanel {
 
     public Project project() {
         return project;
+    }
+
+    public IRecompile recompile() {
+        return recompile;
     }
 }

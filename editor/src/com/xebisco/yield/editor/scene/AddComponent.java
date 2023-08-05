@@ -16,10 +16,9 @@
 
 package com.xebisco.yield.editor.scene;
 
-import com.xebisco.yield.editor.Editor;
-import com.xebisco.yield.editor.EngineInstall;
-import com.xebisco.yield.editor.Utils;
-import com.xebisco.yield.editor.YieldInternalFrame;
+import com.xebisco.yield.editor.*;
+import com.xebisco.yield.editor.code.CodePanel;
+import com.xebisco.yield.editor.explorer.Explorer;
 import com.xebisco.yield.editor.prop.ComponentProp;
 
 import javax.swing.*;
@@ -44,47 +43,15 @@ public class AddComponent extends JPanel implements MouseListener {
     private final List<ComponentProp> props;
     private Class<?> selectedClass;
     private File selectedFile;
-    private final YieldInternalFrame frame;
 
     private final EngineInstall install;
 
-    public AddComponent(File projectLocation, EngineInstall install, YieldInternalFrame frame, List<ComponentProp> props) {
+    public AddComponent(File projectLocation, EngineInstall install, YieldInternalFrame frame, List<ComponentProp> props, IRecompile recompile) {
         this.props = props;
-        this.frame = frame;
         this.install = install;
 
         File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + install.install(), "yield-core.jar");
-        JarInputStream jarFile;
-        try {
-            jarFile = new JarInputStream(new BufferedInputStream(new FileInputStream(core)));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        JarEntry je;
-        List<Class<?>> classes = new ArrayList<>();
-
-        try (URLClassLoader cl = new URLClassLoader(new URL[]{core.toURI().toURL()})) {
-            while (true) {
-                je = jarFile.getNextJarEntry();
-                if (je == null) {
-                    break;
-                }
-                if (je.getName().endsWith(".class")) {
-                    String className = je.getName().substring(0, je.getName().length() - 6);
-                    className = className.replace('/', '.');
-                    Class<?> c = cl.loadClass(className);
-                    Class<?> comp = c;
-                    while ((c = c.getSuperclass()) != null) {
-                        if (c.getName().equals("com.xebisco.yield.ComponentBehavior")) {
-                            classes.add(comp);
-                            break;
-                        }
-                    }
-                }
-            }
-        } catch (IOException | ClassNotFoundException ex) {
-            throw new RuntimeException(ex);
-        }
+        List<Class<?>> classes = classes(core);
 
         setLayout(new BorderLayout());
         JList<Class<?>> list = new JList<>(classes.toArray(new Class<?>[0]));
@@ -147,10 +114,51 @@ public class AddComponent extends JPanel implements MouseListener {
         panel.add(new JButton(new AbstractAction("Create") {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                File f = Explorer.newScript(new File(projectLocation, "Scripts"));
+                if (f != null) {
+                    recompile.recompileProject();
+                    props.add(new ComponentProp(f, install).set(null));
+                    CodePanel.newCodeFrame(frame.getDesktopPane(), install, f, frame, recompile).setLocation(frame.getX() + frame.getWidth() + 100, frame.getY() + 100);
+                    SwingUtilities.getWindowAncestor(AddComponent.this).dispose();
+                }
             }
         }));
         add(panel, BorderLayout.SOUTH);
+    }
+
+    private static List<Class<?>> classes(File core) {
+        JarInputStream jarFile;
+        try {
+            jarFile = new JarInputStream(new BufferedInputStream(new FileInputStream(core)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        JarEntry je;
+        List<Class<?>> classes = new ArrayList<>();
+
+        try (URLClassLoader cl = new URLClassLoader(new URL[]{core.toURI().toURL()})) {
+            while (true) {
+                je = jarFile.getNextJarEntry();
+                if (je == null) {
+                    break;
+                }
+                if (je.getName().endsWith(".class")) {
+                    String className = je.getName().substring(0, je.getName().length() - 6);
+                    className = className.replace('/', '.');
+                    Class<?> c = cl.loadClass(className);
+                    Class<?> comp = c;
+                    while ((c = c.getSuperclass()) != null) {
+                        if (c.getName().equals("com.xebisco.yield.ComponentBehavior")) {
+                            classes.add(comp);
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (IOException | ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+        return classes;
     }
 
     @Override
