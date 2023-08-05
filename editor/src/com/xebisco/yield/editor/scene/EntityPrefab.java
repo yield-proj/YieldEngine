@@ -16,38 +16,34 @@
 
 package com.xebisco.yield.editor.scene;
 
+import com.xebisco.yield.editor.EngineInstall;
+import com.xebisco.yield.editor.Utils;
 import com.xebisco.yield.editor.prop.ComponentProp;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntityPrefab implements Serializable {
-    private double x, y, sx, sy, rz;
     private final List<ComponentProp> components = new ArrayList<>();
+
+    public EntityPrefab(EngineInstall install) {
+        try(URLClassLoader cl = new URLClassLoader(new URL[] {new File(Utils.EDITOR_DIR + "/installs/" + install.install(), "yield-core.jar").toURI().toURL()})) {
+            components.add(new ComponentProp(cl.loadClass("com.xebisco.yield.Transform2D"), false));
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private String name;
     private int zIndex;
     private List<String> tags = new ArrayList<>();
     private boolean visible;
-
-    public double x() {
-        return x;
-    }
-
-    public EntityPrefab setX(double x) {
-        this.x = x;
-        return this;
-    }
-
-    public double y() {
-        return y;
-    }
-
-    public EntityPrefab setY(double y) {
-        this.y = y;
-        return this;
-    }
 
     public List<ComponentProp> components() {
         return components;
@@ -86,33 +82,6 @@ public class EntityPrefab implements Serializable {
 
     public EntityPrefab setVisible(boolean visible) {
         this.visible = visible;
-        return this;
-    }
-
-    public double sx() {
-        return sx;
-    }
-
-    public EntityPrefab setSx(double sx) {
-        this.sx = sx;
-        return this;
-    }
-
-    public double sy() {
-        return sy;
-    }
-
-    public EntityPrefab setSy(double sy) {
-        this.sy = sy;
-        return this;
-    }
-
-    public double rz() {
-        return rz;
-    }
-
-    public EntityPrefab setRz(double rz) {
-        this.rz = rz;
         return this;
     }
 }

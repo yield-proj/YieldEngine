@@ -25,7 +25,7 @@ public final class Props {
     public static Prop[] newProject() {
         return new Prop[] {
                 new StringProp("Project Name", ""),
-                new PathProp("Project Location" , System.getProperty("user.home") + "\\", JFileChooser.DIRECTORIES_ONLY),
+                new PathProp("Project Location" , System.getProperty("user.home"), JFileChooser.DIRECTORIES_ONLY),
                 new ImageProp("Project Icon"),
                 new OptionsProp("Preferred engine", Assets.engineInstalls.toArray(new Serializable[0])),
                 new BooleanProp("Create sample files", true)

@@ -210,25 +210,8 @@ public class Explorer extends JPanel implements ActionListener {
                                                 } catch (IOException ex) {
                                                     Utils.error(null, ex);
                                                 }
-                                                URLClassLoader core;
-                                                try {
-                                                    core = new URLClassLoader(new URL[]{new File(Utils.EDITOR_DIR.getPath() + "/installs/" + workspace.project().preferredInstall().install(), "yield-core.jar").toURI().toURL()});
-                                                } catch (MalformedURLException ex) {
-                                                    throw new RuntimeException(ex);
-                                                }
-                                                EntityPrefab prefab = new EntityPrefab();
+                                                EntityPrefab prefab = new EntityPrefab(workspace.project().preferredInstall());
                                                 prefab.setName((String) Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue());
-                                                try {
-                                                    Class<?> transform = core.loadClass("com.xebisco.yield.Transform2D");
-                                                    prefab.components().add(new ComponentProp(transform, false).set(null));
-                                                } catch (ClassNotFoundException e1) {
-                                                    Utils.error(null, e1);
-                                                }
-                                                try {
-                                                    core.close();
-                                                } catch (IOException ex) {
-                                                    throw new RuntimeException(ex);
-                                                }
                                                 try(ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(f))) {
                                                     oo.writeObject(prefab);
                                                 } catch (IOException ex) {

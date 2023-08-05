@@ -20,6 +20,7 @@ import com.xebisco.yield.editor.prop.EngineInstallProp;
 import com.xebisco.yield.editor.prop.NullProp;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
+import com.xebisco.yield.editor.scene.EntityPrefab;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -192,7 +193,7 @@ public class Projects extends JPanel {
     }
 
     public static boolean checkInstalls() {
-        return Assets.engineInstalls.size() > 0;
+        return !Assets.engineInstalls.isEmpty();
     }
 
     public static void saveProjects() {
@@ -226,12 +227,13 @@ public class Projects extends JPanel {
                 newProjectFrame(owner);
             } else if (!Assets.projects.contains(project)) {
                 Assets.projects.add(project);
-                project.setPreferredInstall((EngineInstall) Objects.requireNonNull(Props.get(sections.get("New Project"), "Preferred engine")).getValue());
+                EngineInstall install;
+                project.setPreferredInstall(install = (EngineInstall) Objects.requireNonNull(Props.get(sections.get("New Project"), "Preferred engine")).getValue());
                 project.getProjectLocation().mkdir();
                 File scriptsDir = new File(project.getProjectLocation(), "Scripts");
                 scriptsDir.mkdir();
-                File objectsDir = new File(project.getProjectLocation(), "Objects");
-                objectsDir.mkdir();
+                File prefabsDir = new File(project.getProjectLocation(), "Prefabs");
+                prefabsDir.mkdir();
                 if((boolean) Objects.requireNonNull(Props.get(sections.get("New Project"), "Create sample files")).getValue()) {
                     File hw = new File(scriptsDir, "HelloScript.java");
                     try {
@@ -247,9 +249,15 @@ public class Projects extends JPanel {
 
 
 
-                    File ohw = new File(objectsDir, "HelloWorld.ypfb");
+                    File ohw = new File(prefabsDir, "HelloWorld.ypfb");
                     try {
                         ohw.createNewFile();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    try(ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(ohw))) {
+                        oo.writeObject(new EntityPrefab(install));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

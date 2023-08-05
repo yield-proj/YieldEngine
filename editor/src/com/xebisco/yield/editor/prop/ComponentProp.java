@@ -46,7 +46,6 @@ public class ComponentProp extends Prop {
 
     private final Class<?> componentClass;
     private final List<Pair<String, Class<?>>> fields = new ArrayList<>();
-    //private final YieldInternalFrame frame;
 
     private final File comp;
 
