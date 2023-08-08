@@ -17,9 +17,7 @@
 package com.xebisco.yield.editor;
 
 import javax.swing.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
@@ -31,13 +29,17 @@ public class Assets {
 
     public static void init() {
         Utils.EDITOR_DIR.mkdir();
-        File jre6 = new File(Utils.EDITOR_DIR, "jre6-rt.jar");
-        if(!jre6.exists()) {
+        File jre = new File(Utils.EDITOR_DIR, "lang-rt.jar");
+        if(!jre.exists()) {
             try {
-                jre6.createNewFile();
-                Files.copy(Objects.requireNonNull(Assets.class.getResourceAsStream("/jre6-rt.jar")), jre6.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                InputStream is = Objects.requireNonNull(Assets.class.getResourceAsStream("/lang-rt.jar"));
+                jre.createNewFile();
+                Files.copy(is, jre.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            } catch (NullPointerException e) {
+                Utils.error(Entry.splashDialog, new IllegalStateException("Missing custom java runtime jar (lang-rt.jar) in resources"));
+                System.exit(1);
             }
         }
         File projectsFile = new File(Utils.EDITOR_DIR, "projects.ser");

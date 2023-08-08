@@ -59,14 +59,19 @@ public class CodePanel extends JPanel {
         jls.setAutoCompleteEnabled(true);
 
         try {
-            jls.getJarManager().addClassFileSource(new File(Utils.EDITOR_DIR, "jre6-rt.jar"));
-            File[] engine = new File(Utils.EDITOR_DIR + "/installs/" + engineInstall.install()).listFiles();
-            assert engine != null;
-            for (File jar : engine)
-                jls.getJarManager().addClassFileSource(jar);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+            jls.getJarManager().addClassFileSource(new File(Utils.EDITOR_DIR, "lang-rt.jar"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+        File[] engine = new File(Utils.EDITOR_DIR + "/installs/" + engineInstall.install()).listFiles();
+            assert engine != null;
+            for (File jar : engine) {
+                try {
+                    jls.getJarManager().addClassFileSource(jar);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
 
         textArea = createTextArea();

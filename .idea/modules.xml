@@ -11,7 +11,7 @@
       <module fileurl="file://$PROJECT_DIR$/openalimpl/openalimpl.iml" filepath="$PROJECT_DIR$/openalimpl/openalimpl.iml" />
       <module fileurl="file://$PROJECT_DIR$/openglimpl/openglimpl.iml" filepath="$PROJECT_DIR$/openglimpl/openglimpl.iml" />
       <module fileurl="file://$PROJECT_DIR$/random-tests/random-tests.iml" filepath="$PROJECT_DIR$/random-tests/random-tests.iml" />
-      <module fileurl="file://$PROJECT_DIR$/script.iml" filepath="$PROJECT_DIR$/script.iml" />
+      <module fileurl="file://$PROJECT_DIR$/script/script.iml" filepath="$PROJECT_DIR$/script/script.iml" />
       <module fileurl="file://$PROJECT_DIR$/swingimpl/swingimpl.iml" filepath="$PROJECT_DIR$/swingimpl/swingimpl.iml" />
       <module fileurl="file://$PROJECT_DIR$/utils/utils.iml" filepath="$PROJECT_DIR$/utils/utils.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/yieldengine.iml" filepath="$PROJECT_DIR$/.idea/yieldengine.iml" />

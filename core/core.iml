@@ -11,5 +11,6 @@
     <orderEntry type="library" name="core-libs" level="project" />
     <orderEntry type="module" module-name="editor_annotations" />
     <orderEntry type="library" name="core-libs" level="project" />
+    <orderEntry type="library" name="core-libs (2)" level="project" />
   </component>
 </module>

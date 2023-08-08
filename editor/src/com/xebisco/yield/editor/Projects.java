@@ -212,6 +212,10 @@ public class Projects extends JPanel {
     }
 
     public static void newProjectFrame(Frame owner) {
+        if(Assets.engineInstalls.isEmpty()) {
+            Utils.errorNoStackTrace(owner, new IllegalStateException("Missing engine install"));
+            return;
+        }
         Map<String, Prop[]> sections = new HashMap<>();
         sections.put("New Project", Props.newProject());
         new PropsWindow(sections, () -> {
