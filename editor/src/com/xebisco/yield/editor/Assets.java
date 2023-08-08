@@ -26,6 +26,7 @@ public class Assets {
     public static final Map<String, ImageIcon> images = new HashMap<>();
     public static List<Project> projects;
     public static List<EngineInstall> engineInstalls;
+    public static List<Editor> openedEditors = new ArrayList<>();
 
     public static void init() {
         Utils.EDITOR_DIR.mkdir();

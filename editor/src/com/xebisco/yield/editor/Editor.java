@@ -63,6 +63,7 @@ public class Editor extends JFrame implements IRecompile {
 
     public Editor(Project project) {
         this.project = project;
+        Assets.openedEditors.add(this);
         workspace = new Workspace(project, this);
 
         Entry.splashDialog(null);
@@ -89,6 +90,7 @@ public class Editor extends JFrame implements IRecompile {
                 super.windowClosing(e);
                 int opt = JOptionPane.showConfirmDialog(Editor.this, "Are you sure you want to close?", "Confirm Close", JOptionPane.YES_NO_OPTION);
                 if (opt == JOptionPane.YES_OPTION) {
+                    Assets.openedEditors.remove(Editor.this);
                     dispose();
                 }
             }
@@ -132,23 +134,23 @@ public class Editor extends JFrame implements IRecompile {
 
         menu.addSeparator();
 
-        JLabel label = new JLabel("  This editor project");
+        JLabel label = new JLabel("  Open editors");
         label.setForeground(new Color(108, 101, 119));
 
         menu.add(label);
 
-        try {
-            menu.add(new AbstractAction(project.getProjectLocation().getPath(), new ImageIcon(ImageIO.read(new File(project.getProjectLocation(), "icon.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH))) {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (JOptionPane.showConfirmDialog(null, "Open in new Editor?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
-                        dispatchEvent(new WindowEvent(Editor.this, WindowEvent.WINDOW_CLOSING));
+        for(Editor editor : Assets.openedEditors) {
+
+            try {
+                menu.add(new AbstractAction(editor.project.getName() + " (" + editor.project.getProjectLocation().getPath() + ')', new ImageIcon(ImageIO.read(new File(editor.project.getProjectLocation(), "icon.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH))) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        editor.requestFocus();
                     }
-                    new Editor(project);
-                }
-            });
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+                });
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         menu.addSeparator();
