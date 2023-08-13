@@ -28,9 +28,11 @@ public class Main extends Scene {
 
     public static void main(String[] args) throws ClassNotFoundException {
         ContextTime time = new ContextTime();
-        time.setTargetSleepTime(0);
+        time.setTargetSleepTime(10000);
         ApplicationManager manager = new ApplicationManager(time);
-        new Application(manager, Main.class, Global.Platforms.swingOpenAL(), new PlatformInit(PlatformInit.INPUT_DEFAULT));
+        PlatformInit init = new PlatformInit(PlatformInit.INPUT_DEFAULT);
+        init.setVerticalSync(false);
+        new Application(manager, Main.class, Global.Platforms.swingXSound(), init);
         manager.run();
     }
 }

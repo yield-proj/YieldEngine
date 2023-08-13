@@ -139,18 +139,6 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         texture.setImageRef(null);
     }
 
-   /* @Override
-    public void setPixel(Object imageRef, com.xebisco.yield.Color color, int x, int y) {
-        BufferedImage image = (BufferedImage) imageRef;
-        image.setRGB(x, y, color.getARGB());
-    }
-
-    @Override
-    public int[] getPixel(Object imageRef, int x, int y) {
-        BufferedImage image = (BufferedImage) imageRef;
-        return image.getRaster().getPixel(x, y, new int[4]);
-    }*/
-
     @Override
     public int getImageWidth(Object imageRef) {
         return ((SwingImage) imageRef).originalImage().getWidth();
@@ -196,389 +184,135 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         key(removeKeyAction, e);
     }
 
-    public void key(KeyAction keyAction, KeyEvent keyEvent) {
+    private void key(KeyAction keyAction, KeyEvent keyEvent) {
         switch (keyEvent.getKeyCode()) {
-            case KeyEvent.VK_ENTER:
-                keyAction.call(Input.Key.VK_ENTER);
-                break;
-            case KeyEvent.VK_BACK_SPACE:
-                keyAction.call(Input.Key.VK_BACK_SPACE);
-                break;
-            case KeyEvent.VK_TAB:
-                keyAction.call(Input.Key.VK_TAB);
-                break;
-            case KeyEvent.VK_CANCEL:
-                keyAction.call(Input.Key.VK_CANCEL);
-                break;
-            case KeyEvent.VK_CLEAR:
-                keyAction.call(Input.Key.VK_CLEAR);
-                break;
-            case KeyEvent.VK_SHIFT:
-                keyAction.call(Input.Key.VK_SHIFT);
-                break;
-            case KeyEvent.VK_CONTROL:
-                keyAction.call(Input.Key.VK_CONTROL);
-                break;
-            case KeyEvent.VK_ALT:
-                keyAction.call(Input.Key.VK_ALT);
-                break;
-            case KeyEvent.VK_PAUSE:
-                keyAction.call(Input.Key.VK_PAUSE);
-                break;
-            case KeyEvent.VK_CAPS_LOCK:
-                keyAction.call(Input.Key.VK_CAPS_LOCK);
-                break;
-            case KeyEvent.VK_ESCAPE:
-                keyAction.call(Input.Key.VK_ESCAPE);
-                break;
-            case KeyEvent.VK_SPACE:
-                keyAction.call(Input.Key.VK_SPACE);
-                break;
-            case KeyEvent.VK_PAGE_UP:
-                keyAction.call(Input.Key.VK_PAGE_UP);
-                break;
-            case KeyEvent.VK_PAGE_DOWN:
-                keyAction.call(Input.Key.VK_PAGE_DOWN);
-                break;
-            case KeyEvent.VK_END:
-                keyAction.call(Input.Key.VK_END);
-                break;
-            case KeyEvent.VK_HOME:
-                keyAction.call(Input.Key.VK_HOME);
-                break;
-            case KeyEvent.VK_LEFT:
-                keyAction.call(Input.Key.VK_LEFT);
-                break;
-            case KeyEvent.VK_UP:
-                keyAction.call(Input.Key.VK_UP);
-                break;
-            case KeyEvent.VK_RIGHT:
-                keyAction.call(Input.Key.VK_RIGHT);
-                break;
-            case KeyEvent.VK_DOWN:
-                keyAction.call(Input.Key.VK_DOWN);
-                break;
-            case KeyEvent.VK_COMMA:
-                keyAction.call(Input.Key.VK_COMMA);
-                break;
-            case KeyEvent.VK_MINUS:
-                keyAction.call(Input.Key.VK_MINUS);
-                break;
-            case KeyEvent.VK_PERIOD:
-                keyAction.call(Input.Key.VK_PERIOD);
-                break;
-            case KeyEvent.VK_SLASH:
-                keyAction.call(Input.Key.VK_SLASH);
-                break;
-            case KeyEvent.VK_0:
-                keyAction.call(Input.Key.VK_0);
-                break;
-            case KeyEvent.VK_1:
-                keyAction.call(Input.Key.VK_1);
-                break;
-            case KeyEvent.VK_2:
-                keyAction.call(Input.Key.VK_2);
-                break;
-            case KeyEvent.VK_3:
-                keyAction.call(Input.Key.VK_3);
-                break;
-            case KeyEvent.VK_4:
-                keyAction.call(Input.Key.VK_4);
-                break;
-            case KeyEvent.VK_5:
-                keyAction.call(Input.Key.VK_5);
-                break;
-            case KeyEvent.VK_6:
-                keyAction.call(Input.Key.VK_6);
-                break;
-            case KeyEvent.VK_7:
-                keyAction.call(Input.Key.VK_7);
-                break;
-            case KeyEvent.VK_8:
-                keyAction.call(Input.Key.VK_8);
-                break;
-            case KeyEvent.VK_9:
-                keyAction.call(Input.Key.VK_9);
-                break;
-            case KeyEvent.VK_SEMICOLON:
-                keyAction.call(Input.Key.VK_SEMICOLON);
-                break;
-            case KeyEvent.VK_EQUALS:
-                keyAction.call(Input.Key.VK_EQUALS);
-                break;
-            case KeyEvent.VK_A:
-                keyAction.call(Input.Key.VK_A);
-                break;
-            case KeyEvent.VK_B:
-                keyAction.call(Input.Key.VK_B);
-                break;
-            case KeyEvent.VK_C:
-                keyAction.call(Input.Key.VK_C);
-                break;
-            case KeyEvent.VK_D:
-                keyAction.call(Input.Key.VK_D);
-                break;
-            case KeyEvent.VK_E:
-                keyAction.call(Input.Key.VK_E);
-                break;
-            case KeyEvent.VK_F:
-                keyAction.call(Input.Key.VK_F);
-                break;
-            case KeyEvent.VK_G:
-                keyAction.call(Input.Key.VK_G);
-                break;
-            case KeyEvent.VK_H:
-                keyAction.call(Input.Key.VK_H);
-                break;
-            case KeyEvent.VK_I:
-                keyAction.call(Input.Key.VK_I);
-                break;
-            case KeyEvent.VK_J:
-                keyAction.call(Input.Key.VK_J);
-                break;
-            case KeyEvent.VK_K:
-                keyAction.call(Input.Key.VK_K);
-                break;
-            case KeyEvent.VK_L:
-                keyAction.call(Input.Key.VK_L);
-                break;
-            case KeyEvent.VK_M:
-                keyAction.call(Input.Key.VK_M);
-                break;
-            case KeyEvent.VK_N:
-                keyAction.call(Input.Key.VK_N);
-                break;
-            case KeyEvent.VK_O:
-                keyAction.call(Input.Key.VK_O);
-                break;
-            case KeyEvent.VK_P:
-                keyAction.call(Input.Key.VK_P);
-                break;
-            case KeyEvent.VK_Q:
-                keyAction.call(Input.Key.VK_Q);
-                break;
-            case KeyEvent.VK_R:
-                keyAction.call(Input.Key.VK_R);
-                break;
-            case KeyEvent.VK_S:
-                keyAction.call(Input.Key.VK_S);
-                break;
-            case KeyEvent.VK_T:
-                keyAction.call(Input.Key.VK_T);
-                break;
-            case KeyEvent.VK_U:
-                keyAction.call(Input.Key.VK_U);
-                break;
-            case KeyEvent.VK_V:
-                keyAction.call(Input.Key.VK_V);
-                break;
-            case KeyEvent.VK_W:
-                keyAction.call(Input.Key.VK_W);
-                break;
-            case KeyEvent.VK_X:
-                keyAction.call(Input.Key.VK_X);
-                break;
-            case KeyEvent.VK_Y:
-                keyAction.call(Input.Key.VK_Y);
-                break;
-            case KeyEvent.VK_Z:
-                keyAction.call(Input.Key.VK_Z);
-                break;
-            case KeyEvent.VK_OPEN_BRACKET:
-                keyAction.call(Input.Key.VK_OPEN_BRACKET);
-                break;
-            case KeyEvent.VK_BACK_SLASH:
-                keyAction.call(Input.Key.VK_BACK_SLASH);
-                break;
-            case KeyEvent.VK_CLOSE_BRACKET:
-                keyAction.call(Input.Key.VK_CLOSE_BRACKET);
-                break;
-            case KeyEvent.VK_NUMPAD0:
-                keyAction.call(Input.Key.VK_NUMPAD0);
-                break;
-            case KeyEvent.VK_NUMPAD1:
-                keyAction.call(Input.Key.VK_NUMPAD1);
-                break;
-            case KeyEvent.VK_NUMPAD2:
-                keyAction.call(Input.Key.VK_NUMPAD2);
-                break;
-            case KeyEvent.VK_NUMPAD3:
-                keyAction.call(Input.Key.VK_NUMPAD3);
-                break;
-            case KeyEvent.VK_NUMPAD4:
-                keyAction.call(Input.Key.VK_NUMPAD4);
-                break;
-            case KeyEvent.VK_NUMPAD5:
-                keyAction.call(Input.Key.VK_NUMPAD5);
-                break;
-            case KeyEvent.VK_NUMPAD6:
-                keyAction.call(Input.Key.VK_NUMPAD6);
-                break;
-            case KeyEvent.VK_NUMPAD7:
-                keyAction.call(Input.Key.VK_NUMPAD7);
-                break;
-            case KeyEvent.VK_NUMPAD8:
-                keyAction.call(Input.Key.VK_NUMPAD8);
-                break;
-            case KeyEvent.VK_NUMPAD9:
-                keyAction.call(Input.Key.VK_NUMPAD9);
-                break;
-            case KeyEvent.VK_MULTIPLY:
-                keyAction.call(Input.Key.VK_MULTIPLY);
-                break;
-            case KeyEvent.VK_ADD:
-                keyAction.call(Input.Key.VK_ADD);
-                break;
-            case KeyEvent.VK_SEPARATOR:
-                keyAction.call(Input.Key.VK_SEPARATOR);
-                break;
-            case KeyEvent.VK_SUBTRACT:
-                keyAction.call(Input.Key.VK_SUBTRACT);
-                break;
-            case KeyEvent.VK_DECIMAL:
-                keyAction.call(Input.Key.VK_DECIMAL);
-                break;
-            case KeyEvent.VK_DIVIDE:
-                keyAction.call(Input.Key.VK_DIVIDE);
-                break;
-            case KeyEvent.VK_DELETE:
-                keyAction.call(Input.Key.VK_DELETE);
-                break;
-            case KeyEvent.VK_NUM_LOCK:
-                keyAction.call(Input.Key.VK_NUM_LOCK);
-                break;
-            case KeyEvent.VK_SCROLL_LOCK:
-                keyAction.call(Input.Key.VK_SCROLL_LOCK);
-                break;
-            case KeyEvent.VK_F1:
-                keyAction.call(Input.Key.VK_F1);
-                break;
-            case KeyEvent.VK_F2:
-                keyAction.call(Input.Key.VK_F2);
-                break;
-            case KeyEvent.VK_F3:
-                keyAction.call(Input.Key.VK_F3);
-                break;
-            case KeyEvent.VK_F4:
-                keyAction.call(Input.Key.VK_F4);
-                break;
-            case KeyEvent.VK_F5:
-                keyAction.call(Input.Key.VK_F5);
-                break;
-            case KeyEvent.VK_F6:
-                keyAction.call(Input.Key.VK_F6);
-                break;
-            case KeyEvent.VK_F7:
-                keyAction.call(Input.Key.VK_F7);
-                break;
-            case KeyEvent.VK_F8:
-                keyAction.call(Input.Key.VK_F8);
-                break;
-            case KeyEvent.VK_F9:
-                keyAction.call(Input.Key.VK_F9);
-                break;
-            case KeyEvent.VK_F10:
-                keyAction.call(Input.Key.VK_F10);
-                break;
-            case KeyEvent.VK_F11:
-                keyAction.call(Input.Key.VK_F11);
-                break;
-            case KeyEvent.VK_F12:
-                keyAction.call(Input.Key.VK_F12);
-                break;
-            case KeyEvent.VK_PRINTSCREEN:
-                keyAction.call(Input.Key.VK_PRINTSCREEN);
-                break;
-            case KeyEvent.VK_INSERT:
-                keyAction.call(Input.Key.VK_INSERT);
-                break;
-            case KeyEvent.VK_HELP:
-                keyAction.call(Input.Key.VK_HELP);
-                break;
-            case KeyEvent.VK_META:
-                keyAction.call(Input.Key.VK_META);
-                break;
-            case KeyEvent.VK_BACK_QUOTE:
-                keyAction.call(Input.Key.VK_BACK_QUOTE);
-                break;
-            case KeyEvent.VK_QUOTE:
-                keyAction.call(Input.Key.VK_QUOTE);
-                break;
-            case KeyEvent.VK_KP_UP:
-                keyAction.call(Input.Key.VK_KP_UP);
-                break;
-            case KeyEvent.VK_KP_DOWN:
-                keyAction.call(Input.Key.VK_KP_DOWN);
-                break;
-            case KeyEvent.VK_KP_LEFT:
-                keyAction.call(Input.Key.VK_KP_LEFT);
-                break;
-            case KeyEvent.VK_KP_RIGHT:
-                keyAction.call(Input.Key.VK_KP_RIGHT);
-                break;
-            case KeyEvent.VK_AMPERSAND:
-                keyAction.call(Input.Key.VK_AMPERSAND);
-                break;
-            case KeyEvent.VK_ASTERISK:
-                keyAction.call(Input.Key.VK_ASTERISK);
-                break;
-            case KeyEvent.VK_QUOTEDBL:
-                keyAction.call(Input.Key.VK_QUOTEDBL);
-                break;
-            case KeyEvent.VK_LESS:
-                keyAction.call(Input.Key.VK_LESS);
-                break;
-            case KeyEvent.VK_GREATER:
-                keyAction.call(Input.Key.VK_GREATER);
-                break;
-            case KeyEvent.VK_BRACELEFT:
-                keyAction.call(Input.Key.VK_BRACELEFT);
-                break;
-            case KeyEvent.VK_BRACERIGHT:
-                keyAction.call(Input.Key.VK_BRACERIGHT);
-                break;
-            case KeyEvent.VK_AT:
-                keyAction.call(Input.Key.VK_AT);
-                break;
-            case KeyEvent.VK_COLON:
-                keyAction.call(Input.Key.VK_COLON);
-                break;
-            case KeyEvent.VK_CIRCUMFLEX:
-                keyAction.call(Input.Key.VK_CIRCUMFLEX);
-                break;
-            case KeyEvent.VK_DOLLAR:
-                keyAction.call(Input.Key.VK_DOLLAR);
-                break;
-            case KeyEvent.VK_EURO_SIGN:
-                keyAction.call(Input.Key.VK_EURO_SIGN);
-                break;
-            case KeyEvent.VK_EXCLAMATION_MARK:
-                keyAction.call(Input.Key.VK_EXCLAMATION_MARK);
-                break;
-            case KeyEvent.VK_INVERTED_EXCLAMATION_MARK:
-                keyAction.call(Input.Key.VK_INVERTED_EXCLAMATION_MARK);
-                break;
-            case KeyEvent.VK_LEFT_PARENTHESIS:
-                keyAction.call(Input.Key.VK_LEFT_PARENTHESIS);
-                break;
-            case KeyEvent.VK_NUMBER_SIGN:
-                keyAction.call(Input.Key.VK_NUMBER_SIGN);
-                break;
-            case KeyEvent.VK_PLUS:
-                keyAction.call(Input.Key.VK_PLUS);
-                break;
-            case KeyEvent.VK_RIGHT_PARENTHESIS:
-                keyAction.call(Input.Key.VK_RIGHT_PARENTHESIS);
-                break;
-            case KeyEvent.VK_UNDERSCORE:
-                keyAction.call(Input.Key.VK_UNDERSCORE);
-                break;
-            case KeyEvent.VK_WINDOWS:
-                keyAction.call(Input.Key.VK_WINDOWS);
-                break;
-            case KeyEvent.VK_CONTEXT_MENU:
-                keyAction.call(Input.Key.VK_CONTEXT_MENU);
-                break;
+            case KeyEvent.VK_ENTER -> keyAction.call(Input.Key.VK_ENTER);
+            case KeyEvent.VK_BACK_SPACE -> keyAction.call(Input.Key.VK_BACK_SPACE);
+            case KeyEvent.VK_TAB -> keyAction.call(Input.Key.VK_TAB);
+            case KeyEvent.VK_CANCEL -> keyAction.call(Input.Key.VK_CANCEL);
+            case KeyEvent.VK_CLEAR -> keyAction.call(Input.Key.VK_CLEAR);
+            case KeyEvent.VK_SHIFT -> keyAction.call(Input.Key.VK_SHIFT);
+            case KeyEvent.VK_CONTROL -> keyAction.call(Input.Key.VK_CONTROL);
+            case KeyEvent.VK_ALT -> keyAction.call(Input.Key.VK_ALT);
+            case KeyEvent.VK_PAUSE -> keyAction.call(Input.Key.VK_PAUSE);
+            case KeyEvent.VK_CAPS_LOCK -> keyAction.call(Input.Key.VK_CAPS_LOCK);
+            case KeyEvent.VK_ESCAPE -> keyAction.call(Input.Key.VK_ESCAPE);
+            case KeyEvent.VK_SPACE -> keyAction.call(Input.Key.VK_SPACE);
+            case KeyEvent.VK_PAGE_UP -> keyAction.call(Input.Key.VK_PAGE_UP);
+            case KeyEvent.VK_PAGE_DOWN -> keyAction.call(Input.Key.VK_PAGE_DOWN);
+            case KeyEvent.VK_END -> keyAction.call(Input.Key.VK_END);
+            case KeyEvent.VK_HOME -> keyAction.call(Input.Key.VK_HOME);
+            case KeyEvent.VK_LEFT -> keyAction.call(Input.Key.VK_LEFT);
+            case KeyEvent.VK_UP -> keyAction.call(Input.Key.VK_UP);
+            case KeyEvent.VK_RIGHT -> keyAction.call(Input.Key.VK_RIGHT);
+            case KeyEvent.VK_DOWN -> keyAction.call(Input.Key.VK_DOWN);
+            case KeyEvent.VK_COMMA -> keyAction.call(Input.Key.VK_COMMA);
+            case KeyEvent.VK_MINUS -> keyAction.call(Input.Key.VK_MINUS);
+            case KeyEvent.VK_PERIOD -> keyAction.call(Input.Key.VK_PERIOD);
+            case KeyEvent.VK_SLASH -> keyAction.call(Input.Key.VK_SLASH);
+            case KeyEvent.VK_0 -> keyAction.call(Input.Key.VK_0);
+            case KeyEvent.VK_1 -> keyAction.call(Input.Key.VK_1);
+            case KeyEvent.VK_2 -> keyAction.call(Input.Key.VK_2);
+            case KeyEvent.VK_3 -> keyAction.call(Input.Key.VK_3);
+            case KeyEvent.VK_4 -> keyAction.call(Input.Key.VK_4);
+            case KeyEvent.VK_5 -> keyAction.call(Input.Key.VK_5);
+            case KeyEvent.VK_6 -> keyAction.call(Input.Key.VK_6);
+            case KeyEvent.VK_7 -> keyAction.call(Input.Key.VK_7);
+            case KeyEvent.VK_8 -> keyAction.call(Input.Key.VK_8);
+            case KeyEvent.VK_9 -> keyAction.call(Input.Key.VK_9);
+            case KeyEvent.VK_SEMICOLON -> keyAction.call(Input.Key.VK_SEMICOLON);
+            case KeyEvent.VK_EQUALS -> keyAction.call(Input.Key.VK_EQUALS);
+            case KeyEvent.VK_A -> keyAction.call(Input.Key.VK_A);
+            case KeyEvent.VK_B -> keyAction.call(Input.Key.VK_B);
+            case KeyEvent.VK_C -> keyAction.call(Input.Key.VK_C);
+            case KeyEvent.VK_D -> keyAction.call(Input.Key.VK_D);
+            case KeyEvent.VK_E -> keyAction.call(Input.Key.VK_E);
+            case KeyEvent.VK_F -> keyAction.call(Input.Key.VK_F);
+            case KeyEvent.VK_G -> keyAction.call(Input.Key.VK_G);
+            case KeyEvent.VK_H -> keyAction.call(Input.Key.VK_H);
+            case KeyEvent.VK_I -> keyAction.call(Input.Key.VK_I);
+            case KeyEvent.VK_J -> keyAction.call(Input.Key.VK_J);
+            case KeyEvent.VK_K -> keyAction.call(Input.Key.VK_K);
+            case KeyEvent.VK_L -> keyAction.call(Input.Key.VK_L);
+            case KeyEvent.VK_M -> keyAction.call(Input.Key.VK_M);
+            case KeyEvent.VK_N -> keyAction.call(Input.Key.VK_N);
+            case KeyEvent.VK_O -> keyAction.call(Input.Key.VK_O);
+            case KeyEvent.VK_P -> keyAction.call(Input.Key.VK_P);
+            case KeyEvent.VK_Q -> keyAction.call(Input.Key.VK_Q);
+            case KeyEvent.VK_R -> keyAction.call(Input.Key.VK_R);
+            case KeyEvent.VK_S -> keyAction.call(Input.Key.VK_S);
+            case KeyEvent.VK_T -> keyAction.call(Input.Key.VK_T);
+            case KeyEvent.VK_U -> keyAction.call(Input.Key.VK_U);
+            case KeyEvent.VK_V -> keyAction.call(Input.Key.VK_V);
+            case KeyEvent.VK_W -> keyAction.call(Input.Key.VK_W);
+            case KeyEvent.VK_X -> keyAction.call(Input.Key.VK_X);
+            case KeyEvent.VK_Y -> keyAction.call(Input.Key.VK_Y);
+            case KeyEvent.VK_Z -> keyAction.call(Input.Key.VK_Z);
+            case KeyEvent.VK_OPEN_BRACKET -> keyAction.call(Input.Key.VK_OPEN_BRACKET);
+            case KeyEvent.VK_BACK_SLASH -> keyAction.call(Input.Key.VK_BACK_SLASH);
+            case KeyEvent.VK_CLOSE_BRACKET -> keyAction.call(Input.Key.VK_CLOSE_BRACKET);
+            case KeyEvent.VK_NUMPAD0 -> keyAction.call(Input.Key.VK_NUMPAD0);
+            case KeyEvent.VK_NUMPAD1 -> keyAction.call(Input.Key.VK_NUMPAD1);
+            case KeyEvent.VK_NUMPAD2 -> keyAction.call(Input.Key.VK_NUMPAD2);
+            case KeyEvent.VK_NUMPAD3 -> keyAction.call(Input.Key.VK_NUMPAD3);
+            case KeyEvent.VK_NUMPAD4 -> keyAction.call(Input.Key.VK_NUMPAD4);
+            case KeyEvent.VK_NUMPAD5 -> keyAction.call(Input.Key.VK_NUMPAD5);
+            case KeyEvent.VK_NUMPAD6 -> keyAction.call(Input.Key.VK_NUMPAD6);
+            case KeyEvent.VK_NUMPAD7 -> keyAction.call(Input.Key.VK_NUMPAD7);
+            case KeyEvent.VK_NUMPAD8 -> keyAction.call(Input.Key.VK_NUMPAD8);
+            case KeyEvent.VK_NUMPAD9 -> keyAction.call(Input.Key.VK_NUMPAD9);
+            case KeyEvent.VK_MULTIPLY -> keyAction.call(Input.Key.VK_MULTIPLY);
+            case KeyEvent.VK_ADD -> keyAction.call(Input.Key.VK_ADD);
+            case KeyEvent.VK_SEPARATOR -> keyAction.call(Input.Key.VK_SEPARATOR);
+            case KeyEvent.VK_SUBTRACT -> keyAction.call(Input.Key.VK_SUBTRACT);
+            case KeyEvent.VK_DECIMAL -> keyAction.call(Input.Key.VK_DECIMAL);
+            case KeyEvent.VK_DIVIDE -> keyAction.call(Input.Key.VK_DIVIDE);
+            case KeyEvent.VK_DELETE -> keyAction.call(Input.Key.VK_DELETE);
+            case KeyEvent.VK_NUM_LOCK -> keyAction.call(Input.Key.VK_NUM_LOCK);
+            case KeyEvent.VK_SCROLL_LOCK -> keyAction.call(Input.Key.VK_SCROLL_LOCK);
+            case KeyEvent.VK_F1 -> keyAction.call(Input.Key.VK_F1);
+            case KeyEvent.VK_F2 -> keyAction.call(Input.Key.VK_F2);
+            case KeyEvent.VK_F3 -> keyAction.call(Input.Key.VK_F3);
+            case KeyEvent.VK_F4 -> keyAction.call(Input.Key.VK_F4);
+            case KeyEvent.VK_F5 -> keyAction.call(Input.Key.VK_F5);
+            case KeyEvent.VK_F6 -> keyAction.call(Input.Key.VK_F6);
+            case KeyEvent.VK_F7 -> keyAction.call(Input.Key.VK_F7);
+            case KeyEvent.VK_F8 -> keyAction.call(Input.Key.VK_F8);
+            case KeyEvent.VK_F9 -> keyAction.call(Input.Key.VK_F9);
+            case KeyEvent.VK_F10 -> keyAction.call(Input.Key.VK_F10);
+            case KeyEvent.VK_F11 -> keyAction.call(Input.Key.VK_F11);
+            case KeyEvent.VK_F12 -> keyAction.call(Input.Key.VK_F12);
+            case KeyEvent.VK_PRINTSCREEN -> keyAction.call(Input.Key.VK_PRINTSCREEN);
+            case KeyEvent.VK_INSERT -> keyAction.call(Input.Key.VK_INSERT);
+            case KeyEvent.VK_HELP -> keyAction.call(Input.Key.VK_HELP);
+            case KeyEvent.VK_META -> keyAction.call(Input.Key.VK_META);
+            case KeyEvent.VK_BACK_QUOTE -> keyAction.call(Input.Key.VK_BACK_QUOTE);
+            case KeyEvent.VK_QUOTE -> keyAction.call(Input.Key.VK_QUOTE);
+            case KeyEvent.VK_KP_UP -> keyAction.call(Input.Key.VK_KP_UP);
+            case KeyEvent.VK_KP_DOWN -> keyAction.call(Input.Key.VK_KP_DOWN);
+            case KeyEvent.VK_KP_LEFT -> keyAction.call(Input.Key.VK_KP_LEFT);
+            case KeyEvent.VK_KP_RIGHT -> keyAction.call(Input.Key.VK_KP_RIGHT);
+            case KeyEvent.VK_AMPERSAND -> keyAction.call(Input.Key.VK_AMPERSAND);
+            case KeyEvent.VK_ASTERISK -> keyAction.call(Input.Key.VK_ASTERISK);
+            case KeyEvent.VK_QUOTEDBL -> keyAction.call(Input.Key.VK_QUOTEDBL);
+            case KeyEvent.VK_LESS -> keyAction.call(Input.Key.VK_LESS);
+            case KeyEvent.VK_GREATER -> keyAction.call(Input.Key.VK_GREATER);
+            case KeyEvent.VK_BRACELEFT -> keyAction.call(Input.Key.VK_BRACELEFT);
+            case KeyEvent.VK_BRACERIGHT -> keyAction.call(Input.Key.VK_BRACERIGHT);
+            case KeyEvent.VK_AT -> keyAction.call(Input.Key.VK_AT);
+            case KeyEvent.VK_COLON -> keyAction.call(Input.Key.VK_COLON);
+            case KeyEvent.VK_CIRCUMFLEX -> keyAction.call(Input.Key.VK_CIRCUMFLEX);
+            case KeyEvent.VK_DOLLAR -> keyAction.call(Input.Key.VK_DOLLAR);
+            case KeyEvent.VK_EURO_SIGN -> keyAction.call(Input.Key.VK_EURO_SIGN);
+            case KeyEvent.VK_EXCLAMATION_MARK -> keyAction.call(Input.Key.VK_EXCLAMATION_MARK);
+            case KeyEvent.VK_INVERTED_EXCLAMATION_MARK -> keyAction.call(Input.Key.VK_INVERTED_EXCLAMATION_MARK);
+            case KeyEvent.VK_LEFT_PARENTHESIS -> keyAction.call(Input.Key.VK_LEFT_PARENTHESIS);
+            case KeyEvent.VK_NUMBER_SIGN -> keyAction.call(Input.Key.VK_NUMBER_SIGN);
+            case KeyEvent.VK_PLUS -> keyAction.call(Input.Key.VK_PLUS);
+            case KeyEvent.VK_RIGHT_PARENTHESIS -> keyAction.call(Input.Key.VK_RIGHT_PARENTHESIS);
+            case KeyEvent.VK_UNDERSCORE -> keyAction.call(Input.Key.VK_UNDERSCORE);
+            case KeyEvent.VK_WINDOWS -> keyAction.call(Input.Key.VK_WINDOWS);
+            case KeyEvent.VK_CONTEXT_MENU -> keyAction.call(Input.Key.VK_CONTEXT_MENU);
         }
     }
 
@@ -794,53 +528,6 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         return device;
     }
 
-    public static BufferedImage modifyImageVertices(BufferedImage originalImage, int[][] vertexCoordinates) {
-        int width = originalImage.getWidth();
-        int height = originalImage.getHeight();
-
-        // Create a new BufferedImage with the same dimensions
-        BufferedImage modifiedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-        // Create a Graphics2D object to draw on the new image
-        Graphics2D g2d = modifiedImage.createGraphics();
-
-        // Apply rendering hints for better quality
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-        // Create an AffineTransform object for transformation
-        AffineTransform transform = new AffineTransform();
-
-        // Set the vertices individually
-        for (int i = 0; i < vertexCoordinates.length; i++) {
-            int x = vertexCoordinates[i][0];
-            int y = vertexCoordinates[i][1];
-            int newX = vertexCoordinates[i][2];
-            int newY = vertexCoordinates[i][3];
-
-            // Calculate the translation required for the vertex
-            int dx = newX - x;
-            int dy = newY - y;
-
-            // Reset the transformation
-            transform.setToIdentity();
-
-            // Translate the Graphics2D object to the original vertex position
-            transform.translate(x, y);
-
-            // Apply the translation for the vertex
-            transform.translate(dx, dy);
-
-            // Draw the image with the applied vertex transformation
-            g2d.drawImage(originalImage, transform, null);
-        }
-
-        // Dispose of the Graphics2D object
-        g2d.dispose();
-
-        return modifiedImage;
-    }
-
     public void setDevice(GraphicsDevice device) {
         this.device = device;
     }
@@ -877,30 +564,18 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     @Override
     public void mousePressed(MouseEvent e) {
         switch (e.getButton()) {
-            case MouseEvent.BUTTON1:
-                pressingMouseButtons.add(Input.MouseButton.BUTTON1);
-                break;
-            case MouseEvent.BUTTON2:
-                pressingMouseButtons.add(Input.MouseButton.BUTTON2);
-                break;
-            case MouseEvent.BUTTON3:
-                pressingMouseButtons.add(Input.MouseButton.BUTTON3);
-                break;
+            case MouseEvent.BUTTON1 -> pressingMouseButtons.add(Input.MouseButton.BUTTON1);
+            case MouseEvent.BUTTON2 -> pressingMouseButtons.add(Input.MouseButton.BUTTON2);
+            case MouseEvent.BUTTON3 -> pressingMouseButtons.add(Input.MouseButton.BUTTON3);
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
         switch (e.getButton()) {
-            case MouseEvent.BUTTON1:
-                pressingMouseButtons.remove(Input.MouseButton.BUTTON1);
-                break;
-            case MouseEvent.BUTTON2:
-                pressingMouseButtons.remove(Input.MouseButton.BUTTON2);
-                break;
-            case MouseEvent.BUTTON3:
-                pressingMouseButtons.remove(Input.MouseButton.BUTTON3);
-                break;
+            case MouseEvent.BUTTON1 -> pressingMouseButtons.remove(Input.MouseButton.BUTTON1);
+            case MouseEvent.BUTTON2 -> pressingMouseButtons.remove(Input.MouseButton.BUTTON2);
+            case MouseEvent.BUTTON3 -> pressingMouseButtons.remove(Input.MouseButton.BUTTON3);
         }
     }
 
@@ -925,22 +600,6 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     public Vector2D getMousePosition() {
         return mousePosition;
-    }
-
-    public KeyAction getAddKeyAction() {
-        return addKeyAction;
-    }
-
-    public KeyAction getRemoveKeyAction() {
-        return removeKeyAction;
-    }
-
-    public MouseButtonAction getAddBtnAction() {
-        return addBtnAction;
-    }
-
-    public MouseButtonAction getRemoveBtnAction() {
-        return removeBtnAction;
     }
 
     public boolean isStretch() {
