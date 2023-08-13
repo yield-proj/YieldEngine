@@ -41,18 +41,18 @@ public class TextureRectangle extends Rectangle {
     }
 
     @Override
-    public void setup(Vector2D[] vertices) {
-        super.setup(vertices);
-        getDrawInstruction().setImageRef(texture.getImageRef());
+    public void setupX(float[] verticesX) {
+        super.setupX(verticesX);
+        drawInstruction().setImageRef(texture.getImageRef());
     }
 
     @Override
     public DrawInstruction render() {
         if (textureSized) {
             if (textureScale == null)
-                getSize().set(texture.getSize());
+                size().set(texture.getSize());
             else
-                getSize().set(texture.getSize().multiply(textureScale));
+                size().set(texture.getSize().multiply(textureScale));
         }
         return super.render();
     }

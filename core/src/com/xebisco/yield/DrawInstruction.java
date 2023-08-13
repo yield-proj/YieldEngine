@@ -23,8 +23,8 @@ import java.util.List;
  * It's a data structure that holds all the information needed to draw a rectangle, oval, text, line, or image
  */
 public class DrawInstruction implements Cloneable {
-    private int[] verticesX;
-    private int[] verticesY;
+    private float[] verticesX;
+    private float[] verticesY;
     private Object imageRef, fontRef;
     private String text;
     private double stroke;
@@ -42,169 +42,192 @@ public class DrawInstruction implements Cloneable {
     public DrawInstruction() {
     }
 
-    public DrawInstruction(int[] verticesX, int[] verticesY) {
+    public DrawInstruction(float[] verticesX, float[] verticesY) {
         this.verticesX = verticesX;
         this.verticesY = verticesY;
     }
 
-    public int[] getVerticesX() {
+    public float[] verticesX() {
         return verticesX;
     }
 
-    public void setVerticesX(int[] verticesX) {
+    public DrawInstruction setVerticesX(float[] verticesX) {
         this.verticesX = verticesX;
+        return this;
     }
 
-    public int[] getVerticesY() {
+    public float[] verticesY() {
         return verticesY;
     }
 
-    public void setVerticesY(int[] verticesY) {
+    public DrawInstruction setVerticesY(float[] verticesY) {
         this.verticesY = verticesY;
+        return this;
     }
 
-    public Object getImageRef() {
+    public Object imageRef() {
         return imageRef;
     }
 
-    public void setImageRef(Object imageRef) {
+    public DrawInstruction setImageRef(Object imageRef) {
         this.imageRef = imageRef;
+        return this;
     }
 
-    public Object getFontRef() {
+    public Object fontRef() {
         return fontRef;
     }
 
-    public void setFontRef(Object fontRef) {
+    public DrawInstruction setFontRef(Object fontRef) {
         this.fontRef = fontRef;
+        return this;
     }
 
-    public String getText() {
+    public String text() {
         return text;
     }
 
-    public void setText(String text) {
+    public DrawInstruction setText(String text) {
         this.text = text;
+        return this;
     }
 
-    public double getStroke() {
+    public double stroke() {
         return stroke;
     }
 
-    public void setStroke(double stroke) {
+    public DrawInstruction setStroke(double stroke) {
         this.stroke = stroke;
+        return this;
     }
 
-    public Color getColor() {
+    public Color color() {
         return color;
     }
 
-    public void setColor(Color color) {
+    public DrawInstruction setColor(Color color) {
         this.color = color;
+        return this;
     }
 
-    public double getRotation() {
-        return rotation;
-    }
-
-    public void setRotation(double rotation) {
-        this.rotation = rotation;
-    }
-
-    public List<DrawInstruction> getChildrenInstructions() {
-        return childrenInstructions;
-    }
-
-    public void setChildrenInstructions(List<DrawInstruction> childrenInstructions) {
-        this.childrenInstructions = childrenInstructions;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public double getScaleX() {
-        return scaleX;
-    }
-
-    public void setScaleX(double scaleX) {
-        this.scaleX = scaleX;
-    }
-
-    public double getScaleY() {
-        return scaleY;
-    }
-
-    public void setScaleY(double scaleY) {
-        this.scaleY = scaleY;
-    }
-
-    public boolean isRotateBeforeScale() {
-        return rotateBeforeScale;
-    }
-
-    public void setRotateBeforeScale(boolean rotateBeforeScale) {
-        this.rotateBeforeScale = rotateBeforeScale;
-    }
-
-    public boolean isIgnoreCameraPosition() {
+    public boolean ignoreCameraPosition() {
         return ignoreCameraPosition;
     }
 
-    public void setIgnoreCameraPosition(boolean ignoreCameraPosition) {
+    public DrawInstruction setIgnoreCameraPosition(boolean ignoreCameraPosition) {
         this.ignoreCameraPosition = ignoreCameraPosition;
+        return this;
     }
 
-    public boolean isIgnoreViewportScale() {
+    public boolean ignoreViewportScale() {
         return ignoreViewportScale;
     }
 
-    public void setIgnoreViewportScale(boolean ignoreViewportScale) {
+    public DrawInstruction setIgnoreViewportScale(boolean ignoreViewportScale) {
         this.ignoreViewportScale = ignoreViewportScale;
+        return this;
     }
 
+    public double rotation() {
+        return rotation;
+    }
+
+    public DrawInstruction setRotation(double rotation) {
+        this.rotation = rotation;
+        return this;
+    }
+
+    public boolean rotateBeforeScale() {
+        return rotateBeforeScale;
+    }
+
+    public DrawInstruction setRotateBeforeScale(boolean rotateBeforeScale) {
+        this.rotateBeforeScale = rotateBeforeScale;
+        return this;
+    }
+
+    public double x() {
+        return x;
+    }
+
+    public DrawInstruction setX(double x) {
+        this.x = x;
+        return this;
+    }
+
+    public double y() {
+        return y;
+    }
+
+    public DrawInstruction setY(double y) {
+        this.y = y;
+        return this;
+    }
+
+    public double scaleX() {
+        return scaleX;
+    }
+
+    public DrawInstruction setScaleX(double scaleX) {
+        this.scaleX = scaleX;
+        return this;
+    }
+
+    public double scaleY() {
+        return scaleY;
+    }
+
+    public DrawInstruction setScaleY(double scaleY) {
+        this.scaleY = scaleY;
+        return this;
+    }
+
+    public double centerOffsetX() {
+        return centerOffsetX;
+    }
+
+    public double centerOffsetY() {
+        return centerOffsetY;
+    }
+
+    public List<DrawInstruction> childrenInstructions() {
+        return childrenInstructions;
+    }
+
+    public DrawInstruction setChildrenInstructions(List<DrawInstruction> childrenInstructions) {
+        this.childrenInstructions = childrenInstructions;
+        return this;
+    }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public DrawInstruction clone() {
         DrawInstruction clone = new DrawInstruction();
-        if (getVerticesX() != null) {
-            clone.setVerticesX(new int[getVerticesX().length]);
-            System.arraycopy(getVerticesX(), 0, clone.getVerticesX(), 0, getVerticesX().length);
+        if (verticesX() != null) {
+            clone.setVerticesX(new float[verticesX().length]);
+            System.arraycopy(verticesX(), 0, clone.verticesX(), 0, verticesX().length);
         }
-        if (getVerticesY() != null) {
-            clone.setVerticesY(new int[getVerticesY().length]);
-            System.arraycopy(getVerticesY(), 0, clone.getVerticesY(), 0, getVerticesY().length);
+        if (verticesY() != null) {
+            clone.setVerticesY(new float[verticesY().length]);
+            System.arraycopy(verticesY(), 0, clone.verticesY(), 0, verticesY().length);
         }
-        clone.setX(getX());
-        clone.setY(getY());
-        clone.setText(getText());
-        clone.setIgnoreViewportScale(isIgnoreViewportScale());
-        clone.setIgnoreCameraPosition(isIgnoreCameraPosition());
-        clone.setRotation(getRotation());
-        clone.setScaleX(getScaleX());
-        clone.setScaleY(getScaleY());
-        clone.setFontRef(getFontRef());
-        clone.setImageRef(getImageRef());
+        clone.setX(x());
+        clone.setY(y());
+        clone.setText(text());
+        clone.setIgnoreViewportScale(ignoreViewportScale());
+        clone.setIgnoreCameraPosition(ignoreCameraPosition());
+        clone.setRotation(rotation());
+        clone.setScaleX(scaleX());
+        clone.setScaleY(scaleY());
+        clone.setFontRef(fontRef());
+        clone.setImageRef(imageRef());
         clone.setCenterOffsetX(getCenterOffsetX());
         clone.setCenterOffsetY(getCenterOffsetY());
-        if (getColor() != null)
-            clone.setColor(getColor().clone());
-        clone.setStroke(getStroke());
-        clone.setRotateBeforeScale(isRotateBeforeScale());
-        getChildrenInstructions().forEach(di -> clone.getChildrenInstructions().add(di.clone()));
+        if (color() != null)
+            clone.setColor(color().clone());
+        clone.setStroke(stroke());
+        clone.setRotateBeforeScale(rotateBeforeScale());
+        childrenInstructions().forEach(di -> clone.childrenInstructions().add(di.clone()));
         return clone;
     }
 

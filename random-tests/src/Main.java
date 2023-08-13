@@ -22,7 +22,7 @@ public class Main extends Scene {
     @Override
     public void onUpdate() {
         a += getApplication().getAxis(HORIZONTAL) / 100.0;
-        e.getComponent(TextureRectangle.class).getColor().setRed(Global.clamp(a, 0, 1));
+        e.getComponent(TextureRectangle.class).color().setRed(Global.clamp(a, 0, 1));
         System.out.println(1 / getTime().getDeltaTime());
     }
 

@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="libs (9)" level="project" />
+    <orderEntry type="library" name="lwjgl-utils-libs" level="project" />
   </component>
 </module>

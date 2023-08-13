@@ -19,7 +19,9 @@ package com.xebisco.yield;
 import com.studiohartman.jamepad.ControllerManager;
 import com.studiohartman.jamepad.ControllerState;
 import com.studiohartman.jamepad.ControllerUnpluggedException;
+import com.xebisco.yield.shader.VertexShader;
 
+import java.awt.image.Kernel;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Function;
@@ -39,10 +41,7 @@ public class Application implements Behavior {
     private final RenderingThread renderingThread;
     private Texture controllerTexture;
     private Texture translucentControllerTexture;
-    private final Function<Throwable, Void> exceptionThrowFunction = throwable -> {
-        throwable.printStackTrace();
-        return null;
-    };
+    private final Map<String, VertexShader> vertexShaderMap = new HashMap<>();
     private ControllerManager controllerManager;
     private int frames;
     private Scene scene;
@@ -633,16 +632,6 @@ public class Application implements Behavior {
     }
 
     /**
-     * The function returns a Function object that takes a Throwable as input and returns Void.
-     *
-     * @return A `Function` object that takes a `Throwable` as input and returns `Void` as output. The
-     * `exceptionThrowFunction` variable is being returned.
-     */
-    public Function<Throwable, Void> getExceptionThrowFunction() {
-        return exceptionThrowFunction;
-    }
-
-    /**
      * This function returns an instance of the ApplicationManager class.
      *
      * @return The method is returning an object of type `ApplicationManager`.
@@ -770,5 +759,26 @@ public class Application implements Behavior {
 
     public void setTranslucentControllerTexture(Texture translucentControllerTexture) {
         this.translucentControllerTexture = translucentControllerTexture;
+    }
+
+    public Map<String, VertexShader> vertexShaderMap() {
+        return vertexShaderMap;
+    }
+
+    public List<DrawInstruction> toSendDrawInstructions() {
+        return toSendDrawInstructions;
+    }
+
+    public Runnable physicsProcess() {
+        return physicsProcess;
+    }
+
+    public Application setPhysicsProcess(Runnable physicsProcess) {
+        this.physicsProcess = physicsProcess;
+        return this;
+    }
+
+    public Context physicsContext() {
+        return physicsContext;
     }
 }

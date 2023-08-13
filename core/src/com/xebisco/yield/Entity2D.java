@@ -85,7 +85,7 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
             entityDrawInstruction.setScaleX(getTransform().getScale().getX());
             entityDrawInstruction.setScaleY(getTransform().getScale().getY());
             entityDrawInstruction.setRotation(getTransform().getzRotation());
-            entityDrawInstruction.getChildrenInstructions().clear();
+            entityDrawInstruction.childrenInstructions().clear();
             entityDrawInstruction.setCenterOffsetX(getTransform().getCenterOffset().getX());
             entityDrawInstruction.setCenterOffsetY(getTransform().getCenterOffset().getY());
         }
@@ -104,7 +104,7 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
                     if (visible) {
                         DrawInstruction di = component.render();
                         if (di != null)
-                            entityDrawInstruction.getChildrenInstructions().add(di);
+                            entityDrawInstruction.childrenInstructions().add(di);
                     }
                 }
             }
@@ -115,7 +115,7 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
             DrawInstruction di = child.process();
             child.updateEntityList();
             if (visible)
-                entityDrawInstruction.getChildrenInstructions().add(di);
+                entityDrawInstruction.childrenInstructions().add(di);
         }
         if (visible)
             return entityDrawInstruction;

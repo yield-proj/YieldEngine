@@ -39,15 +39,18 @@ public class Text extends AbstractRenderable {
     }
 
     @Override
-    public void setup(Vector2D[] vertices) {
-        getDrawInstruction().setText(contents);
-        getDrawInstruction().setFontRef(font.getFontRef());
+    public void setupX(float[] verticesX) {
+        drawInstruction().setText(contents);
+        drawInstruction().setFontRef(font.getFontRef());
+    }
+    @Override
+    public void setupY(float[] verticesY) {
     }
 
     @Override
     public DrawInstruction render() {
         DrawInstruction r = super.render();
-        getSize().set(getApplication().getApplicationPlatform().getFontManager().getStringWidth(contents, font.getFontRef()), getApplication().getApplicationPlatform().getFontManager().getStringHeight(contents, font.getFontRef()));
+        size().set(getApplication().getApplicationPlatform().getFontManager().getStringWidth(contents, font.getFontRef()), getApplication().getApplicationPlatform().getFontManager().getStringHeight(contents, font.getFontRef()));
         return r;
     }
 
