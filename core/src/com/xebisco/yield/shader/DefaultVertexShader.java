@@ -1,4 +1,4 @@
-package com.xebisco.yield.shaders;
+package com.xebisco.yield.shader;
 
 import com.xebisco.yield.shader.VertexShader;
 

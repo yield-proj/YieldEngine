@@ -20,12 +20,10 @@ import com.studiohartman.jamepad.ControllerManager;
 import com.studiohartman.jamepad.ControllerState;
 import com.studiohartman.jamepad.ControllerUnpluggedException;
 import com.xebisco.yield.shader.VertexShader;
-import com.xebisco.yield.shaders.DefaultVertexShader;
+import com.xebisco.yield.shader.DefaultVertexShader;
 
-import java.awt.image.Kernel;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * It's a class that implements the `Behavior` interface and is responsible for rendering the scene and updating the
