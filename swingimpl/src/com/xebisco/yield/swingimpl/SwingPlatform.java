@@ -692,7 +692,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         AffineTransform savedTransform = new AffineTransform(graphics.getTransform());
 
         graphics.translate(drawInstruction.x(), -drawInstruction.y());
-        graphics.translate(drawInstruction.getCenterOffsetX(), -drawInstruction.getCenterOffsetY());
+        graphics.translate(drawInstruction.centerOffsetX(), -drawInstruction.centerOffsetY());
 
         if (drawInstruction.rotateBeforeScale()) {
             graphics.rotate(Math.toRadians(-drawInstruction.rotation()), 0, 0);
@@ -701,7 +701,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
             graphics.scale(drawInstruction.scaleX(), drawInstruction.scaleY());
             graphics.rotate(Math.toRadians(-drawInstruction.rotation()), 0, 0);
         }
-        graphics.translate(-drawInstruction.getCenterOffsetX(), drawInstruction.getCenterOffsetY());
+        graphics.translate(-drawInstruction.centerOffsetX(), drawInstruction.centerOffsetY());
 
 
         if (drawInstruction.verticesX() == null && drawInstruction.verticesY() == null) {

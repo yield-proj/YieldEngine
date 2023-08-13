@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="openglimpl-libs">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/openglimpl/libs" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/openglimpl/libs" recursive="false" />
+  </library>
+</component>
