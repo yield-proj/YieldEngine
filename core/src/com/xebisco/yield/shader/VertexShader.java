@@ -4,7 +4,8 @@ import com.aparapi.Kernel;
 
 public abstract class VertexShader extends Kernel {
 
-    public float[] inXPos, inYPos, outXPos, outYPos;
+    public float[] inXPos, inYPos;
+    public int[] outXPos, outYPos;
 
     public VertexShader() {
         setExplicit(true);

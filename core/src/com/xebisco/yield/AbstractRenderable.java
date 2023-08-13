@@ -35,7 +35,7 @@ public abstract class AbstractRenderable extends ComponentBehavior {
 
     private final Range range = Range.create(verticesCount());
 
-    private final DrawInstruction drawInstruction = new DrawInstruction(new float[verticesCount()], new float[verticesCount()]);
+    private final DrawInstruction drawInstruction = new DrawInstruction(new int[verticesCount()], new int[verticesCount()]);
 
     @VisibleOnEditor
     private Size2D size = new Size2D(100, 100);

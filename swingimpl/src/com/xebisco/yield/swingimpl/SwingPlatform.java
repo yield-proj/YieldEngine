@@ -672,10 +672,10 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
             for (DrawInstruction drawInstruction : drawInstructions) {
                 AffineTransform savedTransform = new AffineTransform(graphics.getTransform());
 
-                if (!drawInstruction.isIgnoreViewportScale())
+                if (!drawInstruction.ignoreViewportScale())
                     graphics.scale(zoomScale.getX(), zoomScale.getY());
 
-                if (!drawInstruction.isIgnoreCameraPosition())
+                if (!drawInstruction.ignoreCameraPosition())
                     graphics.translate(-camera.getX(), camera.getY());
 
                 draw(drawInstruction);
@@ -691,22 +691,22 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     public void draw(DrawInstruction drawInstruction) {
         AffineTransform savedTransform = new AffineTransform(graphics.getTransform());
 
-        graphics.translate(drawInstruction.getX(), -drawInstruction.getY());
+        graphics.translate(drawInstruction.x(), -drawInstruction.y());
         graphics.translate(drawInstruction.getCenterOffsetX(), -drawInstruction.getCenterOffsetY());
 
-        if (drawInstruction.isRotateBeforeScale()) {
-            graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), 0, 0);
-            graphics.scale(drawInstruction.getScaleX(), drawInstruction.getScaleY());
+        if (drawInstruction.rotateBeforeScale()) {
+            graphics.rotate(Math.toRadians(-drawInstruction.rotation()), 0, 0);
+            graphics.scale(drawInstruction.scaleX(), drawInstruction.scaleY());
         } else {
-            graphics.scale(drawInstruction.getScaleX(), drawInstruction.getScaleY());
-            graphics.rotate(Math.toRadians(-drawInstruction.getRotation()), 0, 0);
+            graphics.scale(drawInstruction.scaleX(), drawInstruction.scaleY());
+            graphics.rotate(Math.toRadians(-drawInstruction.rotation()), 0, 0);
         }
         graphics.translate(-drawInstruction.getCenterOffsetX(), drawInstruction.getCenterOffsetY());
 
 
-        if (drawInstruction.getVerticesX() == null && drawInstruction.getVerticesY() == null) {
-            if (drawInstruction.getColor() != null) {
-                graphics.setColor(awtColor(drawInstruction.getColor()));
+        if (drawInstruction.verticesX() == null && drawInstruction.verticesY() == null) {
+            if (drawInstruction.color() != null) {
+                graphics.setColor(awtColor(drawInstruction.color()));
                 AffineTransform t = graphics.getTransform();
                 graphics.setTransform(new AffineTransform());
                 graphics.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -716,21 +716,21 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
             graphics.setClip(null);
             Composite savedComposite = graphics.getComposite();
-            graphics.setColor(awtColor(drawInstruction.getColor()));
+            graphics.setColor(awtColor(drawInstruction.color()));
             graphics.setFont(null);
 
-            if (drawInstruction.getText() != null && drawInstruction.getFontRef() != null) {
-                graphics.setFont((Font) drawInstruction.getFontRef());
-                graphics.drawString(drawInstruction.getText(), -graphics.getFontMetrics().stringWidth(drawInstruction.getText()) / 2, graphics.getFont().getSize() / 4);
-            } else if (drawInstruction.getImageRef() != null) {
-                SwingImage swingImage = (SwingImage) drawInstruction.getImageRef();
-                swingImage.updateImage(drawInstruction.getColor());
+            if (drawInstruction.text() != null && drawInstruction.fontRef() != null) {
+                graphics.setFont((Font) drawInstruction.fontRef());
+                graphics.drawString(drawInstruction.text(), -graphics.getFontMetrics().stringWidth(drawInstruction.text()) / 2, graphics.getFont().getSize() / 4);
+            } else if (drawInstruction.imageRef() != null) {
+                SwingImage swingImage = (SwingImage) drawInstruction.imageRef();
+                swingImage.updateImage(drawInstruction.color());
                 Image image = swingImage.filteredImage();
 
 
-                Polygon p = new Polygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
+                Polygon p = new Polygon(drawInstruction.verticesX(), negateIntArray(drawInstruction.verticesY()), drawInstruction.verticesX().length);
                 graphics.setClip(p);
-                int[] vx = drawInstruction.getVerticesX(), vy = negateIntArray(drawInstruction.getVerticesY());
+                int[] vx = drawInstruction.verticesX(), vy = negateIntArray(drawInstruction.verticesY());
                 int lx = vx[0], ly = vy[0], hx = lx, hy = ly;
 
                 for (int i = 0; i < vx.length; i++) {
@@ -747,11 +747,11 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
                 graphics.drawImage(image, lx, ly, hx - lx, hy - ly, canvas);
             } else {
-                if (drawInstruction.getStroke() == 0)
-                    graphics.fillPolygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
+                if (drawInstruction.stroke() == 0)
+                    graphics.fillPolygon(drawInstruction.verticesX(), negateIntArray(drawInstruction.verticesY()), drawInstruction.verticesX().length);
                 else {
-                    graphics.setStroke(new BasicStroke((float) drawInstruction.getStroke()));
-                    graphics.drawPolygon(drawInstruction.getVerticesX(), negateIntArray(drawInstruction.getVerticesY()), drawInstruction.getVerticesX().length);
+                    graphics.setStroke(new BasicStroke((float) drawInstruction.stroke()));
+                    graphics.drawPolygon(drawInstruction.verticesX(), negateIntArray(drawInstruction.verticesY()), drawInstruction.verticesX().length);
                 }
             }
 
@@ -759,7 +759,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
             graphics.setComposite(savedComposite);
         }
 
-        for (DrawInstruction di : drawInstruction.getChildrenInstructions()) {
+        for (DrawInstruction di : drawInstruction.childrenInstructions()) {
             draw(di);
         }
 

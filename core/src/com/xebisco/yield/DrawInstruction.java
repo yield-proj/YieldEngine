@@ -23,44 +23,39 @@ import java.util.List;
  * It's a data structure that holds all the information needed to draw a rectangle, oval, text, line, or image
  */
 public class DrawInstruction implements Cloneable {
-    private float[] verticesX;
-    private float[] verticesY;
+    private int[] verticesX, verticesY;
     private Object imageRef, fontRef;
     private String text;
-    private double stroke;
     private Color color;
     //Only work on top-level entities
-    private boolean ignoreCameraPosition, ignoreViewportScale;
-    private double rotation;
+    private boolean ignoreCameraPosition, ignoreViewportScale, rotateBeforeScale = true;
 
-    private boolean rotateBeforeScale = true;
-
-    private double x, y, scaleX = 1, scaleY = 1, centerOffsetX, centerOffsetY;
+    private double x, y, scaleX = 1, scaleY = 1, centerOffsetX, centerOffsetY, stroke, rotation;
 
     private List<DrawInstruction> childrenInstructions = new ArrayList<>();
 
     public DrawInstruction() {
     }
 
-    public DrawInstruction(float[] verticesX, float[] verticesY) {
+    public DrawInstruction(int[] verticesX, int[] verticesY) {
         this.verticesX = verticesX;
         this.verticesY = verticesY;
     }
 
-    public float[] verticesX() {
+    public int[] verticesX() {
         return verticesX;
     }
 
-    public DrawInstruction setVerticesX(float[] verticesX) {
+    public DrawInstruction setVerticesX(int[] verticesX) {
         this.verticesX = verticesX;
         return this;
     }
 
-    public float[] verticesY() {
+    public int[] verticesY() {
         return verticesY;
     }
 
-    public DrawInstruction setVerticesY(float[] verticesY) {
+    public DrawInstruction setVerticesY(int[] verticesY) {
         this.verticesY = verticesY;
         return this;
     }
@@ -204,11 +199,11 @@ public class DrawInstruction implements Cloneable {
     public DrawInstruction clone() {
         DrawInstruction clone = new DrawInstruction();
         if (verticesX() != null) {
-            clone.setVerticesX(new float[verticesX().length]);
+            clone.setVerticesX(new int[verticesX().length]);
             System.arraycopy(verticesX(), 0, clone.verticesX(), 0, verticesX().length);
         }
         if (verticesY() != null) {
-            clone.setVerticesY(new float[verticesY().length]);
+            clone.setVerticesY(new int[verticesY().length]);
             System.arraycopy(verticesY(), 0, clone.verticesY(), 0, verticesY().length);
         }
         clone.setX(x());
