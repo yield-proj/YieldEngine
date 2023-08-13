@@ -117,6 +117,7 @@ public class Entry {
         loadImage("animationIcon.png");
         loadImage("graphicalIcon.png");
         loadImage("audioIcon.png");
+        loadImage("toolbarBkg.png");
     }
 
     private static void loadImage(String n) {

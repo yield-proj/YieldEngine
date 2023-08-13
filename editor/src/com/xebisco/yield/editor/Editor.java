@@ -25,12 +25,15 @@ import com.xebisco.yield.editor.scene.EditorScene;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.tools.ToolProvider;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
+import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.RGBImageFilter;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -53,10 +56,10 @@ public class Editor extends JFrame implements IRecompile {
         List<File> out = new ArrayList<>();
         File[] files = dir.listFiles();
         assert files != null;
-        for(File f : files) {
-            if(f.isDirectory())
+        for (File f : files) {
+            if (f.isDirectory())
                 out.addAll(getFilesByExtension(f, extension));
-            else if(f.getName().endsWith("." + extension)) out.add(f);
+            else if (f.getName().endsWith("." + extension)) out.add(f);
         }
         return out;
     }
@@ -74,7 +77,7 @@ public class Editor extends JFrame implements IRecompile {
             Entry.splashDialog.dispose();
         });
 
-        if(Assets.projects != null && Assets.projects.contains(project)) {
+        if (Assets.projects != null && Assets.projects.contains(project)) {
             Assets.projects.remove(project);
             Assets.projects.add(0, project);
         }
@@ -107,78 +110,45 @@ public class Editor extends JFrame implements IRecompile {
 
         left.add(left1SplitPane);
 
-        JToolBar toolBar = new JToolBar();
+        Image tbi = Assets.images.get("toolbarBkg.png").getImage();
+
+        ProjectPanel projectPanel = getProjectPanel();
+
+        Color color = projectPanel.invbg;
+
+        tbi = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(tbi.getSource(), new RGBImageFilter() {
+            @Override
+            public int filterRGB(int x, int y, int rgb) {
+                Color img = new Color(rgb, true);
+                return new Color((img.getRed() / 255f) * (color.getRed() / 255f), (img.getGreen() / 255f) * (color.getGreen() / 255f), (img.getBlue() / 255f) * (color.getBlue() / 255f)).getRGB();
+            }
+        }));
+
+        Image finalImage = tbi;
+        JToolBar toolBar = new JToolBar() {
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                int w = finalImage.getWidth(null), h = finalImage.getHeight(null);
+                if (w < getWidth())
+                    w = getWidth();
+                if (h < getHeight())
+                    h = getHeight();
+                g.drawImage(finalImage, 0, 0, w, h, this);
+            }
+        };
         toolBar.setBorderPainted(false);
         toolBar.setFloatable(true);
         toolBar.setRollover(true);
-        JMenuBar menuBarTb = new JMenuBar();
-        menuBarTb.setBorderPainted(false);
 
-        JMenu menu = new JMenu(project.getName());
-        menu.setIcon(UIManager.getIcon("Tree.expandedIcon"));
+        JPanel panel = new JPanel();
+        panel.setOpaque(false);
+        panel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        menu.add(new AbstractAction("New project", Assets.images.get("addIcon.png")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Projects.newProjectFrame(Editor.this);
-            }
-        });
+        panel.add(projectPanel);
 
-        menu.add(new AbstractAction("Back to projects window", Assets.images.get("backIcon.png")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispatchEvent(new WindowEvent(Editor.this, WindowEvent.WINDOW_CLOSING));
-                if (!isVisible()) Entry.openProjects();
-            }
-        });
-
-        menu.addSeparator();
-
-        JLabel label = new JLabel("  Open editors");
-        label.setForeground(new Color(108, 101, 119));
-
-        menu.add(label);
-
-        for(Editor editor : Assets.openedEditors) {
-
-            try {
-                menu.add(new AbstractAction(editor.project.getName() + " (" + editor.project.getProjectLocation().getPath() + ')', new ImageIcon(ImageIO.read(new File(editor.project.getProjectLocation(), "icon.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH))) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        editor.requestFocus();
-                    }
-                });
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-
-        menu.addSeparator();
-
-        label = new JLabel("  All projects");
-        label.setForeground(new Color(108, 101, 119));
-
-        menu.add(label);
-
-        for (Project p : Assets.projects) {
-            try {
-                menu.add(new AbstractAction(p.getProjectLocation().getPath(), new ImageIcon(ImageIO.read(new File(p.getProjectLocation(), "icon.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH))) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (JOptionPane.showConfirmDialog(null, "Open in new Editor?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
-                            dispatchEvent(new WindowEvent(Editor.this, WindowEvent.WINDOW_CLOSING));
-                        }
-                        new Editor(p);
-                    }
-                });
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        menuBarTb.add(menu);
-
-        toolBar.add(menuBarTb);
+        toolBar.add(panel);
 
         left.add(toolBar, BorderLayout.NORTH);
 
@@ -197,6 +167,156 @@ public class Editor extends JFrame implements IRecompile {
         left0SplitPane.setDividerLocation(.6);
     }
 
+    private static class ProjectPanel extends JPanel {
+        boolean selected;
+
+        private final BufferedImage icon;
+        final Color bg;
+        final Color invbg;
+        private final String text;
+
+        public ProjectPanel(BufferedImage icon, String text) {
+            this.text = text;
+            this.icon = new BufferedImage(20, 20, BufferedImage.TYPE_INT_ARGB);
+            Graphics gc = this.icon.getGraphics();
+            gc.drawImage(icon.getScaledInstance(20, 20, Image.SCALE_SMOOTH), 0, 0, null);
+            gc.dispose();
+            int r = 0, g = 0, b = 0, s = 0;
+            for (int x = 0; x < this.icon.getWidth(); x++)
+                for (int y = 0; y < this.icon.getHeight(); y++) {
+                    Color c = new Color(this.icon.getRGB(x, y), true);
+                    if (c.getAlpha() > 0) {
+                        r += c.getRed();
+                        g += c.getGreen();
+                        b += c.getBlue();
+                        s++;
+                    }
+                }
+            r /= s;
+            g /= s;
+            b /= s;
+            invbg = new Color(r, g, b);
+            bg = new Color(255 - r, 255 - g, 255 - b);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            g.setFont(UIManager.getFont("Label.font"));
+            setSize(new Dimension(50 + g.getFontMetrics().stringWidth(text) + 22, 40));
+            validate();
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            if (selected) {
+                g.setColor(getBackground().brighter());
+            } else {
+                g.setColor(getBackground());
+            }
+            g.fillRoundRect(5, 4, getWidth() - 10, getHeight() - 8, 10, 10);
+            g.setColor(new Color(0x4D5056));
+            ((Graphics2D) g).setStroke(new BasicStroke(1));
+            g.drawRoundRect(5, 4, getWidth() - 10, getHeight() - 8, 10, 10);
+            g.setColor(bg);
+            g.fillRoundRect(14, getHeight() / 2 - icon.getHeight() / 2 - 2, icon.getWidth() + 4, icon.getHeight() + 4, 10, 10);
+            g.drawImage(icon, 16, getHeight() / 2 - icon.getHeight() / 2, this);
+            g.setColor(getForeground());
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g.drawString(text, 20 + icon.getWidth() + 5, 6 + icon.getHeight());
+            g.setColor(new Color(0x4D5056));
+            g.drawLine(getWidth() - 12, getHeight() / 2 - 2, getWidth() - 12 - 4, getHeight() / 2 + 4 - 2);
+            g.drawLine(getWidth() - 12 - 4, getHeight() / 2 + 4 - 2, getWidth() - 12 - 4 - 4, getHeight() / 2 - 2);
+        }
+    }
+
+    private ProjectPanel getProjectPanel() {
+        ProjectPanel projectPanel;
+        try {
+            projectPanel = new ProjectPanel(ImageIO.read(new File(project.getProjectLocation(), "icon.png")), project.getName());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        projectPanel.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                projectPanel.selected = true;
+                repaint();
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                projectPanel.selected = false;
+                repaint();
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JPopupMenu menu = new JPopupMenu();
+
+                menu.add(new AbstractAction("New project", Assets.images.get("addIcon.png")) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Projects.newProjectFrame(Editor.this);
+                    }
+                });
+
+                menu.add(new AbstractAction("Back to projects window", Assets.images.get("backIcon.png")) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        dispatchEvent(new WindowEvent(Editor.this, WindowEvent.WINDOW_CLOSING));
+                        if (!isVisible()) Entry.openProjects();
+                    }
+                });
+
+                menu.addSeparator();
+
+                JLabel label = new JLabel("  Open editors");
+                label.setForeground(new Color(108, 101, 119));
+
+                menu.add(label);
+
+                for (Editor editor : Assets.openedEditors) {
+
+                    try {
+                        menu.add(new AbstractAction(editor.project.getName() + " (" + editor.project.getProjectLocation().getPath() + ')', new ImageIcon(ImageIO.read(new File(editor.project.getProjectLocation(), "icon.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH))) {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                editor.requestFocus();
+                            }
+                        });
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+                menu.addSeparator();
+
+                label = new JLabel("  All projects");
+                label.setForeground(new Color(108, 101, 119));
+
+                menu.add(label);
+
+                for (Project p : Assets.projects) {
+                    try {
+                        menu.add(new AbstractAction(p.getProjectLocation().getPath(), new ImageIcon(ImageIO.read(new File(p.getProjectLocation(), "icon.png")).getScaledInstance(16, 16, Image.SCALE_SMOOTH))) {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                if (JOptionPane.showConfirmDialog(null, "Open in new Editor?", "", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+                                    dispatchEvent(new WindowEvent(Editor.this, WindowEvent.WINDOW_CLOSING));
+                                }
+                                new Editor(p);
+                            }
+                        });
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+                menu.show(projectPanel, projectPanel.getLocation().x, projectPanel.getLocation().y + projectPanel.getHeight() - 10);
+            }
+        });
+        projectPanel.setPreferredSize(new Dimension(150, 40));
+        return projectPanel;
+    }
+
     @Override
     public void recompileProject() {
         AtomicReference<StringBuilder> builder = new AtomicReference<>();
@@ -209,10 +329,10 @@ public class Editor extends JFrame implements IRecompile {
         File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + project.preferredInstall().install() + "/yield-core.jar");
         List<File> scripts = getFilesByExtension(new File(project.getProjectLocation(), "Scripts"), "java");
 
-        for(File file : scripts) {
+        for (File file : scripts) {
             builder.set(new StringBuilder());
-            ToolProvider.getSystemJavaCompiler().run(null, null, error, "-cp", core.getPath(),  "-d", ComponentProp.DEST.getPath(), file.getPath());
-            if(!builder.get().isEmpty())
+            ToolProvider.getSystemJavaCompiler().run(null, null, error, "-cp", core.getPath(), "-d", ComponentProp.DEST.getPath(), file.getPath());
+            if (!builder.get().isEmpty())
                 Utils.errorNoStackTrace(Entry.splashDialog, new CompilationException(builder.toString()));
         }
         try {
