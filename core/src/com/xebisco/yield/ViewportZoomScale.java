@@ -17,5 +17,5 @@
 package com.xebisco.yield;
 
 public interface ViewportZoomScale {
-    void setZoomScale(TwoAnchorRepresentation zoomScale);
+    void setZoomScale(Vector2D zoomScale);
 }

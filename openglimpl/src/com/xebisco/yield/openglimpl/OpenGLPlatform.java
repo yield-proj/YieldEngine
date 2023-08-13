@@ -105,7 +105,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
         void call(Input.Key key);
     }
 
-    private TwoAnchorRepresentation scale = new TwoAnchorRepresentation(1, 1);
+    private Vector2D scale = new Vector2D(1, 1);
 
 
     @Override
@@ -115,7 +115,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
         System.setProperty("newt.window.icons", platformInit.getWindowIconPath() + " " + platformInit.getWindowIconPath());
 
         window = GLWindow.create(new GLCapabilities(profile = GLProfile.get(GLProfile.GL2)));
-        window.setSize((int) platformInit.getWindowSize().getWidth(), (int) platformInit.getWindowSize().getHeight());
+        window.setSize((int) platformInit.getWindowSize().width(), (int) platformInit.getWindowSize().height());
         window.setUndecorated(platformInit.isUndecorated());
         window.setTitle(platformInit.getTitle());
 
@@ -169,9 +169,9 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
                     gl.glLoadIdentity();
 
                     if (!di.ignoreViewportScale())
-                        gl.glScaled(scale.getX(), scale.getY(), 1);
+                        gl.glScaled(scale.x(), scale.y(), 1);
                     if (!di.ignoreCameraPosition())
-                        gl.glTranslated(-camera.getX(), -camera.getY(), 0);
+                        gl.glTranslated(-camera.x(), -camera.y(), 0);
 
                     draw(di, gl);
                 }
@@ -189,10 +189,10 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
         gl.glLoadIdentity();
 
         gl.glOrtho(
-                -platformInit.getViewportSize().getWidth() / 2.,
-                platformInit.getViewportSize().getWidth() / 2.,
-                -platformInit.getViewportSize().getHeight() / 2.,
-                platformInit.getViewportSize().getHeight() / 2.,
+                -platformInit.getViewportSize().width() / 2.,
+                platformInit.getViewportSize().width() / 2.,
+                -platformInit.getViewportSize().height() / 2.,
+                platformInit.getViewportSize().height() / 2.,
                 -1,
                 1
         );
@@ -201,9 +201,9 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
         if (platformInit.isStretchViewport()) {
             gl.glViewport(0, 0, window.getWidth(), window.getHeight());
         } else {
-            Size2D viewport = Global.onSizeBoundary(platformInit.getViewportSize(), new Size2D(window.getWidth(), window.getHeight()));
+            Vector2D viewport = Global.onSizeBoundary(platformInit.getViewportSize(), new Vector2D(window.getWidth(), window.getHeight()));
 
-            gl.glViewport((int) (window.getWidth() / 2 - viewport.getWidth() / 2), (int) (window.getHeight() / 2 - viewport.getHeight() / 2), (int) viewport.getWidth(), (int) viewport.getHeight());
+            gl.glViewport((int) (window.getWidth() / 2 - viewport.width() / 2), (int) (window.getHeight() / 2 - viewport.height() / 2), (int) viewport.width(), (int) viewport.height());
         }
     }
 
@@ -320,12 +320,12 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     @Override
     public double getMouseX() {
-        return mousePosition.getX();
+        return mousePosition.x();
     }
 
     @Override
     public double getMouseY() {
-        return mousePosition.getY();
+        return mousePosition.y();
     }
 
     @Override
@@ -382,7 +382,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     }
 
     @Override
-    public void setZoomScale(TwoAnchorRepresentation scale) {
+    public void setZoomScale(Vector2D scale) {
         this.scale = scale;
     }
 
@@ -820,8 +820,8 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     @Override
     public void mouseMoved(MouseEvent e) {
         mousePosition.set(
-                (double) e.getX() / window.getWidth() * platformInit.getViewportSize().getWidth() - platformInit.getViewportSize().getWidth() / 2.,
-                (double) e.getY() / window.getHeight() * platformInit.getViewportSize().getHeight() - platformInit.getViewportSize().getHeight() / 2.
+                (double) e.getX() / window.getWidth() * platformInit.getViewportSize().width() - platformInit.getViewportSize().width() / 2.,
+                (double) e.getY() / window.getHeight() * platformInit.getViewportSize().height() - platformInit.getViewportSize().height() / 2.
         );
     }
 

@@ -32,7 +32,7 @@ public class TextureRectangle extends Rectangle {
     private boolean disposeTexture;
 
     @VisibleOnEditor
-    private TwoAnchorRepresentation textureScale = null;
+    private Vector2D textureScale = null;
 
     @Override
     public void onStart() {
@@ -104,7 +104,7 @@ public class TextureRectangle extends Rectangle {
      *
      * @return A variable of type `TwoAnchorRepresentation` named `textureScale` is being returned.
      */
-    public TwoAnchorRepresentation getTextureScale() {
+    public Vector2D getTextureScale() {
         return textureScale;
     }
 
@@ -113,7 +113,7 @@ public class TextureRectangle extends Rectangle {
      *
      * @param textureScale The parameter texture scale of a TwoAnchorRepresentation object to set.
      */
-    public void setTextureScale(TwoAnchorRepresentation textureScale) {
+    public void setTextureScale(Vector2D textureScale) {
         this.textureScale = textureScale;
     }
 

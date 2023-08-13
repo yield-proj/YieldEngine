@@ -26,8 +26,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.RGBImageFilter;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.Collection;
@@ -56,7 +54,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     private Vector2D camera;
     private SwingCanvas canvas;
 
-    private TwoAnchorRepresentation zoomScale;
+    private Vector2D zoomScale;
 
     public static Color awtColor(com.xebisco.yield.Color yieldColor) {
         return new Color(yieldColor.getARGB(), true);
@@ -161,12 +159,12 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public double getMouseX() {
-        return mousePosition.getX();
+        return mousePosition.x();
     }
 
     @Override
     public double getMouseY() {
-        return mousePosition.getY();
+        return mousePosition.y();
     }
 
     @Override
@@ -362,11 +360,11 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         if (fullscreen) {
             frame.setUndecorated(true);
             if (device.isDisplayChangeSupported())
-                device.setDisplayMode(new DisplayMode((int) platformInit.getViewportSize().getWidth(), (int) platformInit.getViewportSize().getHeight(), device.getDisplayMode().getBitDepth(), device.getDisplayMode().getRefreshRate()));
+                device.setDisplayMode(new DisplayMode((int) platformInit.getViewportSize().width(), (int) platformInit.getViewportSize().height(), device.getDisplayMode().getBitDepth(), device.getDisplayMode().getRefreshRate()));
             device.setFullScreenWindow(frame);
         } else {
             frame.setUndecorated(undecorated);
-            frame.setSize((int) platformInit.getWindowSize().getWidth(), (int) platformInit.getWindowSize().getHeight());
+            frame.setSize((int) platformInit.getWindowSize().width(), (int) platformInit.getWindowSize().height());
             if (device.isDisplayChangeSupported())
                 device.setDisplayMode(defaultDisplayMode);
         }
@@ -380,18 +378,18 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     public void frame() {
         graphics = canvas.prepareRender();
         if (stretch)
-            graphics.scale(canvas.getWidth() / platformInit.getViewportSize().getWidth(), canvas.getHeight() / platformInit.getViewportSize().getHeight());
+            graphics.scale(canvas.getWidth() / platformInit.getViewportSize().width(), canvas.getHeight() / platformInit.getViewportSize().height());
         else {
-            Size2D viewport = Global.onSizeBoundary(platformInit.getViewportSize(), new Size2D(canvas.getWidth(), canvas.getHeight()));
-            graphics.translate((int) (canvas.getWidth() / 2 - viewport.getWidth() / 2), (int) (canvas.getHeight() / 2 - viewport.getHeight() / 2));
-            graphics.scale(viewport.getWidth() / platformInit.getViewportSize().getWidth(), viewport.getHeight() / platformInit.getViewportSize().getHeight());
+            Vector2D viewport = Global.onSizeBoundary(platformInit.getViewportSize(), new Vector2D(canvas.getWidth(), canvas.getHeight()));
+            graphics.translate((int) (canvas.getWidth() / 2 - viewport.width() / 2), (int) (canvas.getHeight() / 2 - viewport.height() / 2));
+            graphics.scale(viewport.width() / platformInit.getViewportSize().width(), viewport.height() / platformInit.getViewportSize().height());
         }
 
-        graphics.translate(platformInit.getViewportSize().getWidth() / 2, platformInit.getViewportSize().getHeight() / 2);
+        graphics.translate(platformInit.getViewportSize().width() / 2, platformInit.getViewportSize().height() / 2);
 
         Point mouse = canvas.getMousePosition();
         if (mouse != null)
-            mousePosition.set(mouse.getX() / canvas.getWidth() * platformInit.getViewportSize().getWidth() - platformInit.getViewportSize().getWidth() / 2., -mouse.getY() / canvas.getHeight() * platformInit.getViewportSize().getHeight() + platformInit.getViewportSize().getHeight() / 2.);
+            mousePosition.set(mouse.getX() / canvas.getWidth() * platformInit.getViewportSize().width() - platformInit.getViewportSize().width() / 2., -mouse.getY() / canvas.getHeight() * platformInit.getViewportSize().height() + platformInit.getViewportSize().height() / 2.);
     }
 
     @Override
@@ -406,10 +404,10 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
                 AffineTransform savedTransform = new AffineTransform(graphics.getTransform());
 
                 if (!drawInstruction.ignoreViewportScale())
-                    graphics.scale(zoomScale.getX(), zoomScale.getY());
+                    graphics.scale(zoomScale.x(), zoomScale.y());
 
                 if (!drawInstruction.ignoreCameraPosition())
-                    graphics.translate(-camera.getX(), camera.getY());
+                    graphics.translate(-camera.x(), camera.y());
 
                 draw(drawInstruction);
                 graphics.setTransform(savedTransform);
@@ -610,7 +608,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     }
 
     @Override
-    public void setZoomScale(TwoAnchorRepresentation zoomScale) {
+    public void setZoomScale(Vector2D zoomScale) {
         this.zoomScale = zoomScale;
     }
 

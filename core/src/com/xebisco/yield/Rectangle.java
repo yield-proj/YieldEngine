@@ -28,17 +28,17 @@ public class Rectangle extends AbstractRenderable {
 
     @Override
     public void setupX(float[] verticesX) {
-        verticesX[0] = (float) (-size().getWidth() / 2);
-        verticesX[1] = (float) (size().getWidth() / 2.);
-        verticesX[2] = (float) (size().getWidth() / 2.);
-        verticesX[3] = (float) (-size().getWidth() / 2.);
+        verticesX[0] = (float) (-size().width() / 2);
+        verticesX[1] = (float) (size().width() / 2.);
+        verticesX[2] = (float) (size().width() / 2.);
+        verticesX[3] = (float) (-size().width() / 2.);
     }
 
     @Override
     public void setupY(float[] verticesY) {
-        verticesY[0] = (float) (-size().getHeight() / 2.);
-        verticesY[1] = (float) (-size().getHeight() / 2.);
-        verticesY[2] = (float) (size().getHeight() / 2.);
-        verticesY[3] = (float) (size().getHeight() / 2.);
+        verticesY[0] = (float) (-size().height() / 2.);
+        verticesY[1] = (float) (-size().height() / 2.);
+        verticesY[2] = (float) (size().height() / 2.);
+        verticesY[3] = (float) (size().height() / 2.);
     }
 }

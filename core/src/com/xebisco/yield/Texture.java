@@ -17,15 +17,13 @@
 package com.xebisco.yield;
 
 import java.io.InputStream;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.IntStream;
 
 /**
  * The Texture class represents an image texture and provides methods for processing and manipulating it.
  */
 public class Texture extends FileInput implements Disposable {
 
-    private final ImmutableSize2D size;
+    private final ImmutableVector2D size;
     private final TextureManager textureManager;
     private Object imageRef;
 
@@ -33,21 +31,21 @@ public class Texture extends FileInput implements Disposable {
         super(relativePath);
         this.textureManager = textureManager;
         imageRef = textureManager.loadTexture(this);
-        size = new ImmutableSize2D(textureManager.getImageWidth(imageRef), textureManager.getImageHeight(imageRef));
+        size = new ImmutableVector2D(textureManager.getImageWidth(imageRef), textureManager.getImageHeight(imageRef));
     }
 
     public Texture(InputStream inputStream, TextureManager textureManager) {
         super(inputStream);
         this.textureManager = textureManager;
         imageRef = textureManager.loadTexture(this);
-        size = new ImmutableSize2D(textureManager.getImageWidth(imageRef), textureManager.getImageHeight(imageRef));
+        size = new ImmutableVector2D(textureManager.getImageWidth(imageRef), textureManager.getImageHeight(imageRef));
     }
 
     public Texture(Object imageRef, InputStream inputStream, TextureManager textureManager) {
         super(inputStream);
         this.textureManager = textureManager;
         this.imageRef = imageRef;
-        size = new ImmutableSize2D(textureManager.getImageWidth(imageRef), textureManager.getImageHeight(imageRef));
+        size = new ImmutableVector2D(textureManager.getImageWidth(imageRef), textureManager.getImageHeight(imageRef));
     }
 
     /**
@@ -81,7 +79,7 @@ public class Texture extends FileInput implements Disposable {
      *
      * @return The method is returning an object of type `ImmutableSize2D`.
      */
-    public ImmutableSize2D getSize() {
+    public ImmutableVector2D getSize() {
         return size;
     }
 

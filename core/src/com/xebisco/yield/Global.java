@@ -135,10 +135,10 @@ public final class Global {
     /**
      * The function converts a TwoAnchorRepresentation object to a Vec2 object with the same x and y values.
      *
-     * @param twoAnchorRepresentation The generated TwoAnchorRepresentation.
+     * @param vector2D The generated TwoAnchorRepresentation.
      */
-    public static Vec2 toVec2(TwoAnchorRepresentation twoAnchorRepresentation) {
-        return new Vec2((float) twoAnchorRepresentation.getX(), (float) twoAnchorRepresentation.getY());
+    public static Vec2 toVec2(Vector2D vector2D) {
+        return new Vec2((float) vector2D.x(), (float) vector2D.y());
     }
 
     /**
@@ -210,18 +210,18 @@ public final class Global {
      *                 be scaled to while maintaining its aspect ratio.
      * @return A new Size2D object with the adjusted width and height values based on the given size and boundary.
      */
-    public static Size2D onSizeBoundary(Size2D size, Size2D boundary) {
+    public static Vector2D onSizeBoundary(Vector2D size, Vector2D boundary) {
         double new_width;
         double new_height;
 
-        new_height = boundary.getHeight();
-        new_width = (new_height * size.getWidth()) / size.getHeight();
-        if (new_width > boundary.getWidth()) {
-            new_width = boundary.getWidth();
-            new_height = (new_width * size.getHeight()) / size.getWidth();
+        new_height = boundary.height();
+        new_width = (new_height * size.width()) / size.height();
+        if (new_width > boundary.width()) {
+            new_width = boundary.width();
+            new_height = (new_width * size.height()) / size.width();
         }
 
-        return new Size2D(new_width, new_height);
+        return new Vector2D(new_width, new_height);
     }
 
     /**

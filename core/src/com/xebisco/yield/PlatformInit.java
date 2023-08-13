@@ -20,7 +20,7 @@ package com.xebisco.yield;
  * It's a class that holds the initial configuration of the specific platform.
  */
 public class PlatformInit {
-    private Size2D viewportSize = new Size2D(1280, 720), windowSize = new Size2D(1280, 720);
+    private Vector2D viewportSize = new Vector2D(1280, 720), windowSize = new Vector2D(1280, 720);
     private String title = "Yield Window";
     private int startPhysicsPpm = 16;
     private boolean fullscreen, undecorated, stretchViewport, invertZIndex, verticalSync, physicsOnMainContext;
@@ -59,7 +59,7 @@ public class PlatformInit {
      *
      * @return The windowSize variable is being returned.
      */
-    public Size2D getWindowSize() {
+    public Vector2D getWindowSize() {
         return windowSize;
     }
 
@@ -68,7 +68,7 @@ public class PlatformInit {
      *
      * @param windowSize The size of the window in pixels.
      */
-    public void setWindowSize(Size2D windowSize) {
+    public void setWindowSize(Vector2D windowSize) {
         this.windowSize = windowSize;
     }
 
@@ -169,7 +169,7 @@ public class PlatformInit {
      *
      * @return The method is returning an object of type `Size2D`.
      */
-    public Size2D getViewportSize() {
+    public Vector2D getViewportSize() {
         return viewportSize;
     }
 
@@ -179,7 +179,7 @@ public class PlatformInit {
      * @param viewportSize The parameter `viewportSize` is of type `Size2D`, which represents the size of a two-dimensional
      *                     area. It is being used to set the size of a viewport, which is a visible area on a screen/window.
      */
-    public void setViewportSize(Size2D viewportSize) {
+    public void setViewportSize(Vector2D viewportSize) {
         this.viewportSize = viewportSize;
     }
 

@@ -20,7 +20,7 @@ import java.io.InputStream;
 
 public class SpritesheetTexture extends FileInput implements Disposable {
 
-    private final ImmutableSize2D size;
+    private final ImmutableVector2D size;
     private final SpritesheetTextureManager spritesheetTextureManager;
     private Object spritesheetImageRef;
 
@@ -28,21 +28,21 @@ public class SpritesheetTexture extends FileInput implements Disposable {
         super(relativePath);
         this.spritesheetTextureManager = spritesheetTextureManager;
         spritesheetImageRef = spritesheetTextureManager.loadSpritesheetTexture(this);
-        size = new ImmutableSize2D(spritesheetTextureManager.getSpritesheetImageWidth(spritesheetImageRef), spritesheetTextureManager.getSpritesheetImageHeight(spritesheetImageRef));
+        size = new ImmutableVector2D(spritesheetTextureManager.getSpritesheetImageWidth(spritesheetImageRef), spritesheetTextureManager.getSpritesheetImageHeight(spritesheetImageRef));
     }
 
     public SpritesheetTexture(InputStream inputStream, SpritesheetTextureManager spritesheetTextureManager) {
         super(inputStream);
         this.spritesheetTextureManager = spritesheetTextureManager;
         spritesheetImageRef = spritesheetTextureManager.loadSpritesheetTexture(this);
-        size = new ImmutableSize2D(spritesheetTextureManager.getSpritesheetImageWidth(spritesheetImageRef), spritesheetTextureManager.getSpritesheetImageHeight(spritesheetImageRef));
+        size = new ImmutableVector2D(spritesheetTextureManager.getSpritesheetImageWidth(spritesheetImageRef), spritesheetTextureManager.getSpritesheetImageHeight(spritesheetImageRef));
     }
 
     public SpritesheetTexture(Object spritesheetImageRef, InputStream inputStream, SpritesheetTextureManager spritesheetTextureManager) {
         super(inputStream);
         this.spritesheetTextureManager = spritesheetTextureManager;
         this.spritesheetImageRef = spritesheetImageRef;
-        size = new ImmutableSize2D(spritesheetTextureManager.getSpritesheetImageWidth(spritesheetImageRef), spritesheetTextureManager.getSpritesheetImageHeight(spritesheetImageRef));
+        size = new ImmutableVector2D(spritesheetTextureManager.getSpritesheetImageWidth(spritesheetImageRef), spritesheetTextureManager.getSpritesheetImageHeight(spritesheetImageRef));
     }
 
     /**
@@ -52,8 +52,8 @@ public class SpritesheetTexture extends FileInput implements Disposable {
      * the texture is to be retrieved. From the top-left point of the image.
      * @param size The size of the region from which to get the texture.
      */
-    public Texture getTextureFromRegion(Vector2D position, Size2D size) {
-        return spritesheetTextureManager.getTextureFromRegion((int) position.getX(), (int) position.getY(), (int) size.getWidth(), (int) size.getHeight(), this);
+    public Texture getTextureFromRegion(Vector2D position, Vector2D size) {
+        return spritesheetTextureManager.getTextureFromRegion((int) position.x(), (int) position.y(), (int) size.width(), (int) size.height(), this);
     }
 
     /**
@@ -87,7 +87,7 @@ public class SpritesheetTexture extends FileInput implements Disposable {
      *
      * @return The method is returning an object of type `ImmutableSize2D`.
      */
-    public ImmutableSize2D getSize() {
+    public ImmutableVector2D getSize() {
         return size;
     }
 

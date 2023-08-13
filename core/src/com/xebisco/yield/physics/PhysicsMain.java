@@ -81,7 +81,7 @@ public class PhysicsMain {
     }
 
     public void process(float dt) {
-        if (b2World.getGravity().x != gravity.getX() || b2World.getGravity().y != gravity.getY())
+        if (b2World.getGravity().x != gravity.x() || b2World.getGravity().y != gravity.y())
             b2World.setGravity(Global.toVec2(gravity));
         b2World.step(dt, velocityIterations, positionIterations);
     }

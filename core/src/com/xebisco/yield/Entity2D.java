@@ -79,14 +79,14 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
     public DrawInstruction process() {
         frames++;
         if (visible) {
-            entityDrawInstruction.setX(transform().position().getX());
-            entityDrawInstruction.setY(transform().position().getY());
-            entityDrawInstruction.setScaleX(transform().scale().getX());
-            entityDrawInstruction.setScaleY(transform().scale().getY());
+            entityDrawInstruction.setX(transform().position().x());
+            entityDrawInstruction.setY(transform().position().y());
+            entityDrawInstruction.setScaleX(transform().scale().x());
+            entityDrawInstruction.setScaleY(transform().scale().y());
             entityDrawInstruction.setRotation(transform().zRotation());
             entityDrawInstruction.childrenInstructions().clear();
-            entityDrawInstruction.setCenterOffsetX(transform().centerOffset().getX());
-            entityDrawInstruction.setCenterOffsetY(transform().centerOffset().getY());
+            entityDrawInstruction.setCenterOffsetX(transform().centerOffset().x());
+            entityDrawInstruction.setCenterOffsetY(transform().centerOffset().y());
         }
         try {
             for (int i = 0; i < components.size(); i++) {

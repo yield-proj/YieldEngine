@@ -32,7 +32,7 @@ public class Transform2D {
      *
      * @param value The `TwoAnchorRepresentation` object to translate this `Transform2D` instance position.
      */
-    public void translate(TwoAnchorRepresentation value) {
+    public void translate(Vector2D value) {
         position.sumLocal(value);
     }
 
@@ -43,7 +43,7 @@ public class Transform2D {
      * @param y The y-coordinate by which the object will be translated.
      */
     public void translate(double x, double y) {
-        translate(new TwoAnchorRepresentation(x, y));
+        translate(new Vector2D(x, y));
     }
 
     /**
@@ -53,7 +53,7 @@ public class Transform2D {
      * @param y The value to scale the object vertically.
      */
     public void scale(double x, double y) {
-        scale(new TwoAnchorRepresentation(x, y));
+        scale(new Vector2D(x, y));
     }
 
     /**
@@ -61,7 +61,7 @@ public class Transform2D {
      *
      * @param value The `TwoAnchorRepresentation` object to scale this `Transform2D` instance.
      */
-    public void scale(TwoAnchorRepresentation value) {
+    public void scale(Vector2D value) {
         scale.sumLocal(scale.multiply(value));
     }
 

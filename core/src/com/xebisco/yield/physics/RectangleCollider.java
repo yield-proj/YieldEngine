@@ -28,7 +28,7 @@ import org.jbox2d.common.Vec2;
 @ComponentIcon(iconType = ComponentIconType.PHYSICS)
 public class RectangleCollider extends Collider {
     @VisibleOnEditor
-    private Size2D size = new Size2D(100, 100);
+    private Vector2D size = new Vector2D(100, 100);
 
     @VisibleOnEditor
     private Vector2D centroid = new Vector2D();
@@ -40,11 +40,11 @@ public class RectangleCollider extends Collider {
     public Shape getShape() {
         PolygonShape s = new PolygonShape();
         if(!isIgnoreScaling()) {
-            s.setAsBox((float) (size.getWidth() * Math.abs(transform().scale().getX()) / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() * Math.abs(transform().scale().getY()) / getApplication().getPhysicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
+            s.setAsBox((float) (size.width() * Math.abs(transform().scale().x()) / getApplication().getPhysicsPpm() / 2.0), (float) (size.height() * Math.abs(transform().scale().y()) / getApplication().getPhysicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
         } else {
-            s.setAsBox((float) (size.getWidth() / getApplication().getPhysicsPpm() / 2.0), (float) (size.getHeight() / getApplication().getPhysicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
+            s.setAsBox((float) (size.width() / getApplication().getPhysicsPpm() / 2.0), (float) (size.height() / getApplication().getPhysicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
         }
-        s.m_centroid.set(Global.toVec2(centroid.divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))));
+        s.m_centroid.set(Global.toVec2(centroid.divide(new Vector2D(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))));
         return s;
     }
 
@@ -53,7 +53,7 @@ public class RectangleCollider extends Collider {
      *
      * @return The method `getSize()` is returning an object of type `Size2D`.
      */
-    public Size2D getSize() {
+    public Vector2D getSize() {
         return size;
     }
 
@@ -62,7 +62,7 @@ public class RectangleCollider extends Collider {
      *
      * @param size The size value to set.
      */
-    public void setSize(Size2D size) {
+    public void setSize(Vector2D size) {
         this.size = size;
     }
 

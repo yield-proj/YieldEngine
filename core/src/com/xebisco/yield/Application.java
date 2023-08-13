@@ -36,7 +36,7 @@ public class Application implements Behavior {
     private final DrawInstruction backGroundDrawInstruction = new DrawInstruction(null, null);
     private final Set<Axis> axes = new HashSet<>();
     private final ApplicationManager applicationManager;
-    private final Size2D viewportSize;
+    private final Vector2D viewportSize;
     private final RenderingThread renderingThread;
     private Texture controllerTexture;
     private Texture translucentControllerTexture;
@@ -91,7 +91,7 @@ public class Application implements Behavior {
 
         this.platformInit = platformInit;
         renderingThread = new RenderingThread(applicationPlatform.getGraphicsManager());
-        viewportSize = new ImmutableSize2D(platformInit.getWindowSize().getWidth(), platformInit.getViewportSize().getHeight());
+        viewportSize = new ImmutableVector2D(platformInit.getWindowSize().width(), platformInit.getViewportSize().height());
         axes.add(new Axis(HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
         axes.add(new Axis(VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
         axes.add(new Axis(HORIZONTAL_PAD, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
@@ -436,8 +436,8 @@ public class Application implements Behavior {
      * the `axisX` and `axisY` parameters. The `getAxis` method is called twice, once with `axisX` and once with `axisY`,
      * and the results are used to create the `TwoAnchorRepresentation` object.
      */
-    public TwoAnchorRepresentation getAxis(String axisX, String axisY) {
-        return new TwoAnchorRepresentation(getAxis(axisX), getAxis(axisY));
+    public Vector2D getAxis(String axisX, String axisY) {
+        return new Vector2D(getAxis(axisX), getAxis(axisY));
     }
 
     /**
@@ -472,7 +472,7 @@ public class Application implements Behavior {
      *
      * @return The method is returning an object of type `Size2D`.
      */
-    public Size2D getViewportSize() {
+    public Vector2D getViewportSize() {
         return viewportSize;
     }
 

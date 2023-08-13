@@ -20,18 +20,18 @@ package com.xebisco.yield;
  * The ImmutableSize2D class extends Size2D and overrides the setX and setY methods to throw an exception, making it
  * immutable.
  */
-public class ImmutableSize2D extends Size2D {
-    public ImmutableSize2D(double width, double height) {
+public class ImmutableVector2D extends Vector2D {
+    public ImmutableVector2D(double width, double height) {
         super(width, height);
     }
 
     @Override
-    public void setX(double x) {
+    public Vector2D setX(double x) {
         throw new ImmutableBreakException();
     }
 
     @Override
-    public void setY(double y) {
+    public Vector2D setY(double y) {
         throw new ImmutableBreakException();
     }
 }

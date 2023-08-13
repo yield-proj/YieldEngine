@@ -96,7 +96,7 @@ public class StandardPrefabs {
      * @param tags            An array of strings that can be used to tag and identify the entity in the game engine.
      * @return The method is returning an instance of the Entity2DPrefab class.
      */
-    public static Entity2DPrefab rectangleShape(Class<? extends Rectangle> rectangleType, Size2D size, Color color, Boolean filled, Double borderThickness, String[] tags) {
+    public static Entity2DPrefab rectangleShape(Class<? extends Rectangle> rectangleType, Vector2D size, Color color, Boolean filled, Double borderThickness, String[] tags) {
         return new Entity2DPrefab(
                 tags,
                 new ComponentCreation(rectangleType, c -> {
@@ -125,7 +125,7 @@ public class StandardPrefabs {
      * @param tags            An array of strings that can be used to tag and identify the entity.
      * @return The method is returning an instance of the Entity2DPrefab class.
      */
-    public static Entity2DPrefab rectangle(Size2D size, Color color, Boolean filled, Double borderThickness, String[] tags) {
+    public static Entity2DPrefab rectangle(Vector2D size, Color color, Boolean filled, Double borderThickness, String[] tags) {
         return rectangleShape(Rectangle.class, size, color, filled, borderThickness, tags);
     }
 
@@ -141,7 +141,7 @@ public class StandardPrefabs {
      *                        rectangle.
      * @return The method is returning an instance of the Entity2DPrefab class.
      */
-    public static Entity2DPrefab rectangle(Size2D size, Color color, Boolean filled, Double borderThickness) {
+    public static Entity2DPrefab rectangle(Vector2D size, Color color, Boolean filled, Double borderThickness) {
         return rectangle(size, color, filled, borderThickness, new String[0]);
     }
 
@@ -152,7 +152,7 @@ public class StandardPrefabs {
      * @param color The color parameter is of type Color and represents the fill color of the rectangle.
      * @return The method is returning an instance of the Entity2DPrefab class.
      */
-    public static Entity2DPrefab rectangle(Size2D size, Color color) {
+    public static Entity2DPrefab rectangle(Vector2D size, Color color) {
         return rectangle(size, color, null, null, null);
     }
 
@@ -162,7 +162,7 @@ public class StandardPrefabs {
      * @param size The size of the rectangle, represented by a Size2D object.
      * @return The method is returning an instance of the Entity2DPrefab class.
      */
-    public static Entity2DPrefab rectangle(Size2D size) {
+    public static Entity2DPrefab rectangle(Vector2D size) {
         return rectangle(size, null);
     }
 
@@ -177,7 +177,7 @@ public class StandardPrefabs {
      * @param tags        An array of strings that can be used to tag and identify the entity.
      * @return A `Entity2DPrefab` object is being returned.
      */
-    public static Entity2DPrefab texRectangle(Size2D size, String texturePath, String[] tags) {
+    public static Entity2DPrefab texRectangle(Vector2D size, String texturePath, String[] tags) {
         return new Entity2DPrefab(
                 tags,
                 new ComponentCreation(TextureRectangleLoader.class, c -> {
@@ -190,7 +190,7 @@ public class StandardPrefabs {
         );
     }
 
-    public static Entity2DPrefab texRectangle(Size2D size, Texture texture, String[] tags) {
+    public static Entity2DPrefab texRectangle(Vector2D size, Texture texture, String[] tags) {
         return new Entity2DPrefab(
                 tags,
                 new ComponentCreation(TextureRectangle.class, c -> {
@@ -210,7 +210,7 @@ public class StandardPrefabs {
      *                    that will be used for the TextureRectangle component.
      * @return A `Entity2DPrefab` object is being returned.
      */
-    public static Entity2DPrefab texRectangle(Size2D size, String texturePath) {
+    public static Entity2DPrefab texRectangle(Vector2D size, String texturePath) {
         return new Entity2DPrefab(
                 new ComponentCreation(TextureRectangleLoader.class, c -> {
                     ((TextureRectangleLoader) c).setTexturePath(texturePath);
@@ -222,7 +222,7 @@ public class StandardPrefabs {
         );
     }
 
-    public static Entity2DPrefab texRectangle(Size2D size, Texture texture) {
+    public static Entity2DPrefab texRectangle(Vector2D size, Texture texture) {
         return new Entity2DPrefab(
                 new ComponentCreation(TextureRectangle.class, c -> {
                     if (size != null)

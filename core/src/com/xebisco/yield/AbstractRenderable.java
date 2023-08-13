@@ -20,7 +20,6 @@ import com.aparapi.Range;
 import com.xebisco.yield.shader.VertexShader;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -41,7 +40,7 @@ public abstract class AbstractRenderable extends ComponentBehavior {
     private final DrawInstruction drawInstruction = new DrawInstruction(new int[verticesCount()], new int[verticesCount()]);
 
     @VisibleOnEditor
-    private Size2D size = new Size2D(100, 100);
+    private Vector2D size = new Vector2D(100, 100);
     @VisibleOnEditor
     private Color color = new Color(Colors.WHITE);
     @VisibleOnEditor
@@ -70,10 +69,10 @@ public abstract class AbstractRenderable extends ComponentBehavior {
 
         anchorSum.reset();
         switch (anchor) {
-            case UP -> anchorSum.setY(-size().getHeight() / 2.);
-            case DOWN -> anchorSum.setY(size().getHeight() / 2.);
-            case RIGHT -> anchorSum.setX(-size().getWidth() / 2.);
-            case LEFT -> anchorSum.setX(size().getWidth() / 2.);
+            case UP -> anchorSum.setY(-size().height() / 2.);
+            case DOWN -> anchorSum.setY(size().height() / 2.);
+            case RIGHT -> anchorSum.setX(-size().width() / 2.);
+            case LEFT -> anchorSum.setX(size().width() / 2.);
         }
         setupX(verticesX);
         setupY(verticesY);
@@ -92,13 +91,13 @@ public abstract class AbstractRenderable extends ComponentBehavior {
             });
         }
         for (int i = 0; i < drawInstruction.verticesX().length; i++) {
-            drawInstruction.verticesX()[i] += (int) anchorSum.getX();
-            drawInstruction.verticesY()[i] += (int) anchorSum.getY();
+            drawInstruction.verticesX()[i] += (int) anchorSum.x();
+            drawInstruction.verticesY()[i] += (int) anchorSum.y();
         }
-        double ox = offset.getX(), oy = offset.getY();
+        double ox = offset.x(), oy = offset.y();
         if (!ignoreOffsetScaling) {
-            ox *= transform().scale().getX();
-            oy += transform().scale().getY();
+            ox *= transform().scale().x();
+            oy += transform().scale().y();
         }
         drawInstruction.setX(ox);
         drawInstruction.setY(oy);
@@ -135,11 +134,11 @@ public abstract class AbstractRenderable extends ComponentBehavior {
         return drawInstruction;
     }
 
-    public Size2D size() {
+    public Vector2D size() {
         return size;
     }
 
-    public AbstractRenderable setSize(Size2D size) {
+    public AbstractRenderable setSize(Vector2D size) {
         this.size = size;
         return this;
     }

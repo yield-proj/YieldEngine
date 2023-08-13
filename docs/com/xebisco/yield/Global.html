@@ -174,13 +174,13 @@ loadScripts(document, 'script');</script>
 <div class="block">This function returns the default directory for application data.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="Size2D.html" title="class in com.xebisco.yield">Size2D</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onSizeBoundary(com.xebisco.yield.Size2D,com.xebisco.yield.Size2D)" class="member-name-link">onSizeBoundary</a><wbr>(<a href="Size2D.html" title="class in com.xebisco.yield">Size2D</a>&nbsp;size,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onSizeBoundary(com.xebisco.yield.Vector2D,com.xebisco.yield.Vector2D)" class="member-name-link">onSizeBoundary</a><wbr>(<a href="Size2D.html" title="class in com.xebisco.yield">Size2D</a>&nbsp;size,
  <a href="Size2D.html" title="class in com.xebisco.yield">Size2D</a>&nbsp;boundary)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The function resizes a given size to fit within a specified boundary while maintaining its aspect ratio.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.jbox2d.common.Vec2</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toVec2(com.xebisco.yield.TwoAnchorRepresentation)" class="member-name-link">toVec2</a><wbr>(<a href="TwoAnchorRepresentation.html" title="class in com.xebisco.yield">TwoAnchorRepresentation</a>&nbsp;twoAnchorRepresentation)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#toVec2(com.xebisco.yield.Vector2D)" class="member-name-link">toVec2</a><wbr>(<a href="TwoAnchorRepresentation.html" title="class in com.xebisco.yield">TwoAnchorRepresentation</a>&nbsp;vector2D)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The function converts a TwoAnchorRepresentation object to a Vec2 object with the same x and y values.</div>
 </div>
@@ -241,13 +241,13 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="toVec2(com.xebisco.yield.TwoAnchorRepresentation)">
+<section class="detail" id="toVec2(com.xebisco.yield.Vector2D)">
 <h3>toVec2</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">org.jbox2d.common.Vec2</span>&nbsp;<span class="element-name">toVec2</span><wbr><span class="parameters">(<a href="TwoAnchorRepresentation.html" title="class in com.xebisco.yield">TwoAnchorRepresentation</a>&nbsp;twoAnchorRepresentation)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">org.jbox2d.common.Vec2</span>&nbsp;<span class="element-name">toVec2</span><wbr><span class="parameters">(<a href="TwoAnchorRepresentation.html" title="class in com.xebisco.yield">TwoAnchorRepresentation</a>&nbsp;vector2D)</span></div>
 <div class="block">The function converts a TwoAnchorRepresentation object to a Vec2 object with the same x and y values.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>twoAnchorRepresentation</code> - The generated TwoAnchorRepresentation.</dd>
+<dd><code>vector2D</code> - The generated TwoAnchorRepresentation.</dd>
 </dl>
 </section>
 </li>
@@ -335,7 +335,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="onSizeBoundary(com.xebisco.yield.Size2D,com.xebisco.yield.Size2D)">
+<section class="detail" id="onSizeBoundary(com.xebisco.yield.Vector2D,com.xebisco.yield.Vector2D)">
 <h3>onSizeBoundary</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="Size2D.html" title="class in com.xebisco.yield">Size2D</a></span>&nbsp;<span class="element-name">onSizeBoundary</span><wbr><span class="parameters">(<a href="Size2D.html" title="class in com.xebisco.yield">Size2D</a>&nbsp;size,
  <a href="Size2D.html" title="class in com.xebisco.yield">Size2D</a>&nbsp;boundary)</span></div>
