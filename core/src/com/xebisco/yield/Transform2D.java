@@ -80,43 +80,27 @@ public class Transform2D {
      *
      * @return The position of the object.
      */
-    public Vector2D getPosition() {
+    public Vector2D position() {
         return position;
     }
 
     /**
-     * This function returns the zRotation of the object
      *
-     * @return The zRotation variable is being returned.
      */
-    public double getzRotation() {
-        return zRotation;
-    }
-
-    /**
-     * This function sets the zRotation variable to the value of the parameter zRotation.
-     *
-     * @param zRotation The rotation of the object around the z axis.
-     */
-    public void setzRotation(double zRotation) {
-        this.zRotation = zRotation;
-    }
-
-    /**
-     * Returns the scale of the object.
-     *
-     * @return The scale of the object.
-     */
-    public Vector2D getScale() {
+    public Vector2D scale() {
         return scale;
     }
 
-    /**
-     * The function returns the center offset as a Vector2D.
-     *
-     * @return The method is returning a Vector2D object called centerOffset.
-     */
-    public Vector2D getCenterOffset() {
+    public Vector2D centerOffset() {
         return centerOffset;
+    }
+
+    public double zRotation() {
+        return zRotation;
+    }
+
+    public Transform2D setzRotation(double zRotation) {
+        this.zRotation = zRotation;
+        return this;
     }
 }

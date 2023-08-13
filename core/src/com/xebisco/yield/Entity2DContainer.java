@@ -73,7 +73,7 @@ public class Entity2DContainer {
 
         entities.removeAll(toRemoveEntities);
 
-        entities.sort(Comparator.comparing(Entity2D::getIndex).reversed());
+        entities.sort(Comparator.comparing(Entity2D::index).reversed());
 
         toAddEntities.clear();
         toRemoveEntities.clear();

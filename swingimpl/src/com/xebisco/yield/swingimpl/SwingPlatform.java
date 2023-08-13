@@ -351,9 +351,9 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
         frame.setSize(frame.getWidth(), frame.getHeight() + frame.getInsets().top);
-        canvas.requestFocus();
 
-        canvas.createBufferStrategy(2);
+        canvas.createCanvas();
+        canvas.requestFocus();
     }
 
     public void updateScreenState(boolean fullscreen, boolean undecorated) {

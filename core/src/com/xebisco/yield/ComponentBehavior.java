@@ -103,8 +103,8 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      *
      * @return The transform of the entity.
      */
-    public Transform2D getTransform() {
-        return getEntity().getTransform();
+    public Transform2D transform() {
+        return getEntity().transform();
     }
 
     /**
@@ -113,8 +113,8 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      * @return The index of the entity.
      */
 
-    public int getIndex() {
-        return getEntity().getIndex();
+    public int index() {
+        return getEntity().index();
     }
 
     /**

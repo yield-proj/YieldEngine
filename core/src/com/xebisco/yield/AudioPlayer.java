@@ -67,7 +67,7 @@ public class AudioPlayer extends ComponentBehavior {
     /**
      * This function returns the position of the audio player.
      *
-     * @return The method `getPosition()` is returning a `double` value which represents the current position of the audio
+     * @return The method `position()` is returning a `double` value which represents the current position of the audio
      * clip. The position is obtained from the `AudioManager` of this application.
      */
     public double getPosition() {

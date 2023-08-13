@@ -16,7 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.physics.ContactAdapter;
 import com.xebisco.yield.physics.ContactListener;
 
 import java.util.ArrayList;
@@ -80,14 +79,14 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
     public DrawInstruction process() {
         frames++;
         if (visible) {
-            entityDrawInstruction.setX(getTransform().getPosition().getX());
-            entityDrawInstruction.setY(getTransform().getPosition().getY());
-            entityDrawInstruction.setScaleX(getTransform().getScale().getX());
-            entityDrawInstruction.setScaleY(getTransform().getScale().getY());
-            entityDrawInstruction.setRotation(getTransform().getzRotation());
+            entityDrawInstruction.setX(transform().position().getX());
+            entityDrawInstruction.setY(transform().position().getY());
+            entityDrawInstruction.setScaleX(transform().scale().getX());
+            entityDrawInstruction.setScaleY(transform().scale().getY());
+            entityDrawInstruction.setRotation(transform().zRotation());
             entityDrawInstruction.childrenInstructions().clear();
-            entityDrawInstruction.setCenterOffsetX(getTransform().getCenterOffset().getX());
-            entityDrawInstruction.setCenterOffsetY(getTransform().getCenterOffset().getY());
+            entityDrawInstruction.setCenterOffsetX(transform().centerOffset().getX());
+            entityDrawInstruction.setCenterOffsetY(transform().centerOffset().getY());
         }
         try {
             for (int i = 0; i < components.size(); i++) {
@@ -130,8 +129,8 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
         for (ComponentBehavior component : components) {
             component.dispose();
         }
-        if (getParent() != null) {
-            getParent().getToRemoveEntities().add(this);
+        if (parent() != null) {
+            parent().getToRemoveEntities().add(this);
             setParent(null);
         }
     }
@@ -213,149 +212,78 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
         removeComponent(getComponent(componentType));
     }
 
-    /**
-     * Returns the transform of the entity.
-     *
-     * @return The transform of the entity.
-     */
-    public Transform2D getTransform() {
+    public Transform2D transform() {
         return transform;
     }
 
-    /**
-     * This function returns the index of the entity.
-     *
-     * @return The index of the entity.
-     */
-    public int getIndex() {
-        return index;
-    }
-
-    /**
-     * This function sets the index of the entity to the index passed in as a parameter.
-     *
-     * @param index The index of the entity.
-     */
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    /**
-     * This function returns a list of ComponentBehavior objects.
-     *
-     * @return A list of ComponentBehavior objects.
-     */
-    public List<ComponentBehavior> getComponents() {
-        return components;
-    }
-
-    /**
-     * This function sets the components of the current object to the components of the parameter.
-     *
-     * @param components A list of ComponentBehavior objects.
-     */
-    public void setComponents(List<ComponentBehavior> components) {
-        this.components = components;
-    }
-
-    /**
-     * This function returns the number of frames in the entity.
-     *
-     * @return The number of frames in the entity.
-     */
-    public int getFrames() {
-        return frames;
-    }
-
-    /**
-     * This function sets the number of frames in the entity.
-     *
-     * @param frames The number of frames in the entity.
-     */
-    public void setFrames(int frames) {
-        this.frames = frames;
-    }
-
-    /**
-     * The function returns an instance of the Application class.
-     *
-     * @return The method is returning an object of type `Application`.
-     */
-    public Application getApplication() {
+    public Application application() {
         return application;
     }
 
-    public void addContactListener(ContactListener contactListener) {
-        getContactListeners().add(contactListener);
+    public List<ComponentBehavior> components() {
+        return components;
     }
 
-    public List<ContactListener> getContactListeners() {
-        return contactListeners;
+    public Entity2D setComponents(List<ComponentBehavior> components) {
+        this.components = components;
+        return this;
     }
 
-    public void setContactListeners(List<ContactListener> contactListeners) {
-        this.contactListeners = contactListeners;
-    }
-
-    /**
-     * The function returns a boolean value indicating whether an entity is visible or not.
-     *
-     * @return The method `isVisible()` is returning a boolean value, which indicates whether the entity is visible or not.
-     * The value returned depends on the value of the `visible` variable.
-     */
-    public boolean isVisible() {
-        return visible;
-    }
-
-    /**
-     * This function sets the visibility of this entity.
-     *
-     * @param visible The "visible" parameter is a boolean variable that determines whether this entity should
-     *                be visible or not. If the value of "visible" is true, the object will be visible on the screen. If the
-     *                value is false, the object or component will be hidden from view.
-     */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    /**
-     * This function returns the parent container of a 2D entity in Java.
-     *
-     * @return The method is returning an object of type `Entity2DContainer`, which is the parent of the current entity.
-     */
-    public Entity2DContainer getParent() {
+    public Entity2DContainer parent() {
         return parent;
     }
 
-    /**
-     * This function sets the parent of a 2D entity container.
-     *
-     * @param parent The parameter "parent" is an object of type Entity2DContainer, which represents the parent container
-     *               of the current object. This method sets the parent container of the current object to the specified parent object.
-     */
-    public void setParent(Entity2DContainer parent) {
+    public Entity2D setParent(Entity2DContainer parent) {
         this.parent = parent;
+        return this;
     }
 
-    /**
-     * The function returns an array of strings representing tags.
-     *
-     * @return The tags array.
-     */
-    public String[] getTags() {
+    public int index() {
+        return index;
+    }
+
+    public Entity2D setIndex(int index) {
+        this.index = index;
+        return this;
+    }
+
+    public List<ContactListener> contactListeners() {
+        return contactListeners;
+    }
+
+    public Entity2D setContactListeners(List<ContactListener> contactListeners) {
+        this.contactListeners = contactListeners;
+        return this;
+    }
+
+    public String[] tags() {
         return tags;
     }
 
-    /**
-     * This function sets the value of the tags array of this entity.
-     *
-     * @param tags The tags array to set.
-     */
-    public void setTags(String[] tags) {
+    public Entity2D setTags(String[] tags) {
         this.tags = tags;
+        return this;
     }
 
-    public DrawInstruction getEntityDrawInstruction() {
+    public int frames() {
+        return frames;
+    }
+
+    public Entity2D setFrames(int frames) {
+        this.frames = frames;
+        return this;
+    }
+
+    public boolean visible() {
+        return visible;
+    }
+
+    public Entity2D setVisible(boolean visible) {
+        this.visible = visible;
+        return this;
+    }
+
+    public DrawInstruction entityDrawInstruction() {
         return entityDrawInstruction;
     }
 }

@@ -20,6 +20,7 @@ import com.studiohartman.jamepad.ControllerManager;
 import com.studiohartman.jamepad.ControllerState;
 import com.studiohartman.jamepad.ControllerUnpluggedException;
 import com.xebisco.yield.shader.VertexShader;
+import com.xebisco.yield.shaders.DefaultVertexShader;
 
 import java.awt.image.Kernel;
 import java.lang.reflect.InvocationTargetException;
@@ -87,6 +88,8 @@ public class Application implements Behavior {
         setScene(new BlankScene(this));
 
         changeScene(initialScene);
+
+        vertexShaderMap.put("default-shader", new DefaultVertexShader());
 
         this.platformInit = platformInit;
         renderingThread = new RenderingThread(applicationPlatform.getGraphicsManager());

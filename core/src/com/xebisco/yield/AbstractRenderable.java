@@ -20,15 +20,18 @@ import com.aparapi.Range;
 import com.xebisco.yield.shader.VertexShader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
 @ComponentIcon(iconType = ComponentIconType.GRAPHICAL)
 public abstract class AbstractRenderable extends ComponentBehavior {
     private final List<String> vertexShaders = new ArrayList<>();
+
     public abstract int verticesCount();
 
     public abstract void setupX(float[] verticesX);
+
     public abstract void setupY(float[] verticesY);
 
     private float[] verticesX = new float[verticesCount()], verticesY = new float[verticesCount()];
@@ -54,6 +57,10 @@ public abstract class AbstractRenderable extends ComponentBehavior {
 
     private final Vector2D anchorSum = new Vector2D();
 
+    public AbstractRenderable() {
+        vertexShaders.add("default-shader");
+    }
+
     @Override
     public DrawInstruction render() {
         if (filled)
@@ -63,23 +70,15 @@ public abstract class AbstractRenderable extends ComponentBehavior {
 
         anchorSum.reset();
         switch (anchor) {
-            case UP:
-                anchorSum.setY(-size().getHeight() / 2.);
-                break;
-            case DOWN:
-                anchorSum.setY(size().getHeight() / 2.);
-                break;
-            case RIGHT:
-                anchorSum.setX(-size().getWidth() / 2.);
-                break;
-            case LEFT:
-                anchorSum.setX(size().getWidth() / 2.);
-                break;
+            case UP -> anchorSum.setY(-size().getHeight() / 2.);
+            case DOWN -> anchorSum.setY(size().getHeight() / 2.);
+            case RIGHT -> anchorSum.setX(-size().getWidth() / 2.);
+            case LEFT -> anchorSum.setX(size().getWidth() / 2.);
         }
         setupX(verticesX);
         setupY(verticesY);
-        IntStream.range(0, verticesCount()).forEach(i -> {
-            for(String shaderName : vertexShaders) {
+        for (String shaderName : vertexShaders) {
+            IntStream.range(0, verticesCount()).forEach(i -> {
                 VertexShader shader = getApplication().vertexShaderMap().get(shaderName);
                 shader.inXPos = verticesX;
                 shader.inYPos = verticesY;
@@ -90,16 +89,16 @@ public abstract class AbstractRenderable extends ComponentBehavior {
                 shader.getOut();
                 drawInstruction.setVerticesX(shader.outXPos);
                 drawInstruction.setVerticesY(shader.outYPos);
-            }
-        });
+            });
+        }
         for (int i = 0; i < drawInstruction.verticesX().length; i++) {
-            drawInstruction.verticesX()[i] += (float) anchorSum.getX();
-            drawInstruction.verticesY()[i] += (float) anchorSum.getY();
+            drawInstruction.verticesX()[i] += (int) anchorSum.getX();
+            drawInstruction.verticesY()[i] += (int) anchorSum.getY();
         }
         double ox = offset.getX(), oy = offset.getY();
-        if(!ignoreOffsetScaling) {
-            ox *= getTransform().getScale().getX();
-            oy += getTransform().getScale().getY();
+        if (!ignoreOffsetScaling) {
+            ox *= transform().scale().getX();
+            oy += transform().scale().getY();
         }
         drawInstruction.setX(ox);
         drawInstruction.setY(oy);

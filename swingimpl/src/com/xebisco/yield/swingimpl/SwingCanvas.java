@@ -19,6 +19,9 @@ package com.xebisco.yield.swingimpl;
 import java.awt.*;
 
 public class SwingCanvas extends Canvas {
+    public void createCanvas() {
+        createBufferStrategy(3);
+    }
     public Graphics2D prepareRender() {
         Graphics2D g = (Graphics2D) getBufferStrategy().getDrawGraphics();
         g.setBackground(Color.BLACK);

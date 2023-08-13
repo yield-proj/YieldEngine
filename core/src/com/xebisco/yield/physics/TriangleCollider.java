@@ -39,7 +39,7 @@ public class TriangleCollider extends Collider {
         PolygonShape s = new PolygonShape();
         TwoAnchorRepresentation dppm = new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm());
         if (!isIgnoreScaling()) {
-            s.set(new Vec2[]{Global.toVec2(vertices[0].divide(dppm).multiply(getTransform().getScale().absolute())), Global.toVec2(vertices[1].divide(dppm).multiply(getTransform().getScale().absolute())), Global.toVec2(vertices[2].divide(dppm).multiply(getTransform().getScale()))}, 3);
+            s.set(new Vec2[]{Global.toVec2(vertices[0].divide(dppm).multiply(transform().scale().absolute())), Global.toVec2(vertices[1].divide(dppm).multiply(transform().scale().absolute())), Global.toVec2(vertices[2].divide(dppm).multiply(transform().scale()))}, 3);
         } else {
             s.set(new Vec2[]{Global.toVec2(vertices[0].divide(dppm)), Global.toVec2(vertices[1].divide(dppm)), Global.toVec2(vertices[2].divide(dppm))}, 3);
         }

@@ -37,16 +37,16 @@ public class PhysicsBody extends ComponentBehavior {
     @Override
     public void onStart() {
         BodyDef def = new BodyDef();
-        def.position = Global.toVec2(getTransform().getPosition().divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm())));
-        def.angle = (float) Math.toRadians(getTransform().getzRotation());
+        def.position = Global.toVec2(transform().position().divide(new TwoAnchorRepresentation(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm())));
+        def.angle = (float) Math.toRadians(transform().zRotation());
         def.userData = getEntity();
         setB2Body(getApplication().getScene().getPhysicsMain().getB2World().createBody(def));
     }
 
     @Override
     public void onPhysicsUpdate() {
-        for (int i = 0; i < getEntity().getComponents().size(); i++) {
-            ComponentBehavior c = getEntity().getComponents().get(i);
+        for (int i = 0; i < getEntity().components().size(); i++) {
+            ComponentBehavior c = getEntity().components().get(i);
             if (c instanceof Collider) {
                 boolean contains = false;
                 for (Fixture f = getB2Body().getFixtureList(); f != null; f = f.getNext()) {
@@ -62,7 +62,7 @@ public class PhysicsBody extends ComponentBehavior {
             }
         }
         for (Fixture f = getB2Body().getFixtureList(); f != null; f = f.getNext()) {
-            if (!getEntity().getComponents().contains((Collider) f.getUserData())) {
+            if (!getEntity().components().contains((Collider) f.getUserData())) {
                 getB2Body().destroyFixture(f);
             } else {
                 Collider c = ((Collider) f.getUserData());
@@ -92,8 +92,8 @@ public class PhysicsBody extends ComponentBehavior {
         getB2Body().setBullet(bullet);
         getB2Body().m_mass = (float) mass;
         getB2Body().setFixedRotation(fixedRotation);
-        getTransform().getPosition().set(getB2Body().getPosition().x * getApplication().getPhysicsPpm(), getB2Body().getPosition().y * getApplication().getPhysicsPpm());
-        getTransform().setzRotation(Math.toDegrees(getB2Body().getAngle()));
+        transform().position().set(getB2Body().getPosition().x * getApplication().getPhysicsPpm(), getB2Body().getPosition().y * getApplication().getPhysicsPpm());
+        transform().setzRotation(Math.toDegrees(getB2Body().getAngle()));
     }
 
     @Override
