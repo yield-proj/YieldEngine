@@ -41,9 +41,8 @@ public interface GraphicsManager extends Disposable {
 
     /**
      * This function is called once per frame.
-     * This is the first function called in render, it's used to prepare the graphics for the incoming draw calls.
+     * This is the function called in render, it's used to render draw instructions.
      */
-    void frame();
 
     void draw(List<DrawInstruction> drawInstructions);
 

@@ -334,11 +334,6 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     }
 
     @Override
-    public void frame() {
-
-    }
-
-    @Override
     public void draw(List<DrawInstruction> drawInstructions) {
         setDrawInstructions(drawInstructions);
 

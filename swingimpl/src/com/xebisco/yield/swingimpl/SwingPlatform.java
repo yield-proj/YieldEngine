@@ -377,10 +377,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         frame.setIconImage(((SwingImage) icon.getImageRef()).originalImage());
     }
 
-    @Override
     public void frame() {
-        if (!frame.isVisible())
-            return;
         graphics = canvas.prepareRender();
         if (stretch)
             graphics.scale(canvas.getWidth() / platformInit.getViewportSize().getWidth(), canvas.getHeight() / platformInit.getViewportSize().getHeight());
@@ -401,6 +398,8 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     public void draw(List<DrawInstruction> drawInstructions) {
         if (!frame.isVisible())
             return;
+
+        frame();
 
         try {
             for (DrawInstruction drawInstruction : drawInstructions) {

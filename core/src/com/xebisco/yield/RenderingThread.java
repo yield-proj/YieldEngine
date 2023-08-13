@@ -50,7 +50,6 @@ public class RenderingThread extends Thread {
                 }
             }
             if (drawInstructions != null) {
-                graphicsManager.frame();
                 graphicsManager.draw(drawInstructions);
                 setDrawInstructions(null);
             }
