@@ -194,6 +194,16 @@ public class DrawInstruction implements Cloneable {
         return this;
     }
 
+    public DrawInstruction setCenterOffsetX(double centerOffsetX) {
+        this.centerOffsetX = centerOffsetX;
+        return this;
+    }
+
+    public DrawInstruction setCenterOffsetY(double centerOffsetY) {
+        this.centerOffsetY = centerOffsetY;
+        return this;
+    }
+
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public DrawInstruction clone() {
@@ -216,29 +226,13 @@ public class DrawInstruction implements Cloneable {
         clone.setScaleY(scaleY());
         clone.setFontRef(fontRef());
         clone.setImageRef(imageRef());
-        clone.setCenterOffsetX(getCenterOffsetX());
-        clone.setCenterOffsetY(getCenterOffsetY());
+        clone.setCenterOffsetX(centerOffsetX());
+        clone.setCenterOffsetY(centerOffsetY());
         if (color() != null)
             clone.setColor(color().clone());
         clone.setStroke(stroke());
         clone.setRotateBeforeScale(rotateBeforeScale());
         childrenInstructions().forEach(di -> clone.childrenInstructions().add(di.clone()));
         return clone;
-    }
-
-    public double getCenterOffsetX() {
-        return centerOffsetX;
-    }
-
-    public void setCenterOffsetX(double centerOffsetX) {
-        this.centerOffsetX = centerOffsetX;
-    }
-
-    public double getCenterOffsetY() {
-        return centerOffsetY;
-    }
-
-    public void setCenterOffsetY(double centerOffsetY) {
-        this.centerOffsetY = centerOffsetY;
     }
 }

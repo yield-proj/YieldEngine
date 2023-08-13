@@ -37,7 +37,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.*;
 
@@ -169,9 +168,9 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
                 for (DrawInstruction di : drawInstructions) {
                     gl.glLoadIdentity();
 
-                    if (!di.isIgnoreViewportScale())
+                    if (!di.ignoreViewportScale())
                         gl.glScaled(scale.getX(), scale.getY(), 1);
-                    if (!di.isIgnoreCameraPosition())
+                    if (!di.ignoreCameraPosition())
                         gl.glTranslated(-camera.getX(), -camera.getY(), 0);
 
                     draw(di, gl);
@@ -211,68 +210,68 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     public void draw(DrawInstruction di, GL2 gl) {
         Matrix4 matrix4 = new Matrix4();
         gl.glGetFloatv(GL2.GL_MODELVIEW_MATRIX, matrix4.getMatrix(), 0);
-        gl.glTranslatef((float) di.getX(), (float) di.getY(), 0);
-        gl.glTranslatef((float) di.getCenterOffsetX(), (float) di.getCenterOffsetY(), 0);
-        if (di.isRotateBeforeScale()) {
-            gl.glRotatef((float) di.getRotation(), 0, 0, 1);
-            gl.glScalef((float) di.getScaleX(), (float) di.getScaleY(), 0);
+        gl.glTranslatef((float) di.x(), (float) di.y(), 0);
+        gl.glTranslatef((float) di.centerOffsetX(), (float) di.centerOffsetY(), 0);
+        if (di.rotateBeforeScale()) {
+            gl.glRotatef((float) di.rotation(), 0, 0, 1);
+            gl.glScalef((float) di.scaleX(), (float) di.scaleY(), 0);
         } else {
-            gl.glScalef((float) di.getScaleX(), (float) di.getScaleY(), 0);
-            gl.glRotatef((float) di.getRotation(), 0, 0, 1);
+            gl.glScalef((float) di.scaleX(), (float) di.scaleY(), 0);
+            gl.glRotatef((float) di.rotation(), 0, 0, 1);
         }
-        gl.glTranslatef((float) -di.getCenterOffsetX(), (float) -di.getCenterOffsetY(), 0);
+        gl.glTranslatef((float) -di.centerOffsetX(), (float) -di.centerOffsetY(), 0);
 
-        if (di.getVerticesX() == null && di.getVerticesY() == null) {
-            if (di.getColor() != null) {
-                gl.glClearColor((float) di.getColor().getRed(), (float) di.getColor().getGreen(), (float) di.getColor().getBlue(), (float) di.getColor().getAlpha());
+        if (di.verticesX() == null && di.verticesY() == null) {
+            if (di.color() != null) {
+                gl.glClearColor((float) di.color().getRed(), (float) di.color().getGreen(), (float) di.color().getBlue(), (float) di.color().getAlpha());
                 gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
             }
         } else {
-            gl.glColor4d(di.getColor().getRed(), di.getColor().getGreen(), di.getColor().getBlue(), di.getColor().getAlpha());
+            gl.glColor4d(di.color().getRed(), di.color().getGreen(), di.color().getBlue(), di.color().getAlpha());
 
-            if (di.getImageRef() != null && ((OpenGLImage) di.getImageRef()).getTexture() != null) {
-                com.jogamp.opengl.util.texture.Texture t = ((OpenGLImage) di.getImageRef()).getTexture();
+            if (di.imageRef() != null && ((OpenGLImage) di.imageRef()).getTexture() != null) {
+                com.jogamp.opengl.util.texture.Texture t = ((OpenGLImage) di.imageRef()).getTexture();
                 t.enable(gl);
                 t.bind(gl);
                 gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
                 gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
                 gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
                 gl.glBegin(GL2.GL_QUADS);
-                if (di.getVerticesX().length != 4 || di.getVerticesY().length != 4)
+                if (di.verticesX().length != 4 || di.verticesY().length != 4)
                     throw new IllegalVerticesCountException("OpenGL image rendering supports only rectangles");
                 gl.glTexCoord2i(0, 1);
-                gl.glVertex2i(di.getVerticesX()[0], di.getVerticesY()[0]);
+                gl.glVertex2i(di.verticesX()[0], di.verticesY()[0]);
                 gl.glTexCoord2i(1, 1);
-                gl.glVertex2i(di.getVerticesX()[1], di.getVerticesY()[1]);
+                gl.glVertex2i(di.verticesX()[1], di.verticesY()[1]);
                 gl.glTexCoord2i(1, 0);
-                gl.glVertex2i(di.getVerticesX()[2], di.getVerticesY()[2]);
+                gl.glVertex2i(di.verticesX()[2], di.verticesY()[2]);
                 gl.glTexCoord2i(0, 0);
-                gl.glVertex2i(di.getVerticesX()[3], di.getVerticesY()[3]);
+                gl.glVertex2i(di.verticesX()[3], di.verticesY()[3]);
                 gl.glEnd();
                 t.disable(gl);
-            } else if (di.getFontRef() != null) {
-                TextRenderer renderer = (TextRenderer) di.getFontRef();
+            } else if (di.fontRef() != null) {
+                TextRenderer renderer = (TextRenderer) di.fontRef();
                 gl.glEnable(GL2.GL_TEXTURE_2D);
                 renderer.begin3DRendering();
-                Rectangle2D bounds = renderer.getBounds(di.getText());
-                renderer.draw(di.getText(), (int) (-bounds.getWidth() / 2), (int) (-bounds.getHeight() / 2));
+                Rectangle2D bounds = renderer.getBounds(di.text());
+                renderer.draw(di.text(), (int) (-bounds.getWidth() / 2), (int) (-bounds.getHeight() / 2));
                 renderer.end3DRendering();
                 gl.glDisable(GL2.GL_TEXTURE_2D);
             } else {
-                if (di.getStroke() == 0)
+                if (di.stroke() == 0)
                     gl.glBegin(GL2.GL_POLYGON);
                 else {
-                    gl.glLineWidth((float) di.getStroke());
+                    gl.glLineWidth((float) di.stroke());
                     gl.glBegin(GL2.GL_LINE_LOOP);
                 }
-                for (int i1 = 0; i1 < di.getVerticesX().length; i1++) {
-                    gl.glVertex2i(di.getVerticesX()[i1], di.getVerticesY()[i1]);
+                for (int i1 = 0; i1 < di.verticesX().length; i1++) {
+                    gl.glVertex2i(di.verticesX()[i1], di.verticesY()[i1]);
                 }
                 gl.glEnd();
             }
         }
 
-        for (DrawInstruction child : di.getChildrenInstructions()) {
+        for (DrawInstruction child : di.childrenInstructions()) {
             draw(child, gl);
         }
 

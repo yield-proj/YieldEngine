@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="opengl-libs" level="project" />
     <orderEntry type="module" module-name="core" />
+    <orderEntry type="library" name="openglimpl-libs" level="project" />
   </component>
 </module>
