@@ -43,24 +43,24 @@ public final class AnimationPlayer extends ComponentBehavior {
         }
         if (animation != null) {
             toChange += getTime().getDeltaTime();
-            if (actualFrame < animation.getFrames().length - 1) {
-                if (toChange >= animation.getDelay()) {
+            if (actualFrame < animation.frames().length - 1) {
+                if (toChange >= animation.delay()) {
                     toChange = 0;
                     actualFrame++;
                 }
             }
-            if (actualFrame == animation.getFrames().length - 1) {
-                if (toChange >= animation.getDelay()) {
+            if (actualFrame == animation.frames().length - 1) {
+                if (toChange >= animation.delay()) {
                     toChange = 0;
                     if (toSwitchAnimation != null) {
                         setAnimation(toSwitchAnimation);
                         toSwitchAnimation = null;
-                    } else if (animation.isLoop()) actualFrame = 0;
+                    } else if (animation.loop()) actualFrame = 0;
                 }
             }
             TextureRectangle r = getComponent(TextureRectangle.class);
             if (r != null)
-                r.setTexture(animation.getFrames()[actualFrame]);
+                r.setTexture(animation.frames()[actualFrame]);
         }
     }
 
