@@ -54,19 +54,21 @@ public class Text extends AbstractRenderable {
         return r;
     }
 
-    public String getContents() {
+    public String contents() {
         return contents;
     }
 
-    public void setContents(String contents) {
+    public Text setContents(String contents) {
         this.contents = contents;
+        return this;
     }
 
-    public Font getFont() {
+    public Font font() {
         return font;
     }
 
-    public void setFont(Font font) {
+    public Text setFont(Font font) {
         this.font = font;
+        return this;
     }
 }
