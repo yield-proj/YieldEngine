@@ -57,7 +57,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     private Vector2D zoomScale;
 
     public static Color awtColor(com.xebisco.yield.Color yieldColor) {
-        return new Color(yieldColor.getARGB(), true);
+        return new Color(yieldColor.argb(), true);
     }
 
     public Dimension onSizeBoundary(Image image, Dimension boundary) {

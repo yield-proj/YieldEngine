@@ -134,15 +134,16 @@ public class Color implements Cloneable {
      *
      * @return The 'red' variable.
      */
-    public double getRed() {
+    public double red() {
         return red;
     }
 
     /**
      * Setter of the red value of this Color.
      */
-    public void setRed(double red) {
+    public Color setRed(double red) {
         this.red = Global.clamp(red, 0, 1);
+        return this;
     }
 
     /**
@@ -150,15 +151,16 @@ public class Color implements Cloneable {
      *
      * @return The 'green' variable.
      */
-    public double getGreen() {
+    public double green() {
         return green;
     }
 
     /**
      * Setter of the green value of this Color.
      */
-    public void setGreen(double green) {
+    public Color setGreen(double green) {
         this.green = Global.clamp(green, 0, 1);
+        return this;
     }
 
     /**
@@ -166,15 +168,16 @@ public class Color implements Cloneable {
      *
      * @return The 'blue' variable.
      */
-    public double getBlue() {
+    public double blue() {
         return blue;
     }
 
     /**
      * Setter of the blue value of this Color.
      */
-    public void setBlue(double blue) {
+    public Color setBlue(double blue) {
         this.blue = Global.clamp(blue, 0, 1);
+        return this;
     }
 
     /**
@@ -182,15 +185,16 @@ public class Color implements Cloneable {
      *
      * @return The 'alpha' variable.
      */
-    public double getAlpha() {
+    public double alpha() {
         return alpha;
     }
 
     /**
      * Setter of the alpha value of this Color.
      */
-    public void setAlpha(double alpha) {
+    public Color setAlpha(double alpha) {
         this.alpha = Global.clamp(alpha, 0, 1);
+        return this;
     }
 
     /**
@@ -201,7 +205,7 @@ public class Color implements Cloneable {
      * calculated by multiplying the red, green, and blue values by 255 and then shifting them to the appropriate positions
      * in the integer value.
      */
-    public int getRGB() {
+    public int rgb() {
         int rgb = (int) (red * 255.0);
         rgb = (rgb << 8) + (int) (green * 255.0);
         rgb = (rgb << 8) + (int) (blue * 255.0);
@@ -215,7 +219,7 @@ public class Color implements Cloneable {
      * @return The method is returning an integer value that represents the ARGB (Alpha, Red, Green, Blue) color code of
      * the color object.
      */
-    public int getARGB() {
+    public int argb() {
         int rgb = (int) (alpha * 255.0);
         rgb = (rgb << 8) + (int) (red * 255.0);
         rgb = (rgb << 8) + (int) (green * 255.0);
@@ -231,7 +235,7 @@ public class Color implements Cloneable {
      * obtained by shifting the red, green, blue, and alpha values to their respective positions in the 8-bit integer and
      * then combining them using bitwise operations.
      */
-    public int getRGBA() {
+    public int rgba() {
         int rgb = (int) (red * 255.0);
         rgb = (rgb << 8) + (int) (green * 255.0);
         rgb = (rgb << 8) + (int) (blue * 255.0);

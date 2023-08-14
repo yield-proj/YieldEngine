@@ -223,11 +223,11 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
         if (di.verticesX() == null && di.verticesY() == null) {
             if (di.color() != null) {
-                gl.glClearColor((float) di.color().getRed(), (float) di.color().getGreen(), (float) di.color().getBlue(), (float) di.color().getAlpha());
+                gl.glClearColor((float) di.color().red(), (float) di.color().green(), (float) di.color().blue(), (float) di.color().alpha());
                 gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
             }
         } else {
-            gl.glColor4d(di.color().getRed(), di.color().getGreen(), di.color().getBlue(), di.color().getAlpha());
+            gl.glColor4d(di.color().red(), di.color().green(), di.color().blue(), di.color().alpha());
 
             if (di.imageRef() != null && ((OpenGLImage) di.imageRef()).getTexture() != null) {
                 com.jogamp.opengl.util.texture.Texture t = ((OpenGLImage) di.imageRef()).getTexture();
