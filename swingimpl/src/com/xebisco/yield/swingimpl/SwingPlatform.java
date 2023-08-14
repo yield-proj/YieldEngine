@@ -327,7 +327,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         fontSizeGraphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB).createGraphics();
 
         Toolkit.getDefaultToolkit().setDynamicLayout(false);
-        stretch = platformInit.isStretchViewport();
+        stretch = platformInit.stretchViewport();
 
 
         canvas = new SwingCanvas();
@@ -342,9 +342,9 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         canvas.addMouseWheelListener(this);
 
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setTitle(platformInit.getTitle());
+        frame.setTitle(platformInit.title());
 
-        updateScreenState(platformInit.isFullscreen() && device.isFullScreenSupported(), platformInit.isUndecorated());
+        updateScreenState(platformInit.fullscreen() && device.isFullScreenSupported(), platformInit.undecorated());
 
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
@@ -360,11 +360,11 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         if (fullscreen) {
             frame.setUndecorated(true);
             if (device.isDisplayChangeSupported())
-                device.setDisplayMode(new DisplayMode((int) platformInit.getViewportSize().width(), (int) platformInit.getViewportSize().height(), device.getDisplayMode().getBitDepth(), device.getDisplayMode().getRefreshRate()));
+                device.setDisplayMode(new DisplayMode((int) platformInit.viewportSize().width(), (int) platformInit.viewportSize().height(), device.getDisplayMode().getBitDepth(), device.getDisplayMode().getRefreshRate()));
             device.setFullScreenWindow(frame);
         } else {
             frame.setUndecorated(undecorated);
-            frame.setSize((int) platformInit.getWindowSize().width(), (int) platformInit.getWindowSize().height());
+            frame.setSize((int) platformInit.windowSize().width(), (int) platformInit.windowSize().height());
             if (device.isDisplayChangeSupported())
                 device.setDisplayMode(defaultDisplayMode);
         }
@@ -378,18 +378,18 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     public void frame() {
         graphics = canvas.prepareRender();
         if (stretch)
-            graphics.scale(canvas.getWidth() / platformInit.getViewportSize().width(), canvas.getHeight() / platformInit.getViewportSize().height());
+            graphics.scale(canvas.getWidth() / platformInit.viewportSize().width(), canvas.getHeight() / platformInit.viewportSize().height());
         else {
-            Vector2D viewport = Global.onSizeBoundary(platformInit.getViewportSize(), new Vector2D(canvas.getWidth(), canvas.getHeight()));
+            Vector2D viewport = Global.onSizeBoundary(platformInit.viewportSize(), new Vector2D(canvas.getWidth(), canvas.getHeight()));
             graphics.translate((int) (canvas.getWidth() / 2 - viewport.width() / 2), (int) (canvas.getHeight() / 2 - viewport.height() / 2));
-            graphics.scale(viewport.width() / platformInit.getViewportSize().width(), viewport.height() / platformInit.getViewportSize().height());
+            graphics.scale(viewport.width() / platformInit.viewportSize().width(), viewport.height() / platformInit.viewportSize().height());
         }
 
-        graphics.translate(platformInit.getViewportSize().width() / 2, platformInit.getViewportSize().height() / 2);
+        graphics.translate(platformInit.viewportSize().width() / 2, platformInit.viewportSize().height() / 2);
 
         Point mouse = canvas.getMousePosition();
         if (mouse != null)
-            mousePosition.set(mouse.getX() / canvas.getWidth() * platformInit.getViewportSize().width() - platformInit.getViewportSize().width() / 2., -mouse.getY() / canvas.getHeight() * platformInit.getViewportSize().height() + platformInit.getViewportSize().height() / 2.);
+            mousePosition.set(mouse.getX() / canvas.getWidth() * platformInit.viewportSize().width() - platformInit.viewportSize().width() / 2., -mouse.getY() / canvas.getHeight() * platformInit.viewportSize().height() + platformInit.viewportSize().height() / 2.);
     }
 
     @Override
@@ -617,7 +617,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
         if (platformInit != null) {
             platformInit.setFullscreen(fullScreen);
             if (frame != null) {
-                updateScreenState(fullScreen, platformInit.isUndecorated());
+                updateScreenState(fullScreen, platformInit.undecorated());
                 frame.setVisible(true);
                 frame.setLocationRelativeTo(null);
             }

@@ -1,0 +1,53 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="openalimpl:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/openalimpl_jar</output-path>
+    <root id="archive" name="yield-openalimpl.jar">
+      <element id="module-output" name="openalimpl" />
+      <element id="module-output" name="lwjgl-utils" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-stb.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-openal.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-stb-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-stb-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-natives-linux.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-natives-macos.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-openal-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-openal-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-natives-windows.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-stb-natives-linux.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-stb-natives-macos.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-natives-linux-arm32.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-natives-linux-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-natives-macos-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-natives-windows-x86.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-stb-natives-windows.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-openal-natives-linux.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-openal-natives-macos.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-natives-windows-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-openal-natives-windows.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-stb-natives-linux-arm32.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-stb-natives-linux-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-stb-natives-macos-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-stb-natives-windows-x86.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-stb-natives-windows-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-openal-natives-linux-arm32.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-openal-natives-linux-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-openal-natives-macos-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-openal-natives-windows-x86.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openalimpl/libs/lwjgl-openal-natives-windows-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lwjgl-utils/libs/lwjgl.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lwjgl-utils/libs/lwjgl-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lwjgl-utils/libs/lwjgl-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lwjgl-utils/libs/lwjgl-natives-linux.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lwjgl-utils/libs/lwjgl-natives-macos.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lwjgl-utils/libs/lwjgl-natives-windows.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lwjgl-utils/libs/lwjgl-natives-linux-arm32.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lwjgl-utils/libs/lwjgl-natives-linux-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lwjgl-utils/libs/lwjgl-natives-macos-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lwjgl-utils/libs/lwjgl-natives-windows-x86.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lwjgl-utils/libs/lwjgl-natives-windows-arm64.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

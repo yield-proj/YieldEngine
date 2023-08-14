@@ -5,6 +5,10 @@
       <element id="module-output" name="core" />
       <element id="module-output" name="editor_annotations" />
       <element id="extracted-dir" path="$PROJECT_DIR$/core/libs/Jamepad.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/core/libs/bcel-6.7.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/core/libs/aparapi-3.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/core/libs/aparapi-jni-1.4.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/core/libs/commons-lang3-3.13.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/core/libs/jbox2d-library-2.2.1.1.jar" path-in-jar="/" />
     </root>
   </artifact>

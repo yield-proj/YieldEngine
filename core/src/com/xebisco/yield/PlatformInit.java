@@ -54,219 +54,124 @@ public class PlatformInit {
         this.requiredPlatformModules = requiredPlatformModules;
     }
 
-    /**
-     * Returns the size of the window.
-     *
-     * @return The windowSize variable is being returned.
-     */
-    public Vector2D getWindowSize() {
-        return windowSize;
-    }
-
-    /**
-     * This function sets the window size to the given size.
-     *
-     * @param windowSize The size of the window in pixels.
-     */
-    public void setWindowSize(Vector2D windowSize) {
-        this.windowSize = windowSize;
-    }
-
-    /**
-     * This function returns the title of the window.
-     *
-     * @return The title of the window.
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * This function sets the title of the window.
-     *
-     * @param title The title of the window.
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    /**
-     * Returns true if the game is in fullscreen mode, false otherwise.
-     *
-     * @return The value of the variable fullscreen.
-     */
-    public boolean isFullscreen() {
-        return fullscreen;
-    }
-
-    /**
-     * This function sets the fullscreen variable to the value of the fullscreen parameter.
-     *
-     * @param fullscreen Whether the game should be fullscreen.
-     */
-    public void setFullscreen(boolean fullscreen) {
-        this.fullscreen = fullscreen;
-    }
-
-    /**
-     * Returns true if the window is undecorated, false otherwise.
-     *
-     * @return The boolean value of the variable undecorated.
-     */
-    public boolean isUndecorated() {
-        return undecorated;
-    }
-
-    /**
-     * This function sets the undecorated variable to the value of the parameter undecorated.
-     *
-     * @param undecorated If true, the window will not have a title bar, close button, or window border.
-     */
-    public void setUndecorated(boolean undecorated) {
-        this.undecorated = undecorated;
-    }
-
-
-    /**
-     * Return true if application viewport will be stretched.
-     *
-     * @return The boolean value of the variable stretchViewport.
-     */
-    public boolean isStretchViewport() {
-        return stretchViewport;
-    }
-
-    /**
-     * This function sets the undecorated variable to the value of the parameter undecorated.
-     *
-     * @param stretchViewport If true, the application viewport will be stretched.
-     */
-    public void setStretchViewport(boolean stretchViewport) {
-        this.stretchViewport = stretchViewport;
-    }
-
-    /**
-     * The function returns the path of the window icon.
-     *
-     * @return The method `getWindowIconPath()` is returning a `String` value which is the path of the window icon.
-     */
-    public String getWindowIconPath() {
-        return windowIconPath;
-    }
-
-    /**
-     * This function sets the path of the window icon in a Yield application.
-     *
-     * @param windowIconPath The parameter "windowIconPath" is a string that represents the file path of the icon that will
-     *                       be displayed in the window.
-     */
-    public void setWindowIconPath(String windowIconPath) {
-        this.windowIconPath = windowIconPath;
-    }
-
-    /**
-     * The function returns the size of the viewport as a Size2D object.
-     *
-     * @return The method is returning an object of type `Size2D`.
-     */
-    public Vector2D getViewportSize() {
+    public Vector2D viewportSize() {
         return viewportSize;
     }
 
-    /**
-     * This function sets the viewport size of the application.
-     *
-     * @param viewportSize The parameter `viewportSize` is of type `Size2D`, which represents the size of a two-dimensional
-     *                     area. It is being used to set the size of a viewport, which is a visible area on a screen/window.
-     */
-    public void setViewportSize(Vector2D viewportSize) {
+    public PlatformInit setViewportSize(Vector2D viewportSize) {
         this.viewportSize = viewportSize;
+        return this;
     }
 
-    /**
-     * This function returns the window icon as a Texture object in Yield.
-     *
-     * @return The method is returning a Texture object named "windowIcon".
-     */
-    public Texture getWindowIcon() {
-        return windowIcon;
+    public Vector2D windowSize() {
+        return windowSize;
     }
 
-    /**
-     * This function sets the window icon of a Yield application.
-     *
-     * @param windowIcon The parameter "windowIcon" is a Texture object that represents the icon of a window in a Yield application. The method "setWindowIcon" sets the value of the windowIcon instance variable to the value passed as
-     *                   a parameter.
-     */
-    public void setWindowIcon(Texture windowIcon) {
-        this.windowIcon = windowIcon;
+    public PlatformInit setWindowSize(Vector2D windowSize) {
+        this.windowSize = windowSize;
+        return this;
     }
 
-    /**
-     * The function returns the value of the variable startPhysicsPpm.
-     *
-     * @return The method is returning the value of the variable `startPhysicsPpm`.
-     */
-    public int getStartPhysicsPpm() {
+    public String title() {
+        return title;
+    }
+
+    public PlatformInit setTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public int startPhysicsPpm() {
         return startPhysicsPpm;
     }
 
-    /**
-     * This is a method that sets the value of a variable called "startPhysicsPpm".
-     *
-     * @param startPhysicsPpm startPhysicsPpm is a variable of type integer that represents the starting value of the
-     *                        physics pixels per meter (ppm) for the physics simulation.
-     */
-    public void setStartPhysicsPpm(int startPhysicsPpm) {
+    public PlatformInit setStartPhysicsPpm(int startPhysicsPpm) {
         this.startPhysicsPpm = startPhysicsPpm;
+        return this;
     }
 
-    /**
-     * The function returns the value of the boolean variable invertZIndex.
-     *
-     * @return The method `isInvertZIndex()` is returning a boolean value, which is the value of the variable
-     * `invertZIndex`.
-     */
-    public boolean isInvertZIndex() {
+    public boolean fullscreen() {
+        return fullscreen;
+    }
+
+    public PlatformInit setFullscreen(boolean fullscreen) {
+        this.fullscreen = fullscreen;
+        return this;
+    }
+
+    public boolean undecorated() {
+        return undecorated;
+    }
+
+    public PlatformInit setUndecorated(boolean undecorated) {
+        this.undecorated = undecorated;
+        return this;
+    }
+
+    public boolean stretchViewport() {
+        return stretchViewport;
+    }
+
+    public PlatformInit setStretchViewport(boolean stretchViewport) {
+        this.stretchViewport = stretchViewport;
+        return this;
+    }
+
+    public boolean invertZIndex() {
         return invertZIndex;
     }
 
-    /**
-     * This function sets the value of a boolean variable called invertZIndex.
-     *
-     * @param invertZIndex The parameter "invertZIndex" is a boolean variable that determines whether the Z-index of an
-     *                     element should be inverted or not. If set to true, the Z-index will be inverted, meaning that elements with a higher
-     *                     Z-index will appear in front elements with a lower Z-index.
-     */
-    public void setInvertZIndex(boolean invertZIndex) {
+    public PlatformInit setInvertZIndex(boolean invertZIndex) {
         this.invertZIndex = invertZIndex;
+        return this;
     }
 
-    public Class<?>[] getRequiredPlatformModules() {
-        return requiredPlatformModules;
-    }
-
-    public boolean isVerticalSync() {
+    public boolean verticalSync() {
         return verticalSync;
     }
 
-    public void setVerticalSync(boolean verticalSync) {
+    public PlatformInit setVerticalSync(boolean verticalSync) {
         this.verticalSync = verticalSync;
+        return this;
     }
 
-    public ContextTime getPhysicsContextTime() {
-        return physicsContextTime;
-    }
-
-    public void setPhysicsContextTime(ContextTime physicsContextTime) {
-        this.physicsContextTime = physicsContextTime;
-    }
-
-    public boolean isPhysicsOnMainContext() {
+    public boolean physicsOnMainContext() {
         return physicsOnMainContext;
     }
 
-    public void setPhysicsOnMainContext(boolean physicsOnMainContext) {
+    public PlatformInit setPhysicsOnMainContext(boolean physicsOnMainContext) {
         this.physicsOnMainContext = physicsOnMainContext;
+        return this;
+    }
+
+    public Texture windowIcon() {
+        return windowIcon;
+    }
+
+    public PlatformInit setWindowIcon(Texture windowIcon) {
+        this.windowIcon = windowIcon;
+        return this;
+    }
+
+    public String windowIconPath() {
+        return windowIconPath;
+    }
+
+    public PlatformInit setWindowIconPath(String windowIconPath) {
+        this.windowIconPath = windowIconPath;
+        return this;
+    }
+
+    public ContextTime physicsContextTime() {
+        return physicsContextTime;
+    }
+
+    public PlatformInit setPhysicsContextTime(ContextTime physicsContextTime) {
+        this.physicsContextTime = physicsContextTime;
+        return this;
+    }
+
+    public Class<?>[] requiredPlatformModules() {
+        return requiredPlatformModules;
     }
 }

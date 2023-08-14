@@ -56,14 +56,14 @@ public class Application implements Behavior {
     private final Context physicsContext;
 
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, ApplicationPlatform applicationPlatform, PlatformInit platformInit) {
-        physicsPpm = platformInit.getStartPhysicsPpm();
+        physicsPpm = platformInit.startPhysicsPpm();
         this.applicationManager = applicationManager;
         applicationManager.getApplications().add(this);
         this.applicationPlatform = applicationPlatform;
 
         physicsProcess = () -> {
             if (scene != null) {
-                scene.getPhysicsMain().process(!platformInit.isPhysicsOnMainContext() ? (float) (platformInit.getPhysicsContextTime().getTargetSleepTime() * platformInit.getPhysicsContextTime().getTimeScale() * getApplicationManager().getManagerContext().getContextTime().getTimeScale() / 1_000_000.) : (float) (getApplicationManager().getManagerContext().getContextTime().getTargetSleepTime() * getApplicationManager().getManagerContext().getContextTime().getTimeScale() / 1_000_000.));
+                scene.getPhysicsMain().process(!platformInit.physicsOnMainContext() ? (float) (platformInit.physicsContextTime().getTargetSleepTime() * platformInit.physicsContextTime().getTimeScale() * getApplicationManager().getManagerContext().getContextTime().getTimeScale() / 1_000_000.) : (float) (getApplicationManager().getManagerContext().getContextTime().getTargetSleepTime() * getApplicationManager().getManagerContext().getContextTime().getTimeScale() / 1_000_000.));
                 try {
                     for (Entity2D entity : scene.getEntities()) {
                         entity.processPhysics();
@@ -74,8 +74,8 @@ public class Application implements Behavior {
             }
         };
 
-        if (!platformInit.isPhysicsOnMainContext()) {
-            physicsContext = new Context(platformInit.getPhysicsContextTime(), physicsProcess, null, "PhysicsMain");
+        if (!platformInit.physicsOnMainContext()) {
+            physicsContext = new Context(platformInit.physicsContextTime(), physicsProcess, null, "PhysicsMain");
             physicsProcess = null;
         } else {
             physicsContext = null;
@@ -91,7 +91,7 @@ public class Application implements Behavior {
 
         this.platformInit = platformInit;
         renderingThread = new RenderingThread(applicationPlatform.getGraphicsManager());
-        viewportSize = new ImmutableVector2D(platformInit.getWindowSize().width(), platformInit.getViewportSize().height());
+        viewportSize = new ImmutableVector2D(platformInit.windowSize().width(), platformInit.viewportSize().height());
         axes.add(new Axis(HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
         axes.add(new Axis(VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
         axes.add(new Axis(HORIZONTAL_PAD, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
@@ -114,7 +114,7 @@ public class Application implements Behavior {
 
 
     private void checkPlatform(ApplicationPlatform platform, PlatformInit init) {
-        for (Class<?> c : init.getRequiredPlatformModules()) {
+        for (Class<?> c : init.requiredPlatformModules()) {
             if (c.equals(FontManager.class)) {
                 if (platform.getFontManager() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
@@ -156,9 +156,9 @@ public class Application implements Behavior {
         applicationPlatform.getGraphicsManager().init(platformInit);
         renderingThread.start();
         defaultFont = new Font("com/xebisco/yield/OpenSans-Regular.ttf", 48, applicationPlatform.getFontManager());
-        if (platformInit.getWindowIcon() == null)
-            platformInit.setWindowIcon(new Texture(platformInit.getWindowIconPath(), applicationPlatform.getTextureManager()));
-        applicationPlatform.getGraphicsManager().updateWindowIcon(platformInit.getWindowIcon());
+        if (platformInit.windowIcon() == null)
+            platformInit.setWindowIcon(new Texture(platformInit.windowIconPath(), applicationPlatform.getTextureManager()));
+        applicationPlatform.getGraphicsManager().updateWindowIcon(platformInit.windowIcon());
         for (int i = 0; i < 4; i++) {
             String a = String.valueOf((i + 1));
             if (i == 0)

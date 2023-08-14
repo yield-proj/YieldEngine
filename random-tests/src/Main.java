@@ -29,7 +29,6 @@ public class Main extends Scene {
         ContextTime time = new ContextTime();
         ApplicationManager manager = new ApplicationManager(time);
         PlatformInit init = new PlatformInit(PlatformInit.INPUT_DEFAULT);
-        init.setVerticalSync(false);
         new Application(manager, Main.class, Global.Platforms.openGLOpenAL(), init);
         manager.run();
     }

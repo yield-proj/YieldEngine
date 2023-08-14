@@ -25,7 +25,7 @@ public class ToggleFullScreenSystem extends SystemBehavior {
 
     @Override
     public void onStart() {
-        onFullScreen = getScene().getApplication().getPlatformInit().isFullscreen();
+        onFullScreen = getScene().getApplication().getPlatformInit().fullscreen();
     }
 
     @Override

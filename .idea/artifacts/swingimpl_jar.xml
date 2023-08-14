@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="swingimpl:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/swingimpl_jar</output-path>
+    <root id="archive" name="yield-swingimpl.jar">
+      <element id="module-output" name="swingimpl" />
+    </root>
+  </artifact>
+</component>

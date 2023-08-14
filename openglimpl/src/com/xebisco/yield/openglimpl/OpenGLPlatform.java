@@ -112,12 +112,12 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     public void init(PlatformInit platformInit) {
         this.platformInit = platformInit;
 
-        System.setProperty("newt.window.icons", platformInit.getWindowIconPath() + " " + platformInit.getWindowIconPath());
+        System.setProperty("newt.window.icons", platformInit.windowIconPath() + " " + platformInit.windowIconPath());
 
         window = GLWindow.create(new GLCapabilities(profile = GLProfile.get(GLProfile.GL2)));
-        window.setSize((int) platformInit.getWindowSize().width(), (int) platformInit.getWindowSize().height());
-        window.setUndecorated(platformInit.isUndecorated());
-        window.setTitle(platformInit.getTitle());
+        window.setSize((int) platformInit.windowSize().width(), (int) platformInit.windowSize().height());
+        window.setUndecorated(platformInit.undecorated());
+        window.setTitle(platformInit.title());
 
         window.addKeyListener(this);
         window.addMouseListener(this);
@@ -127,7 +127,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
         window.setVisible(true);
 
-        setFullScreen(platformInit.isFullscreen());
+        setFullScreen(platformInit.fullscreen());
     }
 
     @Override
@@ -135,7 +135,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
         GL2 gl = glAutoDrawable.getGL().getGL2();
         gl.glEnable(GL2.GL_BLEND);
         gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
-        if (platformInit.isVerticalSync()) gl.setSwapInterval(1);
+        if (platformInit.verticalSync()) gl.setSwapInterval(1);
         else
             gl.setSwapInterval(0);
         gl.glClearColor(0, 0, 0, 1);
@@ -189,19 +189,19 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
         gl.glLoadIdentity();
 
         gl.glOrtho(
-                -platformInit.getViewportSize().width() / 2.,
-                platformInit.getViewportSize().width() / 2.,
-                -platformInit.getViewportSize().height() / 2.,
-                platformInit.getViewportSize().height() / 2.,
+                -platformInit.viewportSize().width() / 2.,
+                platformInit.viewportSize().width() / 2.,
+                -platformInit.viewportSize().height() / 2.,
+                platformInit.viewportSize().height() / 2.,
                 -1,
                 1
         );
         gl.glMatrixMode(GL2.GL_MODELVIEW);
 
-        if (platformInit.isStretchViewport()) {
+        if (platformInit.stretchViewport()) {
             gl.glViewport(0, 0, window.getWidth(), window.getHeight());
         } else {
-            Vector2D viewport = Global.onSizeBoundary(platformInit.getViewportSize(), new Vector2D(window.getWidth(), window.getHeight()));
+            Vector2D viewport = Global.onSizeBoundary(platformInit.viewportSize(), new Vector2D(window.getWidth(), window.getHeight()));
 
             gl.glViewport((int) (window.getWidth() / 2 - viewport.width() / 2), (int) (window.getHeight() / 2 - viewport.height() / 2), (int) viewport.width(), (int) viewport.height());
         }
@@ -820,8 +820,8 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     @Override
     public void mouseMoved(MouseEvent e) {
         mousePosition.set(
-                (double) e.getX() / window.getWidth() * platformInit.getViewportSize().width() - platformInit.getViewportSize().width() / 2.,
-                (double) e.getY() / window.getHeight() * platformInit.getViewportSize().height() - platformInit.getViewportSize().height() / 2.
+                (double) e.getX() / window.getWidth() * platformInit.viewportSize().width() - platformInit.viewportSize().width() / 2.,
+                (double) e.getY() / window.getHeight() * platformInit.viewportSize().height() - platformInit.viewportSize().height() / 2.
         );
     }
 
