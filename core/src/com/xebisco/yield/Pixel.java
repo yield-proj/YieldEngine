@@ -26,9 +26,9 @@ public class Pixel {
     /**
      * This function returns the color.
      *
-     * @return The method `getColor()` is returning a `Color` object.
+     * @return The method `color()` is returning a `Color` object.
      */
-    public Color getColor() {
+    public Color color() {
         return color;
     }
 
@@ -37,8 +37,9 @@ public class Pixel {
      *
      * @param color The color value to set.
      */
-    public void setColor(Color color) {
+    public Pixel setColor(Color color) {
         this.color = color;
+        return this;
     }
 
     /**
@@ -46,7 +47,7 @@ public class Pixel {
      *
      * @return A Vector2D object representing the position.
      */
-    public Vector2D getPosition() {
+    public Vector2D position() {
         return position;
     }
 
@@ -54,9 +55,10 @@ public class Pixel {
      * This function sets the position of an object to a given 2D vector.
      *
      * @param position position is a parameter of type Vector2D which represents the new position that we want to set for
-     * the pixel.
+     *                 the pixel.
      */
-    public void setPosition(Vector2D position) {
+    public Pixel setPosition(Vector2D position) {
         this.position = position;
+        return this;
     }
 }
