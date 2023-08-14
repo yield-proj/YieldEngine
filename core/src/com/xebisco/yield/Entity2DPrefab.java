@@ -47,16 +47,16 @@ public class Entity2DPrefab {
      *
      * @return An array of ComponentCreation objects is being returned.
      */
-    public ComponentCreation[] getComponents() {
+    public ComponentCreation[] components() {
         return components;
     }
 
     /**
      * The function returns an array of 2D entity prefabs that are children of a parent entity.
      *
-     * @return The method `getChildren()` is returning an array of `Entity2DPrefab` objects named `children`.
+     * @return The method `children()` is returning an array of `Entity2DPrefab` objects named `children`.
      */
-    public Entity2DPrefab[] getChildren() {
+    public Entity2DPrefab[] children() {
         return children;
     }
 
@@ -65,7 +65,7 @@ public class Entity2DPrefab {
      *
      * @return An array of strings called "tags" is being returned.
      */
-    public String[] getTags() {
+    public String[] tags() {
         return tags;
     }
 }
