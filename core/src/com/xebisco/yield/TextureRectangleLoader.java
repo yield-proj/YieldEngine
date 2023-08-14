@@ -27,11 +27,12 @@ public class TextureRectangleLoader extends ComponentBehavior {
         component(TextureRectangle.class).setTexture(new Texture(texturePath, application().applicationPlatform().textureManager()));
     }
 
-    public String getTexturePath() {
+    public String texturePath() {
         return texturePath;
     }
 
-    public void setTexturePath(String texturePath) {
+    public TextureRectangleLoader setTexturePath(String texturePath) {
         this.texturePath = texturePath;
+        return this;
     }
 }
