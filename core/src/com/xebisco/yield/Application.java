@@ -334,8 +334,8 @@ public class Application implements Behavior {
             try {
                 for (SystemBehavior system : scene.systems()) {
                     system.setScene(scene);
-                    system.setFrames(system.getFrames() + 1);
-                    if (system.getFrames() == 1) {
+                    system.setFrames(system.frames() + 1);
+                    if (system.frames() == 1) {
                         system.onStart();
                     }
                     system.onUpdate();
