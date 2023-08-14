@@ -124,7 +124,7 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
     }
 
     public ContextTime getTime() {
-        return getApplication().applicationManager().getManagerContext().getContextTime();
+        return getApplication().applicationManager().managerContext().getContextTime();
     }
 
     public PhysicsMain getPhysicsMain() {

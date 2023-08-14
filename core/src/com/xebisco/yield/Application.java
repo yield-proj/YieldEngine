@@ -58,12 +58,12 @@ public class Application implements Behavior {
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, ApplicationPlatform applicationPlatform, PlatformInit platformInit) {
         physicsPpm = platformInit.startPhysicsPpm();
         this.applicationManager = applicationManager;
-        applicationManager.getApplications().add(this);
+        applicationManager.applications().add(this);
         this.applicationPlatform = applicationPlatform;
 
         physicsProcess = () -> {
             if (scene != null) {
-                scene.getPhysicsMain().process(!platformInit.physicsOnMainContext() ? (float) (platformInit.physicsContextTime().getTargetSleepTime() * platformInit.physicsContextTime().getTimeScale() * applicationManager().getManagerContext().getContextTime().getTimeScale() / 1_000_000.) : (float) (applicationManager().getManagerContext().getContextTime().getTargetSleepTime() * applicationManager().getManagerContext().getContextTime().getTimeScale() / 1_000_000.));
+                scene.getPhysicsMain().process(!platformInit.physicsOnMainContext() ? (float) (platformInit.physicsContextTime().getTargetSleepTime() * platformInit.physicsContextTime().getTimeScale() * applicationManager().managerContext().getContextTime().getTimeScale() / 1_000_000.) : (float) (applicationManager().managerContext().getContextTime().getTargetSleepTime() * applicationManager().managerContext().getContextTime().getTimeScale() / 1_000_000.));
                 try {
                     for (Entity2D entity : scene.getEntities()) {
                         entity.processPhysics();
@@ -378,7 +378,7 @@ public class Application implements Behavior {
         }
         if (changeSceneTransition != null) {
             changeSceneTransition.setApplication(this);
-            changeSceneTransition.setDeltaTime(applicationManager().getManagerContext().getContextTime().getDeltaTime());
+            changeSceneTransition.setDeltaTime(applicationManager().managerContext().getContextTime().getDeltaTime());
             changeSceneTransition.setPassedTime(changeSceneTransition.getPassedTime() + changeSceneTransition.getDeltaTime());
             changeSceneTransition.setFrames(changeSceneTransition.getFrames() + 1);
             drawInstructions.add(changeSceneTransition.render());

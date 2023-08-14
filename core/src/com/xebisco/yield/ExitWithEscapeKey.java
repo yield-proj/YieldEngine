@@ -23,6 +23,6 @@ public class ExitWithEscapeKey extends SystemBehavior {
     @Override
     public void onUpdate() {
         if(getScene().getApplication().pressingKey(Input.Key.VK_ESCAPE))
-            getScene().getApplication().applicationManager().getManagerContext().getRunning().set(false);
+            getScene().getApplication().applicationManager().managerContext().getRunning().set(false);
     }
 }
