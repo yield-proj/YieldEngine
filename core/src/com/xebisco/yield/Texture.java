@@ -53,7 +53,7 @@ public class Texture extends FileInput implements Disposable {
      */
     @Override
     public void dispose() {
-        getTextureManager().unloadTexture(this);
+        textureManager().unloadTexture(this);
     }
 
     /**
@@ -61,7 +61,7 @@ public class Texture extends FileInput implements Disposable {
      *
      * @return The method is returning the value of the variable `imageRef`, which is of type `Object`.
      */
-    public Object getImageRef() {
+    public Object imageRef() {
         return imageRef;
     }
 
@@ -70,8 +70,8 @@ public class Texture extends FileInput implements Disposable {
      *
      * @param imageRef The parameter "imageRef" is an object that represents a reference to an image.
      */
-    public void setImageRef(Object imageRef) {
-        this.imageRef = imageRef;
+    public Texture setImageRef(Object imageRef) {
+        this.imageRef = imageRef;return this;
     }
 
     /**
@@ -79,7 +79,7 @@ public class Texture extends FileInput implements Disposable {
      *
      * @return The method is returning an object of type `ImmutableSize2D`.
      */
-    public ImmutableVector2D getSize() {
+    public ImmutableVector2D size() {
         return size;
     }
 
@@ -88,7 +88,7 @@ public class Texture extends FileInput implements Disposable {
      *
      * @return The method is returning an object of type `TextureManager`.
      */
-    public TextureManager getTextureManager() {
+    public TextureManager textureManager() {
         return textureManager;
     }
 

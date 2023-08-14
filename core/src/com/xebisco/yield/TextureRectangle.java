@@ -43,16 +43,16 @@ public class TextureRectangle extends Rectangle {
     @Override
     public void setupX(float[] verticesX) {
         super.setupX(verticesX);
-        drawInstruction().setImageRef(texture.getImageRef());
+        drawInstruction().setImageRef(texture.imageRef());
     }
 
     @Override
     public DrawInstruction render() {
         if (textureSized) {
             if (textureScale == null)
-                size().set(texture.getSize());
+                size().set(texture.size());
             else
-                size().set(texture.getSize().multiply(textureScale));
+                size().set(texture.size().multiply(textureScale));
         }
         return super.render();
     }

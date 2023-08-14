@@ -51,7 +51,7 @@ public class RectangleCollider extends Collider {
     /**
      * The function returns a Size2D object.
      *
-     * @return The method `getSize()` is returning an object of type `Size2D`.
+     * @return The method `size()` is returning an object of type `Size2D`.
      */
     public Vector2D getSize() {
         return size;

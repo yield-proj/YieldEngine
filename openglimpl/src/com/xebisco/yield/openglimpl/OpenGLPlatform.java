@@ -363,7 +363,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     @Override
     public void unloadTexture(Texture texture) {
-        toDestroyImages.add((OpenGLImage) texture.getImageRef());
+        toDestroyImages.add((OpenGLImage) texture.imageRef());
     }
 
     @Override

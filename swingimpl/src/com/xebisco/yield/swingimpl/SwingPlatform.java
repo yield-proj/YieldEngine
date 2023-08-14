@@ -133,7 +133,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public void unloadTexture(Texture texture) {
-        ((Image) texture.getImageRef()).flush();
+        ((Image) texture.imageRef()).flush();
         texture.setImageRef(null);
     }
 
@@ -372,7 +372,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public void updateWindowIcon(Texture icon) {
-        frame.setIconImage(((SwingImage) icon.getImageRef()).originalImage());
+        frame.setIconImage(((SwingImage) icon.imageRef()).originalImage());
     }
 
     public void frame() {
