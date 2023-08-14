@@ -24,7 +24,7 @@ public class TextureRectangleLoader extends ComponentBehavior {
 
     @Override
     public void onStart() {
-        getComponent(TextureRectangle.class).setTexture(new Texture(texturePath, getApplication().applicationPlatform().getTextureManager()));
+        getComponent(TextureRectangle.class).setTexture(new Texture(texturePath, getApplication().applicationPlatform().textureManager()));
     }
 
     public String getTexturePath() {

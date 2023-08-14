@@ -53,7 +53,7 @@ public class ApplicationManager implements Runnable {
                 application.onUpdate();
             }
             boolean removed = applications.removeIf(a -> {
-                boolean remove = a.applicationPlatform().getGraphicsManager().shouldClose();
+                boolean remove = a.applicationPlatform().graphicsManager().shouldClose();
                 if(remove) a.dispose();
                 return remove;
             });

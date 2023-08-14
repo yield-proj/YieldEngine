@@ -90,7 +90,7 @@ public class Application implements Behavior {
         vertexShaderMap.put("default-shader", new DefaultVertexShader());
 
         this.platformInit = platformInit;
-        renderingThread = new RenderingThread(applicationPlatform.getGraphicsManager());
+        renderingThread = new RenderingThread(applicationPlatform.graphicsManager());
         viewportSize = new ImmutableVector2D(platformInit.windowSize().width(), platformInit.viewportSize().height());
         axes.add(new Axis(HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
         axes.add(new Axis(VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
@@ -116,34 +116,34 @@ public class Application implements Behavior {
     private void checkPlatform(ApplicationPlatform platform, PlatformInit init) {
         for (Class<?> c : init.requiredPlatformModules()) {
             if (c.equals(FontManager.class)) {
-                if (platform.getFontManager() == null)
+                if (platform.fontManager() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(TextureManager.class)) {
-                if (platform.getTextureManager() == null)
+                if (platform.textureManager() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(InputManager.class)) {
-                if (platform.getInputManager() == null)
+                if (platform.inputManager() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(KeyCheck.class)) {
-                if (platform.getKeyCheck() == null)
+                if (platform.keyCheck() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(MouseCheck.class)) {
-                if (platform.getMouseCheck() == null)
+                if (platform.mouseCheck() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(AudioManager.class)) {
-                if (platform.getAudioManager() == null)
+                if (platform.audioManager() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(ViewportZoomScale.class)) {
-                if (platform.getViewportZoomScale() == null)
+                if (platform.viewportZoomScale() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(ToggleFullScreen.class)) {
-                if (platform.getToggleFullScreen() == null)
+                if (platform.toggleFullScreen() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(GraphicsManager.class)) {
-                if (platform.getGraphicsManager() == null)
+                if (platform.graphicsManager() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(SpritesheetTextureManager.class)) {
-                if (platform.getSpritesheetTextureManager() == null)
+                if (platform.spritesheetTextureManager() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else {
                 throw new ApplicationPlatformModuleException("Not supported application module. '" + c.getSimpleName() + "'");
@@ -153,12 +153,12 @@ public class Application implements Behavior {
 
     @Override
     public void onStart() {
-        applicationPlatform.getGraphicsManager().init(platformInit);
+        applicationPlatform.graphicsManager().init(platformInit);
         renderingThread.start();
-        defaultFont = new Font("com/xebisco/yield/OpenSans-Regular.ttf", 48, applicationPlatform.getFontManager());
+        defaultFont = new Font("com/xebisco/yield/OpenSans-Regular.ttf", 48, applicationPlatform.fontManager());
         if (platformInit.windowIcon() == null)
-            platformInit.setWindowIcon(new Texture(platformInit.windowIconPath(), applicationPlatform.getTextureManager()));
-        applicationPlatform.getGraphicsManager().updateWindowIcon(platformInit.windowIcon());
+            platformInit.setWindowIcon(new Texture(platformInit.windowIconPath(), applicationPlatform.textureManager()));
+        applicationPlatform.graphicsManager().updateWindowIcon(platformInit.windowIcon());
         for (int i = 0; i < 4; i++) {
             String a = String.valueOf((i + 1));
             if (i == 0)
@@ -173,10 +173,10 @@ public class Application implements Behavior {
             axes.add(new Axis(LEFT_THUMB + a, null, null, null, null));
             axes.add(new Axis(VIEW + a, null, null, null, null));
         }
-        if (applicationPlatform.getTextureManager() != null) {
-            defaultTexture = new Texture("com/xebisco/yield/yieldIcon.png", applicationPlatform.getTextureManager());
-            controllerTexture = new Texture("com/xebisco/yield/controller.png", applicationPlatform.getTextureManager());
-            translucentControllerTexture = new Texture("com/xebisco/yield/translucentController.png", applicationPlatform.getTextureManager());
+        if (applicationPlatform.textureManager() != null) {
+            defaultTexture = new Texture("com/xebisco/yield/yieldIcon.png", applicationPlatform.textureManager());
+            controllerTexture = new Texture("com/xebisco/yield/controller.png", applicationPlatform.textureManager());
+            translucentControllerTexture = new Texture("com/xebisco/yield/translucentController.png", applicationPlatform.textureManager());
         } else {
             controllerTexture = null;
             translucentControllerTexture = null;
@@ -229,7 +229,7 @@ public class Application implements Behavior {
      * This function updates the values of various input axes based on keyboard and controller inputs.
      */
     public void updateAxes() {
-        mousePosition.set(applicationPlatform.getMouseCheck().getMouseX(), applicationPlatform.getMouseCheck().getMouseY());
+        mousePosition.set(applicationPlatform.mouseCheck().getMouseX(), applicationPlatform.mouseCheck().getMouseY());
         for (Axis axis : axes) {
             if ((axis.getPositiveKey() != null && pressingKey(axis.getPositiveKey())) || (axis.getAltPositiveKey() != null && pressingKey(axis.getAltPositiveKey()))) {
                 axis.setValue(1);
@@ -370,9 +370,9 @@ public class Application implements Behavior {
 
             scene.updateEntityList();
 
-            if (applicationPlatform.getInputManager() != null) {
-                applicationPlatform.getInputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
-                applicationPlatform.getInputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
+            if (applicationPlatform.inputManager() != null) {
+                applicationPlatform.inputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
+                applicationPlatform.inputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
             }
 
         }
@@ -407,7 +407,7 @@ public class Application implements Behavior {
         setScene(null);
         if (controllerManager != null)
             controllerManager.quitSDLGamepad();
-        applicationPlatform.getGraphicsManager().dispose();
+        applicationPlatform.graphicsManager().dispose();
     }
 
     /**
@@ -461,8 +461,8 @@ public class Application implements Behavior {
         this.scene = scene;
         if (scene != null) {
             scene.setFrames(0);
-            applicationPlatform.getGraphicsManager().setCamera(scene.getCamera());
-            applicationPlatform.getViewportZoomScale().setZoomScale(scene.getZoomScale());
+            applicationPlatform.graphicsManager().setCamera(scene.getCamera());
+            applicationPlatform.viewportZoomScale().setZoomScale(scene.getZoomScale());
         }
         return this;
     }
@@ -508,10 +508,10 @@ public class Application implements Behavior {
      * returns true if it does, false otherwise.
      */
     public boolean pressingKey(Input.Key key) {
-        if (applicationPlatform.getKeyCheck() == null && applicationPlatform.getInputManager() != null)
-            return applicationPlatform.getInputManager().getPressingKeys().contains(key);
-        if (applicationPlatform.getKeyCheck() != null && applicationPlatform.getInputManager() == null)
-            return applicationPlatform.getKeyCheck().checkKey(key);
+        if (applicationPlatform.keyCheck() == null && applicationPlatform.inputManager() != null)
+            return applicationPlatform.inputManager().getPressingKeys().contains(key);
+        if (applicationPlatform.keyCheck() != null && applicationPlatform.inputManager() == null)
+            return applicationPlatform.keyCheck().checkKey(key);
         return false;
     }
 
@@ -525,10 +525,10 @@ public class Application implements Behavior {
      * currently being pressed or not. It returns `true` if the button is being pressed and `false` otherwise.
      */
     public boolean pressingButton(Input.MouseButton button) {
-        if (applicationPlatform.getKeyCheck() == null && applicationPlatform.getInputManager() != null)
-            return applicationPlatform.getInputManager().getPressingMouseButtons().contains(button);
-        if (applicationPlatform.getKeyCheck() != null && applicationPlatform.getInputManager() == null)
-            return applicationPlatform.getKeyCheck().checkMouseButton(button);
+        if (applicationPlatform.keyCheck() == null && applicationPlatform.inputManager() != null)
+            return applicationPlatform.inputManager().getPressingMouseButtons().contains(button);
+        if (applicationPlatform.keyCheck() != null && applicationPlatform.inputManager() == null)
+            return applicationPlatform.keyCheck().checkMouseButton(button);
         return false;
     }
 

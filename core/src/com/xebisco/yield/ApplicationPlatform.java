@@ -19,69 +19,9 @@ package com.xebisco.yield;
 /**
  * The class ApplicationPlatform contains various managers and utilities for a Yield application.
  */
-public class ApplicationPlatform {
-    private final FontManager fontManager;
-    private final TextureManager textureManager;
-    private final InputManager inputManager;
-    private final KeyCheck keyCheck;
-    private final MouseCheck mouseCheck;
-    private final AudioManager audioManager;
-    private final ViewportZoomScale viewportZoomScale;
-    private final ToggleFullScreen toggleFullScreen;
-    private final GraphicsManager graphicsManager;
-
-    private final SpritesheetTextureManager spritesheetTextureManager;
-
-    public ApplicationPlatform(FontManager fontManager, TextureManager textureManager, InputManager inputManager, KeyCheck keyCheck, MouseCheck mouseCheck, AudioManager audioManager, ViewportZoomScale viewportZoomScale, ToggleFullScreen toggleFullScreen, GraphicsManager graphicsManager, SpritesheetTextureManager spritesheetTextureManager) {
-        this.fontManager = fontManager;
-        this.textureManager = textureManager;
-        this.inputManager = inputManager;
-        this.keyCheck = keyCheck;
-        this.mouseCheck = mouseCheck;
-        this.audioManager = audioManager;
-        this.viewportZoomScale = viewportZoomScale;
-        this.toggleFullScreen = toggleFullScreen;
-        this.graphicsManager = graphicsManager;
-        this.spritesheetTextureManager = spritesheetTextureManager;
-    }
-
-    public FontManager getFontManager() {
-        return fontManager;
-    }
-
-    public TextureManager getTextureManager() {
-        return textureManager;
-    }
-
-    public InputManager getInputManager() {
-        return inputManager;
-    }
-
-    public KeyCheck getKeyCheck() {
-        return keyCheck;
-    }
-
-    public MouseCheck getMouseCheck() {
-        return mouseCheck;
-    }
-
-    public AudioManager getAudioManager() {
-        return audioManager;
-    }
-
-    public ViewportZoomScale getViewportZoomScale() {
-        return viewportZoomScale;
-    }
-
-    public ToggleFullScreen getToggleFullScreen() {
-        return toggleFullScreen;
-    }
-
-    public GraphicsManager getGraphicsManager() {
-        return graphicsManager;
-    }
-
-    public SpritesheetTextureManager getSpritesheetTextureManager() {
-        return spritesheetTextureManager;
-    }
+public record ApplicationPlatform(FontManager fontManager, TextureManager textureManager, InputManager inputManager,
+                                  KeyCheck keyCheck, MouseCheck mouseCheck, AudioManager audioManager,
+                                  ViewportZoomScale viewportZoomScale, ToggleFullScreen toggleFullScreen,
+                                  GraphicsManager graphicsManager,
+                                  SpritesheetTextureManager spritesheetTextureManager) {
 }

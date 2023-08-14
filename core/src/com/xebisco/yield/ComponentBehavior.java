@@ -172,10 +172,10 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
     }
 
     public TextureManager getTextureManager() {
-        return getApplication().applicationPlatform().getTextureManager();
+        return getApplication().applicationPlatform().textureManager();
     }
 
     public FontManager getFontManager() {
-        return getApplication().applicationPlatform().getFontManager();
+        return getApplication().applicationPlatform().fontManager();
     }
 }
