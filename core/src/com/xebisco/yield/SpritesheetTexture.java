@@ -61,7 +61,7 @@ public class SpritesheetTexture extends FileInput implements Disposable {
      */
     @Override
     public void dispose() {
-        getSpritesheetTextureManager().unloadSpritesheetTexture(this);
+        spritesheetTextureManager().unloadSpritesheetTexture(this);
     }
 
     /**
@@ -69,7 +69,7 @@ public class SpritesheetTexture extends FileInput implements Disposable {
      *
      * @return The method is returning the value of the variable `spritesheetImageRef`, which is of type `Object`.
      */
-    public Object getSpritesheetImageRef() {
+    public Object spritesheetImageRef() {
         return spritesheetImageRef;
     }
 
@@ -78,8 +78,8 @@ public class SpritesheetTexture extends FileInput implements Disposable {
      *
      * @param spritesheetImageRef The parameter "spritesheetImageRef" is an object that represents a reference to an image.
      */
-    public void setSpritesheetImageRef(Object spritesheetImageRef) {
-        this.spritesheetImageRef = spritesheetImageRef;
+    public SpritesheetTexture setSpritesheetImageRef(Object spritesheetImageRef) {
+        this.spritesheetImageRef = spritesheetImageRef;return this;
     }
 
     /**
@@ -91,7 +91,7 @@ public class SpritesheetTexture extends FileInput implements Disposable {
         return size;
     }
 
-    public SpritesheetTextureManager getSpritesheetTextureManager() {
+    public SpritesheetTextureManager spritesheetTextureManager() {
         return spritesheetTextureManager;
     }
 }

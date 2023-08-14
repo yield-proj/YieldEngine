@@ -631,13 +631,13 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public void unloadSpritesheetTexture(SpritesheetTexture spritesheetTexture) {
-        ((Image) spritesheetTexture.getSpritesheetImageRef()).flush();
+        ((Image) spritesheetTexture.spritesheetImageRef()).flush();
         spritesheetTexture.setSpritesheetImageRef(null);
     }
 
     @Override
     public Texture getTextureFromRegion(int x, int y, int width, int height, SpritesheetTexture spritesheetTexture) {
-        return new Texture(((BufferedImage) spritesheetTexture.getSpritesheetImageRef()).getSubimage(x, y, width, height), null, this);
+        return new Texture(((BufferedImage) spritesheetTexture.spritesheetImageRef()).getSubimage(x, y, width, height), null, this);
     }
 
     @Override

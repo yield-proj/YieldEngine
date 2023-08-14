@@ -80,13 +80,13 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     @Override
     public void unloadSpritesheetTexture(SpritesheetTexture spritesheetTexture) {
-        ((Image) spritesheetTexture.getSpritesheetImageRef()).flush();
+        ((Image) spritesheetTexture.spritesheetImageRef()).flush();
         spritesheetTexture.setSpritesheetImageRef(null);
     }
 
     @Override
     public Texture getTextureFromRegion(int x, int y, int width, int height, SpritesheetTexture spritesheetTexture) {
-        OpenGLImage image = new OpenGLImage(AWTTextureIO.newTextureData(profile, ((BufferedImage) spritesheetTexture.getSpritesheetImageRef()).getSubimage(x, y, width, height), false));
+        OpenGLImage image = new OpenGLImage(AWTTextureIO.newTextureData(profile, ((BufferedImage) spritesheetTexture.spritesheetImageRef()).getSubimage(x, y, width, height), false));
         toLoadImages.add(image);
         return new Texture(image, null, this);
     }
