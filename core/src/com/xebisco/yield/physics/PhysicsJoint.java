@@ -41,8 +41,8 @@ public class PhysicsJoint extends ComponentBehavior {
     private void createJoint() {
         JointDef jointDef = new JointDef();
         jointDef.userData = this;
-        jointDef.bodyA = entity1.getComponent(PhysicsBody.class).getB2Body();
-        jointDef.bodyB = entity2.getComponent(PhysicsBody.class).getB2Body();
+        jointDef.bodyA = entity1.component(PhysicsBody.class).getB2Body();
+        jointDef.bodyB = entity2.component(PhysicsBody.class).getB2Body();
         jointDef.type = JointType.valueOf(type.name());
         b2Joint = application().scene().getPhysicsMain().getB2World().createJoint(jointDef);
     }

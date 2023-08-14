@@ -138,7 +138,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      */
 
     public <T extends ComponentBehavior> T component(Class<T> componentType) {
-        return entity().getComponent(componentType);
+        return entity().component(componentType);
     }
 
     /**
@@ -152,7 +152,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      */
 
     public <T extends ComponentBehavior> T component(Class<T> componentType, int index) {
-        return entity().getComponent(componentType, index);
+        return entity().component(componentType, index);
     }
 
     /**
