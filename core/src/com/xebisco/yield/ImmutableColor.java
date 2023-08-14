@@ -41,22 +41,22 @@ public class ImmutableColor extends Color {
     }
 
     @Override
-    public void setRed(double red) {
+    public Color setRed(double red) {
         throw new ImmutableBreakException();
     }
 
     @Override
-    public void setGreen(double green) {
+    public Color setGreen(double green) {
         throw new ImmutableBreakException();
     }
 
     @Override
-    public void setBlue(double blue) {
+    public Color setBlue(double blue) {
         throw new ImmutableBreakException();
     }
 
     @Override
-    public void setAlpha(double alpha) {
+    public Color setAlpha(double alpha) {
         throw new ImmutableBreakException();
     }
 }
