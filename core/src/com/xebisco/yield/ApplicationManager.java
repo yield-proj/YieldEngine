@@ -46,14 +46,14 @@ public class ApplicationManager implements Runnable {
         @Override
         public void run() {
             for(Application application : applications) {
-                application.setFrames(application.getFrames() + 1);
-                if(application.getFrames() == 1) {
+                application.setFrames(application.frames() + 1);
+                if(application.frames() == 1) {
                     application.onStart();
                 }
                 application.onUpdate();
             }
             boolean removed = applications.removeIf(a -> {
-                boolean remove = a.getApplicationPlatform().getGraphicsManager().shouldClose();
+                boolean remove = a.applicationPlatform().getGraphicsManager().shouldClose();
                 if(remove) a.dispose();
                 return remove;
             });

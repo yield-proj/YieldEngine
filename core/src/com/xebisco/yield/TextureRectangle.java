@@ -37,7 +37,7 @@ public class TextureRectangle extends Rectangle {
     @Override
     public void onStart() {
         super.onStart();
-        if (texture == null) texture = getApplication().getDefaultTexture();
+        if (texture == null) texture = getApplication().defaultTexture();
     }
 
     @Override

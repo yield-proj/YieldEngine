@@ -40,11 +40,11 @@ public class RectangleCollider extends Collider {
     public Shape getShape() {
         PolygonShape s = new PolygonShape();
         if(!isIgnoreScaling()) {
-            s.setAsBox((float) (size.width() * Math.abs(transform().scale().x()) / getApplication().getPhysicsPpm() / 2.0), (float) (size.height() * Math.abs(transform().scale().y()) / getApplication().getPhysicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
+            s.setAsBox((float) (size.width() * Math.abs(transform().scale().x()) / getApplication().physicsPpm() / 2.0), (float) (size.height() * Math.abs(transform().scale().y()) / getApplication().physicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
         } else {
-            s.setAsBox((float) (size.width() / getApplication().getPhysicsPpm() / 2.0), (float) (size.height() / getApplication().getPhysicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
+            s.setAsBox((float) (size.width() / getApplication().physicsPpm() / 2.0), (float) (size.height() / getApplication().physicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
         }
-        s.m_centroid.set(Global.toVec2(centroid.divide(new Vector2D(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))));
+        s.m_centroid.set(Global.toVec2(centroid.divide(new Vector2D(getApplication().physicsPpm(), getApplication().physicsPpm()))));
         return s;
     }
 

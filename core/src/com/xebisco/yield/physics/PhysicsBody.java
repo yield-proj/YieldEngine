@@ -37,10 +37,10 @@ public class PhysicsBody extends ComponentBehavior {
     @Override
     public void onStart() {
         BodyDef def = new BodyDef();
-        def.position = Global.toVec2(transform().position().divide(new Vector2D(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm())));
+        def.position = Global.toVec2(transform().position().divide(new Vector2D(getApplication().physicsPpm(), getApplication().physicsPpm())));
         def.angle = (float) Math.toRadians(transform().zRotation());
         def.userData = getEntity();
-        setB2Body(getApplication().getScene().getPhysicsMain().getB2World().createBody(def));
+        setB2Body(getApplication().scene().getPhysicsMain().getB2World().createBody(def));
     }
 
     @Override
@@ -92,14 +92,14 @@ public class PhysicsBody extends ComponentBehavior {
         getB2Body().setBullet(bullet);
         getB2Body().m_mass = (float) mass;
         getB2Body().setFixedRotation(fixedRotation);
-        transform().position().set(getB2Body().getPosition().x * getApplication().getPhysicsPpm(), getB2Body().getPosition().y * getApplication().getPhysicsPpm());
+        transform().position().set(getB2Body().getPosition().x * getApplication().physicsPpm(), getB2Body().getPosition().y * getApplication().physicsPpm());
         transform().setzRotation(Math.toDegrees(getB2Body().getAngle()));
     }
 
     @Override
     public void dispose() {
         if (b2Body != null)
-            getApplication().getScene().getPhysicsMain().getB2World().destroyBody(b2Body);
+            getApplication().scene().getPhysicsMain().getB2World().destroyBody(b2Body);
     }
 
     public void addForce(Vector2D force, ForceType forceType) {
@@ -130,7 +130,7 @@ public class PhysicsBody extends ComponentBehavior {
     }
 
     public void translate(Vector2D a) {
-        setPosition(new Vector2D(getPosition().x + a.x() / getApplication().getPhysicsPpm(), getPosition().y + a.y() / getApplication().getPhysicsPpm()));
+        setPosition(new Vector2D(getPosition().x + a.x() / getApplication().physicsPpm(), getPosition().y + a.y() / getApplication().physicsPpm()));
     }
 
     public void checkBodyCreation() {
@@ -150,7 +150,7 @@ public class PhysicsBody extends ComponentBehavior {
     }
 
     public void setPosition(Vector2D value) {
-        getB2Body().setTransform(new Vec2((float) (value.x() / getApplication().getPhysicsPpm()), (float) (value.y() / getApplication().getPhysicsPpm())), b2Body.getAngle());
+        getB2Body().setTransform(new Vec2((float) (value.x() / getApplication().physicsPpm()), (float) (value.y() / getApplication().physicsPpm())), b2Body.getAngle());
     }
 
     public Vec2 getLinearVelocity() {

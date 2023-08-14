@@ -59,7 +59,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      * @return A RayCast object.
      */
     public final RayCast rayCast(Vector2D point1, Vector2D point2) {
-        return getApplication().getScene().getPhysicsMain().rayCast(getEntity(), point1, point2);
+        return getApplication().scene().getPhysicsMain().rayCast(getEntity(), point1, point2);
     }
 
     /**
@@ -168,14 +168,14 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      * @return The method `getTime()` is returning an object of type `ContextTime`.
      */
     public ContextTime getTime() {
-        return getApplication().getApplicationManager().getManagerContext().getContextTime();
+        return getApplication().applicationManager().getManagerContext().getContextTime();
     }
 
     public TextureManager getTextureManager() {
-        return getApplication().getApplicationPlatform().getTextureManager();
+        return getApplication().applicationPlatform().getTextureManager();
     }
 
     public FontManager getFontManager() {
-        return getApplication().getApplicationPlatform().getFontManager();
+        return getApplication().applicationPlatform().getFontManager();
     }
 }

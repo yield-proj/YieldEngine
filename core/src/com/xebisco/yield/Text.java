@@ -35,7 +35,7 @@ public class Text extends AbstractRenderable {
 
     @Override
     public void onStart() {
-        if(font == null) font = getApplication().getDefaultFont();
+        if(font == null) font = getApplication().defaultFont();
     }
 
     @Override
@@ -50,7 +50,7 @@ public class Text extends AbstractRenderable {
     @Override
     public DrawInstruction render() {
         DrawInstruction r = super.render();
-        size().set(getApplication().getApplicationPlatform().getFontManager().getStringWidth(contents, font.getFontRef()), getApplication().getApplicationPlatform().getFontManager().getStringHeight(contents, font.getFontRef()));
+        size().set(getApplication().applicationPlatform().getFontManager().getStringWidth(contents, font.getFontRef()), getApplication().applicationPlatform().getFontManager().getStringHeight(contents, font.getFontRef()));
         return r;
     }
 
