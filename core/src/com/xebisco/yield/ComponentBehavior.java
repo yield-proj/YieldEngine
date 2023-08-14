@@ -162,7 +162,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      * the `Entity` object and returning it.
      */
     public Application application() {
-        return entity().getApplication();
+        return entity().application();
     }
 
     /**

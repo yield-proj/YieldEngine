@@ -65,7 +65,7 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
 
         }
         try {
-            for (Entity2D child : getEntities()) {
+            for (Entity2D child : entities()) {
                 child.processPhysics();
             }
         } catch (ConcurrentModificationException ignore) {
@@ -110,7 +110,7 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
         } catch (IndexOutOfBoundsException ignore) {
 
         }
-        for (Entity2D child : getEntities()) {
+        for (Entity2D child : entities()) {
             DrawInstruction di = child.process();
             child.updateEntityList();
             if (visible)
@@ -123,14 +123,14 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
 
     @Override
     public void dispose() {
-        for (Entity2D entity : getEntities()) {
+        for (Entity2D entity : entities()) {
             entity.dispose();
         }
         for (ComponentBehavior component : components) {
             component.dispose();
         }
         if (parent() != null) {
-            parent().getToRemoveEntities().add(this);
+            parent().toRemoveEntities().add(this);
             setParent(null);
         }
     }

@@ -25,17 +25,17 @@ public class ToggleFullScreenSystem extends SystemBehavior {
 
     @Override
     public void onStart() {
-        onFullScreen = getScene().getApplication().platformInit().fullscreen();
+        onFullScreen = getScene().application().platformInit().fullscreen();
     }
 
     @Override
     public void onUpdate() {
-        if (getScene().getApplication().pressingKey(Input.Key.VK_ALT)) {
-            if (getScene().getApplication().pressingKey(Input.Key.VK_ENTER)) {
+        if (getScene().application().pressingKey(Input.Key.VK_ALT)) {
+            if (getScene().application().pressingKey(Input.Key.VK_ENTER)) {
                 if (doAction) {
                     doAction = false;
                     onFullScreen = !onFullScreen;
-                    getScene().getApplication().applicationPlatform().toggleFullScreen().setFullScreen(onFullScreen);
+                    getScene().application().applicationPlatform().toggleFullScreen().setFullScreen(onFullScreen);
                 }
             } else {
                 doAction = true;

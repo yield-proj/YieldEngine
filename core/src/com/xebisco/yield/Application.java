@@ -65,7 +65,7 @@ public class Application implements Behavior {
             if (scene != null) {
                 scene.getPhysicsMain().process(!platformInit.physicsOnMainContext() ? (float) (platformInit.physicsContextTime().targetSleepTime() * platformInit.physicsContextTime().timeScale() * applicationManager().managerContext().contextTime().timeScale() / 1_000_000.) : (float) (applicationManager().managerContext().contextTime().targetSleepTime() * applicationManager().managerContext().contextTime().timeScale() / 1_000_000.));
                 try {
-                    for (Entity2D entity : scene.getEntities()) {
+                    for (Entity2D entity : scene.entities()) {
                         entity.processPhysics();
                     }
                 } catch (ConcurrentModificationException ignore) {
@@ -354,7 +354,7 @@ public class Application implements Behavior {
                     backGroundDrawInstruction.setColor(scene.getBackGroundColor());
                     drawInstructions.add(backGroundDrawInstruction);
                 }
-                for (Entity2D entity : scene.getEntities()) {
+                for (Entity2D entity : scene.entities()) {
                     DrawInstruction di = entity.process();
                     entity.updateEntityList();
                     if (di != null && scene.getFrames() >= 2) drawInstructions.add(di);
@@ -449,8 +449,8 @@ public class Application implements Behavior {
      */
     public Application setScene(Scene scene) {
         if (this.scene != null) {
-            for (int i = this.scene.getEntities().size() - 1; i >= 0; i--) {
-                this.scene.getEntities().get(i).dispose();
+            for (int i = this.scene.entities().size() - 1; i >= 0; i--) {
+                this.scene.entities().get(i).dispose();
             }
             this.scene.updateEntityList();
             for (SystemBehavior system : this.scene.getSystems()) {

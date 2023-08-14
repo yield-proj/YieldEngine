@@ -95,23 +95,24 @@ public class Entity2DContainer {
         return toRemoveEntities.add(entity);
     }
 
-    public List<Entity2D> getEntities() {
-        return entities;
-    }
-
-    public void setEntities(List<Entity2D> entities) {
-        this.entities = entities;
-    }
-
-    public Application getApplication() {
+    public Application application() {
         return application;
     }
 
-    public Set<Entity2D> getToAddEntities() {
+    public List<Entity2D> entities() {
+        return entities;
+    }
+
+    public Entity2DContainer setEntities(List<Entity2D> entities) {
+        this.entities = entities;
+        return this;
+    }
+
+    public Set<Entity2D> toAddEntities() {
         return toAddEntities;
     }
 
-    public Set<Entity2D> getToRemoveEntities() {
+    public Set<Entity2D> toRemoveEntities() {
         return toRemoveEntities;
     }
 }
