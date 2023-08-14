@@ -50,7 +50,7 @@ public class ToggleFullScreenSystem extends SystemBehavior {
      *
      * @return The method is returning the value of the boolean variable `onFullScreen`.
      */
-    public boolean isOnFullScreen() {
+    public boolean onFullScreen() {
         return onFullScreen;
     }
 }
