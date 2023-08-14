@@ -63,7 +63,7 @@ public class Application implements Behavior {
 
         physicsProcess = () -> {
             if (scene != null) {
-                scene.getPhysicsMain().process(!platformInit.physicsOnMainContext() ? (float) (platformInit.physicsContextTime().getTargetSleepTime() * platformInit.physicsContextTime().getTimeScale() * applicationManager().managerContext().getContextTime().getTimeScale() / 1_000_000.) : (float) (applicationManager().managerContext().getContextTime().getTargetSleepTime() * applicationManager().managerContext().getContextTime().getTimeScale() / 1_000_000.));
+                scene.getPhysicsMain().process(!platformInit.physicsOnMainContext() ? (float) (platformInit.physicsContextTime().getTargetSleepTime() * platformInit.physicsContextTime().getTimeScale() * applicationManager().managerContext().contextTime().getTimeScale() / 1_000_000.) : (float) (applicationManager().managerContext().contextTime().getTargetSleepTime() * applicationManager().managerContext().contextTime().getTimeScale() / 1_000_000.));
                 try {
                     for (Entity2D entity : scene.getEntities()) {
                         entity.processPhysics();
@@ -191,7 +191,7 @@ public class Application implements Behavior {
             controllerManager.initSDLGamepad();
 
         if (physicsContext != null)
-            physicsContext.getThread().start();
+            physicsContext.thread().start();
     }
 
     private void createNullAxis(String a, String horizontal, String vertical, String fire, String back, String action, String inventory, String start) {
@@ -378,7 +378,7 @@ public class Application implements Behavior {
         }
         if (changeSceneTransition != null) {
             changeSceneTransition.setApplication(this);
-            changeSceneTransition.setDeltaTime(applicationManager().managerContext().getContextTime().getDeltaTime());
+            changeSceneTransition.setDeltaTime(applicationManager().managerContext().contextTime().getDeltaTime());
             changeSceneTransition.setPassedTime(changeSceneTransition.passedTime() + changeSceneTransition.deltaTime());
             changeSceneTransition.setFrames(changeSceneTransition.frames() + 1);
             drawInstructions.add(changeSceneTransition.render());
@@ -403,7 +403,7 @@ public class Application implements Behavior {
         //Wake up thread
         renderingThread.renderAsync(null);
         if (physicsContext != null)
-            physicsContext.getRunning().set(false);
+            physicsContext.running().set(false);
         setScene(null);
         if (controllerManager != null)
             controllerManager.quitSDLGamepad();

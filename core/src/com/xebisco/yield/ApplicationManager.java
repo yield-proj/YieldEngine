@@ -36,7 +36,7 @@ public class ApplicationManager implements Runnable {
 
     @Override
     public void run() {
-        managerContext.getThread().start();
+        managerContext.thread().start();
     }
 
     /**
@@ -57,7 +57,7 @@ public class ApplicationManager implements Runnable {
                 if(remove) a.dispose();
                 return remove;
             });
-            if(removed && applications.size() == 0) managerContext.getRunning().set(false);
+            if(removed && applications.size() == 0) managerContext.running().set(false);
         }
     }
     /**

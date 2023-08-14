@@ -171,7 +171,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      * @return The method `time()` is returning an object of type `ContextTime`.
      */
     public ContextTime time() {
-        return application().applicationManager().managerContext().getContextTime();
+        return application().applicationManager().managerContext().contextTime();
     }
 
     public TextureManager getTextureManager() {

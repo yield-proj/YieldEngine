@@ -77,7 +77,7 @@ public class Context implements Runnable {
      *
      * @return The thread object.
      */
-    public Thread getThread() {
+    public Thread thread() {
         return thread;
     }
 
@@ -86,7 +86,7 @@ public class Context implements Runnable {
      *
      * @return The contextTime object.
      */
-    public ContextTime getContextTime() {
+    public ContextTime contextTime() {
         return contextTime;
     }
 
@@ -95,7 +95,7 @@ public class Context implements Runnable {
      *
      * @return The value of the running variable.
      */
-    public AtomicBoolean getRunning() {
+    public AtomicBoolean running() {
         return running;
     }
 
@@ -104,7 +104,7 @@ public class Context implements Runnable {
      *
      * @return The lock object.
      */
-    public Object getLockObject() {
+    public Object lockObject() {
         return lockObject;
     }
 
@@ -113,7 +113,7 @@ public class Context implements Runnable {
      *
      * @return The runnable object.
      */
-    public Runnable getRunnable() {
+    public Runnable runnable() {
         return runnable;
     }
 
@@ -122,7 +122,7 @@ public class Context implements Runnable {
      *
      * @return The boolean value of the variable lightweight.
      */
-    public boolean isLightweight() {
+    public boolean lightweight() {
         return lightweight;
     }
 
@@ -131,8 +131,9 @@ public class Context implements Runnable {
      *
      * @param lightweight If true, the component will behavior as a lightweight context.
      */
-    public void setLightweight(boolean lightweight) {
+    public Context setLightweight(boolean lightweight) {
         this.lightweight = lightweight;
+        return this;
     }
 
     /**
@@ -140,7 +141,7 @@ public class Context implements Runnable {
      *
      * @return The disposable object.
      */
-    public Disposable getDisposable() {
+    public Disposable disposable() {
         return disposable;
     }
 }
