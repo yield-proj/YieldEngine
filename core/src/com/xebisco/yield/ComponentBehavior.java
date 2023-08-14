@@ -59,7 +59,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      * @return A RayCast object.
      */
     public final RayCast rayCast(Vector2D point1, Vector2D point2) {
-        return application().scene().getPhysicsMain().rayCast(entity(), point1, point2);
+        return application().scene().physicsMain().rayCast(entity(), point1, point2);
     }
 
     /**

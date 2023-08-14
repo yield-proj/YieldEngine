@@ -63,7 +63,7 @@ public class Application implements Behavior {
 
         physicsProcess = () -> {
             if (scene != null) {
-                scene.getPhysicsMain().process(!platformInit.physicsOnMainContext() ? (float) (platformInit.physicsContextTime().targetSleepTime() * platformInit.physicsContextTime().timeScale() * applicationManager().managerContext().contextTime().timeScale() / 1_000_000.) : (float) (applicationManager().managerContext().contextTime().targetSleepTime() * applicationManager().managerContext().contextTime().timeScale() / 1_000_000.));
+                scene.physicsMain().process(!platformInit.physicsOnMainContext() ? (float) (platformInit.physicsContextTime().targetSleepTime() * platformInit.physicsContextTime().timeScale() * applicationManager().managerContext().contextTime().timeScale() / 1_000_000.) : (float) (applicationManager().managerContext().contextTime().targetSleepTime() * applicationManager().managerContext().contextTime().timeScale() / 1_000_000.));
                 try {
                     for (Entity2D entity : scene.entities()) {
                         entity.processPhysics();
@@ -327,12 +327,12 @@ public class Application implements Behavior {
             }
 
             Scene scene = this.scene;
-            scene.setFrames(scene.getFrames() + 1);
-            if (scene.getFrames() == 1) {
+            scene.setFrames(scene.frames() + 1);
+            if (scene.frames() == 1) {
                 scene.onStart();
             }
             try {
-                for (SystemBehavior system : scene.getSystems()) {
+                for (SystemBehavior system : scene.systems()) {
                     system.setScene(scene);
                     system.setFrames(system.getFrames() + 1);
                     if (system.getFrames() == 1) {
@@ -349,15 +349,15 @@ public class Application implements Behavior {
             if (changeSceneTransition == null || !changeSceneTransition.stopUpdatingScene() || toChangeScene == null) {
                 scene.onUpdate();
                 drawInstructions.clear();
-                if (scene.getFrames() >= 2) {
+                if (scene.frames() >= 2) {
                     backGroundDrawInstruction.setStroke(0);
-                    backGroundDrawInstruction.setColor(scene.getBackGroundColor());
+                    backGroundDrawInstruction.setColor(scene.backGroundColor());
                     drawInstructions.add(backGroundDrawInstruction);
                 }
                 for (Entity2D entity : scene.entities()) {
                     DrawInstruction di = entity.process();
                     entity.updateEntityList();
-                    if (di != null && scene.getFrames() >= 2) drawInstructions.add(di);
+                    if (di != null && scene.frames() >= 2) drawInstructions.add(di);
 
                     if (scene != this.scene) {
                         return;
@@ -453,7 +453,7 @@ public class Application implements Behavior {
                 this.scene.entities().get(i).dispose();
             }
             this.scene.updateEntityList();
-            for (SystemBehavior system : this.scene.getSystems()) {
+            for (SystemBehavior system : this.scene.systems()) {
                 system.dispose();
             }
             this.scene.dispose();
@@ -461,8 +461,8 @@ public class Application implements Behavior {
         this.scene = scene;
         if (scene != null) {
             scene.setFrames(0);
-            applicationPlatform.graphicsManager().setCamera(scene.getCamera());
-            applicationPlatform.viewportZoomScale().setZoomScale(scene.getZoomScale());
+            applicationPlatform.graphicsManager().setCamera(scene.camera());
+            applicationPlatform.viewportZoomScale().setZoomScale(scene.zoomScale());
         }
         return this;
     }
