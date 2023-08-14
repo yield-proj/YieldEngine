@@ -167,11 +167,7 @@ public class Application implements Behavior {
                 createNullAxis(a, HORIZONTAL, VERTICAL, FIRE, BACK, ACTION, INVENTORY, START);
                 createNullAxis(a, RIGHT_FIRE, LEFT_FIRE, HORIZONTAL_PAD, VERTICAL_PAD, RIGHT_BUMPER, LEFT_BUMPER, RUN);
             }
-            axes.add(new Axis(HORIZONTAL_CAM + a, null, null, null, null));
-            axes.add(new Axis(VERTICAL_CAM + a, null, null, null, null));
-            axes.add(new Axis(RIGHT_THUMB + a, null, null, null, null));
-            axes.add(new Axis(LEFT_THUMB + a, null, null, null, null));
-            axes.add(new Axis(VIEW + a, null, null, null, null));
+            loadControllerAxis(a, HORIZONTAL_CAM, VERTICAL_CAM, RIGHT_THUMB, LEFT_THUMB, VIEW);
         }
         if (applicationPlatform.textureManager() != null) {
             defaultTexture = new Texture("com/xebisco/yield/yieldIcon.png", applicationPlatform.textureManager());
@@ -194,12 +190,16 @@ public class Application implements Behavior {
             physicsContext.thread().start();
     }
 
+    private void loadControllerAxis(String a, String horizontalCam, String verticalCam, String rightThumb, String leftThumb, String view) {
+        axes.add(new Axis(horizontalCam + a, null, null, null, null));
+        axes.add(new Axis(verticalCam + a, null, null, null, null));
+        axes.add(new Axis(rightThumb + a, null, null, null, null));
+        axes.add(new Axis(leftThumb + a, null, null, null, null));
+        axes.add(new Axis(view + a, null, null, null, null));
+    }
+
     private void createNullAxis(String a, String horizontal, String vertical, String fire, String back, String action, String inventory, String start) {
-        axes.add(new Axis(horizontal + a, null, null, null, null));
-        axes.add(new Axis(vertical + a, null, null, null, null));
-        axes.add(new Axis(fire + a, null, null, null, null));
-        axes.add(new Axis(back + a, null, null, null, null));
-        axes.add(new Axis(action + a, null, null, null, null));
+        loadControllerAxis(a, horizontal, vertical, fire, back, action);
         axes.add(new Axis(inventory + a, null, null, null, null));
         axes.add(new Axis(start + a, null, null, null, null));
     }
@@ -319,7 +319,7 @@ public class Application implements Behavior {
     public void onUpdate() {
         boolean rendering = false;
         if (scene != null) {
-            if (drawInstructions.size() > 0) {
+            if (!drawInstructions.isEmpty()) {
                 rendering = true;
                 toSendDrawInstructions.clear();
                 drawInstructions.forEach((di) -> toSendDrawInstructions.add(di.clone()));

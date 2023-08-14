@@ -78,15 +78,9 @@ public class PhysicsBody extends ComponentBehavior {
             }
         }
         switch (type) {
-            case DYNAMIC:
-                getB2Body().setType(BodyType.DYNAMIC);
-                break;
-            case STATIC:
-                getB2Body().setType(BodyType.STATIC);
-                break;
-            case KINEMATIC:
-                getB2Body().setType(BodyType.KINEMATIC);
-                break;
+            case DYNAMIC -> getB2Body().setType(BodyType.DYNAMIC);
+            case STATIC -> getB2Body().setType(BodyType.STATIC);
+            case KINEMATIC -> getB2Body().setType(BodyType.KINEMATIC);
         }
         getB2Body().setGravityScale((float) gravityScale);
         getB2Body().setBullet(bullet);
@@ -104,28 +98,18 @@ public class PhysicsBody extends ComponentBehavior {
 
     public void addForce(Vector2D force, ForceType forceType) {
         switch (forceType) {
-            case FORCE:
-                getB2Body().applyForceToCenter(Global.toVec2(force));
-                break;
-            case LINEAR_IMPULSE:
-                getB2Body().applyLinearImpulse(Global.toVec2(force), getB2Body().getWorldCenter());
-                break;
-            default:
-                throw new IllegalArgumentException(forceType.name());
+            case FORCE -> getB2Body().applyForceToCenter(Global.toVec2(force));
+            case LINEAR_IMPULSE -> getB2Body().applyLinearImpulse(Global.toVec2(force), getB2Body().getWorldCenter());
+            default -> throw new IllegalArgumentException(forceType.name());
         }
     }
 
     public void addForce(double force, ForceType forceType) {
         checkBodyCreation();
         switch (forceType) {
-            case TORQUE:
-                getB2Body().applyTorque((float) force);
-                break;
-            case ANGULAR_IMPULSE:
-                getB2Body().applyAngularImpulse((float) force);
-                break;
-            default:
-                throw new IllegalArgumentException(forceType.name());
+            case TORQUE -> getB2Body().applyTorque((float) force);
+            case ANGULAR_IMPULSE -> getB2Body().applyAngularImpulse((float) force);
+            default -> throw new IllegalArgumentException(forceType.name());
         }
     }
 
