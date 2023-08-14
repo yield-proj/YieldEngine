@@ -32,7 +32,7 @@ public final class AnimationPlayer extends ComponentBehavior {
 
     @Override
     public void onStart() {
-        textureRectangle = getComponent(TextureRectangle.class);
+        textureRectangle = component(TextureRectangle.class);
     }
 
     @Override
@@ -42,25 +42,25 @@ public final class AnimationPlayer extends ComponentBehavior {
             toSwitchAnimation = null;
         }
         if (animation != null) {
-            toChange += getTime().getDeltaTime();
-            if (actualFrame < animation.getFrames().length - 1) {
-                if (toChange >= animation.getDelay()) {
+            toChange += time().deltaTime();
+            if (actualFrame < animation.frames().length - 1) {
+                if (toChange >= animation.delay()) {
                     toChange = 0;
                     actualFrame++;
                 }
             }
-            if (actualFrame == animation.getFrames().length - 1) {
-                if (toChange >= animation.getDelay()) {
+            if (actualFrame == animation.frames().length - 1) {
+                if (toChange >= animation.delay()) {
                     toChange = 0;
                     if (toSwitchAnimation != null) {
                         setAnimation(toSwitchAnimation);
                         toSwitchAnimation = null;
-                    } else if (animation.isLoop()) actualFrame = 0;
+                    } else if (animation.loop()) actualFrame = 0;
                 }
             }
-            TextureRectangle r = getComponent(TextureRectangle.class);
+            TextureRectangle r = component(TextureRectangle.class);
             if (r != null)
-                r.setTexture(animation.getFrames()[actualFrame]);
+                r.setTexture(animation.frames()[actualFrame]);
         }
     }
 
@@ -78,67 +78,50 @@ public final class AnimationPlayer extends ComponentBehavior {
      *
      * @param animation The animation object that is being set for the current object.
      */
-    public void setAnimation(Animation animation) {
+    public AnimationPlayer setAnimation(Animation animation) {
         actualFrame = 0;
         toChange = 0;
         this.animation = animation;
+        return this;
     }
 
-    /**
-     * The function returns the "toSwitchAnimation" object of type Animation.
-     *
-     * @return The method is returning an object of type `Animation`. The specific `Animation` object being returned is
-     * stored in the variable `toSwitchAnimation`.
-     */
-    public Animation getToSwitchAnimation() {
+    public Animation animation() {
+        return animation;
+    }
+
+    public Animation toSwitchAnimation() {
         return toSwitchAnimation;
     }
 
-    /**
-     * This function sets the value of a variable called "toSwitchAnimation" to the value of the input parameter
-     * "toSwitchAnimation".
-     *
-     * @param toSwitchAnimation The parameter "toSwitchAnimation" is an object of the class "Animation". This method sets
-     *                          the value of the instance variable "toSwitchAnimation" to the value passed as the parameter, which is the next animation that is going to be played by this `AnimationPlayer` object.
-     */
-    public void setToSwitchAnimation(Animation toSwitchAnimation) {
+    public AnimationPlayer setToSwitchAnimation(Animation toSwitchAnimation) {
         this.toSwitchAnimation = toSwitchAnimation;
+        return this;
     }
 
-    /**
-     * The function returns the value of the variable "actualFrame".
-     *
-     * @return The method is returning the value of the variable "actualFrame".
-     */
-    public int getActualFrame() {
+    public int actualFrame() {
         return actualFrame;
     }
 
-    /**
-     * This function sets the value of the "actualFrame" variable.
-     *
-     * @param actualFrame actualFrame is a variable of type int that represents the current frame of an animation. The
-     * method setActualFrame is a setter method that sets the value of actualFrame to the value passed as a parameter.
-     */
-    public void setActualFrame(int actualFrame) {
+    public AnimationPlayer setActualFrame(int actualFrame) {
         this.actualFrame = actualFrame;
+        return this;
     }
 
-    /**
-     * The function returns the value of a double variable named "toChange".
-     *
-     * @return The method is returning a double value named "toChange".
-     */
-    public double getToChange() {
+    public double toChange() {
         return toChange;
     }
 
-    /**
-     * This function sets the value of a variable named "toChange".
-     *
-     * @param toChange toChange is a variable of type double that is being set using the setter method.
-     */
-    public void setToChange(double toChange) {
+    public AnimationPlayer setToChange(double toChange) {
         this.toChange = toChange;
+        return this;
+    }
+
+    public TextureRectangle textureRectangle() {
+        return textureRectangle;
+    }
+
+    public AnimationPlayer setTextureRectangle(TextureRectangle textureRectangle) {
+        this.textureRectangle = textureRectangle;
+        return this;
     }
 }

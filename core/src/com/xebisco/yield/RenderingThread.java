@@ -74,35 +74,41 @@ public class RenderingThread extends Thread {
 
     }
 
-    public AtomicBoolean getRunning() {
+    public AtomicBoolean running() {
         return running;
     }
 
-    public GraphicsManager getGraphicsManager() {
+    public GraphicsManager graphicsManager() {
         return graphicsManager;
     }
 
-    public Object getLockObject() {
-        return lockObject;
-    }
-
-    public List<DrawInstruction> getDrawInstructions() {
+    public List<DrawInstruction> drawInstructions() {
         return drawInstructions;
     }
 
-    public void setDrawInstructions(List<DrawInstruction> drawInstructions) {
+    public RenderingThread setDrawInstructions(List<DrawInstruction> drawInstructions) {
         this.drawInstructions = drawInstructions;
+        return this;
     }
 
-    public Object getOtherLock() {
+    public Object lockObject() {
+        return lockObject;
+    }
+
+    public Object otherLock() {
         return otherLock;
     }
 
-    public boolean isFinishedRendering() {
+    public boolean finishedRendering() {
         return finishedRendering;
     }
 
-    public void setFinishedRendering(boolean finishedRendering) {
+    public RenderingThread setFinishedRendering(boolean finishedRendering) {
         this.finishedRendering = finishedRendering;
+        return this;
+    }
+
+    public Semaphore semaphore() {
+        return semaphore;
     }
 }

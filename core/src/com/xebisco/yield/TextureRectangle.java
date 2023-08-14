@@ -37,22 +37,22 @@ public class TextureRectangle extends Rectangle {
     @Override
     public void onStart() {
         super.onStart();
-        if (texture == null) texture = getApplication().getDefaultTexture();
+        if (texture == null) texture = application().defaultTexture();
     }
 
     @Override
     public void setupX(float[] verticesX) {
         super.setupX(verticesX);
-        drawInstruction().setImageRef(texture.getImageRef());
+        drawInstruction().setImageRef(texture.imageRef());
     }
 
     @Override
     public DrawInstruction render() {
         if (textureSized) {
             if (textureScale == null)
-                size().set(texture.getSize());
+                size().set(texture.size());
             else
-                size().set(texture.getSize().multiply(textureScale));
+                size().set(texture.size().multiply(textureScale));
         }
         return super.render();
     }
@@ -67,7 +67,7 @@ public class TextureRectangle extends Rectangle {
      *
      * @return The method is returning a Texture object.
      */
-    public Texture getTexture() {
+    public Texture texture() {
         return texture;
     }
 
@@ -77,8 +77,8 @@ public class TextureRectangle extends Rectangle {
      * @param texture The "texture" parameter is an object of the class "Texture". The method "setTexture" sets the value
      * of the instance variable "texture" to the value passed as the parameter.
      */
-    public void setTexture(Texture texture) {
-        this.texture = texture;
+    public TextureRectangle setTexture(Texture texture) {
+        this.texture = texture;return this;
     }
 
     /**
@@ -86,7 +86,7 @@ public class TextureRectangle extends Rectangle {
      *
      * @return A boolean value indicating whether the TextureRectangle is texture sized or not.
      */
-    public boolean isTextureSized() {
+    public boolean textureSized() {
         return textureSized;
     }
 
@@ -95,8 +95,8 @@ public class TextureRectangle extends Rectangle {
      *
      * @param textureSized A boolean variable that sets whether the TextureRectangle is texture sized or not.
      */
-    public void setTextureSized(boolean textureSized) {
-        this.textureSized = textureSized;
+    public TextureRectangle setTextureSized(boolean textureSized) {
+        this.textureSized = textureSized;return this;
     }
 
     /**
@@ -104,7 +104,7 @@ public class TextureRectangle extends Rectangle {
      *
      * @return A variable of type `TwoAnchorRepresentation` named `textureScale` is being returned.
      */
-    public Vector2D getTextureScale() {
+    public Vector2D textureScale() {
         return textureScale;
     }
 
@@ -113,8 +113,8 @@ public class TextureRectangle extends Rectangle {
      *
      * @param textureScale The parameter texture scale of a TwoAnchorRepresentation object to set.
      */
-    public void setTextureScale(Vector2D textureScale) {
-        this.textureScale = textureScale;
+    public TextureRectangle setTextureScale(Vector2D textureScale) {
+        this.textureScale = textureScale;return this;
     }
 
     /**
@@ -122,7 +122,7 @@ public class TextureRectangle extends Rectangle {
      *
      * @return The method is returning a boolean value, specifically the value of the variable `disposeTexture`.
      */
-    public boolean isDisposeTexture() {
+    public boolean disposeTexture() {
         return disposeTexture;
     }
 
@@ -133,7 +133,7 @@ public class TextureRectangle extends Rectangle {
      * object should be disposed of when the object is no longer needed. If disposeTexture is set to true, the texture will
      * be disposed of, freeing up memory. If it is set to false, the texture will not be disposed of
      */
-    public void setDisposeTexture(boolean disposeTexture) {
-        this.disposeTexture = disposeTexture;
+    public TextureRectangle setDisposeTexture(boolean disposeTexture) {
+        this.disposeTexture = disposeTexture;return this;
     }
 }

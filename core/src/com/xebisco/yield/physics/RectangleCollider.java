@@ -40,18 +40,18 @@ public class RectangleCollider extends Collider {
     public Shape getShape() {
         PolygonShape s = new PolygonShape();
         if(!isIgnoreScaling()) {
-            s.setAsBox((float) (size.width() * Math.abs(transform().scale().x()) / getApplication().getPhysicsPpm() / 2.0), (float) (size.height() * Math.abs(transform().scale().y()) / getApplication().getPhysicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
+            s.setAsBox((float) (size.width() * Math.abs(transform().scale().x()) / application().physicsPpm() / 2.0), (float) (size.height() * Math.abs(transform().scale().y()) / application().physicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
         } else {
-            s.setAsBox((float) (size.width() / getApplication().getPhysicsPpm() / 2.0), (float) (size.height() / getApplication().getPhysicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
+            s.setAsBox((float) (size.width() / application().physicsPpm() / 2.0), (float) (size.height() / application().physicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
         }
-        s.m_centroid.set(Global.toVec2(centroid.divide(new Vector2D(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))));
+        s.m_centroid.set(Global.toVec2(centroid.divide(new Vector2D(application().physicsPpm(), application().physicsPpm()))));
         return s;
     }
 
     /**
      * The function returns a Size2D object.
      *
-     * @return The method `getSize()` is returning an object of type `Size2D`.
+     * @return The method `size()` is returning an object of type `Size2D`.
      */
     public Vector2D getSize() {
         return size;

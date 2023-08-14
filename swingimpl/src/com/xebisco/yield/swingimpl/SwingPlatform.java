@@ -57,7 +57,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     private Vector2D zoomScale;
 
     public static Color awtColor(com.xebisco.yield.Color yieldColor) {
-        return new Color(yieldColor.getARGB(), true);
+        return new Color(yieldColor.argb(), true);
     }
 
     public Dimension onSizeBoundary(Image image, Dimension boundary) {
@@ -87,12 +87,12 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     public Object loadFont(com.xebisco.yield.Font font) {
         Font f;
         try {
-            f = Font.createFont(Font.TRUETYPE_FONT, font.getInputStream()).deriveFont((float) font.getSize());
+            f = Font.createFont(Font.TRUETYPE_FONT, font.inputStream()).deriveFont((float) font.getSize());
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
         try {
-            font.getInputStream().close();
+            font.inputStream().close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -101,12 +101,12 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public void unloadFont(com.xebisco.yield.Font font) {
-        font.setFontRef(null);
+        font.fontRef(null);
     }
 
     @Override
     public Object loadTexture(Texture texture) {
-        return new SwingImage(loadAWTBufferedImage(new BufferedInputStream(texture.getInputStream())));
+        return new SwingImage(loadAWTBufferedImage(new BufferedInputStream(texture.inputStream())));
     }
 
     private BufferedImage loadAWTBufferedImage(BufferedInputStream inputStream) {
@@ -133,7 +133,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public void unloadTexture(Texture texture) {
-        ((Image) texture.getImageRef()).flush();
+        ((Image) texture.imageRef()).flush();
         texture.setImageRef(null);
     }
 
@@ -372,7 +372,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public void updateWindowIcon(Texture icon) {
-        frame.setIconImage(((SwingImage) icon.getImageRef()).originalImage());
+        frame.setIconImage(((SwingImage) icon.imageRef()).originalImage());
     }
 
     public void frame() {
@@ -626,18 +626,18 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public Object loadSpritesheetTexture(SpritesheetTexture spritesheetTexture) {
-        return loadAWTBufferedImage(new BufferedInputStream(spritesheetTexture.getInputStream()));
+        return loadAWTBufferedImage(new BufferedInputStream(spritesheetTexture.inputStream()));
     }
 
     @Override
     public void unloadSpritesheetTexture(SpritesheetTexture spritesheetTexture) {
-        ((Image) spritesheetTexture.getSpritesheetImageRef()).flush();
+        ((Image) spritesheetTexture.spritesheetImageRef()).flush();
         spritesheetTexture.setSpritesheetImageRef(null);
     }
 
     @Override
     public Texture getTextureFromRegion(int x, int y, int width, int height, SpritesheetTexture spritesheetTexture) {
-        return new Texture(((BufferedImage) spritesheetTexture.getSpritesheetImageRef()).getSubimage(x, y, width, height), null, this);
+        return new Texture(((BufferedImage) spritesheetTexture.spritesheetImageRef()).getSubimage(x, y, width, height), null, this);
     }
 
     @Override

@@ -65,7 +65,7 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
 
         }
         try {
-            for (Entity2D child : getEntities()) {
+            for (Entity2D child : entities()) {
                 child.processPhysics();
             }
         } catch (ConcurrentModificationException ignore) {
@@ -96,8 +96,8 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
 
                 if (component != null) {
                     component.setEntity(this);
-                    component.setFrames(component.getFrames() + 1);
-                    if (component.getFrames() == 1)
+                    component.setFrames(component.frames() + 1);
+                    if (component.frames() == 1)
                         component.onStart();
                     component.onUpdate();
                     if (visible) {
@@ -110,7 +110,7 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
         } catch (IndexOutOfBoundsException ignore) {
 
         }
-        for (Entity2D child : getEntities()) {
+        for (Entity2D child : entities()) {
             DrawInstruction di = child.process();
             child.updateEntityList();
             if (visible)
@@ -123,14 +123,14 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
 
     @Override
     public void dispose() {
-        for (Entity2D entity : getEntities()) {
+        for (Entity2D entity : entities()) {
             entity.dispose();
         }
         for (ComponentBehavior component : components) {
             component.dispose();
         }
         if (parent() != null) {
-            parent().getToRemoveEntities().add(this);
+            parent().toRemoveEntities().add(this);
             setParent(null);
         }
     }
@@ -159,7 +159,7 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
      * @param index         The index of the component you want to get.
      * @return A component of the specified type.
      */
-    public <T extends ComponentBehavior> T getComponent(Class<T> componentType, int index) {
+    public <T extends ComponentBehavior> T component(Class<T> componentType, int index) {
         int i = 0;
         for (ComponentBehavior c : components) {
             if (c.getClass().hashCode() == componentType.hashCode() && c.getClass().equals(componentType)) {
@@ -179,8 +179,8 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
      * @param componentType The type of the component to retrieve.
      * @return The first component of the given type.
      */
-    public <T extends ComponentBehavior> T getComponent(Class<T> componentType) {
-        return getComponent(componentType, 0);
+    public <T extends ComponentBehavior> T component(Class<T> componentType) {
+        return component(componentType, 0);
     }
 
     /**
@@ -200,7 +200,7 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
      * @param index         The index of the component to remove.
      */
     public void removeComponent(Class<? extends ComponentBehavior> componentType, int index) {
-        removeComponent(getComponent(componentType, index));
+        removeComponent(component(componentType, index));
     }
 
     /**
@@ -209,7 +209,7 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
      * @param componentType The type of the component to remove.
      */
     public void removeComponent(Class<? extends ComponentBehavior> componentType) {
-        removeComponent(getComponent(componentType));
+        removeComponent(component(componentType));
     }
 
     public Transform2D transform() {

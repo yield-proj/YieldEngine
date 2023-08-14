@@ -26,6 +26,6 @@ public class BlankScene extends Scene {
 
     @Override
     public void onStart() {
-        setBackGroundColor(Colors.BLACK);
+        backGroundColor(Colors.BLACK);
     }
 }

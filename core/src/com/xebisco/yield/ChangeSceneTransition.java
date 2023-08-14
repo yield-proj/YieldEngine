@@ -33,114 +33,56 @@ public abstract class ChangeSceneTransition implements Renderable {
         this.stopUpdatingScene = stopUpdatingScene;
     }
 
-    /**
-     * The function returns the value of deltaTime, which is a measure of time elapsed since the last frame or
-     * update.
-     *
-     * @return The method is returning a double value named `deltaTime`.
-     */
-    public double getDeltaTime() {
+    public double deltaTime() {
         return deltaTime;
     }
 
-    /**
-     * This function sets the value of deltaTime for an object.
-     *
-     * @param deltaTime deltaTime is a variable of type double that represents the time difference between two consecutive
-     * updates in a simulation or game loop.
-     */
-    public void setDeltaTime(double deltaTime) {
+    public ChangeSceneTransition setDeltaTime(double deltaTime) {
         this.deltaTime = deltaTime;
+        return this;
     }
 
-    /**
-     * The function returns the value of the passedTime variable as a double.
-     *
-     * @return The method is returning a double value representing the amount of time that has passed.
-     */
-    public double getPassedTime() {
+    public double passedTime() {
         return passedTime;
     }
 
-    /**
-     * This function sets the value of the "passedTime" variable.
-     *
-     * @param passedTime passedTime is a variable of type double that represents the amount of time that has passed.
-     */
-    public void setPassedTime(double passedTime) {
+    public ChangeSceneTransition setPassedTime(double passedTime) {
         this.passedTime = passedTime;
+        return this;
     }
 
-    /**
-     * The function returns the value of the variable "timeToWait" as a double.
-     *
-     * @return The method is returning a double value which is the value of the variable `timeToWait`.
-     */
-    public double getTimeToWait() {
+    public double timeToWait() {
         return timeToWait;
     }
 
-    /**
-     * The function returns the value of the frames variable.
-     *
-     * @return The method is returning an integer value of the variable "frames".
-     */
-    public int getFrames() {
-        return frames;
-    }
-
-    /**
-     * The function sets the number of frames for a given object.
-     *
-     * @param frames The "frames" parameter is an integer value that represents the number of frames passed.
-     */
-    public void setFrames(int frames) {
-        this.frames = frames;
-    }
-
-    /**
-     * The function returns an instance of the Application class.
-     *
-     * @return The method is returning an object of type `Application`.
-     */
-    public Application getApplication() {
+    public Application application() {
         return application;
     }
 
-    /**
-     * This function sets the value of the "application" variable in the current object to the value passed as a parameter.
-     *
-     * @param application The parameter "application" is an object of the class "Application". The method "setApplication"
-     * sets the value of the instance variable "application" to the value passed as a parameter.
-     */
-    public void setApplication(Application application) {
+    public ChangeSceneTransition setApplication(Application application) {
         this.application = application;
+        return this;
     }
 
-    /**
-     * The function returns a boolean value indicating whether the effect is finished or not.
-     *
-     * @return The method is returning a boolean value, specifically the value of the variable "finished".
-     */
-    public boolean isFinished() {
+    public int frames() {
+        return frames;
+    }
+
+    public ChangeSceneTransition setFrames(int frames) {
+        this.frames = frames;
+        return this;
+    }
+
+    public boolean finished() {
         return finished;
     }
 
-    /**
-     * This function sets the value of a boolean variable called "finished".
-     *
-     * @param finished A boolean variable that represents whether the effect has been completed or not.
-     */
-    public void setFinished(boolean finished) {
+    public ChangeSceneTransition setFinished(boolean finished) {
         this.finished = finished;
+        return this;
     }
 
-    /**
-     * This function returns the value of a boolean variable called "stopUpdatingScene".
-     *
-     * @return The method is returning a boolean value, specifically the value of the variable `stopUpdatingScene`.
-     */
-    public boolean isStopUpdatingScene() {
+    public boolean stopUpdatingScene() {
         return stopUpdatingScene;
     }
 }

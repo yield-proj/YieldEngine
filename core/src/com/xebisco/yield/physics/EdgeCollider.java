@@ -32,9 +32,9 @@ public class EdgeCollider extends Collider {
     public Shape getShape() {
         EdgeShape s = new EdgeShape();
         if(!isIgnoreScaling()) {
-            s.set(Global.toVec2(point1.divide(new Vector2D(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm())).multiply(transform().scale().absolute())), Global.toVec2(point2.divide(new Vector2D(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm())).multiply(transform().scale().absolute())));
+            s.set(Global.toVec2(point1.divide(new Vector2D(application().physicsPpm(), application().physicsPpm())).multiply(transform().scale().absolute())), Global.toVec2(point2.divide(new Vector2D(application().physicsPpm(), application().physicsPpm())).multiply(transform().scale().absolute())));
         } else {
-            s.set(Global.toVec2(point1.divide(new Vector2D(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))), Global.toVec2(point2.divide(new Vector2D(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))));
+            s.set(Global.toVec2(point1.divide(new Vector2D(application().physicsPpm(), application().physicsPpm()))), Global.toVec2(point2.divide(new Vector2D(application().physicsPpm(), application().physicsPpm()))));
         }
         return s;
     }

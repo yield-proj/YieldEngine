@@ -38,8 +38,8 @@ public class CircleCollider extends Collider {
         float largerScale = (float) (Math.max(Math.abs(transform().scale().x()), Math.abs(transform().scale().y())));
         if(isIgnoreScaling())
             largerScale = 1;
-        s.setRadius((float) (radius * largerScale / getApplication().getPhysicsPpm()));
-        s.m_p.set(Global.toVec2(center.divide(new Vector2D(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))));
+        s.setRadius((float) (radius * largerScale / application().physicsPpm()));
+        s.m_p.set(Global.toVec2(center.divide(new Vector2D(application().physicsPpm(), application().physicsPpm()))));
         return s;
     }
 

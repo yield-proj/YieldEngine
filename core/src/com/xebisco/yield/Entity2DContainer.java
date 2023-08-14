@@ -43,9 +43,9 @@ public class Entity2DContainer {
      * @return The method is returning an instance of the Entity2D class.
      */
     public Entity2D instantiate(Entity2DPrefab prefab, EntityStarter entityStarter) {
-        ComponentBehavior[] components = new ComponentBehavior[prefab.getComponents().length];
+        ComponentBehavior[] components = new ComponentBehavior[prefab.components().length];
         for (int i = 0; i < components.length; i++) {
-            ComponentCreation cc = prefab.getComponents()[i];
+            ComponentCreation cc = prefab.components()[i];
             try {
                 components[i] = cc.getComponentClass().getDeclaredConstructor().newInstance();
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -57,9 +57,9 @@ public class Entity2DContainer {
                 cc.getComponentModifier().modify(components[i]);
         }
         Entity2D entity = new Entity2D(application, components);
-        entity.setTags(prefab.getTags());
+        entity.setTags(prefab.tags());
         entity.setParent(this);
-        for (Entity2DPrefab p : prefab.getChildren()) {
+        for (Entity2DPrefab p : prefab.children()) {
             entity.instantiate(p);
         }
         toAddEntities.add(entity);
@@ -95,23 +95,24 @@ public class Entity2DContainer {
         return toRemoveEntities.add(entity);
     }
 
-    public List<Entity2D> getEntities() {
-        return entities;
-    }
-
-    public void setEntities(List<Entity2D> entities) {
-        this.entities = entities;
-    }
-
-    public Application getApplication() {
+    public Application application() {
         return application;
     }
 
-    public Set<Entity2D> getToAddEntities() {
+    public List<Entity2D> entities() {
+        return entities;
+    }
+
+    public Entity2DContainer setEntities(List<Entity2D> entities) {
+        this.entities = entities;
+        return this;
+    }
+
+    public Set<Entity2D> toAddEntities() {
         return toAddEntities;
     }
 
-    public Set<Entity2D> getToRemoveEntities() {
+    public Set<Entity2D> toRemoveEntities() {
         return toRemoveEntities;
     }
 }

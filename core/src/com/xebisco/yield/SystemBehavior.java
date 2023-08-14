@@ -42,9 +42,9 @@ public abstract class SystemBehavior implements Behavior {
     /**
      * The function returns a Scene object.
      *
-     * @return The `getScene()` method is returning a `Scene` object.
+     * @return The `scene()` method is returning a `Scene` object.
      */
-    public Scene getScene() {
+    public Scene scene() {
         return scene;
     }
 
@@ -52,10 +52,11 @@ public abstract class SystemBehavior implements Behavior {
      * This function sets the scene for a Java application.
      *
      * @param scene The method "setScene" sets the value of the
-     * instance variable "scene" to the value passed as the parameter.
+     *              instance variable "scene" to the value passed as the parameter.
      */
-    public void setScene(Scene scene) {
+    public SystemBehavior setScene(Scene scene) {
         this.scene = scene;
+        return this;
     }
 
     /**
@@ -63,7 +64,7 @@ public abstract class SystemBehavior implements Behavior {
      *
      * @return The method is returning an integer value of the variable "frames".
      */
-    public int getFrames() {
+    public int frames() {
         return frames;
     }
 
@@ -72,7 +73,8 @@ public abstract class SystemBehavior implements Behavior {
      *
      * @param frames The "frames" parameter is an integer value that represents the number of frames.
      */
-    public void setFrames(int frames) {
+    public SystemBehavior setFrames(int frames) {
         this.frames = frames;
+        return this;
     }
 }

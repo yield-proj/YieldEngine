@@ -60,7 +60,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     @Override
     public Object loadSpritesheetTexture(SpritesheetTexture spritesheetTexture) {
-        return loadAWTBufferedImage(new BufferedInputStream(spritesheetTexture.getInputStream()));
+        return loadAWTBufferedImage(new BufferedInputStream(spritesheetTexture.inputStream()));
     }
 
     private BufferedImage loadAWTBufferedImage(BufferedInputStream inputStream) {
@@ -80,13 +80,13 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     @Override
     public void unloadSpritesheetTexture(SpritesheetTexture spritesheetTexture) {
-        ((Image) spritesheetTexture.getSpritesheetImageRef()).flush();
+        ((Image) spritesheetTexture.spritesheetImageRef()).flush();
         spritesheetTexture.setSpritesheetImageRef(null);
     }
 
     @Override
     public Texture getTextureFromRegion(int x, int y, int width, int height, SpritesheetTexture spritesheetTexture) {
-        OpenGLImage image = new OpenGLImage(AWTTextureIO.newTextureData(profile, ((BufferedImage) spritesheetTexture.getSpritesheetImageRef()).getSubimage(x, y, width, height), false));
+        OpenGLImage image = new OpenGLImage(AWTTextureIO.newTextureData(profile, ((BufferedImage) spritesheetTexture.spritesheetImageRef()).getSubimage(x, y, width, height), false));
         toLoadImages.add(image);
         return new Texture(image, null, this);
     }
@@ -223,11 +223,11 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
         if (di.verticesX() == null && di.verticesY() == null) {
             if (di.color() != null) {
-                gl.glClearColor((float) di.color().getRed(), (float) di.color().getGreen(), (float) di.color().getBlue(), (float) di.color().getAlpha());
+                gl.glClearColor((float) di.color().red(), (float) di.color().green(), (float) di.color().blue(), (float) di.color().alpha());
                 gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
             }
         } else {
-            gl.glColor4d(di.color().getRed(), di.color().getGreen(), di.color().getBlue(), di.color().getAlpha());
+            gl.glColor4d(di.color().red(), di.color().green(), di.color().blue(), di.color().alpha());
 
             if (di.imageRef() != null && ((OpenGLImage) di.imageRef()).getTexture() != null) {
                 com.jogamp.opengl.util.texture.Texture t = ((OpenGLImage) di.imageRef()).getTexture();
@@ -287,7 +287,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     @Override
     public Object loadFont(Font font) {
         try {
-            return new TextRenderer(java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, font.getInputStream()).deriveFont((float) font.getSize()));
+            return new TextRenderer(java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, font.inputStream()).deriveFont((float) font.getSize()));
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -295,7 +295,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     @Override
     public void unloadFont(Font font) {
-        ((TextRenderer) font.getFontRef()).dispose();
+        ((TextRenderer) font.fontRef()).dispose();
     }
 
     @Override
@@ -353,7 +353,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     @Override
     public Object loadTexture(Texture texture) {
         try {
-            OpenGLImage image = new OpenGLImage(AWTTextureIO.newTextureData(profile, ImageIO.read(texture.getInputStream()), false));
+            OpenGLImage image = new OpenGLImage(AWTTextureIO.newTextureData(profile, ImageIO.read(texture.inputStream()), false));
             toLoadImages.add(image);
             return image;
         } catch (IOException e) {
@@ -363,7 +363,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     @Override
     public void unloadTexture(Texture texture) {
-        toDestroyImages.add((OpenGLImage) texture.getImageRef());
+        toDestroyImages.add((OpenGLImage) texture.imageRef());
     }
 
     @Override

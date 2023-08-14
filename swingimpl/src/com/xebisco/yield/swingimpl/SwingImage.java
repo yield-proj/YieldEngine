@@ -43,7 +43,7 @@ public class SwingImage {
             @Override
             public int filterRGB(int x, int y, int rgb) {
                 com.xebisco.yield.Color img = new com.xebisco.yield.Color(rgb);
-                return new com.xebisco.yield.Color(img.getRed() * color.getRed(), img.getGreen() * color.getGreen(), img.getBlue() * color.getBlue(), img.getAlpha() * color.getAlpha()).getARGB();
+                return new com.xebisco.yield.Color(img.red() * color.red(), img.green() * color.green(), img.blue() * color.blue(), img.alpha() * color.alpha()).argb();
             }
         }));
     }

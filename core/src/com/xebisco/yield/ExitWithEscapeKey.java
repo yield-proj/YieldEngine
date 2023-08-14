@@ -22,7 +22,7 @@ package com.xebisco.yield;
 public class ExitWithEscapeKey extends SystemBehavior {
     @Override
     public void onUpdate() {
-        if(getScene().getApplication().isPressingKey(Input.Key.VK_ESCAPE))
-            getScene().getApplication().getApplicationManager().getManagerContext().getRunning().set(false);
+        if(scene().application().pressingKey(Input.Key.VK_ESCAPE))
+            scene().application().applicationManager().managerContext().running().set(false);
     }
 }

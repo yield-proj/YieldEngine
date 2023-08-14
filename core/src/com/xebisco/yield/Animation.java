@@ -40,62 +40,30 @@ public class Animation implements Disposable {
             t.dispose();
     }
 
-    /**
-     * The function returns an array of Texture objects.
-     *
-     * @return An array of Texture objects named "frames" is being returned.
-     */
-    public Texture[] getFrames() {
+    public Texture[] frames() {
         return frames;
     }
 
-    /**
-     * This function sets the frames of a texture.
-     *
-     * @param frames The "frames" parameter is an array of Texture objects. The method "setFrames" sets the value of the
-     *               instance variable "frames" to the value of the "frames" parameter.
-     */
-    public void setFrames(Texture[] frames) {
+    public Animation setFrames(Texture[] frames) {
         this.frames = frames;
+        return this;
     }
 
-    /**
-     * The function returns the value of the delay variable as a double.
-     *
-     * @return The method `getDelay()` is returning a `double` value, which is the value of the variable `delay`.
-     */
-    public double getDelay() {
+    public double delay() {
         return delay;
     }
 
-    /**
-     * The function sets the delay value for a certain object.
-     *
-     * @param delay The "delay" parameter is a double data type that represents the amount of time (in seconds) to wait
-     *              before going to the next frame. This method sets the value of the "delay"
-     *              instance variable to the specified value passed as a parameter.
-     */
-    public void setDelay(double delay) {
+    public Animation setDelay(double delay) {
         this.delay = delay;
+        return this;
     }
 
-    /**
-     * The function returns a boolean value indicating whether the animation will loop or not.
-     *
-     * @return The method `isLoop()` is returning a boolean value, which is the value of the variable `loop`.
-     */
-    public boolean isLoop() {
+    public boolean loop() {
         return loop;
     }
 
-    /**
-     * This function sets the value of a boolean variable called "loop".
-     *
-     * @param loop The "loop" parameter is a boolean variable that is used to control whether the animation will loop or not. If the value of "loop" is true, then the animation will be repeated
-     *             indefinitely until it is explicitly stopped or interrupted.
-     */
-    public void setLoop(boolean loop) {
+    public Animation setLoop(boolean loop) {
         this.loop = loop;
+        return this;
     }
-
 }

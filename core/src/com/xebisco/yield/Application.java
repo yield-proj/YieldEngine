@@ -58,14 +58,14 @@ public class Application implements Behavior {
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, ApplicationPlatform applicationPlatform, PlatformInit platformInit) {
         physicsPpm = platformInit.startPhysicsPpm();
         this.applicationManager = applicationManager;
-        applicationManager.getApplications().add(this);
+        applicationManager.applications().add(this);
         this.applicationPlatform = applicationPlatform;
 
         physicsProcess = () -> {
             if (scene != null) {
-                scene.getPhysicsMain().process(!platformInit.physicsOnMainContext() ? (float) (platformInit.physicsContextTime().getTargetSleepTime() * platformInit.physicsContextTime().getTimeScale() * getApplicationManager().getManagerContext().getContextTime().getTimeScale() / 1_000_000.) : (float) (getApplicationManager().getManagerContext().getContextTime().getTargetSleepTime() * getApplicationManager().getManagerContext().getContextTime().getTimeScale() / 1_000_000.));
+                scene.physicsMain().process(!platformInit.physicsOnMainContext() ? (float) (platformInit.physicsContextTime().targetSleepTime() * platformInit.physicsContextTime().timeScale() * applicationManager().managerContext().contextTime().timeScale() / 1_000_000.) : (float) (applicationManager().managerContext().contextTime().targetSleepTime() * applicationManager().managerContext().contextTime().timeScale() / 1_000_000.));
                 try {
-                    for (Entity2D entity : scene.getEntities()) {
+                    for (Entity2D entity : scene.entities()) {
                         entity.processPhysics();
                     }
                 } catch (ConcurrentModificationException ignore) {
@@ -90,7 +90,7 @@ public class Application implements Behavior {
         vertexShaderMap.put("default-shader", new DefaultVertexShader());
 
         this.platformInit = platformInit;
-        renderingThread = new RenderingThread(applicationPlatform.getGraphicsManager());
+        renderingThread = new RenderingThread(applicationPlatform.graphicsManager());
         viewportSize = new ImmutableVector2D(platformInit.windowSize().width(), platformInit.viewportSize().height());
         axes.add(new Axis(HORIZONTAL, Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
         axes.add(new Axis(VERTICAL, Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
@@ -116,34 +116,34 @@ public class Application implements Behavior {
     private void checkPlatform(ApplicationPlatform platform, PlatformInit init) {
         for (Class<?> c : init.requiredPlatformModules()) {
             if (c.equals(FontManager.class)) {
-                if (platform.getFontManager() == null)
+                if (platform.fontManager() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(TextureManager.class)) {
-                if (platform.getTextureManager() == null)
+                if (platform.textureManager() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(InputManager.class)) {
-                if (platform.getInputManager() == null)
+                if (platform.inputManager() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(KeyCheck.class)) {
-                if (platform.getKeyCheck() == null)
+                if (platform.keyCheck() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(MouseCheck.class)) {
-                if (platform.getMouseCheck() == null)
+                if (platform.mouseCheck() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(AudioManager.class)) {
-                if (platform.getAudioManager() == null)
+                if (platform.audioManager() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(ViewportZoomScale.class)) {
-                if (platform.getViewportZoomScale() == null)
+                if (platform.viewportZoomScale() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(ToggleFullScreen.class)) {
-                if (platform.getToggleFullScreen() == null)
+                if (platform.toggleFullScreen() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(GraphicsManager.class)) {
-                if (platform.getGraphicsManager() == null)
+                if (platform.graphicsManager() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else if (c.equals(SpritesheetTextureManager.class)) {
-                if (platform.getSpritesheetTextureManager() == null)
+                if (platform.spritesheetTextureManager() == null)
                     throw new ApplicationPlatformModuleException("The application platform does not contain the '" + c.getSimpleName() + "' module.");
             } else {
                 throw new ApplicationPlatformModuleException("Not supported application module. '" + c.getSimpleName() + "'");
@@ -153,12 +153,12 @@ public class Application implements Behavior {
 
     @Override
     public void onStart() {
-        applicationPlatform.getGraphicsManager().init(platformInit);
+        applicationPlatform.graphicsManager().init(platformInit);
         renderingThread.start();
-        defaultFont = new Font("com/xebisco/yield/OpenSans-Regular.ttf", 48, applicationPlatform.getFontManager());
+        defaultFont = new Font("com/xebisco/yield/OpenSans-Regular.ttf", 48, applicationPlatform.fontManager());
         if (platformInit.windowIcon() == null)
-            platformInit.setWindowIcon(new Texture(platformInit.windowIconPath(), applicationPlatform.getTextureManager()));
-        applicationPlatform.getGraphicsManager().updateWindowIcon(platformInit.windowIcon());
+            platformInit.setWindowIcon(new Texture(platformInit.windowIconPath(), applicationPlatform.textureManager()));
+        applicationPlatform.graphicsManager().updateWindowIcon(platformInit.windowIcon());
         for (int i = 0; i < 4; i++) {
             String a = String.valueOf((i + 1));
             if (i == 0)
@@ -173,10 +173,10 @@ public class Application implements Behavior {
             axes.add(new Axis(LEFT_THUMB + a, null, null, null, null));
             axes.add(new Axis(VIEW + a, null, null, null, null));
         }
-        if (applicationPlatform.getTextureManager() != null) {
-            defaultTexture = new Texture("com/xebisco/yield/yieldIcon.png", applicationPlatform.getTextureManager());
-            controllerTexture = new Texture("com/xebisco/yield/controller.png", applicationPlatform.getTextureManager());
-            translucentControllerTexture = new Texture("com/xebisco/yield/translucentController.png", applicationPlatform.getTextureManager());
+        if (applicationPlatform.textureManager() != null) {
+            defaultTexture = new Texture("com/xebisco/yield/yieldIcon.png", applicationPlatform.textureManager());
+            controllerTexture = new Texture("com/xebisco/yield/controller.png", applicationPlatform.textureManager());
+            translucentControllerTexture = new Texture("com/xebisco/yield/translucentController.png", applicationPlatform.textureManager());
         } else {
             controllerTexture = null;
             translucentControllerTexture = null;
@@ -191,7 +191,7 @@ public class Application implements Behavior {
             controllerManager.initSDLGamepad();
 
         if (physicsContext != null)
-            physicsContext.getThread().start();
+            physicsContext.thread().start();
     }
 
     private void createNullAxis(String a, String horizontal, String vertical, String fire, String back, String action, String inventory, String start) {
@@ -229,11 +229,11 @@ public class Application implements Behavior {
      * This function updates the values of various input axes based on keyboard and controller inputs.
      */
     public void updateAxes() {
-        mousePosition.set(applicationPlatform.getMouseCheck().getMouseX(), applicationPlatform.getMouseCheck().getMouseY());
+        mousePosition.set(applicationPlatform.mouseCheck().getMouseX(), applicationPlatform.mouseCheck().getMouseY());
         for (Axis axis : axes) {
-            if ((axis.getPositiveKey() != null && isPressingKey(axis.getPositiveKey())) || (axis.getAltPositiveKey() != null && isPressingKey(axis.getAltPositiveKey()))) {
+            if ((axis.positiveKey() != null && pressingKey(axis.positiveKey())) || (axis.altPositiveKey() != null && pressingKey(axis.altPositiveKey()))) {
                 axis.setValue(1);
-            } else if ((axis.getNegativeKey() != null && isPressingKey(axis.getNegativeKey())) || (axis.getAltNegativeKey() != null && isPressingKey(axis.getAltNegativeKey()))) {
+            } else if ((axis.negativeKey() != null && pressingKey(axis.negativeKey())) || (axis.altNegativeKey() != null && pressingKey(axis.altNegativeKey()))) {
                 axis.setValue(-1);
             } else {
                 axis.setValue(0);
@@ -248,64 +248,64 @@ public class Application implements Behavior {
                     if (i == 0)
                         a = "";
                     for (Axis axis : this.axes) {
-                        if (axis.getName().equals(HORIZONTAL + a)) {
+                        if (axis.name().equals(HORIZONTAL + a)) {
                             axis.setValue(device.leftStickX);
-                            if (Math.abs(axis.getValue()) < 0.1)
+                            if (Math.abs(axis.value()) < 0.1)
                                 axis.setValue(0);
-                        } else if (axis.getName().equals(VERTICAL + a)) {
+                        } else if (axis.name().equals(VERTICAL + a)) {
                             axis.setValue(device.leftStickY);
-                            if (Math.abs(axis.getValue()) < 0.1)
+                            if (Math.abs(axis.value()) < 0.1)
                                 axis.setValue(0);
-                        } else if (axis.getName().equals(HORIZONTAL_CAM + a)) {
+                        } else if (axis.name().equals(HORIZONTAL_CAM + a)) {
                             axis.setValue(device.rightStickX);
-                            if (Math.abs(axis.getValue()) < 0.1)
+                            if (Math.abs(axis.value()) < 0.1)
                                 axis.setValue(0);
-                        } else if (axis.getName().equals(VERTICAL_CAM + a)) {
+                        } else if (axis.name().equals(VERTICAL_CAM + a)) {
                             axis.setValue(device.rightStickY);
-                            if (Math.abs(axis.getValue()) < 0.1)
+                            if (Math.abs(axis.value()) < 0.1)
                                 axis.setValue(0);
-                        } else if (axis.getName().equals(RIGHT_FIRE + a)) {
+                        } else if (axis.name().equals(RIGHT_FIRE + a)) {
                             axis.setValue(device.rightTrigger);
-                        } else if (axis.getName().equals(RUN + a)) {
+                        } else if (axis.name().equals(RUN + a)) {
                             axis.setValue(device.rightTrigger);
-                        } else if (axis.getName().equals(LEFT_FIRE + a)) {
+                        } else if (axis.name().equals(LEFT_FIRE + a)) {
                             axis.setValue(device.leftTrigger);
-                        } else if (axis.getName().equals(HORIZONTAL_PAD + a)) {
+                        } else if (axis.name().equals(HORIZONTAL_PAD + a)) {
                             if (device.dpadRight) axis.setValue(1);
                             else if (device.dpadLeft) axis.setValue(-1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(VERTICAL_PAD + a)) {
+                        } else if (axis.name().equals(VERTICAL_PAD + a)) {
                             if (device.dpadUp) axis.setValue(1);
                             else if (device.dpadDown) axis.setValue(-1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(FIRE + a)) {
+                        } else if (axis.name().equals(FIRE + a)) {
                             if (device.a) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(ACTION + a)) {
+                        } else if (axis.name().equals(ACTION + a)) {
                             if (device.x) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(BACK + a)) {
+                        } else if (axis.name().equals(BACK + a)) {
                             if (device.b) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(INVENTORY + a)) {
+                        } else if (axis.name().equals(INVENTORY + a)) {
                             if (device.y) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(RIGHT_BUMPER + a)) {
+                        } else if (axis.name().equals(RIGHT_BUMPER + a)) {
                             if (device.rb) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(LEFT_BUMPER + a)) {
+                        } else if (axis.name().equals(LEFT_BUMPER + a)) {
                             if (device.lb) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(RIGHT_THUMB + a)) {
+                        } else if (axis.name().equals(RIGHT_THUMB + a)) {
                             if (device.rightStickClick) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(LEFT_THUMB + a)) {
+                        } else if (axis.name().equals(LEFT_THUMB + a)) {
                             if (device.leftStickClick) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(START + a)) {
+                        } else if (axis.name().equals(START + a)) {
                             if (device.start) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(VIEW + a)) {
+                        } else if (axis.name().equals(VIEW + a)) {
                             if (device.back) axis.setValue(1);
                             else axis.setValue(0);
                         }
@@ -327,15 +327,15 @@ public class Application implements Behavior {
             }
 
             Scene scene = this.scene;
-            scene.setFrames(scene.getFrames() + 1);
-            if (scene.getFrames() == 1) {
+            scene.setFrames(scene.frames() + 1);
+            if (scene.frames() == 1) {
                 scene.onStart();
             }
             try {
-                for (SystemBehavior system : scene.getSystems()) {
+                for (SystemBehavior system : scene.systems()) {
                     system.setScene(scene);
-                    system.setFrames(system.getFrames() + 1);
-                    if (system.getFrames() == 1) {
+                    system.setFrames(system.frames() + 1);
+                    if (system.frames() == 1) {
                         system.onStart();
                     }
                     system.onUpdate();
@@ -346,18 +346,18 @@ public class Application implements Behavior {
 
             updateAxes();
 
-            if (changeSceneTransition == null || !changeSceneTransition.isStopUpdatingScene() || toChangeScene == null) {
+            if (changeSceneTransition == null || !changeSceneTransition.stopUpdatingScene() || toChangeScene == null) {
                 scene.onUpdate();
                 drawInstructions.clear();
-                if (scene.getFrames() >= 2) {
+                if (scene.frames() >= 2) {
                     backGroundDrawInstruction.setStroke(0);
-                    backGroundDrawInstruction.setColor(scene.getBackGroundColor());
+                    backGroundDrawInstruction.setColor(scene.backGroundColor());
                     drawInstructions.add(backGroundDrawInstruction);
                 }
-                for (Entity2D entity : scene.getEntities()) {
+                for (Entity2D entity : scene.entities()) {
                     DrawInstruction di = entity.process();
                     entity.updateEntityList();
-                    if (di != null && scene.getFrames() >= 2) drawInstructions.add(di);
+                    if (di != null && scene.frames() >= 2) drawInstructions.add(di);
 
                     if (scene != this.scene) {
                         return;
@@ -370,23 +370,23 @@ public class Application implements Behavior {
 
             scene.updateEntityList();
 
-            if (applicationPlatform.getInputManager() != null) {
-                applicationPlatform.getInputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
-                applicationPlatform.getInputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
+            if (applicationPlatform.inputManager() != null) {
+                applicationPlatform.inputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_UP);
+                applicationPlatform.inputManager().getPressingMouseButtons().remove(Input.MouseButton.SCROLL_DOWN);
             }
 
         }
         if (changeSceneTransition != null) {
             changeSceneTransition.setApplication(this);
-            changeSceneTransition.setDeltaTime(getApplicationManager().getManagerContext().getContextTime().getDeltaTime());
-            changeSceneTransition.setPassedTime(changeSceneTransition.getPassedTime() + changeSceneTransition.getDeltaTime());
-            changeSceneTransition.setFrames(changeSceneTransition.getFrames() + 1);
+            changeSceneTransition.setDeltaTime(applicationManager().managerContext().contextTime().deltaTime());
+            changeSceneTransition.setPassedTime(changeSceneTransition.passedTime() + changeSceneTransition.deltaTime());
+            changeSceneTransition.setFrames(changeSceneTransition.frames() + 1);
             drawInstructions.add(changeSceneTransition.render());
-            if (changeSceneTransition.getPassedTime() >= changeSceneTransition.getTimeToWait() && toChangeScene != null) {
+            if (changeSceneTransition.passedTime() >= changeSceneTransition.timeToWait() && toChangeScene != null) {
                 setScene(toChangeScene);
                 toChangeScene = null;
             }
-            if (changeSceneTransition.isFinished())
+            if (changeSceneTransition.finished())
                 changeSceneTransition = null;
         } else if (toChangeScene != null) {
             setScene(toChangeScene);
@@ -399,15 +399,15 @@ public class Application implements Behavior {
 
     @Override
     public void dispose() {
-        renderingThread.getRunning().set(false);
+        renderingThread.running().set(false);
         //Wake up thread
         renderingThread.renderAsync(null);
         if (physicsContext != null)
-            physicsContext.getRunning().set(false);
+            physicsContext.running().set(false);
         setScene(null);
         if (controllerManager != null)
             controllerManager.quitSDLGamepad();
-        applicationPlatform.getGraphicsManager().dispose();
+        applicationPlatform.graphicsManager().dispose();
     }
 
     /**
@@ -418,10 +418,10 @@ public class Application implements Behavior {
      *             the value for.
      * @return The method is returning a double value which represents the value of the axis with the given name.
      */
-    public double getAxis(String name) {
+    public double axis(String name) {
         for (Axis axis : axes) {
-            if (axis.getName().hashCode() == name.hashCode() && axis.getName().equals(name))
-                return axis.getValue();
+            if (axis.name().hashCode() == name.hashCode() && axis.name().equals(name))
+                return axis.value();
         }
         throw new IllegalArgumentException("none axis with the name: '" + name + "'");
     }
@@ -436,53 +436,8 @@ public class Application implements Behavior {
      * the `axisX` and `axisY` parameters. The `getAxis` method is called twice, once with `axisX` and once with `axisY`,
      * and the results are used to create the `TwoAnchorRepresentation` object.
      */
-    public Vector2D getAxis(String axisX, String axisY) {
-        return new Vector2D(getAxis(axisX), getAxis(axisY));
-    }
-
-    /**
-     * The function returns a set of Axis objects.
-     *
-     * @return A Set of Axis objects is being returned.
-     */
-    public Set<Axis> getAxes() {
-        return axes;
-    }
-
-    /**
-     * This function returns the number of frames already passed in the application.
-     *
-     * @return The number of frames in the application.
-     */
-    public int getFrames() {
-        return frames;
-    }
-
-    /**
-     * This function sets the number of frames in the application.
-     *
-     * @param frames The number of frames in the application.
-     */
-    public void setFrames(int frames) {
-        this.frames = frames;
-    }
-
-    /**
-     * The function returns the size of the viewport as a Size2D object.
-     *
-     * @return The method is returning an object of type `Size2D`.
-     */
-    public Vector2D getViewportSize() {
-        return viewportSize;
-    }
-
-    /**
-     * This function returns the scene.
-     *
-     * @return The scene.
-     */
-    public Scene getScene() {
-        return scene;
+    public Vector2D axis2D(String axisX, String axisY) {
+        return new Vector2D(axis(axisX), axis(axisY));
     }
 
 
@@ -492,13 +447,13 @@ public class Application implements Behavior {
      * @param scene The scene parameter is an object of the Scene class, which represents a collection of entities and
      *              systems that make up an application scene. This method sets the current scene to the specified scene object.
      */
-    public void setScene(Scene scene) {
+    public Application setScene(Scene scene) {
         if (this.scene != null) {
-            for (int i = this.scene.getEntities().size() - 1; i >= 0; i--) {
-                this.scene.getEntities().get(i).dispose();
+            for (int i = this.scene.entities().size() - 1; i >= 0; i--) {
+                this.scene.entities().get(i).dispose();
             }
             this.scene.updateEntityList();
-            for (SystemBehavior system : this.scene.getSystems()) {
+            for (SystemBehavior system : this.scene.systems()) {
                 system.dispose();
             }
             this.scene.dispose();
@@ -506,9 +461,10 @@ public class Application implements Behavior {
         this.scene = scene;
         if (scene != null) {
             scene.setFrames(0);
-            applicationPlatform.getGraphicsManager().setCamera(scene.getCamera());
-            applicationPlatform.getViewportZoomScale().setZoomScale(scene.getZoomScale());
+            applicationPlatform.graphicsManager().setCamera(scene.camera());
+            applicationPlatform.viewportZoomScale().setZoomScale(scene.zoomScale());
         }
+        return this;
     }
 
     public void changeScene(Class<? extends Scene> sceneClass) {
@@ -528,48 +484,18 @@ public class Application implements Behavior {
         if (toChangeScene != null)
             System.err.println("WARNING: Ignoring scene change, a scene change is already in place.");
         else {
-            setToChangeScene(scene);
-            setChangeSceneTransition(changeSceneTransition);
+            setToChangeScene(scene).setChangeSceneTransition(changeSceneTransition);
         }
     }
 
-    /**
-     * The function returns a ChangeSceneTransition object.
-     *
-     * @return The method is returning an object of type `ChangeSceneTransition`.
-     */
-    public ChangeSceneTransition getChangeSceneTransition() {
-        return changeSceneTransition;
-    }
-
-    /**
-     * The function sets the change scene transition for a given object.
-     *
-     * @param changeSceneTransition changeSceneTransition is a variable of type ChangeSceneTransition that is being passed
-     *                              as a parameter to the method setChangeSceneTransition. The method sets the value of the instance variable
-     *                              changeSceneTransition to the value passed as the parameter.
-     */
-    void setChangeSceneTransition(ChangeSceneTransition changeSceneTransition) {
+    public Application setChangeSceneTransition(ChangeSceneTransition changeSceneTransition) {
         this.changeSceneTransition = changeSceneTransition;
+        return this;
     }
 
-    /**
-     * The function returns a Scene object to change the current scene.
-     *
-     * @return The method is returning a Scene object named "toChangeScene".
-     */
-    public Scene getToChangeScene() {
-        return toChangeScene;
-    }
-
-    /**
-     * The function sets the value of a variable "toChangeScene" to a given Scene object.
-     *
-     * @param toChangeScene toChangeScene is a variable of type Scene that represents the scene that the current scene will
-     *                      change to. This method sets the value of the toChangeScene variable to the passed in Scene object.
-     */
-    void setToChangeScene(Scene toChangeScene) {
+    public Application setToChangeScene(Scene toChangeScene) {
         this.toChangeScene = toChangeScene;
+        return this;
     }
 
     /**
@@ -581,11 +507,11 @@ public class Application implements Behavior {
      * It checks if the list of currently pressing keys obtained from the input manager contains the specified key, and
      * returns true if it does, false otherwise.
      */
-    public boolean isPressingKey(Input.Key key) {
-        if (applicationPlatform.getKeyCheck() == null && applicationPlatform.getInputManager() != null)
-            return applicationPlatform.getInputManager().getPressingKeys().contains(key);
-        if (applicationPlatform.getKeyCheck() != null && applicationPlatform.getInputManager() == null)
-            return applicationPlatform.getKeyCheck().checkKey(key);
+    public boolean pressingKey(Input.Key key) {
+        if (applicationPlatform.keyCheck() == null && applicationPlatform.inputManager() != null)
+            return applicationPlatform.inputManager().getPressingKeys().contains(key);
+        if (applicationPlatform.keyCheck() != null && applicationPlatform.inputManager() == null)
+            return applicationPlatform.keyCheck().checkKey(key);
         return false;
     }
 
@@ -598,176 +524,126 @@ public class Application implements Behavior {
      * @return The method `isPressingButton` returns a boolean value indicating whether the specified `MouseButton` is
      * currently being pressed or not. It returns `true` if the button is being pressed and `false` otherwise.
      */
-    public boolean isPressingButton(Input.MouseButton button) {
-        if (applicationPlatform.getKeyCheck() == null && applicationPlatform.getInputManager() != null)
-            return applicationPlatform.getInputManager().getPressingMouseButtons().contains(button);
-        if (applicationPlatform.getKeyCheck() != null && applicationPlatform.getInputManager() == null)
-            return applicationPlatform.getKeyCheck().checkMouseButton(button);
+    public boolean pressingButton(Input.MouseButton button) {
+        if (applicationPlatform.keyCheck() == null && applicationPlatform.inputManager() != null)
+            return applicationPlatform.inputManager().getPressingMouseButtons().contains(button);
+        if (applicationPlatform.keyCheck() != null && applicationPlatform.inputManager() == null)
+            return applicationPlatform.keyCheck().checkMouseButton(button);
         return false;
     }
 
-    /**
-     * The function returns the platform initialization object.
-     *
-     * @return The method is returning an object of type `PlatformInit`.
-     */
-    public PlatformInit getPlatformInit() {
-        return platformInit;
-    }
-
-    /**
-     * The function returns a DrawInstruction object.
-     *
-     * @return The method is returning an object of type `DrawInstruction`.
-     */
-    public DrawInstruction getBackGroundDrawInstruction() {
-        return backGroundDrawInstruction;
-    }
-
-    public RenderingThread getRenderingThread() {
-        return renderingThread;
-    }
-
-    public List<DrawInstruction> getDrawInstructions() {
-        return drawInstructions;
-    }
-
-    /**
-     * This function returns an instance of the ApplicationManager class.
-     *
-     * @return The method is returning an object of type `ApplicationManager`.
-     */
-    public ApplicationManager getApplicationManager() {
-        return applicationManager;
-    }
-
-    /**
-     * The function returns the value of the variable physicsPpm as a double.
-     *
-     * @return The method is returning a double value which is the value of the variable `physicsPpm`.
-     */
-    public double getPhysicsPpm() {
-        return physicsPpm;
-    }
-
-    /**
-     * This function sets the value of the physicsPpm variable.
-     *
-     * @param physicsPpm physicsPpm stands for "physics pixels per meter". It is a measure of the scale used in a physics
-     *                   simulation, where the size of objects and distances between them are represented in pixels and meters. By setting
-     *                   the physicsPpm value, you can adjust the scale of the physics simulation.
-     */
-    public void setPhysicsPpm(double physicsPpm) {
-        this.physicsPpm = physicsPpm;
-    }
-
-    /**
-     * The function returns the controller manager object.
-     *
-     * @return The method is returning an object of type `ControllerManager`.
-     */
-    public ControllerManager getControllerManager() {
-        return controllerManager;
-    }
-
-    /**
-     * This function sets the controller manager for the current object.
-     *
-     * @param controllerManager The parameter "controllerManager" is an object of the class "ControllerManager". This
-     *                          method sets the value of the instance variable "controllerManager" to the value passed as the parameter.
-     */
-    public void setControllerManager(ControllerManager controllerManager) {
-        this.controllerManager = controllerManager;
-    }
-
-    /**
-     * The function returns a texture object representing the controller texture.
-     *
-     * @return The method is returning a Texture object named "controllerTexture".
-     */
-    public Texture getControllerTexture() {
-        return controllerTexture;
-    }
-
-    /**
-     * This function returns the default font.
-     *
-     * @return The method is returning a Font object named "defaultFont".
-     */
-    public Font getDefaultFont() {
-        return defaultFont;
-    }
-
-    /**
-     * This function sets the default font for a Java program.
-     *
-     * @param defaultFont The parameter `defaultFont` is of type `Font`, which represents a font that can be used to render
-     *                    text. This method sets the default font to be used in the application.
-     */
-    public void setDefaultFont(Font defaultFont) {
-        this.defaultFont = defaultFont;
-    }
-
-    /**
-     * The function returns the default texture.
-     *
-     * @return The method is returning a Texture object named "defaultTexture".
-     */
-    public Texture getDefaultTexture() {
-        return defaultTexture;
-    }
-
-    /**
-     * This function sets the default texture for an object.
-     *
-     * @param defaultTexture The parameter `defaultTexture` is of type `Texture` and represents the default texture that
-     *                       will be set for an object. This method allows the user to set a default texture that will be used if no other texture is specified.
-     */
-    public void setDefaultTexture(Texture defaultTexture) {
-        this.defaultTexture = defaultTexture;
-    }
-
-    /**
-     * This function returns a Texture object representing a translucent controller texture.
-     *
-     * @return The method is returning a Texture object named "translucentControllerTexture".
-     */
-    public Texture getTranslucentControllerTexture() {
-        return translucentControllerTexture;
-    }
-
-    /**
-     * The function returns the current position of the mouse as a Vector2D object.
-     *
-     * @return A Vector2D object representing the position of the mouse.
-     */
-    public Vector2D getMousePosition() {
+    public Vector2D mousePosition() {
         return mousePosition;
     }
 
-    /**
-     * This function returns the application platform.
-     *
-     * @return The method is returning an object of type `ApplicationPlatform`.
-     */
-    public ApplicationPlatform getApplicationPlatform() {
+    public ApplicationPlatform applicationPlatform() {
         return applicationPlatform;
     }
 
-    public void setControllerTexture(Texture controllerTexture) {
-        this.controllerTexture = controllerTexture;
+    public PlatformInit platformInit() {
+        return platformInit;
     }
 
-    public void setTranslucentControllerTexture(Texture translucentControllerTexture) {
+    public DrawInstruction backGroundDrawInstruction() {
+        return backGroundDrawInstruction;
+    }
+
+    public Set<Axis> axes() {
+        return axes;
+    }
+
+    public ApplicationManager applicationManager() {
+        return applicationManager;
+    }
+
+    public Vector2D viewportSize() {
+        return viewportSize;
+    }
+
+    public RenderingThread renderingThread() {
+        return renderingThread;
+    }
+
+    public Texture controllerTexture() {
+        return controllerTexture;
+    }
+
+    public Application setControllerTexture(Texture controllerTexture) {
+        this.controllerTexture = controllerTexture;
+        return this;
+    }
+
+    public Texture translucentControllerTexture() {
+        return translucentControllerTexture;
+    }
+
+    public Application setTranslucentControllerTexture(Texture translucentControllerTexture) {
         this.translucentControllerTexture = translucentControllerTexture;
+        return this;
     }
 
     public Map<String, VertexShader> vertexShaderMap() {
         return vertexShaderMap;
     }
 
+    public ControllerManager controllerManager() {
+        return controllerManager;
+    }
+
+    public Application setControllerManager(ControllerManager controllerManager) {
+        this.controllerManager = controllerManager;
+        return this;
+    }
+
+    public int frames() {
+        return frames;
+    }
+
+    public Scene scene() {
+        return scene;
+    }
+
+    public double physicsPpm() {
+        return physicsPpm;
+    }
+
+    public Application setPhysicsPpm(double physicsPpm) {
+        this.physicsPpm = physicsPpm;
+        return this;
+    }
+
+    public Font defaultFont() {
+        return defaultFont;
+    }
+
+    public Application setDefaultFont(Font defaultFont) {
+        this.defaultFont = defaultFont;
+        return this;
+    }
+
+    public Texture defaultTexture() {
+        return defaultTexture;
+    }
+
+    public Application setDefaultTexture(Texture defaultTexture) {
+        this.defaultTexture = defaultTexture;
+        return this;
+    }
+
+    public ChangeSceneTransition changeSceneTransition() {
+        return changeSceneTransition;
+    }
+
+    public List<DrawInstruction> drawInstructions() {
+        return drawInstructions;
+    }
+
     public List<DrawInstruction> toSendDrawInstructions() {
         return toSendDrawInstructions;
+    }
+
+    public Scene toChangeScene() {
+        return toChangeScene;
     }
 
     public Runnable physicsProcess() {
@@ -781,5 +657,10 @@ public class Application implements Behavior {
 
     public Context physicsContext() {
         return physicsContext;
+    }
+
+    public Application setFrames(int frames) {
+        this.frames = frames;
+        return this;
     }
 }

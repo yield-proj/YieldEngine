@@ -37,16 +37,16 @@ public class PhysicsBody extends ComponentBehavior {
     @Override
     public void onStart() {
         BodyDef def = new BodyDef();
-        def.position = Global.toVec2(transform().position().divide(new Vector2D(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm())));
+        def.position = Global.toVec2(transform().position().divide(new Vector2D(application().physicsPpm(), application().physicsPpm())));
         def.angle = (float) Math.toRadians(transform().zRotation());
-        def.userData = getEntity();
-        setB2Body(getApplication().getScene().getPhysicsMain().getB2World().createBody(def));
+        def.userData = entity();
+        setB2Body(application().scene().physicsMain().getB2World().createBody(def));
     }
 
     @Override
     public void onPhysicsUpdate() {
-        for (int i = 0; i < getEntity().components().size(); i++) {
-            ComponentBehavior c = getEntity().components().get(i);
+        for (int i = 0; i < entity().components().size(); i++) {
+            ComponentBehavior c = entity().components().get(i);
             if (c instanceof Collider) {
                 boolean contains = false;
                 for (Fixture f = getB2Body().getFixtureList(); f != null; f = f.getNext()) {
@@ -62,7 +62,7 @@ public class PhysicsBody extends ComponentBehavior {
             }
         }
         for (Fixture f = getB2Body().getFixtureList(); f != null; f = f.getNext()) {
-            if (!getEntity().components().contains((Collider) f.getUserData())) {
+            if (!entity().components().contains((Collider) f.getUserData())) {
                 getB2Body().destroyFixture(f);
             } else {
                 Collider c = ((Collider) f.getUserData());
@@ -92,14 +92,14 @@ public class PhysicsBody extends ComponentBehavior {
         getB2Body().setBullet(bullet);
         getB2Body().m_mass = (float) mass;
         getB2Body().setFixedRotation(fixedRotation);
-        transform().position().set(getB2Body().getPosition().x * getApplication().getPhysicsPpm(), getB2Body().getPosition().y * getApplication().getPhysicsPpm());
+        transform().position().set(getB2Body().getPosition().x * application().physicsPpm(), getB2Body().getPosition().y * application().physicsPpm());
         transform().setzRotation(Math.toDegrees(getB2Body().getAngle()));
     }
 
     @Override
     public void dispose() {
         if (b2Body != null)
-            getApplication().getScene().getPhysicsMain().getB2World().destroyBody(b2Body);
+            application().scene().physicsMain().getB2World().destroyBody(b2Body);
     }
 
     public void addForce(Vector2D force, ForceType forceType) {
@@ -130,7 +130,7 @@ public class PhysicsBody extends ComponentBehavior {
     }
 
     public void translate(Vector2D a) {
-        setPosition(new Vector2D(getPosition().x + a.x() / getApplication().getPhysicsPpm(), getPosition().y + a.y() / getApplication().getPhysicsPpm()));
+        setPosition(new Vector2D(getPosition().x + a.x() / application().physicsPpm(), getPosition().y + a.y() / application().physicsPpm()));
     }
 
     public void checkBodyCreation() {
@@ -150,7 +150,7 @@ public class PhysicsBody extends ComponentBehavior {
     }
 
     public void setPosition(Vector2D value) {
-        getB2Body().setTransform(new Vec2((float) (value.x() / getApplication().getPhysicsPpm()), (float) (value.y() / getApplication().getPhysicsPpm())), b2Body.getAngle());
+        getB2Body().setTransform(new Vec2((float) (value.x() / application().physicsPpm()), (float) (value.y() / application().physicsPpm())), b2Body.getAngle());
     }
 
     public Vec2 getLinearVelocity() {

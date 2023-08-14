@@ -55,7 +55,7 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
      *
      * @return The method is returning an integer value of the variable "frames".
      */
-    public int getFrames() {
+    public int frames() {
         return frames;
     }
 
@@ -64,8 +64,9 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
      *
      * @param frames The "frames" parameter is an integer value that represents the number of frames on this scene.
      */
-    public void setFrames(int frames) {
+    public Scene setFrames(int frames) {
         this.frames = frames;
+        return this;
     }
 
     /**
@@ -73,7 +74,7 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
      *
      * @return The method is returning the value of the `backGroundColor` variable.
      */
-    public Color getBackGroundColor() {
+    public Color backGroundColor() {
         return backGroundColor;
     }
 
@@ -82,7 +83,7 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
      *
      * @param backGroundColor The background color to set.
      */
-    public void setBackGroundColor(Color backGroundColor) {
+    public void backGroundColor(Color backGroundColor) {
         this.backGroundColor = backGroundColor;
     }
 
@@ -91,7 +92,7 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
      *
      * @return A Set of SystemBehavior objects is being returned.
      */
-    public Set<SystemBehavior> getSystems() {
+    public Set<SystemBehavior> systems() {
         return systems;
     }
 
@@ -101,7 +102,7 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
      * @param systems The parameter "systems" is a Set of objects of type "SystemBehavior". This method sets the value of
      * the instance variable "systems" to the value passed as the parameter.
      */
-    public void setSystems(Set<SystemBehavior> systems) {
+    public void systems(Set<SystemBehavior> systems) {
         this.systems = systems;
     }
 
@@ -110,7 +111,7 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
      *
      * @return A Vector2D object representing the camera position.
      */
-    public Vector2D getCamera() {
+    public Vector2D camera() {
         return camera;
     }
 
@@ -119,15 +120,15 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
      *
      * @return The method is returning a Vector2D object named zoomScale.
      */
-    public Vector2D getZoomScale() {
+    public Vector2D zoomScale() {
         return zoomScale;
     }
 
-    public ContextTime getTime() {
-        return getApplication().getApplicationManager().getManagerContext().getContextTime();
+    public ContextTime time() {
+        return application().applicationManager().managerContext().contextTime();
     }
 
-    public PhysicsMain getPhysicsMain() {
+    public PhysicsMain physicsMain() {
         return physicsMain;
     }
 }

@@ -25,17 +25,17 @@ public class ToggleFullScreenSystem extends SystemBehavior {
 
     @Override
     public void onStart() {
-        onFullScreen = getScene().getApplication().getPlatformInit().fullscreen();
+        onFullScreen = scene().application().platformInit().fullscreen();
     }
 
     @Override
     public void onUpdate() {
-        if (getScene().getApplication().isPressingKey(Input.Key.VK_ALT)) {
-            if (getScene().getApplication().isPressingKey(Input.Key.VK_ENTER)) {
+        if (scene().application().pressingKey(Input.Key.VK_ALT)) {
+            if (scene().application().pressingKey(Input.Key.VK_ENTER)) {
                 if (doAction) {
                     doAction = false;
                     onFullScreen = !onFullScreen;
-                    getScene().getApplication().getApplicationPlatform().getToggleFullScreen().setFullScreen(onFullScreen);
+                    scene().application().applicationPlatform().toggleFullScreen().setFullScreen(onFullScreen);
                 }
             } else {
                 doAction = true;
@@ -50,7 +50,7 @@ public class ToggleFullScreenSystem extends SystemBehavior {
      *
      * @return The method is returning the value of the boolean variable `onFullScreen`.
      */
-    public boolean isOnFullScreen() {
+    public boolean onFullScreen() {
         return onFullScreen;
     }
 }

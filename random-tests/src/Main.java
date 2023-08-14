@@ -22,7 +22,7 @@ public class Main extends Scene {
 
     @Override
     public void onUpdate() {
-        e.transform().rotate(getApplication().getAxis(HORIZONTAL));
+        e.transform().rotate(application().axis(HORIZONTAL));
     }
 
     public static void main(String[] args) throws ClassNotFoundException {

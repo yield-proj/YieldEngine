@@ -37,13 +37,13 @@ public class TriangleCollider extends Collider {
     @Override
     public Shape getShape() {
         PolygonShape s = new PolygonShape();
-        Vector2D dppm = new Vector2D(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm());
+        Vector2D dppm = new Vector2D(application().physicsPpm(), application().physicsPpm());
         if (!isIgnoreScaling()) {
             s.set(new Vec2[]{Global.toVec2(vertices[0].divide(dppm).multiply(transform().scale().absolute())), Global.toVec2(vertices[1].divide(dppm).multiply(transform().scale().absolute())), Global.toVec2(vertices[2].divide(dppm).multiply(transform().scale()))}, 3);
         } else {
             s.set(new Vec2[]{Global.toVec2(vertices[0].divide(dppm)), Global.toVec2(vertices[1].divide(dppm)), Global.toVec2(vertices[2].divide(dppm))}, 3);
         }
-        s.m_centroid.set(Global.toVec2(centroid.divide(new Vector2D(getApplication().getPhysicsPpm(), getApplication().getPhysicsPpm()))));
+        s.m_centroid.set(Global.toVec2(centroid.divide(new Vector2D(application().physicsPpm(), application().physicsPpm()))));
         return s;
     }
 
