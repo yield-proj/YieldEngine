@@ -48,21 +48,21 @@ public class OpenALAudio implements AudioManager {
         }
         Audio out = new Audio(AL10.alGenBuffers(), AL10.alGenSources());
 
-        switch (audio.getAudioClip().getFileFormat()) {
+        switch (audio.audioClip().getFileFormat()) {
             case "WAV":
-                WaveData waveData = WaveData.create(new BufferedInputStream(audio.getAudioClip().getInputStream()));
+                WaveData waveData = WaveData.create(new BufferedInputStream(audio.audioClip().getInputStream()));
                 assert waveData != null;
                 AL10.alBufferData(out.getBuffer(), waveData.format, waveData.data, waveData.samplerate);
                 break;
             case "OGG":
                 try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
-                    ShortBuffer pcm = readVorbis(new BufferedInputStream(audio.getAudioClip().getInputStream()), info);
+                    ShortBuffer pcm = readVorbis(new BufferedInputStream(audio.audioClip().getInputStream()), info);
 
                     AL10.alBufferData(out.getBuffer(), info.channels() == 1 ? AL10.AL_FORMAT_MONO16 : AL10.AL_FORMAT_STEREO16, pcm, info.sample_rate());
                 }
                 break;
             default:
-                throw new IllegalStateException("Not supported audio extension. " + audio.getAudioClip().getFileFormat());
+                throw new IllegalStateException("Not supported audio extension. " + audio.audioClip().getFileFormat());
         }
 
         AL10.alSourcei(out.getSource(), AL10.AL_BUFFER, out.getBuffer());
@@ -97,31 +97,31 @@ public class OpenALAudio implements AudioManager {
 
     @Override
     public void unloadAudio(AudioPlayer audioPlayer) {
-        AL10.alDeleteSources(((Audio) audioPlayer.getClipRef()).getSource());
-        AL10.alDeleteBuffers(((Audio) audioPlayer.getClipRef()).getBuffer());
+        AL10.alDeleteSources(((Audio) audioPlayer.clipRef()).getSource());
+        AL10.alDeleteBuffers(((Audio) audioPlayer.clipRef()).getBuffer());
     }
 
     @Override
     public void play(AudioPlayer audioPlayer) {
-        AL10.alSourcei(((Audio) audioPlayer.getClipRef()).getSource(), AL10.AL_LOOPING, AL10.AL_FALSE);
-        AL10.alSourcePlay(((Audio) audioPlayer.getClipRef()).getSource());
+        AL10.alSourcei(((Audio) audioPlayer.clipRef()).getSource(), AL10.AL_LOOPING, AL10.AL_FALSE);
+        AL10.alSourcePlay(((Audio) audioPlayer.clipRef()).getSource());
     }
 
     @Override
     public void loop(AudioPlayer audioPlayer) {
         play(audioPlayer);
-        AL10.alSourcei(((Audio) audioPlayer.getClipRef()).getSource(), AL10.AL_LOOPING, AL10.AL_TRUE);
+        AL10.alSourcei(((Audio) audioPlayer.clipRef()).getSource(), AL10.AL_LOOPING, AL10.AL_TRUE);
     }
 
     @Override
     public void pause(AudioPlayer audioPlayer) {
-        AL10.alSourcePause(((Audio) audioPlayer.getClipRef()).getSource());
+        AL10.alSourcePause(((Audio) audioPlayer.clipRef()).getSource());
     }
 
     @Override
     public double getLength(AudioPlayer audioPlayer) {
         int bufferID, bufferSize, frequency, bitsPerSample, channels;
-        bufferID = ((Audio) audioPlayer.getClipRef()).getBuffer();
+        bufferID = ((Audio) audioPlayer.clipRef()).getBuffer();
         bufferSize = AL10.alGetBufferi(bufferID, AL10.AL_SIZE);
         frequency = AL10.alGetBufferi(bufferID, AL10.AL_FREQUENCY);
         channels = AL10.alGetBufferi(bufferID, AL10.AL_CHANNELS);
@@ -133,23 +133,23 @@ public class OpenALAudio implements AudioManager {
 
     @Override
     public double getPosition(AudioPlayer audioPlayer) {
-        return AL10.alGetSourcef(((Audio) audioPlayer.getClipRef()).getSource(), AL11.AL_SEC_OFFSET);
+        return AL10.alGetSourcef(((Audio) audioPlayer.clipRef()).getSource(), AL11.AL_SEC_OFFSET);
     }
 
     @Override
     public void setPosition(AudioPlayer audioPlayer, double position) {
-        AL10.alSourcef(((Audio) audioPlayer.getClipRef()).getSource(), AL11.AL_SEC_OFFSET, (float) position);
+        AL10.alSourcef(((Audio) audioPlayer.clipRef()).getSource(), AL11.AL_SEC_OFFSET, (float) position);
     }
 
     @Override
     public void setGain(AudioPlayer audioPlayer, double gain) {
-        AL10.alSourcef(((Audio) audioPlayer.getClipRef()).getSource(), AL10.AL_GAIN, (float) gain);
+        AL10.alSourcef(((Audio) audioPlayer.clipRef()).getSource(), AL10.AL_GAIN, (float) gain);
     }
 
     @Override
     public void setPan(AudioPlayer audioPlayer, double pan) {
         AL10.alDistanceModel(AL11.AL_LINEAR_DISTANCE_CLAMPED);
-        int sourceID = ((Audio) audioPlayer.getClipRef()).getBuffer();
+        int sourceID = ((Audio) audioPlayer.clipRef()).getBuffer();
 
         AL10.alSourcefv(sourceID, AL10.AL_POSITION, new float[]{(float) pan, 0.f, 0.f});
         AL10.alSourcei(sourceID, AL10.AL_SOURCE_RELATIVE, AL10.AL_FALSE);
@@ -159,6 +159,6 @@ public class OpenALAudio implements AudioManager {
 
     @Override
     public boolean isPlaying(AudioPlayer audioPlayer) {
-        return AL10.alGetSourcei(((Audio) audioPlayer.getClipRef()).getSource(), AL10.AL_PLAYING) == AL10.AL_TRUE;
+        return AL10.alGetSourcei(((Audio) audioPlayer.clipRef()).getSource(), AL10.AL_PLAYING) == AL10.AL_TRUE;
     }
 }

@@ -70,7 +70,7 @@ public class AudioPlayer extends ComponentBehavior {
      * @return The method `position()` is returning a `double` value which represents the current position of the audio
      * clip. The position is obtained from the `AudioManager` of this application.
      */
-    public double getPosition() {
+    public double position() {
         return getApplication().applicationPlatform().audioManager().getPosition(this);
     }
 
@@ -80,16 +80,17 @@ public class AudioPlayer extends ComponentBehavior {
      * @param position The parameter "position" is a double value that represents the new position of the audio playback in
      * seconds. This method is used to set the position of the audio playback to a specific time in the audio file.
      */
-    public void setPosition(double position) {
+    public AudioPlayer setPosition(double position) {
         getApplication().applicationPlatform().audioManager().setPosition(this, position);
+        return this;
     }
 
     /**
      * This function returns the length of the audio clip.
      *
-     * @return The method `getLength()` is returning a `double` value which represents the length of the audio clip.
+     * @return The method `length()` is returning a `double` value which represents the length of the audio clip.
      */
-    public double getLength() {
+    public double length() {
         return getApplication().applicationPlatform().audioManager().getLength(this);
     }
 
@@ -98,7 +99,7 @@ public class AudioPlayer extends ComponentBehavior {
      *
      * @return The method is returning a FileInput object named "audioClip".
      */
-    public FileInput getAudioClip() {
+    public FileInput audioClip() {
         return audioClip;
     }
 
@@ -107,11 +108,12 @@ public class AudioPlayer extends ComponentBehavior {
      *
      * @param audioClip The audio file that is being set for the audio player.
      */
-    public void setAudioClip(FileInput audioClip) {
+    public AudioPlayer setAudioClip(FileInput audioClip) {
         if (this.audioClip != null)
             getApplication().applicationPlatform().audioManager().unloadAudio(this);
         this.audioClip = audioClip;
         setClipRef(getApplication().applicationPlatform().audioManager().loadAudio(this));
+        return this;
     }
 
     /**
@@ -119,7 +121,7 @@ public class AudioPlayer extends ComponentBehavior {
      *
      * @return The method is returning the value of the variable `clipRef`, which is of type `Object`.
      */
-    public Object getClipRef() {
+    public Object clipRef() {
         return clipRef;
     }
 
@@ -128,16 +130,17 @@ public class AudioPlayer extends ComponentBehavior {
      *
      * @param clipRef The clipRef value to set.
      */
-    public void setClipRef(Object clipRef) {
+    public AudioPlayer setClipRef(Object clipRef) {
         this.clipRef = clipRef;
+        return this;
     }
 
     /**
      * The function returns the value of the "pan" variable as a double data type.
      *
-     * @return The method `getPan()` is returning a `double` value which is the value of the variable `pan`.
+     * @return The method `pan()` is returning a `double` value which is the value of the variable `pan`.
      */
-    public double getPan() {
+    public double pan() {
         return pan;
     }
 
@@ -148,20 +151,21 @@ public class AudioPlayer extends ComponentBehavior {
      * the audio is fully panned to the left channel, 0.0 means the audio is centered, and 1.0 means the audio is fully
      * panned to the right channel.
      */
-    public void setPan(double pan) {
+    public AudioPlayer setPan(double pan) {
         this.pan = pan;
         if (pan < -1.0 || pan > 1.0)
             throw new IllegalArgumentException("Pan not valid: " + gain);
         getApplication().applicationPlatform().audioManager().setPan(this, pan);
+        return this;
     }
 
     /**
      * This function returns a boolean value indicating whether the audio is currently playing or not.
      *
-     * @return The method `isPlaying()` is returning a boolean value. It is returning `true` if the audio is currently
+     * @return The method `playing()` is returning a boolean value. It is returning `true` if the audio is currently
      * playing and `false` if it is not playing.
      */
-    public boolean isPlaying() {
+    public boolean playing() {
         return getApplication().applicationPlatform().audioManager().isPlaying(this);
     }
 
@@ -170,7 +174,7 @@ public class AudioPlayer extends ComponentBehavior {
      *
      * @return The method is returning a double value, which is the value of the variable "gain".
      */
-    public double getGain() {
+    public double gain() {
         return gain;
     }
 
@@ -180,7 +184,7 @@ public class AudioPlayer extends ComponentBehavior {
      * @param gain The gain parameter is a double value representing the audio gain level to be set. It should be between
      * 0.0 and 1.0, where 0.0 means no sound and 1.0 means the maximum volume.
      */
-    public void setGain(double gain) {
+    public void gain(double gain) {
         this.gain = gain;
         if (gain < 0.0 || gain > 1.0)
             throw new IllegalArgumentException("Gain not valid: " + gain);
