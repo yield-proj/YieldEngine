@@ -47,7 +47,7 @@ public class Context implements Runnable {
             if (!lightweight && value > 0) {
                 do {
                     actual = System.nanoTime();
-                } while (actual - last < contextTime.getTargetSleepTime() * 1_000);
+                } while (actual - last < contextTime.targetSleepTime() * 1_000);
             } else {
                 actual = System.nanoTime();
             }
@@ -57,7 +57,7 @@ public class Context implements Runnable {
             last = actual;
             actual = System.nanoTime();
 
-            value = contextTime.getTargetSleepTime() - 1000 - ((actual - last) / 1_000);
+            value = contextTime.targetSleepTime() - 1000 - ((actual - last) / 1_000);
             if (lightweight) value++;
             if (value > 0)
                 synchronized (lockObject) {

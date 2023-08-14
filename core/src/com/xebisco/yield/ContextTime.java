@@ -21,7 +21,7 @@ package com.xebisco.yield;
  */
 public class ContextTime {
     private double timeScale = 1, deltaTime;
-    private long targetSleepTime = 16666;
+    private long targetSleepTime = 16_666;
 
     public ContextTime(double targetFPS) {
         setTargetFPS(targetFPS);
@@ -35,9 +35,9 @@ public class ContextTime {
      *
      * @param targetFPS The target frames per second (FPS) that the program should aim to achieve.
      */
-    public void setTargetFPS(double targetFPS) {
+    public ContextTime setTargetFPS(double targetFPS) {
         if (targetFPS <= 0) throw new IllegalArgumentException("targetFPS can't be less or equal to zero");
-        setTargetSleepTime((long) (1 / targetFPS * 1_000_000));
+        return setTargetSleepTime((long) (1 / targetFPS * 1_000_000));
     }
 
     /**
@@ -45,7 +45,7 @@ public class ContextTime {
      *
      * @return The timeScale variable is being returned.
      */
-    public double getTimeScale() {
+    public double timeScale() {
         return timeScale;
     }
 
@@ -54,7 +54,7 @@ public class ContextTime {
      *
      * @param timeScale This is the timescale of the context. The default value is 1.0.
      */
-    public void setTimeScale(double timeScale) {
+    public void timeScale(double timeScale) {
         this.timeScale = timeScale;
     }
 
@@ -63,7 +63,7 @@ public class ContextTime {
      *
      * @return The time in seconds since the last update multiplied by the timescale.
      */
-    public double getDeltaTime() {
+    public double deltaTime() {
         return deltaTime * timeScale;
     }
 
@@ -72,8 +72,9 @@ public class ContextTime {
      *
      * @param deltaTime The time in seconds since the last update.
      */
-    public void setDeltaTime(double deltaTime) {
+    public ContextTime setDeltaTime(double deltaTime) {
         this.deltaTime = deltaTime;
+        return this;
     }
 
     /**
@@ -81,7 +82,7 @@ public class ContextTime {
      *
      * @return The target sleep time.
      */
-    public long getTargetSleepTime() {
+    public long targetSleepTime() {
         return targetSleepTime;
     }
 
@@ -90,7 +91,8 @@ public class ContextTime {
      *
      * @param targetSleepTime The amount of time the thread should sleep for in microseconds.
      */
-    public void setTargetSleepTime(long targetSleepTime) {
+    public ContextTime setTargetSleepTime(long targetSleepTime) {
         this.targetSleepTime = targetSleepTime;
+        return this;
     }
 }

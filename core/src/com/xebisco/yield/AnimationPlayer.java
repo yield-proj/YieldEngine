@@ -42,7 +42,7 @@ public final class AnimationPlayer extends ComponentBehavior {
             toSwitchAnimation = null;
         }
         if (animation != null) {
-            toChange += time().getDeltaTime();
+            toChange += time().deltaTime();
             if (actualFrame < animation.frames().length - 1) {
                 if (toChange >= animation.delay()) {
                     toChange = 0;
