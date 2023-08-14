@@ -59,7 +59,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      * @return A RayCast object.
      */
     public final RayCast rayCast(Vector2D point1, Vector2D point2) {
-        return getApplication().scene().getPhysicsMain().rayCast(getEntity(), point1, point2);
+        return application().scene().getPhysicsMain().rayCast(entity(), point1, point2);
     }
 
     /**
@@ -67,7 +67,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      *
      * @return The number of frames in the that this component is in a scene.
      */
-    public int getFrames() {
+    public int frames() {
         return frames;
     }
 
@@ -76,8 +76,9 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      *
      * @param frames The number of frames.
      */
-    public void setFrames(int frames) {
+    public ComponentBehavior setFrames(int frames) {
         this.frames = frames;
+        return this;
     }
 
     /**
@@ -85,7 +86,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      *
      * @return The entity variable is being returned.
      */
-    public Entity2D getEntity() {
+    public Entity2D entity() {
         return entity;
     }
 
@@ -94,8 +95,9 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      *
      * @param entity The entity that the component is attached to.
      */
-    public void setEntity(Entity2D entity) {
+    public ComponentBehavior setEntity(Entity2D entity) {
         this.entity = entity;
+        return this;
     }
 
     /**
@@ -104,7 +106,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      * @return The transform of the entity.
      */
     public Transform2D transform() {
-        return getEntity().transform();
+        return entity().transform();
     }
 
     /**
@@ -114,7 +116,7 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      */
 
     public int index() {
-        return getEntity().index();
+        return entity().index();
     }
 
     /**
@@ -123,8 +125,9 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      * @param index The index of the entity.
      */
 
-    public void setIndex(int index) {
-        getEntity().setIndex(index);
+    public ComponentBehavior setIndex(int index) {
+        entity().setIndex(index);
+        return this;
     }
 
     /**
@@ -134,8 +137,8 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      * @return The first component of the given type.
      */
 
-    public <T extends ComponentBehavior> T getComponent(Class<T> componentType) {
-        return getEntity().getComponent(componentType);
+    public <T extends ComponentBehavior> T component(Class<T> componentType) {
+        return entity().getComponent(componentType);
     }
 
     /**
@@ -148,8 +151,8 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      * @return A component of the specified type.
      */
 
-    public <T extends ComponentBehavior> T getComponent(Class<T> componentType, int index) {
-        return getEntity().getComponent(componentType, index);
+    public <T extends ComponentBehavior> T component(Class<T> componentType, int index) {
+        return entity().getComponent(componentType, index);
     }
 
     /**
@@ -158,24 +161,24 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
      * @return The method is returning an instance of the `Application` class. It is getting the `Application` object from
      * the `Entity` object and returning it.
      */
-    public Application getApplication() {
-        return getEntity().getApplication();
+    public Application application() {
+        return entity().getApplication();
     }
 
     /**
      * This function returns the time context of the application manager.
      *
-     * @return The method `getTime()` is returning an object of type `ContextTime`.
+     * @return The method `time()` is returning an object of type `ContextTime`.
      */
-    public ContextTime getTime() {
-        return getApplication().applicationManager().managerContext().getContextTime();
+    public ContextTime time() {
+        return application().applicationManager().managerContext().getContextTime();
     }
 
     public TextureManager getTextureManager() {
-        return getApplication().applicationPlatform().textureManager();
+        return application().applicationPlatform().textureManager();
     }
 
     public FontManager getFontManager() {
-        return getApplication().applicationPlatform().fontManager();
+        return application().applicationPlatform().fontManager();
     }
 }

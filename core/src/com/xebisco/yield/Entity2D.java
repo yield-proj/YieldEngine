@@ -96,8 +96,8 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
 
                 if (component != null) {
                     component.setEntity(this);
-                    component.setFrames(component.getFrames() + 1);
-                    if (component.getFrames() == 1)
+                    component.setFrames(component.frames() + 1);
+                    if (component.frames() == 1)
                         component.onStart();
                     component.onUpdate();
                     if (visible) {

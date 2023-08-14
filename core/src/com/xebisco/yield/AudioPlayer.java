@@ -31,14 +31,14 @@ public class AudioPlayer extends ComponentBehavior {
      * This function plays the audio clip using the application's audio manager.
      */
     public void play() {
-        getApplication().applicationPlatform().audioManager().play(this);
+        application().applicationPlatform().audioManager().play(this);
     }
 
     /**
      * This function loops audio using the application's audio manager.
      */
     public void loop() {
-        getApplication().applicationPlatform().audioManager().loop(this);
+        application().applicationPlatform().audioManager().loop(this);
     }
 
     /**
@@ -52,7 +52,7 @@ public class AudioPlayer extends ComponentBehavior {
      * This function pauses the audio clip using the application's audio manager.
      */
     public void pause() {
-        getApplication().applicationPlatform().audioManager().pause(this);
+        application().applicationPlatform().audioManager().pause(this);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class AudioPlayer extends ComponentBehavior {
         if(audioClip != null) {
             pause();
             setPosition(0);
-            getApplication().applicationPlatform().audioManager().unloadAudio(this);
+            application().applicationPlatform().audioManager().unloadAudio(this);
         }
     }
 
@@ -71,7 +71,7 @@ public class AudioPlayer extends ComponentBehavior {
      * clip. The position is obtained from the `AudioManager` of this application.
      */
     public double position() {
-        return getApplication().applicationPlatform().audioManager().getPosition(this);
+        return application().applicationPlatform().audioManager().getPosition(this);
     }
 
     /**
@@ -81,7 +81,7 @@ public class AudioPlayer extends ComponentBehavior {
      * seconds. This method is used to set the position of the audio playback to a specific time in the audio file.
      */
     public AudioPlayer setPosition(double position) {
-        getApplication().applicationPlatform().audioManager().setPosition(this, position);
+        application().applicationPlatform().audioManager().setPosition(this, position);
         return this;
     }
 
@@ -91,7 +91,7 @@ public class AudioPlayer extends ComponentBehavior {
      * @return The method `length()` is returning a `double` value which represents the length of the audio clip.
      */
     public double length() {
-        return getApplication().applicationPlatform().audioManager().getLength(this);
+        return application().applicationPlatform().audioManager().getLength(this);
     }
 
     /**
@@ -110,9 +110,9 @@ public class AudioPlayer extends ComponentBehavior {
      */
     public AudioPlayer setAudioClip(FileInput audioClip) {
         if (this.audioClip != null)
-            getApplication().applicationPlatform().audioManager().unloadAudio(this);
+            application().applicationPlatform().audioManager().unloadAudio(this);
         this.audioClip = audioClip;
-        setClipRef(getApplication().applicationPlatform().audioManager().loadAudio(this));
+        setClipRef(application().applicationPlatform().audioManager().loadAudio(this));
         return this;
     }
 
@@ -155,7 +155,7 @@ public class AudioPlayer extends ComponentBehavior {
         this.pan = pan;
         if (pan < -1.0 || pan > 1.0)
             throw new IllegalArgumentException("Pan not valid: " + gain);
-        getApplication().applicationPlatform().audioManager().setPan(this, pan);
+        application().applicationPlatform().audioManager().setPan(this, pan);
         return this;
     }
 
@@ -166,7 +166,7 @@ public class AudioPlayer extends ComponentBehavior {
      * playing and `false` if it is not playing.
      */
     public boolean playing() {
-        return getApplication().applicationPlatform().audioManager().isPlaying(this);
+        return application().applicationPlatform().audioManager().isPlaying(this);
     }
 
     /**
@@ -188,6 +188,6 @@ public class AudioPlayer extends ComponentBehavior {
         this.gain = gain;
         if (gain < 0.0 || gain > 1.0)
             throw new IllegalArgumentException("Gain not valid: " + gain);
-        getApplication().applicationPlatform().audioManager().setGain(this, gain);
+        application().applicationPlatform().audioManager().setGain(this, gain);
     }
 }

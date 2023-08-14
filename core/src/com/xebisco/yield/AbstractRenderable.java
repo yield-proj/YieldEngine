@@ -78,7 +78,7 @@ public abstract class AbstractRenderable extends ComponentBehavior {
         setupY(verticesY);
         for (String shaderName : vertexShaders) {
             IntStream.range(0, verticesCount()).forEach(i -> {
-                VertexShader shader = getApplication().vertexShaderMap().get(shaderName);
+                VertexShader shader = application().vertexShaderMap().get(shaderName);
                 shader.inXPos = verticesX;
                 shader.inYPos = verticesY;
                 shader.outXPos = drawInstruction.verticesX();

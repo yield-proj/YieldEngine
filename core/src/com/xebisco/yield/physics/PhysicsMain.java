@@ -42,25 +42,25 @@ public class PhysicsMain {
             @Override
             public void beginContact(Contact contact) {
                 Collider c = ((Collider) contact.m_fixtureA.getUserData());
-                c.getEntity().contactListeners().forEach(l -> l.onContactBegin(c, ((Collider) contact.m_fixtureB.getUserData())));
+                c.entity().contactListeners().forEach(l -> l.onContactBegin(c, ((Collider) contact.m_fixtureB.getUserData())));
             }
 
             @Override
             public void endContact(Contact contact) {
                 Collider c = ((Collider) contact.m_fixtureA.getUserData());
-                c.getEntity().contactListeners().forEach(l -> l.onContactEnd(c, ((Collider) contact.m_fixtureB.getUserData())));
+                c.entity().contactListeners().forEach(l -> l.onContactEnd(c, ((Collider) contact.m_fixtureB.getUserData())));
             }
 
             @Override
             public void preSolve(Contact contact, Manifold manifold) {
                 Collider c = ((Collider) contact.m_fixtureA.getUserData());
-                c.getEntity().contactListeners().forEach(l -> l.preSolve(contact, manifold));
+                c.entity().contactListeners().forEach(l -> l.preSolve(contact, manifold));
             }
 
             @Override
             public void postSolve(Contact contact, ContactImpulse contactImpulse) {
                 Collider c = ((Collider) contact.m_fixtureA.getUserData());
-                c.getEntity().contactListeners().forEach(l -> l.postSolve(contact, contactImpulse));
+                c.entity().contactListeners().forEach(l -> l.postSolve(contact, contactImpulse));
             }
         });
     }

@@ -32,7 +32,7 @@ public final class AnimationPlayer extends ComponentBehavior {
 
     @Override
     public void onStart() {
-        textureRectangle = getComponent(TextureRectangle.class);
+        textureRectangle = component(TextureRectangle.class);
     }
 
     @Override
@@ -42,7 +42,7 @@ public final class AnimationPlayer extends ComponentBehavior {
             toSwitchAnimation = null;
         }
         if (animation != null) {
-            toChange += getTime().getDeltaTime();
+            toChange += time().getDeltaTime();
             if (actualFrame < animation.frames().length - 1) {
                 if (toChange >= animation.delay()) {
                     toChange = 0;
@@ -58,7 +58,7 @@ public final class AnimationPlayer extends ComponentBehavior {
                     } else if (animation.loop()) actualFrame = 0;
                 }
             }
-            TextureRectangle r = getComponent(TextureRectangle.class);
+            TextureRectangle r = component(TextureRectangle.class);
             if (r != null)
                 r.setTexture(animation.frames()[actualFrame]);
         }
