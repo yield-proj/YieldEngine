@@ -43,7 +43,7 @@ public class Font extends FileInput {
      *
      * @return The fontRef object.
      */
-    public Object getFontRef() {
+    public Object fontRef() {
         return fontRef;
     }
 
@@ -52,7 +52,7 @@ public class Font extends FileInput {
      *
      * @param fontRef The parameter `fontRef` is an object that represents a reference to a font.
      */
-    public void setFontRef(Object fontRef) {
+    public void fontRef(Object fontRef) {
         this.fontRef = fontRef;
     }
 

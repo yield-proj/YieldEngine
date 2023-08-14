@@ -41,7 +41,7 @@ public class Text extends AbstractRenderable {
     @Override
     public void setupX(float[] verticesX) {
         drawInstruction().setText(contents);
-        drawInstruction().setFontRef(font.getFontRef());
+        drawInstruction().setFontRef(font.fontRef());
     }
     @Override
     public void setupY(float[] verticesY) {
@@ -50,7 +50,7 @@ public class Text extends AbstractRenderable {
     @Override
     public DrawInstruction render() {
         DrawInstruction r = super.render();
-        size().set(application().applicationPlatform().fontManager().getStringWidth(contents, font.getFontRef()), application().applicationPlatform().fontManager().getStringHeight(contents, font.getFontRef()));
+        size().set(application().applicationPlatform().fontManager().getStringWidth(contents, font.fontRef()), application().applicationPlatform().fontManager().getStringHeight(contents, font.fontRef()));
         return r;
     }
 

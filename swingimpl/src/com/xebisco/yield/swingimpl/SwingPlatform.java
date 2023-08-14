@@ -101,7 +101,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public void unloadFont(com.xebisco.yield.Font font) {
-        font.setFontRef(null);
+        font.fontRef(null);
     }
 
     @Override

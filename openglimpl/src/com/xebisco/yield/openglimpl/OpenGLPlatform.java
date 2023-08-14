@@ -295,7 +295,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     @Override
     public void unloadFont(Font font) {
-        ((TextRenderer) font.getFontRef()).dispose();
+        ((TextRenderer) font.fontRef()).dispose();
     }
 
     @Override
