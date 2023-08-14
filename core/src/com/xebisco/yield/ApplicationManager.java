@@ -27,11 +27,9 @@ public class ApplicationManager implements Runnable {
     private List<Application> applications = new ArrayList<>();
     private Context managerContext;
     private boolean disposeWhenEmpty = true;
-    private final ApplicationManagerContextRunnable contextRunnable = new ApplicationManagerContextRunnable();
-    private final ApplicationManagerContextDisposable contextDisposable = new ApplicationManagerContextDisposable();
 
     public ApplicationManager(ContextTime contextTime) {
-        managerContext = new Context(contextTime, contextRunnable, contextDisposable, "Application Manager");
+        managerContext = new Context(contextTime, new ApplicationManagerContextRunnable(), new ApplicationManagerContextDisposable(), "Application Manager");
     }
 
     @Override
@@ -57,7 +55,7 @@ public class ApplicationManager implements Runnable {
                 if(remove) a.dispose();
                 return remove;
             });
-            if(removed && applications.size() == 0) managerContext.running().set(false);
+            if(removed && applications.isEmpty()) managerContext.running().set(false);
         }
     }
     /**
@@ -96,13 +94,5 @@ public class ApplicationManager implements Runnable {
     public ApplicationManager setDisposeWhenEmpty(boolean disposeWhenEmpty) {
         this.disposeWhenEmpty = disposeWhenEmpty;
         return this;
-    }
-
-    public ApplicationManagerContextRunnable contextRunnable() {
-        return contextRunnable;
-    }
-
-    public ApplicationManagerContextDisposable contextDisposable() {
-        return contextDisposable;
     }
 }
