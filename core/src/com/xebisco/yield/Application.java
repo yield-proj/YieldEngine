@@ -231,9 +231,9 @@ public class Application implements Behavior {
     public void updateAxes() {
         mousePosition.set(applicationPlatform.mouseCheck().getMouseX(), applicationPlatform.mouseCheck().getMouseY());
         for (Axis axis : axes) {
-            if ((axis.getPositiveKey() != null && pressingKey(axis.getPositiveKey())) || (axis.getAltPositiveKey() != null && pressingKey(axis.getAltPositiveKey()))) {
+            if ((axis.positiveKey() != null && pressingKey(axis.positiveKey())) || (axis.altPositiveKey() != null && pressingKey(axis.altPositiveKey()))) {
                 axis.setValue(1);
-            } else if ((axis.getNegativeKey() != null && pressingKey(axis.getNegativeKey())) || (axis.getAltNegativeKey() != null && pressingKey(axis.getAltNegativeKey()))) {
+            } else if ((axis.negativeKey() != null && pressingKey(axis.negativeKey())) || (axis.altNegativeKey() != null && pressingKey(axis.altNegativeKey()))) {
                 axis.setValue(-1);
             } else {
                 axis.setValue(0);
@@ -248,64 +248,64 @@ public class Application implements Behavior {
                     if (i == 0)
                         a = "";
                     for (Axis axis : this.axes) {
-                        if (axis.getName().equals(HORIZONTAL + a)) {
+                        if (axis.name().equals(HORIZONTAL + a)) {
                             axis.setValue(device.leftStickX);
-                            if (Math.abs(axis.getValue()) < 0.1)
+                            if (Math.abs(axis.value()) < 0.1)
                                 axis.setValue(0);
-                        } else if (axis.getName().equals(VERTICAL + a)) {
+                        } else if (axis.name().equals(VERTICAL + a)) {
                             axis.setValue(device.leftStickY);
-                            if (Math.abs(axis.getValue()) < 0.1)
+                            if (Math.abs(axis.value()) < 0.1)
                                 axis.setValue(0);
-                        } else if (axis.getName().equals(HORIZONTAL_CAM + a)) {
+                        } else if (axis.name().equals(HORIZONTAL_CAM + a)) {
                             axis.setValue(device.rightStickX);
-                            if (Math.abs(axis.getValue()) < 0.1)
+                            if (Math.abs(axis.value()) < 0.1)
                                 axis.setValue(0);
-                        } else if (axis.getName().equals(VERTICAL_CAM + a)) {
+                        } else if (axis.name().equals(VERTICAL_CAM + a)) {
                             axis.setValue(device.rightStickY);
-                            if (Math.abs(axis.getValue()) < 0.1)
+                            if (Math.abs(axis.value()) < 0.1)
                                 axis.setValue(0);
-                        } else if (axis.getName().equals(RIGHT_FIRE + a)) {
+                        } else if (axis.name().equals(RIGHT_FIRE + a)) {
                             axis.setValue(device.rightTrigger);
-                        } else if (axis.getName().equals(RUN + a)) {
+                        } else if (axis.name().equals(RUN + a)) {
                             axis.setValue(device.rightTrigger);
-                        } else if (axis.getName().equals(LEFT_FIRE + a)) {
+                        } else if (axis.name().equals(LEFT_FIRE + a)) {
                             axis.setValue(device.leftTrigger);
-                        } else if (axis.getName().equals(HORIZONTAL_PAD + a)) {
+                        } else if (axis.name().equals(HORIZONTAL_PAD + a)) {
                             if (device.dpadRight) axis.setValue(1);
                             else if (device.dpadLeft) axis.setValue(-1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(VERTICAL_PAD + a)) {
+                        } else if (axis.name().equals(VERTICAL_PAD + a)) {
                             if (device.dpadUp) axis.setValue(1);
                             else if (device.dpadDown) axis.setValue(-1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(FIRE + a)) {
+                        } else if (axis.name().equals(FIRE + a)) {
                             if (device.a) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(ACTION + a)) {
+                        } else if (axis.name().equals(ACTION + a)) {
                             if (device.x) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(BACK + a)) {
+                        } else if (axis.name().equals(BACK + a)) {
                             if (device.b) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(INVENTORY + a)) {
+                        } else if (axis.name().equals(INVENTORY + a)) {
                             if (device.y) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(RIGHT_BUMPER + a)) {
+                        } else if (axis.name().equals(RIGHT_BUMPER + a)) {
                             if (device.rb) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(LEFT_BUMPER + a)) {
+                        } else if (axis.name().equals(LEFT_BUMPER + a)) {
                             if (device.lb) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(RIGHT_THUMB + a)) {
+                        } else if (axis.name().equals(RIGHT_THUMB + a)) {
                             if (device.rightStickClick) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(LEFT_THUMB + a)) {
+                        } else if (axis.name().equals(LEFT_THUMB + a)) {
                             if (device.leftStickClick) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(START + a)) {
+                        } else if (axis.name().equals(START + a)) {
                             if (device.start) axis.setValue(1);
                             else axis.setValue(0);
-                        } else if (axis.getName().equals(VIEW + a)) {
+                        } else if (axis.name().equals(VIEW + a)) {
                             if (device.back) axis.setValue(1);
                             else axis.setValue(0);
                         }
@@ -420,8 +420,8 @@ public class Application implements Behavior {
      */
     public double axis(String name) {
         for (Axis axis : axes) {
-            if (axis.getName().hashCode() == name.hashCode() && axis.getName().equals(name))
-                return axis.getValue();
+            if (axis.name().hashCode() == name.hashCode() && axis.name().equals(name))
+                return axis.value();
         }
         throw new IllegalArgumentException("none axis with the name: '" + name + "'");
     }

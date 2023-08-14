@@ -41,66 +41,32 @@ public class Axis {
         this.altNegativeKey = null;
     }
 
-    /**
-     * The function returns the name.
-     *
-     * @return The method `getName()` is returning the value of the `name` variable, which is a `String`.
-     */
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    /**
-     * The function returns the positive key input.
-     *
-     * @return The method is returning the value of the variable `positiveKey`, which is of type `Input.Key`.
-     */
-    public Input.Key getPositiveKey() {
+    public Input.Key positiveKey() {
         return positiveKey;
     }
 
-    /**
-     * The function returns the negative key input.
-     *
-     * @return The method is returning the value of the variable `negativeKey`, which is of type `Input.Key`.
-     */
-    public Input.Key getNegativeKey() {
+    public Input.Key negativeKey() {
         return negativeKey;
     }
 
-    /**
-     * The function returns the alternate positive key input.
-     *
-     * @return The method is returning the value of the variable `altPositiveKey`, which is of type `Input.Key`.
-     */
-    public Input.Key getAltPositiveKey() {
+    public Input.Key altPositiveKey() {
         return altPositiveKey;
     }
 
-    /**
-     * The function returns the alternate negative key input.
-     *
-     * @return The method is returning the value of the variable `altNegativeKey`, which is of type `Input.Key`.
-     */
-    public Input.Key getAltNegativeKey() {
+    public Input.Key altNegativeKey() {
         return altNegativeKey;
     }
 
-    /**
-     * The function returns the value of this axis.
-     *
-     * @return The value of the variable "value".
-     */
-    public double getValue() {
+    public double value() {
         return value;
     }
 
-    /**
-     * The function sets the value of this axis.
-     *
-     * @param value The value to be set.
-     */
-    public void setValue(double value) {
+    public Axis setValue(double value) {
         this.value = value;
+        return this;
     }
 }
