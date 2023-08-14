@@ -48,21 +48,21 @@ public class OpenALAudio implements AudioManager {
         }
         Audio out = new Audio(AL10.alGenBuffers(), AL10.alGenSources());
 
-        switch (audio.audioClip().getFileFormat()) {
+        switch (audio.audioClip().fileFormat()) {
             case "WAV":
-                WaveData waveData = WaveData.create(new BufferedInputStream(audio.audioClip().getInputStream()));
+                WaveData waveData = WaveData.create(new BufferedInputStream(audio.audioClip().inputStream()));
                 assert waveData != null;
                 AL10.alBufferData(out.getBuffer(), waveData.format, waveData.data, waveData.samplerate);
                 break;
             case "OGG":
                 try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
-                    ShortBuffer pcm = readVorbis(new BufferedInputStream(audio.audioClip().getInputStream()), info);
+                    ShortBuffer pcm = readVorbis(new BufferedInputStream(audio.audioClip().inputStream()), info);
 
                     AL10.alBufferData(out.getBuffer(), info.channels() == 1 ? AL10.AL_FORMAT_MONO16 : AL10.AL_FORMAT_STEREO16, pcm, info.sample_rate());
                 }
                 break;
             default:
-                throw new IllegalStateException("Not supported audio extension. " + audio.audioClip().getFileFormat());
+                throw new IllegalStateException("Not supported audio extension. " + audio.audioClip().fileFormat());
         }
 
         AL10.alSourcei(out.getSource(), AL10.AL_BUFFER, out.getBuffer());

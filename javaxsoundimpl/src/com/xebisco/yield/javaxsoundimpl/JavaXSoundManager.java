@@ -32,7 +32,7 @@ public class JavaXSoundManager implements AudioManager {
         } catch (LineUnavailableException e) {
             throw new RuntimeException(e);
         }
-        BufferedInputStream bis = new BufferedInputStream(audioPlayer.audioClip().getInputStream());
+        BufferedInputStream bis = new BufferedInputStream(audioPlayer.audioClip().inputStream());
         try {
             clip.open(AudioSystem.getAudioInputStream(bis));
         } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
@@ -40,7 +40,7 @@ public class JavaXSoundManager implements AudioManager {
         }
         try {
             bis.close();
-            audioPlayer.audioClip().getInputStream().close();
+            audioPlayer.audioClip().inputStream().close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

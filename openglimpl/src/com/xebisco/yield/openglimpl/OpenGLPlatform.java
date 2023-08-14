@@ -60,7 +60,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     @Override
     public Object loadSpritesheetTexture(SpritesheetTexture spritesheetTexture) {
-        return loadAWTBufferedImage(new BufferedInputStream(spritesheetTexture.getInputStream()));
+        return loadAWTBufferedImage(new BufferedInputStream(spritesheetTexture.inputStream()));
     }
 
     private BufferedImage loadAWTBufferedImage(BufferedInputStream inputStream) {
@@ -287,7 +287,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     @Override
     public Object loadFont(Font font) {
         try {
-            return new TextRenderer(java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, font.getInputStream()).deriveFont((float) font.getSize()));
+            return new TextRenderer(java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, font.inputStream()).deriveFont((float) font.getSize()));
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -353,7 +353,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     @Override
     public Object loadTexture(Texture texture) {
         try {
-            OpenGLImage image = new OpenGLImage(AWTTextureIO.newTextureData(profile, ImageIO.read(texture.getInputStream()), false));
+            OpenGLImage image = new OpenGLImage(AWTTextureIO.newTextureData(profile, ImageIO.read(texture.inputStream()), false));
             toLoadImages.add(image);
             return image;
         } catch (IOException e) {

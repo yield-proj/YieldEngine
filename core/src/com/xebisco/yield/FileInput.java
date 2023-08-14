@@ -45,9 +45,9 @@ public class FileInput {
     /**
      * The function returns an InputStream object.
      *
-     * @return The method `getInputStream()` is returning an `InputStream` object.
+     * @return The method `inputStream()` is returning an `InputStream` object.
      */
-    public InputStream getInputStream() {
+    public InputStream inputStream() {
         return inputStream;
     }
 
@@ -56,7 +56,7 @@ public class FileInput {
      *
      * @return The method is returning a String value which is the file format.
      */
-    public String getFileFormat() {
+    public String fileFormat() {
         return fileFormat;
     }
 }

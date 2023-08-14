@@ -87,12 +87,12 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
     public Object loadFont(com.xebisco.yield.Font font) {
         Font f;
         try {
-            f = Font.createFont(Font.TRUETYPE_FONT, font.getInputStream()).deriveFont((float) font.getSize());
+            f = Font.createFont(Font.TRUETYPE_FONT, font.inputStream()).deriveFont((float) font.getSize());
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
         try {
-            font.getInputStream().close();
+            font.inputStream().close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -106,7 +106,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public Object loadTexture(Texture texture) {
-        return new SwingImage(loadAWTBufferedImage(new BufferedInputStream(texture.getInputStream())));
+        return new SwingImage(loadAWTBufferedImage(new BufferedInputStream(texture.inputStream())));
     }
 
     private BufferedImage loadAWTBufferedImage(BufferedInputStream inputStream) {
@@ -626,7 +626,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public Object loadSpritesheetTexture(SpritesheetTexture spritesheetTexture) {
-        return loadAWTBufferedImage(new BufferedInputStream(spritesheetTexture.getInputStream()));
+        return loadAWTBufferedImage(new BufferedInputStream(spritesheetTexture.inputStream()));
     }
 
     @Override
