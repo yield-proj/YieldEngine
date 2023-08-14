@@ -346,7 +346,7 @@ public class Application implements Behavior {
 
             updateAxes();
 
-            if (changeSceneTransition == null || !changeSceneTransition.isStopUpdatingScene() || toChangeScene == null) {
+            if (changeSceneTransition == null || !changeSceneTransition.stopUpdatingScene() || toChangeScene == null) {
                 scene.onUpdate();
                 drawInstructions.clear();
                 if (scene.getFrames() >= 2) {
@@ -379,14 +379,14 @@ public class Application implements Behavior {
         if (changeSceneTransition != null) {
             changeSceneTransition.setApplication(this);
             changeSceneTransition.setDeltaTime(applicationManager().managerContext().getContextTime().getDeltaTime());
-            changeSceneTransition.setPassedTime(changeSceneTransition.getPassedTime() + changeSceneTransition.getDeltaTime());
-            changeSceneTransition.setFrames(changeSceneTransition.getFrames() + 1);
+            changeSceneTransition.setPassedTime(changeSceneTransition.passedTime() + changeSceneTransition.deltaTime());
+            changeSceneTransition.setFrames(changeSceneTransition.frames() + 1);
             drawInstructions.add(changeSceneTransition.render());
-            if (changeSceneTransition.getPassedTime() >= changeSceneTransition.getTimeToWait() && toChangeScene != null) {
+            if (changeSceneTransition.passedTime() >= changeSceneTransition.timeToWait() && toChangeScene != null) {
                 setScene(toChangeScene);
                 toChangeScene = null;
             }
-            if (changeSceneTransition.isFinished())
+            if (changeSceneTransition.finished())
                 changeSceneTransition = null;
         } else if (toChangeScene != null) {
             setScene(toChangeScene);
