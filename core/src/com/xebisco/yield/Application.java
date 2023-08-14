@@ -399,7 +399,7 @@ public class Application implements Behavior {
 
     @Override
     public void dispose() {
-        renderingThread.getRunning().set(false);
+        renderingThread.running().set(false);
         //Wake up thread
         renderingThread.renderAsync(null);
         if (physicsContext != null)
