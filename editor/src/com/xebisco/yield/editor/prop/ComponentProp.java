@@ -164,7 +164,7 @@ public class ComponentProp extends Prop {
             }
         }));
 
-        if (frame == null) editButton.setEnabled(false);
+        if (comp == null) editButton.setEnabled(false);
 
         namePanel.add(editButtonPanel, BorderLayout.EAST);
 

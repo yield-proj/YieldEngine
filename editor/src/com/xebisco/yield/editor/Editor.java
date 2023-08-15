@@ -65,6 +65,7 @@ public class Editor extends JFrame implements IRecompile {
     }
 
     public Editor(Project project) {
+        Assets.lastOpenedProject = project;
         this.project = project;
         Assets.openedEditors.add(this);
         workspace = new Workspace(project, this);
@@ -136,6 +137,8 @@ public class Editor extends JFrame implements IRecompile {
                 if (h < getHeight())
                     h = getHeight();
                 g.drawImage(finalImage, 0, 0, w, h, this);
+                g.setColor(new Color(getBackground().getRed(), getBackground().getGreen(), getBackground().getBlue(), 150));
+                g.fillRect(0, 0, getWidth(), getHeight());
             }
         };
         toolBar.setBorderPainted(false);
@@ -207,13 +210,8 @@ public class Editor extends JFrame implements IRecompile {
             ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             if (selected) {
                 g.setColor(getBackground().brighter());
-            } else {
-                g.setColor(getBackground());
+                g.fillRoundRect(5, 4, getWidth() - 10, getHeight() - 8, 10, 10);
             }
-            g.fillRoundRect(5, 4, getWidth() - 10, getHeight() - 8, 10, 10);
-            g.setColor(new Color(0x4D5056));
-            ((Graphics2D) g).setStroke(new BasicStroke(1));
-            g.drawRoundRect(5, 4, getWidth() - 10, getHeight() - 8, 10, 10);
             g.setColor(bg);
             g.fillRoundRect(14, getHeight() / 2 - icon.getHeight() / 2 - 2, icon.getWidth() + 4, icon.getHeight() + 4, 10, 10);
             g.drawImage(icon, 16, getHeight() / 2 - icon.getHeight() / 2, this);
@@ -348,6 +346,10 @@ public class Editor extends JFrame implements IRecompile {
         return pane;
     }
 
+    public static void openSettings(Frame owner) {
+        new PropsWindow(Assets.editorSettings, Projects::saveSettings, owner, "editor_settings");
+    }
+
     private JMenuBar menuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("File");
@@ -369,7 +371,7 @@ public class Editor extends JFrame implements IRecompile {
         submenu1.setMnemonic(KeyEvent.VK_M);
         menu.add(submenu1);
 
-        JMenuItem item = new JMenuItem(new AbstractAction("Save") {
+        JMenuItem item = new JMenuItem(new AbstractAction("Save Project") {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -378,7 +380,17 @@ public class Editor extends JFrame implements IRecompile {
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
         menu.add(item);
         menu.addSeparator();
-        menu.add(new AbstractAction("Exit") {
+        item = new JMenuItem(new AbstractAction("Settings") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Assets.loadSettings();
+                openSettings(Editor.this);
+            }
+        });
+        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK));
+        menu.add(item);
+        menu.addSeparator();
+        menu.add(new AbstractAction("Close") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispatchEvent(new WindowEvent(Editor.this, WindowEvent.WINDOW_CLOSING));

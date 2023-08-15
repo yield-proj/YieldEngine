@@ -16,6 +16,8 @@
 
 package com.xebisco.yield.editor;
 
+import com.xebisco.yield.editor.prop.*;
+
 import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
@@ -27,11 +29,14 @@ public class Assets {
     public static List<Project> projects;
     public static List<EngineInstall> engineInstalls;
     public static List<Editor> openedEditors = new ArrayList<>();
+    public static Map<String, Prop[]> editorSettings;
+    public static Project lastOpenedProject;
+    public static Properties language = new Properties();
 
     public static void init() {
         Utils.EDITOR_DIR.mkdir();
         File jre = new File(Utils.EDITOR_DIR, "lang-rt.jar");
-        if(!jre.exists()) {
+        if (!jre.exists()) {
             try {
                 InputStream is = Objects.requireNonNull(Assets.class.getResourceAsStream("/lang-rt.jar"));
                 jre.createNewFile();
@@ -84,6 +89,63 @@ public class Assets {
                 Utils.error(null, e);
                 throw new RuntimeException(e);
             }
+        }
+        language.clear();
+        try {
+            language.load(Assets.class.getResourceAsStream("/lang/en.properties"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        loadSettings();
+        if ((boolean) Props.get(editorSettings.get("behavior"), "reopen_project_on_startup").getValue()) {
+            File lastOpenedProjectFile = new File(Utils.EDITOR_DIR, "lastOpenedProject.ser");
+
+            if (lastOpenedProjectFile.exists()) {
+                try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(lastOpenedProjectFile))) {
+                    lastOpenedProject = (Project) oi.readObject();
+                } catch (IOException | ClassNotFoundException e) {
+                    Utils.error(null, e);
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    public static void loadSettings() {
+        File settings = new File(Utils.EDITOR_DIR, "settings.ser");
+
+        if (!settings.exists()) {
+            try {
+                settings.createNewFile();
+            } catch (IOException e) {
+                Utils.error(null, e);
+                throw new RuntimeException(e);
+            }
+            editorSettings = new HashMap<>();
+            editorSettings.put("behavior", new Prop[]{
+                    new BooleanProp("confirm_close_before_exiting_the_editor", true),
+                    new TextShowProp("project"),
+                    new BooleanProp("reopen_project_on_startup", false),
+                    new PathProp("default_directory_for_new_projects", System.getProperty("user.home"), JFileChooser.DIRECTORIES_ONLY)
+            });
+            editorSettings.put("editor", new Prop[]{
+                    new OptionsProp("language", new Serializable[]{"en"})
+            });
+            Projects.saveSettings();
+        } else {
+            try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(settings))) {
+                //noinspection unchecked
+                editorSettings = (Map<String, Prop[]>) oi.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                Utils.error(null, e);
+                throw new RuntimeException(e);
+            }
+        }
+        language.clear();
+        try {
+            language.load(Assets.class.getResourceAsStream("/lang/" + Props.get(editorSettings.get("editor"), "language").getValue() + ".properties"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

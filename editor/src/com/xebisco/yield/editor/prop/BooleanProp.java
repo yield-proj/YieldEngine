@@ -16,6 +16,8 @@
 
 package com.xebisco.yield.editor.prop;
 
+import com.xebisco.yield.editor.Assets;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.Serializable;
@@ -29,7 +31,7 @@ public class BooleanProp extends Prop {
     public JPanel panel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        JCheckBox checkBox = new JCheckBox(getName());
+        JCheckBox checkBox = new JCheckBox(Assets.language.getProperty(getName()));
         checkBox.setSelected((Boolean) getValue());
         checkBox.addItemListener(e -> setValue(checkBox.isSelected()));
         panel.add(checkBox);

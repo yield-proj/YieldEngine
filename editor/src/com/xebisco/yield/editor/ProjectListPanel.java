@@ -64,13 +64,13 @@ public class ProjectListPanel extends JPanel implements MouseListener {
                     g.setColor(brighterBkg);
                 int y = i * h + (i * s), w = getWidth() - s;
                 projectsPos.add(new ObjPos(project, y));
-                g.fillRoundRect(s, y, w, h, 20, 20);
-                g.fillRect(w, y, s, h);
+                g.fillRoundRect(0, y, w, h, 20, 20);
+                g.fillRect(0, y, s, h);
                 BufferedImage image = imageMap.get(project);
                 if (image == null) {
                     try {
                         Image img = ImageIO.read(new File(project.getProjectLocation(), "icon.png"));
-                        img = img.getScaledInstance(h, (int) (h * ((double) img.getHeight(null) / img.getWidth(null))), Image.SCALE_SMOOTH);
+                        img = img.getScaledInstance(h - 10, (int) ((h - 10) * ((double) img.getHeight(null) / img.getWidth(null))), Image.SCALE_SMOOTH);
                         image = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
                         Graphics g1 = image.getGraphics();
                         g1.drawImage(img, 0, 0, image.getWidth(), image.getHeight(), null);
@@ -88,9 +88,9 @@ public class ProjectListPanel extends JPanel implements MouseListener {
                 g.setFont(font);
                 g.drawString(project.getProjectLocation().toString(), s + 20 + h, y + h - 10);
                 g.setColor(getForeground().darker());
-                g.fillOval(w - 10, y + h / 2 - 2, 4, 4);
                 g.fillOval(w - 16, y + h / 2 - 2, 4, 4);
                 g.fillOval(w - 22, y + h / 2 - 2, 4, 4);
+                g.fillOval(w - 28, y + h / 2 - 2, 4, 4);
             }
             int y = Assets.projects.size() * h + (Assets.projects.size() * s);
             setPreferredSize(new Dimension(getPreferredSize().width, y));

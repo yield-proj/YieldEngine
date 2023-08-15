@@ -37,7 +37,7 @@ public class PathProp extends Prop {
     public JPanel panel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        panel.add(new JLabel(getName() + "   "), BorderLayout.WEST);
+        panel.add(new JLabel(Assets.language.getProperty(getName()) + "   "), BorderLayout.WEST);
         panel.add(panel2(), BorderLayout.CENTER);
         return panel;
     }

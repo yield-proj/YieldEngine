@@ -51,8 +51,8 @@ public class EngineInstallsListPanel extends JPanel implements MouseListener {
                 g.setColor(brighterBkg);
                 int y = i * h + (i * s), w = getWidth() - s;
                 pos.add(new ObjPos(install, y));
-                g.fillRoundRect(s, y, w, h, 20, 20);
-                g.fillRect(w, y, s, h);
+                g.fillRoundRect(0, y, w, h, 20, 20);
+                g.fillRect(0, y, s, h);
                 g.drawImage(Assets.images.get("yieldSmallIcon.png").getImage(), s + 10, y + h / 2 - 40, null);
                 g.setColor(getForeground());
                 g.setFont(bigFont);
@@ -61,10 +61,10 @@ public class EngineInstallsListPanel extends JPanel implements MouseListener {
                 g.drawString(install.install(), s + 20 + h, y + h - 10);
                 g.setColor(getForeground().darker());
                 ((Graphics2D) g).setStroke(new BasicStroke(1));
-                g.drawLine(getWidth() - 10, y + 40 - 15, getWidth() - 15, y + 40 - 20);
-                g.drawLine(getWidth() - 15, y + 40 - 20, getWidth() - 20, y + 40 - 15);
-                g.drawLine(getWidth() - 10, y + 40 + 15, getWidth() - 15, y + 40 + 20);
-                g.drawLine(getWidth() - 15, y + 40 + 20, getWidth() - 20, y + 40 + 15);
+                g.drawLine(getWidth() - 10 - 12, y + 40 - 15, getWidth() - 15 - 12, y + 40 - 20);
+                g.drawLine(getWidth() - 15 - 12, y + 40 - 20, getWidth() - 20 - 12, y + 40 - 15);
+                g.drawLine(getWidth() - 10 - 12, y + 40 + 15, getWidth() - 15 - 12, y + 40 + 20);
+                g.drawLine(getWidth() - 15 - 12, y + 40 + 20, getWidth() - 20 - 12, y + 40 + 15);
             }
             int y = Assets.projects.size() * h + (Assets.projects.size() * s);
             setPreferredSize(new Dimension(getPreferredSize().width, y));

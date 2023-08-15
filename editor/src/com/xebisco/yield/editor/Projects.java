@@ -44,7 +44,7 @@ public class Projects extends JPanel {
         JPanel projectsAndTitlePanel = new JPanel();
         projectsAndTitlePanel.setLayout(new BorderLayout());
 
-        JLabel title = new JLabel("Projects");
+        JLabel title = new JLabel(Assets.language.getProperty("projects"));
         title.setFont(title.getFont().deriveFont(Font.BOLD).deriveFont(40f));
         title.setBorder(BorderFactory.createLineBorder(title.getBackground(), 20));
         projectsAndTitlePanel.add(title, BorderLayout.NORTH);
@@ -63,7 +63,8 @@ public class Projects extends JPanel {
         JButton newPb = button;
         frame.getRootPane().setDefaultButton(button);
 
-        button = new JButton(new AbstractAction("Load") {
+
+        button = new JButton(new AbstractAction(Assets.language.getProperty("load")){
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
@@ -90,8 +91,9 @@ public class Projects extends JPanel {
         logoAndOptions.setLayout(new BorderLayout());
         JLabel logo = new JLabel(Assets.images.get("editorLogoSmall.png"));
         logo.setMaximumSize(new Dimension(100, 100));
-        logo.setOpaque(true);
+        logo.setOpaque(false);
         logoAndOptions.add(logo, BorderLayout.NORTH);
+        logoAndOptions.setBackground(logoAndOptions.getBackground().darker());
         add(logoAndOptions, BorderLayout.WEST);
 
         JPanel installsPanel = new JPanel();
@@ -105,7 +107,7 @@ public class Projects extends JPanel {
 
         JPanel installsControl = new JPanel();
         installsControl.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        button = new JButton(new AbstractAction("Edit") {
+        button = new JButton(new AbstractAction(Assets.language.getProperty("edit")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 editInstalls();
@@ -117,10 +119,20 @@ public class Projects extends JPanel {
 
         installsPanel.add(installsControl, BorderLayout.SOUTH);
 
-        title = new JLabel("Installs");
+        title = new JLabel(Assets.language.getProperty("installs"));
         title.setFont(title.getFont().deriveFont(Font.BOLD).deriveFont(40f));
         title.setBorder(BorderFactory.createLineBorder(title.getBackground(), 20));
         installsPanel.add(title, BorderLayout.NORTH);
+
+        JPanel settingsPanel = new JPanel();
+        settingsPanel.setLayout(new BorderLayout());
+
+        title = new JLabel(Assets.language.getProperty("settings"));
+        title.setFont(title.getFont().deriveFont(Font.BOLD).deriveFont(40f));
+        title.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        settingsPanel.add(title, BorderLayout.NORTH);
+        settingsPanel.add(new PropsPanel(Assets.editorSettings, Projects::saveSettings));
+
 
         JPanel main = new JPanel();
         main.setLayout(new BorderLayout());
@@ -128,7 +140,7 @@ public class Projects extends JPanel {
 
 
         JList<JButton> options = new JList<>(new JButton[]{
-                new JButton(new AbstractAction("Projects") {
+                new JButton(new AbstractAction("projects") {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         main.removeAll();
@@ -138,7 +150,7 @@ public class Projects extends JPanel {
                         main.repaint();
                     }
                 }),
-                new JButton(new AbstractAction("Installs") {
+                new JButton(new AbstractAction("installs") {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         main.removeAll();
@@ -147,10 +159,20 @@ public class Projects extends JPanel {
                         main.validate();
                         main.repaint();
                     }
+                }),
+                new JButton(new AbstractAction("settings") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        main.removeAll();
+                        main.add(settingsPanel);
+                        main.validate();
+                        main.repaint();
+                    }
                 })
         });
         logo.setBackground(options.getBackground());
         options.setCellRenderer(new ButtonListCellRenderer<>());
+        options.setOpaque(false);
         options.addListSelectionListener(new ButtonSelectionListener(options));
         options.setSelectedIndex(0);
         options.getSelectedValue().getAction().actionPerformed(null);
@@ -201,11 +223,24 @@ public class Projects extends JPanel {
         } catch (IOException ex) {
             Utils.error(null, ex);
         }
+        try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(new File(Utils.EDITOR_DIR, "lastOpenedProject.ser")))) {
+            oo.writeObject(Assets.lastOpenedProject);
+        } catch (IOException ex) {
+            Utils.error(null, ex);
+        }
     }
 
     public static void saveInstalls() {
         try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(new File(Utils.EDITOR_DIR, "installs.ser")))) {
             oo.writeObject(Assets.engineInstalls);
+        } catch (IOException ex) {
+            Utils.error(null, ex);
+        }
+    }
+
+    public static void saveSettings() {
+        try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(new File(Utils.EDITOR_DIR, "settings.ser")))) {
+            oo.writeObject(Assets.editorSettings);
         } catch (IOException ex) {
             Utils.error(null, ex);
         }
@@ -217,11 +252,11 @@ public class Projects extends JPanel {
             return;
         }
         Map<String, Prop[]> sections = new HashMap<>();
-        sections.put("New Project", Props.newProject());
+        sections.put("new_project", Props.newProject());
         new PropsWindow(sections, () -> {
             Project project = new Project(
-                    (String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Name")).getValue(),
-                    new File((String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Location")).getValue(), (String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Name")).getValue()));
+                    (String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_name")).getValue(),
+                    new File((String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_location")).getValue(), (String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Name")).getValue()));
             if (project.getName().equals("")) {
                 Utils.error(null, new IllegalStateException("Project requires a name."));
                 newProjectFrame(owner);
@@ -231,13 +266,13 @@ public class Projects extends JPanel {
             } else if (!Assets.projects.contains(project)) {
                 Assets.projects.add(project);
                 EngineInstall install;
-                project.setPreferredInstall(install = (EngineInstall) Objects.requireNonNull(Props.get(sections.get("New Project"), "Preferred engine")).getValue());
+                project.setPreferredInstall(install = (EngineInstall) Objects.requireNonNull(Props.get(sections.get("new_project"), "preferred_engine")).getValue());
                 project.getProjectLocation().mkdir();
                 File scriptsDir = new File(project.getProjectLocation(), "Scripts");
                 scriptsDir.mkdir();
                 File prefabsDir = new File(project.getProjectLocation(), "Prefabs");
                 prefabsDir.mkdir();
-                if((boolean) Objects.requireNonNull(Props.get(sections.get("New Project"), "Create sample files")).getValue()) {
+                if((boolean) Objects.requireNonNull(Props.get(sections.get("new_project"), "create_sample_files")).getValue()) {
                     File hw = new File(scriptsDir, "HelloScript.java");
                     try {
                         hw.createNewFile();
@@ -278,9 +313,9 @@ public class Projects extends JPanel {
                     }
                 }
                 Image image = Assets.images.get("yieldIcon.png").getImage();
-                if (Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Icon")).getValue() != null) {
+                if (Objects.requireNonNull(Props.get(sections.get("new_project"), "project_icon")).getValue() != null) {
                     try {
-                        image = ImageIO.read(new File((String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Icon")).getValue()));
+                        image = ImageIO.read(new File((String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_icon")).getValue()));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -309,6 +344,6 @@ public class Projects extends JPanel {
                 }
                 owner.repaint();
             } else Utils.error(null, new IllegalStateException("Project already exists on the projects list"));
-        }, owner, "New Project");
+        }, owner, "new_project");
     }
 }

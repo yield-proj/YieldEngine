@@ -16,6 +16,8 @@
 
 package com.xebisco.yield.editor.prop;
 
+import com.xebisco.yield.editor.Assets;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -34,7 +36,7 @@ public class OptionsProp extends Prop {
     public JPanel panel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        panel.add(new JLabel(getName() + " "), BorderLayout.WEST);
+        panel.add(new JLabel(Assets.language.getProperty(getName()) + " "), BorderLayout.WEST);
         JComboBox<Serializable> comboBox = new JComboBox<>(options);
         comboBox.addActionListener(new AbstractAction() {
             @Override

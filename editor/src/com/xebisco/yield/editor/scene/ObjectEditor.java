@@ -139,7 +139,7 @@ public class ObjectEditor extends JPanel {
     private JPanel update(List<ComponentProp> props) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        panel.add(PropsWindow.compPropsPanel(props.toArray(new ComponentProp[0]), frame, workspace.recompile()), BorderLayout.NORTH);
+        panel.add(PropsPanel.compPropsPanel(props.toArray(new ComponentProp[0]), frame, workspace.recompile()), BorderLayout.NORTH);
         return panel;
     }
 

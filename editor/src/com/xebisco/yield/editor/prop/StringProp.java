@@ -16,6 +16,8 @@
 
 package com.xebisco.yield.editor.prop;
 
+import com.xebisco.yield.editor.Assets;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -31,7 +33,7 @@ public class StringProp extends Prop {
     public JPanel panel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        panel.add(new JLabel(getName() + "   "), BorderLayout.WEST);
+        panel.add(new JLabel(Assets.language.getProperty(getName()) + "   "), BorderLayout.WEST);
         JTextField field = new JTextField((String) getValue());
         field.getDocument().addDocumentListener(new DocumentListener() {
             @Override

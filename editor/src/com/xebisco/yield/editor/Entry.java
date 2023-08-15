@@ -30,10 +30,12 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 public class Entry {
     public static JDialog splashDialog;
     public final static String RUN;
+
     static {
         RUN = "run_" + Integer.toHexString(new Random().nextInt());
     }
@@ -68,25 +70,31 @@ public class Entry {
             }, null, "Error in editor launch: " + e.getClass().getSimpleName());
         }
         Assets.init();
-        SwingUtilities.invokeLater(() -> {
-            if (args.length == 1) {
-                Project project;
-                try (ObjectInputStream oi = new ObjectInputStream(new BufferedInputStream(new FileInputStream(args[0])))) {
-                    project = (Project) oi.readObject();
-                } catch (IOException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
+        CompletableFuture.runAsync(() -> {
+                    if (splashDialog != null)
+                        splashDialog.dispose();
+                    SwingUtilities.invokeLater(() -> {
+                        if (args.length == 1) {
+                            Project project;
+                            try (ObjectInputStream oi = new ObjectInputStream(new BufferedInputStream(new FileInputStream(args[0])))) {
+                                project = (Project) oi.readObject();
+                            } catch (IOException | ClassNotFoundException e) {
+                                throw new RuntimeException(e);
+                            }
+                            if (Projects.checkInstalls()) {
+                                new Editor(project);
+                            } else {
+                                openProjects();
+                            }
+                        } else if (args.length == 0) {
+                            if (Assets.lastOpenedProject != null)
+                                new Editor(Assets.lastOpenedProject);
+                            else
+                                openProjects();
+                        } else throw new IllegalStateException("Wrong arguments");
+                    });
                 }
-                if(Projects.checkInstalls()) {
-                    new Editor(project);
-                } else {
-                    openProjects();
-                }
-            } else if (args.length == 0) {
-                openProjects();
-            } else throw new IllegalStateException("Wrong arguments");
-            if (splashDialog != null)
-                splashDialog.dispose();
-        });
+        );
     }
 
     private static void loadEverything() {

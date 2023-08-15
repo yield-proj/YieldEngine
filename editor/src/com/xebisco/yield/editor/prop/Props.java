@@ -20,15 +20,16 @@ import com.xebisco.yield.editor.Assets;
 
 import javax.swing.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 public final class Props {
     public static Prop[] newProject() {
         return new Prop[] {
-                new StringProp("Project Name", ""),
-                new PathProp("Project Location" , System.getProperty("user.home"), JFileChooser.DIRECTORIES_ONLY),
-                new ImageProp("Project Icon"),
-                new OptionsProp("Preferred engine", Assets.engineInstalls.toArray(new Serializable[0])),
-                new BooleanProp("Create sample files", true)
+                new StringProp("project_name", ""),
+                new PathProp("project_location" , Objects.requireNonNull(Props.get(Assets.editorSettings.get("behavior"), "default_directory_for_new_projects")).getValue(), JFileChooser.DIRECTORIES_ONLY),
+                new ImageProp("project_icon"),
+                new OptionsProp("preferred_engine", Assets.engineInstalls.toArray(new Serializable[0])),
+                new BooleanProp("create_sample_files", true)
         };
     }
 
@@ -40,8 +41,8 @@ public final class Props {
 
     public static Prop get(Prop[] props, String name) {
         for(Prop p : props)
-            if(p.getName().equals(name)) return p;
-        return null;
+            if(Objects.equals(p.getName(),name)) return p;
+        throw new NullPointerException("Could not find prop");
     }
 
 }
