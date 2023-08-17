@@ -47,7 +47,7 @@ public class ProjectListPanel extends JPanel implements MouseListener {
         Color brighterBkg = getBackground().brighter();
         int h = 80, s = 10;
         ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        if (Assets.projects.size() == 0) {
+        if (Assets.projects.isEmpty()) {
             g.setColor(getForeground());
             String noProject = "No projects loaded.";
             int sw = g.getFontMetrics().stringWidth(noProject);

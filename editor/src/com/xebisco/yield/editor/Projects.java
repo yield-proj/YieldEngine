@@ -93,7 +93,7 @@ public class Projects extends JPanel {
         logo.setMaximumSize(new Dimension(100, 100));
         logo.setOpaque(false);
         logoAndOptions.add(logo, BorderLayout.NORTH);
-        logoAndOptions.setBackground(logoAndOptions.getBackground().darker());
+        //logoAndOptions.setBackground(logoAndOptions.getBackground().brighter());
         add(logoAndOptions, BorderLayout.WEST);
 
         JPanel installsPanel = new JPanel();

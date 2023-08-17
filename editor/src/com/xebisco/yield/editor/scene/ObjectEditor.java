@@ -52,7 +52,7 @@ public class ObjectEditor extends JPanel {
 
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        Prop nameProp = new StringProp("Name", prefab.name());
+        Prop nameProp = new StringProp("object_name", prefab.name());
         add(nameProp.panel(), BorderLayout.NORTH);
 
         JScrollPane scrollPane = new JScrollPane();
@@ -91,7 +91,7 @@ public class ObjectEditor extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JDialog dialog = new JDialog(SwingUtilities.getWindowAncestor(ObjectEditor.this), Dialog.ModalityType.APPLICATION_MODAL);
-                dialog.setTitle("Add Script");
+                dialog.setTitle(Assets.language.getProperty("add_script"));
                 dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 dialog.setLocation(addButtonPanel.getLocationOnScreen());
                 dialog.add(new AddComponent(workspace.project().getProjectLocation(), workspace.project().preferredInstall(), frame, props, workspace.recompile()));
@@ -103,7 +103,7 @@ public class ObjectEditor extends JPanel {
         }));
         addPanel.add(addButtonPanel, BorderLayout.EAST);
         JLabel label;
-        addPanel.add(label = new JLabel("<html><strong>Add script</strong></html>", Assets.images.get("scriptIcon.png"), JLabel.LEFT), BorderLayout.CENTER);
+        addPanel.add(label = new JLabel("<html><strong>" + Assets.language.getProperty("add_script") + "</strong></html>", Assets.images.get("scriptIcon.png"), JLabel.LEFT), BorderLayout.CENTER);
         label.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BorderLayout());

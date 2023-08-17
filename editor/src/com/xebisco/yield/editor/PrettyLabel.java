@@ -37,7 +37,7 @@ public class PrettyLabel extends JPanel {
         g.fillRect(0, 2, 10, getHeight() - 4);
         g.setColor(getForeground());
         int sw = g.getFontMetrics().stringWidth(text);
-        g.drawString(text, getWidth() / 2 - sw / 2, getHeight() / 2 + g.getFont().getSize() / 4);
+        g.drawString(text, getWidth() / 2 - sw / 2, getHeight() / 2 + g.getFont().getSize() / 3);
     }
 
     public String getText() {

@@ -34,7 +34,7 @@ public class ButtonListCellRenderer<T extends JButton> extends PrettyLabel imple
         }
 
         setText(Assets.language.getProperty(value.getText()));
-        setPreferredSize(new Dimension(150, 40));
+        setPreferredSize(new Dimension(100, 35));
         setBackground(background);
         setForeground(foreground);
         return this;

@@ -38,9 +38,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Explorer extends JPanel implements ActionListener {
@@ -91,18 +90,18 @@ public class Explorer extends JPanel implements ActionListener {
     public static File newScript(File dir) {
         AtomicReference<File> toReturn = new AtomicReference<>();
         Map<String, Prop[]> props = new HashMap<>();
-        props.put("New Script", new Prop[]{new StringProp("Name", ""), new BooleanProp("Create default methods", true)});
+        props.put("new_script", new Prop[]{new StringProp("script_name", ""), new BooleanProp("create_default_script_methods", true)});
         new PropsWindow(props, () -> {
-            if (Objects.requireNonNull(Props.get(props.get("New Script"), "Name")).getValue().equals("")) {
+            if (Objects.requireNonNull(Props.get(props.get("new_script"), "script_name")).getValue().equals("")) {
                 JOptionPane.showMessageDialog(null, "Script needs a name");
             } else {
-                File f = new File(dir, Objects.requireNonNull(Props.get(props.get("New Script"), "Name")).getValue() + ".java");
+                File f = new File(dir, Objects.requireNonNull(Props.get(props.get("new_script"), "script_name")).getValue() + ".java");
                 toReturn.set(f);
                 try {
                     f.createNewFile();
 
                     try (BufferedWriter writer = new BufferedWriter(new FileWriter(f))) {
-                        if ((boolean) Objects.requireNonNull(Props.get(props.get("New Script"), "Create default methods")).getValue()) {
+                        if ((boolean) Objects.requireNonNull(Props.get(props.get("new_script"), "create_default_script_methods")).getValue()) {
                             writer.append(getDefaultScript(f.getName().split("\\.java")[0]));
                         } else {
                             writer.append(getEmptyScript(f.getName().split("\\.java")[0]));
@@ -115,7 +114,7 @@ public class Explorer extends JPanel implements ActionListener {
                 }
 
             }
-        }, null, "New Script");
+        }, null, "new_script");
         return toReturn.get();
     }
 
@@ -134,185 +133,201 @@ public class Explorer extends JPanel implements ActionListener {
                 new MouseAdapter() {
                     public void mouseClicked(MouseEvent me) {
                         if (me.getButton() == MouseEvent.BUTTON3) {
+                            tree.setSelectionPath(tree.getPathForLocation(me.getX(), me.getY()));
                             JPopupMenu popupMenu = new JPopupMenu();
 
-                            TreePath[] tps = tree.getSelectionPaths();
-                            if (tps == null)
-                                tps = new TreePath[]{tree.getPathForLocation(me.getX(), me.getY())};
-
-                            if (tps[0] == null)
-                                return;
-
-                            boolean isDir = false, isScript = false, isPrefab = false, multiple = tps.length > 1, includeRoot = false;
-
-                            if (!multiple) {
-                                if (((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).isDirectory())
-                                    isDir = true;
-                                if (((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).getName().endsWith(".java"))
-                                    isScript = true;
-                                if (((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).getName().endsWith(".ypfb"))
-                                    isPrefab = true;
-                            }
-
-                            for (TreePath tp : tps)
-                                if (tp.getParentPath() == null) {
-                                    includeRoot = true;
-                                    break;
-                                }
-
-                            TreePath[] finalTps = tps;
-
-                            if (isScript) {
-                                popupMenu.add(new JMenuItem(new AbstractAction("Open script") {
-                                    @Override
-                                    public void actionPerformed(ActionEvent e) {
-                                        CodePanel.newCodeFrame(workspace.desktopPane(), workspace.project().preferredInstall(), (File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), null, workspace.recompile());
-                                    }
-                                }));
-                            }
-
-                            if (isPrefab) {
-                                popupMenu.add(new JMenuItem(new AbstractAction("Open prefab") {
-                                    @Override
-                                    public void actionPerformed(ActionEvent e) {
-                                        YieldInternalFrame frame = new YieldInternalFrame(null);
-                                        ;
-                                        frame.setFrameIcon(Assets.images.get("windowIcon.png"));
-                                        EntityPrefab prefab;
-                                        try (ObjectInputStream oi = new CustomObjectInputStream(new FileInputStream((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), new URLClassLoader(new URL[]{new File(Utils.EDITOR_DIR.getPath() + "/installs/" + workspace.project().preferredInstall().install(), "yield-core.jar").toURI().toURL(), ComponentProp.DEST.toURI().toURL()}))) {
-                                            prefab = (EntityPrefab) oi.readObject();
-                                        } catch (IOException | ClassNotFoundException ex) {
-                                            throw new RuntimeException(ex);
-                                        }
-                                        frame.add(new ObjectEditor((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), prefab, workspace, frame));
-
-
-                                        frame.setTitle("Object Editor");
-                                        frame.setClosable(true);
-                                        frame.setMaximizable(true);
-                                        frame.setIconifiable(true);
-                                        frame.setResizable(true);
-                                        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-                                        workspace.desktopPane().add(frame);
-                                        frame.setBounds(100, 100, 400, 600);
-                                        frame.setVisible(true);
-                                    }
-                                }));
-                            }
-
-                            popupMenu.add(new JMenuItem(new AbstractAction("Open" + (isDir ? " in Explorer" : " in Desktop")) {
-                                @Override
-                                public void actionPerformed(ActionEvent e) {
-
-                                    boolean open = true;
-                                    if (multiple) {
-                                        open = JOptionPane.showConfirmDialog(null, "Open " + finalTps.length + " files?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
-                                    }
-                                    if (open) {
-                                        for (TreePath tp : finalTps)
-                                            try {
-                                                Desktop.getDesktop().open(((File) ((DefaultMutableTreeNode) tp.getLastPathComponent()).getUserObject()));
-                                            } catch (IOException ex) {
-                                                throw new RuntimeException(ex);
-                                            }
-                                    }
-
-                                }
-                            }));
-
-                            if (isDir) {
-                                popupMenu.add(new JMenuItem(new AbstractAction("Create folder") {
-                                    @Override
-                                    public void actionPerformed(ActionEvent e) {
-                                        Map<String, Prop[]> props = new HashMap<>();
-                                        props.put("New Directory", new Prop[]{new StringProp("Name", "")});
-                                        new PropsWindow(props, () -> {
-                                            new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), (String) Objects.requireNonNull(Props.get(props.get("New Directory"), "Name")).getValue()).mkdir();
-                                            Explorer.this.actionPerformed(null);
-                                        }, null, "New Directory");
-                                    }
-                                }));
-                                popupMenu.add(new JMenuItem(new AbstractAction("Create prefab") {
-                                    @Override
-                                    public void actionPerformed(ActionEvent e) {
-                                        Map<String, Prop[]> props = new HashMap<>();
-                                        props.put("New Prefab", new Prop[]{new StringProp("Name", "")});
-                                        new PropsWindow(props, () -> {
-                                            if (Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue().equals("")) {
-                                                JOptionPane.showMessageDialog(null, "Prefab needs a name");
-                                                actionPerformed(e);
-                                            } else {
-                                                File f = new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue() + ".ypfb");
-                                                try {
-                                                    f.createNewFile();
-                                                } catch (IOException ex) {
-                                                    Utils.error(null, ex);
-                                                }
-                                                EntityPrefab prefab = new EntityPrefab(workspace.project().preferredInstall());
-                                                prefab.setName((String) Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue());
-                                                try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(f))) {
-                                                    oo.writeObject(prefab);
-                                                } catch (IOException ex) {
-                                                    Utils.error(null, ex);
-                                                }
-                                            }
-                                            Explorer.this.actionPerformed(null);
-                                        }, null, "New Prefab");
-                                    }
-                                }));
-                                popupMenu.add(new JMenuItem(new AbstractAction("Create script") {
-                                    @Override
-                                    public void actionPerformed(ActionEvent e) {
-                                        newScript(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()));
-                                        workspace.recompile().recompileProject();
-                                    }
-                                }));
-                            }
-
-                            if (!includeRoot)
-                                popupMenu.add(new JMenuItem(new AbstractAction("Delete") {
-                                    @Override
-                                    public void actionPerformed(ActionEvent e) {
-                                        if (JOptionPane.showConfirmDialog(null, "Delete " + finalTps.length + " file?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                                            for (TreePath tp : finalTps) {
-                                                Path path = ((File) ((DefaultMutableTreeNode) tp.getLastPathComponent()).getUserObject()).toPath();
-
-                                                try {
-                                                    Files.walkFileTree(path,
-                                                            new SimpleFileVisitor<>() {
-
-                                                                @Override
-                                                                public FileVisitResult postVisitDirectory(Path dir,
-                                                                                                          IOException exc)
-                                                                        throws IOException {
-                                                                    Files.delete(dir);
-                                                                    return FileVisitResult.CONTINUE;
-                                                                }
-
-                                                                @Override
-                                                                public FileVisitResult visitFile(Path file,
-                                                                                                 BasicFileAttributes attrs)
-                                                                        throws IOException {
-                                                                    Files.delete(file);
-                                                                    return FileVisitResult.CONTINUE;
-                                                                }
-                                                            }
-                                                    );
-                                                } catch (IOException ex) {
-                                                    throw new RuntimeException(ex);
-                                                }
-                                            }
-                                            Explorer.this.actionPerformed(null);
-                                        }
-                                    }
-                                }));
+                            List<JMenuItem> items = popupT();
+                            for (JMenuItem item : items)
+                                popupMenu.add(item);
 
                             popupMenu.show(Explorer.this, me.getX() + 2, me.getY() + 42);
                         } else
                             doMouseClicked(me);
                     }
                 });
+    }
+
+    private List<JMenuItem> popupT() {
+        List<JMenuItem> popupMenu = new ArrayList<>();
+        TreePath[] tps = tree.getSelectionPaths();
+
+        if (tps == null || tps[0] == null) {
+            JMenu ext = new JMenu("View Options");
+            ext.add(new TextShowPanel("sort_options").panel());
+            ext.add(new JMenuItem("Sort by name"));
+            ext.add(new JMenuItem("Sort by modification(Newest first)"));
+            ext.add(new JMenuItem("Sort by modification(Oldest first)"));
+            popupMenu.add(ext);
+            ext.add(new TextShowPanel("file_filter").panel());
+            ext.add(new JCheckBox("Hide editor files"));
+            return popupMenu;
+        }
+
+        boolean isDir = false, isScript = false, isPrefab = false, multiple = tps.length > 1, includeRoot = false;
+
+        if (!multiple) {
+            if (((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).isDirectory())
+                isDir = true;
+            if (((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).getName().endsWith(".java"))
+                isScript = true;
+            if (((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).getName().endsWith(".ypfb"))
+                isPrefab = true;
+        }
+
+        for (TreePath tp : tps)
+            if (tp.getParentPath() == null) {
+                includeRoot = true;
+                break;
+            }
+
+        TreePath[] finalTps = tps;
+
+        if (isScript) {
+            popupMenu.add(new JMenuItem(new AbstractAction("Open script") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    CodePanel.newCodeFrame(workspace.desktopPane(), workspace.project().preferredInstall(), (File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), null, workspace.recompile());
+                }
+            }));
+        }
+
+        if (isPrefab) {
+            popupMenu.add(new JMenuItem(new AbstractAction("Open prefab") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    YieldInternalFrame frame = new YieldInternalFrame(null);
+                    ;
+                    frame.setFrameIcon(Assets.images.get("windowIcon.png"));
+                    EntityPrefab prefab;
+                    try (ObjectInputStream oi = new CustomObjectInputStream(new FileInputStream((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), new URLClassLoader(new URL[]{new File(Utils.EDITOR_DIR.getPath() + "/installs/" + workspace.project().preferredInstall().install(), "yield-core.jar").toURI().toURL(), ComponentProp.DEST.toURI().toURL()}))) {
+                        prefab = (EntityPrefab) oi.readObject();
+                    } catch (IOException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    frame.add(new ObjectEditor((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), prefab, workspace, frame));
+
+
+                    frame.setTitle("Object Editor");
+                    frame.setClosable(true);
+                    frame.setMaximizable(true);
+                    frame.setIconifiable(true);
+                    frame.setResizable(true);
+                    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+                    workspace.desktopPane().add(frame);
+                    frame.setBounds(100, 100, 400, 600);
+                    frame.setVisible(true);
+                }
+            }));
+        }
+
+        popupMenu.add(new JMenuItem(new AbstractAction("Open" + (isDir ? " in Explorer" : " in Desktop")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                boolean open = true;
+                if (multiple) {
+                    open = JOptionPane.showConfirmDialog(null, "Open " + finalTps.length + " files?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+                }
+                if (open) {
+                    for (TreePath tp : finalTps)
+                        try {
+                            Desktop.getDesktop().open(((File) ((DefaultMutableTreeNode) tp.getLastPathComponent()).getUserObject()));
+                        } catch (IOException ex) {
+                            Utils.errorNoStackTrace(null, new IOException("Could not open '" + ((DefaultMutableTreeNode) tp.getLastPathComponent()).getUserObject() + "'"));
+                        }
+                }
+
+            }
+        }));
+
+        if (isDir) {
+            popupMenu.add(new JMenuItem(new AbstractAction("Create folder") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Map<String, Prop[]> props = new HashMap<>();
+                    props.put("New Directory", new Prop[]{new StringProp("Name", "")});
+                    new PropsWindow(props, () -> {
+                        new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), (String) Objects.requireNonNull(Props.get(props.get("New Directory"), "Name")).getValue()).mkdir();
+                        Explorer.this.actionPerformed(null);
+                    }, null, "New Directory");
+                }
+            }));
+            popupMenu.add(new JMenuItem(new AbstractAction("Create prefab") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Map<String, Prop[]> props = new HashMap<>();
+                    props.put("New Prefab", new Prop[]{new StringProp("Name", "")});
+                    new PropsWindow(props, () -> {
+                        if (Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue().equals("")) {
+                            JOptionPane.showMessageDialog(null, "Prefab needs a name");
+                            actionPerformed(e);
+                        } else {
+                            File f = new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue() + ".ypfb");
+                            try {
+                                f.createNewFile();
+                            } catch (IOException ex) {
+                                Utils.error(null, ex);
+                            }
+                            EntityPrefab prefab = new EntityPrefab(workspace.project().preferredInstall());
+                            prefab.setName((String) Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue());
+                            try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(f))) {
+                                oo.writeObject(prefab);
+                            } catch (IOException ex) {
+                                Utils.error(null, ex);
+                            }
+                        }
+                        Explorer.this.actionPerformed(null);
+                    }, null, "New Prefab");
+                }
+            }));
+            popupMenu.add(new JMenuItem(new AbstractAction("Create script") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    newScript(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()));
+                    workspace.recompile().recompileProject();
+                }
+            }));
+        }
+
+        if (!includeRoot)
+            popupMenu.add(new JMenuItem(new AbstractAction("Delete") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (JOptionPane.showConfirmDialog(null, "Delete " + finalTps.length + " file?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                        for (TreePath tp : finalTps) {
+                            Path path = ((File) ((DefaultMutableTreeNode) tp.getLastPathComponent()).getUserObject()).toPath();
+
+                            try {
+                                Files.walkFileTree(path,
+                                        new SimpleFileVisitor<>() {
+
+                                            @Override
+                                            public FileVisitResult postVisitDirectory(Path dir,
+                                                                                      IOException exc)
+                                                    throws IOException {
+                                                Files.delete(dir);
+                                                return FileVisitResult.CONTINUE;
+                                            }
+
+                                            @Override
+                                            public FileVisitResult visitFile(Path file,
+                                                                             BasicFileAttributes attrs)
+                                                    throws IOException {
+                                                Files.delete(file);
+                                                return FileVisitResult.CONTINUE;
+                                            }
+                                        }
+                                );
+                            } catch (IOException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        }
+                        Explorer.this.actionPerformed(null);
+                    }
+                }
+            }));
+        return popupMenu;
     }
 
     DefaultMutableTreeNode createTree(File temp) {
@@ -365,7 +380,10 @@ public class Explorer extends JPanel implements ActionListener {
             return;
         }
 
-        showFiles(fPath(tp, mainDir));
+        if (!((File) ((DefaultMutableTreeNode) tp.getLastPathComponent()).getUserObject()).isDirectory() && me.getClickCount() == 2) {
+            popupT().get(0).getAction().actionPerformed(null);
+        } else
+            showFiles(fPath(tp, mainDir));
     }
 
     void showFiles(File file) {
