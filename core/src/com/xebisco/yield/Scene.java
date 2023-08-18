@@ -83,7 +83,7 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
      *
      * @param backGroundColor The background color to set.
      */
-    public void backGroundColor(Color backGroundColor) {
+    public void setBackGroundColor(Color backGroundColor) {
         this.backGroundColor = backGroundColor;
     }
 
@@ -102,7 +102,7 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
      * @param systems The parameter "systems" is a Set of objects of type "SystemBehavior". This method sets the value of
      * the instance variable "systems" to the value passed as the parameter.
      */
-    public void systems(Set<SystemBehavior> systems) {
+    public void setSystems(Set<SystemBehavior> systems) {
         this.systems = systems;
     }
 
