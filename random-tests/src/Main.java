@@ -3,26 +3,13 @@ import com.xebisco.yield.*;
 import java.util.concurrent.CompletableFuture;
 
 public class Main extends Scene {
-
-    public static final Entity2DPrefab HELLO_WORLD_TEXT_PREFAB = StandardPrefabs.texRectangle("com/xebisco/yield/img.png");
-
-
     public Main(Application application) {
         super(application);
     }
 
-    Entity2D e;
-
     @Override
     public void onStart() {
-        e = instantiate(HELLO_WORLD_TEXT_PREFAB);
-    }
-
-    private double a;
-
-    @Override
-    public void onUpdate() {
-        e.transform().rotate(application().axis(HORIZONTAL));
+        instantiate(new Entity2DPrefab(new ComponentCreation(Tringle.class)));
     }
 
     public static void main(String[] args) throws ClassNotFoundException {
