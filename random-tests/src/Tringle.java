@@ -1,4 +1,6 @@
-import com.xebisco.yield.*;
+import com.xebisco.yield.Colors;
+import com.xebisco.yield.Texture;
+import com.xebisco.yield.TextureRectangle;
 
 public class Tringle extends TextureRectangle {
 
@@ -17,6 +19,7 @@ public class Tringle extends TextureRectangle {
 
     @Override
     public void setupX(float[] verticesX) {
+        super.setupX(verticesX);
         verticesX[0] = (float) x;
         verticesX[1] = (float) (size().width() / 2.);
         verticesX[2] = (float) (size().width() / 2.);
@@ -25,6 +28,7 @@ public class Tringle extends TextureRectangle {
 
     @Override
     public void setupY(float[] verticesY) {
+        super.setupY(verticesY);
         verticesY[0] = (float) y;
         verticesY[1] = (float) (-size().height() / 2.);
         verticesY[2] = (float) (size().height() / 2.);
