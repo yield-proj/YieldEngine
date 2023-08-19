@@ -110,9 +110,9 @@ public class EngineInstallProp extends Prop {
                     Map<String, Prop[]> props = new HashMap<>();
                     OptionsProp[] pA = new OptionsProp[optionsDefault.length];
                     for (int i = 0; i < pA.length; i++) {
-                        pA[i] = new OptionsProp(i == 0 ? "Core Module" : "Implementation " + i, optionsDefault[i]);
+                        pA[i] = new OptionsProp(i == 0 ? "core_module" : "implementation", optionsDefault[i]);
                     }
-                    props.put("Install Options", pA);
+                    props.put("install_options", pA);
                     new PropsWindow(props, () -> {
                         Entry.splashDialog("Downloading and installing engine");
                         installingEngine = true;
@@ -124,19 +124,19 @@ public class EngineInstallProp extends Prop {
                             if (dir.exists()) {
                                 deleteAllFiles(dir, false);
                             }
-                            for (Prop o : props.get("Install Options")) {
+                            for (Prop o : props.get("install_options")) {
                                 write((String) o.getValue(), dir);
                             }
                             Assets.engineInstalls.add(install);
                             Entry.splashDialog.dispose();
                             installingEngine = false;
                         });
-                    }, null, "Custom Install");
+                    }, null, "custom_install");
                 }
             });
             buttonPanel.add(custom);
 
-            def.setAction(new AbstractAction("Default Install") {
+            def.setAction(new AbstractAction(Assets.language.getProperty("default_install")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if(installingEngine) {
@@ -168,7 +168,7 @@ public class EngineInstallProp extends Prop {
         } else {
             name.setText(name.getText() + " (Installed)");
             JButton remove = new JButton();
-            remove.setAction(new AbstractAction("Remove Install") {
+            remove.setAction(new AbstractAction(Assets.language.getProperty("remove_install")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this install?", "Confirm install remove", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {

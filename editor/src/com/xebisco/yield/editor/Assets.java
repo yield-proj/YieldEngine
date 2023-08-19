@@ -19,6 +19,7 @@ package com.xebisco.yield.editor;
 import com.xebisco.yield.editor.prop.*;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -129,7 +130,24 @@ public class Assets {
                     new PathProp("default_directory_for_new_projects", System.getProperty("user.home"), JFileChooser.DIRECTORIES_ONLY)
             });
             editorSettings.put("editor", new Prop[]{
-                    new OptionsProp("language", new Serializable[]{"en"})
+                    new OptionsProp("language", new Serializable[]{"en"}),
+                    new TextShowProp("fix_editor"),
+                    new ButtonProp("delete_editor_settings", new AbstractAction(Assets.language.getProperty("delete")) {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            settings.delete();
+                            loadSettings();
+                            Projects.saveSettings();
+                        }
+                    })
+            });
+            String[] fontSizes = new String[15];
+            for (int i = 0; i < 15; i++) {
+                int finalI = (i * 2 + 10);
+                fontSizes[i] = finalI + "px";
+            }
+            editorSettings.put("code_editor", new Prop[] {
+                    new OptionsProp("font_size", fontSizes)
             });
             Projects.saveSettings();
         } else {

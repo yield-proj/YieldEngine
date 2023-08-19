@@ -205,11 +205,11 @@ public class Projects extends JPanel {
 
             p.add(new NullProp());
 
-            props.put("Edit Installs", p.toArray(new Prop[0]));
+            props.put("edit_installs", p.toArray(new Prop[0]));
 
             Entry.splashDialog.dispose();
 
-            new PropsWindow(props, () -> {}, null, "New Install");
+            new PropsWindow(props, () -> {}, null, "new_install");
         });
     }
 

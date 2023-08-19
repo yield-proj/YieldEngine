@@ -119,6 +119,11 @@ public class ProjectListPanel extends JPanel implements MouseListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (Projects.checkInstalls()) {
+                        if (!Assets.engineInstalls.contains(selectedProject.preferredInstall())) {
+                            int s = JOptionPane.showOptionDialog(null, "This editor dont have the preferred engine install, choose other one.", "Engine Install", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, Assets.engineInstalls.toArray(new EngineInstall[0]), Assets.engineInstalls.get(0));
+                            if(s == JOptionPane.CLOSED_OPTION) return;
+                            selectedProject.setPreferredInstall(Assets.engineInstalls.get(s));
+                        }
                         Projects.projectsFrame.dispose();
                         new Editor(selectedProject);
                     } else {

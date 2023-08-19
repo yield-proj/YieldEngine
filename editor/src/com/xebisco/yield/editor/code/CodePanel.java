@@ -17,6 +17,7 @@ package com.xebisco.yield.editor.code;
 
 import com.xebisco.yield.editor.*;
 import com.xebisco.yield.editor.prop.ComponentProp;
+import com.xebisco.yield.editor.prop.Props;
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.rsta.ac.java.JavaLanguageSupport;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -56,7 +57,6 @@ public class CodePanel extends JPanel {
         setLayout(new BorderLayout());
 
         JavaLanguageSupport jls = (JavaLanguageSupport) LanguageSupportFactory.get().getSupportFor(SyntaxConstants.SYNTAX_STYLE_JAVA);
-        jls.setAutoCompleteEnabled(true);
 
         try {
             jls.getJarManager().addClassFileSource(new File(Utils.EDITOR_DIR, "lang-rt.jar"));
@@ -64,14 +64,14 @@ public class CodePanel extends JPanel {
             throw new RuntimeException(e);
         }
         File[] engine = new File(Utils.EDITOR_DIR + "/installs/" + engineInstall.install()).listFiles();
-            assert engine != null;
-            for (File jar : engine) {
-                try {
-                    jls.getJarManager().addClassFileSource(jar);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+        assert engine != null;
+        for (File jar : engine) {
+            try {
+                jls.getJarManager().addClassFileSource(jar);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
+        }
 
 
         textArea = createTextArea();
@@ -170,13 +170,13 @@ public class CodePanel extends JPanel {
                     }
                 };
                 File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + engineInstall.install() + "/yield-core.jar");
-                ToolProvider.getSystemJavaCompiler().run(null, null, error, "-cp", core.getPath(),  "-d", ComponentProp.DEST.getPath(), file.getPath());
+                ToolProvider.getSystemJavaCompiler().run(null, null, error, "-cp", core.getPath(), "-d", ComponentProp.DEST.getPath(), file.getPath());
                 try {
                     error.close();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                if(builder.length() > 0)
+                if (!builder.isEmpty())
                     Utils.errorNoStackTrace(CodePanel.this, new CompilationException(builder.toString()));
             }
         }));
@@ -184,47 +184,25 @@ public class CodePanel extends JPanel {
         menuBar.add(menu);
         menu = new JMenu("View");
         menu.add(new JCheckBoxMenuItem(new ToggleLayeredHighlightsAction()));
-        JMenu menu2 = new JMenu("Font size");
-        menu2.add(new AbstractAction("10px") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                textArea.setFont(textArea.getFont().deriveFont(10f));
-            }
-        });
-        menu2.add(new AbstractAction("12px") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                textArea.setFont(textArea.getFont().deriveFont(12f));
-            }
-        });
-        menu2.add(new AbstractAction("14px") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                textArea.setFont(textArea.getFont().deriveFont(14f));
-            }
-        });
-        menu2.add(new AbstractAction("16px") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                textArea.setFont(textArea.getFont().deriveFont(16f));
-            }
-        });
-        menu2.add(new AbstractAction("20px") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                textArea.setFont(textArea.getFont().deriveFont(20f));
-            }
-        });
+        JMenu menu2 = new JMenu("Font");
+        JMenu fontSizes = new JMenu("Font size");
+        for (int i = 0; i < 15; i++) {
+            int finalI = (i * 2 + 10);
+            if(Props.get(Assets.editorSettings.get("code_editor"), "font_size").getValue().equals(finalI + "px"))
+                textArea.setFont(textArea.getFont().deriveFont((float) finalI));
+            fontSizes.add(new AbstractAction(finalI + "px") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Props.get(Assets.editorSettings.get("code_editor"), "font_size").setValue(finalI + "px");
+                    Projects.saveSettings();
+                    textArea.setFont(textArea.getFont().deriveFont((float) finalI));
+                }
+            });
+        }
+        menu2.add(fontSizes);
         menu.add(menu2);
         menuBar.add(menu);
         return menuBar;
-    }
-
-
-    private void addItem(Action a, ButtonGroup bg, JMenu menu) {
-        JRadioButtonMenuItem item = new JRadioButtonMenuItem(a);
-        bg.add(item);
-        menu.add(item);
     }
 
 
@@ -240,16 +218,12 @@ public class CodePanel extends JPanel {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        LanguageSupportFactory.get().register(textArea);
         textArea.setCaretPosition(0);
         textArea.setAntiAliasingEnabled(true);
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         textArea.requestFocusInWindow();
         textArea.setMarkOccurrences(true);
         textArea.setCodeFoldingEnabled(true);
-        textArea.setTabsEmulated(true);
-        textArea.setTabSize(3);
-        ToolTipManager.sharedInstance().registerComponent(textArea);
         return textArea;
     }
 

@@ -38,6 +38,8 @@ public class OptionsProp extends Prop {
         panel.setLayout(new BorderLayout());
         panel.add(new JLabel(Assets.language.getProperty(getName()) + " "), BorderLayout.WEST);
         JComboBox<Serializable> comboBox = new JComboBox<>(options);
+        if(getValue() != null)
+            comboBox.setSelectedItem(getValue());
         comboBox.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
