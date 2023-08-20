@@ -16,13 +16,12 @@
 
 package com.xebisco.yield;
 
+import java.io.Serializable;
+
 /**
  * Vector2D is a Vector2D that represents a vector in 2D space.
  */
-public class Vector2D {
-
-    public static final Vector2D RIGHT = new Vector2D(1, 0), LEFT = new Vector2D(-1, 0), UP = new Vector2D(0, 1), DOWN = new Vector2D(0, -1), ZERO = new Vector2D(0, 0);
-
+public class Vector2D implements Serializable {
     private double x, y;
     public Vector2D(double x, double y) {
         set(x, y);
