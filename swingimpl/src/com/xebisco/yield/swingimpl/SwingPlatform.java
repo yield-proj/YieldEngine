@@ -637,7 +637,7 @@ public class SwingPlatform implements GraphicsManager, FontManager, TextureManag
 
     @Override
     public Texture getTextureFromRegion(int x, int y, int width, int height, SpritesheetTexture spritesheetTexture) {
-        return new Texture(((BufferedImage) spritesheetTexture.spritesheetImageRef()).getSubimage(x, y, width, height), null, this);
+        return new Texture(new SwingImage(((BufferedImage) spritesheetTexture.spritesheetImageRef()).getSubimage(x, y, width, height)), null, this);
     }
 
     @Override
