@@ -85,7 +85,7 @@ public class Workspace extends JPanel {
 
         desktopPane.setOpaque(false);
 
-        JToolBar toolBar = new JToolBar("Workspace Tool Bar");
+        YieldToolBar toolBar = new YieldToolBar("Workspace Tool Bar");
         toolBar.setFloatable(true);
         toolBar.setRollover(true);
         toolBar.setBorderPainted(false);

@@ -126,7 +126,7 @@ public class Editor extends JFrame implements IRecompile {
         }));
 
         Image finalImage = tbi;
-        JToolBar toolBar = new JToolBar() {
+        YieldToolBar toolBar = new YieldToolBar("Project") {
 
             @Override
             protected void paintComponent(Graphics g) {
