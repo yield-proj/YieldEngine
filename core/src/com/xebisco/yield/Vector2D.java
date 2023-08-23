@@ -131,6 +131,10 @@ public class Vector2D implements Serializable {
         return new Vector2D(x, y).multiplyLocal(a);
     }
 
+    public Vector2D multiply(double value) {
+        return new Vector2D(x, y).multiplyLocal(value);
+    }
+
     /**
      * Divide the x and y values of this object by the x and y values of the given object.
      *
@@ -139,6 +143,12 @@ public class Vector2D implements Serializable {
     public Vector2D divideLocal(Vector2D a) {
         x /= a.x;
         y /= a.y;
+        return this;
+    }
+
+    public Vector2D divideLocal(double value) {
+        x /= value;
+        y /= value;
         return this;
     }
 
@@ -153,6 +163,10 @@ public class Vector2D implements Serializable {
      */
     public Vector2D divide(Vector2D a) {
         return new Vector2D(x, y).divideLocal(a);
+    }
+
+    public Vector2D divide(double value) {
+        return new Vector2D(x, y).divideLocal(value);
     }
 
     /**
