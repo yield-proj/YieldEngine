@@ -141,13 +141,8 @@ public class Assets {
                         }
                     })
             });
-            String[] fontSizes = new String[15];
-            for (int i = 0; i < 15; i++) {
-                int finalI = (i * 2 + 10);
-                fontSizes[i] = finalI + "px";
-            }
             editorSettings.put("code_editor", new Prop[] {
-                    new OptionsProp("font_size", fontSizes)
+                    new FontProp("font_size")
             });
             Projects.saveSettings();
         } else {

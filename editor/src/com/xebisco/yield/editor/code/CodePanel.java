@@ -17,6 +17,7 @@ package com.xebisco.yield.editor.code;
 
 import com.xebisco.yield.editor.*;
 import com.xebisco.yield.editor.prop.ComponentProp;
+import com.xebisco.yield.editor.prop.FontProp;
 import com.xebisco.yield.editor.prop.Props;
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.rsta.ac.java.JavaLanguageSupport;
@@ -45,6 +46,7 @@ public class CodePanel extends JPanel {
 
     private final String savedTitle, unsavedTitle;
     private final YieldInternalFrame frame;
+    private final Font startFont;
 
     public CodePanel(File file, EngineInstall engineInstall, YieldInternalFrame frame, IRecompile recompile) {
         this.file = file;
@@ -75,6 +77,10 @@ public class CodePanel extends JPanel {
 
 
         textArea = createTextArea();
+        startFont = textArea.getFont();
+        Font f = (Font) Props.get(Assets.editorSettings.get("code_editor"), "font_size").getValue();
+        if (f != null)
+            textArea.setFont(f);
         jls.install(textArea);
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -184,23 +190,18 @@ public class CodePanel extends JPanel {
         menuBar.add(menu);
         menu = new JMenu("View");
         menu.add(new JCheckBoxMenuItem(new ToggleLayeredHighlightsAction()));
-        JMenu menu2 = new JMenu("Font");
-        JMenu fontSizes = new JMenu("Font size");
-        for (int i = 0; i < 15; i++) {
-            int finalI = (i * 2 + 10);
-            if(Props.get(Assets.editorSettings.get("code_editor"), "font_size").getValue().equals(finalI + "px"))
-                textArea.setFont(textArea.getFont().deriveFont((float) finalI));
-            fontSizes.add(new AbstractAction(finalI + "px") {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Props.get(Assets.editorSettings.get("code_editor"), "font_size").setValue(finalI + "px");
-                    Projects.saveSettings();
-                    textArea.setFont(textArea.getFont().deriveFont((float) finalI));
-                }
-            });
-        }
-        menu2.add(fontSizes);
-        menu.add(menu2);
+        menu.add(new JMenuItem(new AbstractAction("Font...") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((FontProp) Props.get(Assets.editorSettings.get("code_editor"), "font_size")).updateFont(CodePanel.this, null);
+                Font f = (Font) Props.get(Assets.editorSettings.get("code_editor"), "font_size").getValue();
+                if (f != null)
+                    textArea.setFont(f);
+                else textArea.setFont(startFont);
+
+                CodePanel.this.repaint();
+            }
+        }));
         menuBar.add(menu);
         return menuBar;
     }

@@ -38,8 +38,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Explorer extends JPanel implements ActionListener {
@@ -145,6 +145,18 @@ public class Explorer extends JPanel implements ActionListener {
                             doMouseClicked(me);
                     }
                 });
+    }
+
+    private boolean onFolder(String f, File file) {
+        File f1 = new File(workspace.project().getProjectLocation(), f);
+        File p = file;
+        do {
+            if (p.equals(f1)) {
+                return true;
+            }
+            p = p.getParentFile();
+        } while (!p.equals(workspace.project().getProjectLocation()));
+        return false;
     }
 
     private List<JMenuItem> popupT() {
@@ -253,41 +265,43 @@ public class Explorer extends JPanel implements ActionListener {
                     }, null, "New Directory");
                 }
             }));
-            popupMenu.add(new JMenuItem(new AbstractAction("Create prefab") {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Map<String, Prop[]> props = new HashMap<>();
-                    props.put("New Prefab", new Prop[]{new StringProp("Name", "")});
-                    new PropsWindow(props, () -> {
-                        if (Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue().equals("")) {
-                            JOptionPane.showMessageDialog(null, "Prefab needs a name");
-                            actionPerformed(e);
-                        } else {
-                            File f = new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue() + ".ypfb");
-                            try {
-                                f.createNewFile();
-                            } catch (IOException ex) {
-                                Utils.error(null, ex);
+            if (onFolder("Prefabs", (File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()))
+                popupMenu.add(new JMenuItem(new AbstractAction("Create prefab") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Map<String, Prop[]> props = new HashMap<>();
+                        props.put("New Prefab", new Prop[]{new StringProp("name", "")});
+                        new PropsWindow(props, () -> {
+                            if (Objects.requireNonNull(Props.get(props.get("New Prefab"), "name")).getValue().equals("")) {
+                                JOptionPane.showMessageDialog(null, "Prefab needs a name");
+                                actionPerformed(e);
+                            } else {
+                                File f = new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), Objects.requireNonNull(Props.get(props.get("New Prefab"), "name")).getValue() + ".ypfb");
+                                try {
+                                    f.createNewFile();
+                                } catch (IOException ex) {
+                                    Utils.error(null, ex);
+                                }
+                                EntityPrefab prefab = new EntityPrefab(workspace.project().preferredInstall());
+                                prefab.setName((String) Objects.requireNonNull(Props.get(props.get("New Prefab"), "name")).getValue());
+                                try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(f))) {
+                                    oo.writeObject(prefab);
+                                } catch (IOException ex) {
+                                    Utils.error(null, ex);
+                                }
                             }
-                            EntityPrefab prefab = new EntityPrefab(workspace.project().preferredInstall());
-                            prefab.setName((String) Objects.requireNonNull(Props.get(props.get("New Prefab"), "Name")).getValue());
-                            try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(f))) {
-                                oo.writeObject(prefab);
-                            } catch (IOException ex) {
-                                Utils.error(null, ex);
-                            }
-                        }
-                        Explorer.this.actionPerformed(null);
-                    }, null, "New Prefab");
-                }
-            }));
-            popupMenu.add(new JMenuItem(new AbstractAction("Create script") {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    newScript(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()));
-                    workspace.recompile().recompileProject();
-                }
-            }));
+                            Explorer.this.actionPerformed(null);
+                        }, null, "New Prefab");
+                    }
+                }));
+            if (onFolder("Scripts", (File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()))
+                popupMenu.add(new JMenuItem(new AbstractAction("Create script") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        newScript(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()));
+                        workspace.recompile().recompileProject();
+                    }
+                }));
         }
 
         if (!includeRoot)
