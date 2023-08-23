@@ -255,8 +255,8 @@ public class ComponentProp extends Prop {
             Serializable value = ((Map<String, Serializable>) getValue()).get(field.first());
             double xValue, yValue;
             try {
-                xValue = (double) value.getClass().getMethod("getX").invoke(value);
-                yValue = (double) value.getClass().getMethod("getY").invoke(value);
+                xValue = (double) value.getClass().getMethod("x").invoke(value);
+                yValue = (double) value.getClass().getMethod("y").invoke(value);
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }

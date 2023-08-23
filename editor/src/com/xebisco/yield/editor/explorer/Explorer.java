@@ -148,6 +148,7 @@ public class Explorer extends JPanel implements ActionListener {
     }
 
     private boolean onFolder(String f, File file) {
+        if(file == null) return false;
         File f1 = new File(workspace.project().getProjectLocation(), f);
         File p = file;
         do {
@@ -155,7 +156,7 @@ public class Explorer extends JPanel implements ActionListener {
                 return true;
             }
             p = p.getParentFile();
-        } while (!p.equals(workspace.project().getProjectLocation()));
+        } while (!Objects.equals(p, workspace.project().getProjectLocation()));
         return false;
     }
 
