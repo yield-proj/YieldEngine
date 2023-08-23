@@ -194,6 +194,7 @@ public class CodePanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ((FontProp) Props.get(Assets.editorSettings.get("code_editor"), "font_size")).updateFont(CodePanel.this, null);
+                Projects.saveSettings();
                 Font f = (Font) Props.get(Assets.editorSettings.get("code_editor"), "font_size").getValue();
                 if (f != null)
                     textArea.setFont(f);
