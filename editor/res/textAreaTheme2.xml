@@ -7,7 +7,7 @@
 -->
 <RSyntaxTheme version="1.0">
 
-    <background color="1E1E1E" />
+    <background color="1D1D26" />
     <caret color="C9C9D1" />
     <selection useFG="false" bg="713a91" roundedEdges="false" />
     <currentLineHighlight color="242433" />

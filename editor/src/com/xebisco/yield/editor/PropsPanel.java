@@ -45,7 +45,7 @@ public class PropsPanel extends JPanel {
         return panel;
     }
 
-    public PropsPanel(Map<String, Prop[]> s, Runnable apply) {
+    public PropsPanel(Map<String, Prop[]> s) {
         setLayout(new BorderLayout());
 
         List<JButton> sections = new ArrayList<>();
@@ -97,6 +97,7 @@ public class PropsPanel extends JPanel {
 
         if (one == null) {
             JList<JButton> sectionsJL = new JList<>(sections.toArray(new JButton[0]));
+            sectionsJL.setOpaque(false);
             sectionsJL.setCellRenderer(new ButtonListCellRenderer<>());
 
             sectionsJL.addListSelectionListener(new ButtonSelectionListener(sectionsJL));
@@ -108,18 +109,21 @@ public class PropsPanel extends JPanel {
             sections.get(0).getAction().actionPerformed(null);
         }
         add(pane, BorderLayout.CENTER);
+    }
 
+    public void load(Runnable apply) {
         JPanel buttons = new JPanel();
         buttons.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        JButton button = new JButton(new AbstractAction(Assets.language.getProperty("ok")) {
+        JButton button = new JButton(new AbstractAction(Assets.language.getProperty("apply")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 apply.run();
             }
         });
-        if(SwingUtilities.getWindowAncestor(this) instanceof RootPaneContainer f) f.getRootPane().setDefaultButton(button);
         buttons.add(button);
 
         add(buttons, BorderLayout.SOUTH);
+
+        if(SwingUtilities.getWindowAncestor(this) instanceof RootPaneContainer f) f.getRootPane().setDefaultButton(button);
     }
 }

@@ -21,28 +21,31 @@ import com.xebisco.yield.editor.prop.FontProp;
 import com.xebisco.yield.editor.prop.Props;
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.rsta.ac.java.JavaLanguageSupport;
+import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
+import org.fife.ui.rsyntaxtextarea.parser.ParseResult;
+import org.fife.ui.rsyntaxtextarea.parser.Parser;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.*;
 import javax.swing.text.DefaultHighlighter;
 import javax.tools.ToolProvider;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import java.io.*;
 
 public class CodePanel extends JPanel {
 
     private final RSyntaxTextArea textArea;
     private final File file;
+    private boolean saved = true;
 
     private final EngineInstall engineInstall;
-    private boolean saved;
 
     private final String savedTitle, unsavedTitle;
     private final YieldInternalFrame frame;
@@ -52,6 +55,14 @@ public class CodePanel extends JPanel {
         this.file = file;
         this.engineInstall = engineInstall;
         this.frame = frame;
+        frame.addInternalFrameListener(new InternalFrameAdapter() {
+            @Override
+            public void internalFrameClosing(InternalFrameEvent e) {
+                if (saved || JOptionPane.showConfirmDialog(frame, "There are unsaved changes in this file, close anyway?", "Confirm Exit", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                    frame.dispose();
+                }
+            }
+        });
         savedTitle = file.getName() + " (Script)";
         unsavedTitle = file.getName() + " (Script) UNSAVED";
         frame.setTitle(savedTitle);
@@ -77,8 +88,9 @@ public class CodePanel extends JPanel {
 
 
         textArea = createTextArea();
+        textArea.setClearWhitespaceLinesEnabled(true);
         startFont = textArea.getFont();
-        Font f = (Font) Props.get(Assets.editorSettings.get("code_editor"), "font_size").getValue();
+        Font f = (Font) Props.get(Assets.editorSettings.get("code_editor"), "code_editor_font").getValue();
         if (f != null)
             textArea.setFont(f);
         jls.install(textArea);
@@ -97,11 +109,13 @@ public class CodePanel extends JPanel {
         textArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
+                saved = false;
                 frame.setTitle(unsavedTitle);
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
+                saved = false;
                 frame.setTitle(unsavedTitle);
             }
 
@@ -112,6 +126,7 @@ public class CodePanel extends JPanel {
         });
 
         RTextScrollPane scrollPane = new RTextScrollPane(textArea, true);
+        scrollPane.setBorder(null);
         scrollPane.setIconRowHeaderEnabled(true);
         scrollPane.getGutter().setBookmarkingEnabled(true);
 
@@ -144,7 +159,7 @@ public class CodePanel extends JPanel {
         frame.setMaximizable(true);
         frame.setIconifiable(true);
         frame.setResizable(true);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         frame.setBounds(100, 100, 600, 500);
 
@@ -155,19 +170,18 @@ public class CodePanel extends JPanel {
 
     private JMenuBar codeMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("File");
+        JMenu menu = new JMenu(Assets.language.getProperty("file"));
         JMenuItem item;
-        menu.add(item = new JMenuItem(new AbstractAction("Save") {
+        menu.add(item = new JMenuItem(new AbstractAction(Assets.language.getProperty("save")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 try (FileWriter writer = new FileWriter(file)) {
                     writer.append(textArea.getText());
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                saved = true;
                 frame.setTitle(savedTitle);
+                saved = true;
                 final StringBuilder builder = new StringBuilder();
                 OutputStream error = new OutputStream() {
                     @Override
@@ -187,15 +201,43 @@ public class CodePanel extends JPanel {
             }
         }));
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
+        menu.add(new JMenuItem(new AbstractAction(Assets.language.getProperty("close")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (InternalFrameListener l : frame.getInternalFrameListeners()) l.internalFrameClosing(null);
+            }
+        }));
         menuBar.add(menu);
         menu = new JMenu("View");
         menu.add(new JCheckBoxMenuItem(new ToggleLayeredHighlightsAction()));
+        item = new JMenuItem(new AbstractAction(Assets.language.getProperty("increase_font_size")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea.setFont(textArea.getFont().deriveFont(textArea.getFont().getSize() + 1f));
+                repaint();
+            }
+        });
+        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, KeyEvent.CTRL_DOWN_MASK));
+        menu.add(item);
+        item = new JMenuItem(new AbstractAction(Assets.language.getProperty("decrease_font_size")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (textArea.getFont().getSize() > 1) {
+                    textArea.setFont(textArea.getFont().deriveFont(textArea.getFont().getSize() - 1f));
+                    repaint();
+                }
+            }
+        });
+        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, KeyEvent.CTRL_DOWN_MASK));
+        menu.add(item);
+
+
         menu.add(new JMenuItem(new AbstractAction("Font...") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ((FontProp) Props.get(Assets.editorSettings.get("code_editor"), "font_size")).updateFont(CodePanel.this, null);
+                ((FontProp) Props.get(Assets.editorSettings.get("code_editor"), "code_editor_font")).updateFont(CodePanel.this, null);
                 Projects.saveSettings();
-                Font f = (Font) Props.get(Assets.editorSettings.get("code_editor"), "font_size").getValue();
+                Font f = (Font) Props.get(Assets.editorSettings.get("code_editor"), "code_editor_font").getValue();
                 if (f != null)
                     textArea.setFont(f);
                 else textArea.setFont(startFont);

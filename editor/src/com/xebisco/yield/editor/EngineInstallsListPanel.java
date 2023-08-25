@@ -34,10 +34,10 @@ public class EngineInstallsListPanel extends JPanel implements MouseListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Color brighterBkg = getBackground().brighter();
+        Color brighterBkg = UIManager.getColor("List.background");
         int h = 80, s = 10;
         ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        if (Assets.engineInstalls.size() == 0) {
+        if (Assets.engineInstalls.isEmpty()) {
             g.setColor(getForeground());
             String noProject = "No engine installed.";
             int sw = g.getFontMetrics().stringWidth(noProject);

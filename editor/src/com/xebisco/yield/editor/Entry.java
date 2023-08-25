@@ -16,7 +16,9 @@
 
 package com.xebisco.yield.editor;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.IntelliJTheme;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.xebisco.yield.editor.prop.BooleanProp;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
@@ -41,8 +43,10 @@ public class Entry {
     }
 
     public static void main(String[] args) {
+        System.setProperty("sun.java2d.opengl", "True");
         Locale.setDefault(Locale.US);
-        IntelliJTheme.setup(Entry.class.getResourceAsStream("/DarkPurple.theme.json"));
+        //IntelliJTheme.setup(Entry.class.getResourceAsStream("/DarkPurple.theme.json"));
+        FlatMacDarkLaf.setup();
         splashDialog(null);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (Assets.projects != null)

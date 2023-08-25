@@ -39,8 +39,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ObjectEditor extends JPanel {
-
-    private final Timer timer;
     private final YieldInternalFrame frame;
 
     private final Workspace workspace;
@@ -111,11 +109,9 @@ public class ObjectEditor extends JPanel {
         scrollPane.setViewportView(update(props));
         add(bottomPanel, BorderLayout.SOUTH);
 
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-
+        frame.addInternalFrameListener(new InternalFrameAdapter() {
             @Override
-            public void run() {
+            public void internalFrameDeactivated(InternalFrameEvent e) {
                 prefab.setName((String) nameProp.getValue());
                 prefab.components().clear();
                 prefab.components().addAll(props);
@@ -126,11 +122,10 @@ public class ObjectEditor extends JPanel {
                     throw new RuntimeException(ex);
                 }
             }
-        }, 1000, 1000);
-        frame.addInternalFrameListener(new InternalFrameAdapter() {
+
             @Override
             public void internalFrameClosing(InternalFrameEvent e) {
-                timer.cancel();
+                internalFrameDeactivated(e);
                 frame.dispose();
             }
         });
@@ -141,9 +136,5 @@ public class ObjectEditor extends JPanel {
         panel.setLayout(new BorderLayout());
         panel.add(PropsPanel.compPropsPanel(props.toArray(new ComponentProp[0]), frame, workspace.recompile()), BorderLayout.NORTH);
         return panel;
-    }
-
-    public Timer timer() {
-        return timer;
     }
 }

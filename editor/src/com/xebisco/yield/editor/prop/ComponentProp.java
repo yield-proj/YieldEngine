@@ -206,7 +206,6 @@ public class ComponentProp extends Prop {
         panel.setOpaque(false);
         panel.setLayout(new BorderLayout());
         JLabel n = new JLabel("<html>" + field.first() + ": <em>" + field.second().getSimpleName() + "</em></html>");
-        n.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
         panel.add(n, BorderLayout.WEST);
         if (field.second().equals(String.class) ||
                 field.second().equals(Integer.class) ||
@@ -232,9 +231,9 @@ public class ComponentProp extends Prop {
                     try {
                         //noinspection unchecked
                         ((Map<String, Serializable>) getValue()).put(field.first(), castP(textField.getText(), field.second()));
-                        textField.setBorder(null);
+                        textField.setBackground(UIManager.getColor("TextField.background"));
                     } catch (NumberFormatException ex) {
-                        textField.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                        textField.setBackground(Color.RED);
                     }
                 }
 
@@ -244,8 +243,9 @@ public class ComponentProp extends Prop {
                         //noinspection unchecked
                         ((Map<String, Serializable>) getValue()).put(field.first(), castP(textField.getText(), field.second()));
                         textField.setBorder(null);
+                        textField.setBackground(UIManager.getColor("TextField.background"));
                     } catch (NumberFormatException ex) {
-                        textField.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                        textField.setBackground(Color.RED);
                     }
                 }
             });
@@ -281,9 +281,9 @@ public class ComponentProp extends Prop {
                 public void insertUpdate(DocumentEvent e) {
                     try {
                         value.getClass().getMethod("setX", double.class).invoke(value, Double.parseDouble(finalTextField1.getText()));
-                        finalTextField1.setBorder(null);
+                        finalTextField1.setBackground(UIManager.getColor("TextField.background"));
                     } catch (NumberFormatException ex) {
-                        finalTextField1.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                        finalTextField1.setBackground(Color.RED);
                     } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -293,9 +293,9 @@ public class ComponentProp extends Prop {
                 public void removeUpdate(DocumentEvent e) {
                     try {
                         value.getClass().getMethod("setX", double.class).invoke(value, Double.parseDouble(finalTextField1.getText()));
-                        finalTextField1.setBorder(null);
+                        finalTextField1.setBackground(UIManager.getColor("TextField.background"));
                     } catch (NumberFormatException ex) {
-                        finalTextField1.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                        finalTextField1.setBackground(Color.RED);
                     } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException ex) {
                         throw new RuntimeException(ex);
                     }

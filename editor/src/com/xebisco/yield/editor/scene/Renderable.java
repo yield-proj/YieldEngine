@@ -17,7 +17,8 @@
 package com.xebisco.yield.editor.scene;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public interface Renderable {
+public interface Renderable extends Serializable {
     void render(Graphics g);
 }

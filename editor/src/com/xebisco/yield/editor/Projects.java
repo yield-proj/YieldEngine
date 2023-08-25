@@ -16,12 +16,15 @@
 
 package com.xebisco.yield.editor;
 
+import com.xebisco.yield.editor.code.CompilationException;
 import com.xebisco.yield.editor.prop.*;
+import com.xebisco.yield.editor.scene.EditorScene;
 import com.xebisco.yield.editor.scene.EntityPrefab;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.tools.ToolProvider;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -32,6 +35,7 @@ import java.net.URLClassLoader;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Projects extends JPanel {
 
@@ -64,7 +68,7 @@ public class Projects extends JPanel {
         frame.getRootPane().setDefaultButton(button);
 
 
-        button = new JButton(new AbstractAction(Assets.language.getProperty("load")){
+        button = new JButton(new AbstractAction(Assets.language.getProperty("load")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
@@ -91,7 +95,7 @@ public class Projects extends JPanel {
         logoAndOptions.setLayout(new BorderLayout());
         JLabel logo = new JLabel(Assets.images.get("editorLogoSmall.png"));
         logo.setMaximumSize(new Dimension(100, 100));
-        logo.setOpaque(false);
+        logo.setOpaque(true);
         logoAndOptions.add(logo, BorderLayout.NORTH);
         //logoAndOptions.setBackground(logoAndOptions.getBackground().brighter());
         add(logoAndOptions, BorderLayout.WEST);
@@ -124,15 +128,6 @@ public class Projects extends JPanel {
         title.setBorder(BorderFactory.createLineBorder(title.getBackground(), 20));
         installsPanel.add(title, BorderLayout.NORTH);
 
-        JPanel settingsPanel = new JPanel();
-        settingsPanel.setLayout(new BorderLayout());
-
-        title = new JLabel(Assets.language.getProperty("settings"));
-        title.setFont(title.getFont().deriveFont(Font.BOLD).deriveFont(40f));
-        title.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        settingsPanel.add(title, BorderLayout.NORTH);
-        settingsPanel.add(new PropsPanel(Assets.editorSettings, Projects::saveSettings));
-
 
         JPanel main = new JPanel();
         main.setLayout(new BorderLayout());
@@ -164,7 +159,16 @@ public class Projects extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         main.removeAll();
+                        JLabel title = new JLabel(Assets.language.getProperty("settings"));
+                        title.setFont(title.getFont().deriveFont(Font.BOLD).deriveFont(40f));
+                        title.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+                        JPanel settingsPanel = new JPanel();
+                        settingsPanel.setLayout(new BorderLayout());
+                        settingsPanel.add(title, BorderLayout.NORTH);
+                        PropsPanel propsPanel;
+                        settingsPanel.add(propsPanel = new PropsPanel(Assets.editorSettings));
                         main.add(settingsPanel);
+                        propsPanel.load(Projects::saveSettings);
                         main.validate();
                         main.repaint();
                     }
@@ -172,7 +176,7 @@ public class Projects extends JPanel {
         });
         logo.setBackground(options.getBackground());
         options.setCellRenderer(new ButtonListCellRenderer<>());
-        options.setOpaque(false);
+        options.setOpaque(true);
         options.addListSelectionListener(new ButtonSelectionListener(options));
         options.setSelectedIndex(0);
         options.getSelectedValue().getAction().actionPerformed(null);
@@ -199,7 +203,7 @@ public class Projects extends JPanel {
             Map<String, Prop[]> props = new HashMap<>();
             List<Prop> p = new ArrayList<>();
 
-            for(EngineInstall engineInstall : engines) {
+            for (EngineInstall engineInstall : engines) {
                 p.add(new EngineInstallProp(engineInstall));
             }
 
@@ -209,7 +213,8 @@ public class Projects extends JPanel {
 
             Entry.splashDialog.dispose();
 
-            new PropsWindow(props, () -> {}, null, "new_install");
+            new PropsWindow(props, () -> {
+            }, null, "new_install");
         });
     }
 
@@ -247,7 +252,7 @@ public class Projects extends JPanel {
     }
 
     public static void newProjectFrame(Frame owner) {
-        if(Assets.engineInstalls.isEmpty()) {
+        if (Assets.engineInstalls.isEmpty()) {
             Utils.errorNoStackTrace(owner, new IllegalStateException("Missing engine install"));
             return;
         }
@@ -256,7 +261,7 @@ public class Projects extends JPanel {
         new PropsWindow(sections, () -> {
             Project project = new Project(
                     (String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_name")).getValue(),
-                    new File((String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_location")).getValue(), (String) Objects.requireNonNull(Props.get(sections.get("New Project"), "Project Name")).getValue()));
+                    new File((String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_location")).getValue(), (String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_name")).getValue()));
             if (project.getName().equals("")) {
                 Utils.error(null, new IllegalStateException("Project requires a name."));
                 newProjectFrame(owner);
@@ -264,7 +269,7 @@ public class Projects extends JPanel {
                 Utils.error(null, new IllegalStateException("Path is not valid."));
                 newProjectFrame(owner);
             } else if (!Assets.projects.contains(project)) {
-                Assets.projects.add(project);
+                Assets.projects.add(0, project);
                 EngineInstall install;
                 project.setPreferredInstall(install = (EngineInstall) Objects.requireNonNull(Props.get(sections.get("new_project"), "preferred_engine")).getValue());
                 project.getProjectLocation().mkdir();
@@ -272,20 +277,23 @@ public class Projects extends JPanel {
                 scriptsDir.mkdir();
                 File prefabsDir = new File(project.getProjectLocation(), "Prefabs");
                 prefabsDir.mkdir();
-                if((boolean) Objects.requireNonNull(Props.get(sections.get("new_project"), "create_sample_files")).getValue()) {
+                File scenesDir = new File(project.getProjectLocation(), "Scenes");
+                scenesDir.mkdir();
+                if ((boolean) Objects.requireNonNull(Props.get(sections.get("new_project"), "create_sample_files")).getValue()) {
                     File hw = new File(scriptsDir, "HelloScript.java");
                     try {
                         hw.createNewFile();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    try(FileWriter os = new FileWriter(hw)) {
+                    try (FileWriter os = new FileWriter(hw)) {
                         os.append("import com.xebisco.yield.*;\n\npublic class HelloScript extends ComponentBehavior {\n\n\t@Override\n\tpublic void onStart() {\n\t\tSystem.out.println(\"Hello, World. On Console!\");\n\t}\n\n}");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
 
-
+                    File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + project.preferredInstall().install() + "/yield-core.jar");
+                    ToolProvider.getSystemJavaCompiler().run(null, null, null, "-cp", core.getPath(), "-d", ComponentProp.DEST.getPath(), hw.getPath());
 
                     File ohw = new File(prefabsDir, "HelloWorld.ypfb");
                     try {
@@ -300,14 +308,31 @@ public class Projects extends JPanel {
 
                     values.put("contents", "Hello, World!");
 
-                    try(URLClassLoader cl = new URLClassLoader(new URL[] {new File(Utils.EDITOR_DIR + "/installs/" + install.install(), "yield-core.jar").toURI().toURL()})) {
+                    try (URLClassLoader cl = new URLClassLoader(new URL[]{new File(Utils.EDITOR_DIR + "/installs/" + install.install(), "yield-core.jar").toURI().toURL()})) {
                         prefab.components().add(new ComponentProp(cl.loadClass("com.xebisco.yield.Text"), true).set(values));
+                        prefab.components().add(new ComponentProp(hw, install));
                     } catch (IOException | ClassNotFoundException e) {
                         throw new RuntimeException(e);
                     }
 
-                    try(ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(ohw))) {
+                    try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(ohw))) {
                         oo.writeObject(prefab);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    File hwScene = new File(scenesDir, "FirstScene.yscn");
+                    try {
+                        hwScene.createNewFile();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    EditorScene editorScene = new EditorScene();
+                    editorScene.setName("FirstScene");
+
+                    try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(hwScene))) {
+                        oo.writeObject(editorScene);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

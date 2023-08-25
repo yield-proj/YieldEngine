@@ -14,18 +14,19 @@ public class FontSelector extends JDialog {
     private final JTextField fontFamily = new JTextField();
     private int size = 20;
     private final JCheckBox bold = new JCheckBox("Bold"), italic = new JCheckBox("Italic");
-    private Font font;
+    private Font font, actFont;
 
     public static Font open(Font selected, Component c) {
         FontSelector f = new FontSelector(selected);
         f.setLocationRelativeTo(c);
         f.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         f.setVisible(true);
-        return f.font;
+        return f.actFont;
     }
 
     private FontSelector(Font selected) {
         setModal(true);
+        actFont = selected;
         if(selected != null) {
             fontFamily.setText(selected.getFamily());
             size = selected.getSize();
@@ -80,6 +81,7 @@ public class FontSelector extends JDialog {
         JButton button = new JButton(new AbstractAction("Apply") {
             @Override
             public void actionPerformed(ActionEvent e) {
+                actFont = font;
                 dispose();
             }
         });
@@ -88,7 +90,7 @@ public class FontSelector extends JDialog {
         buttonPanel.add(new JButton(new AbstractAction("Select null") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                font = null;
+                actFont = null;
                 dispose();
             }
         }));

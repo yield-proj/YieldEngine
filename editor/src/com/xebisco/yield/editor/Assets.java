@@ -142,7 +142,7 @@ public class Assets {
                     })
             });
             editorSettings.put("code_editor", new Prop[] {
-                    new FontProp("font_size")
+                    new FontProp("code_editor_font")
             });
             Projects.saveSettings();
         } else {

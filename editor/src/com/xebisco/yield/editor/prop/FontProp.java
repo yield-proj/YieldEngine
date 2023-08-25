@@ -14,9 +14,12 @@ public class FontProp extends Prop {
     }
 
     public void updateFont(Component panel, JButton button) {
-        setValue(FontSelector.open((Font) FontProp.this.getValue(), panel));
-        String text = FontProp.this.getValue() == null ? "null" : ((Font) FontProp.this.getValue()).getFamily();
-        if(button != null) button.setText(text);
+        if (panel != null)
+            setValue(FontSelector.open((Font) getValue(), panel));
+        if (button != null) {
+            button.setText(getValue() == null ? "null" : ((Font) getValue()).getFamily());
+            button.setFont((Font) getValue());
+        }
     }
 
     @Override
@@ -31,7 +34,7 @@ public class FontProp extends Prop {
                 updateFont(panel, button);
             }
         });
-        button.setText(getValue() == null ? "null" : ((Font) getValue()).getFamily());
+        updateFont(null, button);
         panel.add(button);
         return panel;
     }

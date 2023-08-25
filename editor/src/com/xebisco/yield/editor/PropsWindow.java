@@ -37,9 +37,10 @@ public class PropsWindow extends JDialog {
             apply.run();
             dispose();
         };
-        PropsPanel propsPanel = new PropsPanel(s, a);
+        PropsPanel propsPanel = new PropsPanel(s);
         setModal(true);
         setContentPane(propsPanel);
+        propsPanel.load(a);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(650, 400);
         setMaximumSize(new Dimension(1000, 400));
