@@ -9,7 +9,7 @@ import java.util.zip.InflaterInputStream;
 public class YASMRun {
     public static void main(String[] args) throws IOException {
         try(ObjectInputStream oi = new ObjectInputStream(new InflaterInputStream(new FileInputStream(args[0] + ".yx")))) {
-            Rd.run(((Program) oi.readObject()).global());
+            Rd.run((Program) oi.readObject());
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

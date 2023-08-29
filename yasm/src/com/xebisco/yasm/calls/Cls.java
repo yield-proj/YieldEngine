@@ -15,6 +15,6 @@ public class Cls implements Call, Serializable {
 
     @Override
     public void run(Program prog, int[] args) {
-        if(prog.bk().get(args[0]) == 1) Rd.run(prog.scopes().get(Mem.STRING_MAP.get(prog.bk().get(prog.regs().get("sdbt")))));
+        if(prog.bk().get(args[0]) == 1) Rd.run(prog.scopes().get(Mem.STRING_MAP.get(prog.bk().get(prog.regs().get("sdbt")))), prog);
     }
 }

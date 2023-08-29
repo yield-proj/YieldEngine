@@ -2,19 +2,16 @@ package com.xebisco.yasm;
 
 import java.io.Serializable;
 
-public final class Instruction implements Runnable, Serializable {
+public final class Instruction implements Serializable {
     private final Call call;
     private final int[] args;
-    private final Program program;
 
-    public Instruction(Call call, int[] args, Program program) {
+    public Instruction(Call call, int[] args) {
         this.call = call;
         this.args = args;
-        this.program = program;
     }
 
-    @Override
-    public void run() {
+    public void run(Program program) {
         call.run(program, args);
     }
 
@@ -24,9 +21,5 @@ public final class Instruction implements Runnable, Serializable {
 
     public int[] args() {
         return args;
-    }
-
-    public Program program() {
-        return program;
     }
 }

@@ -25,7 +25,7 @@ public final class Rd {
                 }
                 args[i1] = v;
             }
-            instructions[i] = new Instruction(call, args, program);
+            instructions[i] = new Instruction(call, args);
         }
         return instructions;
     }
@@ -58,9 +58,15 @@ public final class Rd {
         return program;
     }
 
-    public static void run(Instruction[] instructions) {
+    public static void run(Instruction[] instructions, Program program) {
         for (Instruction instruction : instructions) {
-            instruction.run();
+            instruction.run(program);
+        }
+    }
+    public static void run(Program program) {
+        Instruction[] instructions = program.global();
+        for (Instruction instruction : instructions) {
+            instruction.run(program);
         }
     }
 }
