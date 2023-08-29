@@ -1,0 +1,8 @@
+version 100
+global _start
+sdb0 Hello, World!\n
+_start:
+    movl ccl,0
+    lsdb ccl
+    out sdbt
+done

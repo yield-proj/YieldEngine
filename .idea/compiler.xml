@@ -10,6 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="script" target="17" />
       <module name="script_compiler" target="17" />
     </bytecodeTargetLevel>
   </component>
