@@ -68,7 +68,7 @@ public final class Rd {
                 actScope.append(line).append('\n');
             }
         }
-        if(Integer.parseInt(program.properties().getProperty("version", String.valueOf(VERSION))) != VERSION) System.err.println("WARNING: Not supported version. (program version = " + program.properties().getProperty("version") + ", compiler version = " + VERSION + ")");
+        if((int) program.properties().get("version") != VERSION) System.err.println("WARNING: Not supported version. (program version = " + program.properties().getProperty("version") + ", compiler version = " + VERSION + ")");
         return program;
     }
 

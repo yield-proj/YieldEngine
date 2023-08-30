@@ -2,9 +2,10 @@ i_version 100
 global _start
 sdb1 Hello, World!\n
 _start:
-    movl a,0
-    mov ccl,a
+    movl a,1
+    movl ccl,0
     lsdb a
     memf a
     outs sdbt
+    memf ccl
 done
