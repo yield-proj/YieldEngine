@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class Mem {
     public final static List<String> STRING_MAP = new ArrayList<>();
+    public final static List<Map<Integer, Integer>> REGS_MAP = new ArrayList<>();
     public final static List<Float> FLOAT_MAP = new ArrayList<>();
     public final static List<Double> DOUBLE_MAP = new ArrayList<>();
     private final Map<Integer, Integer> bk = new HashMap<>();

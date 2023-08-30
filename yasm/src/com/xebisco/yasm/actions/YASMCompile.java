@@ -3,7 +3,7 @@ package com.xebisco.yasm.actions;
 import com.xebisco.yasm.Program;
 import com.xebisco.yasm.Rd;
 import com.xebisco.yasm.UnknownCallException;
-import com.xebisco.yasm.calls.AllCalls;
+import com.xebisco.yasm.AllCalls;
 
 import java.io.*;
 import java.util.regex.Matcher;

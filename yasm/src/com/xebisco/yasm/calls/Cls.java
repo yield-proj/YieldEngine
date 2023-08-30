@@ -6,6 +6,8 @@ import com.xebisco.yasm.Program;
 import com.xebisco.yasm.Rd;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Cls implements Call, Serializable {
     @Override
@@ -15,6 +17,10 @@ public class Cls implements Call, Serializable {
 
     @Override
     public void run(Program prog, int[] args) {
-        if(prog.bk().get(args[0]) == 1) Rd.run(prog.scopes().get(Mem.STRING_MAP.get(prog.bk().get(prog.regs().get("sdbt")))), prog);
+        Map<Integer, Integer> m = new HashMap<>(prog.bk());
+        prog.bk().clear();
+        prog.bk().putAll(m);
+        if(prog.bk().get(args[0]) == 1) Rd.run(prog.scopes().get(Mem.STRING_MAP.get(prog.bk().get(args[1]))), prog);
+        prog.bk().putAll(m);
     }
 }
