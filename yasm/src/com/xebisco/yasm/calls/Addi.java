@@ -5,10 +5,10 @@ import com.xebisco.yasm.Program;
 
 import java.io.Serializable;
 
-public class Add implements Call, Serializable {
+public class Addi implements Call, Serializable {
     @Override
     public String name() {
-        return "add";
+        return "addi";
     }
 
     @Override

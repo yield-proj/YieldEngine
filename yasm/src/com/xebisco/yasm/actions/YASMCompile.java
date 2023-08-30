@@ -12,7 +12,7 @@ import java.util.zip.DeflaterOutputStream;
 
 public class YASMCompile {
 
-    public static void main(String[] args) throws UnknownCallException, FileNotFoundException {
+    public static void main(String[] args) throws UnknownCallException, IOException {
         if (args.length == 0) {
             printTutorial();
         }
@@ -25,21 +25,19 @@ public class YASMCompile {
         for (int i = 1; i < args.length; i++) {
             String arg = args[i];
             Matcher matcher = argP.matcher(arg);
-            switch (matcher.group(1)) {
-                case "out" -> {
-                    output = matcher.group(2);
+            if (matcher.matches()) {
+                switch (matcher.group(1)) {
+                    case "out" -> output = matcher.group(2);
+                    case "lib" -> library = Boolean.parseBoolean(matcher.group(2));
+                    default -> printTutorial();
                 }
-                case "lib" -> {
-                    library = Boolean.parseBoolean(matcher.group(2));
-                }
-                default -> {
-                    printTutorial();
-                }
+            } else {
+                printTutorial();
             }
         }
 
 
-        Program program = Rd.program(readFromInputStream(new BufferedInputStream(new FileInputStream(args[0]))), AllCalls.calls());
+        Program program = Rd.program(new File("."), readFromInputStream(new BufferedInputStream(new FileInputStream(args[0]))), AllCalls.calls());
 
         File outputFile = new File(output + "." + (library ? "ylib" : "yx"));
 

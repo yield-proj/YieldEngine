@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-public class Out implements Call, Serializable {
+public class Outs implements Call, Serializable {
     @Override
     public String name() {
-        return "out";
+        return "outs";
     }
 
     @Override

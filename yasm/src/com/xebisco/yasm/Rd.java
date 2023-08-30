@@ -1,5 +1,8 @@
 package com.xebisco.yasm;
 
+import java.io.File;
+import java.io.IOException;
+
 public final class Rd {
     public static final int VERSION = 100;
     public static Instruction[] instructions(String file, Program program, Call[] calls) throws UnknownCallException {
@@ -30,11 +33,12 @@ public final class Rd {
         return instructions;
     }
 
-    public static Program program(String file, Call[] calls) throws UnknownCallException {
+    public static Program program(File local, String file, Call[] calls) throws UnknownCallException, IOException {
         String[] lines = file.split("\n");
         Program program = new Program();
         StringBuilder actScope = null;
         String actScopeString = null;
+        program.properties().put("sdb0", local.getCanonicalPath());
         for (String line : lines) {
             line = line.trim();
             if(line.isEmpty())
@@ -49,7 +53,17 @@ public final class Rd {
             } else if(actScope == null) {
                 String propName = line.substring(0, line.indexOf(' '));
                 String propValue = line.substring(line.indexOf(' ') + 1).replace("\\n", "\n").replace("\\s", " ").replace("\\t", "\t").replace("\\t", "\t");
-                program.properties().put(propName, propValue);
+                if(propName.startsWith("i_")) {
+                    program.properties().put(propName.substring(2), Integer.parseInt(propValue));
+                } else if(propName.startsWith("f_")) {
+                    program.properties().put(propName.substring(2), Float.parseFloat(propValue));
+                } else if(propName.startsWith("d_")) {
+                    program.properties().put(propName.substring(2), Double.parseDouble(propValue));
+                } else if(propName.startsWith("l_")) {
+                    program.properties().put(propName.substring(2), Long.parseLong(propValue));
+                } else {
+                    program.properties().put(propName, propValue);
+                }
             } else {
                 actScope.append(line).append('\n');
             }
