@@ -130,6 +130,10 @@ public class Entry {
         loadImage("graphicalIcon.png");
         loadImage("audioIcon.png");
         loadImage("toolbarBkg.png");
+        loadImage("sceneIcon.png");
+        loadImage("sceneIcon32.png");
+        loadImage("handIcon.png");
+        loadImage("selectIcon.png");
     }
 
     private static void loadImage(String n) {

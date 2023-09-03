@@ -142,7 +142,7 @@ public class Editor extends JFrame implements IRecompile {
             }
         };
         toolBar.setBorderPainted(false);
-        toolBar.setFloatable(true);
+        toolBar.setFloatable(false);
         toolBar.setRollover(true);
 
         JPanel panel = new JPanel();

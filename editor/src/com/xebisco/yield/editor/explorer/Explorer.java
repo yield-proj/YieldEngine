@@ -22,6 +22,7 @@ import com.xebisco.yield.editor.prop.*;
 import com.xebisco.yield.editor.scene.EditorScene;
 import com.xebisco.yield.editor.scene.EntityPrefab;
 import com.xebisco.yield.editor.scene.ObjectEditor;
+import com.xebisco.yield.editor.scene.SceneEditor;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -225,20 +226,12 @@ public class Explorer extends JPanel implements ActionListener {
 
 
                     frame.setTitle("Object Editor");
-                    frame.setClosable(true);
-                    frame.setMaximizable(true);
-                    frame.setIconifiable(true);
-                    frame.setResizable(true);
-                    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-                    workspace.desktopPane().add(frame);
-                    frame.setBounds(100, 100, 400, 600);
-                    frame.setVisible(true);
+                    setupInternalFrame(frame);
                 }
             }));
         }
 
-        /*if (isScene) {
+        if (isScene) {
             popupMenu.add(new JMenuItem(new AbstractAction("Open scene") {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -250,22 +243,15 @@ public class Explorer extends JPanel implements ActionListener {
                     } catch (IOException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
-                    
+                    frame.add(new SceneEditor());
 
 
-                    frame.setTitle("Object Editor");
-                    frame.setClosable(true);
-                    frame.setMaximizable(true);
-                    frame.setIconifiable(true);
-                    frame.setResizable(true);
-                    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-                    workspace.desktopPane().add(frame);
-                    frame.setBounds(100, 100, 400, 600);
-                    frame.setVisible(true);
+                    frame.setTitle("Scene Editor");
+                    setupInternalFrame(frame);
+                    frame.setBounds(100, 100, 600, 500);
                 }
             }));
-        }*/
+        }
 
         popupMenu.add(new JMenuItem(new AbstractAction("Open" + (isDir ? " in Explorer" : " in Desktop")) {
             @Override
@@ -403,6 +389,18 @@ public class Explorer extends JPanel implements ActionListener {
                 }
             }));
         return popupMenu;
+    }
+
+    private void setupInternalFrame(YieldInternalFrame frame) {
+        frame.setClosable(true);
+        frame.setMaximizable(true);
+        frame.setIconifiable(true);
+        frame.setResizable(true);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        workspace.desktopPane().add(frame);
+        frame.setBounds(100, 100, 400, 600);
+        frame.setVisible(true);
     }
 
     DefaultMutableTreeNode createTree(File temp) {
