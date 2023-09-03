@@ -13,6 +13,8 @@ import java.util.Map;
 
 public class PropsPanel extends JPanel {
 
+    String one;
+
     public static JPanel propsPanel(Prop[] props) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.weightx = 1;
@@ -66,7 +68,7 @@ public class PropsPanel extends JPanel {
             }));
         }
 
-        String one = null;
+        one = null;
         int a = 0;
 
         if (s.keySet().size() == 1)
@@ -80,18 +82,6 @@ public class PropsPanel extends JPanel {
                 }
                 break;
             }
-
-        if (one != null) {
-            JLabel label = new JLabel(one);
-            label.setFont(getFont().deriveFont(Font.BOLD));
-            label.setHorizontalAlignment(SwingConstants.CENTER);
-            label.setVerticalAlignment(SwingConstants.CENTER);
-            add(label, BorderLayout.NORTH);
-            pane.setBorder(new YieldBorder());
-            setMinimumSize(new Dimension(250, 100));
-            setSize(new Dimension(250, 100));
-            add(pane, BorderLayout.CENTER);
-        }
 
         Collections.reverse(sections);
 

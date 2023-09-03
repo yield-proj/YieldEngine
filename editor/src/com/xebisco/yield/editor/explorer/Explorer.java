@@ -19,11 +19,13 @@ package com.xebisco.yield.editor.explorer;
 import com.xebisco.yield.editor.*;
 import com.xebisco.yield.editor.code.CodePanel;
 import com.xebisco.yield.editor.prop.*;
+import com.xebisco.yield.editor.scene.EditorScene;
 import com.xebisco.yield.editor.scene.EntityPrefab;
 import com.xebisco.yield.editor.scene.ObjectEditor;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -121,8 +123,9 @@ public class Explorer extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent ev) {
         DefaultMutableTreeNode newtop = createTree(mainDir);
         if (newtop != null) {
+            List<Integer> expanded = getExpanded();
             tree = new JTree(newtop);
-
+            expanded(expanded);
             tree.setCellRenderer(new ExplorerCellRenderer(mainDir));
         }
         if (jsp != null)
@@ -176,7 +179,7 @@ public class Explorer extends JPanel implements ActionListener {
             return popupMenu;
         }
 
-        boolean isDir = false, isScript = false, isPrefab = false, multiple = tps.length > 1, includeRoot = false;
+        boolean isDir = false, isScript = false, isScene = false, isPrefab = false, multiple = tps.length > 1, includeRoot = false;
 
         if (!multiple) {
             if (((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).isDirectory())
@@ -185,6 +188,8 @@ public class Explorer extends JPanel implements ActionListener {
                 isScript = true;
             if (((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).getName().endsWith(".ypfb"))
                 isPrefab = true;
+            if (((File) ((DefaultMutableTreeNode) tps[0].getLastPathComponent()).getUserObject()).getName().endsWith(".yscn"))
+                isScene = true;
         }
 
         for (TreePath tp : tps)
@@ -209,7 +214,6 @@ public class Explorer extends JPanel implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     YieldInternalFrame frame = new YieldInternalFrame(null);
-                    ;
                     frame.setFrameIcon(Assets.images.get("windowIcon.png"));
                     EntityPrefab prefab;
                     try (ObjectInputStream oi = new CustomObjectInputStream(new FileInputStream((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), new URLClassLoader(new URL[]{new File(Utils.EDITOR_DIR.getPath() + "/installs/" + workspace.project().preferredInstall().install(), "yield-core.jar").toURI().toURL(), ComponentProp.DEST.toURI().toURL()}))) {
@@ -233,6 +237,35 @@ public class Explorer extends JPanel implements ActionListener {
                 }
             }));
         }
+
+        /*if (isScene) {
+            popupMenu.add(new JMenuItem(new AbstractAction("Open scene") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    YieldInternalFrame frame = new YieldInternalFrame(null);
+                    frame.setFrameIcon(Assets.images.get("windowIcon.png"));
+                    EditorScene scene;
+                    try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()))) {
+                        scene = (EditorScene) oi.readObject();
+                    } catch (IOException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    
+
+
+                    frame.setTitle("Object Editor");
+                    frame.setClosable(true);
+                    frame.setMaximizable(true);
+                    frame.setIconifiable(true);
+                    frame.setResizable(true);
+                    frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+                    workspace.desktopPane().add(frame);
+                    frame.setBounds(100, 100, 400, 600);
+                    frame.setVisible(true);
+                }
+            }));
+        }*/
 
         popupMenu.add(new JMenuItem(new AbstractAction("Open" + (isDir ? " in Explorer" : " in Desktop")) {
             @Override
@@ -259,11 +292,11 @@ public class Explorer extends JPanel implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     Map<String, Prop[]> props = new HashMap<>();
-                    props.put("New Directory", new Prop[]{new StringProp("Name", "")});
+                    props.put("new_directory", new Prop[]{new StringProp("name", "")});
                     new PropsWindow(props, () -> {
-                        new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), (String) Objects.requireNonNull(Props.get(props.get("New Directory"), "Name")).getValue()).mkdir();
+                        new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), (String) Objects.requireNonNull(Props.get(props.get("new_directory"), "name")).getValue()).mkdir();
                         Explorer.this.actionPerformed(null);
-                    }, null, "New Directory");
+                    }, null, "new_directory");
                 }
             }));
             if (onFolder("Prefabs", (File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()))
@@ -271,13 +304,12 @@ public class Explorer extends JPanel implements ActionListener {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         Map<String, Prop[]> props = new HashMap<>();
-                        props.put("New Prefab", new Prop[]{new StringProp("name", "")});
+                        props.put("new_prefab", new Prop[]{new StringProp("name", "")});
                         new PropsWindow(props, () -> {
-                            if (Objects.requireNonNull(Props.get(props.get("New Prefab"), "name")).getValue().equals("")) {
+                            if (Objects.requireNonNull(Props.get(props.get("new_prefab"), "name")).getValue().equals("")) {
                                 JOptionPane.showMessageDialog(null, "Prefab needs a name");
-                                actionPerformed(e);
                             } else {
-                                File f = new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), Objects.requireNonNull(Props.get(props.get("New Prefab"), "name")).getValue() + ".ypfb");
+                                File f = new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), Objects.requireNonNull(Props.get(props.get("new_prefab"), "name")).getValue() + ".ypfb");
                                 try {
                                     f.createNewFile();
                                 } catch (IOException ex) {
@@ -292,7 +324,35 @@ public class Explorer extends JPanel implements ActionListener {
                                 }
                             }
                             Explorer.this.actionPerformed(null);
-                        }, null, "New Prefab");
+                        }, null, "new_prefab");
+                    }
+                }));
+            if (onFolder("Scenes", (File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()))
+                popupMenu.add(new JMenuItem(new AbstractAction("Create scene") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        Map<String, Prop[]> props = new HashMap<>();
+                        props.put("new_scene", new Prop[]{new StringProp("name", "")});
+                        new PropsWindow(props, () -> {
+                            if (Objects.requireNonNull(Props.get(props.get("new_scene"), "name")).getValue().equals("")) {
+                                JOptionPane.showMessageDialog(null, "Scene needs a name");
+                            } else {
+                                File f = new File(((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), Objects.requireNonNull(Props.get(props.get("new_scene"), "name")).getValue() + ".yscn");
+                                try {
+                                    f.createNewFile();
+                                } catch (IOException ex) {
+                                    Utils.error(null, ex);
+                                }
+                                EditorScene scene = new EditorScene();
+                                scene.setName((String) Objects.requireNonNull(Props.get(props.get("new_scene"), "name")).getValue());
+                                try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(f))) {
+                                    oo.writeObject(scene);
+                                } catch (IOException ex) {
+                                    Utils.error(null, ex);
+                                }
+                            }
+                            Explorer.this.actionPerformed(null);
+                        }, null, "new_scene");
                     }
                 }));
             if (onFolder("Scripts", (File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()))
@@ -346,13 +406,32 @@ public class Explorer extends JPanel implements ActionListener {
     }
 
     DefaultMutableTreeNode createTree(File temp) {
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode(temp);
+        DefaultMutableTreeNode top = new SimpleTreeNode(temp, Comparator.comparing(o -> ((File) ((DefaultMutableTreeNode) o).getUserObject())));
         if (!(temp.exists() && temp.isDirectory()))
             return top;
 
         fillTree(top, temp);
 
         return top;
+    }
+
+    private List<Integer> getExpanded() {
+        if(tree == null) return new ArrayList<>();
+        List<Integer> expanded = new ArrayList<>();
+        for (int i = 0; i < tree.getRowCount() - 1; i++) {
+            TreePath currPath = tree.getPathForRow(i);
+            TreePath nextPath = tree.getPathForRow(i + 1);
+            if (currPath.isDescendant(nextPath)) {
+                expanded.add(i);
+            }
+        }
+        return expanded;
+    }
+
+    private void expanded(List<Integer> expanded) {
+        for (Integer i : expanded) {
+            tree.expandPath(tree.getPathForRow(i));
+        }
     }
 
     void fillTree(DefaultMutableTreeNode root, File file) {

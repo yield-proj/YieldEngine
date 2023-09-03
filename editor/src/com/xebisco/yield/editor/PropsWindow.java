@@ -44,7 +44,12 @@ public class PropsWindow extends JDialog {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(650, 400);
         setMaximumSize(new Dimension(1000, 400));
-        setMinimumSize(new Dimension(500, 100));
+        setMinimumSize(new Dimension(400, 120));
+
+        if (propsPanel.one != null) {
+            setSize(getMinimumSize());
+            setResizable(false);
+        }
         setLocationRelativeTo(owner);
 
         setTitle(Assets.language.getProperty(title));
