@@ -78,7 +78,7 @@ public class YieldTabbedPane extends DnDTabbedPane {
     /**
      * Makes the close button at the specified indes visible or invisible
      */
-    public void setCloseButtonVisibleAt(int aIndex, boolean aVisible) {
+    /*public void setCloseButtonVisibleAt(int aIndex, boolean aVisible) {
         CloseButtonTab cbt = (CloseButtonTab) getTabComponentAt(aIndex);
         cbt.closingLabel.setVisible(aVisible);
     }
@@ -108,7 +108,7 @@ public class YieldTabbedPane extends DnDTabbedPane {
         CloseButtonTab cbt = (CloseButtonTab) getTabComponentAt(index);
         super.setComponentAt(index, component);
         cbt.tab = component;
-    }
+    }*/
 
     private Icon getImageIcon(String aImageName) {
         return Assets.images.get(aImageName);
@@ -151,7 +151,7 @@ public class YieldTabbedPane extends DnDTabbedPane {
 
     }
 
-    private class CloseButtonTab extends JPanel {
+    /*private class CloseButtonTab extends JPanel {
         private Component tab;
         private final JLabel label;
         private final JLabel closingLabel;
@@ -211,7 +211,7 @@ public class YieldTabbedPane extends DnDTabbedPane {
             gbc.insets = new Insets(0, 0, 0, 0);
             add(closingLabel, gbc);
         }
-    }
+    }*/
 
     public boolean isCloseAfterEmpty() {
         return closeAfterEmpty;

@@ -22,15 +22,13 @@ import com.xebisco.yield.editor.prop.ComponentProp;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
 import com.xebisco.yield.editor.scene.EditorScene;
+import com.xebisco.yield.editor.scene.SceneExplorer;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 import javax.tools.ToolProvider;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.RGBImageFilter;
@@ -101,7 +99,9 @@ public class Editor extends JFrame implements IRecompile {
         });
         setIconImage(Assets.images.get("yieldIcon.png").getImage());
 
-        JSplitPane left0SplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new YieldTabbedPane(false, this).addNewTab("Explorer", new Explorer(project.getProjectLocation(), "Project Root", workspace)), new YieldTabbedPane(false, this));
+        SceneExplorer sceneExplorer = new SceneExplorer();
+
+        JSplitPane left0SplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new YieldTabbedPane(false, this).addNewTab("Explorer", new Explorer(project.getProjectLocation(), "Project Root", sceneExplorer, workspace)), new YieldTabbedPane(false, this).addNewTab("Scene Explorer", sceneExplorer));
         JSplitPane left1SplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, left0SplitPane, new YieldTabbedPane(false, this).addNewTab("Console", console = new JTextArea()));
         console.setEditable(false);
         left0SplitPane.setResizeWeight(1);

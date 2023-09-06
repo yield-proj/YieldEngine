@@ -19,14 +19,10 @@ package com.xebisco.yield.editor.explorer;
 import com.xebisco.yield.editor.*;
 import com.xebisco.yield.editor.code.CodePanel;
 import com.xebisco.yield.editor.prop.*;
-import com.xebisco.yield.editor.scene.EditorScene;
-import com.xebisco.yield.editor.scene.EntityPrefab;
-import com.xebisco.yield.editor.scene.ObjectEditor;
-import com.xebisco.yield.editor.scene.SceneEditor;
+import com.xebisco.yield.editor.scene.*;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -52,6 +48,8 @@ public class Explorer extends JPanel implements ActionListener {
     private JTable jtb;
     private JScrollPane jsp;
 
+    private final SceneExplorer sceneExplorer;
+
     File currDirectory = null;
 
     final String[] colHeads = {"File Name", "SIZE(in Bytes)", "Read Only", "Hidden"};
@@ -61,8 +59,9 @@ public class Explorer extends JPanel implements ActionListener {
 
     private final Workspace workspace;
 
-    public Explorer(File mainDir, String mainName, Workspace workspace) {
+    public Explorer(File mainDir, String mainName, SceneExplorer sceneExplorer, Workspace workspace) {
         this.mainDir = mainDir;
+        this.sceneExplorer = sceneExplorer;
         this.workspace = workspace;
 
         setLayout(new BorderLayout());
@@ -243,7 +242,7 @@ public class Explorer extends JPanel implements ActionListener {
                     } catch (IOException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
-                    frame.add(new SceneEditor());
+                    frame.add(new SceneEditor(scene, sceneExplorer));
 
 
                     frame.setTitle("Scene Editor");
