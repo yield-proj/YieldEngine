@@ -115,37 +115,7 @@ public class Assets {
     public static void loadSettings() {
         File settings = new File(Utils.EDITOR_DIR, "settings.ser");
 
-        if (!settings.exists()) {
-            try {
-                settings.createNewFile();
-            } catch (IOException e) {
-                Utils.error(null, e);
-                throw new RuntimeException(e);
-            }
-            editorSettings = new HashMap<>();
-            editorSettings.put("behavior", new Prop[]{
-                    new BooleanProp("confirm_close_before_exiting_the_editor", true),
-                    new TextShowProp("project"),
-                    new BooleanProp("reopen_project_on_startup", false),
-                    new PathProp("default_directory_for_new_projects", System.getProperty("user.home"), JFileChooser.DIRECTORIES_ONLY)
-            });
-            editorSettings.put("editor", new Prop[]{
-                    new OptionsProp("language", new Serializable[]{"en"}),
-                    new TextShowProp("fix_editor"),
-                    new ButtonProp("delete_editor_settings", new AbstractAction(Assets.language.getProperty("delete")) {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            settings.delete();
-                            loadSettings();
-                            Projects.saveSettings();
-                        }
-                    })
-            });
-            editorSettings.put("code_editor", new Prop[] {
-                    new FontProp("code_editor_font")
-            });
-            Projects.saveSettings();
-        } else {
+        if (settings.exists()) {
             try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(settings))) {
                 //noinspection unchecked
                 editorSettings = (Map<String, Prop[]>) oi.readObject();
@@ -153,12 +123,57 @@ public class Assets {
                 Utils.error(null, e);
                 throw new RuntimeException(e);
             }
+        } else editorSettings = new HashMap<>();
+        try {
+            settings.createNewFile();
+        } catch (IOException e) {
+            Utils.error(null, e);
+            throw new RuntimeException(e);
         }
+        putSettings(editorSettings, "behavior", new Prop[]{
+                new BooleanProp("confirm_close_before_exiting_the_editor", true),
+                new TextShowProp("project"),
+                new BooleanProp("reopen_project_on_startup", false),
+                new PathProp("default_directory_for_new_projects", System.getProperty("user.home"), JFileChooser.DIRECTORIES_ONLY)
+        });
+        putSettings(editorSettings, "editor", new Prop[]{
+                new OptionsProp("language", new Serializable[]{"en"}),
+                new TextShowProp("fix_editor"),
+                new ButtonProp("delete_editor_settings", new AbstractAction(Assets.language.getProperty("delete")) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        settings.delete();
+                        loadSettings();
+                        Projects.saveSettings();
+                    }
+                })
+        });
+        putSettings(editorSettings, "code_editor", new Prop[] {
+                new FontProp("code_editor_font")
+        });
+        Projects.saveSettings();
+
+
         language.clear();
         try {
             language.load(Assets.class.getResourceAsStream("/lang/" + Props.get(editorSettings.get("editor"), "language").getValue() + ".properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static void putSettings(Map<String, Prop[]> map, String s, Prop[] props) {
+        if(map.containsKey(s)) {
+            Prop[] mprops = map.get(s);
+            List<Prop> nprops = new ArrayList<>();
+            for(Prop p : props) {
+                Prop p1;
+                if((p1 = Props.get(mprops, p.getName())) != null) {
+                    nprops.add(p1);
+                } else nprops.add(p);
+            }
+        } else {
+            map.put(s, props);
         }
     }
 }

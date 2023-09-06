@@ -42,7 +42,7 @@ public final class Props {
     public static Prop get(Prop[] props, String name) {
         for(Prop p : props)
             if(Objects.equals(p.getName(),name)) return p;
-        throw new NullPointerException("Could not find prop");
+        return null;
     }
 
 }
