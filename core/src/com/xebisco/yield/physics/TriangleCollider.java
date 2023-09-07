@@ -52,7 +52,7 @@ public class TriangleCollider extends Collider {
      *
      * @return An array of Vector2D objects named "vertices" is being returned.
      */
-    public Vector2D[] getVertices() {
+    public Vector2D[] vertices() {
         return vertices;
     }
 
@@ -61,7 +61,7 @@ public class TriangleCollider extends Collider {
      *
      * @return A Vector2D object representing the centroid.
      */
-    public Vector2D getCentroid() {
+    public Vector2D centroid() {
         return centroid;
     }
 
@@ -71,7 +71,8 @@ public class TriangleCollider extends Collider {
      * @param centroid The parameter "centroid" is a Vector2D object representing the centroid of  the triangle collider. The method "setCentroid" sets the value of the centroid for the current object to the value
      *                 passed as the parameter.
      */
-    public void setCentroid(Vector2D centroid) {
+    public TriangleCollider setCentroid(Vector2D centroid) {
         this.centroid = centroid;
+        return this;
     }
 }
