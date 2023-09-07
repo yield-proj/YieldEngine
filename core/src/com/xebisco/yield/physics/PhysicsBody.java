@@ -40,7 +40,7 @@ public class PhysicsBody extends ComponentBehavior {
         def.position = Global.toVec2(transform().position().divide(new Vector2D(application().physicsPpm(), application().physicsPpm())));
         def.angle = (float) Math.toRadians(transform().zRotation());
         def.userData = entity();
-        setB2Body(application().scene().physicsMain().getB2World().createBody(def));
+        setB2Body(application().scene().physicsMain().b2World().createBody(def));
     }
 
     @Override
@@ -93,7 +93,7 @@ public class PhysicsBody extends ComponentBehavior {
     @Override
     public void dispose() {
         if (b2Body != null)
-            application().scene().physicsMain().getB2World().destroyBody(b2Body);
+            application().scene().physicsMain().b2World().destroyBody(b2Body);
     }
 
     public void addForce(Vector2D force, ForceType forceType) {
