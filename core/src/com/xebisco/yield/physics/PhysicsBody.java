@@ -49,21 +49,21 @@ public class PhysicsBody extends ComponentBehavior {
             ComponentBehavior c = entity().components().get(i);
             if (c instanceof Collider) {
                 boolean contains = false;
-                for (Fixture f = getB2Body().getFixtureList(); f != null; f = f.getNext()) {
+                for (Fixture f = b2Body().getFixtureList(); f != null; f = f.getNext()) {
                     if (f.getUserData() == c) {
                         contains = true;
                         break;
                     }
                 }
                 if (!contains) {
-                    Fixture f = getB2Body().createFixture(((Collider) c).shape(), (float) ((Collider) c).density());
+                    Fixture f = b2Body().createFixture(((Collider) c).shape(), (float) ((Collider) c).density());
                     f.setUserData(c);
                 }
             }
         }
-        for (Fixture f = getB2Body().getFixtureList(); f != null; f = f.getNext()) {
+        for (Fixture f = b2Body().getFixtureList(); f != null; f = f.getNext()) {
             if (!entity().components().contains((Collider) f.getUserData())) {
-                getB2Body().destroyFixture(f);
+                b2Body().destroyFixture(f);
             } else {
                 Collider c = ((Collider) f.getUserData());
                 f.m_shape = c.shape();
@@ -78,16 +78,16 @@ public class PhysicsBody extends ComponentBehavior {
             }
         }
         switch (type) {
-            case DYNAMIC -> getB2Body().setType(BodyType.DYNAMIC);
-            case STATIC -> getB2Body().setType(BodyType.STATIC);
-            case KINEMATIC -> getB2Body().setType(BodyType.KINEMATIC);
+            case DYNAMIC -> b2Body().setType(BodyType.DYNAMIC);
+            case STATIC -> b2Body().setType(BodyType.STATIC);
+            case KINEMATIC -> b2Body().setType(BodyType.KINEMATIC);
         }
-        getB2Body().setGravityScale((float) gravityScale);
-        getB2Body().setBullet(bullet);
-        getB2Body().m_mass = (float) mass;
-        getB2Body().setFixedRotation(fixedRotation);
-        transform().position().set(getB2Body().getPosition().x * application().physicsPpm(), getB2Body().getPosition().y * application().physicsPpm());
-        transform().setzRotation(Math.toDegrees(getB2Body().getAngle()));
+        b2Body().setGravityScale((float) gravityScale);
+        b2Body().setBullet(bullet);
+        b2Body().m_mass = (float) mass;
+        b2Body().setFixedRotation(fixedRotation);
+        transform().position().set(b2Body().getPosition().x * application().physicsPpm(), b2Body().getPosition().y * application().physicsPpm());
+        transform().setzRotation(Math.toDegrees(b2Body().getAngle()));
     }
 
     @Override
@@ -98,8 +98,8 @@ public class PhysicsBody extends ComponentBehavior {
 
     public void addForce(Vector2D force, ForceType forceType) {
         switch (forceType) {
-            case FORCE -> getB2Body().applyForceToCenter(Global.toVec2(force));
-            case LINEAR_IMPULSE -> getB2Body().applyLinearImpulse(Global.toVec2(force), getB2Body().getWorldCenter());
+            case FORCE -> b2Body().applyForceToCenter(Global.toVec2(force));
+            case LINEAR_IMPULSE -> b2Body().applyLinearImpulse(Global.toVec2(force), b2Body().getWorldCenter());
             default -> throw new IllegalArgumentException(forceType.name());
         }
     }
@@ -107,103 +107,114 @@ public class PhysicsBody extends ComponentBehavior {
     public void addForce(double force, ForceType forceType) {
         checkBodyCreation();
         switch (forceType) {
-            case TORQUE -> getB2Body().applyTorque((float) force);
-            case ANGULAR_IMPULSE -> getB2Body().applyAngularImpulse((float) force);
+            case TORQUE -> b2Body().applyTorque((float) force);
+            case ANGULAR_IMPULSE -> b2Body().applyAngularImpulse((float) force);
             default -> throw new IllegalArgumentException(forceType.name());
         }
     }
 
     public void translate(Vector2D a) {
-        setPosition(new Vector2D(getPosition().x + a.x() / application().physicsPpm(), getPosition().y + a.y() / application().physicsPpm()));
+        setPosition(new Vector2D(position().x + a.x() / application().physicsPpm(), position().y + a.y() / application().physicsPpm()));
     }
 
     public void checkBodyCreation() {
         if (b2Body == null) throw new BodyNotCreatedException();
     }
 
-    public double getAngle() {
-        return Math.toDegrees(getB2Body().getAngle());
+    public double angle() {
+        return Math.toDegrees(b2Body().getAngle());
     }
 
-    public void setAngle(double angle) {
-        getB2Body().setTransform(getB2Body().getPosition(), (float) Math.toRadians(angle));
+    public PhysicsBody setAngle(double angle) {
+        b2Body().setTransform(b2Body().getPosition(), (float) Math.toRadians(angle));
+        return this;
     }
 
-    public Vec2 getPosition() {
-        return getB2Body().getPosition();
+    public Vec2 position() {
+        return b2Body().getPosition();
     }
 
-    public void setPosition(Vector2D value) {
-        getB2Body().setTransform(new Vec2((float) (value.x() / application().physicsPpm()), (float) (value.y() / application().physicsPpm())), b2Body.getAngle());
+    public PhysicsBody setPosition(Vector2D value) {
+        b2Body().setTransform(new Vec2((float) (value.x() / application().physicsPpm()), (float) (value.y() / application().physicsPpm())), b2Body.getAngle());
+        return this;
     }
 
-    public Vec2 getLinearVelocity() {
-        return getB2Body().getLinearVelocity();
+    public Vec2 linearVelocity() {
+        return b2Body().getLinearVelocity();
     }
 
-    public void setLinearVelocity(Vec2 linearVelocity) {
-        getB2Body().setLinearVelocity(linearVelocity);
+    public PhysicsBody setLinearVelocity(Vec2 linearVelocity) {
+        b2Body().setLinearVelocity(linearVelocity);
+        return this;
     }
 
-    public void setLinearVelocity(Vector2D linearVelocity) {
+    public PhysicsBody setLinearVelocity(Vector2D linearVelocity) {
         setLinearVelocity(Global.toVec2(linearVelocity));
+        return this;
     }
 
 
-    public double getAngularVelocity() {
-        return getB2Body().getAngularVelocity();
+    public double angularVelocity() {
+        return b2Body().getAngularVelocity();
     }
 
-    public void setAngularVelocity(double angularVelocity) {
-        getB2Body().setAngularVelocity((float) angularVelocity);
+    public PhysicsBody setAngularVelocity(double angularVelocity) {
+        b2Body().setAngularVelocity((float) angularVelocity);
+        return this;
     }
 
-    public PhysicsType getType() {
+    public PhysicsType type() {
         return type;
     }
 
-    public void setType(PhysicsType type) {
+    public PhysicsBody setType(PhysicsType type) {
         this.type = type;
+        return this;
     }
 
-    public double getGravityScale() {
+    public double gravityScale() {
         return gravityScale;
     }
 
-    public void setGravityScale(double gravityScale) {
+    public PhysicsBody setGravityScale(double gravityScale) {
         this.gravityScale = gravityScale;
+        return this;
     }
 
-    public Body getB2Body() {
+    public Body b2Body() {
         checkBodyCreation();
         return b2Body;
     }
 
-    public void setB2Body(Body b2Body) {
+    public PhysicsBody setB2Body(Body b2Body) {
         this.b2Body = b2Body;
+        return this;
     }
 
-    public double getMass() {
+    public double mass() {
         return mass;
     }
 
-    public void setMass(double mass) {
+    public PhysicsBody setMass(double mass) {
         this.mass = mass;
+        return this;
     }
 
-    public boolean isBullet() {
+    public boolean bullet() {
         return bullet;
     }
 
-    public void setBullet(boolean bullet) {
+    public PhysicsBody setBullet(boolean bullet) {
         this.bullet = bullet;
+        return this;
     }
 
-    public boolean isFixedRotation() {
+    public boolean fixedRotation() {
         return fixedRotation;
     }
 
-    public void setFixedRotation(boolean fixedRotation) {
+    public PhysicsBody setFixedRotation(boolean fixedRotation) {
         this.fixedRotation = fixedRotation;
+        return this;
     }
 }
