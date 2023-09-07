@@ -1,10 +1,6 @@
 package com.xebisco.yield.kotlin
 
-import com.xebisco.yield.Application
-import com.xebisco.yield.ApplicationManager
-import com.xebisco.yield.ApplicationPlatform
-import com.xebisco.yield.PlatformInit
-import com.xebisco.yield.Scene
+import com.xebisco.yield.*
 import kotlin.reflect.KClass
 
 fun <T : Scene> application(
@@ -14,4 +10,12 @@ fun <T : Scene> application(
     platformInit: PlatformInit
 ): Application {
     return Application(applicationManager, initialScene.java, applicationPlatform, platformInit)
+}
+
+fun <T : Scene> Application.changeScene(sceneClass: KClass<T>) {
+    changeScene(sceneClass.java)
+}
+
+fun <T : Scene> Application.changeScene(sceneClass: KClass<T>, changeSceneTransition: ChangeSceneTransition) {
+    changeScene(sceneClass.java, changeSceneTransition)
 }
