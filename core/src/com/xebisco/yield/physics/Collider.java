@@ -48,14 +48,14 @@ public abstract class Collider extends ComponentBehavior {
      *
      * @return An abstract Shape object is being returned.
      */
-    public abstract Shape getShape();
+    public abstract Shape shape();
 
     /**
      * The function returns the value of the density variable as a double.
      *
      * @return The method is returning a double value, which is the value of the variable "density".
      */
-    public double getDensity() {
+    public double density() {
         return density;
     }
 
@@ -65,8 +65,9 @@ public abstract class Collider extends ComponentBehavior {
      * @param density The parameter "density" is a double data type that represents the density of a fixture.
      *                The method "setDensity" sets the value of the density variable to the value passed as an argument to the method.
      */
-    public void setDensity(double density) {
+    public Collider setDensity(double density) {
         this.density = density;
+        return this;
     }
 
     /**
@@ -74,7 +75,7 @@ public abstract class Collider extends ComponentBehavior {
      *
      * @return The method is returning a double value which represents the friction.
      */
-    public double getFriction() {
+    public double friction() {
         return friction;
     }
 
@@ -85,17 +86,18 @@ public abstract class Collider extends ComponentBehavior {
      *                 surfaces in contact with each other. This value will be used to determine how
      *                 much an object will slow down or stop when it comes into contact with another object or surface.
      */
-    public void setFriction(double friction) {
+    public Collider setFriction(double friction) {
         this.friction = friction;
+        return this;
     }
 
     /**
      * The function returns a boolean value indicating whether the collider is a sensor or not.
      *
-     * @return The method `isSensor()` is returning a boolean value, which indicates whether the object is a sensor or not.
+     * @return The method `sensor()` is returning a boolean value, which indicates whether the object is a sensor or not.
      * The value returned will be `true` if the object is a sensor, and `false` otherwise.
      */
-    public boolean isSensor() {
+    public boolean sensor() {
         return sensor;
     }
 
@@ -104,8 +106,9 @@ public abstract class Collider extends ComponentBehavior {
      *
      * @param sensor The "sensor" parameter is a boolean variable that represents whether a collider is a sensor or not.
      */
-    public void setSensor(boolean sensor) {
+    public Collider setSensor(boolean sensor) {
         this.sensor = sensor;
+        return this;
     }
 
     /**
@@ -113,7 +116,7 @@ public abstract class Collider extends ComponentBehavior {
      *
      * @return A Set of Strings named "collisionFilter" is being returned.
      */
-    public Set<String> getCollisionFilter() {
+    public Set<String> collisionFilter() {
         return collisionFilter;
     }
 
@@ -121,10 +124,11 @@ public abstract class Collider extends ComponentBehavior {
      * This function sets the collision filter for an object.
      *
      * @param collisionFilter The parameter "collisionFilter" is a Set of Strings that is used to filter collisions. It contains the IDs of the objects that should be checked for collisions. Objects with IDs
-     * that are present in the collisionFilter will be ignored in collisions.
+     *                        that are present in the collisionFilter will be ignored in collisions.
      */
-    public void setCollisionFilter(Set<String> collisionFilter) {
+    public Collider setCollisionFilter(Set<String> collisionFilter) {
         this.collisionFilter = collisionFilter;
+        return this;
     }
 
     /**
@@ -132,7 +136,7 @@ public abstract class Collider extends ComponentBehavior {
      *
      * @return The method is returning a String value which represents the collision mask.
      */
-    public String getCollisionMask() {
+    public String collisionMask() {
         return collisionMask;
     }
 
@@ -141,15 +145,17 @@ public abstract class Collider extends ComponentBehavior {
      *
      * @param collisionMask The collisionMask parameter is a String value that represents the ID of this collider when colliding with other objects.
      */
-    public void setCollisionMask(String collisionMask) {
+    public Collider setCollisionMask(String collisionMask) {
         this.collisionMask = collisionMask;
+        return this;
     }
 
-    public boolean isIgnoreScaling() {
+    public boolean ignoreScaling() {
         return ignoreScaling;
     }
 
-    public void setIgnoreScaling(boolean ignoreScaling) {
+    public Collider setIgnoreScaling(boolean ignoreScaling) {
         this.ignoreScaling = ignoreScaling;
+        return this;
     }
 }

@@ -56,7 +56,7 @@ public class PhysicsBody extends ComponentBehavior {
                     }
                 }
                 if (!contains) {
-                    Fixture f = getB2Body().createFixture(((Collider) c).getShape(), (float) ((Collider) c).getDensity());
+                    Fixture f = getB2Body().createFixture(((Collider) c).shape(), (float) ((Collider) c).density());
                     f.setUserData(c);
                 }
             }
@@ -66,13 +66,13 @@ public class PhysicsBody extends ComponentBehavior {
                 getB2Body().destroyFixture(f);
             } else {
                 Collider c = ((Collider) f.getUserData());
-                f.m_shape = c.getShape();
-                f.setDensity((float) ((Collider) f.getUserData()).getDensity());
-                f.setFriction((float) ((Collider) f.getUserData()).getFriction());
-                f.setSensor(((Collider) f.getUserData()).isSensor());
-                f.m_filter.categoryBits = c.getCollisionMask().hashCode();
-                f.setSensor(c.isSensor());
-                for (String filter : c.getCollisionFilter()) {
+                f.m_shape = c.shape();
+                f.setDensity((float) ((Collider) f.getUserData()).density());
+                f.setFriction((float) ((Collider) f.getUserData()).friction());
+                f.setSensor(((Collider) f.getUserData()).sensor());
+                f.m_filter.categoryBits = c.collisionMask().hashCode();
+                f.setSensor(c.sensor());
+                for (String filter : c.collisionFilter()) {
                     f.m_filter.maskBits &= ~(filter.hashCode());
                 }
             }

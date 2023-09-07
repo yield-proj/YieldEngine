@@ -37,9 +37,9 @@ public class RectangleCollider extends Collider {
     private double angle;
 
     @Override
-    public Shape getShape() {
+    public Shape shape() {
         PolygonShape s = new PolygonShape();
-        if(!isIgnoreScaling()) {
+        if(!ignoreScaling()) {
             s.setAsBox((float) (size.width() * Math.abs(transform().scale().x()) / application().physicsPpm() / 2.0), (float) (size.height() * Math.abs(transform().scale().y()) / application().physicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
         } else {
             s.setAsBox((float) (size.width() / application().physicsPpm() / 2.0), (float) (size.height() / application().physicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));

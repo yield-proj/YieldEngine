@@ -35,10 +35,10 @@ public class TriangleCollider extends Collider {
     private Vector2D centroid = new Vector2D();
 
     @Override
-    public Shape getShape() {
+    public Shape shape() {
         PolygonShape s = new PolygonShape();
         Vector2D dppm = new Vector2D(application().physicsPpm(), application().physicsPpm());
-        if (!isIgnoreScaling()) {
+        if (!ignoreScaling()) {
             s.set(new Vec2[]{Global.toVec2(vertices[0].divide(dppm).multiply(transform().scale().absolute())), Global.toVec2(vertices[1].divide(dppm).multiply(transform().scale().absolute())), Global.toVec2(vertices[2].divide(dppm).multiply(transform().scale()))}, 3);
         } else {
             s.set(new Vec2[]{Global.toVec2(vertices[0].divide(dppm)), Global.toVec2(vertices[1].divide(dppm)), Global.toVec2(vertices[2].divide(dppm))}, 3);
