@@ -191,8 +191,6 @@ public class SceneEditor extends JPanel {
                 if(selectingSize != null) {
                     g.setColor(new Color(20, 108, 231, 100));
                     g.fillRect(selectingStart.x, -selectingStart.y, selectingSize.x, -selectingSize.y);
-                    g.setColor(Color.BLUE);
-                    g.drawRect(selectingStart.x, -selectingStart.y, selectingSize.x, -selectingSize.y);
                 }
 
 
@@ -217,7 +215,7 @@ public class SceneEditor extends JPanel {
             @Override
             public void mouseMoved(MouseEvent e) {
                 mx = e.getX() / scale + x + getWidth() / 2. - (getWidth() / 2. / scale);
-                my = -e.getY() / scale - y - getHeight() / 2. + (getHeight() / 2. / scale);
+                my = -e.getY() / scale + y - getHeight() / 2. + (getHeight() / 2. / scale);
                 repaint();
             }
 
@@ -253,7 +251,8 @@ public class SceneEditor extends JPanel {
                     startM = new Point(e.getPoint());
                 }
                 else if (tool == Tool.SELECTOR) {
-                    selectingStart = new Point((int) mx, (int) my);
+                    System.out.println(x + ", " + y);
+                    selectingStart = new Point((int) (mx), (int) (my));
                     selectingSize = new Point(0, 0);
                 }
             }
