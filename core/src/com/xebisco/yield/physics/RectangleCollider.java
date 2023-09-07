@@ -39,7 +39,7 @@ public class RectangleCollider extends Collider {
     @Override
     public Shape shape() {
         PolygonShape s = new PolygonShape();
-        if(!ignoreScaling()) {
+        if (!ignoreScaling()) {
             s.setAsBox((float) (size.width() * Math.abs(transform().scale().x()) / application().physicsPpm() / 2.0), (float) (size.height() * Math.abs(transform().scale().y()) / application().physicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
         } else {
             s.setAsBox((float) (size.width() / application().physicsPpm() / 2.0), (float) (size.height() / application().physicsPpm() / 2.0), new Vec2(), (float) Math.toRadians(angle));
@@ -53,7 +53,7 @@ public class RectangleCollider extends Collider {
      *
      * @return The method `size()` is returning an object of type `Size2D`.
      */
-    public Vector2D getSize() {
+    public Vector2D size() {
         return size;
     }
 
@@ -62,8 +62,9 @@ public class RectangleCollider extends Collider {
      *
      * @param size The size value to set.
      */
-    public void setSize(Vector2D size) {
+    public RectangleCollider setSize(Vector2D size) {
         this.size = size;
+        return this;
     }
 
     /**
@@ -71,7 +72,7 @@ public class RectangleCollider extends Collider {
      *
      * @return A Vector2D object representing the centroid.
      */
-    public Vector2D getCentroid() {
+    public Vector2D centroid() {
         return centroid;
     }
 
@@ -81,16 +82,17 @@ public class RectangleCollider extends Collider {
      * @param centroid The parameter "centroid" is a Vector2D object that represents the center point of the rectangle collider. The method "setCentroid" sets the value of the centroid for
      *                 the current object to the specified value.
      */
-    public void setCentroid(Vector2D centroid) {
+    public RectangleCollider setCentroid(Vector2D centroid) {
         this.centroid = centroid;
+        return this;
     }
 
     /**
      * The function returns the value of the angle.
      *
-     * @return The method `getAngle()` is returning a `double` value which represents the angle.
+     * @return The method `angle()` is returning a `double` value which represents the angle.
      */
-    public double getAngle() {
+    public double angle() {
         return angle;
     }
 
@@ -98,10 +100,11 @@ public class RectangleCollider extends Collider {
      * This function sets the value of the "angle" variable to the input "angle" value.
      *
      * @param angle The parameter "angle" is a double data type that represents the angle value to be set for an object or
-     * variable. The method "setAngle" is used to set the value of the angle variable to the specified value passed as an
-     * argument to the method.
+     *              variable. The method "setAngle" is used to set the value of the angle variable to the specified value passed as an
+     *              argument to the method.
      */
-    public void setAngle(double angle) {
+    public RectangleCollider setAngle(double angle) {
         this.angle = angle;
+        return this;
     }
 }
