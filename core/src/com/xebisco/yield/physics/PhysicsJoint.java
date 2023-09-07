@@ -34,48 +34,52 @@ public class PhysicsJoint extends ComponentBehavior {
 
     @Override
     public void onPhysicsUpdate() {
-        if(b2Joint == null)
+        if (b2Joint == null)
             createJoint();
     }
 
     private void createJoint() {
         JointDef jointDef = new JointDef();
         jointDef.userData = this;
-        jointDef.bodyA = entity1.component(PhysicsBody.class).getB2Body();
-        jointDef.bodyB = entity2.component(PhysicsBody.class).getB2Body();
+        jointDef.bodyA = entity1.component(PhysicsBody.class).b2Body();
+        jointDef.bodyB = entity2.component(PhysicsBody.class).b2Body();
         jointDef.type = JointType.valueOf(type.name());
-        b2Joint = application().scene().physicsMain().getB2World().createJoint(jointDef);
+        b2Joint = application().scene().physicsMain().b2World().createJoint(jointDef);
     }
 
-    public Entity2D getEntity1() {
+    public Entity2D entity1() {
         return entity1;
     }
 
-    public void setEntity1(Entity2D entity1) {
+    public PhysicsJoint setEntity1(Entity2D entity1) {
         this.entity1 = entity1;
+        return this;
     }
 
-    public Entity2D getEntity2() {
+    public Entity2D entity2() {
         return entity2;
     }
 
-    public void setEntity2(Entity2D entity2) {
+    public PhysicsJoint setEntity2(Entity2D entity2) {
         this.entity2 = entity2;
+        return this;
     }
 
-    public Joint getB2Joint() {
+    public Joint b2Joint() {
         return b2Joint;
     }
 
-    public void setB2Joint(Joint b2Joint) {
+    public PhysicsJoint setB2Joint(Joint b2Joint) {
         this.b2Joint = b2Joint;
+        return this;
     }
 
-    public PhysicsJointType getType() {
+    public PhysicsJointType type() {
         return type;
     }
 
-    public void setType(PhysicsJointType type) {
+    public PhysicsJoint setType(PhysicsJointType type) {
         this.type = type;
+        return this;
     }
 }

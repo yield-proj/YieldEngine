@@ -91,7 +91,7 @@ public class PhysicsMain {
      *
      * @return A Vector2D object representing the gravity.
      */
-    public Vector2D getGravity() {
+    public Vector2D gravity() {
         return gravity;
     }
 
@@ -101,8 +101,9 @@ public class PhysicsMain {
      * @param gravity The "gravity" parameter is a Vector2D object that represents the gravitational force acting on an
      *                object in a 2D space. This method sets the value of the "gravity" instance variable to the provided Vector2D object.
      */
-    public void setGravity(Vector2D gravity) {
+    public PhysicsMain setGravity(Vector2D gravity) {
         this.gravity = gravity;
+        return this;
     }
 
     /**
@@ -110,7 +111,7 @@ public class PhysicsMain {
      *
      * @return The method is returning an object of type "World".
      */
-    public World getB2World() {
+    public World b2World() {
         return b2World;
     }
 
@@ -120,8 +121,8 @@ public class PhysicsMain {
      * @param b2World b2World is an object of the Box2D physics engine's World class. It represents the simulation world in
      *                which physical bodies interact with each other according to the laws of physics.
      */
-    public void setB2World(World b2World) {
-        this.b2World = b2World;
+    public PhysicsMain setB2World(World b2World) {
+        this.b2World = b2World;return this;
     }
 
     /**
@@ -129,7 +130,7 @@ public class PhysicsMain {
      *
      * @return The method is returning the value of the variable `velocityIterations`.
      */
-    public int getVelocityIterations() {
+    public int velocityIterations() {
         return velocityIterations;
     }
 
@@ -141,8 +142,8 @@ public class PhysicsMain {
      *                           number of velocity iterations can improve the accuracy of the simulation, but it can also increase the computational
      *                           cost.
      */
-    public void setVelocityIterations(int velocityIterations) {
-        this.velocityIterations = velocityIterations;
+    public PhysicsMain setVelocityIterations(int velocityIterations) {
+        this.velocityIterations = velocityIterations;return this;
     }
 
     /**
@@ -151,7 +152,7 @@ public class PhysicsMain {
      * @return The method `getPositionIterations()` is returning an integer value, which is the value of the variable
      * `positionIterations`.
      */
-    public int getPositionIterations() {
+    public int positionIterations() {
         return positionIterations;
     }
 
@@ -162,8 +163,8 @@ public class PhysicsMain {
      *                           physics engine will perform to calculate the positions of objects in a simulation. Increasing the number of position
      *                           iterations can improve the accuracy of the simulation, but it can also increase the computational cost.
      */
-    public void setPositionIterations(int positionIterations) {
-        this.positionIterations = positionIterations;
+    public PhysicsMain setPositionIterations(int positionIterations) {
+        this.positionIterations = positionIterations;return this;
     }
 
     public Scene getScene() {
