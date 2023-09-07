@@ -13,7 +13,7 @@ fun <T : ComponentBehavior> componentCreation(
     return ComponentCreation(componentClass.java, componentModifier)
 }
 
-fun <T : Rectangle> rectangleShape(
+fun <T : Rectangle> StandardPrefabs.rectangleShape(
     rectangleType: KClass<T>,
     size: Vector2D,
     color: Color,
