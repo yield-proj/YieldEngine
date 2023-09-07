@@ -46,9 +46,9 @@ public class CircleCollider extends Collider {
     /**
      * The function returns the value of the radius.
      *
-     * @return The method `getRadius()` is returning the value of the `radius` variable, which is of type `double`.
+     * @return The method `radius()` is returning the value of the `radius` variable, which is of type `double`.
      */
-    public double getRadius() {
+    public double radius() {
         return radius;
     }
 
@@ -58,20 +58,22 @@ public class CircleCollider extends Collider {
      * @param radius The parameter "radius" is a double data type that represents the radius of a circle. The method
      * "setRadius" sets the value of the instance variable "radius" to the value passed as a parameter.
      */
-    public void setRadius(double radius) {
+    public CircleCollider setRadius(double radius) {
         this.radius = radius;
+        return this;
     }
 
     /**
      * The function returns a Vector2D representing the center point.
      *
-     * @return A Vector2D object representing the center of something (e.g. a shape or object).
+     * @return A Vector2D object representing the center of the circle.
      */
-    public Vector2D getCenter() {
+    public Vector2D center() {
         return center;
     }
 
-    public void setCenter(Vector2D center) {
+    public CircleCollider setCenter(Vector2D center) {
         this.center = center;
+        return this;
     }
 }
