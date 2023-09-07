@@ -51,7 +51,7 @@ public class RayCast implements RayCastCallback {
      *
      * @return The fixture object.
      */
-    public Fixture getFixture() {
+    public Fixture fixture() {
         return fixture;
     }
 
@@ -60,8 +60,9 @@ public class RayCast implements RayCastCallback {
      *
      * @param fixture The fixture value to be set.
      */
-    public void setFixture(Fixture fixture) {
+    public RayCast setFixture(Fixture fixture) {
         this.fixture = fixture;
+        return this;
     }
 
     /**
@@ -69,7 +70,7 @@ public class RayCast implements RayCastCallback {
      *
      * @return The hitPoint variable is being returned.
      */
-    public Vector2D getHitPoint() {
+    public Vector2D hitPoint() {
         return hitPoint;
     }
 
@@ -78,8 +79,8 @@ public class RayCast implements RayCastCallback {
      *
      * @param hitPoint The hitPoint.
      */
-    public void setHitPoint(Vector2D hitPoint) {
-        this.hitPoint = hitPoint;
+    public RayCast setHitPoint(Vector2D hitPoint) {
+        this.hitPoint = hitPoint;return this;
     }
 
     /**
@@ -87,7 +88,7 @@ public class RayCast implements RayCastCallback {
      *
      * @return The normal of the ray-cast.
      */
-    public Vector2D getNormal() {
+    public Vector2D normal() {
         return normal;
     }
 
@@ -96,8 +97,8 @@ public class RayCast implements RayCastCallback {
      *
      * @param normal The normal of the ray-cast.
      */
-    public void setNormal(Vector2D normal) {
-        this.normal = normal;
+    public RayCast setNormal(Vector2D normal) {
+        this.normal = normal;return this;
     }
 
     /**
@@ -105,7 +106,7 @@ public class RayCast implements RayCastCallback {
      *
      * @return The fraction of the ray-cast.
      */
-    public float getFraction() {
+    public float fraction() {
         return fraction;
     }
 
@@ -114,8 +115,8 @@ public class RayCast implements RayCastCallback {
      *
      * @param fraction The fraction of the animation that has been run.
      */
-    public void setFraction(float fraction) {
-        this.fraction = fraction;
+    public RayCast setFraction(float fraction) {
+        this.fraction = fraction;return this;
     }
 
     /**
@@ -123,7 +124,7 @@ public class RayCast implements RayCastCallback {
      *
      * @return The boolean value of hit.
      */
-    public boolean isHit() {
+    public boolean hit() {
         return hit;
     }
 
@@ -132,8 +133,8 @@ public class RayCast implements RayCastCallback {
      *
      * @param hit This hit value to set.
      */
-    public void setHit(boolean hit) {
-        this.hit = hit;
+    public RayCast setHit(boolean hit) {
+        this.hit = hit;return this;
     }
 
     /**
@@ -141,7 +142,7 @@ public class RayCast implements RayCastCallback {
      *
      * @return The requestEntity
      */
-    public Entity2D getRequestEntity() {
+    public Entity2D requestEntity() {
         return requestEntity;
     }
 
@@ -150,8 +151,8 @@ public class RayCast implements RayCastCallback {
      *
      * @param requestEntity The entity that requested this ray-cast.
      */
-    public void setRequestEntity(Entity2D requestEntity) {
-        this.requestEntity = requestEntity;
+    public RayCast setRequestEntity(Entity2D requestEntity) {
+        this.requestEntity = requestEntity;return this;
     }
 
     /**
@@ -159,7 +160,7 @@ public class RayCast implements RayCastCallback {
      *
      * @return The hitEntity variable is being returned.
      */
-    public Entity2D getHitEntity() {
+    public Entity2D hitEntity() {
         return hitEntity;
     }
 
@@ -168,7 +169,7 @@ public class RayCast implements RayCastCallback {
      *
      * @param hitEntity The entity that was hit by the ray-cast.
      */
-    public void setHitEntity(Entity2D hitEntity) {
-        this.hitEntity = hitEntity;
+    public RayCast setHitEntity(Entity2D hitEntity) {
+        this.hitEntity = hitEntity;return this;
     }
 }
