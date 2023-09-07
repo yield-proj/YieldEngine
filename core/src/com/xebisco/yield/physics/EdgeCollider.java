@@ -42,9 +42,9 @@ public class EdgeCollider extends Collider {
     /**
      * The function returns the value of point1 as a Vector2D object.
      *
-     * @return The method `getPoint1()` is returning a `Vector2D` object, specifically the `point1` instance variable.
+     * @return The method `point1()` is returning a `Vector2D` object, specifically the `point1` instance variable.
      */
-    public Vector2D getPoint1() {
+    public Vector2D point1() {
         return point1;
     }
 
@@ -54,8 +54,9 @@ public class EdgeCollider extends Collider {
      * @param point1 The parameter `point1` is a Vector2D object representing a point in a two-dimensional space. The
      * method `setPoint1` sets the value of the instance variable `point1` to the value of the parameter `point1`.
      */
-    public void setPoint1(Vector2D point1) {
+    public EdgeCollider setPoint1(Vector2D point1) {
         this.point1 = point1;
+        return this;
     }
 
     /**
@@ -63,7 +64,7 @@ public class EdgeCollider extends Collider {
      *
      * @return A Vector2D object representing the second point.
      */
-    public Vector2D getPoint2() {
+    public Vector2D point2() {
         return point2;
     }
 
@@ -73,7 +74,8 @@ public class EdgeCollider extends Collider {
      * @param point2 point2 is a variable of type Vector2D that represents the second point in a line segment. The method
      * setPoint2() sets the value of this variable to the value passed as a parameter.
      */
-    public void setPoint2(Vector2D point2) {
+    public EdgeCollider setPoint2(Vector2D point2) {
         this.point2 = point2;
+        return this;
     }
 }
