@@ -37,6 +37,7 @@ Clone your [fork](#fork-the-project) (be sure to replace *your-username* with yo
      - `openglimpl`: [jogl-all](https://jogamp.org/jogl/www/); [gluegen-rt](https://jogamp.org/gluegen/www/).
      - `openalimpl`: [lwjgl](https://www.lwjgl.org/); [lwjgl-openal](https://www.lwjgl.org/); [lwjgl-stb](https://www.lwjgl.org/).
      - `lwjgl-utils`: [lwjgl](https://www.lwjgl.org/).
+     - `editor`:  [flatlaf](https://www.formdev.com/flatlaf/); [RSyntaxTextArea](https://github.com/bobbylight/RSyntaxTextArea); [AutoComplete](https://github.com/bobbylight/AutoComplete); [RSTALanguageSupport](https://github.com/bobbylight/AutoComplete). 
 
 > Tip: Keep your `master` branch pointing at the original repository and make
 > pull requests from branches on your fork. To do this, run:
