@@ -264,10 +264,8 @@ public class Projects extends JPanel {
                     new File((String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_location")).getValue(), (String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_name")).getValue()));
             if (project.getName().equals("")) {
                 Utils.error(null, new IllegalStateException("Project requires a name."));
-                newProjectFrame(owner);
             } else if (!project.getProjectLocation().getParentFile().exists()) {
                 Utils.error(null, new IllegalStateException("Path is not valid."));
-                newProjectFrame(owner);
             } else if (!Assets.projects.contains(project)) {
                 Assets.projects.add(0, project);
                 EngineInstall install;
