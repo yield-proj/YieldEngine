@@ -22,19 +22,17 @@ To install the project you need to have `git`
 
 Clone your [fork](#fork-the-project) (be sure to replace *your-username* with your github account username):
 
-    ```sh
     # Clone your fork
     git clone https://github.com/your-username/YieldEngine.git
 
     # Navigate to the created directory
     cd YieldEngine
-    ```
 
 ## Opening the project
 
-1.  Your environment needs to be have `jdk` version >= 11
+1.  Your environment needs to have `jdk` version >= 17
 
-2.  Yield Engine module have specific dependencies, your environment needs to have them installed.
+2.  Some Yield Engine modules have specific dependencies, your environment needs to have them installed to be able to compile them.
      - `core`: [Jamepad](https://github.com/williamahartman/Jamepad); [jbox2d-library-2.2.1.1](http://www.jbox2d.org/).
      - `openglimpl`: [jogl-all](https://jogamp.org/jogl/www/); [gluegen-rt](https://jogamp.org/gluegen/www/).
      - `openalimpl`: [lwjgl](https://www.lwjgl.org/); [lwjgl-openal](https://www.lwjgl.org/); [lwjgl-stb](https://www.lwjgl.org/).
