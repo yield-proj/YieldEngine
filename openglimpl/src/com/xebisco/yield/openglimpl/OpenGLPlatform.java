@@ -22,7 +22,7 @@ import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
-import com.jogamp.opengl.math.Matrix4;
+import com.jogamp.opengl.math.Matrix4f;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.TextureIO;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
@@ -212,8 +212,9 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     }
 
     public void draw(DrawInstruction di, GL2 gl) {
-        Matrix4 matrix4 = new Matrix4();
-        gl.glGetFloatv(GL2.GL_MODELVIEW_MATRIX, matrix4.getMatrix(), 0);
+        Matrix4f matrix4 = new Matrix4f();
+        float[] matrixF = new float[16];
+        gl.glGetFloatv(GL2.GL_MODELVIEW_MATRIX, matrix4.get(matrixF), 0);
         gl.glTranslatef((float) di.x(), (float) di.y(), 0);
         gl.glTranslatef((float) di.centerOffsetX(), (float) di.centerOffsetY(), 0);
         if (di.rotateBeforeScale()) {
@@ -279,7 +280,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
             draw(child, gl);
         }
 
-        gl.glLoadMatrixf(matrix4.getMatrix(), 0);
+        gl.glLoadMatrixf(matrix4.get(matrixF), 0);
     }
 
     @Override
