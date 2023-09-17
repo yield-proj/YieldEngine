@@ -33,7 +33,7 @@ Clone your [fork](#fork-the-project) (be sure to replace *your-username* with yo
 1.  Your environment needs to have `jdk` version >= 17
 
 2.  Some Yield Engine modules have specific dependencies, your environment needs to have them installed to be able to compile them.
-     - `core`: [Jamepad](https://github.com/williamahartman/Jamepad); [jbox2d-library-2.2.1.1](http://www.jbox2d.org/).
+     - `core`: [Jamepad](https://github.com/williamahartman/Jamepad); [jbox2d-library-2.2.1.1](http://www.jbox2d.org/); [Aparapi](https://aparapi.github.io/); [Aparapi-jni](https://github.com/Syncleus/aparapi-jni); [Apache Commons BCEL](https://commons.apache.org/proper/commons-bcel/)
      - `openglimpl`: [jogl-all](https://jogamp.org/jogl/www/); [gluegen-rt](https://jogamp.org/gluegen/www/).
      - `openalimpl`: [lwjgl3](https://www.lwjgl.org/); [lwjgl3-openal](https://www.lwjgl.org/); [lwjgl3-stb](https://www.lwjgl.org/).
      - `lwjgl-utils`: [lwjgl3](https://www.lwjgl.org/).
