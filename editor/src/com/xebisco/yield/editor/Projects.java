@@ -262,10 +262,10 @@ public class Projects extends JPanel {
             Project project = new Project(
                     (String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_name")).getValue(),
                     new File((String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_location")).getValue(), (String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_name")).getValue()));
-            if (project.getName().equals("")) {
+            if (project.getName().isEmpty()) {
                 Utils.error(null, new IllegalStateException("Project requires a name."));
             } else if (!project.getProjectLocation().getParentFile().exists()) {
-                Utils.error(null, new IllegalStateException("Path is not valid."));
+                Utils.error(null, new IllegalStateException("Missing parent folder."));
             } else if (!Assets.projects.contains(project)) {
                 Assets.projects.add(0, project);
                 EngineInstall install;
@@ -278,17 +278,7 @@ public class Projects extends JPanel {
                 File scenesDir = new File(project.getProjectLocation(), "Scenes");
                 scenesDir.mkdir();
                 if ((boolean) Objects.requireNonNull(Props.get(sections.get("new_project"), "create_sample_files")).getValue()) {
-                    File hw = new File(scriptsDir, "HelloScript.java");
-                    try {
-                        hw.createNewFile();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try (FileWriter os = new FileWriter(hw)) {
-                        os.append("import com.xebisco.yield.*;\n\npublic class HelloScript extends ComponentBehavior {\n\n\t@Override\n\tpublic void onStart() {\n\t\tSystem.out.println(\"Hello, World. On Console!\");\n\t}\n\n}");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    File hw = getHelloWorldScript(scriptsDir);
 
                     File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + project.preferredInstall().install() + "/yield-core.jar");
                     ToolProvider.getSystemJavaCompiler().run(null, null, null, "-cp", core.getPath(), "-d", ComponentProp.DEST.getPath(), hw.getPath());
@@ -307,8 +297,8 @@ public class Projects extends JPanel {
                     values.put("contents", "Hello, World!");
 
                     try (URLClassLoader cl = new URLClassLoader(new URL[]{new File(Utils.EDITOR_DIR + "/installs/" + install.install(), "yield-core.jar").toURI().toURL()})) {
-                        prefab.components().add(new ComponentProp(cl.loadClass("com.xebisco.yield.Text"), true).set(values));
-                        prefab.components().add(new ComponentProp(hw, install));
+                        prefab.components().add(new ComponentProp(cl.loadClass("com.xebisco.yield.Text"), true).init().set(values));
+                        prefab.components().add(new ComponentProp(hw, install).init());
                     } catch (IOException | ClassNotFoundException e) {
                         throw new RuntimeException(e);
                     }
@@ -368,5 +358,20 @@ public class Projects extends JPanel {
                 owner.repaint();
             } else Utils.error(null, new IllegalStateException("Project already exists on the projects list"));
         }, owner, "new_project");
+    }
+
+    private static File getHelloWorldScript(File scriptsDir) {
+        File hw = new File(scriptsDir, "HelloScript.java");
+        try {
+            hw.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try (FileWriter os = new FileWriter(hw)) {
+            os.append("import com.xebisco.yield.*;\n\npublic class HelloScript extends ComponentBehavior {\n\n\t@Override\n\tpublic void onStart() {\n\t\tSystem.out.println(\"Hello, World. On Console!\");\n\t}\n\n}");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return hw;
     }
 }

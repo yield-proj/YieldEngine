@@ -19,6 +19,7 @@ package com.xebisco.yield.editor;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 
 public class Workspace extends JPanel {
@@ -38,8 +39,7 @@ public class Workspace extends JPanel {
         add(desktopPane = new JDesktopPane() {
 
             @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
+            public void paint(Graphics g) {
                 int w = image.getWidth(null), h = image.getHeight(null);
                 if (w < getWidth())
                     w = getWidth();
@@ -52,15 +52,32 @@ public class Workspace extends JPanel {
                     if (internalFrame.isVisible() && !internalFrame.isIcon() && internalFrame instanceof YieldInternalFrame i) {
                         if (i.parent() != null && i.parent().isVisible() && !i.parent().isIcon()) {
                             int x1 = i.getX(), x3 = i.parent().getX(), y1 = i.getY() + i.getHeight() / 2, y3 = i.parent().getY() + i.parent().getHeight() / 2;
-                            if (x3 > x1) x1 += i.getWidth();
-                            else x3 += i.parent().getWidth();
-                            Path2D p = new Path2D.Float();
-                            p.moveTo(x1, y1);
-                            p.curveTo(x3, y1, x1, y3, x3, y3);
-                            ((Graphics2D) g).draw(p);
+                            if (x1 < x3 + i.parent().getWidth() && x1 + i.getWidth() > x3) {
+                                if (i.getY() + i.getHeight() > i.parent().getY() && i.getY() < i.parent().getY() + i.parent().getHeight())
+                                    continue;
+                                x1 += i.getWidth() / 2;
+                                x3 += i.parent().getWidth() / 2;
+                                y1 -= i.getHeight() / 2;
+                                y3 -= i.parent().getHeight() / 2;
+
+                                if (y3 > y1) y1 += i.getHeight();
+                                else y3 += i.parent().getHeight();
+                                Path2D p = new Path2D.Float();
+                                p.moveTo(x1, y1);
+                                p.curveTo(x1, y3, x3, y1, x3, y3);
+                                ((Graphics2D) g).draw(p);
+                            } else {
+                                if (x3 > x1) x1 += i.getWidth();
+                                else x3 += i.parent().getWidth();
+                                Path2D p = new Path2D.Float();
+                                p.moveTo(x1, y1);
+                                p.curveTo(x3, y1, x1, y3, x3, y3);
+                                ((Graphics2D) g).draw(p);
+                            }
                         }
                     }
                 }
+                super.paint(g);
             }
         }, BorderLayout.CENTER);
 
@@ -96,6 +113,9 @@ public class Workspace extends JPanel {
 
         JButton run = new JButton();
         Color savedBkg = new Color(run.getBackground().getRGB());
+
+        toolBar.add(new JLabel(" "));
+
         run.setAction(new AbstractAction("", Assets.images.get("runIcon.png")) {
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -25,7 +25,7 @@ import java.util.List;
 
 public class EditorScene implements Serializable {
     private String name;
-    private Color backgroundColor = Color.GRAY.darker();
+    private Color backgroundColor = Color.BLACK;
     private java.util.List<SceneObject> sceneObjects = new ArrayList<>();
 
     public String getName() {

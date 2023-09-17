@@ -301,7 +301,7 @@ public class Explorer extends JPanel implements ActionListener {
                                     Utils.error(null, ex);
                                 }
                                 EntityPrefab prefab = new EntityPrefab(workspace.project().preferredInstall());
-                                prefab.setName((String) Objects.requireNonNull(Props.get(props.get("New Prefab"), "name")).getValue());
+                                prefab.setName((String) Objects.requireNonNull(Props.get(props.get("new_prefab"), "name")).getValue());
                                 try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(f))) {
                                     oo.writeObject(prefab);
                                 } catch (IOException ex) {
@@ -398,7 +398,7 @@ public class Explorer extends JPanel implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         workspace.desktopPane().add(frame);
-        frame.setBounds(100, 100, 400, 600);
+        frame.setBounds(100, 100, 360, 600);
         frame.setVisible(true);
     }
 

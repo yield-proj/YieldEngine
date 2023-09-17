@@ -134,6 +134,9 @@ public class Entry {
         loadImage("sceneIcon32.png");
         loadImage("handIcon.png");
         loadImage("selectIcon.png");
+        loadImage("optionsIcon.png");
+        loadImage("zoomInIcon.png");
+        loadImage("zoomOutIcon.png");
     }
 
     private static void loadImage(String n) {

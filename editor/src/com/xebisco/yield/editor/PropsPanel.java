@@ -31,7 +31,7 @@ public class PropsPanel extends JPanel {
         return panel;
     }
 
-    public static JPanel compPropsPanel(ComponentProp[] props, YieldInternalFrame frame, IRecompile recompile) {
+    public static JPanel compPropsPanel(List<ComponentProp> props, YieldInternalFrame frame, IRecompile recompile, Runnable update) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.weightx = 1;
         gbc.insets = new Insets(10, 10, 0, 10);
@@ -41,7 +41,21 @@ public class PropsPanel extends JPanel {
         panel.setLayout(new GridBagLayout());
         gbc.gridy = 0;
         for (ComponentProp prop : props) {
-            panel.add(prop.panel(frame, recompile), gbc);
+            panel.add(prop.panel(frame, recompile, () -> {
+                int index = props.indexOf(prop) - 1;
+                if (index >= 1) {
+                    props.remove(prop);
+                    props.add(index, prop);
+                    update.run();
+                }
+            }, () -> {
+                int index = props.indexOf(prop) + 1;
+                if (index < props.size()) {
+                    props.remove(prop);
+                    props.add(index, prop);
+                    update.run();
+                }
+            }), gbc);
             gbc.gridy++;
         }
         return panel;
@@ -114,6 +128,7 @@ public class PropsPanel extends JPanel {
 
         add(buttons, BorderLayout.SOUTH);
 
-        if(SwingUtilities.getWindowAncestor(this) instanceof RootPaneContainer f) f.getRootPane().setDefaultButton(button);
+        if (SwingUtilities.getWindowAncestor(this) instanceof RootPaneContainer f)
+            f.getRootPane().setDefaultButton(button);
     }
 }

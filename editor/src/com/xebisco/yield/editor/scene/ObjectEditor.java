@@ -42,34 +42,78 @@ public class ObjectEditor extends JPanel {
     private final YieldInternalFrame frame;
 
     private final Workspace workspace;
+    private final JScrollPane scrollPane = new JScrollPane();
+    private final EntityPrefab prefab;
+    private final Prop nameProp;
 
     public ObjectEditor(File file, EntityPrefab prefab, Workspace workspace, YieldInternalFrame frame) {
 
         this.frame = frame;
+        this.prefab = prefab;
         this.workspace = workspace;
 
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        Prop nameProp = new StringProp("object_name", prefab.name());
+        nameProp = new StringProp("object_name", prefab.name());
         add(nameProp.panel(), BorderLayout.NORTH);
 
-        JScrollPane scrollPane = new JScrollPane();
-
-
-        URLClassLoader core;
-        try {
-            //noinspection resource
-            core = new URLClassLoader(new URL[]{new File(Utils.EDITOR_DIR + "/installs/" + workspace.project().preferredInstall().install(), "yield-core.jar").toURI().toURL(), ComponentProp.DEST.toURI().toURL()});
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-
         List<ComponentProp> props = new ArrayList<>(prefab.components());
+
+        scrollPane.getVerticalScrollBar().setUnitIncrement(10);
 
 
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         add(scrollPane, BorderLayout.CENTER);
+        JPanel addPanel = getAllPanel();
+        JPanel addButtonPanel = new JPanel();
+        addButtonPanel.setOpaque(false);
+        addButtonPanel.add(new JButton(new AbstractAction("", Assets.images.get("addIcon.png")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialog dialog = new JDialog(SwingUtilities.getWindowAncestor(ObjectEditor.this), Dialog.ModalityType.APPLICATION_MODAL);
+                dialog.setTitle(Assets.language.getProperty("add_script"));
+                dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                dialog.setLocation(addButtonPanel.getLocationOnScreen());
+                dialog.add(new AddComponent(workspace.project().getProjectLocation(), workspace.project().preferredInstall(), frame, props, workspace.recompile()));
+                dialog.setSize(300, 300);
+                dialog.setVisible(true);
+                update(props);
+                repaint();
+            }
+        }));
+        addPanel.add(addButtonPanel, BorderLayout.EAST);
+        JLabel label;
+        addPanel.add(label = new JLabel("<html><strong>" + Assets.language.getProperty("add_script") + "</strong></html>", Assets.images.get("scriptIcon.png"), JLabel.LEFT), BorderLayout.CENTER);
+        label.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BorderLayout());
+        bottomPanel.add(addPanel);
+        update(props);
+        add(bottomPanel, BorderLayout.SOUTH);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> save(props, file)));
+
+        frame.addInternalFrameListener(new InternalFrameAdapter() {
+            @Override
+            public void internalFrameDeactivated(InternalFrameEvent e) {
+                save(props, file);
+            }
+
+            @Override
+            public void internalFrameActivated(InternalFrameEvent e) {
+                update(props);
+            }
+
+            @Override
+            public void internalFrameClosing(InternalFrameEvent e) {
+                save(props, file);
+                frame.dispose();
+            }
+        });
+    }
+
+    private JPanel getAllPanel() {
         JPanel addPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -83,58 +127,29 @@ public class ObjectEditor extends JPanel {
         addPanel.setOpaque(false);
         addPanel.setLayout(new BorderLayout());
         addPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-        JPanel addButtonPanel = new JPanel();
-        addButtonPanel.setOpaque(false);
-        addButtonPanel.add(new JButton(new AbstractAction("", Assets.images.get("addIcon.png")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JDialog dialog = new JDialog(SwingUtilities.getWindowAncestor(ObjectEditor.this), Dialog.ModalityType.APPLICATION_MODAL);
-                dialog.setTitle(Assets.language.getProperty("add_script"));
-                dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                dialog.setLocation(addButtonPanel.getLocationOnScreen());
-                dialog.add(new AddComponent(workspace.project().getProjectLocation(), workspace.project().preferredInstall(), frame, props, workspace.recompile()));
-                dialog.setSize(300, 300);
-                dialog.setVisible(true);
-                scrollPane.setViewportView(update(props));
-                repaint();
-            }
-        }));
-        addPanel.add(addButtonPanel, BorderLayout.EAST);
-        JLabel label;
-        addPanel.add(label = new JLabel("<html><strong>" + Assets.language.getProperty("add_script") + "</strong></html>", Assets.images.get("scriptIcon.png"), JLabel.LEFT), BorderLayout.CENTER);
-        label.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new BorderLayout());
-        bottomPanel.add(addPanel);
-        scrollPane.setViewportView(update(props));
-        add(bottomPanel, BorderLayout.SOUTH);
-
-        frame.addInternalFrameListener(new InternalFrameAdapter() {
-            @Override
-            public void internalFrameDeactivated(InternalFrameEvent e) {
-                prefab.setName((String) nameProp.getValue());
-                prefab.components().clear();
-                prefab.components().addAll(props);
-
-                try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(file))) {
-                    oo.writeObject(prefab);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-
-            @Override
-            public void internalFrameClosing(InternalFrameEvent e) {
-                internalFrameDeactivated(e);
-                frame.dispose();
-            }
-        });
+        return addPanel;
     }
 
-    private JPanel update(List<ComponentProp> props) {
+    private void save(List<ComponentProp> props, File file) {
+        prefab.setName((String) nameProp.getValue());
+        prefab.components().clear();
+        prefab.components().addAll(props);
+
+        try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(file))) {
+            oo.writeObject(prefab);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private void update(List<ComponentProp> props) {
+        int sc = scrollPane.getVerticalScrollBar().getValue();
+        props.forEach(ComponentProp::init);
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        panel.add(PropsPanel.compPropsPanel(props.toArray(new ComponentProp[0]), frame, workspace.recompile()), BorderLayout.NORTH);
-        return panel;
+        panel.add(PropsPanel.compPropsPanel(props, frame, workspace.recompile(), () -> update(props)), BorderLayout.NORTH);
+        scrollPane.setViewportView(panel);
+        scrollPane.getVerticalScrollBar().setValue(sc);
+        scrollPane.repaint();
     }
 }

@@ -38,6 +38,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.*;
+import java.util.concurrent.CompletableFuture;
 
 public class CodePanel extends JPanel {
 
@@ -51,10 +52,13 @@ public class CodePanel extends JPanel {
     private final YieldInternalFrame frame;
     private final Font startFont;
 
+    private final IRecompile recompile;
+
     public CodePanel(File file, EngineInstall engineInstall, YieldInternalFrame frame, IRecompile recompile) {
         this.file = file;
         this.engineInstall = engineInstall;
         this.frame = frame;
+        this.recompile = recompile;
         frame.addInternalFrameListener(new InternalFrameAdapter() {
             @Override
             public void internalFrameClosing(InternalFrameEvent e) {
@@ -182,22 +186,7 @@ public class CodePanel extends JPanel {
                 }
                 frame.setTitle(savedTitle);
                 saved = true;
-                final StringBuilder builder = new StringBuilder();
-                OutputStream error = new OutputStream() {
-                    @Override
-                    public void write(int b) {
-                        builder.append((char) b);
-                    }
-                };
-                File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + engineInstall.install() + "/yield-core.jar");
-                ToolProvider.getSystemJavaCompiler().run(null, null, error, "-cp", core.getPath(), "-d", ComponentProp.DEST.getPath(), file.getPath());
-                try {
-                    error.close();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-                if (!builder.isEmpty())
-                    Utils.errorNoStackTrace(CodePanel.this, new CompilationException(builder.toString()));
+                CompletableFuture.runAsync(recompile::recompileProject);
             }
         }));
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));

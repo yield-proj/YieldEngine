@@ -251,7 +251,6 @@ public class SceneEditor extends JPanel {
                     startM = new Point(e.getPoint());
                 }
                 else if (tool == Tool.SELECTOR) {
-                    System.out.println(x + ", " + y);
                     selectingStart = new Point((int) (mx), (int) (my));
                     selectingSize = new Point(0, 0);
                 }

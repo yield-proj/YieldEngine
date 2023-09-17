@@ -21,16 +21,14 @@ import com.xebisco.yield.ComponentIconType;
 import com.xebisco.yield.VisibleOnEditor;
 import com.xebisco.yield.editor.*;
 import com.xebisco.yield.editor.code.CodePanel;
-import com.xebisco.yield.editor.code.CompilationException;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
-import javax.tools.ToolProvider;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -44,7 +42,7 @@ import java.util.Map;
 public class ComponentProp extends Prop {
     public static final File DEST = new File(Utils.EDITOR_DIR + "/out/" + Entry.RUN);
 
-    private final Class<?> componentClass;
+    private Class<?> componentClass;
     private final List<Pair<String, Class<?>>> fields = new ArrayList<>();
 
     private final File comp;
@@ -58,7 +56,9 @@ public class ComponentProp extends Prop {
         this.showAddButton = true;
         this.comp = comp;
         this.install = install;
+    }
 
+    private void updateComponentClass() {
         File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + install.install() + "/yield-core.jar");
 
         try (URLClassLoader loader = new URLClassLoader(new URL[]{DEST.toURI().toURL(), core.toURI().toURL()})) {
@@ -66,7 +66,6 @@ public class ComponentProp extends Prop {
         } catch (ClassNotFoundException | IOException e) {
             throw new RuntimeException(e);
         }
-        init();
     }
 
     public ComponentProp(Class<?> componentClass, boolean showAddButton) {
@@ -75,11 +74,12 @@ public class ComponentProp extends Prop {
         install = null;
         comp = null;
         this.componentClass = componentClass;
-        init();
     }
 
-    private void init() {
-        setValue(new HashMap<String, Serializable>());
+    public ComponentProp init() {
+        if (comp != null) updateComponentClass();
+        Map<String, Serializable> values = new HashMap<>();
+        List<Pair<String, Class<?>>> fields1 = new ArrayList<>();
         Object o;
         try {
             o = componentClass.getConstructor().newInstance();
@@ -90,23 +90,37 @@ public class ComponentProp extends Prop {
         for (Field field : componentClass.getDeclaredFields()) {
             field.setAccessible(true);
             if (field.isAnnotationPresent(VisibleOnEditor.class)) {
-                fields.add(new Pair<>(field.getName(), field.getType()));
-                try {
-                    Object v = field.get(o);
-                    if (v instanceof Serializable vs) {
-                        //noinspection unchecked
-                        ((Map<String, Serializable>) getValue()).put(field.getName(), vs);
-                    } else if (v == null) {
-                        //noinspection unchecked
-                        ((Map<String, Serializable>) getValue()).put(field.getName(), null);
-                    } else {
-                        JOptionPane.showMessageDialog(null, componentClass.getName() + " " + field.getName() + " need to be serializable.");
+                boolean c = false;
+                for (Pair<String, Class<?>> p : fields) {
+                    if (p.first().equals(field.getName()) && p.second().equals(field.getType())) {
+                        c = true;
+                        break;
                     }
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
+                }
+                fields1.add(new Pair<>(field.getName(), field.getType()));
+                if (!c) {
+                    try {
+                        Object v = field.get(o);
+                        if (v instanceof Serializable vs) {
+                            values.put(field.getName(), vs);
+                        } else if (v == null) {
+                            values.put(field.getName(), null);
+                        } else {
+                            JOptionPane.showMessageDialog(null, componentClass.getName() + " " + field.getName() + " need to be serializable.");
+                        }
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    //noinspection unchecked
+                    values.put(field.getName(), ((Map<String, Serializable>) getValue()).get(field.getName()));
                 }
             }
         }
+        fields.clear();
+        fields.addAll(fields1);
+        setValue((Serializable) values);
+        return this;
     }
 
     public ComponentProp set(Map<String, Serializable> value) {
@@ -117,7 +131,11 @@ public class ComponentProp extends Prop {
         return this;
     }
 
-    public JPanel panel(YieldInternalFrame frame, IRecompile recompile) {
+    private void codeFrame(YieldInternalFrame frame, IRecompile recompile) {
+        CodePanel.newCodeFrame(frame.getDesktopPane(), install, comp, frame, recompile).setLocation(frame.getX() + frame.getWidth() + 100, frame.getY() + 100);
+    }
+
+    public JPanel panel(YieldInternalFrame frame, IRecompile recompile, Runnable up, Runnable down) {
         //noinspection unchecked
         set((Map<String, Serializable>) getValue());
         JPanel panel = new JPanel() {
@@ -129,7 +147,7 @@ public class ComponentProp extends Prop {
             }
         };
         panel.setLayout(new GridBagLayout());
-        JLabel label = new JLabel(getName());
+        JLabel label = new JLabel(getName() + (comp == null ? "" : " (Custom)"));
         if (componentClass.isAnnotationPresent(ComponentIcon.class)) {
             ComponentIconType icon = componentClass.getAnnotation(ComponentIcon.class).iconType();
             label.setIcon(switch (icon) {
@@ -154,19 +172,54 @@ public class ComponentProp extends Prop {
             checkBox.addItemListener(e -> addComp = checkBox.isSelected());
         }
 
-        JPanel editButtonPanel = new JPanel();
-        editButtonPanel.setOpaque(false);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setOpaque(false);
         JButton editButton;
-        editButtonPanel.add(editButton = new JButton(new AbstractAction("", Assets.images.get("editIcon.png")) {
+        buttonPanel.add(editButton = new JButton(new AbstractAction("", Assets.images.get("editIcon.png")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                CodePanel.newCodeFrame(frame.getDesktopPane(), install, comp, frame, recompile).setLocation(frame.getX() + frame.getWidth() + 100, frame.getY() + 100);
+                codeFrame(frame, recompile);
             }
         }));
+        editButton.setToolTipText(Assets.language.getProperty("edit_script"));
 
+        if (showAddButton) {
+            buttonPanel.add(new JButton(new AbstractAction("", Assets.images.get("optionsIcon.png")) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JPopupMenu popupMenu = new JPopupMenu();
+                    JMenuItem item = new JMenuItem(new AbstractAction(Assets.language.getProperty("edit_script")) {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            codeFrame(frame, recompile);
+                        }
+                    });
+                    if (comp != null)
+                        popupMenu.add(item);
+
+                    item = new JMenuItem(new AbstractAction(Assets.language.getProperty("move_component_up")) {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            up.run();
+                        }
+                    });
+                    popupMenu.add(item);
+
+                    item = new JMenuItem(new AbstractAction(Assets.language.getProperty("move_component_down")) {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            down.run();
+                        }
+                    });
+                    popupMenu.add(item);
+
+                    popupMenu.show(buttonPanel, buttonPanel.getMousePosition().x, buttonPanel.getMousePosition().y);
+                }
+            }));
+        }
         if (comp == null) editButton.setEnabled(false);
 
-        namePanel.add(editButtonPanel, BorderLayout.EAST);
+        namePanel.add(buttonPanel, BorderLayout.EAST);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.weightx = 1;
@@ -198,14 +251,14 @@ public class ComponentProp extends Prop {
 
     @Override
     public JPanel panel() {
-        return panel(null, null);
+        return null;
     }
 
     private JPanel fieldPanel(Pair<String, Class<?>> field) {
         JPanel panel = new JPanel();
         panel.setOpaque(false);
         panel.setLayout(new BorderLayout());
-        JLabel n = new JLabel("<html>" + field.first() + ": <em>" + field.second().getSimpleName() + "</em></html>");
+        JLabel n = new JLabel("<html>" + toName(field.first()) + ": <em>" + field.second().getSimpleName() + "  </em></html>");
         panel.add(n, BorderLayout.WEST);
         if (field.second().equals(String.class) ||
                 field.second().equals(Integer.class) ||
@@ -221,10 +274,12 @@ public class ComponentProp extends Prop {
                 field.second().equals(Byte.class) ||
                 field.second().equals(byte.class)
         ) {
-            JTextField textField = new JTextField();
+            YieldTextField textField = new YieldTextField();
             //noinspection unchecked
             Serializable value = ((Map<String, Serializable>) getValue()).get(field.first());
             textField.setText(String.valueOf(value == null ? "" : value));
+            if (value == null) textField.setNull(true);
+            Border border = textField.getBorder();
             textField.getDocument().addDocumentListener(new DocumentAdapter() {
                 @Override
                 public void insertUpdate(DocumentEvent e) {
@@ -232,6 +287,7 @@ public class ComponentProp extends Prop {
                         //noinspection unchecked
                         ((Map<String, Serializable>) getValue()).put(field.first(), castP(textField.getText(), field.second()));
                         textField.setBackground(UIManager.getColor("TextField.background"));
+                        textField.setNull(false);
                     } catch (NumberFormatException ex) {
                         textField.setBackground(Color.RED);
                     }
@@ -242,14 +298,31 @@ public class ComponentProp extends Prop {
                     try {
                         //noinspection unchecked
                         ((Map<String, Serializable>) getValue()).put(field.first(), castP(textField.getText(), field.second()));
-                        textField.setBorder(null);
+                        textField.setBorder(border);
                         textField.setBackground(UIManager.getColor("TextField.background"));
+                        textField.setNull(false);
                     } catch (NumberFormatException ex) {
                         textField.setBackground(Color.RED);
                     }
                 }
             });
             panel.add(textField);
+            if (!field.second().isPrimitive()) {
+                JPanel toNullPanel = new JPanel();
+                toNullPanel.setOpaque(false);
+                toNullPanel.add(new JButton(new AbstractAction("", Assets.images.get("closeIcon.png")) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        textField.setText(null);
+                        //noinspection unchecked
+                        ((Map<String, Serializable>) ComponentProp.this.getValue()).put(field.first(), null);
+                        textField.setNull(true);
+                        textField.setBorder(border);
+                        textField.repaint();
+                    }
+                }));
+                panel.add(toNullPanel, BorderLayout.EAST);
+            }
         } else if (field.second().getName().equals("com.xebisco.yield.Vector2D")) {
             //noinspection unchecked
             Serializable value = ((Map<String, Serializable>) getValue()).get(field.first());
@@ -344,6 +417,25 @@ public class ComponentProp extends Prop {
             panel.add(values);
         }
         return panel;
+    }
+
+    private static String toName(String n) {
+        StringBuilder name = new StringBuilder();
+        boolean lastIs_ = false;
+        for (char c : n.toCharArray()) {
+            if (c == '_') {
+                if (!lastIs_) c = ' ';
+                else if (name.charAt(name.length() - 1) == ' ') name.setLength(name.length() - 1);
+                lastIs_ = true;
+            }
+            if (name.isEmpty()) {
+                c = Character.toUpperCase(c);
+            } else if (Character.isUpperCase(c)) {
+                name.append(' ');
+            }
+            name.append(c);
+        }
+        return name.toString();
     }
 
     private Serializable castP(String s, Class<?> c) throws NumberFormatException {
