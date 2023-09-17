@@ -51,6 +51,9 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     private final Set<OpenGLImage> toLoadImages = new HashSet<>(), toDestroyImages = new HashSet<>();
 
+    private final Set<OpenGLFont> toLoadFonts = new HashSet<>();
+
+
     private final HashSet<Input.Key> pressingKeys = new HashSet<>();
     private final HashSet<Input.MouseButton> pressingMouseButtons = new HashSet<>();
     private final KeyAction addKeyAction = pressingKeys::add, removeKeyAction = pressingKeys::remove;
@@ -162,6 +165,14 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
         } catch (ConcurrentModificationException ignore) {
         }
 
+        try {
+            toLoadFonts.removeIf(font -> {
+                font.setTextRenderer(new TextRenderer(font.font()));
+                return true;
+            });
+        } catch (ConcurrentModificationException ignore) {
+        }
+
         toDestroyImages.removeIf(image -> {
             image.getTexture().destroy(gl);
             return true;
@@ -255,7 +266,7 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
                 gl.glEnd();
                 t.disable(gl);
             } else if (di.fontRef() != null) {
-                TextRenderer renderer = (TextRenderer) di.fontRef();
+                TextRenderer renderer = ((OpenGLFont) di.fontRef()).textRenderer();
                 gl.glEnable(GL2.GL_TEXTURE_2D);
                 renderer.begin3DRendering();
                 Rectangle2D bounds = renderer.getBounds(di.text());
@@ -292,7 +303,9 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
     @Override
     public Object loadFont(Font font) {
         try {
-            return new TextRenderer(java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, font.inputStream()).deriveFont((float) font.getSize()));
+            OpenGLFont f = new OpenGLFont(java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, font.inputStream()).deriveFont((float) font.getSize()));
+            toLoadFonts.add(f);
+            return f;
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -300,17 +313,17 @@ public class OpenGLPlatform implements GraphicsManager, FontManager, TextureMana
 
     @Override
     public void unloadFont(Font font) {
-        ((TextRenderer) font.fontRef()).dispose();
+        ((OpenGLFont) font.fontRef()).textRenderer().dispose();
     }
 
     @Override
     public double getStringWidth(String text, Object fontRef) {
-        return ((TextRenderer) fontRef).getFont().getStringBounds(text, frc).getWidth();
+        return ((OpenGLFont) fontRef).font().getStringBounds(text, frc).getWidth();
     }
 
     @Override
     public double getStringHeight(String text, Object fontRef) {
-        return ((TextRenderer) fontRef).getFont().getStringBounds(text, frc).getHeight();
+        return ((OpenGLFont) fontRef).font().getStringBounds(text, frc).getHeight();
     }
 
     @Override
