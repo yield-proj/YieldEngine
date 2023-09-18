@@ -54,13 +54,19 @@ public class PhysicsMain {
             @Override
             public void preSolve(Contact contact, Manifold manifold) {
                 Collider c = ((Collider) contact.m_fixtureA.getUserData());
-                c.entity().contactListeners().forEach(l -> l.preSolve(contact, manifold));
+                c.entity().contactListeners().forEach(l -> {
+                    if (l instanceof com.xebisco.yield.physics.ContactListener l1)
+                        l1.preSolve(contact, manifold);
+                });
             }
 
             @Override
             public void postSolve(Contact contact, ContactImpulse contactImpulse) {
                 Collider c = ((Collider) contact.m_fixtureA.getUserData());
-                c.entity().contactListeners().forEach(l -> l.postSolve(contact, contactImpulse));
+                c.entity().contactListeners().forEach(l -> {
+                    if (l instanceof com.xebisco.yield.physics.ContactListener l1)
+                        l1.postSolve(contact, contactImpulse);
+                });
             }
         });
     }
@@ -122,7 +128,8 @@ public class PhysicsMain {
      *                which physical bodies interact with each other according to the laws of physics.
      */
     public PhysicsMain setB2World(World b2World) {
-        this.b2World = b2World;return this;
+        this.b2World = b2World;
+        return this;
     }
 
     /**
@@ -143,7 +150,8 @@ public class PhysicsMain {
      *                           cost.
      */
     public PhysicsMain setVelocityIterations(int velocityIterations) {
-        this.velocityIterations = velocityIterations;return this;
+        this.velocityIterations = velocityIterations;
+        return this;
     }
 
     /**
@@ -164,7 +172,8 @@ public class PhysicsMain {
      *                           iterations can improve the accuracy of the simulation, but it can also increase the computational cost.
      */
     public PhysicsMain setPositionIterations(int positionIterations) {
-        this.positionIterations = positionIterations;return this;
+        this.positionIterations = positionIterations;
+        return this;
     }
 
     public Scene getScene() {
