@@ -18,11 +18,7 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.physics.BasicContactListener;
 import com.xebisco.yield.physics.Collider;
-import com.xebisco.yield.physics.ContactListener;
 import com.xebisco.yield.physics.RayCast;
-import org.jbox2d.callbacks.ContactImpulse;
-import org.jbox2d.collision.Manifold;
-import org.jbox2d.dynamics.contacts.Contact;
 
 /**
  * ComponentBehavior is an abstract class that implements the Behavior and Renderable interfaces.
