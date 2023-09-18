@@ -16,6 +16,7 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.physics.BasicContactListener;
 import com.xebisco.yield.physics.Collider;
 import com.xebisco.yield.physics.ContactListener;
 import com.xebisco.yield.physics.RayCast;
@@ -28,7 +29,7 @@ import org.jbox2d.dynamics.contacts.Contact;
  * This the class is declared as abstract. This means that it cannot be instantiated. It
  * is only meant to be extended by other classes
  */
-public abstract class ComponentBehavior implements Behavior, Renderable, ContactListener {
+public abstract class ComponentBehavior implements Behavior, Renderable, BasicContactListener {
     private int frames;
     private Entity2D entity;
 
@@ -58,16 +59,6 @@ public abstract class ComponentBehavior implements Behavior, Renderable, Contact
 
     @Override
     public void onContactEnd(Collider collider, Collider colliding) {
-
-    }
-
-    @Override
-    public void preSolve(Contact var1, Manifold var2) {
-
-    }
-
-    @Override
-    public void postSolve(Contact var1, ContactImpulse var2) {
 
     }
 
