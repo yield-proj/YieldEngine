@@ -24,7 +24,7 @@ The engine can produce executables capable of running in a number of platforms, 
 The Yield Engine documentation is hosted on github websites and is contained in this repository. [Check the docs](https://yield-proj.github.io/YieldEngine/index.html) or [Check the docs folder](https://github.com/yield-proj/YieldEngine/tree/master/docs).
 
 ## 😁 Getting the engine
-### Compiled jar
+### Compiled jars
 A compiled version of every main release is hosted here on github, check [Releases](https://github.com/yield-proj/YieldEngine/releases), to choose witch version of the engine to download.
 ### Compile it yourself
 If you really want, you can also compile the [YieldEngine](https://github.com/yield-proj/YieldEngine/archive/refs/heads/master.zip) to fit your needs.
