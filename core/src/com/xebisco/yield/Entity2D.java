@@ -17,6 +17,7 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.physics.BasicContactListener;
+import com.xebisco.yield.physics.ComponentContactMethodsFire;
 import com.xebisco.yield.physics.ContactListener;
 
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
             c.setEntity(this);
             this.components.add(c);
         }
+        contactListeners.add(new ComponentContactMethodsFire());
     }
 
     public void processPhysics() {
