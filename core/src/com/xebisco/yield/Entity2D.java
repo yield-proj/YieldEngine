@@ -46,8 +46,8 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
         this.application = application;
         for (ComponentBehavior c : components) {
             c.setEntity(this);
+            this.components.add(c);
         }
-        this.components.addAll(List.of(components));
     }
 
     public void processPhysics() {
