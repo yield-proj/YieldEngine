@@ -15,7 +15,6 @@
       <module fileurl="file://$PROJECT_DIR$/script/script.iml" filepath="$PROJECT_DIR$/script/script.iml" />
       <module fileurl="file://$PROJECT_DIR$/swingimpl/swingimpl.iml" filepath="$PROJECT_DIR$/swingimpl/swingimpl.iml" />
       <module fileurl="file://$PROJECT_DIR$/utils/utils.iml" filepath="$PROJECT_DIR$/utils/utils.iml" />
-      <module fileurl="file://$PROJECT_DIR$/yasm/yasm.iml" filepath="$PROJECT_DIR$/yasm/yasm.iml" />
     </modules>
   </component>
 </project>
