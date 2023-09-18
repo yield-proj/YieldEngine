@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.physics.BasicContactListener;
+import com.xebisco.yield.physics.ComponentContactMethodsFire;
 import com.xebisco.yield.physics.ContactListener;
 
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
     private Entity2DContainer parent;
     private int index;
 
-    private List<ContactListener> contactListeners = new ArrayList<>();
+    private List<BasicContactListener> contactListeners = new ArrayList<>();
 
     private String[] tags;
     private int frames;
@@ -46,8 +48,9 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
         this.application = application;
         for (ComponentBehavior c : components) {
             c.setEntity(this);
+            this.components.add(c);
         }
-        this.components.addAll(List.of(components));
+        contactListeners.add(new ComponentContactMethodsFire());
     }
 
     public void processPhysics() {
@@ -247,11 +250,11 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
         return this;
     }
 
-    public List<ContactListener> contactListeners() {
+    public List<BasicContactListener> contactListeners() {
         return contactListeners;
     }
 
-    public Entity2D setContactListeners(List<ContactListener> contactListeners) {
+    public Entity2D setContactListeners(List<BasicContactListener> contactListeners) {
         this.contactListeners = contactListeners;
         return this;
     }

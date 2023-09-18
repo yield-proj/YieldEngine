@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.physics.BasicContactListener;
+import com.xebisco.yield.physics.Collider;
 import com.xebisco.yield.physics.RayCast;
 
 /**
@@ -23,7 +25,7 @@ import com.xebisco.yield.physics.RayCast;
  * This the class is declared as abstract. This means that it cannot be instantiated. It
  * is only meant to be extended by other classes
  */
-public abstract class ComponentBehavior implements Behavior, Renderable {
+public abstract class ComponentBehavior implements Behavior, Renderable, BasicContactListener {
     private int frames;
     private Entity2D entity;
 
@@ -43,6 +45,16 @@ public abstract class ComponentBehavior implements Behavior, Renderable {
 
     @Override
     public void dispose() {
+
+    }
+
+    @Override
+    public void onContactBegin(Collider collider, Collider colliding) {
+
+    }
+
+    @Override
+    public void onContactEnd(Collider collider, Collider colliding) {
 
     }
 
