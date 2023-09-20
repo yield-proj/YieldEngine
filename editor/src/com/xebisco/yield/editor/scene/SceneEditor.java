@@ -21,6 +21,8 @@ public class SceneEditor extends JPanel {
 
     private final EditorScene scene;
 
+    private float scale = 1;
+
     private SceneExplorer sceneExplorer;
 
     public SceneEditor(EditorScene scene, SceneExplorer sceneExplorer) {
@@ -30,6 +32,20 @@ public class SceneEditor extends JPanel {
         add(toolBar, BorderLayout.NORTH);
         toolBar.add(new JLabel("Scene Editor", Assets.images.get("sceneIcon32.png"), JLabel.LEFT));
         toolBar.add(Box.createHorizontalGlue());
+        toolBar.add(new JButton(new AbstractAction("", Assets.images.get("zoomOutIcon.png")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                scale -= .2f;
+                repaint();
+            }
+        }));
+        toolBar.add(new JButton(new AbstractAction("", Assets.images.get("zoomInIcon.png")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                scale += .2f;
+                repaint();
+            }
+        }));
         toolBar.add(new JButton(new AbstractAction("", Assets.images.get("selectIcon.png")) {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -68,7 +84,6 @@ public class SceneEditor extends JPanel {
 
         private Point startM = new Point();
         private double x, y;
-        private float scale = 1;
         private final static float remScale = 0.9f, addScale = 1.1f;
 
         private Timer leftTimer = new Timer(16, new AbstractAction() {
@@ -102,6 +117,7 @@ public class SceneEditor extends JPanel {
         private double mx, my;
 
         private Point selectingSize, selectingStart;
+        private double selectX1, selectY1, selectX2, selectY2;
 
 
         public SceneView() {
@@ -190,9 +206,8 @@ public class SceneEditor extends JPanel {
 
                 if(selectingSize != null) {
                     g.setColor(new Color(20, 108, 231, 100));
-                    g.fillRect(selectingStart.x, -selectingStart.y, selectingSize.x, -selectingSize.y);
+                    g.fillRect((int) selectX1, (int) -selectY1, (int) (selectX2 - selectX1), (int) (-selectY2 + selectY1));
                 }
-
 
                 if (selectedObject != null) {
                     drawArrows(g, selectedObject.getX(), selectedObject.getY());
@@ -208,6 +223,20 @@ public class SceneEditor extends JPanel {
                 } else if (tool == Tool.SELECTOR) {
                     mouseMoved(e);
                     selectingSize = new Point((int) (mx - selectingStart.x), (int) (my - selectingStart.y));
+                    if(selectingSize.x < 0) {
+                        selectX1 = selectingSize.x + selectingStart.x;
+                        selectX2 = selectingStart.x;
+                    } else {
+                        selectX1 = selectingStart.x;
+                        selectX2 = selectingSize.x + selectingStart.x;
+                    }
+                    if(selectingSize.y > 0) {
+                        selectY1 = selectingSize.y + selectingStart.y;
+                        selectY2 = selectingStart.y;
+                    } else {
+                        selectY1 = selectingStart.y;
+                        selectY2 = selectingSize.y + selectingStart.y;
+                    }
                 }
                 repaint();
             }
@@ -262,7 +291,7 @@ public class SceneEditor extends JPanel {
                 if (tool == Tool.MOVE_VIEW)
                     selectingSize = null;
                 else if (tool == Tool.SELECTOR)
-                    selectingSize = new Point(0, 0);
+                    selectingSize = null;
                 repaint();
             }
 
