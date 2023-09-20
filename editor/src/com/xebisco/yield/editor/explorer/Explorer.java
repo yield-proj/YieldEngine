@@ -24,6 +24,7 @@ import com.xebisco.yield.editor.scene.*;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -125,6 +126,11 @@ public class Explorer extends JPanel implements ActionListener {
         if (newtop != null) {
             List<Integer> expanded = getExpanded();
             tree = new JTree(newtop);
+            tree.setDragEnabled(true);
+            tree.setDropMode(DropMode.ON_OR_INSERT);
+            tree.setTransferHandler(new TreeFileTransferHandler());
+            tree.getSelectionModel().setSelectionMode(
+                    TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
             expanded(expanded);
             tree.setCellRenderer(new ExplorerCellRenderer(mainDir));
         }

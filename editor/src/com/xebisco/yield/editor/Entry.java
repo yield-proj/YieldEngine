@@ -19,6 +19,7 @@ package com.xebisco.yield.editor;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.IntelliJTheme;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.xebisco.yield.editor.explorer.Explorer;
 import com.xebisco.yield.editor.prop.BooleanProp;
 import com.xebisco.yield.editor.prop.Prop;
 import com.xebisco.yield.editor.prop.Props;
@@ -28,6 +29,11 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
@@ -42,7 +48,7 @@ public class Entry {
         RUN = "run_" + Integer.toHexString(new Random().nextInt());
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         System.setProperty("sun.java2d.opengl", "True");
         Locale.setDefault(Locale.US);
         //IntelliJTheme.setup(Entry.class.getResourceAsStream("/DarkPurple.theme.json"));
@@ -74,6 +80,26 @@ public class Entry {
             }, null, "Error in editor launch: " + e.getClass().getSimpleName());
         }
         Assets.init();
+        Files.walkFileTree(new File(Utils.EDITOR_DIR, "out").toPath(),
+                new SimpleFileVisitor<>() {
+
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir,
+                                                              IOException exc)
+                            throws IOException {
+                        Files.delete(dir);
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult visitFile(Path file,
+                                                     BasicFileAttributes attrs)
+                            throws IOException {
+                        Files.delete(file);
+                        return FileVisitResult.CONTINUE;
+                    }
+                }
+        );
         CompletableFuture.runAsync(() -> {
                     if (splashDialog != null)
                         splashDialog.dispose();
