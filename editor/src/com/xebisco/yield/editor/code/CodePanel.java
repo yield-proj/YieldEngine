@@ -151,24 +151,14 @@ public class CodePanel extends JPanel {
 
     }
 
-    public static YieldInternalFrame newCodeFrame(JDesktopPane desktopPane, EngineInstall engineInstall, File file, YieldInternalFrame parent, IRecompile recompile) {
-        YieldInternalFrame frame = new YieldInternalFrame(parent);
+    public static YieldInternalFrame newCodeFrame(EngineInstall engineInstall, File file, YieldInternalFrame frame, IRecompile recompile) {
         CodePanel codePanel = new CodePanel(file, engineInstall, frame, recompile);
-        frame.setFrameIcon(Assets.images.get("scriptIcon.png"));
         frame.add(codePanel);
+        frame.setSize(600, 500);
 
         frame.setTitle(file.getName() + " - Script Editor");
         frame.setJMenuBar(codePanel.codeMenuBar());
-        frame.setClosable(true);
-        frame.setMaximizable(true);
-        frame.setIconifiable(true);
-        frame.setResizable(true);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        frame.setBounds(100, 100, 600, 500);
-
-        desktopPane.add(frame);
-        frame.setVisible(true);
         return frame;
     }
 

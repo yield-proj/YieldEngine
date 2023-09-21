@@ -1,14 +1,20 @@
 package com.xebisco.yield.editor.scene;
 
 import com.xebisco.yield.editor.Assets;
+import com.xebisco.yield.editor.Utils;
+import com.xebisco.yield.editor.YieldInternalFrame;
 import com.xebisco.yield.editor.YieldToolBar;
 
 import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
+import java.io.*;
 
-public class SceneEditor extends JPanel {
+public class SceneEditor extends YieldInternalFrame {
 
     enum Tool {
         SELECTOR, MOVE_OBJ, MOVE_VIEW
@@ -24,9 +30,12 @@ public class SceneEditor extends JPanel {
     private float scale = 1;
 
     private SceneExplorer sceneExplorer;
+    private File file;
 
-    public SceneEditor(EditorScene scene, SceneExplorer sceneExplorer) {
+    public SceneEditor(File file, JInternalFrame parent, EditorScene scene, SceneExplorer sceneExplorer) {
+        super(parent);
         this.scene = scene;
+        this.file = file;
         YieldToolBar toolBar = toolBar();
         setLayout(new BorderLayout());
         add(toolBar, BorderLayout.NORTH);
@@ -59,6 +68,49 @@ public class SceneEditor extends JPanel {
             }
         }));
         add(new SceneView());
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu(Assets.language.getProperty("file"));
+        menu.add(new JMenuItem(new AbstractAction(Assets.language.getProperty("save")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (file == null) newFile();
+                if (file != null) save(scene, file);
+            }
+        }));
+        menu.add(new JMenuItem(new AbstractAction(Assets.language.getProperty("save_as")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                newFile();
+                if (file != null) save(scene, file);
+            }
+        }));
+        menuBar.add(menu);
+        setJMenuBar(menuBar);
+        addInternalFrameListener(new InternalFrameAdapter() {
+            @Override
+            public void internalFrameDeactivated(InternalFrameEvent e) {
+                save(scene, file);
+            }
+
+            @Override
+            public void internalFrameClosing(InternalFrameEvent e) {
+                save(scene, file);
+                SceneEditor.this.dispose();
+            }
+        });
+    }
+
+    private void newFile() {
+
+    }
+
+    private static void save(EditorScene scene, File file) {
+        try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(file))) {
+            oo.writeObject(scene);
+        } catch (IOException e) {
+            Utils.error(null, e);
+        }
     }
 
     private YieldToolBar toolBar() {
@@ -201,10 +253,9 @@ public class SceneEditor extends JPanel {
                     g.drawLine((int) x - w / 2, i * gridY - sy, getWidth() / 2 + w / 2 + (int) x, i * gridY - sy);
 
 
-
                 //TODO DRAW OBJS
 
-                if(selectingSize != null) {
+                if (selectingSize != null) {
                     g.setColor(new Color(20, 108, 231, 100));
                     g.fillRect((int) selectX1, (int) -selectY1, (int) (selectX2 - selectX1), (int) (-selectY2 + selectY1));
                 }
@@ -223,14 +274,14 @@ public class SceneEditor extends JPanel {
                 } else if (tool == Tool.SELECTOR) {
                     mouseMoved(e);
                     selectingSize = new Point((int) (mx - selectingStart.x), (int) (my - selectingStart.y));
-                    if(selectingSize.x < 0) {
+                    if (selectingSize.x < 0) {
                         selectX1 = selectingSize.x + selectingStart.x;
                         selectX2 = selectingStart.x;
                     } else {
                         selectX1 = selectingStart.x;
                         selectX2 = selectingSize.x + selectingStart.x;
                     }
-                    if(selectingSize.y > 0) {
+                    if (selectingSize.y > 0) {
                         selectY1 = selectingSize.y + selectingStart.y;
                         selectY2 = selectingStart.y;
                     } else {
@@ -262,6 +313,7 @@ public class SceneEditor extends JPanel {
                 g2.fillPolygon(new int[]{x + 5, x, x - 5}, new int[]{y - 100, y - 110, y - 100}, 3);
                 g2.setTransform(at);
             }
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 selectedObject = null;
@@ -278,8 +330,7 @@ public class SceneEditor extends JPanel {
             public void mousePressed(MouseEvent e) {
                 if (tool == Tool.MOVE_VIEW) {
                     startM = new Point(e.getPoint());
-                }
-                else if (tool == Tool.SELECTOR) {
+                } else if (tool == Tool.SELECTOR) {
                     selectingStart = new Point((int) (mx), (int) (my));
                     selectingSize = new Point(0, 0);
                 }
@@ -288,10 +339,8 @@ public class SceneEditor extends JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 startM = null;
-                if (tool == Tool.MOVE_VIEW)
-                    selectingSize = null;
-                else if (tool == Tool.SELECTOR)
-                    selectingSize = null;
+                if (tool == Tool.MOVE_VIEW) selectingSize = null;
+                else if (tool == Tool.SELECTOR) selectingSize = null;
                 repaint();
             }
 

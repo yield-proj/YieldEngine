@@ -20,19 +20,15 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.IntelliJTheme;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.xebisco.yield.editor.explorer.Explorer;
-import com.xebisco.yield.editor.prop.BooleanProp;
-import com.xebisco.yield.editor.prop.Prop;
-import com.xebisco.yield.editor.prop.Props;
+import com.xebisco.yield.editor.prop.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.*;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Locale;
@@ -63,43 +59,33 @@ public class Entry {
         try {
             loadEverything();
         } catch (Error e) {
-            HashMap<String, Prop[]> props = new HashMap<>();
-            props.put("Resolve launch error", new Prop[]{new BooleanProp("Delete recent projects list", true), new BooleanProp("Delete editor data", false)});
-            new PropsWindow(props, () -> {
-                if ((boolean) Objects.requireNonNull(Props.get(props.get("Resolve launch error"), "Delete recent projects list")).getValue()) {
-                    File projectsFile = new File(Utils.EDITOR_DIR, "projects.ser");
-                    projectsFile.delete();
-                }
-
-                if ((boolean) Objects.requireNonNull(Props.get(props.get("Resolve launch error"), "Delete editor data")).getValue()) {
-                    Utils.EDITOR_DIR.delete();
-                }
-
-                JOptionPane.showMessageDialog(null, "Please restart the editor.");
-                System.exit(0);
-            }, null, "Error in editor launch: " + e.getClass().getSimpleName());
+            launchError(e);
         }
         Assets.init();
-        Files.walkFileTree(new File(Utils.EDITOR_DIR, "out").toPath(),
-                new SimpleFileVisitor<>() {
+        try {
+            Files.walkFileTree(new File(Utils.EDITOR_DIR, "out").toPath(),
+                    new SimpleFileVisitor<>() {
 
-                    @Override
-                    public FileVisitResult postVisitDirectory(Path dir,
-                                                              IOException exc)
-                            throws IOException {
-                        Files.delete(dir);
-                        return FileVisitResult.CONTINUE;
-                    }
+                        @Override
+                        public FileVisitResult postVisitDirectory(Path dir,
+                                                                  IOException exc)
+                                throws IOException {
+                            Files.delete(dir);
+                            return FileVisitResult.CONTINUE;
+                        }
 
-                    @Override
-                    public FileVisitResult visitFile(Path file,
-                                                     BasicFileAttributes attrs)
-                            throws IOException {
-                        Files.delete(file);
-                        return FileVisitResult.CONTINUE;
+                        @Override
+                        public FileVisitResult visitFile(Path file,
+                                                         BasicFileAttributes attrs)
+                                throws IOException {
+                            Files.delete(file);
+                            return FileVisitResult.CONTINUE;
+                        }
                     }
-                }
-        );
+            );
+        } catch (NoSuchFileException e) {
+            launchError(e);
+        }
         CompletableFuture.runAsync(() -> {
                     if (splashDialog != null)
                         splashDialog.dispose();
@@ -125,6 +111,31 @@ public class Entry {
                     });
                 }
         );
+    }
+
+    public static void launchError(Throwable e) {
+        if (splashDialog != null)
+            splashDialog.dispose();
+        HashMap<String, Prop[]> props = new HashMap<>();
+        props.put("launch_error", new Prop[]{new TextShowProp(e.getClass().getSimpleName(), false), new TextShowProp(e.getMessage(), false), new BooleanProp("delete_recent_projects_list", true), new BooleanProp("delete_editor_settings", true), new BooleanProp("delete_editor_data", false)});
+        new PropsWindow(props, () -> {
+            if ((boolean) Objects.requireNonNull(Props.get(props.get("launch_error"), "delete_recent_projects_list")).getValue()) {
+                File projectsFile = new File(Utils.EDITOR_DIR, "projects.ser");
+                projectsFile.delete();
+            }
+
+            if ((boolean) Objects.requireNonNull(Props.get(props.get("launch_error"), "delete_editor_settings")).getValue()) {
+                new File(Utils.EDITOR_DIR, "settings.ser").delete();
+                Assets.loadSettings();
+            }
+
+            if ((boolean) Objects.requireNonNull(Props.get(props.get("launch_error"), "delete_editor_data")).getValue()) {
+                Utils.EDITOR_DIR.delete();
+            }
+
+            JOptionPane.showMessageDialog(null, "Please restart the editor.");
+        }, null, "launch_error");
+        System.exit(1);
     }
 
     private static void loadEverything() {

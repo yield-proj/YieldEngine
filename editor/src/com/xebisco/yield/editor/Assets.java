@@ -36,6 +36,7 @@ public class Assets {
 
     public static void init() {
         Utils.EDITOR_DIR.mkdir();
+        new File(Utils.EDITOR_DIR, "out").mkdir();
         File jre = new File(Utils.EDITOR_DIR, "lang-rt.jar");
         if (!jre.exists()) {
             try {
@@ -119,7 +120,9 @@ public class Assets {
             try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(settings))) {
                 //noinspection unchecked
                 editorSettings = (Map<String, Prop[]>) oi.readObject();
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (ClassNotFoundException | InvalidClassException e) {
+                Entry.launchError(e);
+            } catch (IOException e) {
                 Utils.error(null, e);
                 throw new RuntimeException(e);
             }
@@ -132,13 +135,13 @@ public class Assets {
         }
         putSettings(editorSettings, "behavior", new Prop[]{
                 new BooleanProp("confirm_close_before_exiting_the_editor", true),
-                new TextShowProp("project"),
+                new TextShowProp("project", true),
                 new BooleanProp("reopen_project_on_startup", false),
                 new PathProp("default_directory_for_new_projects", System.getProperty("user.home"), JFileChooser.DIRECTORIES_ONLY)
         });
         putSettings(editorSettings, "editor", new Prop[]{
                 new OptionsProp("language", new Serializable[]{"en"}),
-                new TextShowProp("fix_editor"),
+                new TextShowProp("fix_editor", true),
                 new ButtonProp("delete_editor_settings", new AbstractAction(Assets.language.getProperty("delete")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -148,7 +151,7 @@ public class Assets {
                     }
                 })
         });
-        putSettings(editorSettings, "code_editor", new Prop[] {
+        putSettings(editorSettings, "code_editor", new Prop[]{
                 new FontProp("code_editor_font")
         });
         Projects.saveSettings();
@@ -163,12 +166,12 @@ public class Assets {
     }
 
     private static void putSettings(Map<String, Prop[]> map, String s, Prop[] props) {
-        if(map.containsKey(s)) {
+        if (map.containsKey(s)) {
             Prop[] mprops = map.get(s);
             List<Prop> nprops = new ArrayList<>();
-            for(Prop p : props) {
+            for (Prop p : props) {
                 Prop p1;
-                if((p1 = Props.get(mprops, p.getName())) != null) {
+                if ((p1 = Props.get(mprops, p.getName())) != null) {
                     nprops.add(p1);
                 } else nprops.add(p);
             }

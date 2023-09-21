@@ -53,6 +53,7 @@ public class PropsWindow extends JDialog {
         setLocationRelativeTo(owner);
 
         setTitle(Assets.language.getProperty(title));
+        setIconImage(Assets.images.get("yieldIcon.png").getImage());
 
         setVisible(true);
     }

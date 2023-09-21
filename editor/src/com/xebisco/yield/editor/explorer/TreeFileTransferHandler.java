@@ -11,7 +11,9 @@ import com.xebisco.yield.editor.Utils;
 import java.awt.datatransfer.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -170,7 +172,9 @@ public class TreeFileTransferHandler extends TransferHandler {
             File oldFile = (File) node.getUserObject();
             File newFile = new File((File) (((DefaultMutableTreeNode) node.getPath()[node.getPath().length - 2]).getUserObject()), oldFile.getName());
             try {
-                Files.copy(oldFile.toPath(), newFile.toPath());
+                newFile.createNewFile();
+                Files.copy(oldFile.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                node.setUserObject(newFile);
                 oldFile.delete();
             } catch (IOException e) {
                 Utils.error(null, e);

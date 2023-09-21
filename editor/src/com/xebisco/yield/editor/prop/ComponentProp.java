@@ -21,6 +21,7 @@ import com.xebisco.yield.ComponentIconType;
 import com.xebisco.yield.VisibleOnEditor;
 import com.xebisco.yield.editor.*;
 import com.xebisco.yield.editor.code.CodePanel;
+import com.xebisco.yield.editor.explorer.Explorer;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -132,7 +133,7 @@ public class ComponentProp extends Prop {
     }
 
     private void codeFrame(YieldInternalFrame frame, IRecompile recompile) {
-        CodePanel.newCodeFrame(frame.getDesktopPane(), install, comp, frame, recompile).setLocation(frame.getX() + frame.getWidth() + 100, frame.getY() + 100);
+        CodePanel.newCodeFrame(install, comp, Explorer.setupInternalFrame(new YieldInternalFrame(frame), frame.getDesktopPane()), recompile).setLocation(frame.getX() + frame.getWidth() + 100, frame.getY() + 100);
     }
 
     public JPanel panel(YieldInternalFrame frame, IRecompile recompile, Runnable up, Runnable down) {

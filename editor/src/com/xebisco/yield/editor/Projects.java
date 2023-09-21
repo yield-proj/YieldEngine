@@ -263,9 +263,9 @@ public class Projects extends JPanel {
                     (String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_name")).getValue(),
                     new File((String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_location")).getValue(), (String) Objects.requireNonNull(Props.get(sections.get("new_project"), "project_name")).getValue()));
             if (project.getName().isEmpty()) {
-                Utils.error(null, new IllegalStateException("Project requires a name."));
+                Utils.errorNoStackTrace(null, new IllegalStateException("Project requires a name."));
             } else if (!project.getProjectLocation().getParentFile().exists()) {
-                Utils.error(null, new IllegalStateException("Missing parent folder."));
+                Utils.errorNoStackTrace(null, new IllegalStateException("Missing parent folder."));
             } else if (!Assets.projects.contains(project)) {
                 Assets.projects.add(0, project);
                 EngineInstall install;

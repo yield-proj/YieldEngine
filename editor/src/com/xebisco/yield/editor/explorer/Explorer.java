@@ -175,12 +175,12 @@ public class Explorer extends JPanel implements ActionListener {
 
         if (tps == null || tps[0] == null) {
             JMenu ext = new JMenu("View Options");
-            ext.add(new TextShowPanel("sort_options").panel());
+            ext.add(new TextShowPanel("sort_options", true).panel());
             ext.add(new JMenuItem("Sort by name"));
             ext.add(new JMenuItem("Sort by modification(Newest first)"));
             ext.add(new JMenuItem("Sort by modification(Oldest first)"));
             popupMenu.add(ext);
-            ext.add(new TextShowPanel("file_filter").panel());
+            ext.add(new TextShowPanel("file_filter", true).panel());
             ext.add(new JCheckBox("Hide editor files"));
             return popupMenu;
         }
@@ -210,7 +210,7 @@ public class Explorer extends JPanel implements ActionListener {
             popupMenu.add(new JMenuItem(new AbstractAction("Open script") {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    CodePanel.newCodeFrame(workspace.desktopPane(), workspace.project().preferredInstall(), (File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), null, workspace.recompile());
+                    CodePanel.newCodeFrame(workspace.project().preferredInstall(), (File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), setupInternalFrame(new YieldInternalFrame(null), workspace.desktopPane()), workspace.recompile());
                 }
             }));
         }
@@ -231,7 +231,7 @@ public class Explorer extends JPanel implements ActionListener {
 
 
                     frame.setTitle("Object Editor");
-                    setupInternalFrame(frame);
+                    setupInternalFrame(frame, workspace.desktopPane());
                 }
             }));
         }
@@ -240,20 +240,19 @@ public class Explorer extends JPanel implements ActionListener {
             popupMenu.add(new JMenuItem(new AbstractAction("Open scene") {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    YieldInternalFrame frame = new YieldInternalFrame(null);
-                    frame.setFrameIcon(Assets.images.get("windowIcon.png"));
                     EditorScene scene;
                     try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()))) {
                         scene = (EditorScene) oi.readObject();
                     } catch (IOException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
-                    frame.add(new SceneEditor(scene, sceneExplorer));
+                    YieldInternalFrame frame = new SceneEditor((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), null, scene, sceneExplorer);
+                    frame.setFrameIcon(Assets.images.get("windowIcon.png"));
 
 
                     frame.setTitle("Scene Editor");
-                    setupInternalFrame(frame);
-                    frame.setBounds(100, 100, 600, 500);
+                    setupInternalFrame(frame, workspace.desktopPane());
+                    frame.setSize(600, 500);
                 }
             }));
         }
@@ -396,16 +395,34 @@ public class Explorer extends JPanel implements ActionListener {
         return popupMenu;
     }
 
-    private void setupInternalFrame(YieldInternalFrame frame) {
+    public static YieldInternalFrame setupInternalFrame(YieldInternalFrame frame, JDesktopPane desktopPane) {
+        frame.setFrameIcon(Assets.images.get("scriptIcon.png"));
         frame.setClosable(true);
         frame.setMaximizable(true);
         frame.setIconifiable(true);
         frame.setResizable(true);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        workspace.desktopPane().add(frame);
         frame.setBounds(100, 100, 360, 600);
+        upPos(frame, desktopPane);
+        desktopPane.add(frame);
         frame.setVisible(true);
+        return frame;
+    }
+
+    private static void upPos(JInternalFrame frame, JDesktopPane desktopPane) {
+        for(JInternalFrame f : desktopPane.getAllFrames()) {
+            boolean a = false;
+            if(f.getX() == frame.getX()) {
+                frame.setLocation(frame.getX() + 50, frame.getY());
+                a = true;
+            }
+            if(f.getY() == frame.getY()) {
+                frame.setLocation(frame.getX(), frame.getY() + 50);
+                a = true;
+            }
+            if(a) upPos(frame, desktopPane);
+        }
     }
 
     DefaultMutableTreeNode createTree(File temp) {

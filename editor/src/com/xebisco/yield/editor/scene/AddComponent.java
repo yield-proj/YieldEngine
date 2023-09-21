@@ -43,7 +43,6 @@ public class AddComponent extends JPanel implements MouseListener {
     private final List<ComponentProp> props;
     private Class<?> selectedClass;
     private File selectedFile;
-
     private final EngineInstall install;
 
     public AddComponent(File projectLocation, EngineInstall install, YieldInternalFrame frame, List<ComponentProp> props, IRecompile recompile) {
@@ -118,7 +117,7 @@ public class AddComponent extends JPanel implements MouseListener {
                 if (f != null) {
                     recompile.recompileProject();
                     props.add(new ComponentProp(f, install).set(null));
-                    CodePanel.newCodeFrame(frame.getDesktopPane(), install, f, frame, recompile).setLocation(frame.getX() + frame.getWidth() + 100, frame.getY() + 100);
+                    CodePanel.newCodeFrame(install, f, Explorer.setupInternalFrame(new YieldInternalFrame(frame), frame.getDesktopPane()), recompile).setLocation(frame.getX() + frame.getWidth() + 100, frame.getY() + 100);
                     SwingUtilities.getWindowAncestor(AddComponent.this).dispose();
                 }
             }

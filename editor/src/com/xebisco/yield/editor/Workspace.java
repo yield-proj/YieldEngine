@@ -101,37 +101,6 @@ public class Workspace extends JPanel {
         });
 
         desktopPane.setOpaque(false);
-
-        YieldToolBar toolBar = new YieldToolBar("Workspace Tool Bar");
-        toolBar.setFloatable(true);
-        toolBar.setRollover(true);
-        toolBar.setBorderPainted(false);
-        toolBar.add(new JLabel("Workspace", Assets.images.get("workspaceIcon.png"), JLabel.LEFT));
-        toolBar.add(Box.createHorizontalGlue());
-
-        toolBar.add(new JLabel(" "));
-
-        JButton run = new JButton();
-        Color savedBkg = new Color(run.getBackground().getRGB());
-
-        toolBar.add(new JLabel(" "));
-
-        run.setAction(new AbstractAction("", Assets.images.get("runIcon.png")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                run.setBackground(new Color(89, 157, 94));
-                run.repaint();
-            }
-        });
-
-        toolBar.add(run);
-        toolBar.add(new JButton(new AbstractAction("", Assets.images.get("searchIcon.png")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        }));
-        add(toolBar, BorderLayout.NORTH);
     }
 
     public JDesktopPane desktopPane() {

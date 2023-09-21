@@ -47,7 +47,7 @@ public class Editor extends JFrame implements IRecompile {
     private int gridX = 10;
     private int gridY = 10;
 
-    private final Workspace workspace;
+    private final CloseableTabbedPane workspaces;
     private final JTextArea console;
 
     public static List<File> getFilesByExtension(File dir, String extension) {
@@ -62,11 +62,47 @@ public class Editor extends JFrame implements IRecompile {
         return out;
     }
 
+    private YieldToolBar toolBar() {
+        YieldToolBar toolBar = new YieldToolBar("Workspace Tool Bar");
+        toolBar.setBackground(toolBar.getBackground().darker());
+        toolBar.setFloatable(true);
+        toolBar.setRollover(true);
+        toolBar.setBorderPainted(false);
+        toolBar.add(new JLabel("Workspaces", Assets.images.get("workspaceIcon.png"), JLabel.LEFT));
+        toolBar.add(Box.createHorizontalGlue());
+
+        toolBar.add(new JLabel(" "));
+
+        JButton run = new JButton();
+        Color savedBkg = new Color(run.getBackground().getRGB());
+
+        toolBar.add(new JLabel(" "));
+
+        run.setAction(new AbstractAction("", Assets.images.get("runIcon.png")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                run.setBackground(new Color(89, 157, 94));
+                run.repaint();
+            }
+        });
+
+        toolBar.add(run);
+        toolBar.add(new JButton(new AbstractAction("", Assets.images.get("searchIcon.png")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        }));
+        return toolBar;
+    }
+
     public Editor(Project project) {
         Assets.lastOpenedProject = project;
         this.project = project;
         Assets.openedEditors.add(this);
-        workspace = new Workspace(project, this);
+        Workspace workspace = new Workspace(project, this);
+        workspaces = new CloseableTabbedPane(false);
+        workspaces.addTab("Workspace", workspace);
 
         Entry.splashDialog(null);
 
@@ -111,33 +147,19 @@ public class Editor extends JFrame implements IRecompile {
 
         left.add(left1SplitPane);
 
-        Image tbi = Assets.images.get("toolbarBkg.png").getImage();
 
         ProjectPanel projectPanel = getProjectPanel();
 
-        Color color = projectPanel.invbg;
-
-        tbi = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(tbi.getSource(), new RGBImageFilter() {
-            @Override
-            public int filterRGB(int x, int y, int rgb) {
-                Color img = new Color(rgb, true);
-                return new Color((img.getRed() / 255f) * (color.getRed() / 255f), (img.getGreen() / 255f) * (color.getGreen() / 255f), (img.getBlue() / 255f) * (color.getBlue() / 255f)).getRGB();
-            }
-        }));
-
-        Image finalImage = tbi;
         YieldToolBar toolBar = new YieldToolBar("Project") {
 
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                int w = finalImage.getWidth(null), h = finalImage.getHeight(null);
-                if (w < getWidth())
-                    w = getWidth();
-                if (h < getHeight())
-                    h = getHeight();
-                g.drawImage(finalImage, 0, 0, w, h, this);
-                g.setColor(new Color(getBackground().getRed(), getBackground().getGreen(), getBackground().getBlue(), 150));
+                Color startColor = projectPanel.invbg.darker();
+                Color endColor = getBackground().darker();
+
+                GradientPaint gradient = new GradientPaint(0, 0, startColor, getWidth() / 2, getHeight(), endColor);
+                ((Graphics2D) g).setPaint(gradient);
                 g.fillRect(0, 0, getWidth(), getHeight());
             }
         };
@@ -155,7 +177,13 @@ public class Editor extends JFrame implements IRecompile {
 
         left.add(toolBar, BorderLayout.NORTH);
 
-        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, workspace);
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.add(toolBar(), BorderLayout.NORTH);
+        mainPanel.add(workspaces);
+
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, mainPanel);
+        mainSplitPane.setBackground(mainSplitPane.getBackground().darker());
 
         setContentPane(mainSplitPane);
 
@@ -205,6 +233,7 @@ public class Editor extends JFrame implements IRecompile {
         @Override
         protected void paintComponent(Graphics g) {
             g.setFont(UIManager.getFont("Label.font"));
+            g.translate(0, -5);
             setSize(new Dimension(50 + g.getFontMetrics().stringWidth(text) + 22, 40));
             validate();
             ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -311,7 +340,7 @@ public class Editor extends JFrame implements IRecompile {
                 menu.show(projectPanel, projectPanel.getLocation().x, projectPanel.getLocation().y + projectPanel.getHeight() - 10);
             }
         });
-        projectPanel.setPreferredSize(new Dimension(150, 40));
+        projectPanel.setPreferredSize(new Dimension(150, 30));
         return projectPanel;
     }
 
