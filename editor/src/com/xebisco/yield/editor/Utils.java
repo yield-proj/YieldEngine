@@ -44,6 +44,14 @@ public class Utils {
         return new File(System.getProperty("user.dir"), ".yield_editor");
     }
 
+    public static String sep()
+    {
+        String OS = System.getProperty("os.name").toUpperCase();
+        if (OS.contains("WIN"))
+            return ";";
+        else return ":";
+    }
+
     public static double clamp(double value, double min, double max) {
         return Math.max(min, Math.min(max, value));
     }

@@ -30,7 +30,7 @@ public class SceneEditor extends YieldInternalFrame {
     private float scale = 1;
 
     private SceneExplorer sceneExplorer;
-    private File file;
+    private final File file;
 
     public SceneEditor(File file, JInternalFrame parent, EditorScene scene, SceneExplorer sceneExplorer) {
         super(parent);
@@ -182,7 +182,7 @@ public class SceneEditor extends YieldInternalFrame {
             top.add(scaleLabel);
             top.add(xLabel);
             top.add(yLabel);
-            add(top, BorderLayout.NORTH);
+            add(top, BorderLayout.SOUTH);
         }
 
         @Override
@@ -268,9 +268,11 @@ public class SceneEditor extends YieldInternalFrame {
             @Override
             public void mouseDragged(MouseEvent e) {
                 if (tool == Tool.MOVE_VIEW) {
-                    x -= (e.getX() - startM.getX()) / scale;
-                    y += (e.getY() - startM.getY()) / scale;
-                    startM = new Point(e.getPoint());
+                    if(startM != null) {
+                        x -= (e.getX() - startM.getX()) / scale;
+                        y += (e.getY() - startM.getY()) / scale;
+                        startM = new Point(e.getPoint());
+                    }
                 } else if (tool == Tool.SELECTOR) {
                     mouseMoved(e);
                     selectingSize = new Point((int) (mx - selectingStart.x), (int) (my - selectingStart.y));

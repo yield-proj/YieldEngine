@@ -16,14 +16,18 @@
 
 package com.xebisco.yield.editor;
 
+import com.xebisco.yield.editor.code.CompilationException;
 import com.xebisco.yield.editor.prop.*;
 
 import javax.swing.*;
+import javax.tools.ToolProvider;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Assets {
     public static final Map<String, ImageIcon> images = new HashMap<>();
@@ -111,6 +115,22 @@ public class Assets {
                 }
             }
         }
+        File f = new File(Utils.EDITOR_DIR, "AppEntry.java");
+        try {
+            f.createNewFile();
+            Files.copy(Objects.requireNonNull(Assets.class.getResourceAsStream("/AppEntry.java")), f.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        f = new File(Utils.EDITOR_DIR, "editor_overhead.jar");
+        try {
+            f.createNewFile();
+            Files.copy(Objects.requireNonNull(Assets.class.getResourceAsStream("/editor_overhead.jar")), f.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public static void loadSettings() {
@@ -154,14 +174,27 @@ public class Assets {
         putSettings(editorSettings, "code_editor", new Prop[]{
                 new FontProp("code_editor_font")
         });
+        putSettings(editorSettings, "java_options", new Prop[]{
+                new PathProp("preferred_jre", "", JFileChooser.DIRECTORIES_ONLY)
+        });
         Projects.saveSettings();
 
 
         language.clear();
         try {
-            language.load(Assets.class.getResourceAsStream("/lang/" + Props.get(editorSettings.get("editor"), "language").getValue() + ".properties"));
+            language.load(Assets.class.getResourceAsStream("/lang/" + Objects.requireNonNull(Props.get(editorSettings.get("editor"), "language")).getValue() + ".properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+    }
+
+    public static String getJRE() {
+        String v = (String) Objects.requireNonNull(Props.get(Assets.editorSettings.get("java_options"), "preferred_jre")).getValue();
+        if (v.equals("")) {
+            return System.getProperty("java.home");
+        } else {
+            return v;
         }
     }
 

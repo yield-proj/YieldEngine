@@ -30,15 +30,19 @@ import javax.tools.ToolProvider;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.RGBImageFilter;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.*;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 public class Editor extends JFrame implements IRecompile {
 
@@ -62,6 +66,17 @@ public class Editor extends JFrame implements IRecompile {
         return out;
     }
 
+    public static String readInputStreamAsString(InputStream inputStream) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder stringBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            stringBuilder.append(line).append('\n');
+        }
+        reader.close();
+        return stringBuilder.toString();
+    }
+
     private YieldToolBar toolBar() {
         YieldToolBar toolBar = new YieldToolBar("Workspace Tool Bar");
         toolBar.setBackground(toolBar.getBackground().darker());
@@ -83,6 +98,97 @@ public class Editor extends JFrame implements IRecompile {
             public void actionPerformed(ActionEvent e) {
                 run.setBackground(new Color(89, 157, 94));
                 run.repaint();
+                Entry.splashDialog("Compiling and building...");
+                CompletableFuture.runAsync(() -> {
+                    recompileProject();
+                    String java = Assets.getJRE();
+                    List<String> command = new ArrayList<>();
+                    command.add(java + "/bin/jar");
+                    command.add("-cf");
+                    command.add(ComponentProp.DEST + "/app.jar");
+
+                    for(File f : Objects.requireNonNull(ComponentProp.DEST.listFiles())) {
+                        if(f.getName().endsWith(".class")) command.add(f.getName());
+                    }
+
+                    command.add("init.ser");
+                    command.add("platform.ser");
+
+                    File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + project.preferredInstall().install() + "/yield-core.jar");
+
+                    File initF, platformF;
+                    try(URLClassLoader cl = new URLClassLoader(new URL[]{core.toURI().toURL()})) {
+                        Class<?> init = cl.loadClass("com.xebisco.yield.PlatformInit");
+                        Object o = init.getConstructor(Class[].class).newInstance(new Object[] {(Class<?>[]) init.getField("INPUT_DEFAULT").get(null)});
+                        initF = new File(ComponentProp.DEST, "init.ser");
+                        initF.createNewFile();
+                        try(ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(initF))) {
+                            oo.writeObject(o);
+                        }
+
+                        platformF = new File(ComponentProp.DEST, "platform.ser");
+                        platformF.createNewFile();
+                        try(ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(platformF))) {
+                            oo.writeObject("openGLOpenAL");
+                        }
+                    } catch (ClassNotFoundException | NoSuchMethodException | NoSuchFieldException | InvocationTargetException | InstantiationException | IllegalAccessException | IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                    try {
+                        new ProcessBuilder(command).directory(ComponentProp.DEST).start().waitFor();
+                    } catch (IOException | InterruptedException ex) {
+                        Utils.error(Editor.this, ex);
+                    }
+
+                    initF.delete();
+                    platformF.delete();
+
+                    command.clear();
+
+                    command.add(java + "/bin/javac");
+                    command.add("-cp");
+
+
+                    command.add(core + Utils.sep() + "editor_overhead.jar");
+
+                    command.add("AppEntry.java");
+
+                    try {
+                       new ProcessBuilder(command).directory(Utils.EDITOR_DIR).start().waitFor();
+                    } catch (IOException | InterruptedException ex) {
+                        Utils.error(null, ex);
+                    }
+
+                    command.clear();
+                    command.add(java + "/bin/jar");
+                    command.add("-cf");
+                    command.add(Utils.EDITOR_DIR + "/entry.jar");
+
+                    command.add("AppEntry.class");
+
+                    try {
+                        new ProcessBuilder(command).directory(Utils.EDITOR_DIR).start().waitFor();
+                    } catch (IOException | InterruptedException ex) {
+                        Utils.error(null, ex);
+                    }
+
+                    File f = new File(ComponentProp.DEST, "entry.jar");
+                    try {
+                        f.createNewFile();
+                        Files.copy(new File(Utils.EDITOR_DIR, "entry.jar").toPath(), f.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                    new File(Utils.EDITOR_DIR, "AppEntry.class").delete();
+                    new File(Utils.EDITOR_DIR, "entry.jar").delete();
+
+                    Entry.splashDialog.dispose();
+                }).exceptionally(throwable -> {
+                    Utils.error(null, throwable);
+                    return null;
+                });
             }
         });
 
@@ -356,12 +462,15 @@ public class Editor extends JFrame implements IRecompile {
         File core = new File(Utils.EDITOR_DIR.getPath() + "/installs/" + project.preferredInstall().install() + "/yield-core.jar");
         List<File> scripts = getFilesByExtension(new File(project.getProjectLocation(), "Scripts"), "java");
 
+        String savedJavaHome = System.getProperty("java.home");
+        System.setProperty("java.home", Assets.getJRE());
         for (File file : scripts) {
             builder.set(new StringBuilder());
             ToolProvider.getSystemJavaCompiler().run(null, null, error, "-cp", core.getPath(), "-d", ComponentProp.DEST.getPath(), file.getPath());
             if (!builder.get().isEmpty())
                 Utils.errorNoStackTrace(Entry.splashDialog, new CompilationException(builder.toString()));
         }
+        System.setProperty("java.home", savedJavaHome);
         try {
             error.close();
         } catch (IOException ex) {

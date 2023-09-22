@@ -16,15 +16,16 @@
 
 package com.xebisco.yield;
 
+import java.io.Serializable;
+
 /**
  * It's a class that holds the initial configuration of the specific platform.
  */
-public class PlatformInit {
+public class PlatformInit implements Serializable {
     private Vector2D viewportSize = new Vector2D(1280, 720), windowSize = new Vector2D(1280, 720);
     private String title = "Yield Window";
     private int startPhysicsPpm = 16;
     private boolean fullscreen, undecorated, stretchViewport, invertZIndex, verticalSync, physicsOnMainContext;
-    private Texture windowIcon;
     private String windowIconPath = "com/xebisco/yield/yieldIcon.png";
 
     private ContextTime physicsContextTime = new ContextTime(40);
@@ -141,15 +142,6 @@ public class PlatformInit {
 
     public PlatformInit setPhysicsOnMainContext(boolean physicsOnMainContext) {
         this.physicsOnMainContext = physicsOnMainContext;
-        return this;
-    }
-
-    public Texture windowIcon() {
-        return windowIcon;
-    }
-
-    public PlatformInit setWindowIcon(Texture windowIcon) {
-        this.windowIcon = windowIcon;
         return this;
     }
 

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="editor_overhead:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/editor_overhead_jar</output-path>
+    <root id="archive" name="editor_overhead.jar">
+      <element id="module-output" name="editor_overhead" />
+    </root>
+  </artifact>
+</component>

@@ -16,10 +16,12 @@
 
 package com.xebisco.yield;
 
+import java.io.Serializable;
+
 /**
  * It's a container for time-related variables
  */
-public class ContextTime {
+public class ContextTime implements Serializable {
     private double timeScale = 1, deltaTime;
     private long targetSleepTime = 16_666;
 

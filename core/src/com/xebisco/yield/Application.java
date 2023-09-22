@@ -156,9 +156,7 @@ public class Application implements Behavior {
         applicationPlatform.graphicsManager().init(platformInit);
         renderingThread.start();
         defaultFont = new Font("com/xebisco/yield/OpenSans-Regular.ttf", 48, applicationPlatform.fontManager());
-        if (platformInit.windowIcon() == null)
-            platformInit.setWindowIcon(new Texture(platformInit.windowIconPath(), applicationPlatform.textureManager()));
-        applicationPlatform.graphicsManager().updateWindowIcon(platformInit.windowIcon());
+        applicationPlatform.graphicsManager().updateWindowIcon(new Texture(platformInit.windowIconPath(), applicationPlatform.textureManager()));
         for (int i = 0; i < 4; i++) {
             String a = String.valueOf((i + 1));
             if (i == 0)
