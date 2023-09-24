@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.io.*;
+import java.util.ArrayList;
 
 public class SceneEditor extends YieldInternalFrame {
 
@@ -220,7 +221,7 @@ public class SceneEditor extends YieldInternalFrame {
 
             @Override
             protected void paintComponent(Graphics g) {
-                g.setColor(scene.getBackgroundColor());
+                g.setColor(scene.backgroundColor());
                 g.fillRect(0, 0, getWidth(), getHeight());
 
                 Graphics2D g2 = (Graphics2D) g;
@@ -238,7 +239,11 @@ public class SceneEditor extends YieldInternalFrame {
                 g2.translate(-x, y);
                 g2.setStroke(new BasicStroke(1 / scale));
 
-                g.setColor(new Color(255 - scene.getBackgroundColor().getRed(), 255 - scene.getBackgroundColor().getGreen(), 255 - scene.getBackgroundColor().getBlue(), 100));
+
+                //TODO DRAW OBJS
+
+
+                g.setColor(new Color(255 - scene.backgroundColor().getRed(), 255 - scene.backgroundColor().getGreen(), 255 - scene.backgroundColor().getBlue(), 80));
 
                 int w = (int) (getWidth() / scale), h = (int) (getHeight() / scale);
 
@@ -253,7 +258,6 @@ public class SceneEditor extends YieldInternalFrame {
                     g.drawLine((int) x - w / 2, i * gridY - sy, getWidth() / 2 + w / 2 + (int) x, i * gridY - sy);
 
 
-                //TODO DRAW OBJS
 
                 if (selectingSize != null) {
                     g.setColor(new Color(20, 108, 231, 100));
@@ -261,8 +265,9 @@ public class SceneEditor extends YieldInternalFrame {
                 }
 
                 if (selectedObject != null) {
-                    drawArrows(g, selectedObject.getX(), selectedObject.getY());
+                    drawArrows(g, selectedObject.x(), selectedObject.y());
                 }
+
             }
 
             @Override
@@ -319,8 +324,12 @@ public class SceneEditor extends YieldInternalFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 selectedObject = null;
-                for (SceneObject o : scene.getSceneObjects()) {
-                    if (o.getX() - o.getWidth() / 2. >= mx && o.getX() + o.getWidth() / 2. <= mx && o.getY() - o.getHeight() / 2. >= my && o.getY() + o.getHeight() / 2. <= my) {
+                final var sceneObjects = new ArrayList<SceneObject>();
+                for(File f : scene.sceneObjects()) {
+                    SceneExplorer.loadSceneObject(sceneObjects, f, sceneExplorer.workspace());
+                }
+                for (SceneObject o : sceneObjects) {
+                    if (o.x() - o.width() / 2. >= mx && o.x() + o.width() / 2. <= mx && o.y() - o.height() / 2. >= my && o.y() + o.height() / 2. <= my) {
                         selectedObject = o;
                         break;
                     }

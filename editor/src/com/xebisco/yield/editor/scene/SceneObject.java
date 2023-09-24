@@ -16,47 +16,92 @@
 
 package com.xebisco.yield.editor.scene;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SceneObject implements Serializable {
-    private int x, y, width, height;
-    private final List<Renderable> renderableList = new ArrayList<>();
+    private int x, y, width, height, id = nextID();
 
-    public int getX() {
+    private static int sID = 0;
+
+    private static int nextID() {
+        return sID++;
+    }
+    private List<File> sceneObjects = new ArrayList<>();
+    private final EntityPrefab entityPrefab;
+    private SceneObject parent;
+
+    public SceneObject(EntityPrefab entityPrefab, SceneObject parent) {
+        this.parent = parent;
+        this.entityPrefab = entityPrefab;
+    }
+
+    public int x() {
         return x;
     }
 
-    public void setX(int x) {
+    public SceneObject setX(int x) {
         this.x = x;
+        return this;
     }
 
-    public int getY() {
+    public int y() {
         return y;
     }
 
-    public void setY(int y) {
+    public SceneObject setY(int y) {
         this.y = y;
+        return this;
     }
 
-    public int getWidth() {
+    public int width() {
         return width;
     }
 
-    public void setWidth(int width) {
+    public SceneObject setWidth(int width) {
         this.width = width;
+        return this;
     }
 
-    public int getHeight() {
+    public int height() {
         return height;
     }
 
-    public void setHeight(int height) {
+    public SceneObject setHeight(int height) {
         this.height = height;
+        return this;
     }
 
-    public List<Renderable> getRenderableList() {
-        return renderableList;
+    public List<File> sceneObjects() {
+        return sceneObjects;
+    }
+
+    public SceneObject setSceneObjects(List<File> sceneObjects) {
+        this.sceneObjects = sceneObjects;
+        return this;
+    }
+
+    public EntityPrefab entityPrefab() {
+        return entityPrefab;
+    }
+
+    public SceneObject parent() {
+        return parent;
+    }
+
+    public SceneObject setParent(SceneObject parent) {
+        this.parent = parent;
+        return this;
+    }
+
+    public int id() {
+        return id;
+    }
+
+    public SceneObject setId(int id) {
+        this.id = id;
+        return this;
     }
 }

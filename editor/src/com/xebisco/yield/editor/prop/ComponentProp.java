@@ -22,10 +22,13 @@ import com.xebisco.yield.VisibleOnEditor;
 import com.xebisco.yield.editor.*;
 import com.xebisco.yield.editor.code.CodePanel;
 import com.xebisco.yield.editor.explorer.Explorer;
+import com.xebisco.yield.editor.scene.DeleteAction;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -51,6 +54,7 @@ public class ComponentProp extends Prop {
     private final EngineInstall install;
     private final boolean showAddButton;
     private boolean addComp = true;
+    private DeleteAction deleteAction;
 
     public ComponentProp(File comp, EngineInstall install) {
         super(comp.getName().replace(".java", ""), null);
@@ -77,7 +81,8 @@ public class ComponentProp extends Prop {
         this.componentClass = componentClass;
     }
 
-    public ComponentProp init() {
+    public ComponentProp init(DeleteAction deleteAction) {
+        this.deleteAction = deleteAction;
         if (comp != null) updateComponentClass();
         Map<String, Serializable> values = new HashMap<>();
         List<Pair<String, Class<?>>> fields1 = new ArrayList<>();
@@ -212,6 +217,18 @@ public class ComponentProp extends Prop {
                             down.run();
                         }
                     });
+
+                    popupMenu.add(item);
+
+                    item = new JMenuItem(new AbstractAction(Assets.language.getProperty("delete_component")) {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            deleteAction.deleteComponent();
+                            for(InternalFrameListener ifl : frame.getInternalFrameListeners())
+                                ifl.internalFrameActivated(new InternalFrameEvent(frame, InternalFrameEvent.INTERNAL_FRAME_ACTIVATED));
+                        }
+                    });
+
                     popupMenu.add(item);
 
                     popupMenu.show(buttonPanel, buttonPanel.getMousePosition().x, buttonPanel.getMousePosition().y);

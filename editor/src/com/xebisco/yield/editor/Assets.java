@@ -38,6 +38,8 @@ public class Assets {
     public static Project lastOpenedProject;
     public static Properties language = new Properties();
 
+    private static int sID;
+
     public static void init() {
         Utils.EDITOR_DIR.mkdir();
         new File(Utils.EDITOR_DIR, "out").mkdir();
@@ -131,6 +133,32 @@ public class Assets {
             throw new RuntimeException(e);
         }
 
+        File sIDFile = new File(Utils.EDITOR_DIR, "sID.ser");
+        if (sIDFile.exists()) {
+            try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(sIDFile))) {
+                sID = (int) oi.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            try {
+                sIDFile.createNewFile();
+                try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(sIDFile))) {
+                    oo.writeObject(0);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static void close() {
+        File sIDFile = new File(Utils.EDITOR_DIR, "sID.ser");
+        try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(sIDFile))) {
+            oo.writeObject(0);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void loadSettings() {

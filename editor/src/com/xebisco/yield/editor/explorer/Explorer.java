@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.FileVisitResult;
@@ -43,9 +44,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Explorer extends JPanel implements ActionListener {
-    private JTextArea jta;
     private JTree tree;
-    private JButton refresh;
     private JTable jtb;
     private JScrollPane jsp;
 
@@ -66,9 +65,7 @@ public class Explorer extends JPanel implements ActionListener {
         this.workspace = workspace;
 
         setLayout(new BorderLayout());
-
-        jta = new JTextArea(5, 30);
-        refresh = new JButton(Assets.images.get("reloadIcon.png"));
+        JButton refresh = new JButton(Assets.images.get("reloadIcon.png"));
         JButton newFolder = new JButton(UIManager.getIcon("Tree.closedIcon"));
 
         JToolBar p = new JToolBar();
@@ -129,35 +126,31 @@ public class Explorer extends JPanel implements ActionListener {
             tree.setDragEnabled(true);
             tree.setDropMode(DropMode.ON_OR_INSERT);
             tree.setTransferHandler(new TreeFileTransferHandler());
-            tree.getSelectionModel().setSelectionMode(
-                    TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
+            tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
             expanded(expanded);
             tree.setCellRenderer(new ExplorerCellRenderer(mainDir));
         }
-        if (jsp != null)
-            remove(jsp);
+        if (jsp != null) remove(jsp);
         jsp = new JScrollPane(tree);
         add(jsp, BorderLayout.CENTER);
-        tree.addMouseListener(
-                new MouseAdapter() {
-                    public void mouseClicked(MouseEvent me) {
-                        if (me.getButton() == MouseEvent.BUTTON3) {
-                            tree.setSelectionPath(tree.getPathForLocation(me.getX(), me.getY()));
-                            JPopupMenu popupMenu = new JPopupMenu();
+        tree.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent me) {
+                if (me.getButton() == MouseEvent.BUTTON3) {
+                    tree.setSelectionPath(tree.getPathForLocation(me.getX(), me.getY()));
+                    JPopupMenu popupMenu = new JPopupMenu();
 
-                            List<JMenuItem> items = popupT();
-                            for (JMenuItem item : items)
-                                popupMenu.add(item);
+                    List<JMenuItem> items = popupT();
+                    for (JMenuItem item : items)
+                        popupMenu.add(item);
 
-                            popupMenu.show(Explorer.this, me.getX() + 2, me.getY() + 42);
-                        } else
-                            doMouseClicked(me);
-                    }
-                });
+                    popupMenu.show(Explorer.this, me.getX() + 2, me.getY() + 42);
+                } else doMouseClicked(me);
+            }
+        });
     }
 
     private boolean onFolder(String f, File file) {
-        if(file == null) return false;
+        if (file == null) return false;
         File f1 = new File(workspace.project().getProjectLocation(), f);
         File p = file;
         do {
@@ -223,7 +216,7 @@ public class Explorer extends JPanel implements ActionListener {
                     frame.setFrameIcon(Assets.images.get("windowIcon.png"));
                     EntityPrefab prefab;
                     try (ObjectInputStream oi = new CustomObjectInputStream(new FileInputStream((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), new URLClassLoader(new URL[]{new File(Utils.EDITOR_DIR.getPath() + "/installs/" + workspace.project().preferredInstall().install(), "yield-core.jar").toURI().toURL(), ComponentProp.DEST.toURI().toURL()}))) {
-                        prefab = (EntityPrefab) oi.readObject();
+                        prefab = ((SceneObject) oi.readObject()).entityPrefab();
                     } catch (IOException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -241,18 +234,22 @@ public class Explorer extends JPanel implements ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     EditorScene scene;
-                    try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()))) {
+                    try (ObjectInputStream oi = new CustomObjectInputStream(new FileInputStream((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject()), new URLClassLoader(new URL[]{new File(Utils.EDITOR_DIR.getPath() + "/installs/" + workspace.project().preferredInstall().install(), "yield-core.jar").toURI().toURL(), ComponentProp.DEST.toURI().toURL()}))) {
                         scene = (EditorScene) oi.readObject();
                     } catch (IOException | ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
-                    YieldInternalFrame frame = new SceneEditor((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), null, scene, sceneExplorer);
+
+                    sceneExplorer.setScene((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), scene);
+                    SwingUtilities.getRootPane(Explorer.this).repaint();
+
+                    /*YieldInternalFrame frame = new SceneEditor((File) ((DefaultMutableTreeNode) finalTps[0].getLastPathComponent()).getUserObject(), null, scene, sceneExplorer);
                     frame.setFrameIcon(Assets.images.get("windowIcon.png"));
 
 
                     frame.setTitle("Scene Editor");
                     setupInternalFrame(frame, workspace.desktopPane());
-                    frame.setSize(600, 500);
+                    frame.setSize(600, 500);*/
                 }
             }));
         }
@@ -308,7 +305,7 @@ public class Explorer extends JPanel implements ActionListener {
                                 EntityPrefab prefab = new EntityPrefab(workspace.project().preferredInstall());
                                 prefab.setName((String) Objects.requireNonNull(Props.get(props.get("new_prefab"), "name")).getValue());
                                 try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(f))) {
-                                    oo.writeObject(prefab);
+                                    oo.writeObject(new SceneObject(prefab, null));
                                 } catch (IOException ex) {
                                     Utils.error(null, ex);
                                 }
@@ -355,43 +352,36 @@ public class Explorer extends JPanel implements ActionListener {
                 }));
         }
 
-        if (!includeRoot)
-            popupMenu.add(new JMenuItem(new AbstractAction("Delete") {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (JOptionPane.showConfirmDialog(null, "Delete " + finalTps.length + " file?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                        for (TreePath tp : finalTps) {
-                            Path path = ((File) ((DefaultMutableTreeNode) tp.getLastPathComponent()).getUserObject()).toPath();
+        if (!includeRoot) popupMenu.add(new JMenuItem(new AbstractAction("Delete") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (JOptionPane.showConfirmDialog(null, "Delete " + finalTps.length + " file?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    for (TreePath tp : finalTps) {
+                        Path path = ((File) ((DefaultMutableTreeNode) tp.getLastPathComponent()).getUserObject()).toPath();
 
-                            try {
-                                Files.walkFileTree(path,
-                                        new SimpleFileVisitor<>() {
+                        try {
+                            Files.walkFileTree(path, new SimpleFileVisitor<>() {
 
-                                            @Override
-                                            public FileVisitResult postVisitDirectory(Path dir,
-                                                                                      IOException exc)
-                                                    throws IOException {
-                                                Files.delete(dir);
-                                                return FileVisitResult.CONTINUE;
-                                            }
+                                @Override
+                                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                                    Files.delete(dir);
+                                    return FileVisitResult.CONTINUE;
+                                }
 
-                                            @Override
-                                            public FileVisitResult visitFile(Path file,
-                                                                             BasicFileAttributes attrs)
-                                                    throws IOException {
-                                                Files.delete(file);
-                                                return FileVisitResult.CONTINUE;
-                                            }
-                                        }
-                                );
-                            } catch (IOException ex) {
-                                throw new RuntimeException(ex);
-                            }
+                                @Override
+                                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                                    Files.delete(file);
+                                    return FileVisitResult.CONTINUE;
+                                }
+                            });
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
                         }
-                        Explorer.this.actionPerformed(null);
                     }
+                    Explorer.this.actionPerformed(null);
                 }
-            }));
+            }
+        }));
         return popupMenu;
     }
 
@@ -411,24 +401,23 @@ public class Explorer extends JPanel implements ActionListener {
     }
 
     private static void upPos(JInternalFrame frame, JDesktopPane desktopPane) {
-        for(JInternalFrame f : desktopPane.getAllFrames()) {
+        for (JInternalFrame f : desktopPane.getAllFrames()) {
             boolean a = false;
-            if(f.getX() == frame.getX()) {
+            if (f.getX() == frame.getX()) {
                 frame.setLocation(frame.getX() + 50, frame.getY());
                 a = true;
             }
-            if(f.getY() == frame.getY()) {
+            if (f.getY() == frame.getY()) {
                 frame.setLocation(frame.getX(), frame.getY() + 50);
                 a = true;
             }
-            if(a) upPos(frame, desktopPane);
+            if (a) upPos(frame, desktopPane);
         }
     }
 
     DefaultMutableTreeNode createTree(File temp) {
         DefaultMutableTreeNode top = new SimpleTreeNode(temp, Comparator.comparing(o -> ((File) ((DefaultMutableTreeNode) o).getUserObject())));
-        if (!(temp.exists() && temp.isDirectory()))
-            return top;
+        if (!(temp.exists() && temp.isDirectory())) return top;
 
         fillTree(top, temp);
 
@@ -436,7 +425,7 @@ public class Explorer extends JPanel implements ActionListener {
     }
 
     private List<Integer> getExpanded() {
-        if(tree == null) return new ArrayList<>();
+        if (tree == null) return new ArrayList<>();
         List<Integer> expanded = new ArrayList<>();
         for (int i = 0; i < tree.getRowCount() - 1; i++) {
             TreePath currPath = tree.getPathForRow(i);
@@ -455,8 +444,7 @@ public class Explorer extends JPanel implements ActionListener {
     }
 
     void fillTree(DefaultMutableTreeNode root, File file) {
-        if (!(file.exists() && file.isDirectory()))
-            return;
+        if (!(file.exists() && file.isDirectory())) return;
         File[] filelist = file.listFiles();
 
         assert filelist != null;
@@ -469,16 +457,14 @@ public class Explorer extends JPanel implements ActionListener {
     }
 
     public static File fPath(TreePath tp, File mainDir) {
-        if (tp == null)
-            return null;
+        if (tp == null) return null;
         String s = tp.toString().substring(1, tp.toString().length() - 1);
         StringBuilder m = new StringBuilder();
 
         String[] spl = s.split(", ");
 
         for (int i = 1; i < spl.length; i++) {
-            if (i > 1)
-                m.append("\\");
+            if (i > 1) m.append("\\");
             m.append(spl[i]);
         }
 
@@ -496,8 +482,7 @@ public class Explorer extends JPanel implements ActionListener {
 
         if (!((File) ((DefaultMutableTreeNode) tp.getLastPathComponent()).getUserObject()).isDirectory() && me.getClickCount() == 2) {
             popupT().get(0).getAction().actionPerformed(null);
-        } else
-            showFiles(fPath(tp, mainDir));
+        } else showFiles(fPath(tp, mainDir));
     }
 
     void showFiles(File file) {
@@ -505,6 +490,4 @@ public class Explorer extends JPanel implements ActionListener {
             currDirectory = file;
         }
     }
-////////////////////////////////  
-///////////////////////////////  
 }

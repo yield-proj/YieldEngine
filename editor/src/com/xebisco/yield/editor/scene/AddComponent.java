@@ -16,6 +16,7 @@
 
 package com.xebisco.yield.editor.scene;
 
+import com.xebisco.yield.HideComponent;
 import com.xebisco.yield.editor.*;
 import com.xebisco.yield.editor.code.CodePanel;
 import com.xebisco.yield.editor.explorer.Explorer;
@@ -82,13 +83,14 @@ public class AddComponent extends JPanel implements MouseListener {
                             String className = f.getName().substring(0, f.getName().length() - 6);
                             Class<?> c = cl.loadClass(className);
                             Class<?> comp = c;
-                            while ((c = c.getSuperclass()) != null) {
-                                if (c.getName().equals("com.xebisco.yield.ComponentBehavior")) {
-                                    customClasses.add(comp);
-                                    fileMap.put(comp, f1);
-                                    break;
+                            if (!c.isAnnotationPresent(HideComponent.class))
+                                while ((c = c.getSuperclass()) != null) {
+                                    if (c.getName().equals("com.xebisco.yield.ComponentBehavior")) {
+                                        customClasses.add(comp);
+                                        fileMap.put(comp, f1);
+                                        break;
+                                    }
                                 }
-                            }
                         }
                     }
                 } catch (IOException | ClassNotFoundException ex) {

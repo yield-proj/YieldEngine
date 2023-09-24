@@ -19,6 +19,7 @@ package com.xebisco.yield.editor.scene;
 import com.xebisco.yield.editor.scene.SceneObject;
 
 import java.awt.*;
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,29 +27,32 @@ import java.util.List;
 public class EditorScene implements Serializable {
     private String name;
     private Color backgroundColor = Color.BLACK;
-    private java.util.List<SceneObject> sceneObjects = new ArrayList<>();
+    private java.util.List<File> sceneObjects = new ArrayList<>();
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public void setName(String name) {
+    public EditorScene setName(String name) {
         this.name = name;
+        return this;
     }
 
-    public Color getBackgroundColor() {
+    public Color backgroundColor() {
         return backgroundColor;
     }
 
-    public void setBackgroundColor(Color backgroundColor) {
+    public EditorScene setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
+        return this;
     }
 
-    public List<SceneObject> getSceneObjects() {
+    public List<File> sceneObjects() {
         return sceneObjects;
     }
 
-    public void setSceneObjects(List<SceneObject> sceneObjects) {
+    public EditorScene setSceneObjects(List<File> sceneObjects) {
         this.sceneObjects = sceneObjects;
+        return this;
     }
 }

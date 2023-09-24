@@ -20,6 +20,7 @@ import com.xebisco.yield.editor.code.CompilationException;
 import com.xebisco.yield.editor.prop.*;
 import com.xebisco.yield.editor.scene.EditorScene;
 import com.xebisco.yield.editor.scene.EntityPrefab;
+import com.xebisco.yield.editor.scene.SceneObject;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -277,6 +278,7 @@ public class Projects extends JPanel {
                 prefabsDir.mkdir();
                 File scenesDir = new File(project.getProjectLocation(), "Scenes");
                 scenesDir.mkdir();
+                new File(project.getProjectLocation(), ".generated").mkdir();
                 if ((boolean) Objects.requireNonNull(Props.get(sections.get("new_project"), "create_sample_files")).getValue()) {
                     File hw = getHelloWorldScript(scriptsDir);
 
@@ -297,14 +299,14 @@ public class Projects extends JPanel {
                     values.put("contents", "Hello, World!");
 
                     try (URLClassLoader cl = new URLClassLoader(new URL[]{new File(Utils.EDITOR_DIR + "/installs/" + install.install(), "yield-core.jar").toURI().toURL()})) {
-                        prefab.components().add(new ComponentProp(cl.loadClass("com.xebisco.yield.Text"), true).init().set(values));
-                        prefab.components().add(new ComponentProp(hw, install).init());
+                        prefab.components().add(new ComponentProp(cl.loadClass("com.xebisco.yield.Text"), true).init(null).set(values));
+                        prefab.components().add(new ComponentProp(hw, install).init(null));
                     } catch (IOException | ClassNotFoundException e) {
                         throw new RuntimeException(e);
                     }
 
                     try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(ohw))) {
-                        oo.writeObject(prefab);
+                        oo.writeObject(new SceneObject(prefab, null));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

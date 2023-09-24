@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-@ComponentIcon(iconType = ComponentIconType.GRAPHICAL)
+@HideComponent
 public abstract class AbstractRenderable extends ComponentBehavior {
     private final List<String> vertexShaders = new ArrayList<>();
 

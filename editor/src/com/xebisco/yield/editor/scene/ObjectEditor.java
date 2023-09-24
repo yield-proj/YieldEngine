@@ -26,6 +26,8 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -107,8 +109,14 @@ public class ObjectEditor extends JPanel {
 
             @Override
             public void internalFrameClosing(InternalFrameEvent e) {
-                save(props, file);
                 frame.dispose();
+            }
+        });
+
+        frame.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                save(props, file);
             }
         });
     }
@@ -132,11 +140,12 @@ public class ObjectEditor extends JPanel {
 
     private void save(List<ComponentProp> props, File file) {
         prefab.setName((String) nameProp.getValue());
+        System.out.println(prefab.name());
         prefab.components().clear();
         prefab.components().addAll(props);
 
         try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(file))) {
-            oo.writeObject(prefab);
+            oo.writeObject(new SceneObject(prefab, null));
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -144,7 +153,9 @@ public class ObjectEditor extends JPanel {
 
     private void update(List<ComponentProp> props) {
         int sc = scrollPane.getVerticalScrollBar().getValue();
-        props.forEach(ComponentProp::init);
+        props.forEach(c -> c.init(() -> {
+            props.remove(c);
+        }));
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.add(PropsPanel.compPropsPanel(props, frame, workspace.recompile(), () -> update(props)), BorderLayout.NORTH);

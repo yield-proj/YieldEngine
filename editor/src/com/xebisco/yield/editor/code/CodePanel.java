@@ -54,6 +54,8 @@ public class CodePanel extends JPanel {
 
     private final IRecompile recompile;
 
+    private final RTextScrollPane scrollPane;
+
     public CodePanel(File file, EngineInstall engineInstall, YieldInternalFrame frame, IRecompile recompile) {
         this.file = file;
         this.engineInstall = engineInstall;
@@ -129,7 +131,7 @@ public class CodePanel extends JPanel {
             }
         });
 
-        RTextScrollPane scrollPane = new RTextScrollPane(textArea, true);
+        scrollPane = new RTextScrollPane(textArea, true);
         scrollPane.setBorder(null);
         scrollPane.setIconRowHeaderEnabled(true);
         scrollPane.getGutter().setBookmarkingEnabled(true);
@@ -157,12 +159,12 @@ public class CodePanel extends JPanel {
         frame.setSize(600, 500);
 
         frame.setTitle(file.getName() + " - Script Editor");
-        frame.setJMenuBar(codePanel.codeMenuBar());
+        frame.setJMenuBar(codePanel.codeMenuBar(codePanel));
 
         return frame;
     }
 
-    private JMenuBar codeMenuBar() {
+    private JMenuBar codeMenuBar(CodePanel codePanel) {
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu(Assets.language.getProperty("file"));
         JMenuItem item;
@@ -224,6 +226,34 @@ public class CodePanel extends JPanel {
                 CodePanel.this.repaint();
             }
         }));
+
+        menu.add(new JMenuItem(new AbstractAction(Assets.language.getProperty("shrink")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codePanel.removeAll();
+                frame.setJMenuBar(null);
+                frame.setMaximizable(false);
+                frame.setIconifiable(false);
+                Dimension size = new Dimension(frame.getSize());
+                frame.setResizable(false);
+                frame.setSize(100, 100);
+                codePanel.add(new JButton(new AbstractAction(file.getName()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        codePanel.removeAll();
+                        frame.setMaximizable(true);
+                        frame.setIconifiable(true);
+                        frame.setResizable(true);
+                        frame.setSize(size);
+                        frame.setJMenuBar(menuBar);
+                        codePanel.add(scrollPane);
+                        repaint();
+                    }
+                }));
+                repaint();
+            }
+        }));
+
         menuBar.add(menu);
         return menuBar;
     }

@@ -48,14 +48,15 @@ public class Entry {
         System.setProperty("sun.java2d.opengl", "True");
         Locale.setDefault(Locale.US);
         //IntelliJTheme.setup(Entry.class.getResourceAsStream("/DarkPurple.theme.json"));
-        FlatMacDarkLaf.setup();
         splashDialog(null);
+        FlatMacDarkLaf.setup();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (Assets.projects != null)
                 Projects.saveProjects();
             if (Assets.engineInstalls != null)
                 Projects.saveInstalls();
-        }, "Editor Save"));
+            Assets.close();
+        }, "Editor Close"));
         try {
             loadEverything();
         } catch (Error e) {
@@ -211,12 +212,12 @@ public class Entry {
         splashDialog.setAlwaysOnTop(true);
         splashDialog.setTitle("Yield 5 Editor");
         splashDialog.setUndecorated(true);
-        JProgressBar progressBar = new JProgressBar();
-        progressBar.setIndeterminate(true);
-        splashDialog.add(progressBar, BorderLayout.SOUTH);
         splashDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         if (title != null) {
             splashDialog.add(new JLabel(title), BorderLayout.CENTER);
+            JProgressBar progressBar = new JProgressBar();
+            progressBar.setIndeterminate(true);
+            splashDialog.add(progressBar, BorderLayout.SOUTH);
         } else {
             splashDialog.add(new JLabel(new ImageIcon(Objects.requireNonNull(Entry.class.getResource("/splash.png")))), BorderLayout.CENTER);
         }

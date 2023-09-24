@@ -241,10 +241,13 @@ public class Editor extends JFrame implements IRecompile {
         });
         setIconImage(Assets.images.get("yieldIcon.png").getImage());
 
-        SceneExplorer sceneExplorer = new SceneExplorer();
+        SceneExplorer sceneExplorer = new SceneExplorer(workspace);
 
         JSplitPane left0SplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, new YieldTabbedPane(false, this).addNewTab("Explorer", new Explorer(project.getProjectLocation(), "Project Root", sceneExplorer, workspace)), new YieldTabbedPane(false, this).addNewTab("Scene Explorer", sceneExplorer));
         JSplitPane left1SplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, left0SplitPane, new YieldTabbedPane(false, this).addNewTab("Console", console = new JTextArea()));
+
+        sceneExplorer.setScene(null, null);
+
         console.setEditable(false);
         left0SplitPane.setResizeWeight(1);
         left1SplitPane.setResizeWeight(.5);
@@ -500,7 +503,7 @@ public class Editor extends JFrame implements IRecompile {
                 new PropsWindow(sections, () -> {
                     EditorScene scene = new EditorScene();
                     scene.setName((String) Objects.requireNonNull(Props.get(sections.get("New Scene"), "Name")).getValue());
-                    project.getScenes().put(scene.getName(), scene);
+                    project.getScenes().put(scene.name(), scene);
                     setOpenedScene(scene);
                     repaint();
                 }, Editor.this, null);
