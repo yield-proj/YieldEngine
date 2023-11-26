@@ -10,8 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="core" />
     <orderEntry type="library" name="core-libs" level="project" />
-    <orderEntry type="module" module-name="swingimpl" />
-    <orderEntry type="module" module-name="openglimpl" />
     <orderEntry type="module" module-name="javaxsoundimpl" />
     <orderEntry type="module" module-name="openalimpl" />
   </component>

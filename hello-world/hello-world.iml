@@ -9,6 +9,5 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="core" />
     <orderEntry type="module" module-name="openalimpl" />
-    <orderEntry type="module" module-name="openglimpl" />
   </component>
 </module>

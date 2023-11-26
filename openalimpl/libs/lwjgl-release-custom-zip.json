@@ -22,8 +22,8 @@
   "language": "groovy",
   "contents": [
     "lwjgl",
-    "lwjgl-openal",
-    "lwjgl-stb"
+    "lwjgl-stb",
+    "lwjgl-openal"
   ],
   "version": "3.3.3",
   "versionLatest": "3.3.3"

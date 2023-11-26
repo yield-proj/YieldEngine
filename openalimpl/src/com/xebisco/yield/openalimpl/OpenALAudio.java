@@ -18,7 +18,6 @@ package com.xebisco.yield.openalimpl;
 
 import com.xebisco.yield.AudioManager;
 import com.xebisco.yield.AudioPlayer;
-import com.xebisco.yield.utils.lwjgl.IOUtil;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.*;
 import org.lwjgl.stb.STBVorbis;
@@ -30,6 +29,8 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 
 public class OpenALAudio implements AudioManager {
 
@@ -71,11 +72,39 @@ public class OpenALAudio implements AudioManager {
         return out;
     }
 
+    public static ByteBuffer inputStreamToByteBuffer(InputStream is, int bufferSize) throws IOException {
+        ByteBuffer buffer;
+
+        try (ReadableByteChannel rbc = Channels.newChannel(new BufferedInputStream(is))) {
+            buffer = BufferUtils.createByteBuffer(bufferSize);
+
+            while (true) {
+                int bytes = rbc.read(buffer);
+                if (bytes == -1) {
+                    break;
+                }
+                if (buffer.remaining() == 0) {
+                    buffer = resizeBuffer(buffer, buffer.capacity() * 2);
+                }
+            }
+        }
+
+        buffer.flip();
+        return buffer;
+    }
+
+    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
+        ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
+        buffer.flip();
+        newBuffer.put(buffer);
+        return newBuffer;
+    }
+
     private static ShortBuffer readVorbis(InputStream inputStream, STBVorbisInfo info) {
         IntBuffer error = BufferUtils.createIntBuffer(1);
         long decoder;
         try {
-            decoder = STBVorbis.stb_vorbis_open_memory(IOUtil.fromInputStream(inputStream), error, null);
+            decoder = STBVorbis.stb_vorbis_open_memory(inputStreamToByteBuffer(inputStream, 128 * 128), error, null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
