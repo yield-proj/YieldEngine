@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.platform.ApplicationModule;
+
 import java.io.Serializable;
 
 /**
@@ -24,34 +26,21 @@ import java.io.Serializable;
 public class PlatformInit implements Serializable {
     private Vector2D viewportSize = new Vector2D(1280, 720), windowSize = new Vector2D(1280, 720);
     private String title = "Yield Window";
-    private int startPhysicsPpm = 16;
-    private boolean fullscreen, undecorated, stretchViewport, invertZIndex, verticalSync, physicsOnMainContext;
-    private String windowIconPath = "com/xebisco/yield/yieldIcon.png";
+    private boolean fullscreen, undecorated, stretchViewport, invertZIndex, verticalSync;
+    private String windowIconPath = "yieldIcon.png";
 
     private ContextTime physicsContextTime = new ContextTime(40);
-    private final Class<?>[] requiredPlatformModules;
+    private final ApplicationModule[] requiredPlatformModules;
 
-    public static final Class<?>[] INPUT_DEFAULT = new Class<?>[]{
-            FontManager.class,
-            TextureManager.class,
-            SpritesheetTextureManager.class,
-            InputManager.class,
-            MouseCheck.class,
-            AudioManager.class,
-            ViewportZoomScale.class,
-            GraphicsManager.class
-    }, CHECKS_DEFAULT = new Class<?>[]{
-            FontManager.class,
-            TextureManager.class,
-            SpritesheetTextureManager.class,
-            KeyCheck.class,
-            MouseCheck.class,
-            AudioManager.class,
-            ViewportZoomScale.class,
-            GraphicsManager.class
+    public static final ApplicationModule[] PC_DEFAULT = new ApplicationModule[]{
+            ApplicationModule.FONT_MANAGER,
+            ApplicationModule.TEXTURE_MANAGER,
+            ApplicationModule.PC_INPUT_MANAGER,
+            ApplicationModule.AUDIO_MANAGER,
+            ApplicationModule.GRAPHICS_MANAGER
     };
 
-    public PlatformInit(Class<?>[] requiredPlatformModules) {
+    public PlatformInit(ApplicationModule[] requiredPlatformModules) {
         this.requiredPlatformModules = requiredPlatformModules;
     }
 
@@ -79,15 +68,6 @@ public class PlatformInit implements Serializable {
 
     public PlatformInit setTitle(String title) {
         this.title = title;
-        return this;
-    }
-
-    public int startPhysicsPpm() {
-        return startPhysicsPpm;
-    }
-
-    public PlatformInit setStartPhysicsPpm(int startPhysicsPpm) {
-        this.startPhysicsPpm = startPhysicsPpm;
         return this;
     }
 
@@ -136,15 +116,6 @@ public class PlatformInit implements Serializable {
         return this;
     }
 
-    public boolean physicsOnMainContext() {
-        return physicsOnMainContext;
-    }
-
-    public PlatformInit setPhysicsOnMainContext(boolean physicsOnMainContext) {
-        this.physicsOnMainContext = physicsOnMainContext;
-        return this;
-    }
-
     public String windowIconPath() {
         return windowIconPath;
     }
@@ -163,7 +134,7 @@ public class PlatformInit implements Serializable {
         return this;
     }
 
-    public Class<?>[] requiredPlatformModules() {
+    public ApplicationModule[] requiredPlatformModules() {
         return requiredPlatformModules;
     }
 }

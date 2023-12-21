@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -27,14 +29,12 @@ public class Context implements Runnable {
     private final ContextTime contextTime;
     private final AtomicBoolean running = new AtomicBoolean();
     private final Object lockObject = new Object();
-    private final Runnable runnable;
-    private final Disposable disposable;
+    private final AbstractBehavior abstractBehavior;
     private boolean lightweight;
 
-    public Context(ContextTime contextTime, Runnable runnable, Disposable disposable, String name) {
+    public Context(ContextTime contextTime, AbstractBehavior abstractBehavior, String name) {
         this.contextTime = contextTime;
-        this.runnable = runnable;
-        this.disposable = disposable;
+        this.abstractBehavior = abstractBehavior;
         thread = new Thread(this, "Yield Context: " + name);
     }
 
@@ -52,8 +52,7 @@ public class Context implements Runnable {
                 actual = System.nanoTime();
             }
             contextTime.setDeltaTime((actual - last) / 1_000_000_000.0);
-            if (runnable != null)
-                runnable.run();
+            abstractBehavior.tick(contextTime);
             last = actual;
             actual = System.nanoTime();
 
@@ -68,8 +67,11 @@ public class Context implements Runnable {
                     }
                 }
         }
-        if (disposable != null)
-            disposable.dispose();
+        try {
+            abstractBehavior.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -108,13 +110,8 @@ public class Context implements Runnable {
         return lockObject;
     }
 
-    /**
-     * This function returns a Runnable object.
-     *
-     * @return The runnable object.
-     */
-    public Runnable runnable() {
-        return runnable;
+    public AbstractBehavior abstractBehavior() {
+        return abstractBehavior;
     }
 
     /**
@@ -134,14 +131,5 @@ public class Context implements Runnable {
     public Context setLightweight(boolean lightweight) {
         this.lightweight = lightweight;
         return this;
-    }
-
-    /**
-     * This function returns the disposable object that was passed in the constructor.
-     *
-     * @return The disposable object.
-     */
-    public Disposable disposable() {
-        return disposable;
     }
 }

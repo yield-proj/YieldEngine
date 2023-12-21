@@ -16,16 +16,19 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.rendering.Renderer;
+
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
  * This is a class that represents a container for 2D entities, allowing for instantiation and removal of entities.
  */
-public class Entity2DContainer {
-    private final Application application;
-    private List<Entity2D> entities = new ArrayList<>();
+public class Entity2DContainer extends AbstractBehavior implements Renderable {
+    private volatile List<Entity2D> entities = new ArrayList<>();
     private final Set<Entity2D> toAddEntities = new HashSet<>(), toRemoveEntities = new HashSet<>();
+    private final Application application;
 
     public Entity2DContainer(Application application) {
         this.application = application;
@@ -35,11 +38,11 @@ public class Entity2DContainer {
      * This function instantiates a 2D entity using a prefab and its components, sets its tags and parent, adds it to a
      * list of entities, and starts it.
      *
-     * @param prefab The prefab parameter is an instance of the Entity2DPrefab class, which contains information about the
-     * components and children of the entity to be instantiated.
+     * @param prefab        The prefab parameter is an instance of the Entity2DPrefab class, which contains information about the
+     *                      components and children of the entity to be instantiated.
      * @param entityStarter entityStarter is an optional parameter of type EntityStarter, which is an interface that
-     * defines a method called "start" that takes an Entity2D object as a parameter. This parameter allows for additional
-     * functionality to be executed on the instantiated entity after it has been created.
+     *                      defines a method called "start" that takes an Entity2D object as a parameter. This parameter allows for additional
+     *                      functionality to be executed on the instantiated entity after it has been created.
      * @return The method is returning an instance of the Entity2D class.
      */
     public Entity2D instantiate(Entity2DPrefab prefab, EntityStarter entityStarter) {
@@ -56,9 +59,7 @@ public class Entity2DContainer {
             if (cc.getComponentModifier() != null)
                 cc.getComponentModifier().modify(components[i]);
         }
-        Entity2D entity = new Entity2D(application, components);
-        entity.setTags(prefab.tags());
-        entity.setParent(this);
+        Entity2D entity = new Entity2D(application, components, this, prefab.tags().clone());
         for (Entity2DPrefab p : prefab.children()) {
             entity.instantiate(p);
         }
@@ -68,30 +69,46 @@ public class Entity2DContainer {
         return entity;
     }
 
-    protected void updateEntityList() {
-        entities.addAll(toAddEntities);
+    @Override
+    public void onStart() {
 
-        entities.removeAll(toRemoveEntities);
+    }
 
-        entities.sort(Comparator.comparing(Entity2D::index).reversed());
+    @Override
+    public void render(Renderer renderer) {
+        entities.sort(Comparator.comparing(Entity2D::renderIndex).reversed());
 
-        toAddEntities.clear();
-        toRemoveEntities.clear();
+        entities.forEach(e -> e.render(renderer));
+    }
+
+    @Override
+    public void onUpdate(ContextTime time) {
+        if (!toAddEntities.isEmpty()) {
+            entities.addAll(toAddEntities);
+            toAddEntities.clear();
+        }
+
+        if (!toRemoveEntities.isEmpty()) {
+            entities.removeAll(toRemoveEntities);
+            toRemoveEntities.clear();
+        }
+
+        entities.forEach(e -> e.tick(time));
     }
 
     /**
      * This function instantiates a 2D entity using a prefab and returns it.
      *
      * @param prefab The prefab parameter is an instance of the Entity2DPrefab class, which contains information about the
-     * components and children of the entity to be instantiated.
+     *               components and children of the entity to be instantiated.
      * @return The method is returning an instance of the Entity2D class.
      */
     public Entity2D instantiate(Entity2DPrefab prefab) {
         return instantiate(prefab, null);
     }
 
-    public boolean remove(Entity2D entity) {
-        entity.dispose();
+    public boolean remove(Entity2D entity) throws IOException {
+        entity.close();
         return toRemoveEntities.add(entity);
     }
 
@@ -114,5 +131,10 @@ public class Entity2DContainer {
 
     public Set<Entity2D> toRemoveEntities() {
         return toRemoveEntities;
+    }
+
+    @Override
+    public void close() throws IOException {
+
     }
 }

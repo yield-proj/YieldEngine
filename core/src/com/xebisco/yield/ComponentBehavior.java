@@ -16,17 +16,16 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.physics.BasicContactListener;
-import com.xebisco.yield.physics.Collider;
-import com.xebisco.yield.physics.RayCast;
+import com.xebisco.yield.rendering.Renderer;
+
+import java.io.IOException;
 
 /**
  * ComponentBehavior is an abstract class that implements the Behavior and Renderable interfaces.
  * This the class is declared as abstract. This means that it cannot be instantiated. It
  * is only meant to be extended by other classes
  */
-public abstract class ComponentBehavior implements Behavior, Renderable, BasicContactListener {
-    private int frames;
+public abstract class ComponentBehavior extends AbstractBehavior implements Renderable {
     private Entity2D entity;
 
     @Override
@@ -35,62 +34,18 @@ public abstract class ComponentBehavior implements Behavior, Renderable, BasicCo
     }
 
     @Override
-    public void onUpdate() {
-
-    }
-
-    public void onPhysicsUpdate() {
+    public void onUpdate(ContextTime time) {
 
     }
 
     @Override
-    public void dispose() {
+    public void close() throws IOException {
 
     }
 
     @Override
-    public void onContactBegin(Collider collider, Collider colliding) {
+    public void render(Renderer renderer) {
 
-    }
-
-    @Override
-    public void onContactEnd(Collider collider, Collider colliding) {
-
-    }
-
-    @Override
-    public DrawInstruction render() {
-        return null;
-    }
-
-    /**
-     * Raycast from point1 to point2 and return the closest hit.
-     *
-     * @param point1 The starting point of the ray-cast.
-     * @param point2 The end point of the ray.
-     * @return A RayCast object.
-     */
-    public final RayCast rayCast(Vector2D point1, Vector2D point2) {
-        return application().scene().physicsMain().rayCast(entity(), point1, point2);
-    }
-
-    /**
-     * This function returns the number of frames that this component is in a scene.
-     *
-     * @return The number of frames in the that this component is in a scene.
-     */
-    public int frames() {
-        return frames;
-    }
-
-    /**
-     * This function sets the number of frames.
-     *
-     * @param frames The number of frames.
-     */
-    public ComponentBehavior setFrames(int frames) {
-        this.frames = frames;
-        return this;
     }
 
     /**
@@ -100,6 +55,10 @@ public abstract class ComponentBehavior implements Behavior, Renderable, BasicCo
      */
     public Entity2D entity() {
         return entity;
+    }
+
+    public Application application() {
+        return entity().application();
     }
 
     /**
@@ -127,8 +86,8 @@ public abstract class ComponentBehavior implements Behavior, Renderable, BasicCo
      * @return The index of the entity.
      */
 
-    public int index() {
-        return entity().index();
+    public int renderIndex() {
+        return entity().renderIndex();
     }
 
     /**
@@ -137,8 +96,8 @@ public abstract class ComponentBehavior implements Behavior, Renderable, BasicCo
      * @param index The index of the entity.
      */
 
-    public ComponentBehavior setIndex(int index) {
-        entity().setIndex(index);
+    public ComponentBehavior setRenderIndex(int index) {
+        entity().setRenderIndex(index);
         return this;
     }
 
@@ -165,32 +124,5 @@ public abstract class ComponentBehavior implements Behavior, Renderable, BasicCo
 
     public <T extends ComponentBehavior> T component(Class<T> componentType, int index) {
         return entity().component(componentType, index);
-    }
-
-    /**
-     * This function returns the application associated with the entity.
-     *
-     * @return The method is returning an instance of the `Application` class. It is getting the `Application` object from
-     * the `Entity` object and returning it.
-     */
-    public Application application() {
-        return entity().application();
-    }
-
-    /**
-     * This function returns the time context of the application manager.
-     *
-     * @return The method `time()` is returning an object of type `ContextTime`.
-     */
-    public ContextTime time() {
-        return application().applicationManager().managerContext().contextTime();
-    }
-
-    public TextureManager textureManager() {
-        return application().applicationPlatform().textureManager();
-    }
-
-    public FontManager fontManager() {
-        return application().applicationPlatform().fontManager();
     }
 }

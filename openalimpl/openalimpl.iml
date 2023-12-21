@@ -8,7 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="core" />
-    <orderEntry type="module" module-name="lwjgl-utils" />
     <orderEntry type="library" name="openalimpl-libs" level="project" />
+    <orderEntry type="library" name="openglimpl-libs" level="project" />
   </component>
 </module>

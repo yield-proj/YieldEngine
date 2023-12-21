@@ -16,197 +16,31 @@
 
 package com.xebisco.yield;
 
-import com.aparapi.Range;
-import com.xebisco.yield.shader.VertexShader;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
+import com.xebisco.yield.rendering.Form;
+import com.xebisco.yield.rendering.Paint;
+import com.xebisco.yield.rendering.Renderer;
 
 @HideComponent
 public abstract class AbstractRenderable extends ComponentBehavior {
-    private final List<String> vertexShaders = new ArrayList<>();
 
-    public abstract int verticesCount();
+    private final Form form;
+    private final Paint paint = new Paint();
 
-    public abstract void setupX(float[] verticesX);
-
-    public abstract void setupY(float[] verticesY);
-
-    private float[] verticesX = new float[verticesCount()], verticesY = new float[verticesCount()];
-
-    private final Range range = Range.create(verticesCount());
-
-    private final DrawInstruction drawInstruction = new DrawInstruction(new int[verticesCount()], new int[verticesCount()]);
-
-    @VisibleOnEditor
-    private Vector2D size = new Vector2D(100, 100);
-    @VisibleOnEditor
-    private Color color = new Color(Colors.WHITE);
-    @VisibleOnEditor
-    private double borderThickness;
-    @VisibleOnEditor
-    private boolean filled = true, absoluteScaled, ignoreOffsetScaling;
-
-    @VisibleOnEditor
-    private Vector2D offset = new Vector2D();
-
-    @VisibleOnEditor
-    private RectangleAnchor anchor = RectangleAnchor.CENTER;
-
-    private final Vector2D anchorSum = new Vector2D();
-
-    public AbstractRenderable() {
-        vertexShaders.add("default-shader");
+    public AbstractRenderable(Form form) {
+        this.form = form;
     }
 
     @Override
-    public DrawInstruction render() {
-        if (filled)
-            drawInstruction.setStroke(0);
-        else drawInstruction.setStroke(borderThickness);
-        drawInstruction.setColor(color);
-
-        anchorSum.reset();
-        switch (anchor) {
-            case UP -> anchorSum.setY(-size().height() / 2.);
-            case DOWN -> anchorSum.setY(size().height() / 2.);
-            case RIGHT -> anchorSum.setX(-size().width() / 2.);
-            case LEFT -> anchorSum.setX(size().width() / 2.);
-        }
-        setupX(verticesX);
-        setupY(verticesY);
-        for (String shaderName : vertexShaders) {
-            IntStream.range(0, verticesCount()).forEach(i -> {
-                VertexShader shader = application().vertexShaderMap().get(shaderName);
-                shader.inXPos = verticesX;
-                shader.inYPos = verticesY;
-                shader.outXPos = drawInstruction.verticesX();
-                shader.outYPos = drawInstruction.verticesY();
-                shader.putAll();
-                shader.execute(range);
-                shader.getOut();
-                drawInstruction.setVerticesX(shader.outXPos);
-                drawInstruction.setVerticesY(shader.outYPos);
-            });
-        }
-        for (int i = 0; i < drawInstruction.verticesX().length; i++) {
-            drawInstruction.verticesX()[i] += (int) anchorSum.x();
-            drawInstruction.verticesY()[i] += (int) anchorSum.y();
-        }
-        double ox = offset.x(), oy = offset.y();
-        if (!ignoreOffsetScaling) {
-            ox *= transform().scale().x();
-            oy += transform().scale().y();
-        }
-        drawInstruction.setX(ox);
-        drawInstruction.setY(oy);
-        return drawInstruction;
+    public void render(Renderer renderer) {
+        paint.setTransformation(transform());
+        renderer.draw(form, paint);
     }
 
-    public List<String> vertexShaders() {
-        return vertexShaders;
+    public Form form() {
+        return form;
     }
 
-    public float[] verticesX() {
-        return verticesX;
-    }
-
-    public AbstractRenderable setVerticesX(float[] verticesX) {
-        this.verticesX = verticesX;
-        return this;
-    }
-
-    public float[] verticesY() {
-        return verticesY;
-    }
-
-    public AbstractRenderable setVerticesY(float[] verticesY) {
-        this.verticesY = verticesY;
-        return this;
-    }
-
-    public Range range() {
-        return range;
-    }
-
-    public DrawInstruction drawInstruction() {
-        return drawInstruction;
-    }
-
-    public Vector2D size() {
-        return size;
-    }
-
-    public AbstractRenderable setSize(Vector2D size) {
-        this.size = size;
-        return this;
-    }
-
-    public Color color() {
-        return color;
-    }
-
-    public AbstractRenderable setColor(Color color) {
-        this.color = color;
-        return this;
-    }
-
-    public double borderThickness() {
-        return borderThickness;
-    }
-
-    public AbstractRenderable setBorderThickness(double borderThickness) {
-        this.borderThickness = borderThickness;
-        return this;
-    }
-
-    public boolean filled() {
-        return filled;
-    }
-
-    public AbstractRenderable setFilled(boolean filled) {
-        this.filled = filled;
-        return this;
-    }
-
-    public boolean absoluteScaled() {
-        return absoluteScaled;
-    }
-
-    public AbstractRenderable setAbsoluteScaled(boolean absoluteScaled) {
-        this.absoluteScaled = absoluteScaled;
-        return this;
-    }
-
-    public boolean ignoreOffsetScaling() {
-        return ignoreOffsetScaling;
-    }
-
-    public AbstractRenderable setIgnoreOffsetScaling(boolean ignoreOffsetScaling) {
-        this.ignoreOffsetScaling = ignoreOffsetScaling;
-        return this;
-    }
-
-    public Vector2D offset() {
-        return offset;
-    }
-
-    public AbstractRenderable setOffset(Vector2D offset) {
-        this.offset = offset;
-        return this;
-    }
-
-    public RectangleAnchor anchor() {
-        return anchor;
-    }
-
-    public AbstractRenderable setAnchor(RectangleAnchor anchor) {
-        this.anchor = anchor;
-        return this;
-    }
-
-    public Vector2D anchorSum() {
-        return anchorSum;
+    public Paint paint() {
+        return paint;
     }
 }

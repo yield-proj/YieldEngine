@@ -17,10 +17,12 @@
 package com.xebisco.yield;
 
 
+import java.io.Closeable;
+
 /**
  * The Behavior is the main interface of the Yield Game Engine, almost all elements of an application implements this interface.
  */
-public interface Behavior extends Disposable, DefaultAxis {
+public interface Behavior extends Closeable {
     /**
      * This function is called when the object starts
      */
@@ -28,5 +30,5 @@ public interface Behavior extends Disposable, DefaultAxis {
     /**
      * This function is called every time the application updates
      */
-    void onUpdate();
+    void onUpdate(ContextTime time);
 }

@@ -16,17 +16,15 @@
 
 package com.xebisco.yield.openalimpl;
 
-import com.xebisco.yield.AudioManager;
 import com.xebisco.yield.AudioPlayer;
-import com.xebisco.yield.utils.lwjgl.IOUtil;
+import com.xebisco.yield.manager.AudioManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.*;
 import org.lwjgl.stb.STBVorbis;
 import org.lwjgl.stb.STBVorbisInfo;
+import org.lwjgl.system.MemoryUtil;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
@@ -50,15 +48,17 @@ public class OpenALAudio implements AudioManager {
 
         switch (audio.audioClip().fileFormat()) {
             case "WAV":
-                WaveData waveData = WaveData.create(new BufferedInputStream(audio.audioClip().inputStream()));
+                WaveData waveData = WaveData.create(new File(audio.audioClip().path()));
                 assert waveData != null;
                 AL10.alBufferData(out.getBuffer(), waveData.format, waveData.data, waveData.samplerate);
                 break;
             case "OGG":
                 try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
-                    ShortBuffer pcm = readVorbis(new BufferedInputStream(audio.audioClip().inputStream()), info);
+                    ShortBuffer pcm = readVorbis(new BufferedInputStream(new BufferedInputStream(new FileInputStream(audio.audioClip().path()))), info);
 
                     AL10.alBufferData(out.getBuffer(), info.channels() == 1 ? AL10.AL_FORMAT_MONO16 : AL10.AL_FORMAT_STEREO16, pcm, info.sample_rate());
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
                 }
                 break;
             default:
@@ -71,11 +71,24 @@ public class OpenALAudio implements AudioManager {
         return out;
     }
 
+    public static ByteBuffer fromInputStream(InputStream inputStream) throws IOException {
+        byte[] bytes;
+        bytes = inputStream.readAllBytes();
+
+        ByteBuffer buffer = MemoryUtil.memAlloc(bytes.length);
+        for (byte b : bytes)
+            buffer.put(b);
+
+        buffer.flip();
+
+        return buffer;
+    }
+
     private static ShortBuffer readVorbis(InputStream inputStream, STBVorbisInfo info) {
         IntBuffer error = BufferUtils.createIntBuffer(1);
         long decoder;
         try {
-            decoder = STBVorbis.stb_vorbis_open_memory(IOUtil.fromInputStream(inputStream), error, null);
+            decoder = STBVorbis.stb_vorbis_open_memory(fromInputStream(inputStream), error, null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

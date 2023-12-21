@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import java.io.IOException;
+
 /**
  * The AudioPlayer class is a component behavior that allows for playing, pausing, and manipulating audio clips in a Yield
  * application.
@@ -56,7 +58,7 @@ public class AudioPlayer extends ComponentBehavior {
     }
 
     @Override
-    public void dispose() {
+    public void close() throws IOException {
         if(audioClip != null) {
             pause();
             setPosition(0);

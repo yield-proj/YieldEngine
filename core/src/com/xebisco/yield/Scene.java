@@ -16,8 +16,6 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.physics.PhysicsMain;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,48 +23,19 @@ import java.util.Set;
  * The Scene class is an abstract class that extends Entity2DContainer and implements Behavior, and contains various
  * systems and properties for managing a scene.
  */
-public abstract class Scene extends Entity2DContainer implements Behavior {
-    private int frames;
-    private final Vector2D camera = new Vector2D(), zoomScale = new Vector2D(1, 1);
+public abstract class Scene extends Entity2DContainer {
+    private final Transform2D camera = new Transform2D();
     private Color backGroundColor = Colors.GRAY.darker();
     private Set<SystemBehavior> systems = new HashSet<>();
-    private final PhysicsMain physicsMain = new PhysicsMain(this);
+
     public Scene(Application application) {
         super(application);
     }
 
     @Override
-    public void onStart() {
-        
-    }
-
-    @Override
-    public void onUpdate() {
-
-    }
-
-    @Override
-    public void dispose() {
-
-    }
-
-    /**
-     * The function returns the value of the frames variable.
-     *
-     * @return The method is returning an integer value of the variable "frames".
-     */
-    public int frames() {
-        return frames;
-    }
-
-    /**
-     * The function sets the number of frames for this scene.
-     *
-     * @param frames The "frames" parameter is an integer value that represents the number of frames on this scene.
-     */
-    public Scene setFrames(int frames) {
-        this.frames = frames;
-        return this;
+    public void onUpdate(ContextTime time) {
+        super.onUpdate(time);
+        systems.forEach(s -> s.setScene(this).tick(time));
     }
 
     /**
@@ -106,29 +75,7 @@ public abstract class Scene extends Entity2DContainer implements Behavior {
         this.systems = systems;
     }
 
-    /**
-     * The function returns a Vector2D representing the camera position.
-     *
-     * @return A Vector2D object representing the camera position.
-     */
-    public Vector2D camera() {
+    public Transform2D camera() {
         return camera;
-    }
-
-    /**
-     * The function returns the zoom scale as a Vector2D.
-     *
-     * @return The method is returning a Vector2D object named zoomScale.
-     */
-    public Vector2D zoomScale() {
-        return zoomScale;
-    }
-
-    public ContextTime time() {
-        return application().applicationManager().managerContext().contextTime();
-    }
-
-    public PhysicsMain physicsMain() {
-        return physicsMain;
     }
 }

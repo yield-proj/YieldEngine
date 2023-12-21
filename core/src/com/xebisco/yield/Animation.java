@@ -16,10 +16,15 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.texture.Texture;
+
+import java.io.Closeable;
+import java.io.IOException;
+
 /**
  * The Animation class represents a sequence of textures with a delay and loop option, and can be disposed.
  */
-public class Animation implements Disposable {
+public class Animation implements Closeable {
     private Texture[] frames;
     private double delay;
     private boolean loop;
@@ -35,9 +40,9 @@ public class Animation implements Disposable {
     }
 
     @Override
-    public void dispose() {
+    public void close() throws IOException {
         for (Texture t : frames)
-            t.dispose();
+            t.close();
     }
 
     public Texture[] frames() {

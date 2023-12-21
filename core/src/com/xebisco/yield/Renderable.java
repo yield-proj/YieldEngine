@@ -16,6 +16,8 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.rendering.Renderer;
+
 public interface Renderable {
-    DrawInstruction render();
+    void render(Renderer renderer);
 }

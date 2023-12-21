@@ -16,9 +16,13 @@
 
 package com.xebisco.yield;
 
-import org.jbox2d.common.Vec2;
+import com.xebisco.yield.platform.ApplicationModule;
+import com.xebisco.yield.platform.ApplicationPlatform;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -26,129 +30,35 @@ import java.util.Random;
  */
 public final class Global {
 
-    public static class Platforms {
-        /**
-         * The function returns an instance of an ApplicationPlatform using Java's Swing for rendering and JavaX Sound
-         * for audio.
-         *
-         * @return The method is returning an instance of the `ApplicationPlatform` class.
-         */
-        public static ApplicationPlatform swingXSound() throws ClassNotFoundException {
-            Class<?> swingPlatformClass = Class.forName("com.xebisco.yield.swingimpl.SwingPlatform");
-            Class<?> clipAudioClass = Class.forName("com.xebisco.yield.javaxsoundimpl.JavaXSoundManager");
-            try {
-                Object swingPlatform = swingPlatformClass.getConstructor().newInstance(), clipAudio = clipAudioClass.getConstructor().newInstance();
-                return new ApplicationPlatform(
-                        (FontManager) swingPlatform,
-                        (TextureManager) swingPlatform,
-                        (InputManager) swingPlatform,
-                        null,
-                        (MouseCheck) swingPlatform,
-                        (AudioManager) clipAudio,
-                        (ViewportZoomScale) swingPlatform,
-                        (ToggleFullScreen) swingPlatform,
-                        (GraphicsManager) swingPlatform,
-                        (SpritesheetTextureManager) swingPlatform);
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
-                     InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        public static ApplicationPlatform openGLXSound() throws ClassNotFoundException {
-            Class<?> openGLPlatformClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
-            Class<?> clipAudioClass = Class.forName("com.xebisco.yield.javaxsoundimpl.JavaXSoundManager");
-            try {
-                Object openGLPlatform = openGLPlatformClass.getConstructor().newInstance(), clipAudio = clipAudioClass.getConstructor().newInstance();
-                return new ApplicationPlatform(
-                        (FontManager) openGLPlatform,
-                        (TextureManager) openGLPlatform,
-                        (InputManager) openGLPlatform,
-                        null,
-                        (MouseCheck) openGLPlatform,
-                        (AudioManager) clipAudio,
-                        (ViewportZoomScale) openGLPlatform,
-                        (ToggleFullScreen) openGLPlatform,
-                        (GraphicsManager) openGLPlatform,
-                        (SpritesheetTextureManager) openGLPlatform);
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
-                     InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
+    public static final class Platforms {
         public static ApplicationPlatform openGLOpenAL() throws ClassNotFoundException {
-            Class<?> openGLPlatformClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLPlatform");
-            Class<?> alAudioClass = Class.forName("com.xebisco.yield.openalimpl.OpenALAudio");
+            Map<ApplicationModule, Object> modules = new HashMap<>();
+            Class<?> openGLGraphicsManagerClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLGraphicsManager");
+            Class<?> openGLFontManagerClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLFontManager");
+            Class<?> openGLTextureManagerClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLTextureManager");
+            Class<?> openALAudioManagerClass = Class.forName("com.xebisco.yield.openalimpl.OpenALAudio");
             try {
-                Object openGLPlatform = openGLPlatformClass.getConstructor().newInstance(), alAudio = alAudioClass.getConstructor().newInstance();
-                return new ApplicationPlatform(
-                        (FontManager) openGLPlatform,
-                        (TextureManager) openGLPlatform,
-                        (InputManager) openGLPlatform,
-                        null,
-                        (MouseCheck) openGLPlatform,
-                        (AudioManager) alAudio,
-                        (ViewportZoomScale) openGLPlatform,
-                        (ToggleFullScreen) openGLPlatform,
-                        (GraphicsManager) openGLPlatform,
-                        (SpritesheetTextureManager) openGLPlatform);
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
-                     InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-        }
+                Object openGLGraphicsManager = openGLGraphicsManagerClass.getConstructor().newInstance();
+                Object openGLFontManager = openGLFontManagerClass.getConstructor().newInstance();
+                Object openGLTextureManager = openGLTextureManagerClass.getConstructor().newInstance();
+                Object openALAudioManager = openALAudioManagerClass.getConstructor().newInstance();
 
-        /**
-         * The function returns an instance of an ApplicationPlatform using Java's Swing for rendering and OpenAL
-         * for audio.
-         *
-         * @return The method is returning an instance of the `ApplicationPlatform` class.
-         */
-        public static ApplicationPlatform swingOpenAL() throws ClassNotFoundException {
-            Class<?> swingPlatformClass = Class.forName("com.xebisco.yield.swingimpl.SwingPlatform");
-            Class<?> openalAudioClass = Class.forName("com.xebisco.yield.openalimpl.OpenALAudio");
-            try {
-                Object swingPlatform = swingPlatformClass.getConstructor().newInstance(), openalAudio = openalAudioClass.getConstructor().newInstance();
-                return new ApplicationPlatform(
-                        (FontManager) swingPlatform,
-                        (TextureManager) swingPlatform,
-                        (InputManager) swingPlatform,
-                        null,
-                        (MouseCheck) swingPlatform,
-                        (AudioManager) openalAudio,
-                        (ViewportZoomScale) swingPlatform,
-                        (ToggleFullScreen) swingPlatform,
-                        (GraphicsManager) swingPlatform,
-                        (SpritesheetTextureManager) swingPlatform);
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
-                     InvocationTargetException e) {
+                modules.put(ApplicationModule.GRAPHICS_MANAGER, openGLGraphicsManager);
+                modules.put(ApplicationModule.PC_INPUT_MANAGER, openGLGraphicsManager);
+                modules.put(ApplicationModule.AUDIO_MANAGER, openALAudioManager);
+                modules.put(ApplicationModule.TEXTURE_MANAGER, openGLTextureManager);
+                modules.put(ApplicationModule.FONT_MANAGER, openGLFontManager);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
+            return new ApplicationPlatform(modules);
         }
     }
 
     public static final Random RANDOM = new Random();
 
     public static String APP_SAVE_ID;
-
-    /**
-     * The function converts a TwoAnchorRepresentation object to a Vec2 object with the same x and y values.
-     *
-     * @param vector2D The generated TwoAnchorRepresentation.
-     */
-    public static Vec2 toVec2(Vector2D vector2D) {
-        return new Vec2((float) vector2D.x(), (float) vector2D.y());
-    }
-
-    /**
-     * The function converts a Vec2 object to a TwoAnchorRepresentation object with the same x and y values.
-     *
-     * @param vec2 The generated TwoAnchorRepresentation.
-     */
-    public static Vector2D toVector2D(Vec2 vec2) {
-        return new Vector2D(vec2.x, vec2.y);
-    }
 
     /**
      * If value is greater than max, return max, otherwise return the greatest of value and min.

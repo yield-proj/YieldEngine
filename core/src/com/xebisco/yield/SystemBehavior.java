@@ -16,12 +16,12 @@
 
 package com.xebisco.yield;
 
+import java.io.IOException;
+
 /**
  * This is an abstract class that implements the Behavior interface and contains methods for managing scenes.
  */
-public abstract class SystemBehavior implements Behavior {
-
-    private int frames;
+public abstract class SystemBehavior extends AbstractBehavior {
     private Scene scene;
 
     @Override
@@ -30,12 +30,12 @@ public abstract class SystemBehavior implements Behavior {
     }
 
     @Override
-    public void onUpdate() {
+    public void onUpdate(ContextTime time) {
 
     }
 
     @Override
-    public void dispose() {
+    public void close() throws IOException {
 
     }
 
@@ -56,25 +56,6 @@ public abstract class SystemBehavior implements Behavior {
      */
     public SystemBehavior setScene(Scene scene) {
         this.scene = scene;
-        return this;
-    }
-
-    /**
-     * The function returns the value of the frames variable.
-     *
-     * @return The method is returning an integer value of the variable "frames".
-     */
-    public int frames() {
-        return frames;
-    }
-
-    /**
-     * The function sets the number of frames for a given object.
-     *
-     * @param frames The "frames" parameter is an integer value that represents the number of frames.
-     */
-    public SystemBehavior setFrames(int frames) {
-        this.frames = frames;
         return this;
     }
 }

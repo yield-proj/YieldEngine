@@ -16,7 +16,6 @@
 
 package com.xebisco.yield;
 
-import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,31 +23,19 @@ import java.util.regex.Pattern;
  * The FileInput class provides methods for obtaining an InputStream from a file path or an existing InputStream.
  */
 public class FileInput {
-    private final InputStream inputStream;
-    private final String fileFormat;
+    private final String fileFormat, path;
     private static final Pattern FORMAT_PATTERN = Pattern.compile(".([^.]+)$");
 
-    public FileInput(String relativePath) {
-        if (!relativePath.startsWith("/")) relativePath = "/" + relativePath;
-        Matcher matcher = FORMAT_PATTERN.matcher(relativePath);
+    public FileInput(String path) {
+        this.path = path;
+        Matcher matcher = FORMAT_PATTERN.matcher(path);
         if (matcher.find())
             fileFormat = matcher.group(1).toUpperCase();
         else fileFormat = null;
-        inputStream = FileInput.class.getResourceAsStream(relativePath);
     }
 
-    public FileInput(InputStream inputStream) {
-        this.inputStream = inputStream;
-        fileFormat = null;
-    }
-
-    /**
-     * The function returns an InputStream object.
-     *
-     * @return The method `inputStream()` is returning an `InputStream` object.
-     */
-    public InputStream inputStream() {
-        return inputStream;
+    public String path() {
+        return path;
     }
 
     /**

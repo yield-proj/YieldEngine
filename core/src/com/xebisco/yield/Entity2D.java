@@ -16,70 +16,72 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.physics.BasicContactListener;
-import com.xebisco.yield.physics.ComponentContactMethodsFire;
-import com.xebisco.yield.physics.ContactListener;
+import com.xebisco.yield.rendering.Renderer;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /**
  * The Entity2D class is a final class that extends Entity2DContainer and implements Renderable and Disposable, and
  * contains various methods and properties for managing components and rendering.
  */
-public final class Entity2D extends Entity2DContainer implements Disposable {
+public final class Entity2D extends Entity2DContainer {
     private final Transform2D transform = new Transform2D();
-    private final Application application;
     private List<ComponentBehavior> components = new ArrayList<>();
-    private Entity2DContainer parent;
-    private int index;
+    private final Entity2DContainer parent;
+    private int renderIndex;
 
-    private List<BasicContactListener> contactListeners = new ArrayList<>();
+    private final Application application;
 
-    private String[] tags;
-    private int frames;
+    private final String[] tags;
     private boolean visible = true;
 
-    private final DrawInstruction entityDrawInstruction = new DrawInstruction();
-
-    Entity2D(Application application, ComponentBehavior[] components) {
+    Entity2D(Application application, ComponentBehavior[] components, Entity2DContainer parent, String[] tags) {
         super(application);
+        this.parent = parent;
         this.application = application;
+        this.tags = tags;
         for (ComponentBehavior c : components) {
             c.setEntity(this);
             this.components.add(c);
         }
-        contactListeners.add(new ComponentContactMethodsFire());
     }
 
-    public void processPhysics() {
-        if(frames <= 1)
-            return;
-        try {
-            for (int i = 0; i < components.size(); i++) {
-                ComponentBehavior component = null;
+    @Override
+    public void tick(ContextTime time) {
+        super.tick(time);
+        for (int i = 0; i < components.size(); i++) {
+            ComponentBehavior component;
 
-                component = components.get(i);
-                if (component != null)
-                    component.onPhysicsUpdate();
+            component = components.get(i);
+
+            if (component != null) {
+                component.setEntity(this);
+                component.tick(time);
             }
-        } catch (IndexOutOfBoundsException ignore) {
-
         }
-        try {
-            for (Entity2D child : entities()) {
-                child.processPhysics();
-            }
-        } catch (ConcurrentModificationException ignore) {
+    }
 
+    @Override
+    public void render(Renderer renderer) {
+        for (int i = 0; i < components.size(); i++) {
+            ComponentBehavior component;
+
+            component = components.get(i);
+
+            if (component != null) {
+                component.setEntity(this);
+                component.render(renderer);
+            }
         }
     }
 
     /**
      * For each component, set the entity and frames, and call onStart and onUpdate.
      */
-    public DrawInstruction process() {
+    /*public DrawInstruction process() {
         frames++;
         if (visible) {
             entityDrawInstruction.setX(transform().position().x());
@@ -122,19 +124,18 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
         if (visible)
             return entityDrawInstruction;
         return null;
-    }
+    }*/
 
     @Override
-    public void dispose() {
+    public void close() throws IOException {
         for (Entity2D entity : entities()) {
-            entity.dispose();
+            entity.close();
         }
         for (ComponentBehavior component : components) {
-            component.dispose();
+            component.close();
         }
         if (parent() != null) {
             parent().toRemoveEntities().add(this);
-            setParent(null);
         }
     }
 
@@ -154,12 +155,12 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
     }
 
     /**
-     * Get the component of the specified type at the specified index.
+     * Get the component of the specified type at the specified renderIndex.
      * The first line of the function is a generic type declaration. This is a way of saying that the function will return
      * a component of the specified type
      *
      * @param componentType The type of component you want to get.
-     * @param index         The index of the component you want to get.
+     * @param index         The renderIndex of the component you want to get.
      * @return A component of the specified type.
      */
     public <T extends ComponentBehavior> T component(Class<T> componentType, int index) {
@@ -191,18 +192,18 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
      *
      * @param component The component to remove.
      */
-    public void removeComponent(ComponentBehavior component) {
+    public void removeComponent(ComponentBehavior component) throws IOException {
         components.remove(component);
-        component.dispose();
+        component.close();
     }
 
     /**
-     * Remove the component of the given type at the given index.
+     * Remove the component of the given type at the given renderIndex.
      *
      * @param componentType The type of component to remove.
-     * @param index         The index of the component to remove.
+     * @param index         The renderIndex of the component to remove.
      */
-    public void removeComponent(Class<? extends ComponentBehavior> componentType, int index) {
+    public void removeComponent(Class<? extends ComponentBehavior> componentType, int index) throws IOException {
         removeComponent(component(componentType, index));
     }
 
@@ -211,16 +212,12 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
      *
      * @param componentType The type of the component to remove.
      */
-    public void removeComponent(Class<? extends ComponentBehavior> componentType) {
+    public void removeComponent(Class<? extends ComponentBehavior> componentType) throws IOException {
         removeComponent(component(componentType));
     }
 
     public Transform2D transform() {
         return transform;
-    }
-
-    public Application application() {
-        return application;
     }
 
     public List<ComponentBehavior> components() {
@@ -236,45 +233,17 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
         return parent;
     }
 
-    public Entity2D setParent(Entity2DContainer parent) {
-        this.parent = parent;
-        return this;
+    public int renderIndex() {
+        return renderIndex;
     }
 
-    public int index() {
-        return index;
-    }
-
-    public Entity2D setIndex(int index) {
-        this.index = index;
-        return this;
-    }
-
-    public List<BasicContactListener> contactListeners() {
-        return contactListeners;
-    }
-
-    public Entity2D setContactListeners(List<BasicContactListener> contactListeners) {
-        this.contactListeners = contactListeners;
+    public Entity2D setRenderIndex(int renderIndex) {
+        this.renderIndex = renderIndex;
         return this;
     }
 
     public String[] tags() {
         return tags;
-    }
-
-    public Entity2D setTags(String[] tags) {
-        this.tags = tags;
-        return this;
-    }
-
-    public int frames() {
-        return frames;
-    }
-
-    public Entity2D setFrames(int frames) {
-        this.frames = frames;
-        return this;
     }
 
     public boolean visible() {
@@ -284,9 +253,5 @@ public final class Entity2D extends Entity2DContainer implements Disposable {
     public Entity2D setVisible(boolean visible) {
         this.visible = visible;
         return this;
-    }
-
-    public DrawInstruction entityDrawInstruction() {
-        return entityDrawInstruction;
     }
 }

@@ -25,6 +25,8 @@ public class Transform2D {
     @VisibleOnEditor
     private final Vector2D position = new Vector2D(), scale = new Vector2D(1, 1), centerOffset = new Vector2D();
     @VisibleOnEditor
+    private ObjectCenter center = ObjectCenter.CENTER;
+    @VisibleOnEditor
     private double zRotation;
 
     /**
@@ -101,6 +103,15 @@ public class Transform2D {
 
     public Transform2D setzRotation(double zRotation) {
         this.zRotation = zRotation;
+        return this;
+    }
+
+    public ObjectCenter center() {
+        return center;
+    }
+
+    public Transform2D setCenter(ObjectCenter center) {
+        this.center = center;
         return this;
     }
 }

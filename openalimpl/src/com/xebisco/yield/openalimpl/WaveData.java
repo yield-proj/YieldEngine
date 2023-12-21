@@ -21,6 +21,7 @@ import org.lwjgl.openal.AL10;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -74,12 +75,23 @@ public class WaveData {
 	public static WaveData create(InputStream is) {
 		try {
 			return create(
-				AudioSystem.getAudioInputStream(is));
+					AudioSystem.getAudioInputStream(is));
 		} catch (Exception e) {
 			System.err.println("Unable to create from inputstream");
 			e.printStackTrace();
 			return null;
-		}		
+		}
+	}
+
+	public static WaveData create(File f) {
+		try {
+			return create(
+					AudioSystem.getAudioInputStream(f));
+		} catch (Exception e) {
+			System.err.println("Unable to create from inputstream");
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/**
