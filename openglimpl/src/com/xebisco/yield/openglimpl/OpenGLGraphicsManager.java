@@ -1,6 +1,7 @@
 package com.xebisco.yield.openglimpl;
 
 import com.xebisco.yield.*;
+import com.xebisco.yield.font.FontCharacter;
 import com.xebisco.yield.manager.GraphicsManager;
 import com.xebisco.yield.manager.PCInputManager;
 import com.xebisco.yield.rendering.Form;
@@ -14,6 +15,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +27,8 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.stb.STBImage.stbi_image_free;
+import static org.lwjgl.stb.STBImage.stbi_load;
 
 public class OpenGLGraphicsManager implements GraphicsManager, PCInputManager {
 
@@ -34,6 +38,7 @@ public class OpenGLGraphicsManager implements GraphicsManager, PCInputManager {
     private Vector2D viewportSize;
 
     private OpenGLShaderProgram default2DShader;
+    private OpenGLShaderProgram defaultText2DShader;
 
     private Mesh2D squareMesh;
 
@@ -108,12 +113,29 @@ public class OpenGLGraphicsManager implements GraphicsManager, PCInputManager {
         glfwShowWindow(windowHandler);
 
         default2DShader = new OpenGLShaderProgram(OpenGLGraphicsManager.class.getResourceAsStream("default2d.vert"), OpenGLGraphicsManager.class.getResourceAsStream("default2d.frag"));
+        defaultText2DShader = new OpenGLShaderProgram(OpenGLGraphicsManager.class.getResourceAsStream("default2d.vert"), OpenGLGraphicsManager.class.getResourceAsStream("textdefault2d.frag"));
         squareMesh = new Mesh2D(new float[]{-100, 100, 100, 100, 100, -100, -100, -100}, new float[]{0, 0, 1, 0, 1, 1, 0, 1}, new int[]{0, 1, 2, 2, 3, 0});
     }
 
     @Override
     public void updateWindowIcon(Texture icon) {
+        ByteBuffer image;
+        int width, height;
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer comp = stack.mallocInt(1);
+            IntBuffer w = stack.mallocInt(1);
+            IntBuffer h = stack.mallocInt(1);
 
+            image = stbi_load(icon.path(), w, h, comp, 4);
+            width = w.get();
+            height = h.get();
+        }
+        GLFWImage imageB = GLFWImage.malloc();
+        GLFWImage.Buffer imagebf = GLFWImage.malloc(1);
+        assert image != null;
+        imageB.set(width, height, image);
+        imagebf.put(0, imageB);
+        glfwSetWindowIcon(windowHandler, imagebf);
     }
 
     @Override
@@ -140,22 +162,27 @@ public class OpenGLGraphicsManager implements GraphicsManager, PCInputManager {
         GL11.glEnable(GL11.GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
         switch (form) {
             case SQUARE -> {
-                default2DShader.bind();
+                OpenGLShaderProgram shader = default2DShader;
+                boolean isChar = paint.text() != null;
+                if (isChar) shader = defaultText2DShader;
 
-                default2DShader.setUniform("transformationMatrix", new Matrix4f().identity().translate(new Vector3f((float) paint.transformation().position().x(), (float) paint.transformation().position().y(), 0)).rotateZ((float) Math.toRadians(paint.transformation().zRotation())).scaleXY((float) paint.transformation().scale().x(), (float) paint.transformation().scale().y()));
-                default2DShader.setUniform("viewMatrix", viewMatrix);
-                default2DShader.setUniform("color", new Vector4f((float) paint.color().red(), (float) paint.color().green(), (float) paint.color().blue(), (float) paint.color().alpha()));
 
-                if(paint.hasImage()) {
-                    default2DShader.setUniform("texture_sampler", 0);
-                    default2DShader.setUniform("ignoreTexture", 0);
+                shader.bind();
+
+                shader.setUniform("transformationMatrix", new Matrix4f().identity().translate(new Vector3f((float) paint.transformation().position().x(), (float) paint.transformation().position().y(), 0)).rotateZ((float) Math.toRadians(paint.transformation().zRotation())).scaleXY((float) paint.transformation().scale().x(), (float) paint.transformation().scale().y()));
+                shader.setUniform("viewMatrix", viewMatrix);
+                shader.setUniform("color", new Vector4f((float) paint.color().red(), (float) paint.color().green(), (float) paint.color().blue(), (float) paint.color().alpha()));
+
+                if (paint.hasImage()) {
+                    shader.setUniform("texture_sampler", 0);
+                    if (!isChar)
+                        shader.setUniform("ignoreTexture", 0);
                     glActiveTexture(GL_TEXTURE0);
                     glBindTexture(GL_TEXTURE_2D, (int) paint.drawObj());
                 } else {
-                    default2DShader.setUniform("ignoreTexture", 1);
+                    shader.setUniform("ignoreTexture", 1);
                 }
 
                 glBindVertexArray(squareMesh.vao);
@@ -171,8 +198,36 @@ public class OpenGLGraphicsManager implements GraphicsManager, PCInputManager {
                 glBindVertexArray(0);
                 glBindTexture(GL_TEXTURE_2D, 0);
 
-                default2DShader.unbind();
+                shader.unbind();
             }
+            case TEXT -> {
+                if (!paint.text().isEmpty()) {
+                    double width = 0;
+                    for (char c : paint.text().toCharArray()) {
+                        FontCharacter character = paint.font().characterMap().get(c);
+                        width += character.advance() * 2;
+                    }
+                    double x = -width / 2;
+                    double y = -paint.font().size() / 2;
+                    for (char c : paint.text().toCharArray()) {
+                        Paint p = new Paint();
+                        p.setText("");
+                        p.setHasImage(true);
+                        p.setColor(paint.color());
+                        Transform2D t = new Transform2D(paint.transformation());
+                        FontCharacter character = paint.font().characterMap().get(c);
+                        x += character.advance();
+                        t.translate(x, character.top() * 2. - character.texture().size().height() + y);
+                        x += character.advance();
+                        t.scale().set(character.texture().size().width() / 100., character.texture().size().height() / 100.);
+
+                        p.setDrawObj(character.texture().imageRef());
+                        p.setTransformation(t);
+                        draw(Form.SQUARE, p);
+                    }
+                }
+            }
+
         }
         GL11.glDisable(GL11.GL_BLEND);
     }

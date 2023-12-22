@@ -18,6 +18,7 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.font.Font;
 import com.xebisco.yield.manager.ApplicationManager;
+import com.xebisco.yield.manager.PCInputManager;
 import com.xebisco.yield.platform.ApplicationModule;
 import com.xebisco.yield.platform.ApplicationPlatform;
 import com.xebisco.yield.texture.Texture;
@@ -25,6 +26,8 @@ import com.xebisco.yield.texture.TextureFilter;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * It's a class that implements the `Behavior` interface and is responsible for rendering the scene and updating the
@@ -39,6 +42,7 @@ public class Application extends AbstractBehavior {
     private Scene scene;
     private Font defaultFont;
     private Texture defaultTexture;
+    private Map<String, Axis> axisMap = new HashMap<>();
 
     public Application(ApplicationManager applicationManager, Class<? extends Scene> initialScene, ApplicationPlatform applicationPlatform, PlatformInit platformInit) {
         this.applicationManager = applicationManager;
@@ -63,6 +67,11 @@ public class Application extends AbstractBehavior {
 
         this.platformInit = platformInit;
         viewportSize = new ImmutableVector2D(platformInit.windowSize().width(), platformInit.viewportSize().height());
+
+
+        axisMap.put(Global.HORIZONTAL, new Axis(Input.Key.VK_D, Input.Key.VK_A, Input.Key.VK_RIGHT, Input.Key.VK_LEFT));
+        axisMap.put(Global.VERTICAL, new Axis(Input.Key.VK_W, Input.Key.VK_S, Input.Key.VK_UP, Input.Key.VK_DOWN));
+        axisMap.put(Global.JUMP, new Axis(Input.Key.VK_SPACE, Input.Key.VK_SHIFT));
     }
 
     public Application(ApplicationManager applicationManager, ApplicationPlatform applicationPlatform, PlatformInit platformInit) {
@@ -79,7 +88,7 @@ public class Application extends AbstractBehavior {
     @Override
     public void onStart() {
         applicationPlatform.graphicsManager().init(platformInit);
-        defaultFont = new Font("OpenSans-Regular.ttf", 48, applicationPlatform.fontManager());
+        defaultFont = new Font("OpenSans-Regular.ttf", 32, applicationPlatform.fontManager());
         try {
             applicationPlatform.graphicsManager().updateWindowIcon(new Texture(platformInit.windowIconPath(), TextureFilter.LINEAR, applicationPlatform.textureManager()));
         } catch (IOException e) {
@@ -165,6 +174,31 @@ public class Application extends AbstractBehavior {
 
     public Application setDefaultTexture(Texture defaultTexture) {
         this.defaultTexture = defaultTexture;
+        return this;
+    }
+
+    public double axis(String axisName) {
+        Axis axis = axisMap().get(axisName);
+        PCInputManager inputManager = applicationPlatform.pcInputManager();
+        if(inputManager.getPressingKeys().contains(axis.positiveKey()) || inputManager.getPressingKeys().contains(axis.altPositiveKey())) {
+            return 1;
+        }
+        else if(inputManager.getPressingKeys().contains(axis.negativeKey()) || inputManager.getPressingKeys().contains(axis.altNegativeKey())) {
+            return -1;
+        }
+        return 0;
+    }
+
+    public Vector2D axis2D(String xAxis, String yAxis) {
+        return new Vector2D(axis(xAxis), axis(yAxis));
+    }
+
+    public Map<String, Axis> axisMap() {
+        return axisMap;
+    }
+
+    public Application setAxisMap(Map<String, Axis> axisMap) {
+        this.axisMap = axisMap;
         return this;
     }
 }

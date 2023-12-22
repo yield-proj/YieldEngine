@@ -23,11 +23,22 @@ package com.xebisco.yield;
 @ComponentIcon(iconType = ComponentIconType.TRANSFORM)
 public class Transform2D {
     @VisibleOnEditor
-    private final Vector2D position = new Vector2D(), scale = new Vector2D(1, 1), centerOffset = new Vector2D();
+    private final Vector2D position = new Vector2D(), scale = new Vector2D(1, 1);
     @VisibleOnEditor
     private ObjectCenter center = ObjectCenter.CENTER;
     @VisibleOnEditor
     private double zRotation;
+
+    public Transform2D() {
+    }
+
+    public Transform2D(Transform2D t) {
+        position.set(t.position);
+        scale.set(t.scale);
+        center = t.center;
+        zRotation = t.zRotation;
+    }
+
 
     /**
      * This function translates the position by adding a TwoAnchorRepresentation value to it.
@@ -91,10 +102,6 @@ public class Transform2D {
      */
     public Vector2D scale() {
         return scale;
-    }
-
-    public Vector2D centerOffset() {
-        return centerOffset;
     }
 
     public double zRotation() {

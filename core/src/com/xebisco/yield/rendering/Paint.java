@@ -3,10 +3,13 @@ package com.xebisco.yield.rendering;
 import com.xebisco.yield.Color;
 import com.xebisco.yield.Colors;
 import com.xebisco.yield.Transform2D;
+import com.xebisco.yield.font.Font;
 
 public class Paint {
     private Object drawObj;
     private Transform2D transformation;
+    private String text;
+    private Font font;
     private boolean hasImage;
     private Color color = new Color(Colors.WHITE);
 
@@ -43,6 +46,24 @@ public class Paint {
 
     public Paint setColor(Color color) {
         this.color = color;
+        return this;
+    }
+
+    public String text() {
+        return text;
+    }
+
+    public Paint setText(String text) {
+        this.text = text;
+        return this;
+    }
+
+    public Font font() {
+        return font;
+    }
+
+    public Paint setFont(Font font) {
+        this.font = font;
         return this;
     }
 }

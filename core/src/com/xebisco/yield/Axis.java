@@ -20,53 +20,9 @@ package com.xebisco.yield;
  * The class "Axis" represents an input axis with keys for positive and negative values, and can store and retrieve its
  * current value.
  */
-public class Axis {
-    private final String name;
-    private final Input.Key positiveKey, negativeKey, altPositiveKey, altNegativeKey;
-    private double value;
+public record Axis(Input.Key positiveKey, Input.Key negativeKey, Input.Key altPositiveKey, Input.Key altNegativeKey) {
 
-    public Axis(String name, Input.Key positiveKey, Input.Key negativeKey, Input.Key altPositiveKey, Input.Key altNegativeKey) {
-        this.name = name;
-        this.positiveKey = positiveKey;
-        this.negativeKey = negativeKey;
-        this.altPositiveKey = altPositiveKey;
-        this.altNegativeKey = altNegativeKey;
-    }
-
-    public Axis(String name, Input.Key positiveKey, Input.Key negativeKey) {
-        this.name = name;
-        this.positiveKey = positiveKey;
-        this.negativeKey = negativeKey;
-        this.altPositiveKey = null;
-        this.altNegativeKey = null;
-    }
-
-    public String name() {
-        return name;
-    }
-
-    public Input.Key positiveKey() {
-        return positiveKey;
-    }
-
-    public Input.Key negativeKey() {
-        return negativeKey;
-    }
-
-    public Input.Key altPositiveKey() {
-        return altPositiveKey;
-    }
-
-    public Input.Key altNegativeKey() {
-        return altNegativeKey;
-    }
-
-    public double value() {
-        return value;
-    }
-
-    public Axis setValue(double value) {
-        this.value = value;
-        return this;
+    public Axis(Input.Key positiveKey, Input.Key negativeKey) {
+        this(positiveKey, negativeKey, null, null);
     }
 }

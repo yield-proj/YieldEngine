@@ -10,6 +10,7 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.freetype.FT_Bitmap;
 import org.lwjgl.util.freetype.FT_Face;
+import org.lwjgl.util.freetype.FT_GlyphSlot;
 
 import java.util.Objects;
 
@@ -60,7 +61,6 @@ public class OpenGLFontManager implements FontManager {
         }
 
 
-
         FT_New_Face(ftLibL, font.path(), 0, fontPointer = MemoryUtil.memAllocPointer(1));
 
         FT_Face face = FT_Face.create(fontPointer.get());
@@ -82,10 +82,13 @@ public class OpenGLFontManager implements FontManager {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+            FT_GlyphSlot glyph = Objects.requireNonNull(face.glyph());
+
+
             Texture t = new Texture(texture, new Vector2D(bitmap.width(), bitmap.rows()), font.path(), TextureFilter.LINEAR, null);
 
             //noinspection resource
-            font.characterMap().put(c, new FontCharacter(t, new Vector2D(bitmap.width(), bitmap.rows()), (int) Objects.requireNonNull(face.glyph()).advance().x()));
+            font.characterMap().put(c, new FontCharacter(t, glyph.bitmap_top(), bitmap.width() == 0 ? (int) (font.size() / 3) : bitmap.width() + 3));
         }
 
         FT_Done_Face(face);

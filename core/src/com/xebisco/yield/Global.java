@@ -30,6 +30,8 @@ import java.util.Random;
  */
 public final class Global {
 
+    public static final String HORIZONTAL = "Horizontal", VERTICAL = "Vertical", JUMP = "Jump";
+
     public static final class Platforms {
         public static ApplicationPlatform openGLOpenAL() throws ClassNotFoundException {
             Map<ApplicationModule, Object> modules = new HashMap<>();

@@ -36,15 +36,6 @@ public class Font extends FileInput {
         fontManager.loadFont(this);
     }
 
-    /**
-     * The function returns the size as a double.
-     *
-     * @return The method is returning a double value which is the size.
-     */
-    public double getSize() {
-        return size;
-    }
-
     public Map<Character, FontCharacter> characterMap() {
         return characterMap;
     }

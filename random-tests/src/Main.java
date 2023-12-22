@@ -11,7 +11,7 @@ public class Main extends Scene {
 
     @Override
     public void onStart() {
-        instantiate(new Entity2DPrefab(new ComponentCreation(TexturedSquareMesh.class)));
+        instantiate(new Entity2DPrefab(new ComponentCreation(TextMesh.class), new ComponentCreation(Movement.class)));
     }
 
     public static void main(String[] args) throws ClassNotFoundException {

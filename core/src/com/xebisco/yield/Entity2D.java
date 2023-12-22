@@ -78,6 +78,17 @@ public final class Entity2D extends Entity2DContainer {
         }
     }
 
+    public Transform2D hierarchyTransform() {
+        Transform2D t = new Transform2D(transform);
+        if(parent != null && parent instanceof Entity2D ep) {
+            Transform2D parentTransform = ep.hierarchyTransform();
+            t.rotate(parentTransform.zRotation());
+            t.translate(parentTransform.position());
+            t.scale(parentTransform.scale());
+        }
+        return t;
+    }
+
     /**
      * For each component, set the entity and frames, and call onStart and onUpdate.
      */
