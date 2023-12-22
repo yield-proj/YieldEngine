@@ -22,7 +22,6 @@ import com.xebisco.yield.texture.TexturedSquareMesh;
  * The AnimationPlayer class is a component behavior that handles the playing of animations by updating the texture
  * rectangle with the current frame.
  */
-@ComponentIcon(iconType = ComponentIconType.ANIMATION)
 public final class AnimationPlayer extends ComponentBehavior {
     private Animation animation;
     private Animation toSwitchAnimation;

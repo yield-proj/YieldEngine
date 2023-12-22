@@ -20,13 +20,9 @@ package com.xebisco.yield;
  * It represents the position, size, scale, and rotation of a 2D object
  */
 
-@ComponentIcon(iconType = ComponentIconType.TRANSFORM)
 public class Transform2D {
-    @VisibleOnEditor
     private final Vector2D position = new Vector2D(), scale = new Vector2D(1, 1);
-    @VisibleOnEditor
     private ObjectCenter center = ObjectCenter.CENTER;
-    @VisibleOnEditor
     private double zRotation;
 
     public Transform2D() {

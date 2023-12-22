@@ -20,7 +20,6 @@ import com.xebisco.yield.rendering.Form;
 import com.xebisco.yield.rendering.Paint;
 import com.xebisco.yield.rendering.Renderer;
 
-@HideComponent
 public abstract class AbstractRenderable extends ComponentBehavior {
 
     private final Form form;
