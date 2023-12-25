@@ -2,13 +2,15 @@ package com.xebisco.yield.physics;
 
 import com.xebisco.yield.ComponentBehavior;
 import com.xebisco.yield.ContextTime;
+import com.xebisco.yield.ImmutableVector2D;
 import com.xebisco.yield.Vector2D;
 import com.xebisco.yield.physics.colliders.Collider2D;
 import org.jbox2d.callbacks.ContactListener;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.*;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.Fixture;
+import org.jbox2d.dynamics.FixtureDef;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,6 +80,15 @@ public class PhysicsBody extends ComponentBehavior {
 
     public void applyTorque(double torque) {
         b2Body.applyTorque((float) torque);
+    }
+
+    public ImmutableVector2D linearVelocity() {
+        return Utils.toImmutableVector2D(b2Body.getLinearVelocity().mul((float) physicsSystem.ppm()));
+    }
+
+    public PhysicsBody setLinearVelocity(Vector2D linearVelocity) {
+        b2Body.setLinearVelocity(Utils.toVec2(linearVelocity.divide(physicsSystem.ppm())));
+        return this;
     }
 
     public void applyAngularImpulse(double impulse) {

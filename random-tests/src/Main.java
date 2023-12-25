@@ -14,8 +14,8 @@ public class Main extends Scene {
 
     @Override
     public void onStart() {
-        systems().add(new PhysicsSystem());
-        instantiate(new Entity2DPrefab(new ComponentCreation(TextMesh.class), new ComponentCreation(Movement.class), new ComponentCreation(PhysicsBody.class, c -> ((PhysicsBody) c).setType(BodyType.DYNAMIC).setGravityScale(0))));
+        systems().add(new PhysicsSystem().setGravity(new Vector2D(0, -800)));
+        instantiate(new Entity2DPrefab(new ComponentCreation(TextMesh.class), new ComponentCreation(Movement.class), new ComponentCreation(PhysicsBody.class, c -> ((PhysicsBody) c).setType(BodyType.DYNAMIC))));
     }
 
     public static void main(String[] args) throws ClassNotFoundException {

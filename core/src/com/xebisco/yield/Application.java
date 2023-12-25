@@ -122,6 +122,14 @@ public class Application extends AbstractBehavior {
         applicationPlatform.close();
     }
 
+    public boolean isKeyPressed(Input.Key key) {
+        return applicationPlatform.pcInputManager().getPressingKeys().contains(key);
+    }
+
+    public boolean isMouseButtonPressed(Input.MouseButton mouseButton) {
+        return applicationPlatform.pcInputManager().getPressingMouseButtons().contains(mouseButton);
+    }
+
 
     /**
      * This function sets the scene and disposes of any previous scene and its entities and systems.
@@ -179,11 +187,10 @@ public class Application extends AbstractBehavior {
 
     public double axis(String axisName) {
         Axis axis = axisMap().get(axisName);
-        PCInputManager inputManager = applicationPlatform.pcInputManager();
-        if(inputManager.getPressingKeys().contains(axis.positiveKey()) || inputManager.getPressingKeys().contains(axis.altPositiveKey())) {
+        if(isKeyPressed(axis.positiveKey()) || isKeyPressed(axis.altPositiveKey())) {
             return 1;
         }
-        else if(inputManager.getPressingKeys().contains(axis.negativeKey()) || inputManager.getPressingKeys().contains(axis.altNegativeKey())) {
+        else if(isKeyPressed(axis.negativeKey()) || isKeyPressed(axis.altNegativeKey())) {
             return -1;
         }
         return 0;

@@ -11,7 +11,7 @@ import java.io.IOException;
 public class PhysicsSystem extends SystemBehavior {
     private final World b2World = new World(new Vec2(0, -10));
 
-    private final Vector2D gravity = new Vector2D(0, -10);
+    private Vector2D gravity = new Vector2D(0, -10);
 
     private int velocityIterations = 6, positionIterations = 2;
     private double ppm = 32;
@@ -34,6 +34,11 @@ public class PhysicsSystem extends SystemBehavior {
 
     public Vector2D gravity() {
         return gravity;
+    }
+
+    public PhysicsSystem setGravity(Vector2D gravity) {
+        this.gravity = gravity;
+        return this;
     }
 
     public int velocityIterations() {

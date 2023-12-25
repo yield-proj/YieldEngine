@@ -12,7 +12,8 @@ public class Movement extends ComponentBehavior {
 
     @Override
     public void onUpdate(ContextTime time) {
-        body.applyLinearImpulse(application().axis2D("Horizontal", "Vertical").multiplyLocal(time.deltaTime()));
+        if (application().isKeyPressed(Input.Key.VK_W))
+            body.setLinearVelocity(new Vector2D(body.linearVelocity().x(), 300));
         transform().rotate(1);
     }
 }
