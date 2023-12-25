@@ -4,10 +4,13 @@ import com.xebisco.yield.ComponentBehavior;
 import com.xebisco.yield.ContextTime;
 import com.xebisco.yield.Vector2D;
 import com.xebisco.yield.physics.colliders.Collider2D;
+import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PhysicsBody extends ComponentBehavior {
     private BodyType type = BodyType.STATIC;
@@ -19,6 +22,8 @@ public class PhysicsBody extends ComponentBehavior {
     private boolean bullet = false;
     private double gravityScale = 1;
     private PhysicsSystem physicsSystem;
+
+    private final List<ContactListener> contactListeners = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -80,6 +85,10 @@ public class PhysicsBody extends ComponentBehavior {
     public void onLateUpdate(ContextTime time) {
         transform().position().set(b2Body.getPosition().x * physicsSystem.ppm(), b2Body.getPosition().y * physicsSystem.ppm());
         transform().setzRotation(b2Body.getAngle());
+    }
+
+    public void addContactListener(ContactListener contactListener) {
+        contactListeners.add(contactListener);
     }
 
     public BodyType type() {
@@ -158,5 +167,9 @@ public class PhysicsBody extends ComponentBehavior {
         if(b2Body != null) b2Body.setGravityScale((float) gravityScale);
         this.gravityScale = gravityScale;
         return this;
+    }
+
+    public List<ContactListener> contactListeners() {
+        return contactListeners;
     }
 }

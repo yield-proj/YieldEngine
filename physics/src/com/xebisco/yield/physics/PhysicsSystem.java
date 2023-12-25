@@ -17,6 +17,11 @@ public class PhysicsSystem extends SystemBehavior {
     private double ppm = 32;
 
     @Override
+    public void onStart() {
+        b2World.setContactListener(new WorldContactListener());
+    }
+
+    @Override
     public void onUpdate(ContextTime time) {
         super.onUpdate(time);
         b2World.setGravity(Utils.toVec2(gravity.divide(ppm)));
