@@ -59,7 +59,7 @@ public class Entity2DContainer extends AbstractBehavior implements Renderable {
             if (cc.getComponentModifier() != null) {
                 try {
                     cc.getComponentModifier().modify(components[i]);
-                } catch (OnlyModifiableBeforeCreation e) {
+                } catch (OnlyModifiableBeforeCreationException e) {
                     throw new RuntimeException(e);
                 }
             }

@@ -1,8 +1,7 @@
 package com.xebisco.yield.physics.joints;
 
 import com.xebisco.yield.ComponentBehavior;
-import com.xebisco.yield.ContextTime;
-import com.xebisco.yield.OnlyModifiableBeforeCreation;
+import com.xebisco.yield.OnlyModifiableBeforeCreationException;
 import com.xebisco.yield.physics.PhysicsBody;
 import com.xebisco.yield.physics.PhysicsSystem;
 import org.jbox2d.dynamics.joints.DistanceJoint;
@@ -35,8 +34,8 @@ public class DistanceJoint2D extends ComponentBehavior {
         return body1;
     }
 
-    public DistanceJoint2D setBody1(PhysicsBody body1) throws OnlyModifiableBeforeCreation {
-        if (b2DistanceJoint != null) throw new OnlyModifiableBeforeCreation();
+    public DistanceJoint2D setBody1(PhysicsBody body1) throws OnlyModifiableBeforeCreationException {
+        if (b2DistanceJoint != null) throw new OnlyModifiableBeforeCreationException();
         this.body1 = body1;
         return this;
     }
@@ -45,8 +44,8 @@ public class DistanceJoint2D extends ComponentBehavior {
         return body2;
     }
 
-    public DistanceJoint2D setBody2(PhysicsBody body2) throws OnlyModifiableBeforeCreation {
-        if (b2DistanceJoint != null) throw new OnlyModifiableBeforeCreation();
+    public DistanceJoint2D setBody2(PhysicsBody body2) throws OnlyModifiableBeforeCreationException {
+        if (b2DistanceJoint != null) throw new OnlyModifiableBeforeCreationException();
         this.body2 = body2;
         return this;
     }
@@ -55,8 +54,8 @@ public class DistanceJoint2D extends ComponentBehavior {
         return collideConnected;
     }
 
-    public DistanceJoint2D setCollideConnected(boolean collideConnected) throws OnlyModifiableBeforeCreation {
-        if (b2DistanceJoint != null) throw new OnlyModifiableBeforeCreation();
+    public DistanceJoint2D setCollideConnected(boolean collideConnected) throws OnlyModifiableBeforeCreationException {
+        if (b2DistanceJoint != null) throw new OnlyModifiableBeforeCreationException();
         this.collideConnected = collideConnected;
         return this;
     }
