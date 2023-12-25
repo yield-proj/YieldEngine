@@ -72,6 +72,18 @@ public class PhysicsBody extends ComponentBehavior {
         b2Body.applyForceToCenter(Utils.toVec2(force));
     }
 
+    public void applyLinearImpulse(Vector2D impulse) {
+        b2Body.applyLinearImpulse(Utils.toVec2(impulse), b2Body.getWorldCenter());
+    }
+
+    public void applyTorque(double torque) {
+        b2Body.applyTorque((float) torque);
+    }
+
+    public void applyAngularImpulse(double impulse) {
+        b2Body.applyAngularImpulse((float) impulse);
+    }
+
     @Override
     public void onUpdate(ContextTime time) {
         Fixture fixture = b2Body.m_fixtureList;

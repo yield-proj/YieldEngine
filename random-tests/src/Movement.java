@@ -12,7 +12,7 @@ public class Movement extends ComponentBehavior {
 
     @Override
     public void onUpdate(ContextTime time) {
-        body.applyForce(application().axis2D("Horizontal", "Vertical").multiplyLocal(new Vector2D(5, 5)));
+        body.applyLinearImpulse(application().axis2D("Horizontal", "Vertical").multiplyLocal(new Vector2D(5, 5)));
         transform().rotate(1);
     }
 }
