@@ -28,9 +28,7 @@ public class Context implements Runnable {
     private final Thread thread;
     private final ContextTime contextTime;
     private final AtomicBoolean running = new AtomicBoolean();
-    private final Object lockObject = new Object();
     private final AbstractBehavior abstractBehavior;
-    private boolean lightweight;
 
     public Context(ContextTime contextTime, AbstractBehavior abstractBehavior, String name) {
         this.contextTime = contextTime;
@@ -42,30 +40,31 @@ public class Context implements Runnable {
     public void run() {
         running.set(true);
         long last = System.nanoTime(), actual;
+        long start = last;
         long value = 0;
         while (running.get()) {
-            if (!lightweight && value > 0) {
+            if (value > 0) {
                 do {
                     actual = System.nanoTime();
-                } while (actual - last < contextTime.targetSleepTime() * 1_000);
+                } while (actual - last < contextTime.targetSleepTime());
             } else {
                 actual = System.nanoTime();
             }
-            contextTime.setDeltaTime((actual - last) / 1_000_000_000.0);
-            abstractBehavior.tick(contextTime);
+            contextTime.setTimeSinceStart(actual - start);
+            contextTime.setDeltaTime((actual - last) / 1_000_000_000f);
+            abstractBehavior.onUpdate(contextTime);
             last = actual;
             actual = System.nanoTime();
 
-            value = contextTime.targetSleepTime() - 1000 - ((actual - last) / 1_000);
-            if (lightweight) value++;
-            if (value > 0)
-                synchronized (lockObject) {
-                    try {
-                        lockObject.wait(value / 1000, (int) (value - value / 1000));
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+            value = contextTime.targetSleepTime() - 1_000_000 - ((actual - last) / 1_000_000);
+            if (value > 0) {
+                try {
+                    //noinspection BusyWait
+                    Thread.sleep(value / 1_000_000, (int) (value - (value / 1_000_000 * 1_000_000)));
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
+            }
         }
         try {
             abstractBehavior.close();
@@ -101,35 +100,7 @@ public class Context implements Runnable {
         return running;
     }
 
-    /**
-     * This function returns the lock object.
-     *
-     * @return The lock object.
-     */
-    public Object lockObject() {
-        return lockObject;
-    }
-
     public AbstractBehavior abstractBehavior() {
         return abstractBehavior;
-    }
-
-    /**
-     * Returns true if this component is lightweight.
-     *
-     * @return The boolean value of the variable lightweight.
-     */
-    public boolean lightweight() {
-        return lightweight;
-    }
-
-    /**
-     * Sets the lightweight property of the component.
-     *
-     * @param lightweight If true, the component will behavior as a lightweight context.
-     */
-    public Context setLightweight(boolean lightweight) {
-        this.lightweight = lightweight;
-        return this;
     }
 }
