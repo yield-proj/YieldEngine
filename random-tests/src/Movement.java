@@ -1,11 +1,18 @@
-import com.xebisco.yield.ComponentBehavior;
-import com.xebisco.yield.ContextTime;
-import com.xebisco.yield.Vector2D;
+import com.xebisco.yield.*;
+import com.xebisco.yield.physics.PhysicsBody;
 
 public class Movement extends ComponentBehavior {
+
+    private PhysicsBody body;
+
+    @Override
+    public void onStart() {
+        body = component(PhysicsBody.class);
+    }
+
     @Override
     public void onUpdate(ContextTime time) {
-        transform().translate(application().axis2D("Horizontal", "Vertical").multiplyLocal(new Vector2D(5, 5)));
+        body.applyForce(application().axis2D("Horizontal", "Vertical").multiplyLocal(new Vector2D(5, 5)));
         transform().rotate(1);
     }
 }

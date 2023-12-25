@@ -38,6 +38,24 @@ public abstract class Scene extends Entity2DContainer {
         systems.forEach(s -> s.setScene(this).tick(time));
     }
 
+    public <T extends SystemBehavior> T system(Class<T> systemType, int index) {
+        int i = 0;
+        for (SystemBehavior c : systems) {
+            if (c.getClass().hashCode() == systemType.hashCode() && c.getClass().equals(systemType)) {
+                if (index == i) {
+                    //noinspection unchecked
+                    return (T) c;
+                }
+                i++;
+            }
+        }
+        return null;
+    }
+
+    public <T extends SystemBehavior> T system(Class<T> systemType) {
+        return system(systemType, 0);
+    }
+
     /**
      * This function returns the background color.
      *

@@ -1,5 +1,8 @@
 import com.xebisco.yield.*;
 import com.xebisco.yield.manager.ApplicationManager;
+import com.xebisco.yield.physics.BodyType;
+import com.xebisco.yield.physics.PhysicsBody;
+import com.xebisco.yield.physics.PhysicsSystem;
 import com.xebisco.yield.texture.TexturedSquareMesh;
 
 import java.util.concurrent.CompletableFuture;
@@ -11,7 +14,8 @@ public class Main extends Scene {
 
     @Override
     public void onStart() {
-        instantiate(new Entity2DPrefab(new ComponentCreation(TextMesh.class), new ComponentCreation(Movement.class)));
+        systems().add(new PhysicsSystem());
+        instantiate(new Entity2DPrefab(new ComponentCreation(TextMesh.class), new ComponentCreation(Movement.class), new ComponentCreation(PhysicsBody.class, c -> ((PhysicsBody) c).setType(BodyType.DYNAMIC).setGravityScale(0))));
     }
 
     public static void main(String[] args) throws ClassNotFoundException {

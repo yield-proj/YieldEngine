@@ -1,5 +1,6 @@
 package com.xebisco.yield.physics;
 
+import com.xebisco.yield.Scene;
 import com.xebisco.yield.Vector2D;
 import org.jbox2d.common.Vec2;
 

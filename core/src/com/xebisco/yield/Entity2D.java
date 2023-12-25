@@ -29,11 +29,9 @@ import java.util.List;
  */
 public final class Entity2D extends Entity2DContainer {
     private final Transform2D transform = new Transform2D();
-    private List<ComponentBehavior> components = new ArrayList<>();
+    private final ComponentBehavior[] components;
     private final Entity2DContainer parent;
     private int renderIndex;
-
-    private final Application application;
 
     private final String[] tags;
     private boolean visible = true;
@@ -41,36 +39,37 @@ public final class Entity2D extends Entity2DContainer {
     Entity2D(Application application, ComponentBehavior[] components, Entity2DContainer parent, String[] tags) {
         super(application);
         this.parent = parent;
-        this.application = application;
         this.tags = tags;
-        for (ComponentBehavior c : components) {
-            c.setEntity(this);
-            this.components.add(c);
-        }
+        this.components = components;
     }
 
     @Override
-    public void tick(ContextTime time) {
-        super.tick(time);
-        for (int i = 0; i < components.size(); i++) {
-            ComponentBehavior component;
-
-            component = components.get(i);
-
+    public void onUpdate(ContextTime time) {
+        if(frames() == 0) {
+            for (ComponentBehavior component : components) {
+                if (component != null) {
+                    component.setEntity(this);
+                    component.onCreate();
+                }
+            }
+        }
+        for (ComponentBehavior component : components) {
             if (component != null) {
                 component.setEntity(this);
                 component.tick(time);
+            }
+        }
+        for (ComponentBehavior component : components) {
+            if (component != null) {
+                component.setEntity(this);
+                component.onLateUpdate(time);
             }
         }
     }
 
     @Override
     public void render(Renderer renderer) {
-        for (int i = 0; i < components.size(); i++) {
-            ComponentBehavior component;
-
-            component = components.get(i);
-
+        for (ComponentBehavior component : components) {
             if (component != null) {
                 component.setEntity(this);
                 component.render(renderer);
@@ -198,46 +197,12 @@ public final class Entity2D extends Entity2DContainer {
         return component(componentType, 0);
     }
 
-    /**
-     * Remove the component from the list of components and dispose of it.
-     *
-     * @param component The component to remove.
-     */
-    public void removeComponent(ComponentBehavior component) throws IOException {
-        components.remove(component);
-        component.close();
-    }
-
-    /**
-     * Remove the component of the given type at the given renderIndex.
-     *
-     * @param componentType The type of component to remove.
-     * @param index         The renderIndex of the component to remove.
-     */
-    public void removeComponent(Class<? extends ComponentBehavior> componentType, int index) throws IOException {
-        removeComponent(component(componentType, index));
-    }
-
-    /**
-     * Remove the component of the given type from the entity.
-     *
-     * @param componentType The type of the component to remove.
-     */
-    public void removeComponent(Class<? extends ComponentBehavior> componentType) throws IOException {
-        removeComponent(component(componentType));
-    }
-
     public Transform2D transform() {
         return transform;
     }
 
-    public List<ComponentBehavior> components() {
+    public ComponentBehavior[] components() {
         return components;
-    }
-
-    public Entity2D setComponents(List<ComponentBehavior> components) {
-        this.components = components;
-        return this;
     }
 
     public Entity2DContainer parent() {

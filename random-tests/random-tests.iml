@@ -13,5 +13,6 @@
     <orderEntry type="module" module-name="openglimpl" />
     <orderEntry type="module" module-name="javaxsoundimpl" />
     <orderEntry type="module" module-name="openalimpl" />
+    <orderEntry type="module" module-name="physics" />
   </component>
 </module>

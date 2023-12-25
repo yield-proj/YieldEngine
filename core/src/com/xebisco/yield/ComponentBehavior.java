@@ -28,6 +28,14 @@ import java.io.IOException;
 public abstract class ComponentBehavior extends AbstractBehavior implements Renderable {
     private Entity2D entity;
 
+    public void onCreate() {
+
+    }
+
+    public void onLateUpdate(ContextTime time) {
+
+    }
+
     @Override
     public void onStart() {
 

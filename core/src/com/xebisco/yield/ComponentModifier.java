@@ -23,5 +23,5 @@ public interface ComponentModifier {
      *
      * @param component The component to be modified.
      */
-    void modify(ComponentBehavior component);
+    void modify(ComponentBehavior component) throws OnlyModifiableBeforeCreation;
 }
