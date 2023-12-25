@@ -35,7 +35,7 @@ public final class Global {
     public static final class Platforms {
         public static ApplicationPlatform openGLOpenAL() throws ClassNotFoundException {
             Map<ApplicationModule, Object> modules = new HashMap<>();
-            Class<?> openGLGraphicsManagerClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLGraphicsManager");
+            Class<?> openGLGraphicsManagerClass = Class.forName("com.xebisco.yield.openglimpl.GLFWOpenGLGraphicsManager");
             Class<?> openGLFontManagerClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLFontManager");
             Class<?> openGLTextureManagerClass = Class.forName("com.xebisco.yield.openglimpl.OpenGLTextureManager");
             Class<?> openALAudioManagerClass = Class.forName("com.xebisco.yield.openalimpl.OpenALAudio");

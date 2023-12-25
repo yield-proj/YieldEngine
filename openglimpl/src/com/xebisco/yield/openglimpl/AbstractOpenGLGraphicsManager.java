@@ -1,22 +1,20 @@
 package com.xebisco.yield.openglimpl;
 
-import com.xebisco.yield.*;
+import com.xebisco.yield.Color;
+import com.xebisco.yield.Input;
+import com.xebisco.yield.Transform2D;
+import com.xebisco.yield.Vector2D;
 import com.xebisco.yield.font.FontCharacter;
 import com.xebisco.yield.manager.GraphicsManager;
 import com.xebisco.yield.manager.PCInputManager;
 import com.xebisco.yield.rendering.Form;
 import com.xebisco.yield.rendering.Paint;
-import com.xebisco.yield.texture.Texture;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.system.MemoryStack;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -27,10 +25,8 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.stb.STBImage.stbi_image_free;
-import static org.lwjgl.stb.STBImage.stbi_load;
 
-public class OpenGLGraphicsManager implements GraphicsManager, PCInputManager {
+public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, PCInputManager {
 
     private final Vector2D mouse = new Vector2D();
 
@@ -48,94 +44,14 @@ public class OpenGLGraphicsManager implements GraphicsManager, PCInputManager {
     private final Collection<Input.Key> pressingKeys = new ArrayList<>();
     private final Collection<Input.MouseButton> pressingMouseButtons = new ArrayList<>();
 
-
     private long windowHandler;
 
-    @Override
-    public void init(PlatformInit platformInit) {
-
-        viewportSize = platformInit.viewportSize();
-
-        if (!glfwInit()) {
-            throw new IllegalStateException("Could not initialize GLFW.");
-        }
-
-        glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-
-        windowHandler = glfwCreateWindow((int) platformInit.windowSize().width(), (int) platformInit.windowSize().height(), platformInit.title(), 0, 0);
-
-        glfwSetKeyCallback(windowHandler, new GLFWKeyCallback() {
-            @Override
-            public void invoke(long window, int key, int scancode, int action, int mods) {
-                Input.Key k = GLUtils.intToKey(key);
-                if (action == GLFW_PRESS) pressingKeys.add(k);
-                else if (action == GLFW_RELEASE) pressingKeys.remove(k);
-            }
-        });
-        glfwSetMouseButtonCallback(windowHandler, new GLFWMouseButtonCallback() {
-            @Override
-            public void invoke(long window, int button, int action, int mods) {
-                Input.MouseButton k = GLUtils.intToMouseButton(button);
-                if (action == GLFW_PRESS) pressingMouseButtons.add(k);
-                else if (action == GLFW_RELEASE) pressingMouseButtons.remove(k);
-            }
-        });
-        glfwSetCursorPosCallback(windowHandler, new GLFWCursorPosCallback() {
-            @Override
-            public void invoke(long window, double x, double y) {
-                try (MemoryStack stack = MemoryStack.stackPush()) {
-                    IntBuffer w = stack.mallocInt(1), h = stack.mallocInt(1);
-                    glfwGetWindowSize(window, w, h);
-                    mouse.set(x * w.get(), y * h.get());
-                }
-            }
-        });
-        glfwSetWindowSizeCallback(windowHandler, new GLFWWindowSizeCallback() {
-            @Override
-            public void invoke(long window, int w, int h) {
-                GL11.glViewport(0, 0, w, h);
-            }
-        });
-
-
-        glfwMakeContextCurrent(windowHandler);
-
-        if (platformInit.verticalSync()) glfwSwapInterval(1);
-        else glfwSwapInterval(0);
-
+    protected void initAll() {
         GL.createCapabilities();
 
-        glfwShowWindow(windowHandler);
-
-        default2DShader = new OpenGLShaderProgram(OpenGLGraphicsManager.class.getResourceAsStream("default2d.vert"), OpenGLGraphicsManager.class.getResourceAsStream("default2d.frag"));
-        defaultText2DShader = new OpenGLShaderProgram(OpenGLGraphicsManager.class.getResourceAsStream("default2d.vert"), OpenGLGraphicsManager.class.getResourceAsStream("textdefault2d.frag"));
+        default2DShader = new OpenGLShaderProgram(AbstractOpenGLGraphicsManager.class.getResourceAsStream("default2d.vert"), AbstractOpenGLGraphicsManager.class.getResourceAsStream("default2d.frag"));
+        defaultText2DShader = new OpenGLShaderProgram(AbstractOpenGLGraphicsManager.class.getResourceAsStream("default2d.vert"), AbstractOpenGLGraphicsManager.class.getResourceAsStream("textdefault2d.frag"));
         squareMesh = new Mesh2D(new float[]{-100, 100, 100, 100, 100, -100, -100, -100}, new float[]{0, 0, 1, 0, 1, 1, 0, 1}, new int[]{0, 1, 2, 2, 3, 0});
-    }
-
-    @Override
-    public void updateWindowIcon(Texture icon) {
-        ByteBuffer image;
-        int width, height;
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer comp = stack.mallocInt(1);
-            IntBuffer w = stack.mallocInt(1);
-            IntBuffer h = stack.mallocInt(1);
-
-            image = stbi_load(icon.path(), w, h, comp, 4);
-            width = w.get();
-            height = h.get();
-        }
-        GLFWImage imageB = GLFWImage.malloc();
-        GLFWImage.Buffer imagebf = GLFWImage.malloc(1);
-        assert image != null;
-        imageB.set(width, height, image);
-        imagebf.put(0, imageB);
-        glfwSetWindowIcon(windowHandler, imagebf);
     }
 
     @Override
@@ -232,10 +148,6 @@ public class OpenGLGraphicsManager implements GraphicsManager, PCInputManager {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    public static void main(String[] args) {
-
-    }
-
     @Override
     public void finish() {
         glfwSwapBuffers(windowHandler);
@@ -259,5 +171,71 @@ public class OpenGLGraphicsManager implements GraphicsManager, PCInputManager {
     @Override
     public Vector2D mouse() {
         return mouse;
+    }
+
+    public Transform2D camera() {
+        return camera;
+    }
+
+    public Vector2D viewportSize() {
+        return viewportSize;
+    }
+
+    public AbstractOpenGLGraphicsManager setViewportSize(Vector2D viewportSize) {
+        this.viewportSize = viewportSize;
+        return this;
+    }
+
+    public OpenGLShaderProgram default2DShader() {
+        return default2DShader;
+    }
+
+    public AbstractOpenGLGraphicsManager setDefault2DShader(OpenGLShaderProgram default2DShader) {
+        this.default2DShader = default2DShader;
+        return this;
+    }
+
+    public OpenGLShaderProgram defaultText2DShader() {
+        return defaultText2DShader;
+    }
+
+    public AbstractOpenGLGraphicsManager setDefaultText2DShader(OpenGLShaderProgram defaultText2DShader) {
+        this.defaultText2DShader = defaultText2DShader;
+        return this;
+    }
+
+    public Mesh2D squareMesh() {
+        return squareMesh;
+    }
+
+    public AbstractOpenGLGraphicsManager setSquareMesh(Mesh2D squareMesh) {
+        this.squareMesh = squareMesh;
+        return this;
+    }
+
+    public Matrix4f viewMatrix() {
+        return viewMatrix;
+    }
+
+    public AbstractOpenGLGraphicsManager setViewMatrix(Matrix4f viewMatrix) {
+        this.viewMatrix = viewMatrix;
+        return this;
+    }
+
+    public Collection<Input.Key> pressingKeys() {
+        return pressingKeys;
+    }
+
+    public Collection<Input.MouseButton> pressingMouseButtons() {
+        return pressingMouseButtons;
+    }
+
+    public long windowHandler() {
+        return windowHandler;
+    }
+
+    public AbstractOpenGLGraphicsManager setWindowHandler(long windowHandler) {
+        this.windowHandler = windowHandler;
+        return this;
     }
 }
