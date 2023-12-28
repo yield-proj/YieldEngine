@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="editor_app-liibs">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/editor_app/libs" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/editor_app/libs" recursive="false" />
+  </library>
+</component>

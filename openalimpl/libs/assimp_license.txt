@@ -16,7 +16,7 @@ following conditions are met:
   following disclaimer in the documentation and/or other
   materials provided with the distribution.
 
-* Neither the name of the assimp team, nor the names of its
+* Neither the className of the assimp team, nor the names of its
   contributors may be used to endorse or promote products
   derived from this software without specific prior
   written permission of the assimp team.
@@ -42,7 +42,7 @@ These are 3d models for testing purposes, from various free sources
 on the internet. They are - unless otherwise stated - copyright of
 their respective creators, which may impose additional requirements
 on the use of their work. For any of these models, see
-<model-name>.source.txt for more legal information. Contact us if you
+<model-className>.source.txt for more legal information. Contact us if you
 are a copyright holder and believe that we credited you inproperly or
 if you don't want your files to appear in the repository.
 
@@ -61,7 +61,7 @@ are permitted provided that the following conditions are met:
 * Redistributions in binary form must reproduce the above copyright notice,
   this list of conditions and the following disclaimer in the documentation
   and/or other materials provided with the distribution.
-* Neither the name of Poly2Tri nor the names of its contributors may be
+* Neither the className of Poly2Tri nor the names of its contributors may be
   used to endorse or promote products derived from this software without specific
   prior written permission.
 

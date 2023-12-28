@@ -1,20 +1,68 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="openglimpl:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/openglimpl_jar</output-path>
-    <root id="archive" name="yield-openglimpl.jar">
+    <root id="archive" name="openglimpl.jar">
       <element id="module-output" name="openglimpl" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/jogl-all.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/gluegen-rt.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/jogl-all-natives-linux-amd64.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/gluegen-rt-natives-linux-amd64.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/jogl-all-natives-linux-aarch64.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/jogl-all-natives-linux-armv6hf.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/jogl-all-natives-windows-amd64.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/gluegen-rt-natives-linux-aarch64.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/gluegen-rt-natives-linux-armv6hf.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/gluegen-rt-natives-windows-amd64.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/jogl-all-natives-macosx-universal.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/gluegen-rt-natives-macosx-universal.jar" path-in-jar="/" />
+      <element id="module-output" name="core" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-stb.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-glfw.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/joml-1.10.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-opengl.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-freetype.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-stb-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-stb-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-glfw-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-glfw-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/joml-1.10.5-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/joml-1.10.5-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-natives-linux.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-natives-macos.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-opengl-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-opengl-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-natives-windows.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-freetype-javadoc.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-freetype-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-stb-natives-linux.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-stb-natives-macos.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-glfw-natives-linux.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-glfw-natives-macos.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-natives-linux-arm32.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-natives-linux-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-natives-macos-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-natives-windows-x86.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-stb-natives-windows.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-glfw-natives-windows.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-opengl-natives-linux.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-opengl-natives-macos.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-natives-windows-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-freetype-natives-linux.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-freetype-natives-macos.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-opengl-natives-windows.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-stb-natives-linux-arm32.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-stb-natives-linux-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-stb-natives-macos-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-stb-natives-windows-x86.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-freetype-natives-windows.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-glfw-natives-linux-arm32.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-glfw-natives-linux-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-glfw-natives-macos-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-glfw-natives-windows-x86.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-stb-natives-windows-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-glfw-natives-windows-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-opengl-natives-linux-arm32.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-opengl-natives-linux-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-opengl-natives-macos-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-opengl-natives-windows-x86.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-freetype-natives-linux-arm32.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-freetype-natives-linux-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-freetype-natives-macos-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-freetype-natives-windows-x86.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-opengl-natives-windows-arm64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/openglimpl/libs/lwjgl-freetype-natives-windows-arm64.jar" path-in-jar="/" />
+      <element id="library" level="project" name="core-libs" />
     </root>
   </artifact>
 </component>
