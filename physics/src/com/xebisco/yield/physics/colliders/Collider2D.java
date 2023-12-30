@@ -5,7 +5,7 @@ import org.jbox2d.collision.shapes.Shape;
 
 public abstract class Collider2D extends ComponentBehavior {
     private double density = 1, restitution = 0, friction = 0.2;
-    private int collisionMask = 0;
+    private int collisionMask = 1;
     private int[] excludedMasks = new int[0];
 
 

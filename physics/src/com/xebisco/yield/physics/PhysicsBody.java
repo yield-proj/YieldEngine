@@ -44,7 +44,7 @@ public class PhysicsBody extends ComponentBehavior {
         bodyDef.bullet = bullet;
         bodyDef.gravityScale = (float) gravityScale;
         bodyDef.userData = this;
-        bodyDef.position = Utils.toVec2(transform().position().multiply(physicsSystem.ppm()));
+        bodyDef.position = Utils.toVec2(transform().position().divide(physicsSystem.ppm()));
         bodyDef.angle = (float) transform().zRotation();
         b2Body = physicsSystem.b2World().createBody(bodyDef);
         for (ComponentBehavior componentBehavior : entity().components()) {

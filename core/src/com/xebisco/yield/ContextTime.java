@@ -23,7 +23,7 @@ import java.io.Serializable;
  */
 public class ContextTime implements Serializable {
     private double timeScale = 1, deltaTime;
-    private long targetSleepTime = 16_666, timeSinceStart;
+    private long targetSleepTime = 16_666_666, timeSinceStart;
 
     public ContextTime(double targetFPS) {
         setTargetFPS(targetFPS);

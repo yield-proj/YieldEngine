@@ -3,14 +3,22 @@ package com.xebisco.yield.editor.app;
 import com.xebisco.yield.editor.app.props.*;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.io.*;
-import java.net.*;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class EditorWindow extends JFrame {
 
@@ -125,12 +133,40 @@ public class EditorWindow extends JFrame {
         fileMenu.add(new JMenuItem(new AbstractAction(Srd.LANG.getProperty("se_menuBar_file_newEntityPrefab")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (projectRoot == null || scene == null) {
+                if (projectRoot == null) {
                     JOptionPane.showMessageDialog(EditorWindow.this, Srd.LANG.getProperty("se_noFolderError"));
                     return;
                 }
 
+                String folderName = JOptionPane.showInputDialog("Entity/File name");
+                if (folderName == null || folderName.isEmpty()) {
+                    JOptionPane.showMessageDialog(EditorWindow.this, Srd.LANG.getProperty("misc_operationCanceled"));
+                    return;
+                }
 
+                File prefabFile = new File(new File(projectRoot, "Prefabs"), folderName + ".yepf");
+                try {
+                    if (!prefabFile.createNewFile()) {
+                        JOptionPane.showMessageDialog(EditorWindow.this, "Prefab file already exists");
+                        return;
+                    }
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(EditorWindow.this, ex.getMessage(), ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+                    throw new RuntimeException(ex);
+                }
+
+                EditorEntity entity = new EditorEntity().setEntityName(folderName);
+
+                try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(prefabFile))) {
+                    oo.writeObject(entity);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                JDialog dialog = openEntity(EditorWindow.this, entity, prefabFile);
+                dialog.pack();
+                dialog.setLocationRelativeTo(EditorWindow.this);
+                dialog.setVisible(true);
             }
         }));
 
@@ -186,6 +222,40 @@ public class EditorWindow extends JFrame {
             }
         }));
 
+        fileMenu.add(new JMenuItem(new AbstractAction(Srd.LANG.getProperty("se_menuBar_file_openEntityPrefab")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (projectRoot == null) {
+                    JOptionPane.showMessageDialog(EditorWindow.this, Srd.LANG.getProperty("se_noFolderError"));
+                    return;
+                }
+                JFileChooser fileChooser = new JFileChooser(new File(projectRoot, "Prefabs"));
+                fileChooser.setFileFilter(new FileFilter() {
+                    @Override
+                    public boolean accept(File f) {
+                        return f.getName().endsWith(".yepf");
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "Yield Entity Prefab (.yepf)";
+                    }
+                });
+                if (fileChooser.showOpenDialog(EditorWindow.this) == JFileChooser.APPROVE_OPTION) {
+                    EditorEntity prefab;
+                    try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(fileChooser.getSelectedFile()))) {
+                        prefab = (EditorEntity) oi.readObject();
+                    } catch (IOException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    JDialog dialog = openEntity(EditorWindow.this, prefab, fileChooser.getSelectedFile());
+                    dialog.pack();
+                    dialog.setLocationRelativeTo(EditorWindow.this);
+                    dialog.setVisible(true);
+                }
+            }
+        }));
+
         fileMenu.addSeparator();
 
         JMenu preferencesMenu = new JMenu(Srd.LANG.getProperty("se_menuBar_file_preferences"));
@@ -223,8 +293,7 @@ public class EditorWindow extends JFrame {
                             JOptionPane.showMessageDialog(EditorWindow.this, "Yield Engine REV " + globalClass.getField("REV").get(null));
                         } catch (ClassNotFoundException ex) {
                             JOptionPane.showMessageDialog(EditorWindow.this, "Incompatible Yield Engine jar", "Incompatible Engine", JOptionPane.ERROR_MESSAGE);
-                        }
-                        catch (Exception ex){
+                        } catch (Exception ex) {
                             JOptionPane.showMessageDialog(EditorWindow.this, ex.getMessage(), ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
                         }
                     }
@@ -316,6 +385,106 @@ public class EditorWindow extends JFrame {
         } else if (r == JOptionPane.NO_OPTION) {
             new EditorWindow().setSceneFile(scene);
         }
+    }
+
+    public static JDialog openEntity(Frame frame, EditorEntity entity, File toSaveFile) {
+        AtomicReference<File> saveFile = new AtomicReference<>(toSaveFile);
+        JDialog dialog = new JDialog(frame);
+        dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        dialog.setMinimumSize(new Dimension(280, 350));
+        JPanel header = new JPanel(new BorderLayout());
+        JLabel title = new JLabel(entity.entityName());
+        title.setFont(title.getFont().deriveFont(Font.BOLD).deriveFont(28f));
+        AtomicBoolean inDialog = new AtomicBoolean(false);
+        if (toSaveFile != null)
+            dialog.setTitle(entity.entityName() + " (File Prefab)");
+        else dialog.setTitle(entity.entityName() + " (In Scene)");
+        title.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                if (toSaveFile != null)
+                    dialog.setTitle(entity.entityName() + " (File Prefab)");
+                else dialog.setTitle(entity.entityName() + " (In Scene)");
+                title.setText(entity.entityName());
+                title.repaint();
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                inDialog.set(true);
+                String name = JOptionPane.showInputDialog("Entity Name");
+                if (name == null || name.isEmpty()) {
+                    JOptionPane.showMessageDialog(dialog, Srd.LANG.getProperty("misc_operationCanceled"));
+                } else {
+                    entity.setEntityName(name);
+                    if (toSaveFile != null) {
+                        if (JOptionPane.showConfirmDialog(dialog, "Change file name also?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                            saveFile.get().renameTo(new File(saveFile.get().getParent(), name + ".yepf"));
+                            saveFile.set(new File(saveFile.get().getParent(), name + ".yepf"));
+                        }
+                    }
+                    dialog.requestFocus();
+                }
+                inDialog.set(false);
+            }
+        });
+        title.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        header.add(title, BorderLayout.WEST);
+
+        JPanel optionsPanel = new JPanel();
+        JCheckBox checkBox = new JCheckBox("Enabled");
+        checkBox.setSelected(entity.enabled());
+        checkBox.addChangeListener(e -> {
+            entity.setEnabled(checkBox.isSelected());
+        });
+        checkBox.setEnabled(toSaveFile == null);
+        optionsPanel.add(checkBox);
+        header.add(optionsPanel, BorderLayout.EAST);
+
+        dialog.add(header, BorderLayout.NORTH);
+
+
+        List<Prop> props = new ArrayList<>();
+        for(EditorComponent comp : entity.components()) {
+            props.add(new ComponentProp(comp));
+        }
+
+
+        dialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (toSaveFile != null) {
+                    try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(saveFile.get()))) {
+                        oo.writeObject(entity);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+
+                dialog.dispose();
+            }
+        });
+        dialog.addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                if (!inDialog.get())
+                    dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
+            }
+        });
+
+
+
+        dialog.add(new PropPanel(props.toArray(new Prop[0])));
+
+        return dialog;
     }
 
 

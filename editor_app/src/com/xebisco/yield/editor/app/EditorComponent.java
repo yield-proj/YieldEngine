@@ -1,12 +1,14 @@
 package com.xebisco.yield.editor.app;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class EditorComponent {
-    private List<Pair<String, Class<?>>> fields = new ArrayList<>();
+public class EditorComponent implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -9027305243114159863L;
+    private List<Pair<Pair<String, Class<?>>, String[]>> fields = new ArrayList<>();
     private final String className;
 
     private boolean canRemove = true;
@@ -15,11 +17,11 @@ public class EditorComponent {
         this.className = className;
     }
 
-    public List<Pair<String, Class<?>>> fields() {
+    public List<Pair<Pair<String, Class<?>>, String[]>> fields() {
         return fields;
     }
 
-    public EditorComponent setFields(List<Pair<String, Class<?>>> fields) {
+    public EditorComponent setFields(List<Pair<Pair<String, Class<?>>, String[]>> fields) {
         this.fields = fields;
         return this;
     }

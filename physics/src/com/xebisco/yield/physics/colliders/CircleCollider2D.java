@@ -5,7 +5,7 @@ import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.Shape;
 
 public class CircleCollider2D extends Collider2D {
-    private double radius;
+    private double radius = 50;
 
     @Override
     public Shape createShape(double ppm) {
