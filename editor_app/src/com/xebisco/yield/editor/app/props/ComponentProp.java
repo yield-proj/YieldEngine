@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +31,7 @@ public class ComponentProp extends Prop {
         JPanel panel = new JPanel(new BorderLayout());
         JToolBar header = new JToolBar();
         header.setRollover(true);
-        header.setBackground(header.getBackground().brighter());
+        header.setFloatable(false);
         Matcher matcher = COMPONENT_NAME_PATTERN.matcher(component.className());
         matcher.find();
         JLabel title = new JLabel(matcher.group(1));
@@ -77,22 +79,50 @@ public class ComponentProp extends Prop {
     }
 
 
-    private static List<Prop> getProps(List<Pair<Pair<String, Class<?>>, String[]>> compValues) {
+    private static List<Prop> getProps(List<Pair<Pair<String, String>, String[]>> compValues) {
         List<Prop> props = new ArrayList<>();
 
-        for (Pair<Pair<String, Class<?>>, String[]> compValue : compValues) {
-            EditableValuesType type = EditableValuesType.getType(compValue.first().second());
-            if(type == null) continue;
+        for (Pair<Pair<String, String>, String[]> compValue : compValues) {
+            Class<?> c;
+            try {
+                c = Class.forName(compValue.first().second());
+            } catch (ClassNotFoundException e) {
+                try {
+                    c = Srd.yieldEngineClassLoader.loadClass(compValue.first().second());
+                } catch (ClassNotFoundException ignore) {
+                    switch (compValue.first().second()) {
+                        case "int" -> c = int.class;
+                        case "long" -> c = long.class;
+                        case "float" -> c = float.class;
+                        case "double" -> c = double.class;
+                        default -> throw new RuntimeException(e);
+                    }
+                }
+            }
+            EditableValuesType type = EditableValuesType.getType(c);
+            if (type == null) {
+                if (c.isEnum()) {
+                    try {
+                        props.add(new ComboProp(compValue.first().first(), (Serializable) c.getMethod("valueOf", String.class).invoke(null, compValue.second()[0]), (Serializable[]) c.getEnumConstants()));
+                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                continue;
+            }
             switch (type) {
                 case STRING -> props.add(new TextFieldProp(compValue.first().first(), compValue.second()[0]));
-                case INT -> props.add(new IntTextFieldProp(compValue.first().first(), Integer.parseInt(compValue.second()[0])));
-                case LONG -> props.add(new LongTextFieldProp(compValue.first().first(), Long.parseLong(compValue.second()[0])));
+                case INT ->
+                        props.add(new IntTextFieldProp(compValue.first().first(), Integer.parseInt(compValue.second()[0])));
+                case LONG ->
+                        props.add(new LongTextFieldProp(compValue.first().first(), Long.parseLong(compValue.second()[0])));
                 case FLOAT ->
                         props.add(new FloatTextFieldProp(compValue.first().first(), Float.parseFloat(compValue.second()[0])));
                 case DOUBLE ->
                         props.add(new DoubleTextFieldProp(compValue.first().first(), Double.parseDouble(compValue.second()[0])));
-                case POSITION ->
-                        props.add(new PositionProp(compValue.first().first(), new Point2D.Float(Float.parseFloat(compValue.second()[0]), Float.parseFloat(compValue.second()[1]))));
+                case POSITION -> {
+                    props.add(new PositionProp(compValue.first().first(), new Point2D.Float(Float.parseFloat(compValue.second()[0]), Float.parseFloat(compValue.second()[1]))));
+                }
                 case ARRAY -> {
                     //props.add(new ArrayProp<>(compValue.first().first(), getProps(compValue.arrayValues()).toArray(new Prop[0])));
                 }

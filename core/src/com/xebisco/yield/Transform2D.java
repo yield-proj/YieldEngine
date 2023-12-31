@@ -16,13 +16,18 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.editor.utils.Visible;
+
 /**
  * It represents the position, size, scale, and rotation of a 2D object
  */
 
 public class Transform2D {
+    @Visible
     private final Vector2D position = new Vector2D(), scale = new Vector2D(1, 1);
-    private ObjectCenter center = ObjectCenter.CENTER;
+    @Visible
+    private ObjectAnchor anchor = ObjectAnchor.CENTER;
+    @Visible
     private double zRotation;
 
     public Transform2D() {
@@ -31,7 +36,7 @@ public class Transform2D {
     public Transform2D(Transform2D t) {
         position.set(t.position);
         scale.set(t.scale);
-        center = t.center;
+        anchor = t.anchor;
         zRotation = t.zRotation;
     }
 
@@ -109,12 +114,12 @@ public class Transform2D {
         return this;
     }
 
-    public ObjectCenter center() {
-        return center;
+    public ObjectAnchor anchor() {
+        return anchor;
     }
 
-    public Transform2D setCenter(ObjectCenter center) {
-        this.center = center;
+    public Transform2D setAnchor(ObjectAnchor anchor) {
+        this.anchor = anchor;
         return this;
     }
 }

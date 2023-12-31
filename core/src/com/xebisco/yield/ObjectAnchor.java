@@ -16,6 +16,6 @@
 
 package com.xebisco.yield;
 
-public enum ObjectCenter {
-    DOWN, UP, CENTER, LEFT, RIGHT
+public enum ObjectAnchor {
+    CENTER, WEST, EAST, NORTH, SOUTH, NORTHWEST, NORTHEAST, SOUTHWEST, SOUTHEAST
 }

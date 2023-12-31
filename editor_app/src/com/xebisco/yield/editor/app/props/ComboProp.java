@@ -28,7 +28,9 @@ public class ComboProp extends Prop {
     public JComponent render() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        JLabel name = new JLabel(Srd.LANG.getProperty(this.name()));
+        String text = Srd.LANG.getProperty(name());
+        if (text == null) text = name();
+        JLabel name = new JLabel(text);
         name.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 6));
         panel.add(name, BorderLayout.WEST);
         JPanel comboBoxPanel = new JPanel();
