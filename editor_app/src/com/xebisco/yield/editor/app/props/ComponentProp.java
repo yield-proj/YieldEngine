@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 public class ComponentProp extends Prop {
     private boolean hidden;
-    private final static Pattern COMPONENT_NAME_PATTERN = Pattern.compile("([^.]+)$");
+    public final static Pattern COMPONENT_NAME_PATTERN = Pattern.compile("([^.]+)$");
 
     public ComponentProp(EditorComponent value) {
         super(value.className(), value);
@@ -122,6 +122,9 @@ public class ComponentProp extends Prop {
                         props.add(new DoubleTextFieldProp(compValue.first().first(), Double.parseDouble(compValue.second()[0])));
                 case POSITION -> {
                     props.add(new PositionProp(compValue.first().first(), new Point2D.Float(Float.parseFloat(compValue.second()[0]), Float.parseFloat(compValue.second()[1]))));
+                }
+                case COLOR -> {
+                    props.add(new ColorProp(compValue.first().first(), new Color(Integer.parseInt(compValue.second()[0], 16), true)));
                 }
                 case ARRAY -> {
                     //props.add(new ArrayProp<>(compValue.first().first(), getProps(compValue.arrayValues()).toArray(new Prop[0])));

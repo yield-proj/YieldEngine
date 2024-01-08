@@ -16,10 +16,12 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.editor.utils.AffectsEditorEntitySize;
 import com.xebisco.yield.rendering.Form;
 import com.xebisco.yield.rendering.Paint;
 import com.xebisco.yield.rendering.Renderer;
 
+@AffectsEditorEntitySize
 public abstract class AbstractRenderable extends ComponentBehavior {
 
     private final Form form;

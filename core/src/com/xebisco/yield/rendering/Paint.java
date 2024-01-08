@@ -3,10 +3,12 @@ package com.xebisco.yield.rendering;
 import com.xebisco.yield.Color;
 import com.xebisco.yield.Colors;
 import com.xebisco.yield.Transform2D;
+import com.xebisco.yield.Vector2D;
 import com.xebisco.yield.font.Font;
 
 public class Paint {
     private Object drawObj;
+    private Vector2D rectSize;
     private Transform2D transformation;
     private String text;
     private Font font;
@@ -64,6 +66,15 @@ public class Paint {
 
     public Paint setFont(Font font) {
         this.font = font;
+        return this;
+    }
+
+    public Vector2D rectSize() {
+        return rectSize;
+    }
+
+    public Paint setRectSize(Vector2D rectSize) {
+        this.rectSize = rectSize;
         return this;
     }
 }

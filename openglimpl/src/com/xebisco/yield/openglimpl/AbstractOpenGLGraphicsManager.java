@@ -51,7 +51,7 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
 
         default2DShader = new OpenGLShaderProgram(AbstractOpenGLGraphicsManager.class.getResourceAsStream("default2d.vert"), AbstractOpenGLGraphicsManager.class.getResourceAsStream("default2d.frag"));
         defaultText2DShader = new OpenGLShaderProgram(AbstractOpenGLGraphicsManager.class.getResourceAsStream("default2d.vert"), AbstractOpenGLGraphicsManager.class.getResourceAsStream("textdefault2d.frag"));
-        squareMesh = new Mesh2D(new float[]{-100, 100, 100, 100, 100, -100, -100, -100}, new float[]{0, 0, 1, 0, 1, 1, 0, 1}, new int[]{0, 1, 2, 2, 3, 0});
+        squareMesh = new Mesh2D(new float[]{-1, 1, 1, 1, 1, -1, -1, -1}, new float[]{0, 0, 1, 0, 1, 1, 0, 1}, new int[]{0, 1, 2, 2, 3, 0});
     }
 
     @Override
@@ -87,7 +87,7 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
 
                 shader.bind();
 
-                shader.setUniform("transformationMatrix", new Matrix4f().identity().translate(new Vector3f((float) paint.transformation().position().x(), (float) paint.transformation().position().y(), 0)).rotateZ((float) Math.toRadians(paint.transformation().zRotation())).scaleXY((float) paint.transformation().scale().x(), (float) paint.transformation().scale().y()));
+                shader.setUniform("transformationMatrix", new Matrix4f().identity().translate(new Vector3f((float) paint.transformation().position().x(), (float) paint.transformation().position().y(), 0)).rotateZ((float) Math.toRadians(paint.transformation().zRotation())).scaleXY((float) (paint.transformation().scale().x() * paint.rectSize().width()), (float) (paint.transformation().scale().y() * paint.rectSize().height())));
                 shader.setUniform("viewMatrix", viewMatrix);
                 shader.setUniform("color", new Vector4f((float) paint.color().red(), (float) paint.color().green(), (float) paint.color().blue(), (float) paint.color().alpha()));
 

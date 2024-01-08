@@ -3,24 +3,25 @@ package com.xebisco.yield.editor.app;
 import com.xebisco.yield.editor.app.props.*;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.Timer;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.*;
+import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class EditorWindow extends JFrame {
 
@@ -44,7 +45,7 @@ public class EditorWindow extends JFrame {
                 }
             }
         });
-        setMinimumSize(new Dimension(400, 300));
+        setMinimumSize(new Dimension(700, 700));
 
 
         JToolBar toolBar = new JToolBar();
@@ -168,8 +169,6 @@ public class EditorWindow extends JFrame {
                 }
 
                 JDialog dialog = openEntity(EditorWindow.this, entity, prefabFile);
-                dialog.pack();
-                dialog.setLocationRelativeTo(EditorWindow.this);
                 dialog.setVisible(true);
             }
         }));
@@ -253,8 +252,6 @@ public class EditorWindow extends JFrame {
                         throw new RuntimeException(ex);
                     }
                     JDialog dialog = openEntity(EditorWindow.this, prefab, fileChooser.getSelectedFile());
-                    dialog.pack();
-                    dialog.setLocationRelativeTo(EditorWindow.this);
                     dialog.setVisible(true);
                 }
             }
@@ -422,9 +419,19 @@ public class EditorWindow extends JFrame {
         }
     }
 
-    public static JDialog openEntity(Frame frame, EditorEntity entity, File toSaveFile) {
+    private JDialog fixedEntityDialog;
+
+    public JDialog openEntity(Frame frame, EditorEntity entity, File toSaveFile) {
         AtomicReference<File> saveFile = new AtomicReference<>(toSaveFile);
         JDialog dialog = new JDialog(frame);
+
+        boolean isFixed;
+        if (fixedEntityDialog == null) {
+            isFixed = true;
+            fixedEntityDialog = dialog;
+        } else isFixed = false;
+
+        dialog.setUndecorated(isFixed);
         dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         dialog.setMinimumSize(new Dimension(280, 350));
         JPanel header = new JPanel(new BorderLayout());
@@ -433,6 +440,7 @@ public class EditorWindow extends JFrame {
         AtomicBoolean inDialog = new AtomicBoolean(false);
         if (toSaveFile != null) dialog.setTitle(entity.entityName() + " (File Prefab)");
         else dialog.setTitle(entity.entityName() + " (In Scene)");
+
         title.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -464,7 +472,7 @@ public class EditorWindow extends JFrame {
             }
         });
         title.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        header.add(title, BorderLayout.WEST);
+        header.add(title);
 
         JPanel optionsPanel = new JPanel();
         JCheckBox checkBox = new JCheckBox("Enabled");
@@ -473,6 +481,10 @@ public class EditorWindow extends JFrame {
             entity.setEnabled(checkBox.isSelected());
         });
         checkBox.setEnabled(toSaveFile == null);
+        if (toSaveFile != null) {
+            title.setForeground(new Color(0, 100, 100));
+            title.setBorder(BorderFactory.createTitledBorder("PREFAB FILE"));
+        }
         optionsPanel.add(checkBox);
         header.add(optionsPanel, BorderLayout.EAST);
 
@@ -483,6 +495,26 @@ public class EditorWindow extends JFrame {
         for (EditorComponent comp : entity.components()) {
             props.add(new ComponentProp(comp));
         }
+
+        if (isFixed) addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                if (dialog.isVisible()) {
+                    dialog.setLocation(EditorWindow.this.getX() + 100, EditorWindow.this.getY() + EditorWindow.this.getHeight() - dialog.getHeight() - 100);
+                }
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                if (dialog.isVisible()) {
+                    dialog.setLocation(EditorWindow.this.getX() + 100, EditorWindow.this.getY() + EditorWindow.this.getHeight() - dialog.getHeight() - 100);
+                }
+            }
+        });
+
+        if (isFixed)
+            dialog.setLocation(EditorWindow.this.getX() + 100, EditorWindow.this.getY() + EditorWindow.this.getHeight() - dialog.getHeight() - 100);
+        else dialog.setLocationRelativeTo(EditorWindow.this);
 
 
         dialog.addWindowListener(new WindowAdapter() {
@@ -496,6 +528,7 @@ public class EditorWindow extends JFrame {
                     }
                 }
 
+                if (isFixed && fixedEntityDialog == dialog) fixedEntityDialog = null;
 
                 dialog.dispose();
             }
@@ -503,11 +536,12 @@ public class EditorWindow extends JFrame {
         dialog.addWindowFocusListener(new WindowFocusListener() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
-
+                if (dialog.isUndecorated()) dialog.setOpacity(1);
             }
 
             @Override
             public void windowLostFocus(WindowEvent e) {
+                if (dialog.isUndecorated()) dialog.setOpacity(.4f);
                 if (!inDialog.get()) {
                     if (toSaveFile != null) {
                         try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(saveFile.get()))) {
@@ -523,7 +557,87 @@ public class EditorWindow extends JFrame {
 
         dialog.add(new JScrollPane(new PropPanel(props.toArray(new Prop[0]))));
 
+
+        JPanel buttonPanel = new JPanel();
+        JButton addButton = new JButton(new AbstractAction(Srd.LANG.getProperty("ce_addComponent")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialog addComponentDialog = new JDialog();
+                addComponentDialog.setTitle(Srd.LANG.getProperty("ce_addComponent"));
+                addComponentDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                addComponentDialog.setSize(200, 200);
+                addComponentDialog.setLocationRelativeTo(dialog);
+                JList<Class<?>> components;
+                try {
+                    components = new JList<>(getComponentClasses(Srd.yieldEngineClassLoader, "com.xebisco.yield").toArray(new Class<?>[0]));
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+                components.setCellRenderer(new DefaultListCellRenderer() {
+                    @Override
+                    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                        JLabel l = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                        l.setText(((Class<?>) value).getSimpleName());
+                        l.setHorizontalAlignment(CENTER);
+                        l.setFont(l.getFont().deriveFont(Font.BOLD));
+                        l.setIcon(new ImageIcon(Objects.requireNonNull(ComponentProp.class.getResource("/com/xebisco/yield/editor/app/codeIcon.png"))));
+                        return l;
+                    }
+                });
+                addComponentDialog.add(new JScrollPane(components));
+                JPanel buttonP = new JPanel();
+                buttonP.add(new JButton(new AbstractAction(Srd.LANG.getProperty("ce_addComponent")) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                    }
+                }));
+                addComponentDialog.setVisible(true);
+            }
+        });
+        buttonPanel.add(addButton);
+        if (isFixed) buttonPanel.add(new JButton(new AbstractAction(Srd.LANG.getProperty("misc_close")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+            }
+        }));
+        dialog.add(buttonPanel, BorderLayout.SOUTH);
+        dialog.getRootPane().setDefaultButton(addButton);
+
         return dialog;
+    }
+
+    public static List<Class<?>> getComponentClasses(ClassLoader cl, String pack) throws Exception {
+        List<String> classNames = new ArrayList<>();
+        ZipInputStream zip = new ZipInputStream(new BufferedInputStream(new URI(Srd.yieldEngineURL).toURL().openStream()));
+        for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+            if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
+                // This ZipEntry represents a class. Now, what class does it represent?
+                String className = entry.getName().replace('/', '.'); // including ".class"
+                classNames.add(className.substring(0, className.length() - ".class".length()));
+            }
+        }
+
+        List<Class<?>> ret = new ArrayList<>();
+        for (String className : classNames) {
+            if (className.startsWith(pack)) {
+                Class<?> c = cl.loadClass(className);
+                if (!Modifier.isAbstract(c.getModifiers()) && classInstanceOf(c, cl.loadClass("com.xebisco.yield.ComponentBehavior")))
+                    ret.add(c);
+            }
+        }
+
+        return ret;
+    }
+
+    private static boolean classInstanceOf(Class<?> c, Class<?> c2) {
+        Class<?> o = c;
+        while (o.getSuperclass() != null) {
+            o = o.getSuperclass();
+            if (o.equals(c2)) return true;
+        }
+        return false;
     }
 
 
@@ -606,9 +720,11 @@ public class EditorWindow extends JFrame {
                 //TODO draw objs
 
                 for (EditorEntity e : scene().entities()) {
-                    drawArrows(g2, e.position().x, e.position().y);
-                    //TODO select entity
-                    selectedEntity = e;
+                    e.draw(g2);
+                    g2.setColor(new Color(213, 213, 213, 65));
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    Point2D.Double position = e.position();
+                    g2.fill(new Arc2D.Double(position.x - (8 / zoom / 2), position.y - (8 / zoom / 2), 8 / zoom, 8 / zoom, 0, 360, Arc2D.CHORD));
                 }
 
                 g2.setStroke(new BasicStroke((float) (1 / zoom)));
@@ -629,15 +745,24 @@ public class EditorWindow extends JFrame {
                     g.drawLine((int) viewPositionX, i * gridSize.height + startY, (int) (getWidth() + viewPositionX), i * gridSize.height + startY);
                 }
 
+                //Y
+                g.setColor(new Color(10, 255, 10, 100));
                 g.drawLine(0, (int) viewPositionY, 0, (int) (getHeight() + viewPositionY));
 
+
+                //X
+                g.setColor(new Color(255 - 100, 10, 10, 100));
                 g.drawLine((int) viewPositionX, 0, (int) (getWidth() + viewPositionX), 0);
 
                 if (placeInGrid) {
-                    Point loc = closerGridLocationTo(new Point((int) mousePositionX, (int) mousePositionY));
+                    Point loc = closerGridLocationTo(new Point2D.Double(mousePositionX, mousePositionY));
                     double ballSize = 12 / zoom;
                     Shape circle = new Arc2D.Double(loc.x - ballSize / 2, loc.y - ballSize / 2, ballSize, ballSize, 0, 360, Arc2D.CHORD);
                     g2.fill(circle);
+                }
+
+                if (selectedEntity != null) {
+                    drawArrows(g2, selectedEntity.position().x, selectedEntity.position().y);
                 }
             } else {
                 g.setColor(getBackground().darker());
@@ -650,8 +775,12 @@ public class EditorWindow extends JFrame {
             }
         }
 
-        private Point closerGridLocationTo(Point point) {
-            return new Point(((point.x + gridSize.width / 2) / gridSize.width) * gridSize.width, ((point.y + gridSize.height / 2) / gridSize.height) * gridSize.height);
+        private Point closerGridLocationTo(Point2D.Double point) {
+            boolean negativeX = point.x < 0, negativeY = point.y < 0;
+            Point p = new Point((((int) Math.abs(point.getX()) + gridSize.width / 2) / gridSize.width) * gridSize.width, (((int) Math.abs(point.getY()) + gridSize.height / 2) / gridSize.height) * gridSize.height);
+            if (negativeX) p.x *= -1;
+            if (negativeY) p.y *= -1;
+            return p;
         }
 
         private void drawArrows(Graphics2D g, double x, double y) {
@@ -724,6 +853,7 @@ public class EditorWindow extends JFrame {
 
         @Override
         public void mouseMoved(MouseEvent e) {
+            if (scene == null) return;
             mousePositionX = e.getX() / zoom + viewPositionX + getWidth() / 2. - (getWidth() / 2. / zoom);
             mousePositionY = e.getY() / zoom + viewPositionY + getHeight() / 2. - (getHeight() / 2. / zoom);
             repaint();
@@ -731,11 +861,19 @@ public class EditorWindow extends JFrame {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-
+            if (scene == null) return;
+            for (EditorEntity entity : scene.entities()) {
+                Dimension d = entity.size();
+                Point2D.Double p = entity.position();
+                if (p.x - d.width / 2. > mousePositionX && p.x + d.width / 2. < mousePositionX) {
+                    System.out.println(entity);
+                }
+            }
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
+            if (scene == null) return;
             if (e.getButton() == MouseEvent.BUTTON2) {
                 dragging = true;
                 lastDraggingPosition.setLocation(e.getLocationOnScreen());
