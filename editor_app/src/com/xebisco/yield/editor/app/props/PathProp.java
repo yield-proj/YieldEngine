@@ -23,10 +23,12 @@ public class PathProp extends TextFieldProp {
         b.add(new JButton(new AbstractAction(Srd.LANG.getProperty("misc_load")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                File start = new File((String) value);
+                File start;
+                if (value == null) start = null;
+                else start = new File((String) value);
                 JFileChooser fileChooser;
-                if (start.exists() && start.isDirectory()) fileChooser = new JFileChooser(start);
-                else fileChooser = new JFileChooser();
+                if (start != null && start.exists() && start.isDirectory()) fileChooser = new JFileChooser(start);
+                else fileChooser = new JFileChooser(new File(""));
                 fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
                 fileChooser.setFileFilter(filter);
                 if (fileChooser.showOpenDialog(o) == JFileChooser.APPROVE_OPTION) {

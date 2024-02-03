@@ -8,6 +8,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -51,7 +52,11 @@ public class ImageFileProp extends PathProp {
             imageLabel.setIcon(new ImageIcon(ImageIO.read(new File(path)).getScaledInstance(32, -1, Image.SCALE_SMOOTH)));
         } catch (IOException | NullPointerException e) {
             imageLabel.setBorder(BorderFactory.createTitledBorder("NONE"));
-            imageLabel.setIcon(new ImageIcon(((ImageIcon) UIManager.getIcon("OptionPane.errorIcon")).getImage().getScaledInstance(32, -1, Image.SCALE_SMOOTH)));
+            BufferedImage i = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+            Graphics g = i.createGraphics();
+            UIManager.getIcon("OptionPane.errorIcon").paintIcon(imageLabel, g, 32, 32);
+            g.dispose();
+            imageLabel.setIcon(new ImageIcon(i));
         }
     }
 

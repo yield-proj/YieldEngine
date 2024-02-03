@@ -1,14 +1,13 @@
 package com.xebisco.yield.editor.app.props;
 
-import com.xebisco.yield.editor.app.EditableValuesType;
-import com.xebisco.yield.editor.app.EditorComponent;
-import com.xebisco.yield.editor.app.Pair;
-import com.xebisco.yield.editor.app.Srd;
+import com.xebisco.yield.editor.app.*;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -20,9 +19,15 @@ import java.util.regex.Pattern;
 public class ComponentProp extends Prop {
     private boolean hidden;
     public final static Pattern COMPONENT_NAME_PATTERN = Pattern.compile("([^.]+)$");
+    private final Runnable moveUp, moveDown, remove, reload;
+    private List<Prop> props;
 
-    public ComponentProp(EditorComponent value) {
+    public ComponentProp(EditorComponent value, Runnable moveUp, Runnable moveDown, Runnable remove, Runnable reload) {
         super(value.className(), value);
+        this.moveUp = moveUp;
+        this.moveDown = moveDown;
+        this.remove = remove;
+        this.reload = reload;
     }
 
     @Override
@@ -30,12 +35,14 @@ public class ComponentProp extends Prop {
         EditorComponent component = (EditorComponent) value();
         JPanel panel = new JPanel(new BorderLayout());
         JToolBar header = new JToolBar();
+        header.setBackground(header.getBackground().brighter());
         header.setRollover(true);
         header.setFloatable(false);
         Matcher matcher = COMPONENT_NAME_PATTERN.matcher(component.className());
         matcher.find();
         JLabel title = new JLabel(matcher.group(1));
         title.setFont(title.getFont().deriveFont(Font.BOLD));
+        title.setForeground(title.getForeground().brighter());
         title.setIcon(new ImageIcon(Objects.requireNonNull(ComponentProp.class.getResource("/com/xebisco/yield/editor/app/codeIcon.png"))));
         header.add(title);
         header.add(Box.createHorizontalGlue());
@@ -66,13 +73,48 @@ public class ComponentProp extends Prop {
         });
         header.add(hideButton);
 
+        if (!component.className().equals("com.xebisco.yield.Transform2D")) {
+
+            JButton optionsButton = new JButton();
+            optionsButton.setAction(new AbstractAction("+") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JPopupMenu popupMenu = new JPopupMenu();
+                    popupMenu.add(new AbstractAction("Move Up") {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            moveUp.run();
+                            reload.run();
+                        }
+                    });
+                    popupMenu.add(new AbstractAction("Move Down") {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            moveDown.run();
+                            reload.run();
+                        }
+                    });
+                    popupMenu.add(new AbstractAction("Remove") {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            remove.run();
+                            reload.run();
+                        }
+                    });
+                    popupMenu.show(optionsButton, 0, 0);
+                }
+            });
+            header.add(optionsButton);
+        }
+
         panel.add(header, BorderLayout.NORTH);
         return panel;
     }
 
     private void addComp(JPanel componentPanel) {
         componentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        List<Prop> props = getProps(((EditorComponent) value).fields());
+        props = getProps(((EditorComponent) value).fields());
+        if (props.isEmpty()) props.add(new StringProp("No editable fields"));
         JPanel propPanel = new PropPanel(props.toArray(new Prop[0]));
         propPanel.setOpaque(false);
         componentPanel.add(propPanel);
@@ -124,14 +166,66 @@ public class ComponentProp extends Prop {
                     props.add(new PositionProp(compValue.first().first(), new Point2D.Float(Float.parseFloat(compValue.second()[0]), Float.parseFloat(compValue.second()[1]))));
                 }
                 case COLOR -> {
-                    props.add(new ColorProp(compValue.first().first(), new Color(Integer.parseInt(compValue.second()[0], 16), true)));
+                    props.add(new ColorProp(compValue.first().first(), new Color((float) Double.parseDouble(compValue.second()[0]), (float) Double.parseDouble(compValue.second()[1]), (float) Double.parseDouble(compValue.second()[2]), (float) Double.parseDouble(compValue.second()[3]))));
                 }
+                case FILE -> {
+                    FileFilter filter;
+                    if(compValue.second().length > 1)
+                        filter = new FileFilter() {
+                            @Override
+                            public boolean accept(File f) {
+                                for(String a : compValue.second()[1].split(";")) {
+                                    if(f.getName().endsWith(a)) return true;
+                                }
+                                return false;
+                            }
+
+                            @Override
+                            public String getDescription() {
+                                return "Custom";
+                            }
+                        };
+                    else filter = new FileFilter() {
+                        @Override
+                        public boolean accept(File f) {
+                            return true;
+                        }
+
+                        @Override
+                        public String getDescription() {
+                            return "All Files";
+                        }
+                    };
+                    props.add(new PathProp(compValue.first().first(), compValue.second()[0], filter));
+                }
+                case TEXTURE -> props.add(new ImageFileProp(compValue.first().first(), compValue.second()[0]));
                 case ARRAY -> {
-                    //props.add(new ArrayProp<>(compValue.first().first(), getProps(compValue.arrayValues()).toArray(new Prop[0])));
+                    //props.add(new ArrayProp<>(compValue.first().first(), getProps(compValue.arrayValues()).toArray(new Prop[0])));nnot invoke "java.awt.Color.getRed()" because "prop.value" is null
                 }
             }
         }
         return props;
+    }
+
+    public void saveValues() {
+        EditorComponent component = (EditorComponent) value;
+        for (Prop prop : props) {
+            String[] v;
+            if (prop.getClass().equals(PositionProp.class)) {
+                v = new String[]{String.valueOf(((Point2D.Float) prop.value).x), String.valueOf(((Point2D.Float) prop.value).y).toUpperCase()};
+            } else if (prop.getClass().equals(ColorProp.class)) {
+                v = new String[]{String.valueOf(((Color) prop.value).getRed() / 255.), String.valueOf(((Color) prop.value).getGreen() / 255.), String.valueOf(((Color) prop.value).getBlue() / 255.), String.valueOf(((Color) prop.value).getAlpha() / 255.)};
+            } else if(prop instanceof DoubleTextFieldProp || prop instanceof FloatTextFieldProp || prop instanceof IntTextFieldProp || prop instanceof LongTextFieldProp) {
+                v = new String[]{((String) prop.value).isEmpty() ? "0" : ((String) prop.value)};
+            } else {
+                v = new String[]{String.valueOf(prop.value)};
+            }
+            component.fields().forEach(p -> {
+                if (p.first().first().equals(prop.name())) {
+                    System.arraycopy(v, 0, p.second(), 0, v.length);
+                }
+            });
+        }
     }
 
 

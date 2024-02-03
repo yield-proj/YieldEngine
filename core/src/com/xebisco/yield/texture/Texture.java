@@ -50,6 +50,10 @@ public class Texture extends FileInput implements Closeable {
         this.filter = filter;
     }
 
+    public static String[] extensions() {
+        return new String[] {"png", "jpg", "jpeg"};
+    }
+
     /**
      * The `dispose()` method is used to release any resources or memory used by the `Texture` object.
      */
@@ -77,6 +81,8 @@ public class Texture extends FileInput implements Closeable {
         this.imageRef = imageRef;
         return this;
     }
+
+
 
     /**
      * The function returns an immutable 2D size object.

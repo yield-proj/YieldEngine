@@ -8,7 +8,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class EditorComponent implements Serializable {
     @Serial
@@ -27,18 +26,47 @@ public class EditorComponent implements Serializable {
                  IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+
+        Class<?> c = clazz;
+        do {
+            addFields(c, o);
+            c = c.getSuperclass();
+        } while (!c.isPrimitive() && c.getSuperclass() != null);
+    }
+
+    private void addFields(Class<?> clazz, Object o) {
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
             try {
                 String[] value;
-                if(field.getType().getName().equals("com.xebisco.yield.Vector2D")) {
+                if (field.getType().getName().equals("com.xebisco.yield.Vector2D")) {
                     Object obj = field.get(o);
                     value = new String[]{String.valueOf(obj.getClass().getMethod("x").invoke(obj)), String.valueOf(obj.getClass().getMethod("y").invoke(obj))};
-                }
-                    else value = new String[]{String.valueOf(field.get(o))};
+                } else if (field.getType().getName().equals("com.xebisco.yield.Color")) {
+                    Object obj = field.get(o);
+                    value = new String[]{String.valueOf(obj.getClass().getMethod("red").invoke(obj)), String.valueOf(obj.getClass().getMethod("green").invoke(obj)), String.valueOf(obj.getClass().getMethod("blue").invoke(obj)), String.valueOf(obj.getClass().getMethod("alpha").invoke(obj))};
+                } else if (EditorWindow.classInstanceOf(field.getType(), Srd.yieldEngineClassLoader.loadClass("com.xebisco.yield.FileInput"))) {
+                    Object obj = null;
+                    if (o != null) obj = field.get(o);
+                    String path = null;
+                    if (obj != null) path = (String) obj.getClass().getMethod("path").invoke(obj);
+                    try {
+                        String[] extensions = (String[]) clazz.getMethod("extensions").invoke(null);
+                        StringBuilder extensionsS = new StringBuilder();
+                        for (String ext : extensions) {
+                            extensionsS.append(ext).append(";");
+                        }
+                        if (extensionsS.toString().endsWith(";"))
+                            extensionsS = new StringBuilder(extensionsS.substring(0, extensionsS.length() - 1));
+                        value = new String[]{path, extensionsS.toString()};
+                    } catch (NoSuchMethodException e) {
+                        value = new String[]{path};
+                    }
+                } else value = new String[]{String.valueOf(field.get(o))};
                 if (field.isAnnotationPresent(Visible.class))
                     fields.add(new Pair<>(new Pair<>(field.getName(), field.getType().getName()), value));
-            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException |
+                     ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -46,6 +74,25 @@ public class EditorComponent implements Serializable {
 
     public List<Pair<Pair<String, String>, String[]>> fields() {
         return fields;
+    }
+
+    public EditorComponent sameAs(List<Pair<Pair<String, String>, String[]>> fields, EditorComponent editorComponent) {
+        for (Pair<Pair<String, String>, String[]> field : fields) {
+            editorComponent.fields.forEach(p -> {
+                if (p.first().first().equals(field.first().first())) {
+                    System.arraycopy(field.second(), 0, p.second(), 0, p.second().length);
+                }
+            });
+        }
+        return editorComponent;
+    }
+
+    public EditorComponent sameAs() {
+        try {
+            return sameAs(fields, new EditorComponent(Srd.yieldEngineClassLoader.loadClass(className)));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public EditorComponent setFields(List<Pair<Pair<String, String>, String[]>> fields) {

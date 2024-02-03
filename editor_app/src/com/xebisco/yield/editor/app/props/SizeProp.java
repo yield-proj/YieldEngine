@@ -25,12 +25,14 @@ public class SizeProp extends Prop {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                value.width = Integer.parseInt(widthField.getText());
+                if (widthField.getText().isEmpty()) value.width = 0;
+                else value.width = Integer.parseInt(widthField.getText());
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                value.width = Integer.parseInt(widthField.getText());
+                if (widthField.getText().isEmpty()) value.width = 0;
+                else value.width = Integer.parseInt(widthField.getText());
             }
         });
         heightField = new JTextField(String.valueOf(value.height));
@@ -43,12 +45,14 @@ public class SizeProp extends Prop {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                value.height = Integer.parseInt(heightField.getText());
+                if (heightField.getText().isEmpty()) value.height = 0;
+                else value.height = Integer.parseInt(heightField.getText());
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                value.height = Integer.parseInt(heightField.getText());
+                if (heightField.getText().isEmpty()) value.height = 0;
+                else value.height = Integer.parseInt(heightField.getText());
             }
         });
     }

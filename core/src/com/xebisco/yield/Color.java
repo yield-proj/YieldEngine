@@ -224,11 +224,7 @@ public class Color implements Cloneable {
     }
 
     private static int colorValue(double alpha, double red, double green, double blue) {
-        int rgb = (int) (alpha * 255.0);
-        rgb = (rgb << 8) + (int) (red * 255.0);
-        rgb = (rgb << 8) + (int) (green * 255.0);
-        rgb = (rgb << 8) + (int) (blue * 255.0);
-        return rgb;
+        return ((int) (alpha * 255)) << 24 + ((int) (red * 255)) << 16 + ((int) (green * 255)) << 8 + ((int) (blue * 255));
     }
 
     /**

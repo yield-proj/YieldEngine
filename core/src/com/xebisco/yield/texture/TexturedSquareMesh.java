@@ -1,10 +1,14 @@
 package com.xebisco.yield.texture;
 
 import com.xebisco.yield.SquareMesh;
+import com.xebisco.yield.editor.utils.AffectsEditorEntitySize;
+import com.xebisco.yield.editor.utils.Visible;
 import com.xebisco.yield.rendering.Renderer;
 
+@AffectsEditorEntitySize
 public class TexturedSquareMesh extends SquareMesh {
 
+    @Visible
     private Texture texture;
 
     public TexturedSquareMesh() {

@@ -14,6 +14,7 @@ public class TextFieldProp extends Prop {
     public TextFieldProp(String name, String value) {
         super(name, value);
         field = new JTextField((String) value());
+        field.setMaximumSize(field.getPreferredSize());
         field.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {

@@ -17,17 +17,22 @@ public class ColorProp extends Prop {
         String text = Srd.LANG.getProperty(name());
         if (text == null) text = name();
         panel.add(new JLabel(text + " "), BorderLayout.WEST);
+        JButton button;
         panel.add(new JButton(new AbstractAction("Color") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setValue(JColorChooser.showDialog(null, "Select Color", (Color) value()));
+                Color v = JColorChooser.showDialog(null, "Select Color", (Color) value());
+                if (v != null)
+                    setValue(v);
             }
         }) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                if (value != null)
+                if (value != null) {
                     setBackground((Color) value());
+                    setForeground(new Color(255 - ((Color) value()).getRed(), 255 - ((Color) value()).getGreen(), 255 - ((Color) value()).getBlue()));
+                }
             }
         });
         return panel;

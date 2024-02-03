@@ -1,8 +1,7 @@
 package com.xebisco.yield.editor.app;
 
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -16,7 +15,7 @@ public class Entry {
 
         //UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
 
-        FlatLightLaf.setup();
+        FlatDarculaLaf.setup();
 
         EditorWindow window = new EditorWindow();
         window.setLocationRelativeTo(null);

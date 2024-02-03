@@ -26,7 +26,8 @@ public class PositionProp extends Prop {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                value.x = Float.parseFloat(widthField.getText());
+                if (widthField.getText().isEmpty()) value.x = 0;
+                else value.x = Float.parseFloat(widthField.getText());
             }
 
             @Override
@@ -44,12 +45,14 @@ public class PositionProp extends Prop {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                value.y = Float.parseFloat(heightField.getText());
+                if (heightField.getText().isEmpty()) value.y = 0;
+                else value.y = Float.parseFloat(heightField.getText());
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                value.y = Float.parseFloat(heightField.getText());
+                if (heightField.getText().isEmpty()) value.y = 0;
+                else value.y = Float.parseFloat(heightField.getText());
             }
         });
     }

@@ -2,9 +2,12 @@ package com.xebisco.yield.editor.app;
 
 import com.xebisco.yield.editor.app.props.*;
 
-import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Arc2D;
@@ -13,11 +16,11 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.*;
 import java.lang.reflect.Modifier;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
 import java.util.List;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.ZipEntry;
@@ -29,7 +32,9 @@ public class EditorWindow extends JFrame {
     private File sceneFile;
     private EditorScene scene;
     private EditorProject project;
-    private Dimension gridSize = new Dimension(16, 16);
+    private Point2D.Float gridSize = new Point2D.Float(16, 16);
+    private GameView gameView;
+    private EntitiesTree entitiesTree;
 
     private int gridOpacity = 30;
 
@@ -49,17 +54,28 @@ public class EditorWindow extends JFrame {
 
 
         JToolBar toolBar = new JToolBar();
-        JLabel xLabel = new JLabel(), yLabel = new JLabel(), zoomLabel = new JLabel();
+        JLabel xLabel = new JLabel(), yLabel = new JLabel(), zoomLabel = new JLabel(), gridLabel = new JLabel();
         toolBar.setFloatable(true);
         toolBar.add(Box.createHorizontalGlue());
+        toolBar.add(gridLabel);
+        toolBar.addSeparator();
         toolBar.add(xLabel);
         toolBar.addSeparator();
         toolBar.add(yLabel);
         toolBar.addSeparator();
         toolBar.add(zoomLabel);
+
+        entitiesTree = new EntitiesTree();
+        gameView = new GameView(xLabel, yLabel, zoomLabel, gridLabel);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setLeftComponent(entitiesTree);
+        splitPane.setRightComponent(gameView);
+
+
         add(toolBar, BorderLayout.NORTH);
 
-        add(new GameView(xLabel, yLabel, zoomLabel));
+        add(splitPane);
 
         setSize(new Dimension(1280, 720));
     }
@@ -285,23 +301,33 @@ public class EditorWindow extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 Map<String, Prop[]> sections = new HashMap<>();
 
-                sections.put("Scene View", new Prop[]{new SizeProp("Grid Size", gridSize), new SlideProp("Grid Opacity", gridOpacity, 0, 255)});
-                sections.put("Engine", new Prop[]{new TextFieldProp("Yield Engine Core Jar URI", Srd.yieldEngineURL)});
+                sections.put("Scene View", new Prop[]{new PositionProp("Grid Size", gridSize), new SlideProp("Grid Opacity", gridOpacity, 0, 255)});
+                sections.put("Engine", new Prop[]{new PathProp("Yield Engine Core Jar", Srd.yieldEngineJar.getAbsolutePath(), new FileFilter() {
+                    @Override
+                    public boolean accept(File f) {
+                        return f.getName().endsWith(".jar");
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "JAR Files";
+                    }
+                })});
 
                 new SettingsPropDialog(EditorWindow.this, sections, () -> {
                     Map<String, Serializable> sceneViewValues = PropPanel.values(sections.get("Scene View"));
-                    gridSize = (Dimension) sceneViewValues.get("Grid Size");
+                    gridSize = (Point2D.Float) sceneViewValues.get("Grid Size");
                     gridOpacity = (int) sceneViewValues.get("Grid Opacity");
 
                     Map<String, Serializable> engineValues = PropPanel.values(sections.get("Engine"));
                     boolean differentEngine = false;
-                    if (!engineValues.get("Yield Engine Core Jar URI").equals(Srd.yieldEngineURL)) {
-                        Srd.yieldEngineURL = (String) engineValues.get("Yield Engine Core Jar URI");
+                    if (!engineValues.get("Yield Engine Core Jar").equals(Srd.yieldEngineJar)) {
+                        Srd.yieldEngineJar = new File((String) engineValues.get("Yield Engine Core Jar"));
                         differentEngine = true;
                     }
                     if (differentEngine) {
                         try {
-                            Srd.yieldEngineClassLoader = new URLClassLoader(new URL[]{new URI(Srd.yieldEngineURL).toURL()});
+                            Srd.yieldEngineClassLoader = new URLClassLoader(new URL[]{Srd.yieldEngineJar.toURI().toURL()});
                             Class<?> globalClass;
                             if ((globalClass = Srd.yieldEngineClassLoader.loadClass("com.xebisco.yield.Global")) == null)
                                 throw new IllegalStateException("invalid Yield Engine Jar URI");
@@ -364,16 +390,7 @@ public class EditorWindow extends JFrame {
         };
         menuBar.add(sceneMenu);
 
-        JMenu sceneAddMenu = new JMenu(Srd.LANG.getProperty("se_menuBar_scene_add"));
-
-        sceneMenu.add(sceneAddMenu);
-
-        sceneAddMenu.add(new AbstractAction(Srd.LANG.getProperty("se_menuBar_scene_add_emptyEntity")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                scene.entities().add(new EditorEntity());
-            }
-        });
+        sceneMenu.add(addMenu(null, null));
 
         sceneMenu.addSeparator();
 
@@ -426,14 +443,16 @@ public class EditorWindow extends JFrame {
         JDialog dialog = new JDialog(frame);
 
         boolean isFixed;
-        if (fixedEntityDialog == null) {
+        if (toSaveFile == null) {
             isFixed = true;
+            if (fixedEntityDialog != null)
+                fixedEntityDialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
             fixedEntityDialog = dialog;
         } else isFixed = false;
 
         dialog.setUndecorated(isFixed);
         dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        dialog.setMinimumSize(new Dimension(280, 350));
+        dialog.setMinimumSize(new Dimension(350, 400));
         JPanel header = new JPanel(new BorderLayout());
         JLabel title = new JLabel(entity.entityName());
         title.setFont(title.getFont().deriveFont(Font.BOLD).deriveFont(28f));
@@ -486,34 +505,33 @@ public class EditorWindow extends JFrame {
             title.setBorder(BorderFactory.createTitledBorder("PREFAB FILE"));
         }
         optionsPanel.add(checkBox);
+
+        JScrollPane scrollPane = new JScrollPane();
+        List<ComponentProp> props = new ArrayList<>();
+
+
         header.add(optionsPanel, BorderLayout.EAST);
 
         dialog.add(header, BorderLayout.NORTH);
-
-
-        List<Prop> props = new ArrayList<>();
-        for (EditorComponent comp : entity.components()) {
-            props.add(new ComponentProp(comp));
-        }
 
         if (isFixed) addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 if (dialog.isVisible()) {
-                    dialog.setLocation(EditorWindow.this.getX() + 100, EditorWindow.this.getY() + EditorWindow.this.getHeight() - dialog.getHeight() - 100);
+                    dialog.setLocation((int) (gameView.getLocationOnScreen().getX() + 60), (int) (gameView.getLocationOnScreen().getY() + EditorWindow.this.getHeight() - dialog.getHeight() - 100));
                 }
             }
 
             @Override
             public void componentMoved(ComponentEvent e) {
                 if (dialog.isVisible()) {
-                    dialog.setLocation(EditorWindow.this.getX() + 100, EditorWindow.this.getY() + EditorWindow.this.getHeight() - dialog.getHeight() - 100);
+                    dialog.setLocation((int) (gameView.getLocationOnScreen().getX() + 60), (int) (gameView.getLocationOnScreen().getY() + EditorWindow.this.getHeight() - dialog.getHeight() - 100));
                 }
             }
         });
 
         if (isFixed)
-            dialog.setLocation(EditorWindow.this.getX() + 100, EditorWindow.this.getY() + EditorWindow.this.getHeight() - dialog.getHeight() - 100);
+            dialog.setLocation((int) (gameView.getLocationOnScreen().getX() + 60), (int) (gameView.getLocationOnScreen().getY() + EditorWindow.this.getHeight() - dialog.getHeight() - 100));
         else dialog.setLocationRelativeTo(EditorWindow.this);
 
 
@@ -533,35 +551,54 @@ public class EditorWindow extends JFrame {
                 dialog.dispose();
             }
         });
+
+        reloadFields(props, entity, scrollPane);
+
+        frame.addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                if (scene != null && !scene.entities().contains(entity) && toSaveFile == null)
+                    dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                if (dialog.isVisible()) reloadFields(props, entity, scrollPane);
+            }
+        });
+
         dialog.addWindowFocusListener(new WindowFocusListener() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
+                inDialog.set(false);
                 if (dialog.isUndecorated()) dialog.setOpacity(1);
             }
 
             @Override
             public void windowLostFocus(WindowEvent e) {
-                if (dialog.isUndecorated()) dialog.setOpacity(.4f);
+                if (dialog.isUndecorated()) dialog.setOpacity(.3f);
+
                 if (!inDialog.get()) {
+                    props.forEach(ComponentProp::saveValues);
                     if (toSaveFile != null) {
                         try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(saveFile.get()))) {
                             oo.writeObject(entity);
                         } catch (IOException ex) {
                             throw new RuntimeException(ex);
                         }
-                    } else dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
+                    } //else if (!isFixed) dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
                 }
             }
         });
 
-
-        dialog.add(new JScrollPane(new PropPanel(props.toArray(new Prop[0]))));
+        dialog.add(scrollPane);
 
 
         JPanel buttonPanel = new JPanel();
         JButton addButton = new JButton(new AbstractAction(Srd.LANG.getProperty("ce_addComponent")) {
             @Override
             public void actionPerformed(ActionEvent e) {
+                inDialog.set(true);
                 JDialog addComponentDialog = new JDialog();
                 addComponentDialog.setTitle(Srd.LANG.getProperty("ce_addComponent"));
                 addComponentDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -573,6 +610,17 @@ public class EditorWindow extends JFrame {
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
+                components.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getClickCount() == 2 && components.getSelectedValue() != null) {
+                            entity.components().add(new EditorComponent(components.getSelectedValue()));
+                            addComponentDialog.dispose();
+                            reloadFields(props, entity, scrollPane);
+                            inDialog.set(false);
+                        }
+                    }
+                });
                 components.setCellRenderer(new DefaultListCellRenderer() {
                     @Override
                     public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -585,13 +633,6 @@ public class EditorWindow extends JFrame {
                     }
                 });
                 addComponentDialog.add(new JScrollPane(components));
-                JPanel buttonP = new JPanel();
-                buttonP.add(new JButton(new AbstractAction(Srd.LANG.getProperty("ce_addComponent")) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-
-                    }
-                }));
                 addComponentDialog.setVisible(true);
             }
         });
@@ -602,15 +643,132 @@ public class EditorWindow extends JFrame {
                 dialog.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
             }
         }));
+
+        if (entity.prefabFile() != null) buttonPanel.add(new JButton(new AbstractAction("Reload") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (JOptionPane.showConfirmDialog(dialog, "This will remove any custom configurations, Proceed?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+                    return;
+                }
+                EditorEntity loaded;
+                try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(entity.prefabFile()))) {
+                    loaded = (EditorEntity) oi.readObject();
+                } catch (IOException | ClassNotFoundException ex) {
+                    JOptionPane.showMessageDialog(dialog, ex.getMessage(), ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                AtomicReference<EditorComponent> transform = new AtomicReference<>();
+
+                if (JOptionPane.showConfirmDialog(dialog, "Override tranformation properties", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+                    entity.components().forEach(c -> {
+                        if (c.className().equals("com.xebisco.yield.Transform2D")) transform.set(c);
+                    });
+                }
+
+                entity.components().clear();
+                for (EditorComponent component : loaded.components()) {
+                    entity.components().add(component);
+                }
+
+                if (transform.get() != null) {
+                    entity.components().removeIf(c -> c.className().equals("com.xebisco.yield.Transform2D"));
+                    entity.components().addFirst(transform.get());
+                }
+                reloadFields(props, entity, scrollPane);
+            }
+        }));
+
         dialog.add(buttonPanel, BorderLayout.SOUTH);
         dialog.getRootPane().setDefaultButton(addButton);
+
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         return dialog;
     }
 
+    private JMenu addMenu(List<EditorEntity> entities, EditorEntity parent) {
+        JMenu sceneAddMenu = new JMenu(Srd.LANG.getProperty("se_menuBar_scene_add"));
+
+        sceneAddMenu.add(new AbstractAction(Srd.LANG.getProperty("se_menuBar_scene_add_emptyEntity")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                List<EditorEntity> entities1 = entities;
+                if (entities1 == null)
+                    entities1 = scene.entities();
+                entities1.add(new EditorEntity().setParent(parent));
+                entitiesTree.tree.update();
+            }
+        });
+
+        sceneAddMenu.addSeparator();
+
+        sceneAddMenu.add(new AbstractAction(Srd.LANG.getProperty("se_menuBar_scene_add_fromPrefab")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser(new File(projectRoot, "Prefabs"));
+                fileChooser.setFileFilter(new FileFilter() {
+                    @Override
+                    public boolean accept(File f) {
+                        return f.getName().endsWith(".yepf");
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "Yield Entity Prefab (.yepf)";
+                    }
+                });
+                if (fileChooser.showOpenDialog(EditorWindow.this) == JFileChooser.APPROVE_OPTION) {
+                    EditorEntity prefab;
+                    try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(fileChooser.getSelectedFile()))) {
+                        prefab = (EditorEntity) oi.readObject();
+                    } catch (IOException | ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    prefab.setPrefabFile(fileChooser.getSelectedFile());
+                    List<EditorEntity> entities1 = entities;
+                    if (entities1 == null)
+                        entities1 = scene.entities();
+                    entities1.add(prefab.setParent(parent));
+                    entitiesTree.tree.update();
+                }
+            }
+        });
+        return sceneAddMenu;
+    }
+
+    private void reloadFields(List<ComponentProp> props, EditorEntity entity, JScrollPane scrollPane) {
+        int v = scrollPane.getVerticalScrollBar().getValue();
+        props.clear();
+        for (EditorComponent comp : entity.components()) {
+            props.add(new ComponentProp(comp, () -> {
+                int i = entity.components().indexOf(comp);
+                if (i <= 1) return;
+                entity.components().remove(comp);
+                entity.components().add(i - 1, comp);
+            }, () -> {
+                int i = entity.components().indexOf(comp);
+                if (i >= entity.components().size()) return;
+                entity.components().remove(comp);
+                entity.components().add(i + 1, comp);
+            }, () -> {
+                entity.components().remove(comp);
+            }, () -> {
+                reloadFields(props, entity, scrollPane);
+            }));
+        }
+        PropPanel p = new PropPanel(props.toArray(new Prop[0]));
+        p.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        p.setPreferredSize(new Dimension(scrollPane.getWidth() - scrollPane.getVerticalScrollBar().getWidth(), p.getPreferredSize().height));
+        scrollPane.setViewportView(p);
+        scrollPane.getVerticalScrollBar().setValue(v);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(12);
+        entitiesTree.tree.update();
+    }
+
     public static List<Class<?>> getComponentClasses(ClassLoader cl, String pack) throws Exception {
         List<String> classNames = new ArrayList<>();
-        ZipInputStream zip = new ZipInputStream(new BufferedInputStream(new URI(Srd.yieldEngineURL).toURL().openStream()));
+        ZipInputStream zip = new ZipInputStream(new BufferedInputStream(Srd.yieldEngineJar.toURI().toURL().openStream()));
         for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
             if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
                 // This ZipEntry represents a class. Now, what class does it represent?
@@ -631,13 +789,185 @@ public class EditorWindow extends JFrame {
         return ret;
     }
 
-    private static boolean classInstanceOf(Class<?> c, Class<?> c2) {
+    public static boolean classInstanceOf(Class<?> c, Class<?> c2) {
         Class<?> o = c;
+        if (c.equals(c2)) return true;
         while (o.getSuperclass() != null) {
             o = o.getSuperclass();
             if (o.equals(c2)) return true;
         }
         return false;
+    }
+
+    class EntitiesTree extends JPanel {
+
+        private final Tree tree;
+
+        public EntitiesTree() {
+            super(new BorderLayout());
+            add(tree = new Tree());
+            JToolBar toolBar = new JToolBar();
+            toolBar.add(new JButton(new AbstractAction("Reload") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    tree.update();
+                }
+            }));
+            add(toolBar, BorderLayout.NORTH);
+        }
+
+        class Tree extends JTree {
+
+            private EditorEntity[] es() {
+                if (getSelectionPaths() == null || getSelectionPaths().length == 0) return new EditorEntity[0];
+                EditorEntity[] entities = new EditorEntity[getSelectionPaths().length];
+                for (int i = 0; i < entities.length; i++) {
+                    entities[i] = ((EntityNode) ((DefaultMutableTreeNode) getSelectionPaths()[i].getLastPathComponent()).getUserObject()).editorEntity;
+                }
+                return entities;
+            }
+
+            public Tree() {
+                setShowsRootHandles(true);
+
+                addMouseListener(new MouseAdapter() {
+                    public void mouseReleased(MouseEvent e) {
+                        if (e.isPopupTrigger()) {
+                            try {
+                                entityPopupPanel(Tree.this, es());
+                            } catch (ClassCastException ex) {
+                                rootEntityPopupPanel(Tree.this);
+                            }
+                        }
+                    }
+                });
+
+                addTreeSelectionListener(e -> {
+                    if (getSelectionPaths() != null && getSelectionPaths().length == 1) try {
+                        gameView.selectedEntity = es()[0];
+                        gameView.repaint();
+                    } catch (ClassCastException ignore) {
+                    }
+                });
+
+
+                update();
+            }
+
+            public void update() {
+                if (scene == null) {
+                    setModel(new DefaultTreeModel(new DefaultMutableTreeNode()));
+                    return;
+                }
+                List<Integer> expanded = new ArrayList<>();
+
+                for (int i = 0; i < entitiesTree.tree.getRowCount(); i++) {
+                    if (tree.isExpanded(i)) {
+                        expanded.add(i);
+                    }
+                }
+                DefaultMutableTreeNode root = new DefaultMutableTreeNode("Scene Root");
+                CreateChildNodes ccn = new CreateChildNodes();
+                ccn.createChildren(scene.entities(), root);
+                DefaultTreeModel treeModel = new DefaultTreeModel(root);
+                setModel(treeModel);
+                expandRow(0);
+                revalidate();
+                updateUI();
+
+                expanded.forEach(tree::expandRow);
+            }
+
+            public static class CreateChildNodes {
+
+                private void createChildren(EditorEntity entity, DefaultMutableTreeNode node) {
+                    List<EditorEntity> entities = entity.children();
+                    if (entities.isEmpty()) return;
+
+                    for (EditorEntity e : entities) {
+                        DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(new EntityNode(e));
+                        node.add(childNode);
+                        createChildren(e, childNode);
+                    }
+                }
+
+                private void createChildren(List<EditorEntity> entities, DefaultMutableTreeNode node) {
+                    if (entities.isEmpty()) return;
+
+                    for (EditorEntity e : entities) {
+                        DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(new EntityNode(e));
+                        node.add(childNode);
+                        createChildren(e, childNode);
+                    }
+                }
+
+            }
+
+            public record EntityNode(EditorEntity editorEntity) {
+
+                @Override
+                public String toString() {
+                    return editorEntity.entityName();
+                }
+            }
+        }
+    }
+
+    public void entityPopupPanel(Component invoker, EditorEntity entity) {
+        entityPopupPanel(invoker, new EditorEntity[]{entity});
+    }
+
+    public void entityPopupPanel(Component invoker, EditorEntity[] entities) {
+        if (entities.length == 0) return;
+        JPopupMenu popupMenu = new JPopupMenu();
+        popupMenu.add(new JLabel(Arrays.toString(entities)));
+        popupMenu.addSeparator();
+        if (entities.length == 1) {
+            popupMenu.add(addMenu(entities[0].children(), entities[0]));
+            popupMenu.add(new AbstractAction("Open") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    openEntity(EditorWindow.this, entities[0], null).setVisible(true);
+                }
+            });
+        }
+        popupMenu.add(new AbstractAction("Duplicate") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CompletableFuture.runAsync(() -> {
+                    for (EditorEntity en : entities) {
+                        EditorEntity n = new EditorEntity().setEntityName(en.entityName() + " (Clone)").setParent(en.parent()).setPrefabFile(en.prefabFile());
+                        n.components().clear();
+                        for (EditorComponent c : en.components())
+                            n.components().add(c.sameAs());
+                        scene.entities().add(n);
+                    }
+                    entitiesTree.tree.update();
+                });
+            }
+        });
+        popupMenu.add(new AbstractAction("Delete") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CompletableFuture.runAsync(() -> {
+                    for (EditorEntity en : entities) {
+                        scene.entities().remove(en);
+                    }
+                    if (!scene.entities().contains(gameView.selectedEntity)) gameView.selectedEntity = null;
+                    gameView.repaint();
+                    entitiesTree.tree.update();
+                });
+            }
+        });
+        popupMenu.show(invoker, invoker.getMousePosition().x, invoker.getMousePosition().y);
+    }
+
+    public void rootEntityPopupPanel(Component invoker) {
+        JPopupMenu popupMenu = new JPopupMenu();
+        popupMenu.add(new JLabel("Scene Root"));
+        popupMenu.addSeparator();
+        popupMenu.add(addMenu(scene.entities(), null));
+        popupMenu.show(invoker, invoker.getMousePosition().x, invoker.getMousePosition().y);
     }
 
 
@@ -647,30 +977,30 @@ public class EditorWindow extends JFrame {
         private Point lastDraggingPosition = new Point();
         private double viewPositionX, viewPositionY, mousePositionX, mousePositionY;
 
-        private final JLabel xLabel, yLabel, zoomLabel;
+        private final JLabel xLabel, yLabel, zoomLabel, gridLabel;
 
         private final Timer RIGHT_TIMER = new Timer(16, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                viewPositionX += 1 / zoom;
+                viewPositionX += 1 / zoom * 2;
                 repaint();
             }
         }), LEFT_TIMER = new Timer(16, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                viewPositionX -= 1 / zoom;
+                viewPositionX -= 1 / zoom * 2;
                 repaint();
             }
         }), UP_TIMER = new Timer(16, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                viewPositionY -= 1 / zoom;
+                viewPositionY -= 1 / zoom * 2;
                 repaint();
             }
         }), DOWN_TIMER = new Timer(16, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                viewPositionY += 1 / zoom;
+                viewPositionY += 1 / zoom * 2;
                 repaint();
             }
         });
@@ -681,10 +1011,11 @@ public class EditorWindow extends JFrame {
 
         private boolean placeInGrid, xArrowSelected, yArrowSelected;
 
-        public GameView(JLabel xLabel, JLabel yLabel, JLabel zoomLabel) {
+        public GameView(JLabel xLabel, JLabel yLabel, JLabel zoomLabel, JLabel gridLabel) {
             this.xLabel = xLabel;
             this.yLabel = yLabel;
             this.zoomLabel = zoomLabel;
+            this.gridLabel = gridLabel;
             addMouseWheelListener(this);
             addMouseMotionListener(this);
             addMouseListener(this);
@@ -698,6 +1029,7 @@ public class EditorWindow extends JFrame {
             xLabel.setText(String.format("x: %.1f", viewPositionX));
             yLabel.setText(String.format("y: %.1f", viewPositionY));
             zoomLabel.setText(String.format("zoom: %.1f", zoom));
+            gridLabel.setText(String.format("grid: (%.2f; %.2f)", gridSize.x, gridSize.y));
         }
 
         @Override
@@ -723,8 +1055,8 @@ public class EditorWindow extends JFrame {
                     e.draw(g2);
                     g2.setColor(new Color(213, 213, 213, 65));
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    Point2D.Double position = e.position();
-                    g2.fill(new Arc2D.Double(position.x - (8 / zoom / 2), position.y - (8 / zoom / 2), 8 / zoom, 8 / zoom, 0, 360, Arc2D.CHORD));
+                    Point2D.Double position = e.realPosition();
+                    g2.fill(new Arc2D.Double(position.x - (8 / zoom / 2), -position.y - (8 / zoom / 2), 8 / zoom, 8 / zoom, 0, 360, Arc2D.CHORD));
                 }
 
                 g2.setStroke(new BasicStroke((float) (1 / zoom)));
@@ -732,17 +1064,17 @@ public class EditorWindow extends JFrame {
                 g2.setColor(new Color(255 - scene.backgroundColor().getRed(), 255 - scene.backgroundColor().getGreen(), 255 - scene.backgroundColor().getBlue(), gridOpacity).brighter());
 
                 int startX = (int) viewPositionX;
-                while (startX % gridSize.width != 0) startX++;
+                while (startX % gridSize.x != 0) startX++;
 
-                for (int i = 0; i < getWidth() / gridSize.width + 1; i++) {
-                    g.drawLine(i * gridSize.width + startX, (int) viewPositionY, i * gridSize.width + startX, (int) (getHeight() + viewPositionY));
+                for (int i = 0; i < getWidth() / gridSize.x + 1; i++) {
+                    g2.draw(new Line2D.Double(i * gridSize.x + startX, viewPositionY, i * gridSize.x + startX, getHeight() + viewPositionY));
                 }
 
                 int startY = (int) viewPositionY;
-                while (startY % gridSize.height != 0) startY++;
+                while (startY % gridSize.y != 0) startY++;
 
-                for (int i = 0; i < getHeight() / gridSize.height + 1; i++) {
-                    g.drawLine((int) viewPositionX, i * gridSize.height + startY, (int) (getWidth() + viewPositionX), i * gridSize.height + startY);
+                for (int i = 0; i < getHeight() / gridSize.y + 1; i++) {
+                    g2.draw(new Line2D.Double(viewPositionX, i * gridSize.y + startY, getWidth() + viewPositionX, i * gridSize.y + startY));
                 }
 
                 //Y
@@ -762,7 +1094,8 @@ public class EditorWindow extends JFrame {
                 }
 
                 if (selectedEntity != null) {
-                    drawArrows(g2, selectedEntity.position().x, selectedEntity.position().y);
+                    Point2D.Double ePosition = selectedEntity.realPosition();
+                    drawArrows(g2, ePosition.x, -ePosition.y);
                 }
             } else {
                 g.setColor(getBackground().darker());
@@ -777,7 +1110,7 @@ public class EditorWindow extends JFrame {
 
         private Point closerGridLocationTo(Point2D.Double point) {
             boolean negativeX = point.x < 0, negativeY = point.y < 0;
-            Point p = new Point((((int) Math.abs(point.getX()) + gridSize.width / 2) / gridSize.width) * gridSize.width, (((int) Math.abs(point.getY()) + gridSize.height / 2) / gridSize.height) * gridSize.height);
+            Point p = new Point((int) ((((int) Math.abs(point.getX()) + (int) gridSize.x / 2) / (int) gridSize.x) * (int) gridSize.x), (int) ((((int) Math.abs(point.getY()) + (int) gridSize.y / 2) / (int) gridSize.y) * (int) gridSize.y));
             if (negativeX) p.x *= -1;
             if (negativeY) p.y *= -1;
             return p;
@@ -840,11 +1173,22 @@ public class EditorWindow extends JFrame {
             }
 
             if (moving) {
+                mouseMoved(e);
                 if (selectedEntity != null) {
-                    if (xArrowSelected)
-                        selectedEntity.setPosition(selectedEntity.position().x - ((double) (lastDraggingPosition.x - e.getLocationOnScreen().x) / zoom), selectedEntity.position().y);
-                    if (yArrowSelected)
-                        selectedEntity.setPosition(selectedEntity.position().x, selectedEntity.position().y - ((double) (lastDraggingPosition.y - e.getLocationOnScreen().y) / zoom));
+                    if (xArrowSelected) {
+                        if (placeInGrid) {
+                            Point gridPosition = closerGridLocationTo(new Point2D.Double(mousePositionX, mousePositionY));
+                            selectedEntity.setPosition(gridPosition.x, selectedEntity.position().y);
+                        } else
+                            selectedEntity.setPosition(selectedEntity.position().x - ((double) (lastDraggingPosition.x - e.getLocationOnScreen().x) / zoom), selectedEntity.position().y);
+                    }
+                    if (yArrowSelected) {
+                        if (placeInGrid) {
+                            Point gridPosition = closerGridLocationTo(new Point2D.Double(mousePositionX, mousePositionY));
+                            selectedEntity.setPosition(selectedEntity.position().x, -gridPosition.y);
+                        } else
+                            selectedEntity.setPosition(selectedEntity.position().x, selectedEntity.position().y + ((double) (lastDraggingPosition.y - e.getLocationOnScreen().y) / zoom));
+                    }
                     lastDraggingPosition.setLocation(e.getLocationOnScreen());
                 }
                 repaint();
@@ -857,22 +1201,58 @@ public class EditorWindow extends JFrame {
             mousePositionX = e.getX() / zoom + viewPositionX + getWidth() / 2. - (getWidth() / 2. / zoom);
             mousePositionY = e.getY() / zoom + viewPositionY + getHeight() / 2. - (getHeight() / 2. / zoom);
             repaint();
-        }
 
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (scene == null) return;
+            setToolTipText("");
+
             for (EditorEntity entity : scene.entities()) {
                 Dimension d = entity.size();
-                Point2D.Double p = entity.position();
-                if (p.x - d.width / 2. > mousePositionX && p.x + d.width / 2. < mousePositionX) {
-                    System.out.println(entity);
+                Point2D.Double p = entity.realPosition();
+                if (d.width < 8) d.width = 8;
+                if (d.height < 8) d.height = 8;
+                if (p.x - d.width / 2. < mousePositionX && p.x + d.width / 2. > mousePositionX && -p.y - d.height / 2. < mousePositionY && -p.y + d.height / 2. > mousePositionY) {
+                    setToolTipText(entity.entityName());
                 }
             }
         }
 
         @Override
+        public void mouseClicked(MouseEvent e) {
+            if (scene == null) return;
+            EditorEntity lastSelected = selectedEntity;
+            if (!moving) selectedEntity = null;
+            for (EditorEntity entity : scene.entities()) {
+                if (entity.inside(new Point2D.Double(mousePositionX, mousePositionY))) {
+                    if (e.getButton() == MouseEvent.BUTTON1) {
+                        if (lastSelected != null && lastSelected.isChildOf(entity)) {
+                            selectedEntity = lastSelected;
+                            break;
+                        }
+                        selectedEntity = entity;
+                        entitiesTree.tree.clearSelection();
+                        for (int i = 0; i < entitiesTree.tree.getRowCount(); i++) {
+                            Object o = ((DefaultMutableTreeNode) entitiesTree.tree.getPathForRow(i).getLastPathComponent()).getUserObject();
+                            if (o instanceof EntitiesTree.Tree.EntityNode e1) {
+                                if (e1.editorEntity.equals(selectedEntity)) {
+                                    entitiesTree.tree.addSelectionPath(entitiesTree.tree.getPathForRow(i));
+                                    break;
+                                }
+                            }
+                        }
+                    } else if (e.getButton() == MouseEvent.BUTTON2) {
+                        openEntity(EditorWindow.this, entity, null).setVisible(true);
+                    } else if (e.getButton() == MouseEvent.BUTTON3) {
+                        entityPopupPanel(this, entity);
+                        if (!scene.entities().contains(entity)) selectedEntity = null;
+                    }
+                }
+            }
+
+            repaint();
+        }
+
+        @Override
         public void mousePressed(MouseEvent e) {
+            requestFocus();
             if (scene == null) return;
             if (e.getButton() == MouseEvent.BUTTON2) {
                 dragging = true;
@@ -908,7 +1288,11 @@ public class EditorWindow extends JFrame {
 
         @Override
         public void keyPressed(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_CONTROL) placeInGrid = true;
+            if (e.getKeyCode() == KeyEvent.VK_EQUALS && gridSize.x < 2000 && gridSize.y < 2000)
+                gridSize.setLocation(new Point2D.Float(gridSize.x * 2, gridSize.y * 2));
+            if (e.getKeyCode() == KeyEvent.VK_MINUS && gridSize.x > 2 && gridSize.y > 2)
+                gridSize.setLocation(new Point2D.Float(gridSize.x / 2, gridSize.y / 2));
+            if (e.getKeyCode() == KeyEvent.VK_CONTROL) placeInGrid = !placeInGrid;
             if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) RIGHT_TIMER.start();
             if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) LEFT_TIMER.start();
             if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) UP_TIMER.start();
@@ -919,7 +1303,7 @@ public class EditorWindow extends JFrame {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_CONTROL) placeInGrid = false;
+            //sif (e.getKeyCode() == KeyEvent.VK_CONTROL) placeInGrid = false;
             if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) RIGHT_TIMER.stop();
             if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) LEFT_TIMER.stop();
             if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) UP_TIMER.stop();
@@ -954,6 +1338,7 @@ public class EditorWindow extends JFrame {
         if (sceneFile != null) {
             try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(sceneFile))) {
                 setScene((EditorScene) oi.readObject());
+                entitiesTree.tree.update();
             } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
