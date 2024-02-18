@@ -390,7 +390,7 @@ public class EditorWindow extends JFrame {
         };
         menuBar.add(sceneMenu);
 
-        sceneMenu.add(addMenu(null, null));
+        sceneMenu.add(addMenu(null, null, null));
 
         sceneMenu.addSeparator();
 
@@ -557,7 +557,7 @@ public class EditorWindow extends JFrame {
         frame.addWindowFocusListener(new WindowFocusListener() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
-                if (scene != null && !scene.entities().contains(entity) && toSaveFile == null)
+                if (scene != null && !entityExists(entity) && toSaveFile == null)
                     dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
             }
 
@@ -687,7 +687,24 @@ public class EditorWindow extends JFrame {
         return dialog;
     }
 
-    private JMenu addMenu(List<EditorEntity> entities, EditorEntity parent) {
+    public boolean entityExists(EditorEntity entity) {
+        if (scene == null) return false;
+        if (scene.entities().contains(entity)) return true;
+        for (EditorEntity e : scene.entities()) {
+            if (entityExists(entity, e)) return true;
+        }
+        return false;
+    }
+
+    private boolean entityExists(EditorEntity entity, EditorEntity parent) {
+        if (parent.children().contains(entity)) return true;
+        for (EditorEntity e : parent.children()) {
+            if (entityExists(entity, e)) return true;
+        }
+        return false;
+    }
+
+    private JMenu addMenu(List<EditorEntity> entities, EditorEntity parent, Point2D.Double mousePosition) {
         JMenu sceneAddMenu = new JMenu(Srd.LANG.getProperty("se_menuBar_scene_add"));
 
         sceneAddMenu.add(new AbstractAction(Srd.LANG.getProperty("se_menuBar_scene_add_emptyEntity")) {
@@ -696,7 +713,9 @@ public class EditorWindow extends JFrame {
                 List<EditorEntity> entities1 = entities;
                 if (entities1 == null)
                     entities1 = scene.entities();
-                entities1.add(new EditorEntity().setParent(parent));
+                EditorEntity ee = new EditorEntity().setParent(parent);
+                if (mousePosition != null) ee.setPosition(mousePosition.x, mousePosition.y);
+                entities1.add(ee);
                 entitiesTree.tree.update();
             }
         });
@@ -832,11 +851,11 @@ public class EditorWindow extends JFrame {
 
                 addMouseListener(new MouseAdapter() {
                     public void mouseReleased(MouseEvent e) {
-                        if (e.isPopupTrigger()) {
+                        if (e.getButton() == MouseEvent.BUTTON3) {
                             try {
                                 entityPopupPanel(Tree.this, es());
                             } catch (ClassCastException ex) {
-                                rootEntityPopupPanel(Tree.this);
+                                rootEntityPopupPanel(Tree.this, null);
                             }
                         }
                     }
@@ -923,7 +942,7 @@ public class EditorWindow extends JFrame {
         popupMenu.add(new JLabel(Arrays.toString(entities)));
         popupMenu.addSeparator();
         if (entities.length == 1) {
-            popupMenu.add(addMenu(entities[0].children(), entities[0]));
+            popupMenu.add(addMenu(entities[0].children(), entities[0], null));
             popupMenu.add(new AbstractAction("Open") {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -951,9 +970,11 @@ public class EditorWindow extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 CompletableFuture.runAsync(() -> {
                     for (EditorEntity en : entities) {
-                        scene.entities().remove(en);
+                        if (en.parent() != null) en.parent().children().remove(en);
+                        else
+                            scene.entities().remove(en);
                     }
-                    if (!scene.entities().contains(gameView.selectedEntity)) gameView.selectedEntity = null;
+                    if (!entityExists(gameView.selectedEntity)) gameView.selectedEntity = null;
                     gameView.repaint();
                     entitiesTree.tree.update();
                 });
@@ -962,11 +983,11 @@ public class EditorWindow extends JFrame {
         popupMenu.show(invoker, invoker.getMousePosition().x, invoker.getMousePosition().y);
     }
 
-    public void rootEntityPopupPanel(Component invoker) {
+    public void rootEntityPopupPanel(Component invoker, Point2D.Double mousePosition) {
         JPopupMenu popupMenu = new JPopupMenu();
         popupMenu.add(new JLabel("Scene Root"));
         popupMenu.addSeparator();
-        popupMenu.add(addMenu(scene.entities(), null));
+        popupMenu.add(addMenu(scene.entities(), null, mousePosition));
         popupMenu.show(invoker, invoker.getMousePosition().x, invoker.getMousePosition().y);
     }
 
@@ -1010,6 +1031,13 @@ public class EditorWindow extends JFrame {
         private EditorEntity selectedEntity;
 
         private boolean placeInGrid, xArrowSelected, yArrowSelected;
+
+        private EntitySelectedFx entitySelectedFx = null;
+
+        private static class EntitySelectedFx {
+            int f = 30;
+            EditorEntity entity;
+        }
 
         public GameView(JLabel xLabel, JLabel yLabel, JLabel zoomLabel, JLabel gridLabel) {
             this.xLabel = xLabel;
@@ -1091,6 +1119,11 @@ public class EditorWindow extends JFrame {
                     double ballSize = 12 / zoom;
                     Shape circle = new Arc2D.Double(loc.x - ballSize / 2, loc.y - ballSize / 2, ballSize, ballSize, 0, 360, Arc2D.CHORD);
                     g2.fill(circle);
+                }
+
+                if (entitySelectedFx != null) {
+                    g2.setColor(new Color(0, 41, 253, 174));
+                    g2.setColor(new Color(66, 213, 255, 174));
                 }
 
                 if (selectedEntity != null) {
@@ -1242,9 +1275,14 @@ public class EditorWindow extends JFrame {
                         openEntity(EditorWindow.this, entity, null).setVisible(true);
                     } else if (e.getButton() == MouseEvent.BUTTON3) {
                         entityPopupPanel(this, entity);
-                        if (!scene.entities().contains(entity)) selectedEntity = null;
+                        if (!entityExists(entity)) selectedEntity = null;
                     }
                 }
+            }
+
+            if (e.getButton() == MouseEvent.BUTTON3 && selectedEntity == null) {
+                if (this.getMousePosition() != null)
+                    rootEntityPopupPanel(this, new Point2D.Double(mousePositionX, -mousePositionY));
             }
 
             repaint();

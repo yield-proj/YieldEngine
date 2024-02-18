@@ -10,25 +10,25 @@ import com.xebisco.yield.physics.colliders.EdgeCollider2D;
 public class Main extends Scene {
 
     private static final Entity2DPrefab prefab = new Entity2DPrefab(
-            new ComponentCreation(TextMesh.class, c -> ((TextMesh) c).paint().setText("Hello, World!")),
-            new ComponentCreation(Script.class),
-            new ComponentCreation(PhysicsBody.class, c -> ((PhysicsBody) c).setType(BodyType.DYNAMIC)),
-            new ComponentCreation(CircleCollider2D.class)
-    ), prefab2 = new Entity2DPrefab(
-            new ComponentCreation(TextMesh.class, c -> ((TextMesh) c).paint().setText("GROUND")),
-            new ComponentCreation(PhysicsBody.class, c -> ((PhysicsBody) c).setType(BodyType.STATIC)),
-            new ComponentCreation(EdgeCollider2D.class)
+            new ComponentCreation(TextMesh.class, c -> ((TextMesh) c).paint().setText("Hello, World!"))
     );
 
     public Main(Application application) {
         super(application);
     }
 
+    Entity2D e;
+
     @Override
     public void onStart() {
-        systems().add(new PhysicsSystem().setGravity(new Vector2D(0, -100)));
-        instantiate(prefab);
-        instantiate(prefab2).transform().translate(0, -100);
+        super.onStart();
+        e = instantiate(prefab);
+    }
+
+    @Override
+    public void onUpdate(ContextTime time) {
+        super.onUpdate(time);
+        e.transform().rotate(60 * time.deltaTime());
     }
 
     public static void main(String[] args) throws ClassNotFoundException {

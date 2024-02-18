@@ -6,14 +6,14 @@ import com.xebisco.yield.rendering.Form;
 import com.xebisco.yield.rendering.Renderer;
 
 @AffectsEditorEntitySize
-public class SquareMesh extends AbstractRenderable {
+public class RectangleMesh extends AbstractRenderable {
     @Visible
     private Color color = new Color(1, 1, 1, 1);
 
     @Visible
     private Vector2D size = new Vector2D(100, 100);
 
-    public SquareMesh() {
+    public RectangleMesh() {
         super(Form.SQUARE);
         paint().setHasImage(false);
     }
@@ -29,7 +29,7 @@ public class SquareMesh extends AbstractRenderable {
         return color;
     }
 
-    public SquareMesh setColor(Color color) {
+    public RectangleMesh setColor(Color color) {
         this.color = color;
         return this;
     }
@@ -38,7 +38,7 @@ public class SquareMesh extends AbstractRenderable {
         return size;
     }
 
-    public SquareMesh setSize(Vector2D size) {
+    public RectangleMesh setSize(Vector2D size) {
         this.size = size;
         return this;
     }

@@ -12,6 +12,7 @@ import org.lwjgl.util.freetype.FT_Bitmap;
 import org.lwjgl.util.freetype.FT_Face;
 import org.lwjgl.util.freetype.FT_GlyphSlot;
 
+import java.nio.IntBuffer;
 import java.util.Objects;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -23,8 +24,6 @@ public class OpenGLFontManager implements FontManager {
     private PointerBuffer ftLib;
     private long ftLibL;
     private PointerBuffer fontPointer;
-
-    public final static String ASCII = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
     public PointerBuffer fontPointer() {
         return fontPointer;
@@ -69,7 +68,11 @@ public class OpenGLFontManager implements FontManager {
 
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-        for (char c : ASCII.toCharArray()) {
+        IntBuffer index = MemoryUtil.memAllocInt(1);
+
+        long c = FT_Get_First_Char(face, index);
+
+        while (true) {
             FT_Load_Char(face, c, FT_LOAD_RENDER);
             int texture = glGenTextures();
             //noinspection resource
@@ -88,7 +91,14 @@ public class OpenGLFontManager implements FontManager {
             Texture t = new Texture(texture, new Vector2D(bitmap.width(), bitmap.rows()), font.path(), TextureFilter.LINEAR, null);
 
             //noinspection resource
-            font.characterMap().put(c, new FontCharacter(t, glyph.bitmap_top(), bitmap.width() == 0 ? (int) (font.size() / 3) : bitmap.width() + 3));
+            font.characterMap().put((char) (int) c, new FontCharacter(t, glyph.bitmap_top(), (int) glyph.advance().x() >> 6));
+            MemoryUtil.memFree(index);
+            index = MemoryUtil.memAllocInt(1);
+            c = FT_Get_Next_Char(face, c, index);
+            if(index.get() == 0) {
+                MemoryUtil.memFree(index);
+                break;
+            }
         }
 
         FT_Done_Face(face);

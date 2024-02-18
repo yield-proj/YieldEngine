@@ -16,7 +16,7 @@
 
 package com.xebisco.yield;
 
-import com.xebisco.yield.texture.TexturedSquareMesh;
+import com.xebisco.yield.texture.TexturedRectangleMesh;
 
 /**
  * The AnimationPlayer class is a component behavior that handles the playing of animations by updating the texture
@@ -52,7 +52,7 @@ public final class AnimationPlayer extends ComponentBehavior {
                     } else if (animation.loop()) actualFrame = 0;
                 }
             }
-            TexturedSquareMesh r = component(TexturedSquareMesh.class);
+            TexturedRectangleMesh r = component(TexturedRectangleMesh.class);
             if (r != null)
                 r.setTexture(animation.frames()[actualFrame]);
         }

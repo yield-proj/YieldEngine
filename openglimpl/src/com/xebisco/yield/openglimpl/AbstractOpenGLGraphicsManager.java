@@ -87,18 +87,38 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
 
                 shader.bind();
 
-                shader.setUniform("transformationMatrix", new Matrix4f().identity().translate(new Vector3f((float) paint.transformation().position().x(), (float) paint.transformation().position().y(), 0)).rotateZ((float) Math.toRadians(paint.transformation().zRotation())).scaleXY((float) (paint.transformation().scale().x() * paint.rectSize().width()), (float) (paint.transformation().scale().y() * paint.rectSize().height())));
-                shader.setUniform("viewMatrix", viewMatrix);
-                shader.setUniform("color", new Vector4f((float) paint.color().red(), (float) paint.color().green(), (float) paint.color().blue(), (float) paint.color().alpha()));
+                try {
+                    shader.setUniform("transformationMatrix", new Matrix4f().identity().translate(new Vector3f((float) paint.transformation().position().x(), (float) paint.transformation().position().y(), 0)).rotateZ((float) Math.toRadians(paint.transformation().zRotation())).scaleXY((float) (paint.transformation().scale().x() * paint.rectSize().width()), (float) (paint.transformation().scale().y() * paint.rectSize().height())));
+                } catch (IllegalArgumentException ignore) {
+                }
+                try {
+                    shader.setUniform("viewMatrix", viewMatrix);
+                } catch (IllegalArgumentException ignore) {
+                }
+                try {
+                    shader.setUniform("color", new Vector4f((float) paint.color().red(), (float) paint.color().green(), (float) paint.color().blue(), (float) paint.color().alpha()));
+                } catch (IllegalArgumentException ignore) {
+                }
 
+                //System.out.println(paint);
                 if (paint.hasImage()) {
-                    shader.setUniform("texture_sampler", 0);
-                    if (!isChar)
-                        shader.setUniform("ignoreTexture", 0);
+                    try {
+                        shader.setUniform("texture_sampler", 0);
+                    } catch (IllegalArgumentException ignore) {
+                    }
+                    if (!isChar) {
+                        try {
+                            shader.setUniform("ignoreTexture", 0);
+                        } catch (IllegalArgumentException ignore) {
+                        }
+                    }
                     glActiveTexture(GL_TEXTURE0);
                     glBindTexture(GL_TEXTURE_2D, (int) paint.drawObj());
                 } else {
-                    shader.setUniform("ignoreTexture", 1);
+                    try {
+                        shader.setUniform("ignoreTexture", 1);
+                    } catch (IllegalArgumentException ignore) {
+                    }
                 }
 
                 glBindVertexArray(squareMesh.vao);
@@ -121,6 +141,7 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
                     double width = 0;
                     for (char c : paint.text().toCharArray()) {
                         FontCharacter character = paint.font().characterMap().get(c);
+                        if (character == null) return;
                         width += character.advance() * 2;
                     }
                     double x = -width / 2;
@@ -135,7 +156,9 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
                         x += character.advance();
                         t.translate(x, character.top() * 2. - character.texture().size().height() + y);
                         x += character.advance();
-                        t.scale().set(character.texture().size().width() / 100., character.texture().size().height() / 100.);
+                        t.scale().set(1, 1);
+
+                        p.setRectSize(new Vector2D(character.texture().size().width(), character.texture().size().height()));
 
                         p.setDrawObj(character.texture().imageRef());
                         p.setTransformation(t);
