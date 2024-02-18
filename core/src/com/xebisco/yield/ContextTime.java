@@ -39,7 +39,7 @@ public class ContextTime implements Serializable {
      */
     public ContextTime setTargetFPS(double targetFPS) {
         if (targetFPS <= 0) throw new IllegalArgumentException("targetFPS can't be less or equal to zero");
-        return setTargetSleepTime((long) (1 / targetFPS * 1_000_000));
+        return setTargetSleepTime((long) (1 / targetFPS * 1_000_000_000));
     }
 
     /**

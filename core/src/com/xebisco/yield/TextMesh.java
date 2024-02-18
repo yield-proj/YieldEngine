@@ -10,7 +10,6 @@ public class TextMesh extends AbstractRenderable {
 
     @Override
     public void onStart() {
-        transform().scale().set(.1, .1);
         if(paint().font() == null)
             paint().setFont(application().defaultFont());
     }

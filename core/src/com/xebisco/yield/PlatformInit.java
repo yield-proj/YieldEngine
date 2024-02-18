@@ -18,18 +18,19 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.platform.ApplicationModule;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * It's a class that holds the initial configuration of the specific platform.
  */
 public class PlatformInit implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 6160223093067169502L;
     private Vector2D viewportSize = new Vector2D(1280, 720), windowSize = new Vector2D(1280, 720);
     private String title = "Yield Window";
     private boolean fullscreen, undecorated, stretchViewport, invertZIndex, verticalSync;
     private String windowIconPath = "yieldIcon.png";
-
-    private ContextTime physicsContextTime = new ContextTime(40);
     private final ApplicationModule[] requiredPlatformModules;
 
     public static final ApplicationModule[] PC_DEFAULT = new ApplicationModule[]{
@@ -122,15 +123,6 @@ public class PlatformInit implements Serializable {
 
     public PlatformInit setWindowIconPath(String windowIconPath) {
         this.windowIconPath = windowIconPath;
-        return this;
-    }
-
-    public ContextTime physicsContextTime() {
-        return physicsContextTime;
-    }
-
-    public PlatformInit setPhysicsContextTime(ContextTime physicsContextTime) {
-        this.physicsContextTime = physicsContextTime;
         return this;
     }
 

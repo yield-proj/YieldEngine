@@ -17,22 +17,20 @@ public class Main extends Scene {
         super(application);
     }
 
-    Entity2D e;
-
     @Override
     public void onStart() {
         super.onStart();
-        e = instantiate(prefab);
+        instantiate(prefab);
     }
 
     @Override
     public void onUpdate(ContextTime time) {
         super.onUpdate(time);
-        e.transform().rotate(60 * time.deltaTime());
+        setBackGroundColor(Colors.random());
     }
 
     public static void main(String[] args) throws ClassNotFoundException {
-        ApplicationManager manager = new ApplicationManager(new ContextTime());
+        ApplicationManager manager = new ApplicationManager(new ContextTime().setTargetFPS(10));
         new Application(manager, Main.class, Global.Platforms.openGLOpenAL(), new PlatformInit(PlatformInit.PC_DEFAULT));
         manager.run();
     }
