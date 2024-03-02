@@ -16,6 +16,7 @@
 
 package com.xebisco.yield.manager;
 
+import com.xebisco.yield.AbstractTexture;
 import com.xebisco.yield.Vector2D;
 import com.xebisco.yield.texture.SpritesheetTexture;
 import com.xebisco.yield.texture.Texture;
@@ -32,7 +33,7 @@ public interface TextureManager {
      *
      * @param texture The "texture" parameter in the "loadTexture" method is an object of the "Texture" class.
      */
-    Object loadTexture(Texture texture, Vector2D size) throws IOException;
+    Object loadTexture(AbstractTexture texture, Vector2D size) throws IOException;
 
     /**
      * The function unloads a texture.
@@ -40,7 +41,7 @@ public interface TextureManager {
      * @param texture The parameter "texture" is a variable of type "Texture" that represents a texture object. This
      * function "unloadTexture" is used to free up memory and resources associated with the texture object.
      */
-    void unloadTexture(Texture texture);
+    void unloadTexture(AbstractTexture texture);
 
     Object loadSpritesheetTexture(SpritesheetTexture spritesheetTexture, Vector2D size) throws IOException;
 

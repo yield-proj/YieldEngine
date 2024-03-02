@@ -16,6 +16,7 @@
 
 package com.xebisco.yield.texture;
 
+import com.xebisco.yield.AbstractTexture;
 import com.xebisco.yield.FileInput;
 import com.xebisco.yield.ImmutableVector2D;
 import com.xebisco.yield.Vector2D;
@@ -27,27 +28,23 @@ import java.io.IOException;
 /**
  * The Texture class represents an image texture and provides methods for processing and manipulating it.
  */
-public class Texture extends FileInput implements Closeable {
+public class Texture extends AbstractTexture {
     private final ImmutableVector2D size;
     private final TextureManager textureManager;
-    private Object imageRef;
-    private final TextureFilter filter;
 
     public Texture(String path, TextureFilter filter, TextureManager textureManager) throws IOException {
-        super(path);
+        super(path, filter);
         this.textureManager = textureManager;
         Vector2D size = new Vector2D();
-        imageRef = textureManager.loadTexture(this, size);
+        setImageRef(textureManager.loadTexture(this, size));
         this.size = new ImmutableVector2D(size.width(), size.height());
-        this.filter = filter;
     }
 
     public Texture(Object imageRef, Vector2D size, String path, TextureFilter filter, TextureManager textureManager) {
-        super(path);
+        super(path, filter);
         this.textureManager = textureManager;
-        this.imageRef = imageRef;
+        setImageRef(imageRef);
         this.size = new ImmutableVector2D(size.width(), size.height());
-        this.filter = filter;
     }
 
     public static String[] extensions() {
@@ -62,26 +59,6 @@ public class Texture extends FileInput implements Closeable {
         if (textureManager != null)
             textureManager().unloadTexture(this);
     }
-
-    /**
-     * The function returns the reference to an image object.
-     *
-     * @return The method is returning the value of the variable `imageRef`, which is of type `Object`.
-     */
-    public Object imageRef() {
-        return imageRef;
-    }
-
-    /**
-     * This function sets the image reference for an object.
-     *
-     * @param imageRef The parameter "imageRef" is an object that represents a reference to an image.
-     */
-    public Texture setImageRef(Object imageRef) {
-        this.imageRef = imageRef;
-        return this;
-    }
-
 
 
     /**
@@ -100,9 +77,5 @@ public class Texture extends FileInput implements Closeable {
      */
     public TextureManager textureManager() {
         return textureManager;
-    }
-
-    public TextureFilter filter() {
-        return filter;
     }
 }

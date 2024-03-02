@@ -100,7 +100,6 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
                 } catch (IllegalArgumentException ignore) {
                 }
 
-                //System.out.println(paint);
                 if (paint.hasImage()) {
                     try {
                         shader.setUniform("texture_sampler", 0);
@@ -156,7 +155,6 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
                         x += character.advance();
                         t.translate(x, character.top() * 2. - character.texture().size().height() + y);
                         x += character.advance();
-                        t.scale().set(1, 1);
 
                         p.setRectSize(new Vector2D(character.texture().size().width(), character.texture().size().height()));
 

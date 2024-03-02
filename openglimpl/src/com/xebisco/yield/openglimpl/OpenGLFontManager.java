@@ -23,11 +23,6 @@ public class OpenGLFontManager implements FontManager {
 
     private PointerBuffer ftLib;
     private long ftLibL;
-    private PointerBuffer fontPointer;
-
-    public PointerBuffer fontPointer() {
-        return fontPointer;
-    }
 
     public PointerBuffer ftLib() {
         return ftLib;
@@ -47,11 +42,6 @@ public class OpenGLFontManager implements FontManager {
         return this;
     }
 
-    public OpenGLFontManager setFontPointer(PointerBuffer fontPointer) {
-        this.fontPointer = fontPointer;
-        return this;
-    }
-
     @Override
     public Object loadFont(Font font) {
         if (ftLib == null) {
@@ -59,6 +49,8 @@ public class OpenGLFontManager implements FontManager {
             ftLibL = ftLib.get();
         }
 
+
+        PointerBuffer fontPointer;
 
         FT_New_Face(ftLibL, font.path(), 0, fontPointer = MemoryUtil.memAllocPointer(1));
 

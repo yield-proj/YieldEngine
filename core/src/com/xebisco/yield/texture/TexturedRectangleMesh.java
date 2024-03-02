@@ -1,15 +1,12 @@
 package com.xebisco.yield.texture;
 
+import com.xebisco.yield.AbstractTexture;
 import com.xebisco.yield.RectangleMesh;
-import com.xebisco.yield.editor.utils.AffectsEditorEntitySize;
-import com.xebisco.yield.editor.utils.Visible;
 import com.xebisco.yield.rendering.Renderer;
 
-@AffectsEditorEntitySize
 public class TexturedRectangleMesh extends RectangleMesh {
 
-    @Visible
-    private Texture texture;
+    private AbstractTexture texture;
 
     public TexturedRectangleMesh() {
         paint().setHasImage(true);
@@ -27,11 +24,11 @@ public class TexturedRectangleMesh extends RectangleMesh {
         super.render(renderer);
     }
 
-    public Texture texture() {
+    public AbstractTexture texture() {
         return texture;
     }
 
-    public TexturedRectangleMesh setTexture(Texture texture) {
+    public TexturedRectangleMesh setTexture(AbstractTexture texture) {
         this.texture = texture;
         return this;
     }

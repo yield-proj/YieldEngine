@@ -25,15 +25,15 @@ import java.io.IOException;
  * The Animation class represents a sequence of textures with a delay and loop option, and can be disposed.
  */
 public class Animation implements Closeable {
-    private Texture[] frames;
+    private AbstractTexture[] frames;
     private double delay;
     private boolean loop;
 
-    public Animation(Texture... frames) {
+    public Animation(AbstractTexture... frames) {
         this(true, 0.5, frames);
     }
 
-    public Animation(boolean loop, double delay, Texture... frames) {
+    public Animation(boolean loop, double delay, AbstractTexture... frames) {
         this.loop = loop;
         this.frames = frames;
         this.delay = delay;
@@ -41,15 +41,15 @@ public class Animation implements Closeable {
 
     @Override
     public void close() throws IOException {
-        for (Texture t : frames)
+        for (AbstractTexture t : frames)
             t.close();
     }
 
-    public Texture[] frames() {
+    public AbstractTexture[] frames() {
         return frames;
     }
 
-    public Animation setFrames(Texture[] frames) {
+    public Animation setFrames(AbstractTexture[] frames) {
         this.frames = frames;
         return this;
     }

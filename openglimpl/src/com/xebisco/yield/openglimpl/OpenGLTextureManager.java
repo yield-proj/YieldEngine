@@ -1,5 +1,6 @@
 package com.xebisco.yield.openglimpl;
 
+import com.xebisco.yield.AbstractTexture;
 import com.xebisco.yield.Color;
 import com.xebisco.yield.rendering.Form;
 import com.xebisco.yield.texture.SpritesheetTexture;
@@ -22,7 +23,7 @@ import static org.lwjgl.stb.STBImage.*;
 
 public class OpenGLTextureManager implements TextureManager {
     @Override
-    public Object loadTexture(Texture texture, Vector2D size) throws IOException {
+    public Object loadTexture(AbstractTexture texture, Vector2D size) throws IOException {
         ByteBuffer image;
         IntBuffer w = BufferUtils.createIntBuffer(1);
         IntBuffer h = BufferUtils.createIntBuffer(1);
@@ -67,7 +68,7 @@ public class OpenGLTextureManager implements TextureManager {
     }
 
     @Override
-    public void unloadTexture(Texture texture) {
+    public void unloadTexture(AbstractTexture texture) {
         glDeleteTextures((int) texture.imageRef());
     }
 
