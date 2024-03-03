@@ -23,7 +23,7 @@ public class Mat3 extends AbstractMat {
             float a21, float a22, float a23,
             float a31, float a32, float a33
     ) {
-        super(new float[][]{new float[]{a11, a12, a13}, new float[]{a21, a22, a23}, new float[]{a31, a32, a33}});
+        super(new float[]{a11, a12, a13, a21, a22, a23, a31, a32, a33});
     }
 
     public Mat3(Matrix3fc m) {

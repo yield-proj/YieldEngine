@@ -31,7 +31,7 @@ public abstract class AbstractRenderable extends ComponentBehavior {
     @Override
     public void render(Renderer renderer) {
         paint.setTransformation(entity().hierarchyTransform());
-        renderer.draw(form, paint);
+        renderer.draw(form, paint, this);
     }
 
     public Form form() {

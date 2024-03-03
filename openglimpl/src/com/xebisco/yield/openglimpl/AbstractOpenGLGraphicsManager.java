@@ -22,6 +22,8 @@ import com.xebisco.yield.Vector2D;
 import com.xebisco.yield.font.FontCharacter;
 import com.xebisco.yield.manager.GraphicsManager;
 import com.xebisco.yield.manager.PCInputManager;
+import com.xebisco.yield.openglimpl.shader.BlendFunc;
+import com.xebisco.yield.openglimpl.shader.ConnectToShader;
 import com.xebisco.yield.rendering.Form;
 import com.xebisco.yield.rendering.Paint;
 import org.joml.Matrix4f;
@@ -32,6 +34,8 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -44,6 +48,8 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, PCInputManager {
 
     private final Vector2D mouse = new Vector2D();
+
+    private final Map<String, OpenGLShaderProgram> loadedShaders = new HashMap<>();
 
     private Transform2D camera;
     private Vector2D viewportSize;
@@ -89,7 +95,12 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
     }
 
     @Override
-    public void draw(Form form, Paint paint) {
+    public void draw(Form form, Paint paint, Object caller) {
+        if (caller != null && caller.getClass().isAnnotationPresent(ConnectToShader.class)) {
+            draw((ConnectToShader) caller);
+            return;
+        }
+
         GL11.glEnable(GL11.GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -175,13 +186,28 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
 
                         p.setDrawObj(character.texture().imageRef());
                         p.setTransformation(t);
-                        draw(Form.SQUARE, p);
+                        draw(Form.SQUARE, p, null);
                     }
                 }
             }
 
         }
         GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    public void draw(ConnectToShader o) {
+        boolean useBlend = o.getClass().isAnnotationPresent(BlendFunc.class);
+        if (useBlend) {
+            GL11.glEnable(GL11.GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+
+        OpenGLShaderProgram shader = new OpenGLShaderProgram(AbstractOpenGLGraphicsManager.class.getResourceAsStream("/" + o.vert()), AbstractOpenGLGraphicsManager.class.getResourceAsStream("/" + o.frag()));
+
+
+
+        if (useBlend)
+            GL11.glDisable(GL11.GL_BLEND);
     }
 
     @Override

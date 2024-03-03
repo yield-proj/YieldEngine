@@ -15,6 +15,7 @@
 
 package com.xebisco.yield.openglimpl;
 
+import com.xebisco.yield.openglimpl.shader.types.*;
 import org.joml.Matrix4f;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
@@ -52,7 +53,7 @@ public class OpenGLShaderProgram implements AutoCloseable {
     }
 
     private void checkUniform(String uniformName) {
-        if(uniforms.containsKey(uniformName)) return;
+        if (uniforms.containsKey(uniformName)) return;
         createUniform(uniformName);
     }
 
@@ -65,35 +66,19 @@ public class OpenGLShaderProgram implements AutoCloseable {
         }
     }
 
-    public void setUniform(String uniformName, Matrix4f[] matrices) {
+    public void setUniform(String uniformName, Mat4 value) {
         checkUniform(uniformName);
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            int length = matrices != null ? matrices.length : 0;
-            FloatBuffer fb = stack.mallocFloat(16 * length);
-            for (int i = 0; i < length; i++) {
-                matrices[i].get(16 * i, fb);
-            }
-            glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
-        }
+        glUniformMatrix4fv(uniforms.get(uniformName), false, value.data());
     }
 
-    public void setUniform(String uniformName, float[][][] matrices) {
+    public void setUniform(String uniformName, Mat3 value) {
         checkUniform(uniformName);
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            int length = matrices != null ? matrices.length : 0;
-            FloatBuffer fb = stack.mallocFloat(16 * length);
-            for (int i = 0; i < length; i++) {
-                int i1 = 16 * i;
-                int i2 = 0;
-                while (i1 > 3) {
-                    i1 -= 4;
-                    i2++;
-                }
-                
-                fb.put(matrices[i][i1][i2]);
-            }
-            glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
-        }
+        glUniformMatrix3fv(uniforms.get(uniformName), false, value.data());
+    }
+
+    public void setUniform(String uniformName, Mat2 value) {
+        checkUniform(uniformName);
+        glUniformMatrix2fv(uniforms.get(uniformName), false, value.data());
     }
 
     public void setUniform(String uniformName, Vector3fc value) {
@@ -101,7 +86,22 @@ public class OpenGLShaderProgram implements AutoCloseable {
         glUniform3f(uniforms.get(uniformName), value.x(), value.y(), value.z());
     }
 
+    public void setUniform(String uniformName, Vec3 value) {
+        checkUniform(uniformName);
+        glUniform3f(uniforms.get(uniformName), value.x(), value.y(), value.z());
+    }
+
+    public void setUniform(String uniformName, Vec2 value) {
+        checkUniform(uniformName);
+        glUniform2f(uniforms.get(uniformName), value.x(), value.y());
+    }
+
     public void setUniform(String uniformName, Vector4fc value) {
+        checkUniform(uniformName);
+        glUniform4f(uniforms.get(uniformName), value.x(), value.y(), value.z(), value.w());
+    }
+
+    public void setUniform(String uniformName, Vec4 value) {
         checkUniform(uniformName);
         glUniform4f(uniforms.get(uniformName), value.x(), value.y(), value.z(), value.w());
     }
@@ -123,7 +123,8 @@ public class OpenGLShaderProgram implements AutoCloseable {
         glShaderSource(shaderId, shaderCode);
         glCompileShader(shaderId);
 
-        if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) throw new IllegalStateException(glGetShaderInfoLog(shaderId, 1024));
+        if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0)
+            throw new IllegalStateException(glGetShaderInfoLog(shaderId, 1024));
 
         glAttachShader(programHandler, shaderId);
 
