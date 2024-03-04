@@ -24,8 +24,7 @@ public class Main extends Scene {
     }
 
     private final static Entity2DPrefab HELLO_WORLD_PREFAB = new Entity2DPrefab(
-            new ComponentCreation(CustomRectangleMesh.class),
-            new ComponentCreation(TextMesh.class, c -> ((TextMesh) c).setContents("Hello, World!"))
+            new ComponentCreation(CS.class)
     );
 
 

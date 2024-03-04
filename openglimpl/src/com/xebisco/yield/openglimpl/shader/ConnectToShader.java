@@ -24,7 +24,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConnectToShader {
     DrawMode mode() default DrawMode.TRIANGLES;
-    int count();
     DataType type() default DataType.UNSIGNED_INT;
     long indices() default 0;
     String vert();

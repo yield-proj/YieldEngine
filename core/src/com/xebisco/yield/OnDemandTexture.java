@@ -21,9 +21,13 @@ import com.xebisco.yield.texture.TextureFilter;
 import java.io.IOException;
 
 public class OnDemandTexture extends AbstractTexture {
-    private final TextureManager textureManager;
+    private final ReturnTextureManager textureManager;
 
-    public OnDemandTexture(String path, TextureFilter filter, TextureManager textureManager) {
+    public interface ReturnTextureManager {
+        TextureManager textureManager();
+    }
+
+    public OnDemandTexture(String path, TextureFilter filter, ReturnTextureManager textureManager) {
         super(path, filter);
         this.textureManager = textureManager;
     }
@@ -38,14 +42,14 @@ public class OnDemandTexture extends AbstractTexture {
     @Override
     public void close() {
         if (textureManager != null && imageRef != null)
-            textureManager().unloadTexture(this);
+            textureManager().textureManager().unloadTexture(this);
     }
 
     @Override
     public Object imageRef() {
         if(imageRef == null) {
             try {
-                setImageRef(textureManager.loadTexture(this, new Vector2D()));
+                setImageRef(textureManager.textureManager().loadTexture(this, new Vector2D()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -53,12 +57,7 @@ public class OnDemandTexture extends AbstractTexture {
         return super.imageRef();
     }
 
-    /**
-     * The function returns the texture manager object.
-     *
-     * @return The method is returning an object of type `TextureManager`.
-     */
-    public TextureManager textureManager() {
+    public ReturnTextureManager textureManager() {
         return textureManager;
     }
 }

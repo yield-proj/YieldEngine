@@ -22,7 +22,7 @@ import com.xebisco.yield.openglimpl.shader.*;
 import com.xebisco.yield.openglimpl.shader.types.Mat4;
 import com.xebisco.yield.openglimpl.shader.types.Vec2;
 
-@ConnectToShader(count = 6, vert = "com/xebisco/yield/openglimpl/default2d.vert", frag = "com/xebisco/yield/openglimpl/default2d.frag")
+@ConnectToShader(vert = "com/xebisco/yield/openglimpl/default2d.vert", frag = "com/xebisco/yield/openglimpl/default2d.frag")
 public class CustomRectangleMesh extends AbstractRenderable {
     @AttribArray
     static final Vec2[] positions = new Vec2[]{

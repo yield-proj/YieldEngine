@@ -23,11 +23,9 @@ import java.nio.IntBuffer;
 import static org.lwjgl.opengl.GL30.*;
 
 public class Mesh2D extends AbstractMesh {
-    public final int vertexCount;
 
     public Mesh2D(float[] positions, float[] texCoords, int[] indices) {
-        super();
-        vertexCount = indices.length;
+        super(indices.length);
 
         int vbo = glGenBuffers();
         vbos.add(vbo);
@@ -54,7 +52,7 @@ public class Mesh2D extends AbstractMesh {
 
         vbo = glGenBuffers();
         vbos.add(vbo);
-        IntBuffer indicesBuffer = MemoryUtil.memCallocInt(vertexCount);
+        IntBuffer indicesBuffer = MemoryUtil.memCallocInt(indices.length);
         indicesBuffer.put(indices).flip();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
@@ -69,4 +67,6 @@ public class Mesh2D extends AbstractMesh {
     @Override
     public void init() {
     }
+
+
 }

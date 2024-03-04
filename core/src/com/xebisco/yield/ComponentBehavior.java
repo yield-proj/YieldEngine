@@ -16,6 +16,7 @@
 package com.xebisco.yield;
 
 import com.xebisco.yield.rendering.Renderer;
+import com.xebisco.yield.texture.TextureFilter;
 
 import java.io.IOException;
 
@@ -131,5 +132,13 @@ public abstract class ComponentBehavior extends AbstractBehavior implements Rend
 
     public <T extends ComponentBehavior> T component(Class<T> componentType, int index) {
         return entity().component(componentType, index);
+    }
+
+    public final AbstractTexture texture(String path, TextureFilter filter) {
+        return new OnDemandTexture(path, filter, () -> application().applicationPlatform().textureManager());
+    }
+
+    public final AbstractTexture texture(String path) {
+        return texture(path, TextureFilter.LINEAR);
     }
 }

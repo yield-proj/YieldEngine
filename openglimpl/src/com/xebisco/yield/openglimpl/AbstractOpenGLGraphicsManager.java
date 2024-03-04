@@ -48,9 +48,8 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, PCInputManager {
 
     private final Vector2D mouse = new Vector2D();
-
-    private final Map<String, OpenGLShaderProgram> loadedShaders = new HashMap<>();
     private final Map<Object, AbstractMesh> loadedMeshes = new HashMap<>();
+    private final Map<Pair<String, String>, OpenGLShaderProgram> loadedShaders = new HashMap<>();
 
     private Transform2D camera;
     private Vector2D viewportSize;
@@ -152,7 +151,7 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
                 glEnableVertexAttribArray(0);
                 glEnableVertexAttribArray(1);
 
-                glDrawElements(GL_TRIANGLES, squareMesh.vertexCount, GL_UNSIGNED_INT, 0);
+                glDrawElements(GL_TRIANGLES, squareMesh.vertexCount(), GL_UNSIGNED_INT, 0);
 
                 glDisableVertexAttribArray(0);
                 glDisableVertexAttribArray(1);
@@ -203,7 +202,11 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
 
-        OpenGLShaderProgram shader = new OpenGLShaderProgram(AbstractOpenGLGraphicsManager.class.getResourceAsStream("/" + o.getClass().getAnnotation(ConnectToShader.class).vert()), AbstractOpenGLGraphicsManager.class.getResourceAsStream("/" + o.getClass().getAnnotation(ConnectToShader.class).frag()));
+        OpenGLShaderProgram shader;
+        Pair<String, String> shaderPaths = new Pair<>(o.getClass().getAnnotation(ConnectToShader.class).vert(), o.getClass().getAnnotation(ConnectToShader.class).frag());
+        if (loadedShaders.containsKey(shaderPaths)) shader = loadedShaders.get(shaderPaths);
+        else
+            loadedShaders.put(shaderPaths, shader = new OpenGLShaderProgram(AbstractOpenGLGraphicsManager.class.getResourceAsStream("/" + o.getClass().getAnnotation(ConnectToShader.class).vert()), AbstractOpenGLGraphicsManager.class.getResourceAsStream("/" + o.getClass().getAnnotation(ConnectToShader.class).frag())));
 
         //Create mesh if not existent
         if (!loadedMeshes.containsKey(o)) {
@@ -369,11 +372,11 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
         AbstractMesh mesh = loadedMeshes.get(o);
         glBindVertexArray(mesh.vao());
 
-        for(int i = 0; i < mesh.vbos().size() - 1; i++) glEnableVertexAttribArray(i);
+        for (int i = 0; i < mesh.vbos().size() - 1; i++) glEnableVertexAttribArray(i);
 
-        glDrawElements(DrawMode.toGL(o.getClass().getAnnotation(ConnectToShader.class).mode()), o.getClass().getAnnotation(ConnectToShader.class).count(), DataType.toGL(o.getClass().getAnnotation(ConnectToShader.class).type()), o.getClass().getAnnotation(ConnectToShader.class).indices());
+        glDrawElements(DrawMode.toGL(o.getClass().getAnnotation(ConnectToShader.class).mode()), mesh.vertexCount(), DataType.toGL(o.getClass().getAnnotation(ConnectToShader.class).type()), o.getClass().getAnnotation(ConnectToShader.class).indices());
 
-        for(int i = 0; i < mesh.vbos().size() - 1; i++) glEnableVertexAttribArray(i);
+        for (int i = 0; i < mesh.vbos().size() - 1; i++) glEnableVertexAttribArray(i);
 
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -381,12 +384,13 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
         shader.unbind();
 
 
-        if (useBlend)
-            GL11.glDisable(GL11.GL_BLEND);
+        if (useBlend) GL11.glDisable(GL11.GL_BLEND);
     }
 
     private static AbstractMesh abstractMesh(List<Pair<float[], Pair<Integer, Integer>>> toLoad, List<int[]> elements) {
-        AbstractMesh mesh = new AbstractMesh() {
+        int vertexCount = 0;
+        for (int[] i : elements) vertexCount = i.length;
+        AbstractMesh mesh = new AbstractMesh(vertexCount) {
             @Override
             public void init() {
                 int i = 0;
@@ -398,7 +402,7 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
                     buffer.flip();
                     glBindBuffer(GL_ARRAY_BUFFER, vbo);
                     glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-                    if(tl.second().second() >= 0) i = tl.second().second();
+                    if (tl.second().second() >= 0) i = tl.second().second();
                     glEnableVertexAttribArray(i);
                     glVertexAttribPointer(i, tl.second().first(), GL_FLOAT, false, 0, 0);
                     i++;

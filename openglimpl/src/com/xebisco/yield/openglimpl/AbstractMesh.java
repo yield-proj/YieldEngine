@@ -26,10 +26,11 @@ import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.*;
 
 public abstract class AbstractMesh implements AutoCloseable {
-    private final int vao;
+    private final int vao, vertexCount;
     protected final List<Integer> vbos = new ArrayList<>();
 
-    public AbstractMesh() {
+    public AbstractMesh(int vertexCount) {
+        this.vertexCount = vertexCount;
         vao = glGenVertexArrays();
         glBindVertexArray(vao);
     }
@@ -53,5 +54,9 @@ public abstract class AbstractMesh implements AutoCloseable {
 
     public List<Integer> vbos() {
         return vbos;
+    }
+
+    public int vertexCount() {
+        return vertexCount;
     }
 }
