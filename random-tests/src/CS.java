@@ -38,6 +38,5 @@ public class CS extends EmptyRenderable {
     @Override
     public void onUpdate(ContextTime time) {
         a+= (float) time.deltaTime();
-        application().scene().backGroundColor().setGreen(Math.abs(Math.sin(a)));
     }
 }

@@ -31,6 +31,7 @@ public class Main extends Scene {
     @Override
     public void onStart() {
         super.onStart();
+        setBackGroundColor(new Color(Colors.WHITE));
         instantiate(HELLO_WORLD_PREFAB);
     }
 
