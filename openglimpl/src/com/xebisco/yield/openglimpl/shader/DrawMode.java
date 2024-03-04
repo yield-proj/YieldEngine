@@ -13,20 +13,25 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.openglimpl.shader.types;
+package com.xebisco.yield.openglimpl.shader;
 
-import org.joml.Matrix2fc;
+import static org.lwjgl.opengl.GL11.*;
 
-public final class Mat2 extends AbstractMat {
-    public Mat2(float a11, float a12, float a21, float a22) {
-        super(new float[]{a11, a12, a21, a22});
-    }
+public enum DrawMode {
+    TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN;
 
-    public Mat2(Matrix2fc m) {
-        this(m.m00(), m.m01(), m.m10(), m.m11());
-    }
-
-    public Mat2(Vec2 column1, Vec2 column2) {
-        this(column1.x(), column1.y(), column2.x(), column2.y());
+    public static int toGL(DrawMode drawMode) {
+        switch (drawMode) {
+            case TRIANGLES -> {
+                return GL_TRIANGLES;
+            }
+            case TRIANGLE_STRIP -> {
+                return GL_TRIANGLE_STRIP;
+            }
+            case TRIANGLE_FAN -> {
+                return GL_TRIANGLE_FAN;
+            }
+        }
+        throw new IllegalArgumentException();
     }
 }

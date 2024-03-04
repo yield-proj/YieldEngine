@@ -15,7 +15,7 @@
 
 package com.xebisco.yield.openglimpl.shader.types;
 
-public class Vec3 {
+public final class Vec3 {
     private float x, y, z;
 
     public Vec3(float x, float y, float z) {

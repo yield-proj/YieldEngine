@@ -15,7 +15,7 @@
 
 package com.xebisco.yield.openglimpl.shader.types;
 
-abstract class AbstractMat {
+abstract sealed class AbstractMat permits Mat2, Mat3, Mat4 {
     private final float[] data;
 
     public AbstractMat(float[] data) {

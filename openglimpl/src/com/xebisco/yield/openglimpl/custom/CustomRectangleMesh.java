@@ -15,42 +15,44 @@
 
 package com.xebisco.yield.openglimpl.custom;
 
+import com.xebisco.yield.AbstractRenderable;
 import com.xebisco.yield.ContextTime;
-import com.xebisco.yield.RectangleMesh;
-import com.xebisco.yield.openglimpl.shader.AttribArray;
-import com.xebisco.yield.openglimpl.shader.ConnectToShader;
-import com.xebisco.yield.openglimpl.shader.Uniform;
-import com.xebisco.yield.openglimpl.shader.Utils;
+import com.xebisco.yield.Vector2D;
+import com.xebisco.yield.openglimpl.shader.*;
 import com.xebisco.yield.openglimpl.shader.types.Mat4;
 import com.xebisco.yield.openglimpl.shader.types.Vec2;
 
-@ConnectToShader(vert = "com/xebisco/yield/openglimpl/default2d.vert", frag = "com/xebisco/yield/openglimpl/default2d.frag")
-public class CustomRectangleMesh extends RectangleMesh {
-    @AttribArray(index = 0)
-    Vec2[] positions = new Vec2[]{
+@ConnectToShader(count = 6, vert = "com/xebisco/yield/openglimpl/default2d.vert", frag = "com/xebisco/yield/openglimpl/default2d.frag")
+public class CustomRectangleMesh extends AbstractRenderable {
+    @AttribArray
+    static final Vec2[] positions = new Vec2[]{
             new Vec2(-1, 1),
             new Vec2(1, 1),
             new Vec2(1, -1),
             new Vec2(-1, -1)
     };
 
-    @AttribArray(index = 1)
-    Vec2[] texCoord = new Vec2[]{
+    @AttribArray
+    static final Vec2[] texCoord = new Vec2[]{
             new Vec2(0, 0),
             new Vec2(1, 0),
             new Vec2(1, 1),
             new Vec2(0, 1)
     };
 
-    @AttribArray(index = 2)
-    int[] indices = new int[]{0, 1, 2, 2, 3, 0};
+    @Element
+    static final int[] indices = new int[]{0, 1, 2, 2, 3, 0};
 
     @Uniform
     Mat4 viewMatrix, transformationMatrix;
 
+    public CustomRectangleMesh() {
+        super(null);
+    }
+
     @Override
     public void onUpdate(ContextTime time) {
         viewMatrix = Utils.viewMatrix(application().scene().camera(), application().viewportSize());
-        transformationMatrix = Utils.transformationMatrix(transform());
+        transformationMatrix = Utils.transformationMatrix(transform(), new Vector2D(100, 100));
     }
 }

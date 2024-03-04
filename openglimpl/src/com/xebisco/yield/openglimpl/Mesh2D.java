@@ -15,25 +15,19 @@
 
 package com.xebisco.yield.openglimpl;
 
-import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.lwjgl.opengl.GL30.*;
 
-public class Mesh2D implements AutoCloseable {
-    public final int vertexCount, vao;
-    private final List<Integer> vbos = new ArrayList<>();
+public class Mesh2D extends AbstractMesh {
+    public final int vertexCount;
 
     public Mesh2D(float[] positions, float[] texCoords, int[] indices) {
+        super();
         vertexCount = indices.length;
-
-        vao = glGenVertexArrays();
-        glBindVertexArray(vao);
 
         int vbo = glGenBuffers();
         vbos.add(vbo);
@@ -73,13 +67,6 @@ public class Mesh2D implements AutoCloseable {
     }
 
     @Override
-    public void close() {
-        glDisableVertexAttribArray(0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        vbos.forEach(GL20::glDeleteBuffers);
-
-        glBindVertexArray(0);
-        glDeleteVertexArrays(vao);
+    public void init() {
     }
 }

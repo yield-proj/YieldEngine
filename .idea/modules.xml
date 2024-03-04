@@ -15,6 +15,7 @@
       <module fileurl="file://$PROJECT_DIR$/openglimpl/openglimpl.iml" filepath="$PROJECT_DIR$/openglimpl/openglimpl.iml" />
       <module fileurl="file://$PROJECT_DIR$/physics/physics.iml" filepath="$PROJECT_DIR$/physics/physics.iml" />
       <module fileurl="file://$PROJECT_DIR$/random-tests/random-tests.iml" filepath="$PROJECT_DIR$/random-tests/random-tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/utils/utils.iml" filepath="$PROJECT_DIR$/utils/utils.iml" />
     </modules>
   </component>
 </project>

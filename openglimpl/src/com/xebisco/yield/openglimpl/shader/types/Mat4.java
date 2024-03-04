@@ -17,7 +17,7 @@ package com.xebisco.yield.openglimpl.shader.types;
 
 import org.joml.Matrix4fc;
 
-public class Mat4 extends AbstractMat {
+public final class Mat4 extends AbstractMat {
     public Mat4(
             float a11, float a12, float a13, float a14,
             float a21, float a22, float a23, float a24,

@@ -116,6 +116,11 @@ public class OpenGLShaderProgram implements AutoCloseable {
         glUniform1f(uniforms.get(uniformName), value);
     }
 
+    public void setUniform(String uniformName, Sampler2D value) {
+        checkUniform(uniformName);
+        glUniform1i(uniforms.get(uniformName), value.id());
+    }
+
     private int createShader(String shaderCode, int shaderType) {
         int shaderId = glCreateShader(shaderType);
         if (shaderId == 0) throw new IllegalStateException("Could not create shader");

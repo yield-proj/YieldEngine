@@ -15,6 +15,7 @@
 
 import com.xebisco.yield.*;
 import com.xebisco.yield.manager.ApplicationManager;
+import com.xebisco.yield.openglimpl.custom.CustomRectangleMesh;
 import com.xebisco.yield.texture.TexturedRectangleMesh;
 
 public class Main extends Scene {
@@ -23,7 +24,7 @@ public class Main extends Scene {
     }
 
     private final static Entity2DPrefab HELLO_WORLD_PREFAB = new Entity2DPrefab(
-            new ComponentCreation(TexturedRectangleMesh.class),
+            new ComponentCreation(CustomRectangleMesh.class),
             new ComponentCreation(TextMesh.class, c -> ((TextMesh) c).setContents("Hello, World!"))
     );
 

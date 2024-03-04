@@ -15,7 +15,7 @@
 
 package com.xebisco.yield.openglimpl.shader.types;
 
-public class Sampler2D {
+public final class Sampler2D {
     private int id;
 
     public Sampler2D(int id) {
