@@ -15,8 +15,57 @@
 
 package com.xebisco.yield.tileeditor.app;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.xebisco.yield.uiutils.Srd;
+
+import javax.swing.*;
+import java.io.*;
+import java.util.Properties;
+
 public class Entry {
-    public static void main(String[] args) {
-        System.out.println("a");
+    public static void main(String[] args) throws IOException {
+        /*if (SystemInfo.isLinux) {
+            JFrame.setDefaultLookAndFeelDecorated(true);
+            JDialog.setDefaultLookAndFeelDecorated(true);
+        }*/
+        FlatDarculaLaf.setup();
+
+        Srd.LANG.load(Entry.class.getResourceAsStream("/lang/en.properties"));
+
+        File saveFile = new File(System.getProperty("user.home"), ".ytileeditor");
+
+        if (!saveFile.exists()) {
+            File w = createWorkspace();
+            if (w == null) System.exit(0);
+            saveFile.createNewFile();
+        } else {
+            try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(saveFile))) {
+                G.appProps = (Properties) oi.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(saveFile))) {
+                oo.writeObject(G.appProps);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }));
+
+        new ProjectEditor(new File(G.appProps.getProperty("lastWorkspace"), "workspace.ser"));
+    }
+
+    public static File createWorkspace() throws IOException {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setDialogTitle("Choose Workspace");
+        if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            ProjectEditor.createWorkspace(fileChooser.getSelectedFile());
+            G.appProps.put("lastWorkspace", fileChooser.getSelectedFile().getAbsolutePath());
+            return fileChooser.getSelectedFile();
+        }
+        return null;
     }
 }
