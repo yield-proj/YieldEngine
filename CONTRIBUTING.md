@@ -1,6 +1,6 @@
 # Contributing to the Yield Engine
 
-First off all, thank you very much for helping with the development of the Yield Engine.🚀✨
+First of all, thank you very much for helping with the development of the Yield Engine.🚀✨
 
 ## Table of Contents
 
