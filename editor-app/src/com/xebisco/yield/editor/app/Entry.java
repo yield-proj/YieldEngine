@@ -15,8 +15,51 @@
 
 package com.xebisco.yield.editor.app;
 
-public class Entry {
-    public static void main(String[] args) {
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.IntelliJTheme;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.util.SystemInfo;
+import com.xebisco.yield.uiutils.Srd;
 
+import javax.swing.*;
+import java.io.*;
+import java.util.Properties;
+
+import static com.xebisco.yield.editor.app.ProjectEditor.createWorkspace;
+
+public class Entry {
+    public static void main(String[] args) throws IOException {
+        if (SystemInfo.isLinux) {
+            JFrame.setDefaultLookAndFeelDecorated(true);
+            JDialog.setDefaultLookAndFeelDecorated(true);
+        }
+        IntelliJTheme.setup(Entry.class.getResourceAsStream("/octagon.theme.json"));
+
+        Srd.LANG.load(Entry.class.getResourceAsStream("/lang/en.properties"));
+
+        File saveFile = new File(System.getProperty("user.home"), ".yeditor");
+
+        if (!saveFile.exists()) {
+            File w = createWorkspace();
+            if (w == null) System.exit(0);
+            saveFile.createNewFile();
+        } else {
+            try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(saveFile))) {
+                G.appProps = (Properties) oi.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(saveFile))) {
+                oo.writeObject(G.appProps);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }));
+
+        new ProjectEditor(new File(G.appProps.getProperty("lastWorkspace"), "workspace.ser"));
     }
 }

@@ -15,6 +15,7 @@
 
 package com.xebisco.yield.editor.app;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,8 @@ public class Editor {
     static {
         Map<String, Serializable> general = new HashMap<>();
         general.put("p_t_general_projectName", "");
+        general.put("p_t_general_projectIcon", new File("icon.png"));
+        general.put("p_t_general_projectIcon", new File("icon.png"));
     }
 }
 
