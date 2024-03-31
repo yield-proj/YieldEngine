@@ -27,26 +27,37 @@ public class Project implements Serializable {
     private String name;
     private Date lastModified = new Date();
     private final String ID = UUID.randomUUID().toString();
-
-    private TileMap map;
+    private transient File path;
 
     private Project() {
     }
 
     public static Project createProject(String name, Dimension size, String ec, File dir) throws IOException {
         int[][] map = new int[size.width][size.height];
-        for(int x = 0; x < map.length; x++)
-            for(int y = 0; y < map[0].length; y++) {
+        for (int x = 0; x < map.length; x++)
+            for (int y = 0; y < map[0].length; y++) {
                 map[x][y] = -1;
             }
-        Project p = new Project().setName(name).setMap(new TileMap(new TileSet(), map));
-        p.map().setEntityCreationClassName(ec);
+
         dir.mkdir();
-        File projectFile = new File(dir, "map.ser");
+
+        TileMap tileMap = new TileMap(new TileSet(), map);
+        tileMap.setEntityCreationClassName(ec);
+
+        File mapFile = new File(dir, "te_map.ser");
+        mapFile.createNewFile();
+        try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(mapFile))) {
+            oo.writeObject(tileMap);
+        }
+
+        Project p = new Project().setName(name);
+
+        File projectFile = new File(dir, "te_project.ser");
         projectFile.createNewFile();
         try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(projectFile))) {
             oo.writeObject(p);
         }
+
         return p;
     }
 
@@ -85,12 +96,12 @@ public class Project implements Serializable {
         return ID;
     }
 
-    public TileMap map() {
-        return map;
+    public File path() {
+        return path;
     }
 
-    public Project setMap(TileMap map) {
-        this.map = map;
+    public Project setPath(File path) {
+        this.path = path;
         return this;
     }
 }

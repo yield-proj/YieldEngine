@@ -16,6 +16,7 @@
 package com.xebisco.yield.tileeditor.app;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.util.SystemInfo;
 import com.xebisco.yield.uiutils.Srd;
 
 import javax.swing.*;
@@ -24,10 +25,10 @@ import java.util.Properties;
 
 public class Entry {
     public static void main(String[] args) throws IOException {
-        /*if (SystemInfo.isLinux) {
+        if (SystemInfo.isLinux) {
             JFrame.setDefaultLookAndFeelDecorated(true);
             JDialog.setDefaultLookAndFeelDecorated(true);
-        }*/
+        }
         FlatDarculaLaf.setup();
 
         Srd.LANG.load(Entry.class.getResourceAsStream("/lang/en.properties"));

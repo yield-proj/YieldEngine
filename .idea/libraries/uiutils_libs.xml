@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="uiutils-libs">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/uiutils/libs" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/uiutils/libs" recursive="false" />
+  </library>
+</component>

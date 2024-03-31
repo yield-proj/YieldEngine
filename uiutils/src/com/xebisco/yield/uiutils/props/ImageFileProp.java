@@ -1,5 +1,6 @@
 package com.xebisco.yield.uiutils.props;
 
+import com.formdev.flatlaf.icons.FlatOptionPaneErrorIcon;
 import com.xebisco.yield.uiutils.Srd;
 
 import javax.imageio.ImageIO;
@@ -49,21 +50,24 @@ public class ImageFileProp extends PathProp {
     private void updateImage(String path) {
         try {
             imageLabel.setBorder(BorderFactory.createTitledBorder(new File(path).getName()));
-            imageLabel.setIcon(new ImageIcon(ImageIO.read(new File(path)).getScaledInstance(32, -1, Image.SCALE_SMOOTH)));
+            imageLabel.setIcon(new ImageIcon(ImageIO.read(new File(path)).getScaledInstance(64, -1, Image.SCALE_SMOOTH)));
         } catch (IOException | NullPointerException e) {
+            Icon icon = new FlatOptionPaneErrorIcon();
             imageLabel.setBorder(BorderFactory.createTitledBorder("NONE"));
-            BufferedImage i = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage i = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics g = i.createGraphics();
-            UIManager.getIcon("OptionPane.errorIcon").paintIcon(imageLabel, g, 32, 32);
+            icon.paintIcon(imageLabel, g, 0, 0);
             g.dispose();
-            imageLabel.setIcon(new ImageIcon(i));
+            imageLabel.setIcon(new ImageIcon(i.getScaledInstance(64, 64, BufferedImage.SCALE_SMOOTH)));
         }
     }
 
     @Override
     public JComponent render() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.add(super.render(), BorderLayout.NORTH);
+        JComponent s = super.render();
+        s.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        panel.add(s);
         JPanel m = new JPanel(new BorderLayout());
         m.add(panel);
         m.add(imageLabel, BorderLayout.WEST);

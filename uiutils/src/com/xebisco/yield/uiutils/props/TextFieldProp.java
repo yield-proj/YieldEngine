@@ -35,8 +35,7 @@ public class TextFieldProp extends Prop {
 
     @Override
     public JComponent render() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
+        JPanel panel = new JPanel(new BorderLayout());
         String text = Srd.LANG.getProperty(name());
         if (text == null) text = name();
         JLabel west = new JLabel(text);

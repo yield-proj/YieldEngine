@@ -28,8 +28,10 @@ public class Tile implements Serializable {
     private transient BufferedImage image;
 
     private int width, height;
+    private boolean empty;
 
     public Tile(String name, String instanceEntity, BufferedImage image, int width, int height) {
+        if (image == null) empty = true;
         this.instanceEntity = instanceEntity;
         this.image = image;
         this.name = name;
@@ -40,13 +42,26 @@ public class Tile implements Serializable {
     @Serial
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
-        ImageIO.write(image, "png", out);
+        if (!empty)
+            ImageIO.write(image, "png", out);
     }
 
     @Serial
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
+        if (!empty)
             image = ImageIO.read(in);
+    }
+
+    @Override
+    public String toString() {
+        return "Tile{" +
+                "name='" + name + '\'' +
+                ", instanceEntity='" + instanceEntity + '\'' +
+                ", width=" + width +
+                ", height=" + height +
+                ", empty=" + empty +
+                '}';
     }
 
     public BufferedImage image() {
@@ -91,6 +106,15 @@ public class Tile implements Serializable {
 
     public Tile setInstanceEntity(String instanceEntity) {
         this.instanceEntity = instanceEntity;
+        return this;
+    }
+
+    public boolean empty() {
+        return empty;
+    }
+
+    public Tile setEmpty(boolean empty) {
+        this.empty = empty;
         return this;
     }
 }

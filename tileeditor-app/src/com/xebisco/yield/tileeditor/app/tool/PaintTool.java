@@ -25,7 +25,7 @@ import java.util.Objects;
 public class PaintTool implements Tool {
     @Override
     public void press(Point mouse, MapEditor mapEditor) {
-        mapEditor.project().map().map()[mouse.x][mouse.y] = 1;
+        //mapEditor.project().map().map()[mouse.x][mouse.y] = 1;
     }
 
     @Override

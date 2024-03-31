@@ -10,5 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="tileeditor-libs" level="project" />
     <orderEntry type="module" module-name="uiutils" />
+    <orderEntry type="library" name="tileeditor-app" level="project" />
   </component>
 </module>

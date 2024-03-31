@@ -19,8 +19,11 @@ public class PathProp extends TextFieldProp {
     @Override
     public JComponent render() {
         JComponent o = super.render();
-        JPanel b = new JPanel();
-        b.add(new JButton(new AbstractAction(Srd.LANG.getProperty("misc_load")) {
+        JPanel b = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        b.add(new JButton(new AbstractAction("Load") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 File start;
@@ -35,7 +38,8 @@ public class PathProp extends TextFieldProp {
                     setValue(fileChooser.getSelectedFile().getAbsolutePath());
                 }
             }
-        }));
+        }), gbc);
+        b.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
         o.add(b, BorderLayout.EAST);
         return o;
     }

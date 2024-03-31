@@ -24,6 +24,7 @@ import com.xebisco.yield.uiutils.props.PropPanel;
 import com.xebisco.yield.uiutils.props.SizeProp;
 import com.xebisco.yield.uiutils.props.TextFieldProp;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -41,18 +42,11 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ProjectEditor extends JFrame {
-    public final List<Project> PROJECTS;
+    public static List<File> PROJECT_FILES;
+    public static List<Project> PROJECT_OBJECTS = new ArrayList<>();
     private final File workspaceFile;
 
-    private void saveWorkspace() {
-        try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(workspaceFile))) {
-            oo.writeObject(PROJECTS);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void saveWorkspace(File workspaceFile, List<Project> projects) {
+    private static void saveWorkspace(File workspaceFile, List<File> projects) {
         try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(workspaceFile))) {
             oo.writeObject(projects);
         } catch (IOException e) {
@@ -70,6 +64,19 @@ public class ProjectEditor extends JFrame {
         saveWorkspace(workspaceFile, new ArrayList<>());
     }
 
+    public static void loadProjects() {
+        PROJECT_OBJECTS.clear();
+        for(File p : PROJECT_FILES) {
+            try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(p))) {
+                //noinspection unchecked
+                PROJECT_OBJECTS.add(((Project) oi.readObject()).setPath(p));
+            } catch (Exception e) {
+                PROJECT_FILES.remove(p);
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+
     private void openProject(Project project) {
         dispose();
         new MapEditor(project);
@@ -82,18 +89,20 @@ public class ProjectEditor extends JFrame {
         } else {
             try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(workspaceFile))) {
                 //noinspection unchecked
-                PROJECTS = (List<Project>) oi.readObject();
+                PROJECT_FILES = (List<File>) oi.readObject();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(workspaceFile))) {
-                oo.writeObject(PROJECTS);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            saveWorkspace(workspaceFile, PROJECT_FILES);
         }));
+
+        try {
+            setIconImage(ImageIO.read(Objects.requireNonNull(ProjectEditor.class.getResourceAsStream("/logo/logo.png"))));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         setTitle(Srd.LANG.getProperty("tile_editor_projects"));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -104,7 +113,9 @@ public class ProjectEditor extends JFrame {
 
         JPanel mainPanel = new JPanel(new BorderLayout()), leftPanel = new JPanel(new BorderLayout());
 
-        ProjectsModel model = new ProjectsModel(PROJECTS);
+        loadProjects();
+
+        ProjectsModel model = new ProjectsModel(PROJECT_OBJECTS);
         JTable table = new JTable(model);
         table.setDefaultRenderer(Date.class, new DefaultTableCellRenderer() {
             @Override
@@ -151,7 +162,7 @@ public class ProjectEditor extends JFrame {
                 if (p < 0) return;
                 table.requestFocus();
                 table.clearSelection();
-                Project project = PROJECTS.get(p);
+                Project project = PROJECT_OBJECTS.get(p);
                 if (popup) {
                     JPopupMenu popupMenu = new JPopupMenu(project.name());
                     popupMenu.add(new AbstractAction("Open") {
@@ -163,7 +174,8 @@ public class ProjectEditor extends JFrame {
                     popupMenu.add(new AbstractAction("Remove From List") {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            PROJECTS.remove(project);
+                            PROJECT_FILES.remove(project.path());
+                            loadProjects();
                             sorter.allRowsChanged();
                             table.updateUI();
                         }
@@ -213,7 +225,7 @@ public class ProjectEditor extends JFrame {
                             return;
                         }
                         AtomicBoolean alreadyExists = new AtomicBoolean(false);
-                        PROJECTS.forEach(p -> {
+                        PROJECT_OBJECTS.forEach(p -> {
                             if (p.name().equals(s)) {
                                 alreadyExists.set(true);
                             }
@@ -224,7 +236,9 @@ public class ProjectEditor extends JFrame {
                             return;
                         }
                         try {
-                            PROJECTS.add(Project.createProject(s, d, ec, new File(workspaceFile.getParentFile(), s)));
+                            File projectFile = new File(workspaceFile.getParentFile(), s);
+                            PROJECT_FILES.add(projectFile);
+                            PROJECT_OBJECTS.add(Project.createProject(s, d, ec, projectFile).setPath(projectFile));
                         } catch (IOException ex) {
                             throw new RuntimeException(ex);
                         }
@@ -263,10 +277,11 @@ public class ProjectEditor extends JFrame {
             if (fileChooser.showOpenDialog(ProjectEditor.this) == JFileChooser.APPROVE_OPTION) {
                 try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(fileChooser.getSelectedFile()))) {
                     Project p = ((Project) oi.readObject()).setLastModified(new Date());
-                    if (PROJECTS.contains(p)) {
+                    if (PROJECT_OBJECTS.contains(p)) {
                         JOptionPane.showMessageDialog(fileChooser, "This project is already imported", "Error", JOptionPane.ERROR_MESSAGE);
                     } else {
-                        PROJECTS.add(p);
+                        PROJECT_FILES.add(fileChooser.getSelectedFile());
+                        loadProjects();
                         sorter.allRowsChanged();
                         table.updateUI();
                     }
