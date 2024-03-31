@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="tileeditor-app">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/tileeditor-app/libs" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/tileeditor-app/libs" recursive="false" />
+  </library>
+</component>
