@@ -33,11 +33,10 @@ Clone your [fork](#fork-the-project) (be sure to replace *your-username* with yo
 1.  Your environment needs to have `jdk` version >= 17
 
 2.  Some Yield Engine modules have specific dependencies, your environment needs to have them installed to be able to compile them.
-     - `core`: [Jamepad](https://github.com/williamahartman/Jamepad); [jbox2d-library-2.2.1.1](http://www.jbox2d.org/); [Aparapi](https://aparapi.github.io/); [Aparapi-jni](https://github.com/Syncleus/aparapi-jni); [Apache Commons BCEL](https://commons.apache.org/proper/commons-bcel/)
-     - `openglimpl`: [jogl-all](https://jogamp.org/jogl/www/); [gluegen-rt](https://jogamp.org/gluegen/www/).
+     - `core`: none
+     - `physics`: [jbox2d-library-2.2.1.1](http://www.jbox2d.org/).
+     - `openglimpl`: [lwjgl3](https://www.lwjgl.org/); [lwjgl3-freetype](https://www.lwjgl.org/); [lwjgl3-glfw](https://www.lwjgl.org/); [lwjgl3-opengl](https://www.lwjgl.org/); [lwjgl3-stb](https://www.lwjgl.org/).
      - `openalimpl`: [lwjgl3](https://www.lwjgl.org/); [lwjgl3-openal](https://www.lwjgl.org/); [lwjgl3-stb](https://www.lwjgl.org/).
-     - `lwjgl-utils`: [lwjgl3](https://www.lwjgl.org/).
-     - `editor`:  [flatlaf](https://www.formdev.com/flatlaf/); [RSyntaxTextArea](https://github.com/bobbylight/RSyntaxTextArea); [AutoComplete](https://github.com/bobbylight/AutoComplete); [RSTALanguageSupport](https://github.com/bobbylight/AutoComplete). 
 
 > Tip: Keep your `master` branch pointing at the original repository and make
 > pull requests from branches on your fork. To do this, run:
