@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="editor_annotations" />
+    <orderEntry type="module" module-name="editor-annotations" />
     <orderEntry type="module" module-name="core" />
     <orderEntry type="library" name="physics-libs" level="project" />
   </component>

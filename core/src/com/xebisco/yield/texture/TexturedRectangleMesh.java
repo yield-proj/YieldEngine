@@ -17,10 +17,12 @@ package com.xebisco.yield.texture;
 
 import com.xebisco.yield.AbstractTexture;
 import com.xebisco.yield.RectangleMesh;
+import com.xebisco.yield.editor.annotations.Visible;
 import com.xebisco.yield.rendering.Renderer;
 
 public class TexturedRectangleMesh extends RectangleMesh {
 
+    @Visible
     private AbstractTexture texture;
 
     public TexturedRectangleMesh() {

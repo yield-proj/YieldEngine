@@ -13,9 +13,8 @@ import java.util.Properties;
 
 public class Srd {
     public static final Properties LANG = new Properties();
-    public static ClassLoader yieldEngineClassLoader;
-
     public static final Map<String, BufferedImage> imageCache = new HashMap<>();
+    public static final BufferedImage NULL_IMAGE = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 
     public static BufferedImage getImage(String path) {
         if(imageCache.containsKey(path)) return imageCache.get(path);

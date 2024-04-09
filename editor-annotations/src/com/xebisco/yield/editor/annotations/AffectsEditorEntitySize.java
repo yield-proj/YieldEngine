@@ -13,11 +13,14 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.editor.app;
+package com.xebisco.yield.editor.annotations;
 
-import java.util.Properties;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class G {
-    public static Properties appProps = new Properties();
-    public static final String VERSION = "dev1";
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface AffectsEditorEntitySize {
 }

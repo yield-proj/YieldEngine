@@ -98,8 +98,8 @@ public class PositionProp extends Prop {
 
     @Override
     public Prop setValue(Serializable value) {
-        widthField.setText(String.valueOf(((Dimension) value).width));
-        heightField.setText(String.valueOf(((Dimension) value).height));
+        widthField.setText(String.valueOf(((Point2D.Float) value).x));
+        heightField.setText(String.valueOf(((Point2D.Float) value).y));
         return super.setValue(value);
     }
 }

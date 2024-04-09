@@ -15,10 +15,7 @@
 
 package com.xebisco.yield.editor.app;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
-import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.IntelliJTheme;
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.formdev.flatlaf.util.SystemInfo;
 import com.xebisco.yield.uiutils.Srd;
 
@@ -30,6 +27,7 @@ import static com.xebisco.yield.editor.app.ProjectEditor.createWorkspace;
 
 public class Entry {
     public static void main(String[] args) throws IOException {
+        System.setProperty("sun.java2d.opengl", "True");
         if (SystemInfo.isLinux) {
             JFrame.setDefaultLookAndFeelDecorated(true);
             JDialog.setDefaultLookAndFeelDecorated(true);
@@ -46,7 +44,7 @@ public class Entry {
             saveFile.createNewFile();
         } else {
             try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(saveFile))) {
-                G.appProps = (Properties) oi.readObject();
+                Global.appProps = (Properties) oi.readObject();
             } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -54,12 +52,12 @@ public class Entry {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(saveFile))) {
-                oo.writeObject(G.appProps);
+                oo.writeObject(Global.appProps);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }));
 
-        new ProjectEditor(new File(G.appProps.getProperty("lastWorkspace"), "workspace.ser"));
+        new ProjectEditor(new File(Global.appProps.getProperty("lastWorkspace"), "workspace.ser"));
     }
 }

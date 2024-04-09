@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/core_jar</output-path>
     <root id="archive" name="core.jar">
       <element id="module-output" name="core" />
-      <element id="library" level="project" name="core-libs" />
+      <element id="module-output" name="editor-annotations" />
     </root>
   </artifact>
 </component>

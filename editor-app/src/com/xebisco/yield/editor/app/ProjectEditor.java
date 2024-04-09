@@ -15,11 +15,11 @@
 
 package com.xebisco.yield.editor.app;
 
+import com.xebisco.yield.editor.app.editor.Editor;
 import com.xebisco.yield.uiutils.PrettyListCellRenderer;
 import com.xebisco.yield.uiutils.Srd;
 import com.xebisco.yield.uiutils.props.Prop;
 import com.xebisco.yield.uiutils.props.PropPanel;
-import com.xebisco.yield.uiutils.props.SizeProp;
 import com.xebisco.yield.uiutils.props.TextFieldProp;
 
 import javax.imageio.ImageIO;
@@ -36,6 +36,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.util.List;
 import java.util.*;
@@ -67,8 +68,8 @@ public class ProjectEditor extends JFrame {
     public static void loadProjects() {
         PROJECT_OBJECTS.clear();
         List<File> toRemove = new ArrayList<>();
-        for(File p : PROJECT_FILES) {
-            try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(p))) {
+        for (File p : PROJECT_FILES) {
+            try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(new File(p, "editor_project.ser")))) {
                 //noinspection unchecked
                 PROJECT_OBJECTS.add(((Project) oi.readObject()).setPath(p));
             } catch (Exception e) {
@@ -79,10 +80,22 @@ public class ProjectEditor extends JFrame {
         PROJECT_FILES.removeAll(toRemove);
     }
 
-    private void openProject(Project project) {
+    private void openProject(Project project) throws IOException {
         dispose();
-        //TODO open editor
-        //new MapEditor(project);
+        if (project.updatePropsToLatest(false)) {
+            if (JOptionPane.showConfirmDialog(
+                    null,
+                    "This project is not up to date regarding this editor. Update the project's properties and open it? (A backup of the project is recomended first)",
+                    "Confirm",
+                    JOptionPane.YES_NO_OPTION
+            ) == JOptionPane.YES_OPTION
+            ) {
+                project.updatePropsToLatest(true);
+            } else {
+                return;
+            }
+        }
+        new Editor(project);
     }
 
     public static File createWorkspace() throws IOException {
@@ -91,7 +104,7 @@ public class ProjectEditor extends JFrame {
         fileChooser.setDialogTitle("Choose Workspace");
         if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             ProjectEditor.createWorkspace(fileChooser.getSelectedFile());
-            G.appProps.put("lastWorkspace", fileChooser.getSelectedFile().getAbsolutePath());
+            Global.appProps.put("lastWorkspace", fileChooser.getSelectedFile().getAbsolutePath());
             return fileChooser.getSelectedFile();
         }
         return null;
@@ -183,7 +196,11 @@ public class ProjectEditor extends JFrame {
                     popupMenu.add(new AbstractAction("Open") {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            openProject(project);
+                            try {
+                                openProject(project);
+                            } catch (IOException ex) {
+                                throw new RuntimeException(ex);
+                            }
                         }
                     });
                     popupMenu.add(new AbstractAction("Remove From List") {
@@ -198,7 +215,11 @@ public class ProjectEditor extends JFrame {
                     popupMenu.show(table, e.getX(), e.getY());
                     table.addRowSelectionInterval(p, p);
                 } else {
-                    openProject(project);
+                    try {
+                        openProject(project);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             }
         });
@@ -216,8 +237,6 @@ public class ProjectEditor extends JFrame {
                 newProjectDialog.add(new TitleLabel("New Project", null), BorderLayout.NORTH);
                 Prop[] props = new Prop[]{
                         new TextFieldProp("Project Name", "Sample Name"),
-                        new SizeProp("Map Grid Size", new Dimension(100, 100)),
-                        new TextFieldProp("Entity Creation Class", "EntityCreation"),
                 };
                 PropPanel newProjectProps = new PropPanel(props);
                 newProjectProps.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
@@ -232,8 +251,6 @@ public class ProjectEditor extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         Map<String, Serializable> values = PropPanel.values(props);
                         String s = (String) values.get("Project Name");
-                        String ec = (String) values.get("Entity Creation Class");
-                        Dimension d = (Dimension) values.get("Map Grid Size");
                         if (s.isEmpty()) {
                             err[0] = false;
                             JOptionPane.showMessageDialog(ProjectEditor.this, "Project Name must not be empty");
@@ -245,21 +262,25 @@ public class ProjectEditor extends JFrame {
                                 alreadyExists.set(true);
                             }
                         });
+
+                        File projectFile = new File(workspaceFile.getParentFile(), s);
+                        if(projectFile.exists())
+                            alreadyExists.set(true);
+
                         if (alreadyExists.get()) {
                             err[0] = false;
-                            JOptionPane.showMessageDialog(ProjectEditor.this, "A project with this name already exists");
+                            JOptionPane.showMessageDialog(ProjectEditor.this, "A directory with this name already exists");
                             return;
                         }
                         try {
-                            File projectFile = new File(workspaceFile.getParentFile(), s);
                             PROJECT_FILES.add(projectFile);
-                            PROJECT_OBJECTS.add(Project.createProject(s, d, ec, projectFile).setPath(projectFile));
-                        } catch (IOException ex) {
-                            throw new RuntimeException(ex);
+                            PROJECT_OBJECTS.add(Project.createProject(s, projectFile).setPath(projectFile));
+                            sorter.allRowsChanged();
+                            table.updateUI();
+                            newProjectDialog.dispose();
+                        } catch (IOException | URISyntaxException ex) {
+                            JOptionPane.showMessageDialog(ProjectEditor.this, ex.getMessage(), ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
                         }
-                        sorter.allRowsChanged();
-                        table.updateUI();
-                        newProjectDialog.dispose();
                     }
                 });
                 newProjectDialog.getRootPane().setDefaultButton(finish);
@@ -307,10 +328,10 @@ public class ProjectEditor extends JFrame {
             }
         }, () -> {
             JDialog dialog = new JDialog(ProjectEditor.this, true);
-            dialog.setTitle("Workspace");
+            dialog.add(new TitleLabel("Workspace", null), BorderLayout.NORTH);
             dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-            dialog.setMinimumSize(new Dimension(250, 140));
+            dialog.setMinimumSize(new Dimension(250, 200));
 
             JLabel label = new JLabel(workspaceFile.getParentFile().getAbsolutePath());
             label.setFont(label.getFont().deriveFont(Font.BOLD));
@@ -327,7 +348,7 @@ public class ProjectEditor extends JFrame {
                     try {
                         createWorkspace();
                         Dimension size = ProjectEditor.this.getSize();
-                        ProjectEditor editor = new ProjectEditor(new File(G.appProps.getProperty("lastWorkspace"), "workspace.ser"));
+                        ProjectEditor editor = new ProjectEditor(new File(Global.appProps.getProperty("lastWorkspace"), "workspace.ser"));
                         editor.setSize(size);
                         editor.setLocationRelativeTo(ProjectEditor.this);
                         ProjectEditor.this.dispose();
@@ -389,6 +410,7 @@ public class ProjectEditor extends JFrame {
         add(mainSplitPane);
 
         setVisible(true);
+        requestFocus();
         //mainSplitPane.setDividerLocation(0);
     }
 

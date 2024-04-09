@@ -15,17 +15,21 @@
 
 package com.xebisco.yield.editor.app;
 
-import java.awt.*;
+import com.xebisco.yield.editor.app.editor.Editor;
+
 import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Project implements Serializable {
-    private HashMap<String, HashMap<String, Serializable>> propsValues;
-
-    private String name;
+    @Serial
+    private static final long serialVersionUID = 4908578292511938243L;
+    private final HashMap<String, HashMap<String, Serializable>> propsValues = new HashMap<>();
     private Date lastModified = new Date();
     private final String ID = UUID.randomUUID().toString();
     private transient File path;
@@ -33,16 +37,46 @@ public class Project implements Serializable {
     private Project() {
     }
 
-    public static Project createProject(String name, Dimension size, String ec, File dir) throws IOException {
-        int[][] map = new int[size.width][size.height];
-        for (int x = 0; x < map.length; x++)
-            for (int y = 0; y < map[0].length; y++) {
-                map[x][y] = -1;
-            }
+    public boolean updatePropsToLatest(boolean ignoreCheck) throws IOException {
 
+        if(!new File(path, "icon.png").exists()) {
+            if (ignoreCheck)
+                Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/logo/logo.png")), new File(path, "icon.png").toPath(), StandardCopyOption.REPLACE_EXISTING);
+            else return true;
+        }
+
+        for (String s : Editor.STD_PROJECT_VALUES.keySet()) {
+            if (!propsValues.containsKey(s)) {
+                if (ignoreCheck)
+                    propsValues.put(s, Editor.STD_PROJECT_VALUES.get(s));
+                else return true;
+            } else {
+                for (String s1 : Editor.STD_PROJECT_VALUES.get(s).keySet()) {
+                    if (!propsValues.get(s).containsKey(s1)) {
+                        if (ignoreCheck)
+                            propsValues.get(s).put(s1, Editor.STD_PROJECT_VALUES.get(s).get(s1));
+                        else return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public void saveProjectFile() {
+        try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(new File(path, "editor_project.ser")))) {
+            oo.writeObject(this);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Project createProject(String name, File dir) throws IOException, URISyntaxException {
         dir.mkdir();
 
-        Project p = new Project().setName(name);
+        Project p = new Project();
+        p.updatePropsToLatest(true);
+        p.setName(name);
 
         File projectFile = new File(dir, "editor_project.ser");
         projectFile.createNewFile();
@@ -67,11 +101,11 @@ public class Project implements Serializable {
     }
 
     public String name() {
-        return name;
+        return (String) propsValues.get("p_t_general").get("p_t_general_projectName");
     }
 
     public Project setName(String name) {
-        this.name = name;
+        propsValues.get("p_t_general").replace("p_t_general_projectName", name);
         return this;
     }
 

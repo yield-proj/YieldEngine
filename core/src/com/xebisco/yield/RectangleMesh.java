@@ -15,12 +15,16 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.editor.annotations.AffectsEditorEntitySize;
+import com.xebisco.yield.editor.annotations.Visible;
 import com.xebisco.yield.rendering.Form;
 import com.xebisco.yield.rendering.Renderer;
 
+@AffectsEditorEntitySize
 public class RectangleMesh extends AbstractRenderable {
+    @Visible
     private Color color = new Color(1, 1, 1, 1);
-
+    @Visible
     private Vector2D size = new Vector2D(100, 100);
 
     public RectangleMesh() {
