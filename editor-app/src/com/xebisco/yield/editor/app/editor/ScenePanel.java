@@ -20,10 +20,13 @@ import com.xebisco.yield.editor.app.Project;
 import com.xebisco.yield.uiutils.Srd;
 import com.xebisco.yield.uiutils.props.Prop;
 import com.xebisco.yield.uiutils.props.PropPanel;
+import com.xebisco.yield.utils.Pair;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -55,6 +58,22 @@ public class ScenePanel extends JPanel {
         gameView = new GameView(this, entitiesTree);
         mainP = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, gameView, null);
         mainP.setResizeWeight(1);
+       addAncestorListener(new AncestorListener() {
+           @Override
+           public void ancestorAdded(AncestorEvent event) {
+
+           }
+
+           @Override
+           public void ancestorRemoved(AncestorEvent event) {
+               if(saveTimer != null) saveTimer.stop();
+           }
+
+           @Override
+           public void ancestorMoved(AncestorEvent event) {
+
+           }
+       });
         add(mainP);
     }
     private Timer saveTimer;
@@ -140,11 +159,10 @@ public class ScenePanel extends JPanel {
             saveTimer.stop();
             saveTimer = null;
         }
-        saveTimer = new Timer(1000, new AbstractAction() {
+        saveTimer = new Timer(300, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO fiz position saving (Graphics position override props one)
-                saveSceneEntity(entity);
+                saveSceneEntity(entity, true);
                 if (toSaveFile != null) {
                     try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(saveFile.get()))) {
                         oo.writeObject(entity);
@@ -250,9 +268,23 @@ public class ScenePanel extends JPanel {
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     }
 
-    public void saveSceneEntity(EditorEntity entity) {
-        System.out.println("SAVING ENTITY " + entity.entityName());
+    public void saveSceneEntity(EditorEntity entity, boolean transformSave) {
         entity.props.forEach(c -> ((ComponentProp) c).saveValues());
+        if(transformSave) {
+            float[] pos = new float[2];
+            entity.props.forEach(c -> {
+                if (((ComponentProp) c).name().equals("com.xebisco.yield.Transform2D")) {
+                    ((ComponentProp) c).props.forEach(c1 -> {
+                        if (c1.name().equals("position")) {
+                            pos[0] = ((Point2D.Float) c1.value()).x;
+                            pos[1] = ((Point2D.Float) c1.value()).y;
+                        }
+                    });
+                }
+            });
+            entity.setTransformPosition(pos[0], pos[1]);
+        }
+        updateUI();
     }
 
     public static List<Class<?>> getComponentClasses(ClassLoader cl, String pack) throws Exception {

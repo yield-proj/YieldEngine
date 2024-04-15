@@ -102,4 +102,11 @@ public class PositionProp extends Prop {
         heightField.setText(String.valueOf(((Point2D.Float) value).y));
         return super.setValue(value);
     }
+
+    public Prop setValue(float x, float y) {
+        widthField.setText(String.valueOf(x));
+        heightField.setText(String.valueOf(y));
+        ((Point2D.Float) value).setLocation(x, y);
+        return this;
+    }
 }

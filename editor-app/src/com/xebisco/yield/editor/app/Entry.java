@@ -15,7 +15,9 @@
 
 package com.xebisco.yield.editor.app;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.IntelliJTheme;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.formdev.flatlaf.util.SystemInfo;
 import com.xebisco.yield.uiutils.Srd;
 

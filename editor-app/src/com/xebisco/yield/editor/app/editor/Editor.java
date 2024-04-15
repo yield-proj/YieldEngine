@@ -30,9 +30,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class Editor extends JFrame {
     public final static HashMap<String, HashMap<String, Serializable>> STD_PROJECT_VALUES = new HashMap<>();
+    private boolean running;
 
     static {
         HashMap<String, Serializable> general = new HashMap<>();
@@ -41,7 +43,15 @@ public class Editor extends JFrame {
         STD_PROJECT_VALUES.put("p_t_general", general);
     }
 
+    private final JTabbedPane tabbedPane = new JTabbedPane();
+
+    private final Project project;
+    private final JPanel scenePanel = new JPanel(new BorderLayout());
+
+    private final JButton playButton, playGlobalButton, pauseButton, stopButton;
+
     public Editor(Project project) {
+        this.project = project;
         try {
             Image loadedIcon = ImageIO.read(new File(project.path(), "icon.png")).getScaledInstance(14, 14, Image.SCALE_SMOOTH);
             BufferedImage icon = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
@@ -74,7 +84,6 @@ public class Editor extends JFrame {
         setMinimumSize(new Dimension(1280, 720));
 
 
-
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
         menuBar.add(fileMenu);
@@ -90,13 +99,77 @@ public class Editor extends JFrame {
         setJMenuBar(menuBar);
 
 
-        add(new ScenePanel(new EditorScene(), project));
+        JToolBar toolBar = new JToolBar();
+        toolBar.add(Box.createHorizontalGlue());
+        toolBar.setBackground(getBackground());
+        toolBar.addSeparator();
+        toolBar.add(playButton = new JButton(new AbstractAction("", new ImageIcon(Objects.requireNonNull(Editor.class.getResource("/icons/play.png")))) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                runScene(null);
+            }
+        }));
+        toolBar.add(playGlobalButton = new JButton(new AbstractAction("", new ImageIcon(Objects.requireNonNull(Editor.class.getResource("/icons/playglobal.png")))) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                runScene(null);
+            }
+        }));
+        toolBar.add(pauseButton = new JButton(new AbstractAction("", new ImageIcon(Objects.requireNonNull(Editor.class.getResource("/icons/pause.png")))) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pause();
+            }
+        }));
+        pauseButton.setEnabled(false);
 
+        toolBar.add(stopButton = new JButton(new AbstractAction("", new ImageIcon(Objects.requireNonNull(Editor.class.getResource("/icons/stop.png")))) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stop();
+            }
+        }));
+        stopButton.setEnabled(false);
+        toolBar.addSeparator();
+        toolBar.add(Box.createHorizontalGlue());
+        add(toolBar, BorderLayout.NORTH);
+
+
+        add(tabbedPane);
+        tabbedPane.addTab("Scene Panel", scenePanel);
+        tabbedPane.setTabPlacement(JTabbedPane.BOTTOM);
+
+        //TODO actual scenes
+        scenePanel.removeAll();
+        scenePanel.add(new ScenePanel(new EditorScene(), project));
 
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
+    public void runScene(EditorScene scene) {
+        running = true;
+        playButton.setEnabled(false);
+        playGlobalButton.setEnabled(false);
+        pauseButton.setEnabled(true);
+        stopButton.setEnabled(true);
+        //TODO
+    }
+
+    public void pause() {
+        if (running) {
+            //TODO
+        }
+    }
+
+    public void stop() {
+        running = false;
+        playButton.setEnabled(true);
+        playGlobalButton.setEnabled(true);
+        pauseButton.setEnabled(false);
+        stopButton.setEnabled(false);
+        //TODO
+    }
 
 }
 

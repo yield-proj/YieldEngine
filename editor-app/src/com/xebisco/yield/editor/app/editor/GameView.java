@@ -294,8 +294,8 @@ class GameView extends JPanel {
                         } else
                             selectedEntity.setPosition(selectedEntity.position().x, selectedEntity.position().y + ((double) (lastDraggingPosition.y - e.getLocationOnScreen().y) / zoom));
                     }
-                    scenePanel.saveSceneEntity(selectedEntity);
                     lastDraggingPosition.setLocation(e.getLocationOnScreen());
+                    scenePanel.saveSceneEntity(selectedEntity, false);
                 }
                 repaint();
             }

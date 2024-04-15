@@ -17,6 +17,7 @@ package com.xebisco.yield.editor.app.editor;
 
 import com.xebisco.yield.editor.app.Global;
 import com.xebisco.yield.uiutils.Srd;
+import com.xebisco.yield.uiutils.props.PositionProp;
 import com.xebisco.yield.utils.Pair;
 
 import java.awt.*;
@@ -29,6 +30,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class EditorEntity implements Serializable {
     @Serial
@@ -130,28 +132,33 @@ public class EditorEntity implements Serializable {
     }
 
     public void setPosition(double x, double y) {
-        if(props != null) {
+        if (props != null) {
             props.forEach(c -> {
-                if(((ComponentProp) c).name().equals("com.xebisco.yield.Transform2D")) {
+                if (((ComponentProp) c).name().equals("com.xebisco.yield.Transform2D")) {
                     ((ComponentProp) c).props.forEach(c1 -> {
-                        if(c1.name().equals("position")) c1.setValue(new Point2D.Float((float) x, (float) y));
+                        if (c1.name().equals("position")) {
+                            ((PositionProp) c1).setValue((float) x, (float) y);
+                        }
                     });
                 }
             });
-        } else {
-            for (EditorComponent c : components) {
-                if (c.className().equals("com.xebisco.yield.Transform2D")) {
-                    for (Pair<Pair<String, String>, String[]> field : c.fields()) {
-                        if (field.first().first().equals("position")) {
-                            field.second()[0] = String.valueOf(x);
-                            field.second()[1] = String.valueOf(y);
-                            return;
-                        }
+        }
+        setTransformPosition(x, y);
+    }
+
+    public void setTransformPosition(double x, double y) {
+        for (EditorComponent c : components) {
+            if (c.className().equals("com.xebisco.yield.Transform2D")) {
+                for (Pair<Pair<String, String>, String[]> field : c.fields()) {
+                    if (field.first().first().equals("position")) {
+                        field.second()[0] = String.valueOf(x);
+                        field.second()[1] = String.valueOf(y);
+                        return;
                     }
                 }
             }
-            throw new IllegalStateException();
         }
+        throw new IllegalStateException();
     }
 
     public void draw(Graphics2D g) {
@@ -205,7 +212,7 @@ public class EditorEntity implements Serializable {
 
                     AffineTransform imageTransform = new AffineTransform();
 
-                    BufferedImage image = Srd.NULL_IMAGE;
+                    BufferedImage image = Srd.getImage(Objects.requireNonNull(EditorEntity.class.getResource("/logo/logo.png")));
                     for (Pair<Pair<String, String>, String[]> field : c.fields()) {
                         if (field.first().first().equals("texture")) {
                             //image = new Point2D.Double(Double.parseDouble(   field.second()[0]), Double.parseDouble(field.second()[1]));
@@ -283,10 +290,10 @@ public class EditorEntity implements Serializable {
                 a.x = -size.x / 2.;
             }
             case "SOUTH" -> {
-                a.y = size.y / 2.;
+                a.y = -size.y / 2.;
             }
             case "NORTH" -> {
-                a.y = -size.y / 2.;
+                a.y = size.y / 2.;
             }
             case "NORTHWEST" -> {
                 a.x = size.x / 2.;

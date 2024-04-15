@@ -27,4 +27,16 @@ public class Srd {
         imageCache.put(path, image);
         return image;
     }
+
+    public static BufferedImage getImage(URL res) {
+        if(imageCache.containsKey(res.toExternalForm())) return imageCache.get(res.toExternalForm());
+        BufferedImage image;
+        try {
+            image = ImageIO.read(res);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        imageCache.put(res.toExternalForm(), image);
+        return image;
+    }
 }
