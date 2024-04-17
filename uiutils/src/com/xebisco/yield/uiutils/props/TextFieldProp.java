@@ -10,9 +10,11 @@ import java.io.Serializable;
 
 public class TextFieldProp extends Prop {
     private final JTextField field;
+    private final boolean prettyString;
 
-    public TextFieldProp(String name, String value) {
+    public TextFieldProp(String name, String value, boolean prettyString) {
         super(name, value);
+        this.prettyString = prettyString;
         field = new JTextField((String) value());
         field.setMaximumSize(field.getPreferredSize());
         field.getDocument().addDocumentListener(new DocumentListener() {
@@ -36,11 +38,7 @@ public class TextFieldProp extends Prop {
     @Override
     public JComponent render() {
         JPanel panel = new JPanel(new BorderLayout());
-        String text = Srd.LANG.getProperty(name());
-        if (text == null) text = name();
-        JLabel west = new JLabel(text);
-        west.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 6));
-        panel.add(west, BorderLayout.WEST);
+        panel.add(westLabel(prettyString), BorderLayout.WEST);
         JPanel p = new JPanel();
         p.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();

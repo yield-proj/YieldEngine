@@ -41,7 +41,13 @@ public class Project implements Serializable {
 
         if(!new File(path, "icon.png").exists()) {
             if (ignoreCheck)
-                Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/logo/logo.png")), new File(path, "icon.png").toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/empty-project-template/logo.png")), new File(path, "icon.png").toPath(), StandardCopyOption.REPLACE_EXISTING);
+            else return true;
+        }
+
+        if(!new File(path, "default-font.ttf").exists()) {
+            if (ignoreCheck)
+                Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/empty-project-template/default-font.ttf")), new File(path, "default-font.png").toPath(), StandardCopyOption.REPLACE_EXISTING);
             else return true;
         }
 

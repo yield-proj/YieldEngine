@@ -7,16 +7,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class ColorProp extends Prop {
-    public ColorProp(String name, Color value) {
+    private final boolean prettyString;
+    public ColorProp(String name, Color value, boolean prettyString) {
         super(name, value);
+        this.prettyString = prettyString;
     }
 
     @Override
     public JComponent render() {
         JPanel panel = new JPanel(new BorderLayout());
-        String text = Srd.LANG.getProperty(name());
-        if (text == null) text = name();
-        panel.add(new JLabel(text + " "), BorderLayout.WEST);
+        panel.add(westLabel(prettyString), BorderLayout.WEST);
         JButton button;
         panel.add(new JButton(new AbstractAction("Color") {
             @Override

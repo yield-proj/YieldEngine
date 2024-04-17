@@ -13,10 +13,12 @@ import java.io.Serializable;
 public class PositionProp extends Prop {
 
     private final JTextField widthField, heightField;
+    private final boolean prettyString;
 
-    public PositionProp(String name, Point2D.Float value) {
+    public PositionProp(String name, Point2D.Float value, boolean prettyString) {
         super(name, value);
         widthField = new JTextField(String.valueOf(value.x));
+        this.prettyString = prettyString;
         ((PlainDocument) widthField.getDocument()).setDocumentFilter(new FloatFilter());
         widthField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -61,11 +63,7 @@ public class PositionProp extends Prop {
     public JComponent render() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        String text = Srd.LANG.getProperty(name());
-        if (text == null) text = name();
-        JLabel west = new JLabel(text + "    ");
-        west.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 6));
-        panel.add(west, BorderLayout.WEST);
+        panel.add(westLabel(prettyString), BorderLayout.WEST);
 
         JPanel xW = new JPanel();
         xW.setLayout(new BorderLayout());

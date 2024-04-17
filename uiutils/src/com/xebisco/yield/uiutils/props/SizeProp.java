@@ -12,10 +12,12 @@ import java.io.Serializable;
 public class SizeProp extends Prop {
 
     private final JTextField widthField, heightField;
+    private final boolean prettyString;
 
-    public SizeProp(String name, Dimension value) {
+    public SizeProp(String name, Dimension value, boolean prettyString) {
         super(name, value);
         widthField = new JTextField(String.valueOf(value.width));
+        this.prettyString = prettyString;
         ((PlainDocument) widthField.getDocument()).setDocumentFilter(new IntFilter());
         widthField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -61,11 +63,7 @@ public class SizeProp extends Prop {
     public JComponent render() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        String text = Srd.LANG.getProperty(name());
-        if (text == null) text = name();
-        JLabel west = new JLabel(text + "    ");
-        west.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 6));
-        panel.add(west, BorderLayout.WEST);
+        panel.add(westLabel(prettyString), BorderLayout.WEST);
 
         JPanel xW = new JPanel();
         xW.setLayout(new BorderLayout());

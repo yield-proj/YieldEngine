@@ -11,8 +11,8 @@ import java.io.File;
 public class PathProp extends TextFieldProp {
     private final FileFilter filter;
 
-    public PathProp(String name, String value, FileFilter filter) {
-        super(name, value);
+    public PathProp(String name, String value, FileFilter filter, boolean prettyString) {
+        super(name, value, prettyString);
         this.filter = filter;
     }
 

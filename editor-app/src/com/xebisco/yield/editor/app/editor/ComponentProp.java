@@ -169,7 +169,7 @@ public class ComponentProp extends Prop {
             if (type == null) {
                 if (c.isEnum()) {
                     try {
-                        props.add(new ComboProp(compValue.first().first(), (Serializable) c.getMethod("valueOf", String.class).invoke(null, compValue.second()[0]), (Serializable[]) c.getEnumConstants()));
+                        props.add(new ComboProp(compValue.first().first(), (Serializable) c.getMethod("valueOf", String.class).invoke(null, compValue.second()[0]), (Serializable[]) c.getEnumConstants(), true));
                     } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                         throw new RuntimeException(e);
                     }
@@ -177,20 +177,20 @@ public class ComponentProp extends Prop {
                 continue;
             }
             switch (type) {
-                case STRING -> props.add(new TextFieldProp(compValue.first().first(), compValue.second()[0]));
+                case STRING -> props.add(new TextFieldProp(compValue.first().first(), compValue.second()[0], true));
                 case INT ->
-                        props.add(new IntTextFieldProp(compValue.first().first(), Integer.parseInt(compValue.second()[0])));
+                        props.add(new IntTextFieldProp(compValue.first().first(), Integer.parseInt(compValue.second()[0]), true));
                 case LONG ->
-                        props.add(new LongTextFieldProp(compValue.first().first(), Long.parseLong(compValue.second()[0])));
+                        props.add(new LongTextFieldProp(compValue.first().first(), Long.parseLong(compValue.second()[0]), true));
                 case FLOAT ->
-                        props.add(new FloatTextFieldProp(compValue.first().first(), Float.parseFloat(compValue.second()[0])));
+                        props.add(new FloatTextFieldProp(compValue.first().first(), Float.parseFloat(compValue.second()[0]), true));
                 case DOUBLE ->
-                        props.add(new DoubleTextFieldProp(compValue.first().first(), Double.parseDouble(compValue.second()[0])));
+                        props.add(new DoubleTextFieldProp(compValue.first().first(), Double.parseDouble(compValue.second()[0]), true));
                 case POSITION -> {
-                    props.add(new PositionProp(compValue.first().first(), new Point2D.Float(Float.parseFloat(compValue.second()[0]), Float.parseFloat(compValue.second()[1]))));
+                    props.add(new PositionProp(compValue.first().first(), new Point2D.Float(Float.parseFloat(compValue.second()[0]), Float.parseFloat(compValue.second()[1])), true));
                 }
                 case COLOR -> {
-                    props.add(new ColorProp(compValue.first().first(), new Color((float) Double.parseDouble(compValue.second()[0]), (float) Double.parseDouble(compValue.second()[1]), (float) Double.parseDouble(compValue.second()[2]), (float) Double.parseDouble(compValue.second()[3]))));
+                    props.add(new ColorProp(compValue.first().first(), new Color((float) Double.parseDouble(compValue.second()[0]), (float) Double.parseDouble(compValue.second()[1]), (float) Double.parseDouble(compValue.second()[2]), (float) Double.parseDouble(compValue.second()[3])), true));
                 }
                 case FILE -> {
                     FileFilter filter;
@@ -220,9 +220,9 @@ public class ComponentProp extends Prop {
                             return "All Files";
                         }
                     };
-                    props.add(new PathProp(compValue.first().first(), compValue.second()[0], filter));
+                    props.add(new PathProp(compValue.first().first(), compValue.second()[0], filter, true));
                 }
-                case TEXTURE -> props.add(new ImageFileProp(compValue.first().first(), compValue.second()[0]));
+                case TEXTURE -> props.add(new ImageFileProp(compValue.first().first(), compValue.second()[0], true));
                 case ARRAY -> {
                     //props.add(new ArrayProp<>(compValue.first().first(), getProps(compValue.arrayValues()).toArray(new Prop[0])));nnot invoke "java.awt.Color.getRed()" because "prop.value" is null
                 }

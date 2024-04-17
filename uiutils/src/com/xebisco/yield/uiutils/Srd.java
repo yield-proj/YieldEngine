@@ -16,6 +16,21 @@ public class Srd {
     public static final Map<String, BufferedImage> imageCache = new HashMap<>();
     public static final BufferedImage NULL_IMAGE = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 
+    public static String prettyString(String s) {
+        if(s.isEmpty()) return s;
+        StringBuilder builder = new StringBuilder().append(Character.toUpperCase(s.charAt(0)));
+        for(int i = 1; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if(Character.isUpperCase(c)) {
+                if(!Character.isUpperCase(s.charAt(i - 1)) && !Character.isWhitespace(s.charAt(i - 1))) {
+                    builder.append(" ");
+                }
+            }
+            builder.append(c);
+        }
+        return builder.toString();
+    }
+
     public static BufferedImage getImage(String path) {
         if(imageCache.containsKey(path)) return imageCache.get(path);
         BufferedImage image;

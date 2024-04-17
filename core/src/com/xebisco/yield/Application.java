@@ -87,7 +87,7 @@ public class Application extends AbstractBehavior {
     @Override
     public void onStart() {
         applicationPlatform.graphicsManager().init(platformInit);
-        defaultFont = new Font("OpenSans-Regular.ttf", 32, applicationPlatform.fontManager());
+        defaultFont = new Font("default-font.ttf", 32, applicationPlatform.fontManager());
         try {
             applicationPlatform.graphicsManager().updateWindowIcon(new Texture(platformInit.windowIconPath(), TextureFilter.LINEAR, applicationPlatform.textureManager()));
         } catch (IOException e) {

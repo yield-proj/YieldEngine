@@ -236,7 +236,7 @@ public class ProjectEditor extends JFrame {
                 JDialog newProjectDialog = new JDialog(ProjectEditor.this, true);
                 newProjectDialog.add(new TitleLabel("New Project", null), BorderLayout.NORTH);
                 Prop[] props = new Prop[]{
-                        new TextFieldProp("Project Name", "Sample Name"),
+                        new TextFieldProp("Project Name", "Sample Name", false),
                 };
                 PropPanel newProjectProps = new PropPanel(props);
                 newProjectProps.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));

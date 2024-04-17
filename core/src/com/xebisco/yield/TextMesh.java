@@ -15,13 +15,19 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.editor.annotations.Visible;
+import com.xebisco.yield.font.Font;
 import com.xebisco.yield.rendering.Form;
 import com.xebisco.yield.rendering.Renderer;
 
 public class TextMesh extends AbstractRenderable {
 
+    @Visible
     private String contents = "Sample Text";
+    @Visible
     private Color color = new Color(1, 1, 1, 1);
+    @Visible
+    private Font font;
 
     public TextMesh() {
         super(Form.TEXT);
@@ -31,13 +37,14 @@ public class TextMesh extends AbstractRenderable {
     public void render(Renderer renderer) {
         paint().setColor(color);
         paint().setText(contents);
+        paint().setFont(font);
         super.render(renderer);
     }
 
     @Override
     public void onStart() {
-        if(paint().font() == null)
-            paint().setFont(application().defaultFont());
+        if(font == null)
+            font = application().defaultFont();
     }
 
     public String contents() {

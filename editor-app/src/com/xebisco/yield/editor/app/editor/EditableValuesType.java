@@ -34,7 +34,7 @@ public enum EditableValuesType {
             throw new RuntimeException(e);
         }
         try {
-            if(c.isAssignableFrom(Global.yieldEngineClassLoader.loadClass("com.xebisco.yield.FileInput"))) return FILE;
+            if(Global.yieldEngineClassLoader.loadClass("com.xebisco.yield.FileInput").isAssignableFrom(c)) return FILE;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

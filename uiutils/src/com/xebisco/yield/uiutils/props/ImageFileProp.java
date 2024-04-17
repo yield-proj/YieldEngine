@@ -16,7 +16,7 @@ import java.io.IOException;
 public class ImageFileProp extends PathProp {
     private final JLabel imageLabel = new JLabel();
 
-    public ImageFileProp(String name, String value) {
+    public ImageFileProp(String name, String value, boolean prettyString) {
         super(name, value, new FileFilter() {
             @Override
             public boolean accept(File f) {
@@ -27,7 +27,7 @@ public class ImageFileProp extends PathProp {
             public String getDescription() {
                 return "Image Files";
             }
-        });
+        }, prettyString);
         field().getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
