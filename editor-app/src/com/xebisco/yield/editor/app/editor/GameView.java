@@ -89,6 +89,7 @@ class GameView extends JPanel {
         this.scenePanel = scenePanel;
 
         JToolBar toolBar = new JToolBar();
+        toolBar.addSeparator();
         toolBar.add(xLabel);
         toolBar.addSeparator();
         toolBar.add(yLabel);
@@ -99,7 +100,13 @@ class GameView extends JPanel {
 
         add(toolBar, BorderLayout.NORTH);
 
-        add(new Intern());
+        Intern intern = new Intern();
+
+        intern.setMinimumSize(new Dimension(600, 400));
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, entitiesTree, intern);
+
+        add(splitPane);
 
         this.entitiesTree = entitiesTree;
     }

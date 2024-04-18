@@ -223,6 +223,7 @@ public class ComponentProp extends Prop {
                     props.add(new PathProp(compValue.first().first(), compValue.second()[0], filter, true));
                 }
                 case TEXTURE -> props.add(new ImageFileProp(compValue.first().first(), compValue.second()[0], true));
+                case FONT -> props.add(new FontFileProp(compValue.first().first(), compValue.second()[0], true));
                 case ARRAY -> {
                     //props.add(new ArrayProp<>(compValue.first().first(), getProps(compValue.arrayValues()).toArray(new Prop[0])));nnot invoke "java.awt.Color.getRed()" because "prop.value" is null
                 }

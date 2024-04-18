@@ -86,7 +86,19 @@ public class Editor extends JFrame {
 
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
+        fileMenu.add(new AbstractAction("New Prefab") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
         menuBar.add(fileMenu);
+        fileMenu.add(new AbstractAction("Save") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                project.saveProjectFile();
+            }
+        });
 
         fileMenu.addSeparator();
         fileMenu.add(new AbstractAction("Close") {

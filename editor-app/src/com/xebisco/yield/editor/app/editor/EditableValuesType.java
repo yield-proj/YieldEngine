@@ -18,7 +18,7 @@ package com.xebisco.yield.editor.app.editor;
 import com.xebisco.yield.editor.app.Global;
 
 public enum EditableValuesType {
-    STRING, INT, FLOAT, LONG, DOUBLE, POSITION, ARRAY, COLOR, FILE, TEXTURE;
+    STRING, INT, FLOAT, LONG, DOUBLE, POSITION, ARRAY, COLOR, FILE, TEXTURE, FONT;
 
     public static EditableValuesType getType(Class<?> c) {
         if(c.equals(String.class)) return STRING;
@@ -30,6 +30,11 @@ public enum EditableValuesType {
         if(c.getName().equals("com.xebisco.yield.Color")) return COLOR;
         try {
             if(c.isAssignableFrom(Global.yieldEngineClassLoader.loadClass("com.xebisco.yield.texture.Texture"))) return TEXTURE;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            if(c.isAssignableFrom(Global.yieldEngineClassLoader.loadClass("com.xebisco.yield.font.Font"))) return FONT;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

@@ -159,9 +159,22 @@ public class ScenePanel extends JPanel {
             saveTimer.stop();
             saveTimer = null;
         }
+        Font defaultFont;
+        try {
+            defaultFont = Font.createFont(Font.TRUETYPE_FONT, new File(project.path(), "default-font.ttf")).deriveFont(12f);
+        } catch (FontFormatException | IOException e) {
+            throw new RuntimeException(e);
+        }
         saveTimer = new Timer(300, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(!entityExists(entity)) {
+                    mainP.setRightComponent(null);
+                    saveTimer.stop();
+                    saveTimer = null;
+                    return;
+                }
+                entity.setDefaultFont(defaultFont);
                 saveSceneEntity(entity, true);
                 if (toSaveFile != null) {
                     try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(saveFile.get()))) {

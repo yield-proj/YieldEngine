@@ -26,11 +26,13 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
 
 public class EditorEntity implements Serializable {
     @Serial
@@ -39,6 +41,7 @@ public class EditorEntity implements Serializable {
     private boolean enabled = true;
     private List<EditorComponent> components = new ArrayList<>();
     private List<EditorEntity> children = new ArrayList<>();
+    private transient Font defaultFont;
 
     public transient List<Object> props;
 
@@ -189,7 +192,6 @@ public class EditorEntity implements Serializable {
 
                 g.setColor(color);
                 g.fill(new Rectangle2D.Double(position.x - (size.x * scale.x / 2), -position.y - (size.y * scale.y / 2), size.x * scale.x, size.y * scale.y));
-                g.setTransform(t);
             } else if (c.className().equals("com.xebisco.yield.texture.TexturedRectangleMesh")) {
                 Color color = new Color(0, 0, 0, 1);
                 for (Pair<Pair<String, String>, String[]> field : c.fields()) {
@@ -229,10 +231,8 @@ public class EditorEntity implements Serializable {
                 imageTransform.scale(size.x * scale.x / (double) image.getWidth(), size.y * scale.y / (double) image.getHeight());
 
                 g.drawImage(applyShader(image, color), imageTransform, null);
-                g.setTransform(t);
             } else if (c.className().equals("com.xebisco.yield.TextMesh")) {
-                //TODO font rendering
-                /*Color color = new Color(0, 0, 0, 1);
+                Color color = new Color(0, 0, 0, 1);
                 for (Pair<Pair<String, String>, String[]> field : c.fields()) {
                     if (field.first().first().equals("color")) {
                         color = new Color(Float.parseFloat(field.second()[0]), Float.parseFloat(field.second()[1]), Float.parseFloat(field.second()[2]), Float.parseFloat(field.second()[3]));
@@ -240,44 +240,44 @@ public class EditorEntity implements Serializable {
                     }
                 }
 
-                Font font = null;
+                Font font = defaultFont;
 
                 for (Pair<Pair<String, String>, String[]> field : c.fields()) {
                     if (field.first().first().equals("font")) {
-                        if(field.second()[0] == null || field.second()[0].isEmpty() || field.second()[0].equals("null"))
-                            font = new Font();
-                        break;
-                    }
-                }
-
-                //g.setFont();
-
-                Point2D.Double size = new Point2D.Double();
-                Point2D aP = anchorP(size);
-                g.translate(aP.getX(), aP.getY());*/
-
-                /*AffineTransform imageTransform = new AffineTransform();
-
-                BufferedImage image = Srd.getImage(Objects.requireNonNull(EditorEntity.class.getResource("/logo/logo.png")));
-                for (Pair<Pair<String, String>, String[]> field : c.fields()) {
-                    if (field.first().first().equals("texture")) {
-                        //image = new Point2D.Double(Double.parseDouble(   field.second()[0]), Double.parseDouble(field.second()[1]));
-                        if (field.second().length > 0 && field.second()[0] != null && !field.second()[0].equals("null"))
-                            try {
-                                image = Srd.getImage(field.second()[0]);
-                            } catch (RuntimeException ignore) {
+                        if (!(field.second()[0] == null || field.second()[0].isEmpty() || field.second()[0].equals("null"))) {
+                            Matcher m = FontFileProp.SIZEP.matcher(field.second()[0]);
+                            if (m.find()) {
+                                try {
+                                    font = Font.createFont(Font.TRUETYPE_FONT, new File(m.group(1))).deriveFont(Float.parseFloat(m.group(2)));
+                                } catch (FontFormatException | IOException e) {
+                                    throw new RuntimeException(e);
+                                }
                             }
-                        break;
+                            break;
+                        }
                     }
                 }
 
+                String contents = "error_loading";
 
-                imageTransform.translate(position.x - (size.x * scale.x / 2), -position.y - (size.y * scale.y / 2));
-                imageTransform.scale(size.x * scale.x / (double) image.getWidth(), size.y * scale.y / (double) image.getHeight());
+                for (Pair<Pair<String, String>, String[]> field : c.fields()) {
+                    if (field.first().first().equals("contents")) {
+                        if (field.second()[0] != null)
+                            contents = field.second()[0];
+                        break;
+                    }
+                }
+                g.setFont(font);
+                g.setColor(color);
 
-                g.drawImage(applyShader(image, color), imageTransform, null);*/
-                g.setTransform(t);
+                Rectangle2D rect = g.getFontMetrics().getStringBounds(contents, g);
+
+                Point2D.Double size = new Point2D.Double(rect.getWidth(), rect.getHeight() / 2);
+                Point2D aP = anchorP(size);
+                g.translate(aP.getX(), aP.getY());
+                g.drawString(contents, (float) (-size.getX() / 2 + position.x), (float) (size.getY() / 2 - position.y));
             }
+            g.setTransform(t);
         }
         for (EditorEntity child : children) child.draw(g);
     }
@@ -441,6 +441,24 @@ public class EditorEntity implements Serializable {
 
     public EditorEntity setPrefabFile(File prefabFile) {
         this.prefabFile = prefabFile;
+        return this;
+    }
+
+    public Font defaultFont() {
+        return defaultFont;
+    }
+
+    public EditorEntity setDefaultFont(Font defaultFont) {
+        this.defaultFont = defaultFont;
+        return this;
+    }
+
+    public List<Object> props() {
+        return props;
+    }
+
+    public EditorEntity setProps(List<Object> props) {
+        this.props = props;
         return this;
     }
 }
