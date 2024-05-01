@@ -312,7 +312,7 @@ public class ProjectEditor extends JFrame {
             fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
             if (fileChooser.showOpenDialog(ProjectEditor.this) == JFileChooser.APPROVE_OPTION) {
                 try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(fileChooser.getSelectedFile()))) {
-                    Project p = ((Project) oi.readObject()).setLastModified(new Date());
+                    Project p = ((Project) oi.readObject());
                     if (PROJECT_OBJECTS.contains(p)) {
                         JOptionPane.showMessageDialog(fileChooser, "This project is already imported", "Error", JOptionPane.ERROR_MESSAGE);
                     } else {

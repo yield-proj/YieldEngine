@@ -28,7 +28,7 @@ class GameView extends JPanel {
 
     private Point2D.Float gridSize = new Point2D.Float(16, 16);
 
-    private float gridOpacity = 15;
+    private float gridOpacity = 10;
 
     private boolean dragging, moving;
     private Point lastDraggingPosition = new Point();
@@ -141,7 +141,7 @@ class GameView extends JPanel {
                 double viewPositionX = GameView.this.viewPositionX - getWidth() / 2., viewPositionY = GameView.this.viewPositionY - getHeight() / 2.;
                 double mousePositionX = GameView.this.mousePositionX - getWidth() / 2., mousePositionY = GameView.this.mousePositionY - getHeight() / 2.;
 
-                if (zoom < 1) zoom = 1;
+                if (zoom < .5) zoom = .5;
                 g2.translate(getWidth() / 2., getHeight() / 2.);
                 g2.scale(zoom, zoom);
                 g2.translate(-getWidth() / 2., -getHeight() / 2.);
@@ -163,30 +163,32 @@ class GameView extends JPanel {
 
                 g2.setStroke(new BasicStroke((float) (1 / zoom)));
 
-                g2.setColor(new Color(255 - scene.backgroundColor().getRed(), 255 - scene.backgroundColor().getGreen(), 255 - scene.backgroundColor().getBlue(), (int) ((gridOpacity / 100f) * 255)).brighter());
+                g2.setColor(new Color(255 - scene.backgroundColor().getRed(), 255 - scene.backgroundColor().getGreen(), 255 - scene.backgroundColor().getBlue(), (int) ((gridOpacity / 100f) * 255.)).brighter());
 
-                int startX = (int) viewPositionX;
-                while (startX % gridSize.x != 0) startX++;
+                if (zoom > .5) {
+                    int startX = (int) viewPositionX;
+                    while (startX % gridSize.x != 0) startX++;
 
-                for (int i = 0; i < getWidth() / gridSize.x + 1; i++) {
-                    g2.draw(new Line2D.Double(i * gridSize.x + startX, viewPositionY, i * gridSize.x + startX, getHeight() + viewPositionY));
-                }
+                    for (int i = -getWidth() / 2; i < getWidth() * 1.5 / gridSize.x + 1; i++) {
+                        g2.draw(new Line2D.Double(i * gridSize.x + startX, viewPositionY - getHeight() / 2., i * gridSize.x + startX, getHeight() * 1.5 + viewPositionY));
+                    }
 
-                int startY = (int) viewPositionY;
-                while (startY % gridSize.y != 0) startY++;
+                    int startY = (int) viewPositionY;
+                    while (startY % gridSize.y != 0) startY++;
 
-                for (int i = 0; i < getHeight() / gridSize.y + 1; i++) {
-                    g2.draw(new Line2D.Double(viewPositionX, i * gridSize.y + startY, getWidth() + viewPositionX, i * gridSize.y + startY));
+                    for (int i = -getHeight() / 2; i < getHeight() * 1.5 / gridSize.y + 1; i++) {
+                        g2.draw(new Line2D.Double(viewPositionX - getWidth() / 2., i * gridSize.y + startY, getWidth() * 1.5 + viewPositionX, i * gridSize.y + startY));
+                    }
                 }
 
                 //Y
                 g.setColor(new Color(10, 255, 10, 100));
-                g.drawLine(0, (int) viewPositionY, 0, (int) (getHeight() + viewPositionY));
+                g.drawLine(0, (int) viewPositionY - getHeight() / 2, 0, (int) (getHeight() * 1.5 + viewPositionY));
 
 
                 //X
                 g.setColor(new Color(255 - 100, 10, 10, 100));
-                g.drawLine((int) viewPositionX, 0, (int) (getWidth() + viewPositionX), 0);
+                g.drawLine((int) viewPositionX - getWidth() / 2, 0, (int) (getWidth() * 1.5 + viewPositionX), 0);
 
                 if (placeInGrid) {
                     Point loc = closerGridLocationTo(new Point2D.Double(mousePositionX, mousePositionY));
@@ -265,8 +267,8 @@ class GameView extends JPanel {
         @Override
         public void mouseWheelMoved(MouseWheelEvent e) {
             if (scene == null) return;
-            double nzoom = zoom - e.getPreciseWheelRotation();
-            if (nzoom < 1) nzoom = 1;
+            double nzoom = zoom - e.getPreciseWheelRotation() / 2;
+            if (nzoom < .5) nzoom = .5;
             zoom = nzoom;
             mouseMoved(e);
         }

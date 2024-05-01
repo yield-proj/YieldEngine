@@ -17,16 +17,18 @@ package com.xebisco.yield.editor.app;
 
 import com.xebisco.yield.editor.app.editor.ScenePanel;
 
-import java.io.InputStream;
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
 public class Global {
     public static Properties appProps = new Properties();
-    public static final String VERSION = "dev1";
+    public static final String BUILD = "prelaunch-trintaabr0-2024", VERSION = "2024.0pl";
     public static final URL yieldEngineJar = Objects.requireNonNull(ScenePanel.class.getResource("/engine/core.jar"));
     public static final ClassLoader yieldEngineClassLoader = new URLClassLoader(new URL[]{yieldEngineJar}, null);
     public static final Class<? extends Annotation> VISIBLE_ANNOTATION, HIDE_ANNOTATION, SIZE_ANNOTATION;
@@ -42,5 +44,20 @@ public class Global {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<File> listf(File directory) {
+        List<File> files = new ArrayList<>();
+
+        File[] fList = directory.listFiles();
+        if(fList != null)
+            for (File file : fList) {
+                if (file.isFile()) {
+                    files.add(file);
+                } else if (file.isDirectory()) {
+                    files.addAll(listf(file));
+                }
+            }
+        return files;
     }
 }

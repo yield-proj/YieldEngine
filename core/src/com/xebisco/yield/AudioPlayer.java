@@ -15,6 +15,9 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.editor.annotations.FileExtensions;
+import com.xebisco.yield.editor.annotations.Visible;
+
 import java.io.IOException;
 
 /**
@@ -22,10 +25,14 @@ import java.io.IOException;
  * application.
  */
 public class AudioPlayer extends ComponentBehavior {
+    @Visible
+    @FileExtensions(extensions = {"wav", "ogg"})
     private FileInput audioClip;
     private Object clipRef;
+    @Visible
     private double pan;
-    private double gain;
+    @Visible
+    private double gain = 1;
 
     /**
      * This function plays the audio clip using the application's audio manager.
@@ -57,7 +64,7 @@ public class AudioPlayer extends ComponentBehavior {
 
     @Override
     public void close() throws IOException {
-        if(audioClip != null) {
+        if (audioClip != null) {
             pause();
             setPosition(0);
             application().applicationPlatform().audioManager().unloadAudio(this);
@@ -78,7 +85,7 @@ public class AudioPlayer extends ComponentBehavior {
      * This function sets the position of the audio player using the application's audio manager.
      *
      * @param position The parameter "position" is a double value that represents the new position of the audio playback in
-     * seconds. This method is used to set the position of the audio playback to a specific time in the audio file.
+     *                 seconds. This method is used to set the position of the audio playback to a specific time in the audio file.
      */
     public AudioPlayer setPosition(double position) {
         application().applicationPlatform().audioManager().setPosition(this, position);
@@ -109,8 +116,7 @@ public class AudioPlayer extends ComponentBehavior {
      * @param audioClip The audio file that is being set for the audio player.
      */
     public AudioPlayer setAudioClip(FileInput audioClip) {
-        if (this.audioClip != null)
-            application().applicationPlatform().audioManager().unloadAudio(this);
+        if (this.audioClip != null) application().applicationPlatform().audioManager().unloadAudio(this);
         this.audioClip = audioClip;
         setClipRef(application().applicationPlatform().audioManager().loadAudio(this));
         return this;
@@ -148,13 +154,12 @@ public class AudioPlayer extends ComponentBehavior {
      * This function sets the pan of an audio object and throws an exception if the gain is not within the valid range.
      *
      * @param pan The parameter "pan" is a double value representing the stereo panning of the audio. A value of -1.0 means
-     * the audio is fully panned to the left channel, 0.0 means the audio is centered, and 1.0 means the audio is fully
-     * panned to the right channel.
+     *            the audio is fully panned to the left channel, 0.0 means the audio is centered, and 1.0 means the audio is fully
+     *            panned to the right channel.
      */
     public AudioPlayer setPan(double pan) {
         this.pan = pan;
-        if (pan < -1.0 || pan > 1.0)
-            throw new IllegalArgumentException("Pan not valid: " + gain);
+        if (pan < -1.0 || pan > 1.0) throw new IllegalArgumentException("Pan not valid: " + gain);
         application().applicationPlatform().audioManager().setPan(this, pan);
         return this;
     }
@@ -182,12 +187,11 @@ public class AudioPlayer extends ComponentBehavior {
      * This function sets the gain of the audio player and throws an exception if the gain is not within the valid range.
      *
      * @param gain The gain parameter is a double value representing the audio gain level to be set. It should be between
-     * 0.0 and 1.0, where 0.0 means no sound and 1.0 means the maximum volume.
+     *             0.0 and 1.0, where 0.0 means no sound and 1.0 means the maximum volume.
      */
     public void gain(double gain) {
         this.gain = gain;
-        if (gain < 0.0 || gain > 1.0)
-            throw new IllegalArgumentException("Gain not valid: " + gain);
+        if (gain < 0.0 || gain > 1.0) throw new IllegalArgumentException("Gain not valid: " + gain);
         application().applicationPlatform().audioManager().setGain(this, gain);
     }
 }

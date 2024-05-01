@@ -15,21 +15,19 @@
 
 package com.xebisco.yield.editor.app.editor;
 
+import com.xebisco.yield.editor.app.Global;
 import com.xebisco.yield.editor.app.Project;
+import com.xebisco.yield.editor.app.TitleLabel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 public class Editor extends JFrame {
@@ -108,6 +106,61 @@ public class Editor extends JFrame {
             }
         });
 
+        JMenu buildMenu = new JMenu("Build");
+
+        buildMenu.add(new AbstractAction("Compile Scripts") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String out = project.compileScripts();
+                if(out != null) {
+                    JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Compile Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        menuBar.add(buildMenu);
+
+        JMenu helpMenu = new JMenu("Help");
+        menuBar.add(helpMenu);
+
+        helpMenu.add(new AbstractAction("About") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialog dialog = new JDialog();
+                dialog.setResizable(false);
+                dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                dialog.setTitle("About Yield Editor");
+                try {
+                    dialog.add(new TitleLabel(" Yield Editor " + Global.VERSION, new ImageIcon(ImageIO.read(Objects.requireNonNull(Editor.class.getResource("/logo/logo.png"))).getScaledInstance(64, -1, Image.SCALE_SMOOTH))), BorderLayout.NORTH);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                JLabel label = new JLabel("<html>" +
+                        "<p>Build: " + Global.BUILD + "</p> <br>" +
+                        "<p>A JVM game engine, a simple and efficient engine for creating 2d games in Java.</p> <br>" +
+                        "<p>Runtime: " + System.getProperty("java.runtime.version") + "</p>" +
+                        "<p>VM: " + System.getProperty("java.vm.name") + "</p> <br>" +
+                        "<small>Copyright @ 2022-2024 Xebisco. Licensed under the Apache License, Version 2.0</small>" +
+                        "</html>");
+                label.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+                dialog.add(label);
+
+                JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+                bottom.add(new JButton(new AbstractAction("OK") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        dialog.dispose();
+                    }
+                }));
+
+                dialog.add(bottom, BorderLayout.SOUTH);
+
+                dialog.setSize(new Dimension(460, 330));
+                dialog.setLocationRelativeTo(Editor.this);
+                dialog.setVisible(true);
+            }
+        });
+
         setJMenuBar(menuBar);
 
 
@@ -147,8 +200,10 @@ public class Editor extends JFrame {
         add(toolBar, BorderLayout.NORTH);
 
 
-        add(tabbedPane);
+        /*add(tabbedPane);
         tabbedPane.addTab("Scene Panel", scenePanel);
+        tabbedPane.addTab("Code Panel", new CodePanel());*/
+        add(scenePanel);
         tabbedPane.setTabPlacement(JTabbedPane.BOTTOM);
 
         //TODO actual scenes

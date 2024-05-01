@@ -30,10 +30,11 @@ import static com.xebisco.yield.editor.app.ProjectEditor.createWorkspace;
 public class Entry {
     public static void main(String[] args) throws IOException {
         System.setProperty("sun.java2d.opengl", "True");
-        if (SystemInfo.isLinux) {
+        /*if (SystemInfo.isLinux) {
             JFrame.setDefaultLookAndFeelDecorated(true);
             JDialog.setDefaultLookAndFeelDecorated(true);
-        }
+        }*/
+        //FlatDarkLaf.setup();
         IntelliJTheme.setup(Entry.class.getResourceAsStream("/octagon.theme.json"));
 
         Srd.LANG.load(Entry.class.getResourceAsStream("/lang/en.properties"));

@@ -29,12 +29,12 @@ public enum EditableValuesType {
         if(c.getName().equals("com.xebisco.yield.Vector2D")) return POSITION;
         if(c.getName().equals("com.xebisco.yield.Color")) return COLOR;
         try {
-            if(c.isAssignableFrom(Global.yieldEngineClassLoader.loadClass("com.xebisco.yield.texture.Texture"))) return TEXTURE;
+            if(Global.yieldEngineClassLoader.loadClass("com.xebisco.yield.AbstractTexture").isAssignableFrom(c)) return TEXTURE;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         try {
-            if(c.isAssignableFrom(Global.yieldEngineClassLoader.loadClass("com.xebisco.yield.font.Font"))) return FONT;
+            if(Global.yieldEngineClassLoader.loadClass("com.xebisco.yield.font.Font").isAssignableFrom(c)) return FONT;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

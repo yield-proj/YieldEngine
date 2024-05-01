@@ -55,27 +55,29 @@ public class ScenePanel extends JPanel {
         this.project = project;
         entitiesTree = new EntitiesTree();
         entitiesTree.tree.update();
+        entitiesTree.setMinimumSize(new Dimension(200, 300));
         gameView = new GameView(this, entitiesTree);
         mainP = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, gameView, null);
         mainP.setResizeWeight(1);
-       addAncestorListener(new AncestorListener() {
-           @Override
-           public void ancestorAdded(AncestorEvent event) {
+        addAncestorListener(new AncestorListener() {
+            @Override
+            public void ancestorAdded(AncestorEvent event) {
 
-           }
+            }
 
-           @Override
-           public void ancestorRemoved(AncestorEvent event) {
-               if(saveTimer != null) saveTimer.stop();
-           }
+            @Override
+            public void ancestorRemoved(AncestorEvent event) {
+                if (saveTimer != null) saveTimer.stop();
+            }
 
-           @Override
-           public void ancestorMoved(AncestorEvent event) {
+            @Override
+            public void ancestorMoved(AncestorEvent event) {
 
-           }
-       });
+            }
+        });
         add(mainP);
     }
+
     private Timer saveTimer;
 
     public void openEntity(EditorEntity entity, File toSaveFile) {
@@ -85,7 +87,7 @@ public class ScenePanel extends JPanel {
         panel.setMinimumSize(new Dimension(440, 440));
 
         Integer divLoc = mainP.getDividerLocation();
-        if(mainP.getRightComponent() == null) divLoc = null;
+        if (mainP.getRightComponent() == null) divLoc = null;
         mainP.setRightComponent(panel);
         if (divLoc != null)
             mainP.setDividerLocation(divLoc);
@@ -155,7 +157,7 @@ public class ScenePanel extends JPanel {
 
         panel.add(scrollPane);
 
-        if(saveTimer != null) {
+        if (saveTimer != null) {
             saveTimer.stop();
             saveTimer = null;
         }
@@ -165,10 +167,10 @@ public class ScenePanel extends JPanel {
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
-        saveTimer = new Timer(300, new AbstractAction() {
+        saveTimer = new Timer(100, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(!entityExists(entity)) {
+                if (!entityExists(entity)) {
                     mainP.setRightComponent(null);
                     saveTimer.stop();
                     saveTimer = null;
@@ -283,7 +285,7 @@ public class ScenePanel extends JPanel {
 
     public void saveSceneEntity(EditorEntity entity, boolean transformSave) {
         entity.props.forEach(c -> ((ComponentProp) c).saveValues());
-        if(transformSave) {
+        if (transformSave) {
             float[] pos = new float[2];
             entity.props.forEach(c -> {
                 if (((ComponentProp) c).name().equals("com.xebisco.yield.Transform2D")) {
@@ -457,7 +459,9 @@ public class ScenePanel extends JPanel {
                         n.components().clear();
                         for (EditorComponent c : en.components())
                             n.components().add(c.sameAs());
-                        scene.entities().add(n);
+                        if (en.parent() == null)
+                            scene.entities().add(n);
+                        else en.parent().children().add(n);
                     }
                     entitiesTree.tree.update();
                 });
