@@ -35,7 +35,7 @@ Clone your [fork](#fork-the-project) (be sure to replace *your-username* with yo
 2.  Some Yield Engine modules have specific dependencies, your environment needs to have them installed to be able to compile them.
      - `core`: none
      - `editor-annotations`: none
-     - `editor-app`: [flatlaf-3.2.5](https://www.formdev.com/flatlaf/); [rsyntaxtextarea-3.4.0](https://github.com/bobbylight/RSyntaxTextArea); [languagesupport-3.3.0](https://github.com/bobbylight/RSTALanguageSupport); [autocomplete-3.3.1](https://github.com/bobbylight/AutoComplete)
+     - `editor-app`: [flatlaf-3.2.5](https://www.formdev.com/flatlaf/); [rsyntaxtextarea-3.4.0](https://github.com/bobbylight/RSyntaxTextArea); [languagesupport-3.3.0](https://github.com/bobbylight/RSTALanguageSupport); [autocomplete-3.3.1](https://github.com/bobbylight/AutoComplete).
      - `physics`: [jbox2d-library-2.2.1.1](http://www.jbox2d.org/).
      - `openglimpl`: [lwjgl3](https://www.lwjgl.org/); [lwjgl3-freetype](https://www.lwjgl.org/); [lwjgl3-glfw](https://www.lwjgl.org/); [lwjgl3-opengl](https://www.lwjgl.org/); [lwjgl3-stb](https://www.lwjgl.org/).
      - `openalimpl`: [lwjgl3](https://www.lwjgl.org/); [lwjgl3-openal](https://www.lwjgl.org/); [lwjgl3-stb](https://www.lwjgl.org/).
