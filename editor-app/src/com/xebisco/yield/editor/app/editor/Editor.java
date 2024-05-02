@@ -136,12 +136,39 @@ public class Editor extends JFrame {
 
         JMenu buildMenu = new JMenu("Build");
 
+        buildMenu.add(new AbstractAction("Clear Build") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                project.clearBuild();
+            }
+        });
+
         buildMenu.add(new AbstractAction("Compile Scripts") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String out = project.compileScripts();
                 if(out != null) {
                     JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Compile Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        buildMenu.add(new AbstractAction("Create Manifest") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String out = project.createManifest();
+                if(out != null) {
+                    JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Compile Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        buildMenu.add(new AbstractAction("Build JAR") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String out = project.buildToJar();
+                if(out != null) {
+                    JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Build JAR Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

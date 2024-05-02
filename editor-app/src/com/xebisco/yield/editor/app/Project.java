@@ -23,6 +23,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
 
 public class Project implements Serializable {
     @Serial
@@ -124,10 +126,7 @@ public class Project implements Serializable {
 
         DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
 
-        //TODO ADD JAR FILES(LIBRARIES AND ENGINE)
-        Iterable<String> options = Arrays.asList("-d", path.getPath());
-
-        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnosticCollector, options, null, compilationUnits);
+        JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnosticCollector, compileOptions(), null, compilationUnits);
 
         // Perform the compilation
         try {
@@ -158,6 +157,98 @@ public class Project implements Serializable {
             return e.getMessage();
         }
         return null;
+    }
+
+    public String createManifest() {
+        File manifestFile = new File(path, "Build/MANIFEST.MF");
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(manifestFile))) {
+            writer.println("Manifest-Version: 1.0");
+            File[] libs = new File(path, "Libraries").listFiles();
+            if (libs != null && libs.length > 0) {
+                writer.print("Class-Path: ");
+                StringBuilder jarLibs = new StringBuilder();
+                for (int i = 0; i < libs.length; i++) {
+                    jarLibs.append("Libraries/").append(libs[i].getName());
+                    if (i < libs.length - 1) jarLibs.append(' ');
+                }
+                writer.println(jarLibs);
+            }
+
+            manifestFile.createNewFile();
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+
+        return null;
+    }
+
+    public String buildToJar() {
+        try (JarOutputStream jos = new JarOutputStream(new FileOutputStream(new File(path, name().replaceAll("\\s", "_") + ".jar")))) {
+            addFilesToJar(new File(path, "Build"), new File(path, "Build"), jos);
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+        return null;
+    }
+
+    public void clearBuild() {
+        deleteDir(new File(path, "Build"));
+    }
+
+    private static void deleteDir(File file) {
+        File[] contents = file.listFiles();
+        if (contents != null) {
+            for (File f : contents) {
+                deleteDir(f);
+            }
+        }
+        file.delete();
+    }
+
+    private static void addFilesToJar(File rootDir, File currentDir, JarOutputStream jos) throws IOException {
+        File[] files = currentDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    addFilesToJar(rootDir, file, jos);
+                } else {
+                    String entryName = file.getPath().substring(rootDir.getPath().length() + 1);
+                    entryName = entryName.replace(File.separatorChar, '/');
+                    JarEntry jarEntry = new JarEntry(entryName);
+                    jos.putNextEntry(jarEntry);
+
+                    try (FileInputStream fis = new FileInputStream(file)) {
+                        byte[] buffer = new byte[1024];
+                        int bytesRead;
+                        while ((bytesRead = fis.read(buffer)) != -1) {
+                            jos.write(buffer, 0, bytesRead);
+                        }
+                    }
+
+                    jos.closeEntry();
+                }
+            }
+        }
+    }
+
+    private List<String> compileOptions() {
+        List<String> options = new ArrayList<>();
+
+        options.add("-d");
+        options.add(path.getPath() + "/Build");
+
+        File[] libs = new File(path, "Libraries").listFiles();
+        if (libs != null) {
+            options.add("-classpath");
+            StringBuilder jarLibs = new StringBuilder();
+            for (int i = 0; i < libs.length; i++) {
+                jarLibs.append(libs[i].getAbsolutePath());
+                if (i < libs.length - 1) jarLibs.append(File.pathSeparator);
+            }
+            options.add(jarLibs.toString());
+        }
+        return options;
     }
 
     @Override
