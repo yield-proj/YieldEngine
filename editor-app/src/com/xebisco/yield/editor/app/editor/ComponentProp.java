@@ -41,13 +41,15 @@ public class ComponentProp extends Prop {
     public final static Pattern COMPONENT_NAME_PATTERN = Pattern.compile("([^.]+)$");
     private final Runnable moveUp, moveDown, remove, reload;
     List<Prop> props;
+    private final transient Editor editor;
 
-    public ComponentProp(EditorComponent value, Runnable moveUp, Runnable moveDown, Runnable remove, Runnable reload) {
+    public ComponentProp(EditorComponent value, Runnable moveUp, Runnable moveDown, Runnable remove, Runnable reload, Editor editor) {
         super(value.className(), value);
         this.moveUp = moveUp;
         this.moveDown = moveDown;
         this.remove = remove;
         this.reload = reload;
+        this.editor = editor;
     }
 
     @Override
@@ -137,7 +139,7 @@ public class ComponentProp extends Prop {
 
     private void addComp(JPanel componentPanel) {
         componentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        props = getProps(((EditorComponent) value).fields());
+        props = getProps(((EditorComponent) value).fields(), editor);
         if (props.isEmpty()) props.add(new StringProp("No visible fields"));
         JPanel propPanel = new PropPanel(props.toArray(new Prop[0]));
         propPanel.setOpaque(false);
@@ -145,7 +147,7 @@ public class ComponentProp extends Prop {
     }
 
 
-    private static List<Prop> getProps(List<Pair<Pair<String, String>, String[]>> compValues) {
+    private static List<Prop> getProps(List<Pair<Pair<String, String>, String[]>> compValues, Editor editor) {
         List<Prop> props = new ArrayList<>();
 
         for (Pair<Pair<String, String>, String[]> compValue : compValues) {
@@ -154,7 +156,7 @@ public class ComponentProp extends Prop {
                 c = Class.forName(compValue.first().second());
             } catch (ClassNotFoundException e) {
                 try {
-                    c = Global.yieldEngineClassLoader.loadClass(compValue.first().second());
+                    c = editor.yieldEngineClassLoader.loadClass(compValue.first().second());
                 } catch (ClassNotFoundException ignore) {
                     switch (compValue.first().second()) {
                         case "int" -> c = int.class;
@@ -165,7 +167,7 @@ public class ComponentProp extends Prop {
                     }
                 }
             }
-            EditableValuesType type = EditableValuesType.getType(c);
+            EditableValuesType type = EditableValuesType.getType(c, editor);
             if (type == null) {
                 if (c.isEnum()) {
                     try {

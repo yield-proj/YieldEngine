@@ -15,7 +15,6 @@
 
 package com.xebisco.yield.editor.app.editor;
 
-import com.xebisco.yield.editor.annotations.Visible;
 import com.xebisco.yield.editor.app.Global;
 import com.xebisco.yield.utils.Pair;
 
@@ -31,11 +30,14 @@ public class EditorComponent implements Serializable {
     private static final long serialVersionUID = -9027305243114159863L;
     private List<Pair<Pair<String, String>, String[]>> fields = new ArrayList<>();
     private final String className;
+    private transient final Editor editor;
+
 
     private boolean canRemove = true;
 
-    public EditorComponent(Class<?> clazz) {
+    public EditorComponent(Class<?> clazz, Editor editor) {
         this.className = clazz.getName();
+        this.editor = editor;
         Object o;
         try {
             o = clazz.getConstructor().newInstance();
@@ -62,7 +64,7 @@ public class EditorComponent implements Serializable {
                 } else if (field.getType().getName().equals("com.xebisco.yield.Color")) {
                     Object obj = field.get(o);
                     value = new String[]{String.valueOf(obj.getClass().getMethod("red").invoke(obj)), String.valueOf(obj.getClass().getMethod("green").invoke(obj)), String.valueOf(obj.getClass().getMethod("blue").invoke(obj)), String.valueOf(obj.getClass().getMethod("alpha").invoke(obj))};
-                } else if (Global.yieldEngineClassLoader.loadClass("com.xebisco.yield.FileInput").isAssignableFrom(field.getType())) {
+                } else if (editor.yieldEngineClassLoader.loadClass("com.xebisco.yield.FileInput").isAssignableFrom(field.getType())) {
                     Object obj = null;
                     if (o != null) obj = field.get(o);
                     String path = null;
@@ -80,7 +82,7 @@ public class EditorComponent implements Serializable {
                         value = new String[]{path};
                     }
                 } else value = new String[]{String.valueOf(field.get(o))};
-                if (field.isAnnotationPresent(Global.VISIBLE_ANNOTATION))
+                if (field.isAnnotationPresent(editor.VISIBLE_ANNOTATION))
                     fields.add(new Pair<>(new Pair<>(field.getName(), field.getType().getName()), value));
             } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException |
                      ClassNotFoundException e) {
@@ -106,7 +108,7 @@ public class EditorComponent implements Serializable {
 
     public EditorComponent sameAs() {
         try {
-            return sameAs(fields, new EditorComponent(Global.yieldEngineClassLoader.loadClass(className)));
+            return sameAs(fields, new EditorComponent(editor.yieldEngineClassLoader.loadClass(className), editor));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

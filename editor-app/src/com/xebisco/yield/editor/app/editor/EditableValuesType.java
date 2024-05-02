@@ -20,7 +20,7 @@ import com.xebisco.yield.editor.app.Global;
 public enum EditableValuesType {
     STRING, INT, FLOAT, LONG, DOUBLE, POSITION, ARRAY, COLOR, FILE, TEXTURE, FONT;
 
-    public static EditableValuesType getType(Class<?> c) {
+    public static EditableValuesType getType(Class<?> c, Editor editor) {
         if(c.equals(String.class)) return STRING;
         if(c.equals(Integer.class) || c.equals(int.class)) return INT;
         if(c.equals(Float.class) || c.equals(float.class)) return FLOAT;
@@ -29,17 +29,17 @@ public enum EditableValuesType {
         if(c.getName().equals("com.xebisco.yield.Vector2D")) return POSITION;
         if(c.getName().equals("com.xebisco.yield.Color")) return COLOR;
         try {
-            if(Global.yieldEngineClassLoader.loadClass("com.xebisco.yield.AbstractTexture").isAssignableFrom(c)) return TEXTURE;
+            if(editor.yieldEngineClassLoader.loadClass("com.xebisco.yield.AbstractTexture").isAssignableFrom(c)) return TEXTURE;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         try {
-            if(Global.yieldEngineClassLoader.loadClass("com.xebisco.yield.font.Font").isAssignableFrom(c)) return FONT;
+            if(editor.yieldEngineClassLoader.loadClass("com.xebisco.yield.font.Font").isAssignableFrom(c)) return FONT;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         try {
-            if(Global.yieldEngineClassLoader.loadClass("com.xebisco.yield.FileInput").isAssignableFrom(c)) return FILE;
+            if(editor.yieldEngineClassLoader.loadClass("com.xebisco.yield.FileInput").isAssignableFrom(c)) return FILE;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

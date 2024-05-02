@@ -44,11 +44,13 @@ public class EditorEntity implements Serializable {
     private transient Font defaultFont;
 
     public transient List<Object> props;
+    private final transient Editor editor;
 
     private File prefabFile;
     private EditorEntity parent;
 
-    public EditorEntity() {
+    public EditorEntity(Editor editor) {
+        this.editor = editor;
         clearComponents();
     }
 
@@ -56,7 +58,7 @@ public class EditorEntity implements Serializable {
         components.clear();
         EditorComponent transform;
         try {
-            transform = new EditorComponent(Global.yieldEngineClassLoader.loadClass("com.xebisco.yield.Transform2D"));
+            transform = new EditorComponent(editor.yieldEngineClassLoader.loadClass("com.xebisco.yield.Transform2D"), editor);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -365,8 +367,8 @@ public class EditorEntity implements Serializable {
         Point2D.Double scale = scale();
         for (EditorComponent c : components) {
             try {
-                Class<?> cl = Global.yieldEngineClassLoader.loadClass(c.className());
-                if (cl.isAnnotationPresent(Global.SIZE_ANNOTATION)) {
+                Class<?> cl = editor.yieldEngineClassLoader.loadClass(c.className());
+                if (cl.isAnnotationPresent(editor.SIZE_ANNOTATION)) {
                     Point2D.Double s1 = new Point2D.Double();
                     c.fields().forEach(p -> {
                         if (p.first().first().equals("size")) {

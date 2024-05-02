@@ -20,7 +20,6 @@ import com.xebisco.yield.editor.app.Project;
 import com.xebisco.yield.uiutils.Srd;
 import com.xebisco.yield.uiutils.props.Prop;
 import com.xebisco.yield.uiutils.props.PropPanel;
-import com.xebisco.yield.utils.Pair;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -49,10 +48,13 @@ public class ScenePanel extends JPanel {
     private EntitiesTree entitiesTree;
     private final JSplitPane mainP;
 
-    public ScenePanel(EditorScene scene, Project project) {
+    private final Editor editor;
+
+    public ScenePanel(EditorScene scene, Project project, Editor editor) {
         super(new BorderLayout());
         this.scene = scene;
         this.project = project;
+        this.editor = editor;
         entitiesTree = new EntitiesTree();
         entitiesTree.tree.update();
         entitiesTree.setMinimumSize(new Dimension(200, 300));
@@ -207,7 +209,7 @@ public class ScenePanel extends JPanel {
                 addComponentDialog.setLocationRelativeTo(panel);
                 JList<Class<?>> components;
                 try {
-                    components = new JList<>(getComponentClasses(Global.yieldEngineClassLoader, "com.xebisco.yield").toArray(new Class<?>[0]));
+                    components = new JList<>(getComponentClasses(editor.yieldEngineClassLoader, "com.xebisco.yield", editor).toArray(new Class<?>[0]));
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
@@ -215,7 +217,7 @@ public class ScenePanel extends JPanel {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if (e.getClickCount() == 2 && components.getSelectedValue() != null) {
-                            entity.components().add(new EditorComponent(components.getSelectedValue()));
+                            entity.components().add(new EditorComponent(components.getSelectedValue(), editor));
                             addComponentDialog.dispose();
                             reloadFields(props, entity, scrollPane);
                         }
@@ -302,14 +304,14 @@ public class ScenePanel extends JPanel {
         updateUI();
     }
 
-    public static List<Class<?>> getComponentClasses(ClassLoader cl, String pack) throws Exception {
-        List<String> classNames = getClassNames();
+    public static List<Class<?>> getComponentClasses(ClassLoader cl, String pack, Editor editor) throws Exception {
+        List<String> classNames = getClassNames(editor);
 
         List<Class<?>> ret = new ArrayList<>();
         for (String className : classNames) {
             if (className.startsWith(pack)) {
                 Class<?> c = cl.loadClass(className);
-                if (!Modifier.isAbstract(c.getModifiers()) && cl.loadClass("com.xebisco.yield.ComponentBehavior").isAssignableFrom(c) && !c.isAnnotationPresent(Global.HIDE_ANNOTATION))
+                if (!Modifier.isAbstract(c.getModifiers()) && cl.loadClass("com.xebisco.yield.ComponentBehavior").isAssignableFrom(c) && !c.isAnnotationPresent(editor.HIDE_ANNOTATION))
                     ret.add(c);
             }
         }
@@ -317,9 +319,9 @@ public class ScenePanel extends JPanel {
         return ret;
     }
 
-    private static List<String> getClassNames() throws IOException {
+    private static List<String> getClassNames(Editor editor) throws IOException {
         List<String> classNames = new ArrayList<>();
-        ZipInputStream zip = new ZipInputStream(Global.yieldEngineJar.openStream());
+        ZipInputStream zip = new ZipInputStream(editor.yieldEngineJar.openStream());
         for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
             if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
                 // This ZipEntry represents a class. Now, what class does it represent?
@@ -348,7 +350,7 @@ public class ScenePanel extends JPanel {
                 entity.components().remove(comp);
             }, () -> {
                 reloadFields(props, entity, scrollPane);
-            }));
+            }, editor));
         }
         entity.props = Arrays.asList(props.toArray());
         PropPanel p = new PropPanel(props.toArray(new Prop[0]));
@@ -387,7 +389,7 @@ public class ScenePanel extends JPanel {
                 List<EditorEntity> entities1 = entities;
                 if (entities1 == null)
                     entities1 = scene.entities();
-                EditorEntity ee = new EditorEntity().setParent(parent);
+                EditorEntity ee = new EditorEntity(editor).setParent(parent);
                 if (mousePosition != null) ee.setPosition(mousePosition.x, mousePosition.y);
                 entities1.add(ee);
                 openEntity(ee, null);
@@ -455,7 +457,7 @@ public class ScenePanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 CompletableFuture.runAsync(() -> {
                     for (EditorEntity en : entities) {
-                        EditorEntity n = new EditorEntity().setEntityName(en.entityName() + " (Clone)").setParent(en.parent()).setPrefabFile(en.prefabFile());
+                        EditorEntity n = new EditorEntity(editor).setEntityName(en.entityName() + " (Clone)").setParent(en.parent()).setPrefabFile(en.prefabFile());
                         n.components().clear();
                         for (EditorComponent c : en.components())
                             n.components().add(c.sameAs());

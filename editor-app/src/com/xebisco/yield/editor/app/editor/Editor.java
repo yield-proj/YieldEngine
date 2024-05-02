@@ -27,12 +27,20 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Objects;
 
 public class Editor extends JFrame {
     public final static HashMap<String, HashMap<String, Serializable>> STD_PROJECT_VALUES = new HashMap<>();
     private boolean running;
+    public final URL yieldEngineJar;
+    public final ClassLoader yieldEngineClassLoader;
+
+    public final Class<? extends Annotation> VISIBLE_ANNOTATION, HIDE_ANNOTATION, SIZE_ANNOTATION;
 
     static {
         HashMap<String, Serializable> general = new HashMap<>();
@@ -45,6 +53,7 @@ public class Editor extends JFrame {
 
     private final Project project;
     private final JPanel scenePanel = new JPanel(new BorderLayout());
+
 
     private final JButton playButton, playGlobalButton, pauseButton, stopButton;
 
@@ -78,6 +87,25 @@ public class Editor extends JFrame {
                 }
             }
         });
+
+        try {
+            yieldEngineJar = new File(project.path(), "Libraries/yield-core.jar").toURI().toURL();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+
+        yieldEngineClassLoader = new URLClassLoader(new URL[]{yieldEngineJar}, null);
+
+        try {
+            //noinspection unchecked
+            VISIBLE_ANNOTATION = (Class<? extends Annotation>) yieldEngineClassLoader.loadClass("com.xebisco.yield.editor.annotations.Visible");
+            //noinspection unchecked
+            HIDE_ANNOTATION = (Class<? extends Annotation>) yieldEngineClassLoader.loadClass("com.xebisco.yield.editor.annotations.HideComponent");
+            //noinspection unchecked
+            SIZE_ANNOTATION = (Class<? extends Annotation>) yieldEngineClassLoader.loadClass("com.xebisco.yield.editor.annotations.AffectsEditorEntitySize");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
         setMinimumSize(new Dimension(1280, 720));
 
@@ -208,7 +236,7 @@ public class Editor extends JFrame {
 
         //TODO actual scenes
         scenePanel.removeAll();
-        scenePanel.add(new ScenePanel(new EditorScene(), project));
+        scenePanel.add(new ScenePanel(new EditorScene(), project, this));
 
         setLocationRelativeTo(null);
         setVisible(true);

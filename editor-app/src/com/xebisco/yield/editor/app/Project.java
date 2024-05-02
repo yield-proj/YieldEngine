@@ -59,6 +59,12 @@ public class Project implements Serializable {
             else return true;
         }
 
+        if (!new File(path, "Libraries/yield-core.jar").exists()) {
+            if (ignoreCheck)
+                Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/engine/core.jar")), new File(path, "Libraries/yield-core.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
+            else return true;
+        }
+
         for (String s : Editor.STD_PROJECT_VALUES.keySet()) {
             if (!propsValues.containsKey(s)) {
                 if (ignoreCheck) propsValues.put(s, Editor.STD_PROJECT_VALUES.get(s));
@@ -111,8 +117,7 @@ public class Project implements Serializable {
 
         List<File> files = Global.listf(new File(path, "Scripts"));
 
-        if(files.isEmpty()) return null;
-
+        if (files.isEmpty()) return null;
 
 
         Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(files);

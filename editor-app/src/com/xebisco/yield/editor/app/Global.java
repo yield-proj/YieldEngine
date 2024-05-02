@@ -29,22 +29,6 @@ import java.util.Properties;
 public class Global {
     public static Properties appProps = new Properties();
     public static final String BUILD = "prelaunch-trintaabr0-2024", VERSION = "2024.0pl";
-    public static final URL yieldEngineJar = Objects.requireNonNull(ScenePanel.class.getResource("/engine/core.jar"));
-    public static final ClassLoader yieldEngineClassLoader = new URLClassLoader(new URL[]{yieldEngineJar}, null);
-    public static final Class<? extends Annotation> VISIBLE_ANNOTATION, HIDE_ANNOTATION, SIZE_ANNOTATION;
-
-    static {
-        try {
-            //noinspection unchecked
-            VISIBLE_ANNOTATION = (Class<? extends Annotation>) yieldEngineClassLoader.loadClass("com.xebisco.yield.editor.annotations.Visible");
-            //noinspection unchecked
-            HIDE_ANNOTATION = (Class<? extends Annotation>) yieldEngineClassLoader.loadClass("com.xebisco.yield.editor.annotations.HideComponent");
-            //noinspection unchecked
-            SIZE_ANNOTATION = (Class<? extends Annotation>) yieldEngineClassLoader.loadClass("com.xebisco.yield.editor.annotations.AffectsEditorEntitySize");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public static List<File> listf(File directory) {
         List<File> files = new ArrayList<>();
