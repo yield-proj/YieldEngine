@@ -48,7 +48,7 @@ public final class ComponentCreation {
      * @return The method is returning an object of type `Class` that extends `ComponentBehavior`. The specific class being
      * returned is determined by the value of the `componentClass` variable.
      */
-    public Class<? extends ComponentBehavior> getComponentClass() {
+    public Class<? extends ComponentBehavior> componentClass() {
         return componentClass;
     }
 
@@ -57,7 +57,7 @@ public final class ComponentCreation {
      *
      * @return The method is returning an object of type `ComponentModifier`.
      */
-    public ComponentModifier getComponentModifier() {
+    public ComponentModifier componentModifier() {
         return componentModifier;
     }
 }

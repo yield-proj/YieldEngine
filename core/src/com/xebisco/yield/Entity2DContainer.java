@@ -54,15 +54,15 @@ public class Entity2DContainer extends AbstractBehavior implements Renderable {
         for (int i = 0; i < components.length; i++) {
             ComponentCreation cc = prefab.components()[i];
             try {
-                components[i] = cc.getComponentClass().getDeclaredConstructor().newInstance();
+                components[i] = cc.componentClass().getDeclaredConstructor().newInstance();
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e);
             } catch (NoSuchMethodException e) {
-                throw new IllegalStateException("Components need to have one constructor without any arguments. '" + cc.getComponentClass() + "'");
+                throw new IllegalStateException("Components need to have one constructor without any arguments. '" + cc.componentClass() + "'");
             }
-            if (cc.getComponentModifier() != null) {
+            if (cc.componentModifier() != null) {
                 try {
-                    cc.getComponentModifier().modify(components[i]);
+                    cc.componentModifier().modify(components[i]);
                 } catch (OnlyModifiableBeforeCreationException e) {
                     throw new RuntimeException(e);
                 }
