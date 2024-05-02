@@ -39,15 +39,15 @@ public class PropPanel extends JPanel {
                 JPanel p2newC = new JPanel();
                 p2newC.setOpaque(false);
                 p2newC.setLayout(new BorderLayout());
-                p2newC.add(containers.getLast(), BorderLayout.NORTH);
-                p2newC.setBorder(containerBorders.getLast());
-                containerBorders.removeLast();
+                p2newC.add(getLast(containers), BorderLayout.NORTH);
+                p2newC.setBorder(getLast(containerBorders));
+                removeLast(containerBorders);
                 JPanel newC = new JPanel();
                 newC.setOpaque(false);
                 newC.setLayout(new BorderLayout());
                 newC.add(pnewC, BorderLayout.NORTH);
                 newC.add(p2newC);
-                containers.removeLast();
+                removeLast(containers);
                 JPanel newCP = new JPanel();
                 newCP.setOpaque(false);
                 newCP.setLayout(new BorderLayout());
@@ -55,22 +55,22 @@ public class PropPanel extends JPanel {
 
                 containers.set(containers.size() - 1, newCP);
             } else {
-                containers.getLast().add(prop.render());
-                containers.getLast().setOpaque(false);
+                getLast(containers).add(prop.render());
+                getLast(containers).setOpaque(false);
                 JPanel newC = new JPanel();
                 newC.setOpaque(false);
                 newC.setLayout(new BorderLayout());
-                newC.add(containers.getLast(), BorderLayout.NORTH);
+                newC.add(getLast(containers), BorderLayout.NORTH);
                 containers.set(containers.size() - 1, newC);
 
                 JPanel space = new JPanel();
                 space.setOpaque(false);
                 space.setPreferredSize(new Dimension(6, 6));
-                containers.getLast().add(space);
+                getLast(containers).add(space);
                 newC = new JPanel();
                 newC.setOpaque(false);
                 newC.setLayout(new BorderLayout());
-                newC.add(containers.getLast(), BorderLayout.NORTH);
+                newC.add(getLast(containers), BorderLayout.NORTH);
                 containers.set(containers.size() - 1, newC);
             }
         }
@@ -80,14 +80,14 @@ public class PropPanel extends JPanel {
             pnewC.add(containers.get(containers.size() - 2), BorderLayout.NORTH);
             JPanel p2newC = new JPanel();
             p2newC.setLayout(new BorderLayout());
-            p2newC.add(containers.getLast(), BorderLayout.NORTH);
-            p2newC.setBorder(containerBorders.getLast());
-            containerBorders.removeLast();
+            p2newC.add(getLast(containers), BorderLayout.NORTH);
+            p2newC.setBorder(getLast(containerBorders));
+            removeLast(containerBorders);
             JPanel newC = new JPanel();
             newC.setLayout(new BorderLayout());
             newC.add(pnewC, BorderLayout.NORTH);
             newC.add(p2newC);
-            containers.removeLast();
+            removeLast(containers);
             JPanel newCP = new JPanel();
             newCP.setLayout(new BorderLayout());
             newCP.add(newC, BorderLayout.NORTH);
@@ -96,6 +96,14 @@ public class PropPanel extends JPanel {
         }
 
         add(containers.get(0));
+    }
+
+    private static <T> T getLast(List<T> list) {
+        return list.get(list.size() - 1);
+    }
+
+    private static <T> T removeLast(List<T> list) {
+        return list.remove(list.size() - 1);
     }
 
     public static HashMap<String, Serializable> values(Prop[] props) {

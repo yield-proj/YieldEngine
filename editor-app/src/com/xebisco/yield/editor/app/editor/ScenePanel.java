@@ -271,7 +271,7 @@ public class ScenePanel extends JPanel {
 
                 if (transform.get() != null) {
                     entity.components().removeIf(c -> c.className().equals("com.xebisco.yield.Transform2D"));
-                    entity.components().addFirst(transform.get());
+                    entity.components().add(0, transform.get());
                 }
                 reloadFields(props, entity, scrollPane);
             }
