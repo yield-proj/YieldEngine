@@ -28,10 +28,15 @@ public class Splash extends JFrame implements AutoCloseable {
     public Splash() throws IOException {
         setResizable(false);
         setUndecorated(true);
-        setBackground(Color.BLACK);
+        setBackground(new Color(Integer.parseInt("282A3A", 16)));
         splashImage = ImageIO.read(Objects.requireNonNull(Splash.class.getResource("/logo/splash.png"))).getScaledInstance(500, -1, Image.SCALE_SMOOTH);
         SplashPanel splashPanel;
         add(splashPanel = new SplashPanel());
+
+        JProgressBar progressBar = new JProgressBar();
+        progressBar.setIndeterminate(true);
+        add(progressBar, BorderLayout.SOUTH);
+
         pack();
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
