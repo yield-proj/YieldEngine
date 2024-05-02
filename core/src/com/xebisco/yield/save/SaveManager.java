@@ -24,7 +24,7 @@ public class SaveManager {
     public static void saveSlot(byte slot, SaveObject saveObject) {
         checkSaveId();
         saveObject.setModifiedDate(new Date());
-        String appdata = Global.defaultDirectory() + "/YieldGameData";
+        String appdata = Global.defaultDirectory() + "/.yieldappdata";
         File dataDir = new File(appdata);
         if(!dataDir.exists()) {
             dataDir.mkdir();
@@ -44,7 +44,7 @@ public class SaveManager {
 
     public static SaveObject getSlot(byte slot) {
         checkSaveId();
-        String appdata = Global.defaultDirectory() + "/YieldGameData";
+        String appdata = Global.defaultDirectory() + "/.yieldappdata";
         File dataDir = new File(appdata);
         if(!dataDir.exists()) {
             dataDir.mkdir();
