@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * It's a class that manages multiple applications.
+ * {@code ApplicationManager} class manages the lifecycle of applications.
+ * It runs the applications and handles their disposal when necessary.
  */
 public class ApplicationManager implements Runnable {
 
@@ -33,17 +34,25 @@ public class ApplicationManager implements Runnable {
     private Context managerContext;
     private boolean disposeWhenEmpty = true;
 
+    /**
+     * Constructs an instance of {@link ApplicationManager} with the specified context time.
+     *
+     * @param contextTime The context time for the manager.
+     */
     public ApplicationManager(ContextTime contextTime) {
         managerContext = new Context(contextTime, new ApplicationManagerBehavior(), "Application Manager");
     }
 
+    /**
+     * Starts the thread for the manager. It starts all the {@link Application}s in this {@link ApplicationManager}.
+     */
     @Override
     public void run() {
         managerContext.thread().start();
     }
 
     /**
-     * It runs the applications
+     * Handles the behavior of the manager.
      */
     class ApplicationManagerBehavior extends AbstractBehavior {
 
@@ -78,28 +87,61 @@ public class ApplicationManager implements Runnable {
         }
     }
 
+    /**
+     * Returns the list of applications managed by this manager.
+     *
+     * @return The list of applications.
+     */
     public List<Application> applications() {
         return applications;
     }
 
+    /**
+     * Sets the list of applications managed by this manager.
+     *
+     * @param applications The list of applications.
+     * @return This instance of {@link ApplicationManager} for method chaining.
+     */
     public ApplicationManager setApplications(List<Application> applications) {
         this.applications = applications;
         return this;
     }
 
+    /**
+     * Returns the context in which this manager operates.
+     *
+     * @return The context.
+     */
     public Context managerContext() {
         return managerContext;
     }
 
+    /**
+     * Sets the context in which this manager operates.
+     *
+     * @param managerContext The context.
+     * @return This instance of {@link ApplicationManager} for method chaining.
+     */
     public ApplicationManager setManagerContext(Context managerContext) {
         this.managerContext = managerContext;
         return this;
     }
 
+    /**
+     * Returns the flag indicating whether to dispose of the manager when there are no more applications.
+     *
+     * @return The flag.
+     */
     public boolean disposeWhenEmpty() {
         return disposeWhenEmpty;
     }
 
+    /**
+     * Sets the flag indicating whether to dispose of the manager when there are no more applications.
+     *
+     * @param disposeWhenEmpty The flag.
+     * @return This instance of {@link ApplicationManager} for method chaining.
+     */
     public ApplicationManager setDisposeWhenEmpty(boolean disposeWhenEmpty) {
         this.disposeWhenEmpty = disposeWhenEmpty;
         return this;

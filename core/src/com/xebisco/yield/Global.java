@@ -25,14 +25,29 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * Static collection of util methods.
+ * A static class containing various utility functions and constants.
  */
 public final class Global {
 
+    /**
+     * Constants representing different axis.
+     */
     public static final String HORIZONTAL = "Horizontal", VERTICAL = "Vertical", JUMP = "Jump";
+    /**
+     * A constant representing the revision number.
+     */
     public static final long REV = 511;
 
+    /**
+     * A static class containing platform-specific implementations.
+     */
     public static final class Platforms {
+        /**
+         * Creates an instance of the platform using the OpenGL and OpenAL implementations.
+         *
+         * @return An instance of the platform using the modules.
+         * @throws ClassNotFoundException If any of the modules cannot be found.
+         */
         public static ApplicationPlatform openGLOpenAL() throws ClassNotFoundException {
             Map<ApplicationModule, Object> modules = new HashMap<>();
             Class<?> openGLGraphicsManagerClass = Class.forName("com.xebisco.yield.openglimpl.GLFWOpenGLGraphicsManager");
@@ -58,8 +73,14 @@ public final class Global {
         }
     }
 
+    /**
+     * A static instance of the {@link Random} class.
+     */
     public static final Random RANDOM = new Random();
 
+    /**
+     * A static string representing the application save ID.
+     */
     public static String APP_SAVE_ID;
 
     /**
@@ -138,10 +159,10 @@ public final class Global {
 
     /**
      * This function returns the default directory for application data.
+     *
      * @return The default directory for application data.
      */
-    public static String defaultDirectory()
-    {
+    public static String defaultDirectory() {
         String OS = System.getProperty("os.name").toUpperCase();
         if (OS.contains("WIN"))
             return System.getenv("APPDATA");

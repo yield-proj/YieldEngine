@@ -24,7 +24,7 @@ import com.xebisco.yield.texture.Texture;
 import java.io.Closeable;
 
 /**
- * The `GraphicsManager` interface is a wrapper around the platform's graphics API. It's a simple class that provides a
+ * The {@code GraphicsManager} interface is a wrapper around the platform's graphics API. It's a simple class that provides a
  * few functions for drawing to the screen
  */
 public interface GraphicsManager extends Closeable, Renderer {

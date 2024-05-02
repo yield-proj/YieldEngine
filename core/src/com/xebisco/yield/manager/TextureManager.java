@@ -24,22 +24,11 @@ import com.xebisco.yield.texture.TextureFilter;
 import java.io.IOException;
 
 /**
- * The TextureManager interface should be implemented by the specific platform running the application, it contains function for manipulation image files.
+ * The {@code TextureManager} interface should be implemented by the specific platform running the application, it contains function for manipulation image files.
  */
 public interface TextureManager {
-    /**
-     * This function loads a texture and returns the specific image reference.
-     *
-     * @param texture The "texture" parameter in the "loadTexture" method is an object of the "Texture" class.
-     */
     Object loadTexture(AbstractTexture texture, Vector2D size) throws IOException;
 
-    /**
-     * The function unloads a texture.
-     *
-     * @param texture The parameter "texture" is a variable of type "Texture" that represents a texture object. This
-     * function "unloadTexture" is used to free up memory and resources associated with the texture object.
-     */
     void unloadTexture(AbstractTexture texture);
 
     Object loadSpritesheetTexture(SpritesheetTexture spritesheetTexture, Vector2D size) throws IOException;

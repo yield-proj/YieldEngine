@@ -16,10 +16,16 @@
 package com.xebisco.yield;
 
 /**
- * The BlankScene class sets the background color to black for a given application.
+ * The BlankScene class is a custom scene for an application.
+ * It sets the background color to black when the scene starts.
  */
 public class BlankScene extends Scene {
 
+    /**
+     * Constructs a new BlankScene object with the given application.
+     *
+     * @param application the application to which the scene belongs
+     */
     public BlankScene(Application application) {
         super(application);
     }

@@ -18,7 +18,7 @@ package com.xebisco.yield.manager;
 import com.xebisco.yield.AudioPlayer;
 
 /**
- * The AudioManager interface should be implemented by the specific platform running the application, it contains function for manipulation audio files.
+ * The {@code AudioManager} interface should be implemented by the specific platform running the application, it contains function for manipulation audio files.
  */
 public interface AudioManager {
     /**

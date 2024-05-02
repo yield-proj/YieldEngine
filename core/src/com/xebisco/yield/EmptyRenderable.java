@@ -15,7 +15,15 @@
 
 package com.xebisco.yield;
 
+/**
+ * This class represents an empty renderable object. It extends the {@link AbstractRenderable} class.
+ * An empty renderable object does not have any specific content to render.
+ */
 public class EmptyRenderable extends AbstractRenderable {
+
+    /**
+     * Constructs a new instance of EmptyRenderable.
+     */
     public EmptyRenderable() {
         super(null);
     }

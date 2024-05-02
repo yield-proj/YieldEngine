@@ -22,22 +22,52 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * The class ApplicationPlatform contains various managers and utilities for a Yield application.
+ * Represents the platform of the application, containing various managers.
  */
 public record ApplicationPlatform(Map<ApplicationModule, Object> modules) implements Closeable {
     //FONT_MANAGER, TEXTURE_MANAGER, PC_INPUT_MANAGER, AUDIO_MANAGER, GRAPHICS_MANAGER
+
+    /**
+     * Get the font manager instance.
+     *
+     * @return The font manager instance.
+     */
     public FontManager fontManager() {
         return (FontManager) modules.get(ApplicationModule.FONT_MANAGER);
     }
+
+    /**
+     * Get the texture manager instance.
+     *
+     * @return The texture manager instance.
+     */
     public TextureManager textureManager() {
         return (TextureManager) modules.get(ApplicationModule.TEXTURE_MANAGER);
     }
+
+    /**
+     * Get the PC input manager instance.
+     *
+     * @return The PC input manager instance.
+     */
     public PCInputManager pcInputManager() {
         return (PCInputManager) modules.get(ApplicationModule.PC_INPUT_MANAGER);
     }
+
+    /**
+     * Get the audio manager instance.
+     *
+     * @return The audio manager instance.
+     */
     public AudioManager audioManager() {
         return (AudioManager) modules.get(ApplicationModule.AUDIO_MANAGER);
     }
+
+    /**
+     * Get the graphics manager instance.
+     *
+     * @return The graphics manager instance.
+     */
     public GraphicsManager graphicsManager() {
         return (GraphicsManager) modules.get(ApplicationModule.GRAPHICS_MANAGER);
     }

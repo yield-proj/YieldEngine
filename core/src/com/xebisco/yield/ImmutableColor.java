@@ -16,7 +16,8 @@
 package com.xebisco.yield;
 
 /**
- * The ImmutableColor class extends the Color class and overrides its methods to prevent modification of its properties.
+ * {@code ImmutableColor} class extends the {@link Color} class and provides an immutable version of it.
+ * It does not allow any of its properties to be changed once they are set.
  */
 public class ImmutableColor extends Color {
     public ImmutableColor(long rgba) {

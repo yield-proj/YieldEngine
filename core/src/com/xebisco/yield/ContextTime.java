@@ -15,26 +15,43 @@
 
 package com.xebisco.yield;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * It's a container for time-related variables
+ * Represents the timing context for an application, encapsulating time-related properties such as
+ * delta time, timescale, and target sleep time. This class allows for the adjustment of the perceived speed of time
+ * (via timescale) and facilitates frame rate control by setting a target frames per second (FPS). It also tracks
+ * the total time since the start of the context, enabling various time-based operations within the application.
  */
+
 public class ContextTime implements Serializable {
     private double timeScale = 1, deltaTime;
     private long targetSleepTime = 16_666_666, timeSinceStart;
 
+    /**
+     * Constructs a {@link ContextTime} object with a specified target frames per second (FPS).
+     * This constructor calculates the target sleep time based on the provided FPS.
+     *
+     * @param targetFPS The desired target FPS for the context time.
+     */
     public ContextTime(double targetFPS) {
         setTargetFPS(targetFPS);
     }
 
+    /**
+     * Default constructor for ContextTime. Initializes the object with default values.
+     */
     public ContextTime() {
     }
 
     /**
-     * This function sets the target sleep time based on the desired frames per second.
+     * Sets the target frames per second (FPS) for this context.
+     * This method calculates and sets the target sleep time based on the provided FPS.
      *
-     * @param targetFPS The target frames per second (FPS) that the program should aim to achieve.
+     * @param targetFPS The desired target FPS.
+     * @return The current ContextTime instance for chaining method calls.
+     * @throws IllegalArgumentException If the targetFPS is less than or equal to zero.
      */
     public ContextTime setTargetFPS(double targetFPS) {
         if (targetFPS <= 0) throw new IllegalArgumentException("targetFPS can't be less or equal to zero");
@@ -42,36 +59,38 @@ public class ContextTime implements Serializable {
     }
 
     /**
-     * Returns the scale of the context time.
+     * Gets the current timescale.
      *
-     * @return The timeScale variable is being returned.
+     * @return The current timescale.
      */
     public double timeScale() {
         return timeScale;
     }
 
     /**
-     * This function sets the timescale of the context.
+     * Sets the timescale. This scale is applied to deltaTime to simulate faster or slower motion.
      *
-     * @param timeScale This is the timescale of the context. The default value is 1.0.
+     * @param timeScale The new timescale to set.
      */
     public void timeScale(double timeScale) {
         this.timeScale = timeScale;
     }
 
     /**
-     * Returns the time in seconds since the last frame.
+     * Gets the delta time adjusted by the current timescale.
+     * This value represents the scaled time elapsed between the current and the last update.
      *
-     * @return The time in seconds since the last update multiplied by the timescale.
+     * @return The scaled delta time.
      */
     public double deltaTime() {
         return deltaTime * timeScale;
     }
 
     /**
-     * This function sets the deltaTime variable to the value of the deltaTime parameter.
+     * Sets the delta time. This is the raw time elapsed between the current and the last update.
      *
-     * @param deltaTime The time in seconds since the last update.
+     * @param deltaTime The delta time to set.
+     * @return The current ContextTime instance for chaining method calls.
      */
     public ContextTime setDeltaTime(double deltaTime) {
         this.deltaTime = deltaTime;
@@ -79,33 +98,52 @@ public class ContextTime implements Serializable {
     }
 
     /**
-     * Returns the target sleep time in microseconds
+     * Gets the target sleep time. This is the intended duration to sleep between updates to achieve the target FPS.
      *
-     * @return The target sleep time.
+     * @return The target sleep time in nanoseconds.
      */
     public long targetSleepTime() {
         return targetSleepTime;
     }
 
     /**
-     * This function sets the target sleep time to the value passed in.
+     * Sets the target sleep time. This is used to adjust the update frequency to achieve the target FPS.
      *
-     * @param targetSleepTime The amount of time the thread should sleep for in microseconds.
+     * @param targetSleepTime The target sleep time in nanoseconds.
+     * @return The current ContextTime instance for chaining method calls.
      */
     public ContextTime setTargetSleepTime(long targetSleepTime) {
         this.targetSleepTime = targetSleepTime;
         return this;
     }
 
+    /**
+     * Sets the timescale. This scale is applied to deltaTime to simulate faster or slower motion.
+     * This is an alternative method to the void timeScale(double timeScale) method, allowing method chaining.
+     *
+     * @param timeScale The new timescale to set.
+     * @return The current ContextTime instance for chaining method calls.
+     */
     public ContextTime setTimeScale(double timeScale) {
         this.timeScale = timeScale;
         return this;
     }
 
+    /**
+     * Gets the time since the start of the context in nanoseconds.
+     *
+     * @return The time since start in nanoseconds.
+     */
     public long timeSinceStart() {
         return timeSinceStart;
     }
 
+    /**
+     * Sets the time since the start of the context. This is typically updated to track the total elapsed time.
+     *
+     * @param timeSinceStart The time since start in nanoseconds.
+     * @return The current ContextTime instance for chaining method calls.
+     */
     public ContextTime setTimeSinceStart(long timeSinceStart) {
         this.timeSinceStart = timeSinceStart;
         return this;

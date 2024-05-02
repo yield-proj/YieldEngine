@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * It's a class that runs a runnable at a specified frame-rate
+ * This class represents a context that runs a specified behavior at a specified frame-rate.
  */
 public class Context implements Runnable {
 
@@ -29,6 +29,13 @@ public class Context implements Runnable {
     private final AtomicBoolean running = new AtomicBoolean();
     private final AbstractBehavior abstractBehavior;
 
+    /**
+     * Constructs a new Context object.
+     *
+     * @param contextTime The context time object.
+     * @param abstractBehavior The behavior to be run.
+     * @param name The name of the thread.
+     */
     public Context(ContextTime contextTime, AbstractBehavior abstractBehavior, String name) {
         this.contextTime = contextTime;
         this.abstractBehavior = abstractBehavior;
@@ -99,6 +106,11 @@ public class Context implements Runnable {
         return running;
     }
 
+    /**
+     * Returns the abstract behavior associated with this context.
+     *
+     * @return The abstract behavior.
+     */
     public AbstractBehavior abstractBehavior() {
         return abstractBehavior;
     }

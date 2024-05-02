@@ -19,12 +19,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The FileInput class provides methods for obtaining an InputStream from a file path or an existing InputStream.
+ * This class represents a file input with its path and format.
  */
 public class FileInput {
     private final String fileFormat, path;
     private static final Pattern FORMAT_PATTERN = Pattern.compile(".([^.]+)$");
 
+    /**
+     * Constructs a new {@link FileInput} object with the given path.
+     *
+     * @param path the path of the file
+     */
     public FileInput(String path) {
         this.path = path;
         Matcher matcher = FORMAT_PATTERN.matcher(path);
@@ -33,14 +38,19 @@ public class FileInput {
         else fileFormat = null;
     }
 
+    /**
+     * Returns the path of the file.
+     *
+     * @return the path of the file
+     */
     public String path() {
         return path;
     }
 
     /**
-     * The function returns the file format as a string.
+     * Returns the format of the file.
      *
-     * @return The method is returning a String value which is the file format.
+     * @return the format of the file {@code (e.g., "TXT", "JPG", "WAV")} or null if the format could not be determined
      */
     public String fileFormat() {
         return fileFormat;

@@ -20,11 +20,17 @@ import com.xebisco.yield.RectangleMesh;
 import com.xebisco.yield.editor.annotations.Visible;
 import com.xebisco.yield.rendering.Renderer;
 
+/**
+ * A subclass of {@link RectangleMesh} that adds the ability to apply a texture to the mesh.
+ */
 public class TexturedRectangleMesh extends RectangleMesh {
 
     @Visible
     private AbstractTexture texture;
 
+    /**
+     * Constructs a new {@link TexturedRectangleMesh}.
+     */
     public TexturedRectangleMesh() {
         paint().setHasImage(true);
     }
@@ -41,10 +47,21 @@ public class TexturedRectangleMesh extends RectangleMesh {
         super.render(renderer);
     }
 
+    /**
+     * Returns the {@link AbstractTexture} object applied to the mesh.
+     *
+     * @return The texture applied to the mesh.
+     */
     public AbstractTexture texture() {
         return texture;
     }
 
+    /**
+     * Sets the texture applied to the mesh.
+     *
+     * @param texture The texture to apply to the mesh.
+     * @return This instance of {@link TexturedRectangleMesh} for method chaining.
+     */
     public TexturedRectangleMesh setTexture(AbstractTexture texture) {
         this.texture = texture;
         return this;

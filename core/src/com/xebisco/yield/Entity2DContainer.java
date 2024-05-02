@@ -22,27 +22,32 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
- * This is a class that represents a container for 2D entities, allowing for instantiation and removal of entities.
+ * This is a class that represents a container for {@link Entity2D}s, allowing for instantiation and removal of entities.
  */
 public class Entity2DContainer extends AbstractBehavior implements Renderable {
     private volatile List<Entity2D> entities = new ArrayList<>();
     private final Set<Entity2D> toAddEntities = new HashSet<>(), toRemoveEntities = new HashSet<>();
     private final Application application;
 
+    /**
+     * Constructs a new instance of {@link Entity2DContainer} with the given application.
+     *
+     * @param application the application that this Entity2DContainer belongs to
+     */
     public Entity2DContainer(Application application) {
         this.application = application;
     }
 
     /**
-     * This function instantiates a 2D entity using a prefab and its components, sets its tags and parent, adds it to a
+     * This function instantiates a {@link Entity2D} using a prefab and its components, sets its tags and parent, adds it to a
      * list of entities, and starts it.
      *
-     * @param prefab        The prefab parameter is an instance of the Entity2DPrefab class, which contains information about the
+     * @param prefab        The prefab parameter is an instance of the {@link Entity2DPrefab} class, which contains information about the
      *                      components and children of the entity to be instantiated.
      * @param entityStarter entityStarter is an optional parameter of type EntityStarter, which is an interface that
-     *                      defines a method called "start" that takes an Entity2D object as a parameter. This parameter allows for additional
+     *                      defines a method called "start" that takes an {@link Entity2D} object as a parameter. This parameter allows for additional
      *                      functionality to be executed on the instantiated entity after it has been created.
-     * @return The method is returning an instance of the Entity2D class.
+     * @return The method is returning an instance of the {@link Entity2D} class.
      */
     public Entity2D instantiate(Entity2DPrefab prefab, EntityStarter entityStarter) {
         ComponentBehavior[] components = new ComponentBehavior[prefab.components().length];
@@ -103,36 +108,69 @@ public class Entity2DContainer extends AbstractBehavior implements Renderable {
     /**
      * This function instantiates a 2D entity using a prefab and returns it.
      *
-     * @param prefab The prefab parameter is an instance of the Entity2DPrefab class, which contains information about the
+     * @param prefab The prefab parameter is an instance of the {@link Entity2DPrefab} class, which contains information about the
      *               components and children of the entity to be instantiated.
-     * @return The method is returning an instance of the Entity2D class.
+     * @return The method is returning an instance of the {@link Entity2D} class.
      */
     public Entity2D instantiate(Entity2DPrefab prefab) {
         return instantiate(prefab, null);
     }
 
+    /**
+     * Removes the specified entity from the container and adds it to the list of entities to be removed.
+     *
+     * @param entity The entity to be removed
+     * @return true if the entity was successfully added to the list of entities to be removed, false otherwise
+     * @throws IOException if an error occurs while closing the entity
+     */
     public boolean remove(Entity2D entity) throws IOException {
         entity.close();
         return toRemoveEntities.add(entity);
     }
 
+    /**
+     * Returns the application that this {@link Entity2DContainer} belongs to.
+     *
+     * @return the application
+     */
     public Application application() {
         return application;
     }
 
+    /**
+     * Returns the list of entities in the container.
+     *
+     * @return the list of entities
+     */
     public List<Entity2D> entities() {
         return entities;
     }
 
+    /**
+     * Sets the list of entities in the container.
+     *
+     * @param entities the list of entities to be set
+     * @return this Entity2DContainer instance for method chaining.
+     */
     public Entity2DContainer setEntities(List<Entity2D> entities) {
         this.entities = entities;
         return this;
     }
 
+    /**
+     * Returns the set of entities to be added to the container.
+     *
+     * @return the set of entities to be added
+     */
     public Set<Entity2D> toAddEntities() {
         return toAddEntities;
     }
 
+    /**
+     * Returns the set of entities to be removed from the container.
+     *
+     * @return the set of entities to be removed
+     */
     public Set<Entity2D> toRemoveEntities() {
         return toRemoveEntities;
     }

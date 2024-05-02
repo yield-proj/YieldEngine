@@ -23,10 +23,23 @@ public class Entity2DPrefab {
     private final Entity2DPrefab[] children;
     private final String[] tags;
 
+    /**
+     * The constructor that initializes the {@link Entity2DPrefab} with children and components.
+     *
+     * @param children The array of {@link Entity2DPrefab} objects representing the children of the entity.
+     * @param components The array of {@link ComponentCreation} objects representing the components of the entity.
+     */
     public Entity2DPrefab(Entity2DPrefab[] children, ComponentCreation... components) {
         this(children, new String[0], components);
     }
 
+    /**
+     * The constructor that initializes the {@link Entity2DPrefab} with children, components, and tags.
+     *
+     * @param children The array of {@link Entity2DPrefab} objects representing the children of the entity.
+     * @param tags      The array of strings representing the tags of the entity.
+     * @param components The array of {@link ComponentCreation} objects representing the components of the entity.
+     */
     public Entity2DPrefab(Entity2DPrefab[] children, String[] tags, ComponentCreation... components) {
         this.components = components;
         this.children = children;
@@ -37,14 +50,19 @@ public class Entity2DPrefab {
         this(new Entity2DPrefab[0], new String[0], components);
     }
 
+    /**
+     * The constructor that initializes the {@link Entity2DPrefab} with components.
+     *
+     * @param components The array of ComponentCreation objects representing the components of the entity.
+     */
     public Entity2DPrefab(String[] tags, ComponentCreation... components) {
         this(new Entity2DPrefab[0], tags, components);
     }
 
     /**
-     * The function returns an array of ComponentCreation objects.
+     * The function returns an array of {@link ComponentCreation} objects.
      *
-     * @return An array of ComponentCreation objects is being returned.
+     * @return An array of ComponentCreation objects representing the components of the entity.
      */
     public ComponentCreation[] components() {
         return components;
@@ -53,7 +71,7 @@ public class Entity2DPrefab {
     /**
      * The function returns an array of 2D entity prefabs that are children of a parent entity.
      *
-     * @return The method `children()` is returning an array of `Entity2DPrefab` objects named `children`.
+     * @return An array of {@link Entity2DPrefab} objects representing the children of the entity.
      */
     public Entity2DPrefab[] children() {
         return children;
@@ -62,7 +80,7 @@ public class Entity2DPrefab {
     /**
      * The function returns an array of strings representing tags.
      *
-     * @return An array of strings called "tags" is being returned.
+     * @return An array of strings representing the tags of the entity.
      */
     public String[] tags() {
         return tags;

@@ -15,14 +15,16 @@
 
 package com.xebisco.yield;
 
+/**
+ * This interface represents a starter for an entity of type {@link Entity2D}.
+ */
 @FunctionalInterface
 public interface EntityStarter {
     /**
-     * The function "start" takes an object of type Entity2D as a parameter.
+     * The function {@code start(Entity2D e)} is a method that takes an object of type {@link Entity2D} as a parameter.
      *
-     * @param e The parameter "e" in the function "start" is of type Entity2D, which means it is an object or instance of
-     * the Entity2D class. This parameter is passed to the function as an argument and can be used within the function to
-     * access the properties and methods of the Entity2D
+     * @param e The parameter "e" is of type {@link Entity2D}, which means it is an object or instance of the {@link Entity2D} class.
+     * This parameter is passed to the function as an argument and can be used within the function to access and modify the properties of the Entity2D.
      */
     void start(Entity2D e);
 }

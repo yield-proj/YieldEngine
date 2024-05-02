@@ -15,17 +15,32 @@
 
 package com.xebisco.yield;
 
+/**
+ * Provides an abstract implementation of the {@link Behavior} interface,
+ * tracking the number of frames since its activation and defining the lifecycle of a behavior.
+ */
 public abstract class AbstractBehavior implements Behavior {
     private long frames;
 
+    /**
+     * Updates the behavior each frame. It calls {@code onStart()} on the first frame,
+     * then calls {@code onUpdate(ContextTime)} on every frame including the first.
+     *
+     * @param time The context time for the current frame, providing timing information.
+     */
     public void tick(ContextTime time) {
         if(frames == 0) {
-            onStart();
+            onStart(); // Called only on the first frame.
         }
-        onUpdate(time);
-        frames++;
+        onUpdate(time); // Called every frame.
+        frames++; // Increment the frame count.
     }
 
+    /**
+     * Returns the number of frames since the behavior started.
+     *
+     * @return The number of frames since the behavior was activated.
+     */
     public long frames() {
         return frames;
     }

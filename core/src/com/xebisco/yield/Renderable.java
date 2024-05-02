@@ -17,6 +17,14 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.rendering.Renderer;
 
+/**
+ * Represents an object that can be rendered by a {@link Renderer}.
+ */
 public interface Renderable {
+    /**
+     * Renders the object using the provided {@link Renderer}.
+     *
+     * @param renderer The renderer to use for rendering the object.
+     */
     void render(Renderer renderer);
 }

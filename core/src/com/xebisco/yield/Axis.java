@@ -16,11 +16,23 @@
 package com.xebisco.yield;
 
 /**
- * The class "Axis" represents an input axis with keys for positive and negative values, and can store and retrieve its
- * current value.
+ * Represents an input axis with two keys for positive and negative directions.
+ * It also includes optional keys for alternative positive and negative directions.
+ *
+ * @param positiveKey The key for the positive direction.
+ * @param negativeKey The key for the negative direction.
+ * @param altPositiveKey The optional key for the alternative positive direction.
+ * @param altNegativeKey The optional key for the alternative negative direction.
  */
 public record Axis(Input.Key positiveKey, Input.Key negativeKey, Input.Key altPositiveKey, Input.Key altNegativeKey) {
 
+    /**
+     * Constructor for Axis with only positive and negative keys.
+     * The alternative positive and negative keys will be set to null.
+     *
+     * @param positiveKey The key for the positive direction.
+     * @param negativeKey The key for the negative direction.
+     */
     public Axis(Input.Key positiveKey, Input.Key negativeKey) {
         this(positiveKey, negativeKey, null, null);
     }

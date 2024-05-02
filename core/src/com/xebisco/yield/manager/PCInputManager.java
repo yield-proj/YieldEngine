@@ -20,6 +20,9 @@ import com.xebisco.yield.Vector2D;
 
 import java.util.Collection;
 
+/**
+ * This interface represents a PC input manager that handles user input from a keyboard and mouse.
+ */
 public interface PCInputManager {
     /**
      * The function returns a collection of currently pressed keys.

@@ -15,6 +15,16 @@
 
 package com.xebisco.yield.texture;
 
+/**
+ * Enum representing different texture filtering methods.
+ */
 public enum TextureFilter {
-    NEAREST, LINEAR
+    /**
+     * Nearest neighbor sampling for texture filtering.
+     */
+    NEAREST,
+    /**
+     * Linear interpolation for texture filtering.
+     */
+    LINEAR
 }

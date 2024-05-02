@@ -18,12 +18,9 @@ package com.xebisco.yield;
 import java.util.Random;
 
 /**
- * It's a collection of static final Color objects that represent the default colors used by GrADS
+ * A utility class for defining and generating various color constants.
  */
 public class Colors {
-    /**
-     * From GrADS Default colors.
-     */
     public static final Color
             BLACK = new ImmutableColor(0, 0, 0),
             WHITE = new ImmutableColor(1, 1, 1),
@@ -42,10 +39,21 @@ public class Colors {
             DARK_PURPLE = new ImmutableColor(0.5, 0, 0.86),
             GRAY = new ImmutableColor(0.67, 0.67, 0.67);
 
+    /**
+     * Generates a random color using the provided random number generator.
+     *
+     * @param random the random number generator to use
+     * @return a new random color
+     */
     public static Color random(Random random) {
          return new Color(random.nextDouble(), random.nextDouble(), random.nextDouble());
     }
 
+    /**
+     * Generates a random color using the global random number generator.
+     *
+     * @return a new random color
+     */
     public static Color random() {
         return random(Global.RANDOM);
     }

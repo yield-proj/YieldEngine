@@ -19,11 +19,21 @@ import com.xebisco.yield.rendering.Form;
 import com.xebisco.yield.rendering.Paint;
 import com.xebisco.yield.rendering.Renderer;
 
+/**
+ * Abstract class representing a renderable component in the application.
+ * This class provides methods for rendering the component using a provided renderer.
+ */
 public abstract class AbstractRenderable extends ComponentBehavior {
 
     private final Form form;
+
     private final Paint paint = new Paint();
 
+    /**
+     * Constructs a new AbstractRenderable with the given form.
+     *
+     * @param form The form of the renderable component.
+     */
     public AbstractRenderable(Form form) {
         this.form = form;
     }
@@ -34,10 +44,20 @@ public abstract class AbstractRenderable extends ComponentBehavior {
         renderer.draw(form, paint, this);
     }
 
+    /**
+     * Returns the form of the renderable component.
+     *
+     * @return The form of the renderable component.
+     */
     public Form form() {
         return form;
     }
 
+    /**
+     * Returns the paint object used for rendering the component.
+     *
+     * @return The paint object used for rendering the component.
+     */
     public Paint paint() {
         return paint;
     }

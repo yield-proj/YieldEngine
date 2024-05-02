@@ -15,9 +15,6 @@
 
 package com.xebisco.yield;
 
-/**
- * The abstract class ChangeSceneTransition contains methods for managing time and frames in a scene transition effect.
- */
 public abstract class ChangeSceneTransition implements Renderable {
 
     private double deltaTime, passedTime;

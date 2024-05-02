@@ -16,18 +16,28 @@
 package com.xebisco.yield;
 
 /**
- * The ComponentCreation class represents the creation of a component with a specified behavior and
- * modifier.
+ * Represents a creation of a component with a specific behavior and modifier.
  */
 public final class ComponentCreation {
     private final Class<? extends ComponentBehavior> componentClass;
     private final ComponentModifier componentModifier;
 
+    /**
+     * Constructs a new ComponentCreation with the given component class and modifier.
+     *
+     * @param componentClass the class of the component behavior
+     * @param componentModifier the modifier of the component
+     */
     public ComponentCreation(Class<? extends ComponentBehavior> componentClass, ComponentModifier componentModifier) {
         this.componentClass = componentClass;
         this.componentModifier = componentModifier;
     }
 
+    /**
+     * Constructs a new ComponentCreation with the given component class and a null modifier.
+     *
+     * @param componentClass the class of the component behavior
+     */
     public ComponentCreation(Class<? extends ComponentBehavior> componentClass) {
         this(componentClass, null);
     }

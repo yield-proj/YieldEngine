@@ -18,16 +18,28 @@ package com.xebisco.yield;
 import java.util.Objects;
 
 /**
- * A color stored in a separated RGB values.
+ * This class represents a color with {@code RGB} or {@code ARGB} format. Storing red, green, blue and alpha values with double floating point precision.
  */
 public class Color implements Cloneable {
 
     private double red, green, blue, alpha;
 
+
+    /**
+     * Constructor that takes a long value representing a color.
+     *
+     * @param color The long value representing the color.
+     */
     public Color(long color) {
         this(color, Format.ARGB);
     }
 
+    /**
+     * Constructor that takes a long value representing a color and a format.
+     *
+     * @param color The long value representing the color.
+     * @param format The format of the color value.
+     */
     public Color(long color, Format format) {
         switch (format) {
             case RGB:
@@ -52,6 +64,11 @@ public class Color implements Cloneable {
 
     }
 
+    /**
+     * Constructor that takes another Color object and creates a copy of it.
+     *
+     * @param toCopy The Color object to copy.
+     */
     public Color(Color toCopy) {
         this.red = toCopy.red;
         this.green = toCopy.green;
@@ -59,6 +76,12 @@ public class Color implements Cloneable {
         this.alpha = toCopy.alpha;
     }
 
+    /**
+     * Constructor that takes an RGB value and an alpha value.
+     *
+     * @param rgb The RGB value.
+     * @param alpha The alpha value.
+     */
     public Color(int rgb, double alpha) {
         red = ((rgb & 0xFF0000) >> 16) / 255f;
         green = ((rgb & 0xFF00) >> 8) / 255f;
@@ -66,6 +89,13 @@ public class Color implements Cloneable {
         alpha = Global.clamp(alpha, 0f, 1f);
     }
 
+    /**
+     * Constructor that takes red, green, and blue values.
+     *
+     * @param red The red value.
+     * @param green The green value.
+     * @param blue The blue value.
+     */
     public Color(double red, double green, double blue) {
         this.red = Global.clamp(red, 0, 1);
         this.green = Global.clamp(green, 0, 1);
@@ -73,6 +103,14 @@ public class Color implements Cloneable {
         this.alpha = 1f;
     }
 
+    /**
+     * Constructor that takes red, green, blue, and alpha values.
+     *
+     * @param red The red value.
+     * @param green The green value.
+     * @param blue The blue value.
+     * @param alpha The alpha value.
+     */
     public Color(double red, double green, double blue, double alpha) {
         this.red = Global.clamp(red, 0, 1);
         this.green = Global.clamp(green, 0, 1);

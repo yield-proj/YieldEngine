@@ -20,6 +20,10 @@ import com.xebisco.yield.editor.annotations.Visible;
 import com.xebisco.yield.rendering.Form;
 import com.xebisco.yield.rendering.Renderer;
 
+/**
+ * {@code RectangleMesh} class extends {@link AbstractRenderable} and represents a rectangle mesh object.
+ * It is used to render a rectangle with specified color and size.
+ */
 @AffectsEditorEntitySize
 public class RectangleMesh extends AbstractRenderable {
     @Visible
@@ -27,6 +31,9 @@ public class RectangleMesh extends AbstractRenderable {
     @Visible
     private Vector2D size = new Vector2D(100, 100);
 
+    /**
+     * Constructs a new RectangleMesh.
+     */
     public RectangleMesh() {
         super(Form.SQUARE);
         paint().setHasImage(false);
@@ -39,19 +46,41 @@ public class RectangleMesh extends AbstractRenderable {
         super.render(renderer);
     }
 
+    /**
+     * Gets the color of the rectangle mesh.
+     *
+     * @return The color of the rectangle mesh.
+     */
     public Color color() {
         return color;
     }
 
+    /**
+     * Sets the color of the rectangle mesh.
+     *
+     * @param color The new color for the rectangle mesh.
+     * @return This {@link RectangleMesh} instance for method chaining.
+     */
     public RectangleMesh setColor(Color color) {
         this.color = color;
         return this;
     }
 
+    /**
+     * Gets the size of the rectangle mesh.
+     *
+     * @return The size of the rectangle mesh.
+     */
     public Vector2D size() {
         return size;
     }
 
+    /**
+     * Sets the size of the rectangle mesh.
+     *
+     * @param size The new size for the rectangle mesh.
+     * @return This {@link RectangleMesh} instance for method chaining.
+     */
     public RectangleMesh setSize(Vector2D size) {
         this.size = size;
         return this;

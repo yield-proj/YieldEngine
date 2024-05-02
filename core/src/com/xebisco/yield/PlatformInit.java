@@ -19,9 +19,8 @@ import com.xebisco.yield.platform.ApplicationModule;
 
 import java.io.Serial;
 import java.io.Serializable;
-
 /**
- * It's a class that holds the initial configuration of the specific platform.
+ * {@code PlatformInit} is a class that represents the platform initialization settings.
  */
 public class PlatformInit implements Serializable {
     @Serial
@@ -32,6 +31,10 @@ public class PlatformInit implements Serializable {
     private String windowIconPath = "yieldIcon.png";
     private final ApplicationModule[] requiredPlatformModules;
 
+    /**
+     * The {@code PC_DEFAULT} static array in the PlatformInit class serves as a predefined set of required platform modules for the PC platform.
+     * These platform modules are essential components that are needed to initialize and run the application on a PC.
+     */
     public static final ApplicationModule[] PC_DEFAULT = new ApplicationModule[]{
             ApplicationModule.FONT_MANAGER,
             ApplicationModule.TEXTURE_MANAGER,
@@ -40,91 +43,200 @@ public class PlatformInit implements Serializable {
             ApplicationModule.GRAPHICS_MANAGER
     };
 
+    /**
+     * Constructs a new instance of {@link PlatformInit} with the specified required platform modules.
+     *
+     * @param requiredPlatformModules the required platform modules
+     */
     public PlatformInit(ApplicationModule[] requiredPlatformModules) {
         this.requiredPlatformModules = requiredPlatformModules;
     }
 
+    /**
+     * Gets the initial viewport size.
+     *
+     * @return the initial viewport size
+     */
     public Vector2D viewportSize() {
         return viewportSize;
     }
 
+    /**
+     * Sets the initial viewport size.
+     *
+     * @param viewportSize the new viewport size
+     * @return this instance for method chaining
+     */
     public PlatformInit setViewportSize(Vector2D viewportSize) {
         this.viewportSize = viewportSize;
         return this;
     }
 
+    /**
+     * Gets the initial window size.
+     *
+     * @return the initial window size
+     */
     public Vector2D windowSize() {
         return windowSize;
     }
 
+    /**
+     * Sets the initial window size.
+     *
+     * @param windowSize the new window size
+     * @return this instance for method chaining
+     */
     public PlatformInit setWindowSize(Vector2D windowSize) {
         this.windowSize = windowSize;
         return this;
     }
 
+    /**
+     * Gets the initial window title.
+     *
+     * @return the initial window title
+     */
     public String title() {
         return title;
     }
 
+    /**
+     * Sets the initial window title.
+     *
+     * @param title the new window title
+     * @return this instance for method chaining
+     */
     public PlatformInit setTitle(String title) {
         this.title = title;
         return this;
     }
 
+    /**
+     * Gets whether the window should be in fullscreen mode.
+     *
+     * @return whether the window should be in fullscreen mode
+     */
     public boolean fullscreen() {
         return fullscreen;
     }
 
+    /**
+     * Sets whether the window should be in fullscreen mode.
+     *
+     * @param fullscreen whether the window should be in fullscreen mode
+     * @return this instance for method chaining
+     */
     public PlatformInit setFullscreen(boolean fullscreen) {
         this.fullscreen = fullscreen;
         return this;
     }
 
+    /**
+     * Gets whether the window should be undecorated.
+     *
+     * @return whether the window should be undecorated
+     */
     public boolean undecorated() {
         return undecorated;
     }
 
+    /**
+     * Sets whether the window should be undecorated.
+     *
+     * @param undecorated whether the window should be undecorated
+     * @return this instance for method chaining
+     */
     public PlatformInit setUndecorated(boolean undecorated) {
         this.undecorated = undecorated;
         return this;
     }
 
+    /**
+     * Gets whether the viewport should be stretched to fit the window.
+     *
+     * @return whether the viewport should be stretched to fit the window
+     */
     public boolean stretchViewport() {
         return stretchViewport;
     }
 
+    /**
+     * Sets whether the viewport should be stretched to fit the window.
+     *
+     * @param stretchViewport whether the viewport should be stretched to fit the window
+     * @return this instance for method chaining
+     */
     public PlatformInit setStretchViewport(boolean stretchViewport) {
         this.stretchViewport = stretchViewport;
         return this;
     }
 
+    /**
+     * Gets whether the Z-index should be inverted.
+     *
+     * @return whether the Z-index should be inverted
+     */
     public boolean invertZIndex() {
         return invertZIndex;
     }
 
+    /**
+     * Sets whether the Z-index should be inverted.
+     *
+     * @param invertZIndex whether the Z-index should be inverted
+     * @return this instance for method chaining
+     */
     public PlatformInit setInvertZIndex(boolean invertZIndex) {
         this.invertZIndex = invertZIndex;
         return this;
     }
 
+    /**
+     * Gets whether vertical synchronization should be enabled.
+     *
+     * @return whether vertical synchronization should be enabled
+     */
     public boolean verticalSync() {
         return verticalSync;
     }
 
+    /**
+     * Sets whether vertical synchronization should be enabled.
+     *
+     * @param verticalSync whether vertical synchronization should be enabled
+     * @return this instance for method chaining
+     */
     public PlatformInit setVerticalSync(boolean verticalSync) {
         this.verticalSync = verticalSync;
         return this;
     }
 
+    /**
+     * Gets the path to the window icon.
+     *
+     * @return the path to the window icon
+     */
     public String windowIconPath() {
         return windowIconPath;
     }
 
+    /**
+     * Sets the path to the window icon.
+     *
+     * @param windowIconPath the new path to the window icon
+     * @return this instance for method chaining
+     */
     public PlatformInit setWindowIconPath(String windowIconPath) {
         this.windowIconPath = windowIconPath;
         return this;
     }
 
+    /**
+     * Gets the required platform modules.
+     *
+     * @return the required platform modules
+     */
     public ApplicationModule[] requiredPlatformModules() {
         return requiredPlatformModules;
     }

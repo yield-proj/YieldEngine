@@ -15,6 +15,16 @@
 
 package com.xebisco.yield.rendering;
 
+/**
+ * Represents a renderer that can draw objects.
+ */
 public interface Renderer {
+    /**
+     * Draws the specified form using the provided paint and caller.
+     *
+     * @param form the form to be drawn
+     * @param paint the paint to be used for drawing
+     * @param caller the object that called this method
+     */
     void draw(Form form, Paint paint, Object caller);
 }

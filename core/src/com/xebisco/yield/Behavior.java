@@ -19,15 +19,20 @@ package com.xebisco.yield;
 import java.io.Closeable;
 
 /**
- * The Behavior is the main interface of the Yield Game Engine, almost all elements of an application implements this interface.
+ * This interface represents a behavior that can be started and updated over time.
+ * It extends the {@link java.io.Closeable} interface to allow for proper resource management.
  */
 public interface Behavior extends Closeable {
     /**
-     * This function is called when the object starts
+     * This method is called when the behavior is started.
+     * It is typically used to initialize any necessary state or resources.
      */
     void onStart();
     /**
-     * This function is called every time the application updates
+     * This method is called when the behavior needs to be updated with the current time.
+     * It is typically used to perform any necessary calculations or updates based on the current time.
+     *
+     * @param time The current time context.
      */
     void onUpdate(ContextTime time);
 }

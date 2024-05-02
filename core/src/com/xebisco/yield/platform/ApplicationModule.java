@@ -15,6 +15,32 @@
 
 package com.xebisco.yield.platform;
 
+/**
+ * Enum representing the different application modules.
+ */
 public enum ApplicationModule {
-    FONT_MANAGER, TEXTURE_MANAGER, PC_INPUT_MANAGER, AUDIO_MANAGER, GRAPHICS_MANAGER
+    /**
+     * Represents the Font Manager module.
+     */
+    FONT_MANAGER,
+
+    /**
+     * Represents the Texture Manager module.
+     */
+    TEXTURE_MANAGER,
+
+    /**
+     * Represents the PC Input Manager module.
+     */
+    PC_INPUT_MANAGER,
+
+    /**
+     * Represents the Audio Manager module.
+     */
+    AUDIO_MANAGER,
+
+    /**
+     * Represents the Graphics Manager module.
+     */
+    GRAPHICS_MANAGER
 }

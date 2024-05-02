@@ -23,8 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Entity2D class is a final class that extends Entity2DContainer and implements Renderable and Disposable, and
- * contains various methods and properties for managing components and rendering.
+ * Represents a 2D entity within a game or application.
+ * This class extends {@link Entity2DContainer} and provides functionality for managing components, updating, rendering,
+ * and transforming the entity within its hierarchy.
  */
 public final class Entity2D extends Entity2DContainer {
     private final Transform2D transform = new Transform2D();
@@ -35,6 +36,14 @@ public final class Entity2D extends Entity2DContainer {
     private final String[] tags;
     private boolean visible = true;
 
+    /**
+     * Constructs a new {@link Entity2D} object with the specified components, parent, and tags.
+     *
+     * @param application The application that this entity belongs to.
+     * @param components   The array of components that this entity will manage.
+     * @param parent        The parent entity of this entity, or null if it has no parent.
+     * @param tags          The array of tags that describe this entity.
+     */
     Entity2D(Application application, ComponentBehavior[] components, Entity2DContainer parent, String[] tags) {
         super(application);
         this.parent = parent;
@@ -76,6 +85,11 @@ public final class Entity2D extends Entity2DContainer {
         }
     }
 
+    /**
+     * Calculates the transformations applied to this entity by its parent and itself.
+     *
+     * @return The transformations applied to this entity.
+     */
     public Transform2D hierarchyTransform() {
         Transform2D t = new Transform2D(transform);
         if(parent != null && parent instanceof Entity2D ep) {
@@ -87,9 +101,7 @@ public final class Entity2D extends Entity2DContainer {
         return t;
     }
 
-    /**
-     * For each component, set the entity and frames, and call onStart and onUpdate.
-     */
+     //For each component, set the entity and frames, and call onStart and onUpdate.
     /*public DrawInstruction process() {
         frames++;
         if (visible) {
@@ -149,11 +161,10 @@ public final class Entity2D extends Entity2DContainer {
     }
 
     /**
-     * This function checks if a given tag is present in an array of tags.
+     * Checks if a given tag is present in the array of tags.
      *
-     * @param tag The parameter "tag" is a String representing the tag that we want to check if it exists in the "tags"
-     *            array.
-     * @return A boolean value is being returned.
+     * @param tag The tag to check for.
+     * @return True if the tag is present in the array of tags, false otherwise.
      */
     public boolean containsTag(String tag) {
         for (String t : tags) {
@@ -164,13 +175,11 @@ public final class Entity2D extends Entity2DContainer {
     }
 
     /**
-     * Get the component of the specified type at the specified renderIndex.
-     * The first line of the function is a generic type declaration. This is a way of saying that the function will return
-     * a component of the specified type
+     * Gets the component of the specified type at the specified renderIndex.
      *
-     * @param componentType The type of component you want to get.
-     * @param index         The renderIndex of the component you want to get.
-     * @return A component of the specified type.
+     * @param componentType The type of component to retrieve.
+     * @param index          The renderIndex of the component to retrieve.
+     * @return The component of the specified type at the specified renderIndex, or null if no such component exists.
      */
     public <T extends ComponentBehavior> T component(Class<T> componentType, int index) {
         int i = 0;
@@ -187,44 +196,87 @@ public final class Entity2D extends Entity2DContainer {
     }
 
     /**
-     * Returns the first component of the specified type, or null if no such component exists.
+     * Gets the first component of the specified type.
      *
-     * @param componentType The type of the component to retrieve.
-     * @return The first component of the given type.
+     * @param componentType The type of component to retrieve.
+     * @param <T>            The type of component to retrieve.
+     * @return The first component of the specified type, or null if no such component exists.
      */
     public <T extends ComponentBehavior> T component(Class<T> componentType) {
         return component(componentType, 0);
     }
 
+    /**
+     * Gets the transformations applied to this entity.
+     *
+     * @return The transformations applied to this entity.
+     */
     public Transform2D transform() {
         return transform;
     }
 
+    /**
+     * Gets the array of components that this entity manages.
+     *
+     * @return The array of components that this entity manages.
+     */
     public ComponentBehavior[] components() {
         return components;
     }
 
+    /**
+     * Gets the parent entity of this entity, or null if it has no parent.
+     *
+     * @return The parent entity of this entity, or null if it has no parent.
+     */
     public Entity2DContainer parent() {
         return parent;
     }
 
+    /**
+     * Gets the renderIndex of this entity.
+     *
+     * @return The renderIndex of this entity.
+     */
     public int renderIndex() {
         return renderIndex;
     }
 
+    /**
+     * Sets the renderIndex of this entity.
+     *
+     * @param renderIndex The new renderIndex for this entity.
+     * @return This entity, for method chaining.
+     */
     public Entity2D setRenderIndex(int renderIndex) {
         this.renderIndex = renderIndex;
         return this;
     }
 
+    /**
+     * Gets the array of tags that describe this entity.
+     *
+     * @return The array of tags that describe this entity.
+     */
     public String[] tags() {
         return tags;
     }
 
+    /**
+     * Gets the visibility of this entity.
+     *
+     * @return The visibility of this entity.
+     */
     public boolean visible() {
         return visible;
     }
 
+    /**
+     * Sets the visibility of this entity.
+     *
+     * @param visible True to make this entity visible, false to hide it.
+     * @return This entity, for method chaining.
+     */
     public Entity2D setVisible(boolean visible) {
         this.visible = visible;
         return this;

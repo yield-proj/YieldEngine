@@ -15,6 +15,16 @@
 
 package com.xebisco.yield.rendering;
 
+/**
+ * Enum representing different forms that can be used in rendering.
+ */
 public enum Form {
-    SQUARE, TEXT
+    /**
+     * Represents a square form.
+     */
+    SQUARE,
+    /**
+     * Represents a text form.
+     */
+    TEXT
 }

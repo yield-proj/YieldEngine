@@ -18,7 +18,7 @@ package com.xebisco.yield;
 import java.io.IOException;
 
 /**
- * This is an abstract class that implements the Behavior interface and contains methods for managing scenes.
+ * An abstract class representing a system. It contains methods for managing scenes.
  */
 public abstract class SystemBehavior extends AbstractBehavior {
     private Scene scene;
@@ -39,19 +39,19 @@ public abstract class SystemBehavior extends AbstractBehavior {
     }
 
     /**
-     * The function returns a Scene object.
+     * Returns the current scene reference.
      *
-     * @return The `scene()` method is returning a `Scene` object.
+     * @return The current scene reference.
      */
     public Scene scene() {
         return scene;
     }
 
     /**
-     * This function sets the scene for a Java application.
+     * This function sets the scene for this {@link SystemBehavior}. It does not change the application's scene, to change the scene, use the {@link Application#setScene} method.
      *
-     * @param scene The method "setScene" sets the value of the
-     *              instance variable "scene" to the value passed as the parameter.
+     * @param scene The scene reference to be set.
+     * @return The current instance of SystemBehavior for method chaining.
      */
     public SystemBehavior setScene(Scene scene) {
         this.scene = scene;

@@ -17,9 +17,12 @@ package com.xebisco.yield.manager;
 
 import com.xebisco.yield.font.Font;
 
+/**
+ * The {@code FontManager} interface provides methods to load and unload fonts.
+ */
 public interface FontManager {
     /**
-     * The function loads a font object in Java.
+     * The function loads a font object.
      *
      * @param font The "font" parameter in the "loadFont" method is the font that you want to load.
      */

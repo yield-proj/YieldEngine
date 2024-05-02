@@ -15,6 +15,52 @@
 
 package com.xebisco.yield;
 
+/**
+ * Enum representing different object anchors for entities. Used for rendering.
+ */
 public enum ObjectAnchor {
-    CENTER, WEST, EAST, NORTH, SOUTH, NORTHWEST, NORTHEAST, SOUTHWEST, SOUTHEAST
+    /**
+     * Represents the center of an object.
+     */
+    CENTER,
+
+    /**
+     * Represents the west side of an object.
+     */
+    WEST,
+
+    /**
+     * Represents the east side of an object.
+     */
+    EAST,
+
+    /**
+     * Represents the north side of an object.
+     */
+    NORTH,
+
+    /**
+     * Represents the south side of an object.
+     */
+    SOUTH,
+
+    /**
+     * Represents the northwest corner of an object.
+     */
+    NORTHWEST,
+
+    /**
+     * Represents the northeast corner of an object.
+     */
+    NORTHEAST,
+
+    /**
+     * Represents the southwest corner of an object.
+     */
+    SOUTHWEST,
+
+    /**
+     * Represents the southeast corner of an object.
+     */
+    SOUTHEAST
 }

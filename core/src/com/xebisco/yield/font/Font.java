@@ -22,23 +22,40 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The Font class represents a font loaded from a file or input stream with a specified size and font loader.
+ * The {@code Font} class represents a font file with a specified size and font loader.
  */
 public class Font extends FileInput {
 
     private final Map<Character, FontCharacter> characterMap = new HashMap<>();
     private final double size;
 
+    /**
+     * Constructs a new Font object.
+     *
+     * @param path The path to the font file.
+     * @param size The size of the font.
+     * @param fontManager The {@link FontManager} instance responsible for loading fonts.
+     */
     public Font(String path, double size, FontManager fontManager) {
         super(path);
         this.size = size;
         fontManager.loadFont(this);
     }
 
+    /**
+     * Returns the map containing all the characters and their corresponding FontCharacter objects.
+     *
+     * @return The map of characters and their corresponding {@link FontCharacter} objects.
+     */
     public Map<Character, FontCharacter> characterMap() {
         return characterMap;
     }
 
+    /**
+     * Returns the size of the font.
+     *
+     * @return The size of the font.
+     */
     public double size() {
         return size;
     }

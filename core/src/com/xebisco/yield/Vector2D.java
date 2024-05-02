@@ -19,41 +19,77 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * Vector2D is a Vector2D that represents a vector in 2D space.
+ * Represents a 2D vector, points and sizes.
  */
 public class Vector2D implements Serializable {
     @Serial
     private static final long serialVersionUID = 1008847862337497624L;
 
     private double x, y;
+
+    /**
+     * Constructs a new {@link Vector2D} instance with the specified x and y coordinates.
+     *
+     * @param x the x coordinate of the vector
+     * @param y the y coordinate of the vector
+     */
     public Vector2D(double x, double y) {
         set(x, y);
     }
+
+    /**
+     * Constructs a new {@link Vector2D} instance.
+     */
     public Vector2D() {
     }
 
+    /**
+     * Constructs a new {@link Vector2D} instance with the specified {@link Vector2D} object.
+     *
+     * @param a the {@link Vector2D} object to copy
+     */
     public Vector2D(Vector2D a) {
         set(a.x(), a.y());
     }
 
+    /**
+     * Sets the x and y coordinates of this {@link Vector2D} instance.
+     *
+     * @param x the new x coordinate
+     * @param y the new y coordinate
+     * @return this {@link Vector2D} instance for method chaining
+     */
     public Vector2D set(double x, double y) {
         this.x = x;
         this.y = y;
         return this;
     }
 
+    /**
+     * Resets this {@link Vector2D} instance to the origin {@code (0, 0)}.
+     *
+     * @return this {@link Vector2D} instance for method chaining
+     */
     public Vector2D reset() {
         return set(0, 0);
     }
+
+    /**
+     * Sets the coordinates of this {@link Vector2D} instance from a given {@link Vector2D} object.
+     *
+     * @param a The {@link Vector2D} object
+     * @return this {@link Vector2D} instance for method chaining
+     */
 
     public Vector2D set(Vector2D a) {
         return set(a.x(), a.y());
     }
 
-    /**
-     * Add the x and y values of the given Vector2D to the x and y values of this Vector2D.
+/**
+     * Adds the x and y coordinates of given {@link Vector2D} object to this {@link Vector2D} instance.
      *
-     * @param a The Vector2D object to add to this one.
+     * @param a the {@link Vector2D} object to add from
+     * @return this {@link Vector2D} instance for method chaining
      */
     public Vector2D sumLocal(Vector2D a) {
         x += a.x;
@@ -62,22 +98,20 @@ public class Vector2D implements Serializable {
     }
 
     /**
-     * This method returns the sum of two anchor representations.
+     * Adds the x and y coordinates of the given {@link Vector2D} object to a copy of this {@link Vector2D} instance.
      *
-     * @param a The parameter `a` is an object of the class `Vector2D` that is being passed as an argument
-     * to the `sum` method.
-     * @return A new instance of the `Vector2D` class is being returned, which is the result of adding the
-     * current instance's coordinates (`x` and `y`) to the coordinates of the `Vector2D` object passed as
-     * the argument `a`. The `sumLocal` method is called on the new instance to perform the addition operation.
+     * @param a the {@link Vector2D} object to add
+     * @return a new {@link Vector2D} instance representing the result of the addition operation
      */
     public Vector2D sum(Vector2D a) {
         return new Vector2D(x, y).sumLocal(a);
     }
 
     /**
-     * Subtracts the given representation from this one.
+     * Subtracts the x and y coordinates of given {@link Vector2D} object to this {@link Vector2D} instance.
      *
-     * @param a The Vector2D to subtract from this one.
+     * @param a the {@link Vector2D} object to add from
+     * @return this {@link Vector2D} instance for method chaining
      */
     public Vector2D subtractLocal(Vector2D a) {
         x -= a.x;
@@ -86,12 +120,10 @@ public class Vector2D implements Serializable {
     }
 
     /**
-     * This method subtracts a Vector2D object from another and returns the result as a new
-     * Vector2D object.
+     * Subtracts the x and y coordinates of the given {@link Vector2D} object from a copy of this {@link Vector2D} instance.
      *
-     * @param a The parameter "a" is a Vector2D object that is being subtracted from the current object.
-     * @return A new instance of the `Vector2D` class is being returned. The `subtractLocal` method is being
-     * called on the new instance with the `a` parameter passed in, which modifies the instance's `x` and `y` values.
+     * @param a the {@link Vector2D} object to subtract
+     * @return a new {@link Vector2D} instance representing the result of the subtraction operation
      */
     public Vector2D subtract(Vector2D a) {
         return new Vector2D(x, y).subtractLocal(a);

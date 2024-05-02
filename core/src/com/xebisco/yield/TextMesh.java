@@ -20,6 +20,10 @@ import com.xebisco.yield.font.Font;
 import com.xebisco.yield.rendering.Form;
 import com.xebisco.yield.rendering.Renderer;
 
+/**
+ * {@code TextMesh} class extends {@link AbstractRenderable} and represents a text mesh object.
+ * It is used to render text with specified contents, color, and font.
+ */
 public class TextMesh extends AbstractRenderable {
 
     @Visible
@@ -29,6 +33,9 @@ public class TextMesh extends AbstractRenderable {
     @Visible
     private Font font;
 
+    /**
+     * Constructs a new TextMesh.
+     */
     public TextMesh() {
         super(Form.TEXT);
     }
@@ -47,19 +54,40 @@ public class TextMesh extends AbstractRenderable {
             font = application().defaultFont();
     }
 
+    /**
+     * Returns the text contents of the {@link TextMesh}.
+     *
+     * @return The text contents.
+     */
     public String contents() {
         return contents;
     }
 
+    /**
+     * Sets the text contents of the {@link TextMesh}.
+     *
+     * @param contents The new text contents to be set.
+     * @return The {@link TextMesh} object for method chaining.
+     */
     public TextMesh setContents(String contents) {
         this.contents = contents;
         return this;
     }
-
+    /**
+     * Returns the color of the {@link TextMesh}.
+     *
+     * @return The color of the text.
+     */
     public Color color() {
         return color;
     }
 
+    /**
+     * Sets the color of the {@link TextMesh}.
+     *
+     * @param color The new color to be set.
+     * @return The {@link TextMesh} object for method chaining.
+     */
     public TextMesh setColor(Color color) {
         this.color = color;
         return this;

@@ -19,14 +19,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The Scene class is an abstract class that extends Entity2DContainer and implements Behavior, and contains various
- * systems and properties for managing a scene.
+ * The {@code Scene} class represents a scene in a 2D environment. It can contain various
+ * systems and properties for managing an application state.
  */
 public abstract class Scene extends Entity2DContainer {
     private final Transform2D camera = new Transform2D();
     private Color backGroundColor = Colors.GRAY.darker();
     private Set<SystemBehavior> systems = new HashSet<>();
 
+    /**
+     * Constructs a new {@link Scene} with the given application.
+     *
+     * @param application The application that the scene belongs to.
+     */
     public Scene(Application application) {
         super(application);
     }
@@ -37,6 +42,14 @@ public abstract class Scene extends Entity2DContainer {
         systems.forEach(s -> s.setScene(this).tick(time));
     }
 
+    /**
+     * Returns a specific {@link SystemBehavior} object from the scene.
+     *
+     * @param <T> The type of the SystemBehavior object.
+     * @param systemType The class of the SystemBehavior object to retrieve.
+     * @param index The index of the SystemBehavior object to retrieve.
+     * @return The specified {@link SystemBehavior} object, or null if not found.
+     */
     public <T extends SystemBehavior> T system(Class<T> systemType, int index) {
         int i = 0;
         for (SystemBehavior c : systems) {
@@ -51,47 +64,56 @@ public abstract class Scene extends Entity2DContainer {
         return null;
     }
 
+    /**
+     * Returns the first found {@link SystemBehavior} object from the scene.
+     *
+     * @param <T> The type of the {@link SystemBehavior} object.
+     * @param systemType The class of the {@link SystemBehavior} object to retrieve.
+     * @return The specified {@link SystemBehavior} object, or null if not found.
+     */
     public <T extends SystemBehavior> T system(Class<T> systemType) {
         return system(systemType, 0);
     }
 
     /**
-     * This function returns the background color.
+     * Returns the background color of the scene.
      *
-     * @return The method is returning the value of the `backGroundColor` variable.
+     * @return The background color of the scene.
      */
     public Color backGroundColor() {
         return backGroundColor;
     }
 
     /**
-     * This function sets the background color of the scene.
+     * Sets the background color of the scene.
      *
-     * @param backGroundColor The background color to set.
+     * @param backGroundColor The new background color for the scene.
+     * @return This {@link Scene} instance for method chaining.
      */
     public void setBackGroundColor(Color backGroundColor) {
         this.backGroundColor = backGroundColor;
     }
 
-    /**
-     * The function returns a Set of SystemBehavior objects.
-     *
-     * @return A Set of SystemBehavior objects is being returned.
-     */
+
     public Set<SystemBehavior> systems() {
         return systems;
     }
 
     /**
-     * This function sets the value of a Set of SystemBehavior objects in the current object.
+     * Sets the {@link SystemBehavior} objects in the scene.
      *
-     * @param systems The parameter "systems" is a Set of objects of type "SystemBehavior". This method sets the value of
-     * the instance variable "systems" to the value passed as the parameter.
+     * @param systems The new set of {@link SystemBehavior} objects for the scene.
+     * @return This {@link Scene} instance for method chaining.
      */
     public void setSystems(Set<SystemBehavior> systems) {
         this.systems = systems;
     }
 
+    /**
+     * Retrieves the camera transform of the scene.
+     *
+     * @return The camera transform of the scene.
+     */
     public Transform2D camera() {
         return camera;
     }

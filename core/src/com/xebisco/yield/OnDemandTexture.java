@@ -20,25 +20,47 @@ import com.xebisco.yield.texture.TextureFilter;
 
 import java.io.IOException;
 
+/**
+ * The {@code OnDemandTexture} class extends {@link  AbstractTexture} and represents a texture that is loaded on demand.
+ * It has a reference to a {@link ReturnTextureManager} which is used to load and unload the texture.
+ */
 public class OnDemandTexture extends AbstractTexture {
     private final ReturnTextureManager textureManager;
 
+    /**
+     * The {@code ReturnTextureManager} interface provides a method to get the {@link TextureManager}.
+     * It is used to get the {@link TextureManager} instance that is responsible for loading and unloading textures.
+     */
     public interface ReturnTextureManager {
+        /**
+         * Returns the {@link TextureManager} instance.
+         *
+         * @return the {@link TextureManager} instance.
+         */
         TextureManager textureManager();
     }
 
+    /**
+     * Constructs a new {@code OnDemandTexture} instance with the specified path, filter, and {@link ReturnTextureManager}.
+     *
+     * @param path          the path of the texture file.
+     * @param filter        the filter to be applied to the texture.
+     * @param textureManager the {@link ReturnTextureManager} instance.
+     */
     public OnDemandTexture(String path, TextureFilter filter, ReturnTextureManager textureManager) {
         super(path, filter);
         this.textureManager = textureManager;
     }
 
+    /**
+     * Returns an array of string extensions that are supported by the {@link OnDemandTexture} class.
+     *
+     * @return an array of string extensions.
+     */
     public static String[] extensions() {
         return new String[]{"png", "jpg", "jpeg"};
     }
 
-    /**
-     * The `dispose()` method is used to release any resources or memory used by the `Texture` object.
-     */
     @Override
     public void close() {
         if (textureManager != null && imageRef != null)
@@ -57,6 +79,11 @@ public class OnDemandTexture extends AbstractTexture {
         return super.imageRef();
     }
 
+    /**
+     * Returns the {@link ReturnTextureManager} instance.
+     *
+     * @return the {@link ReturnTextureManager} instance.
+     */
     public ReturnTextureManager textureManager() {
         return textureManager;
     }

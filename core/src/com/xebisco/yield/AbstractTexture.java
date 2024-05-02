@@ -17,38 +17,55 @@ package com.xebisco.yield;
 
 import com.xebisco.yield.texture.TextureFilter;
 
+/**
+ * This abstract class represents a texture in the application.
+ */
 public abstract class AbstractTexture extends FileInput implements AutoCloseable {
     Object imageRef;
 
     private final TextureFilter filter;
 
-
+    /**
+     * Constructs a new AbstractTexture object with the given path and filter.
+     *
+     * @param path The path to the texture file.
+     * @param filter The filter to apply to the texture.
+     */
     protected AbstractTexture(String path, TextureFilter filter) {
         super(path);
         this.filter = filter;
     }
 
+    /**
+     * Closes the texture and releases any associated resources.
+     */
     public abstract void close();
 
     /**
-     * The function returns the reference to an image object.
+     * Returns the reference to the image object.
      *
-     * @return The method is returning the value of the variable `imageRef`, which is of type `Object`.
+     * @return The reference to the image object.
      */
     public Object imageRef() {
         return imageRef;
     }
 
     /**
-     * This function sets the image reference for an object.
+     * Sets the reference to the image object.
      *
-     * @param imageRef The parameter "imageRef" is an object that represents a reference to an image.
+     * @param imageRef The new reference to the image object.
+     * @return The current AbstractTexture object for method chaining.
      */
     public AbstractTexture setImageRef(Object imageRef) {
         this.imageRef = imageRef;
         return this;
     }
 
+    /**
+     * Returns the filter applied to the texture.
+     *
+     * @return The filter applied to the texture.
+     */
     public TextureFilter filter() {
         return filter;
     }

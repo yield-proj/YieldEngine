@@ -15,12 +15,17 @@
 
 package com.xebisco.yield;
 
+/**
+ * A functional interface that represents a modifier for a component's behavior.
+ * This interface is used to modify the behavior of a component before its creation.
+ */
 @FunctionalInterface
 public interface ComponentModifier {
     /**
-     * The function modifies the behavior of a component.
+     * Modifies the behavior of a component.
      *
      * @param component The component to be modified.
+     * @throws OnlyModifiableBeforeCreationException If the component is already created and cannot be modified.
      */
     void modify(ComponentBehavior component) throws OnlyModifiableBeforeCreationException;
 }

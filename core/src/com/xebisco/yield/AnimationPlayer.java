@@ -28,29 +28,40 @@ public final class AnimationPlayer extends ComponentBehavior {
     private int actualFrame;
     private double toChange;
 
+    /**
+     * This method is called every frame to update the animation player.
+     *
+     * @param time The context time, containing delta time.
+     */
     @Override
     public void onUpdate(ContextTime time) {
         if (animation == null) {
             setAnimation(toSwitchAnimation);
             toSwitchAnimation = null;
         }
+
         if (animation != null) {
             toChange += time.deltaTime();
+
             if (actualFrame < animation.frames().length - 1) {
                 if (toChange >= animation.delay()) {
                     toChange = 0;
                     actualFrame++;
                 }
             }
+
             if (actualFrame == animation.frames().length - 1) {
                 if (toChange >= animation.delay()) {
                     toChange = 0;
+
                     if (toSwitchAnimation != null) {
                         setAnimation(toSwitchAnimation);
                         toSwitchAnimation = null;
-                    } else if (animation.loop()) actualFrame = 0;
+                    }
+                    else if (animation.loop()) actualFrame = 0;
                 }
             }
+
             TexturedRectangleMesh r = component(TexturedRectangleMesh.class);
             if (r != null)
                 r.setTexture(animation.frames()[actualFrame]);
@@ -58,18 +69,19 @@ public final class AnimationPlayer extends ComponentBehavior {
     }
 
     /**
-     * The function returns an Animation object.
+     * Returns the currently playing animation.
      *
-     * @return The method is returning an object of type `Animation`.
+     * @return The currently playing animation.
      */
     public Animation getAnimation() {
         return animation;
     }
 
     /**
-     * This function sets the animation and resets the frame and change counters.
+     * Sets the current animation to the given animation.
      *
-     * @param animation The animation object that is being set for the current object.
+     * @param animation The animation to set.
+     * @return This AnimationPlayer instance.
      */
     public AnimationPlayer setAnimation(Animation animation) {
         actualFrame = 0;
@@ -78,32 +90,70 @@ public final class AnimationPlayer extends ComponentBehavior {
         return this;
     }
 
+    /**
+     * Returns the currently playing animation.
+     *
+     * @return The currently playing animation.
+     */
     public Animation animation() {
         return animation;
     }
 
+    /**
+     * Returns the animation that will be played after the current animation finishes.
+     *
+     * @return The animation that will be played after the current animation finishes.
+     */
     public Animation toSwitchAnimation() {
         return toSwitchAnimation;
     }
 
+    /**
+     * Sets the animation that will be played after the current animation finishes.
+     *
+     * @param toSwitchAnimation The animation to set.
+     * @return This AnimationPlayer instance.
+     */
     public AnimationPlayer setToSwitchAnimation(Animation toSwitchAnimation) {
         this.toSwitchAnimation = toSwitchAnimation;
         return this;
     }
 
+    /**
+     * Returns the index of the current frame in the animation.
+     *
+     * @return The index of the current frame in the animation.
+     */
     public int actualFrame() {
         return actualFrame;
     }
 
+    /**
+     * Sets the index of the current frame in the animation.
+     *
+     * @param actualFrame The index of the frame to set.
+     * @return This AnimationPlayer instance.
+     */
     public AnimationPlayer setActualFrame(int actualFrame) {
         this.actualFrame = actualFrame;
         return this;
     }
 
+    /**
+     * Returns the time since the last frame change.
+     *
+     * @return The time since the last frame change.
+     */
     public double toChange() {
         return toChange;
     }
 
+    /**
+     * Sets the time since the last frame change.
+     *
+     * @param toChange The time to set.
+     * @return This AnimationPlayer instance.
+     */
     public AnimationPlayer setToChange(double toChange) {
         this.toChange = toChange;
         return this;
