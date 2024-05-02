@@ -90,8 +90,9 @@ public abstract class Scene extends Entity2DContainer {
      * @param backGroundColor The new background color for the scene.
      * @return This {@link Scene} instance for method chaining.
      */
-    public void setBackGroundColor(Color backGroundColor) {
+    public Scene setBackGroundColor(Color backGroundColor) {
         this.backGroundColor = backGroundColor;
+        return this;
     }
 
 
@@ -105,8 +106,9 @@ public abstract class Scene extends Entity2DContainer {
      * @param systems The new set of {@link SystemBehavior} objects for the scene.
      * @return This {@link Scene} instance for method chaining.
      */
-    public void setSystems(Set<SystemBehavior> systems) {
+    public Scene setSystems(Set<SystemBehavior> systems) {
         this.systems = systems;
+        return this;
     }
 
     /**
