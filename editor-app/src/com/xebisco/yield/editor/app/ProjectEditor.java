@@ -110,7 +110,7 @@ public class ProjectEditor extends JFrame {
         return null;
     }
 
-    public ProjectEditor(File workspaceFile) {
+    public ProjectEditor(File workspaceFile, AutoCloseable splash) {
         this.workspaceFile = workspaceFile;
         if (!workspaceFile.exists()) {
             throw new IllegalStateException("NON EXISTENT WORKSPACE");
@@ -264,7 +264,7 @@ public class ProjectEditor extends JFrame {
                         });
 
                         File projectFile = new File(workspaceFile.getParentFile(), s);
-                        if(projectFile.exists())
+                        if (projectFile.exists())
                             alreadyExists.set(true);
 
                         if (alreadyExists.get()) {
@@ -348,7 +348,7 @@ public class ProjectEditor extends JFrame {
                     try {
                         createWorkspace();
                         Dimension size = ProjectEditor.this.getSize();
-                        ProjectEditor editor = new ProjectEditor(new File(Global.appProps.getProperty("lastWorkspace"), "workspace.ser"));
+                        ProjectEditor editor = new ProjectEditor(new File(Global.appProps.getProperty("lastWorkspace"), "workspace.ser"), null);
                         editor.setSize(size);
                         editor.setLocationRelativeTo(ProjectEditor.this);
                         ProjectEditor.this.dispose();
@@ -409,6 +409,13 @@ public class ProjectEditor extends JFrame {
 
         add(mainSplitPane);
 
+        if (splash != null) {
+            try {
+                splash.close();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
         setVisible(true);
         requestFocus();
         //mainSplitPane.setDividerLocation(0);

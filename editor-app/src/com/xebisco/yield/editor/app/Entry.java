@@ -30,6 +30,9 @@ import static com.xebisco.yield.editor.app.ProjectEditor.createWorkspace;
 public class Entry {
     public static void main(String[] args) throws IOException {
         System.setProperty("sun.java2d.opengl", "True");
+
+        Splash splash = new Splash();
+
         if (SystemInfo.isLinux) {
             JFrame.setDefaultLookAndFeelDecorated(true);
             JDialog.setDefaultLookAndFeelDecorated(true);
@@ -61,6 +64,6 @@ public class Entry {
             }
         }));
 
-        new ProjectEditor(new File(Global.appProps.getProperty("lastWorkspace"), "workspace.ser"));
+        new ProjectEditor(new File(Global.appProps.getProperty("lastWorkspace"), "workspace.ser"), splash);
     }
 }
