@@ -18,7 +18,7 @@ package com.xebisco.yield.save;
 import java.io.Serializable;
 import java.util.Date;
 
-public class SaveObject {
+public class SaveObject implements Serializable {
     private final String saveName;
 
     private Serializable object;
