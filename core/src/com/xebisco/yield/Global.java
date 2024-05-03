@@ -15,11 +15,11 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.defaults.DefaultFileIOManager;
 import com.xebisco.yield.platform.ApplicationModule;
 import com.xebisco.yield.platform.ApplicationPlatform;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -65,6 +65,7 @@ public final class Global {
                 modules.put(ApplicationModule.AUDIO_MANAGER, openALAudioManager);
                 modules.put(ApplicationModule.TEXTURE_MANAGER, openGLTextureManager);
                 modules.put(ApplicationModule.FONT_MANAGER, openGLFontManager);
+                modules.put(ApplicationModule.FILE_IO_MANAGER, new DefaultFileIOManager());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException e) {
                 throw new RuntimeException(e);
