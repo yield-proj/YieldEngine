@@ -199,13 +199,14 @@ public class Project implements Serializable {
     }
 
     public String packAssets() {
+        if(new File(path, "Output/data").exists()) deleteDir(new File(path, "Output/data"));
         new File(path, "Output/data").mkdir();
 
         try {
             try(AssetsCompressing ac = new AssetsCompressing(new File(path, "Output/data"))) {
                 Global.listf(new File(path, "Assets")).forEach(asset -> {
                     try {
-                        ac.addFile(asset, asset.getCanonicalPath());
+                        ac.addFile(asset, asset.getPath().substring(new File(path, "Assets").getPath().length() + 1));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
