@@ -39,19 +39,6 @@ public class Project implements Serializable {
     }
 
     public boolean updatePropsToLatest(boolean ignoreCheck) throws IOException {
-
-        if (!new File(path, "icon.png").exists()) {
-            if (ignoreCheck)
-                Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/empty-project-template/icon.png")), new File(path, "icon.png").toPath(), StandardCopyOption.REPLACE_EXISTING);
-            else return true;
-        }
-
-        if (!new File(path, "default-font.ttf").exists()) {
-            if (ignoreCheck)
-                Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/empty-project-template/default-font.ttf")), new File(path, "default-font.ttf").toPath(), StandardCopyOption.REPLACE_EXISTING);
-            else return true;
-        }
-
         if (!new File(path, "Scripts").exists()) {
             if (ignoreCheck) new File(path, "Scripts").mkdir();
             else return true;
@@ -59,6 +46,18 @@ public class Project implements Serializable {
 
         if (!new File(path, "Assets").exists()) {
             if (ignoreCheck) new File(path, "Assets").mkdir();
+            else return true;
+        }
+
+        if (!new File(path, "Assets/icon.png").exists()) {
+            if (ignoreCheck)
+                Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/empty-project-template/icon.png")), new File(path, "Assets/icon.png").toPath(), StandardCopyOption.REPLACE_EXISTING);
+            else return true;
+        }
+
+        if (!new File(path, "Assets/default-font.ttf").exists()) {
+            if (ignoreCheck)
+                Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/empty-project-template/default-font.ttf")), new File(path, "Assets/default-font.ttf").toPath(), StandardCopyOption.REPLACE_EXISTING);
             else return true;
         }
 
@@ -116,6 +115,7 @@ public class Project implements Serializable {
     }
 
     public String compileScripts() {
+        List<File> toDeleteFiles = new ArrayList<>();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
             return "Java compiler not found. Make sure you're using a JDK.";
@@ -125,10 +125,19 @@ public class Project implements Serializable {
 
         List<File> files = Global.listf(new File(path, "Scripts"));
 
-        if (files.isEmpty()) return null;
+        //Add default code
 
+        try {
+            File temp = File.createTempFile("ylddef", ".java");
+            Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/inject-code/Launcher.java")), temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            files.add(temp);
+            toDeleteFiles.add(temp);
+        } catch (IOException e) {
+            return e.getMessage();
+        }
 
         Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(files);
+
 
         DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
 
@@ -139,16 +148,7 @@ public class Project implements Serializable {
             if (!task.call()) {
                 StringBuilder dig = new StringBuilder();
                 for (Diagnostic<? extends JavaFileObject> diagnostic : diagnosticCollector.getDiagnostics()) {
-                    dig
-                            .append("<small>")
-                            .append(diagnostic.getSource().getName())
-                            .append(":")
-                            .append(diagnostic.getLineNumber())
-                            .append(":")
-                            .append(diagnostic.getColumnNumber())
-                            .append("</small><br><pre>java: ")
-                            .append(diagnostic.getMessage(null))
-                            .append("</pre><br>");
+                    dig.append("<small>").append(diagnostic.getSource().getName()).append(":").append(diagnostic.getLineNumber()).append(":").append(diagnostic.getColumnNumber()).append("</small><br><pre>java: ").append(diagnostic.getMessage(null)).append("</pre><br>");
                 }
                 return dig.toString();
             }
@@ -162,11 +162,14 @@ public class Project implements Serializable {
         } catch (Exception e) {
             return e.getMessage();
         }
+
+        toDeleteFiles.forEach(File::delete);
         return null;
     }
 
     public String createManifest() {
-        File manifestFile = new File(path, "Build/MANIFEST.MF");
+        new File(path, "Build/META-INF").mkdir();
+        File manifestFile = new File(path, "Build/META-INF/MANIFEST.MF");
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(manifestFile))) {
             writer.println("Manifest-Version: 1.0");
@@ -175,11 +178,13 @@ public class Project implements Serializable {
                 writer.print("Class-Path: ");
                 StringBuilder jarLibs = new StringBuilder();
                 for (int i = 0; i < libs.length; i++) {
-                    jarLibs.append("Libraries/").append(libs[i].getName());
+                    jarLibs.append("libs/").append(libs[i].getName());
                     if (i < libs.length - 1) jarLibs.append(' ');
                 }
                 writer.println(jarLibs);
             }
+
+            writer.println("Main-Class: injected.Launcher");
 
             manifestFile.createNewFile();
         } catch (IOException e) {
@@ -191,7 +196,7 @@ public class Project implements Serializable {
 
     public String buildToJar() {
         try (JarOutputStream jos = new JarOutputStream(new FileOutputStream(new File(path, "Output/" + name().replaceAll("\\s", "_") + ".jar")))) {
-            addFilesToJar(new File(path, "Output"), new File(path, "Build"), jos);
+            addFilesToJar("", new File(path, "Output"), new File(path, "Build"), jos);
         } catch (IOException e) {
             return e.getMessage();
         }
@@ -199,11 +204,11 @@ public class Project implements Serializable {
     }
 
     public String packAssets() {
-        if(new File(path, "Output/data").exists()) deleteDir(new File(path, "Output/data"));
+        if (new File(path, "Output/data").exists()) deleteDir(new File(path, "Output/data"));
         new File(path, "Output/data").mkdir();
 
         try {
-            try(AssetsCompressing ac = new AssetsCompressing(new File(path, "Output/data"))) {
+            try (AssetsCompressing ac = new AssetsCompressing(new File(path, "Output/data"))) {
                 Global.listf(new File(path, "Assets")).forEach(asset -> {
                     try {
                         ac.addFile(asset, asset.getPath().substring(new File(path, "Assets").getPath().length() + 1));
@@ -218,8 +223,25 @@ public class Project implements Serializable {
         return null;
     }
 
+    public String copyLibraries() {
+        if (new File(path, "Output/libs").exists()) deleteDir(new File(path, "Output/libs"));
+        new File(path, "Output/libs").mkdir();
+
+        for (File lib : Global.listf(new File(path, "Libraries"))) {
+            try {
+                Files.copy(lib.toPath(), new File(path, "Output/libs/" + lib.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                return e.getMessage();
+            }
+        }
+
+
+        return null;
+    }
+
     public void clearBuild() {
         deleteDir(new File(path, "Build"));
+        new File(path, "Build").mkdir();
     }
 
     public void clearOutput() {
@@ -237,16 +259,17 @@ public class Project implements Serializable {
         file.delete();
     }
 
-    private static void addFilesToJar(File rootDir, File currentDir, JarOutputStream jos) throws IOException {
+    private static void addFilesToJar(String jarPackage, File rootDir, File currentDir, JarOutputStream jos) throws IOException {
+        if (!jarPackage.isEmpty()) jarPackage = jarPackage + '/';
         File[] files = currentDir.listFiles();
         if (files != null) {
             for (File file : files) {
                 if (file.isDirectory()) {
-                    addFilesToJar(rootDir, file, jos);
+                    addFilesToJar(jarPackage, rootDir, file, jos);
                 } else {
                     String entryName = file.getPath().substring(rootDir.getPath().length());
                     entryName = entryName.replace(File.separatorChar, '/');
-                    JarEntry jarEntry = new JarEntry(entryName);
+                    JarEntry jarEntry = new JarEntry(jarPackage + entryName);
                     jos.putNextEntry(jarEntry);
 
                     try (FileInputStream fis = new FileInputStream(file)) {

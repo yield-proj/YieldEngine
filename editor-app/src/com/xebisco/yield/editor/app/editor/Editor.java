@@ -60,7 +60,7 @@ public class Editor extends JFrame {
     public Editor(Project project) {
         this.project = project;
         try {
-            Image loadedIcon = ImageIO.read(new File(project.path(), "icon.png")).getScaledInstance(14, 14, Image.SCALE_SMOOTH);
+            Image loadedIcon = ImageIO.read(new File(project.path(), "Assets/icon.png")).getScaledInstance(14, 14, Image.SCALE_SMOOTH);
             BufferedImage icon = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
             Graphics g = icon.getGraphics();
             g.setColor(Color.BLACK);
@@ -178,6 +178,16 @@ public class Editor extends JFrame {
                 String out = project.packAssets();
                 if(out != null) {
                     JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Pack Assets Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        buildMenu.add(new AbstractAction("Copy Libraries") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String out = project.copyLibraries();
+                if(out != null) {
+                    JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Copy Libraries Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
