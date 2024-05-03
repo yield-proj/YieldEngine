@@ -87,7 +87,8 @@ public class OpenGLTextureManager implements TextureManager {
     @Override
     public void unloadTexture(AbstractTexture texture, FileIOManager ioManager) {
         glDeleteTextures((int) texture.imageRef());
-        ioManager.releaseFile(texture.path());
+        if (ioManager != null)
+            ioManager.releaseFile(texture.path());
     }
 
     @Override
@@ -101,7 +102,8 @@ public class OpenGLTextureManager implements TextureManager {
     public void unloadSpritesheetTexture(SpritesheetTexture spritesheetTexture, FileIOManager ioManager) {
         ((BufferedImage) spritesheetTexture.imageRef()).flush();
         spritesheetTexture.setImageRef(null);
-        ioManager.releaseFile(spritesheetTexture.path());
+        if (ioManager != null)
+            ioManager.releaseFile(spritesheetTexture.path());
     }
 
     @Override
@@ -109,8 +111,8 @@ public class OpenGLTextureManager implements TextureManager {
         BufferedImage image = ((BufferedImage) spritesheetTexture.imageRef()).getSubimage(x, y, width, height);
         try (MemoryStack stack = MemoryStack.stackPush()) {
             ByteBuffer imageBuffer = stack.malloc(image.getWidth() * image.getHeight() * 4);
-            for(int iy = 0; iy < image.getHeight(); iy++) {
-                for(int ix = 0; ix < image.getWidth(); ix++) {
+            for (int iy = 0; iy < image.getHeight(); iy++) {
+                for (int ix = 0; ix < image.getWidth(); ix++) {
                     Color color = new Color(image.getRGB(ix, iy), Color.Format.ARGB);
                     imageBuffer.put((byte) (color.red() * 255));
                     imageBuffer.put((byte) (color.green() * 255));
@@ -120,7 +122,7 @@ public class OpenGLTextureManager implements TextureManager {
             }
             imageBuffer.flip();
             int handler = loadTexture(imageBuffer, width, height, 4, textureFilter);
-            return new Texture(handler, new Vector2D(width, height), spritesheetTexture.path(), textureFilter, this);
+            return new Texture(handler, new Vector2D(width, height), spritesheetTexture.path(), textureFilter, this, null);
         }
     }
 }

@@ -18,6 +18,7 @@ package com.xebisco.yield.texture;
 import com.xebisco.yield.FileInput;
 import com.xebisco.yield.ImmutableVector2D;
 import com.xebisco.yield.Vector2D;
+import com.xebisco.yield.manager.FileIOManager;
 import com.xebisco.yield.manager.TextureManager;
 
 import java.io.Closeable;
@@ -31,25 +32,27 @@ public class SpritesheetTexture extends FileInput implements Closeable {
     private final ImmutableVector2D size;
     private final TextureManager textureManager;
     private Object imageRef;
+    private final FileIOManager ioManager;
 
     /**
      * Constructs a {@link SpritesheetTexture} from a given path and {@link TextureManager}.
      *
-     * @param path The path to the spritesheet file.
+     * @param path           The path to the spritesheet file.
      * @param textureManager The {@link TextureManager} responsible for loading and unloading textures.
      * @throws IOException If an error occurs while reading the spritesheet file.
      */
-    public SpritesheetTexture(String path, TextureManager textureManager) throws IOException {
+    public SpritesheetTexture(String path, TextureManager textureManager, FileIOManager ioManager) throws IOException {
         super(path);
         this.textureManager = textureManager;
+        this.ioManager = ioManager;
         Vector2D size = new Vector2D();
-        imageRef = textureManager.loadSpritesheetTexture(this, size);
+        imageRef = textureManager.loadSpritesheetTexture(this, size, ioManager);
         this.size = new ImmutableVector2D(size.width(), size.height());
     }
 
     @Override
     public void close() {
-        textureManager().unloadSpritesheetTexture(this);
+        textureManager().unloadSpritesheetTexture(this, ioManager);
     }
 
     /**
@@ -68,7 +71,8 @@ public class SpritesheetTexture extends FileInput implements Closeable {
      * @return This instance of {@link SpritesheetTexture} for method chaining.
      */
     public SpritesheetTexture setImageRef(Object imageRef) {
-        this.imageRef = imageRef;return this;
+        this.imageRef = imageRef;
+        return this;
     }
 
     /**
@@ -87,5 +91,14 @@ public class SpritesheetTexture extends FileInput implements Closeable {
      */
     public TextureManager textureManager() {
         return textureManager;
+    }
+
+    /**
+     * Returns the {@link FileIOManager} responsible for reading and writing files.
+     *
+     * @return The {@link FileIOManager}.
+     */
+    public FileIOManager getIoManager() {
+        return ioManager;
     }
 }

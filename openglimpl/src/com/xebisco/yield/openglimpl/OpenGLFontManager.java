@@ -96,7 +96,7 @@ public class OpenGLFontManager implements FontManager {
             FT_GlyphSlot glyph = Objects.requireNonNull(face.glyph());
 
 
-            Texture t = new Texture(texture, new Vector2D(bitmap.width(), bitmap.rows()), font.path(), TextureFilter.LINEAR, null);
+            Texture t = new Texture(texture, new Vector2D(bitmap.width(), bitmap.rows()), font.path(), TextureFilter.LINEAR, null, null);
 
             //noinspection resource
             font.characterMap().put((char) (int) c, new FontCharacter(t, glyph.bitmap_top(), (int) glyph.advance().x() >> 6));

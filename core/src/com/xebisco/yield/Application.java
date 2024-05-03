@@ -110,13 +110,13 @@ public class Application extends AbstractBehavior {
         applicationPlatform.graphicsManager().init(platformInit);
         defaultFont = new Font("default-font.ttf", 32, applicationPlatform.fontManager(), applicationPlatform.ioManager());
         try {
-            applicationPlatform.graphicsManager().updateWindowIcon(new Texture(platformInit.windowIconPath(), TextureFilter.LINEAR, applicationPlatform.textureManager()), applicationPlatform.ioManager());
+            applicationPlatform.graphicsManager().updateWindowIcon(new Texture(platformInit.windowIconPath(), TextureFilter.LINEAR, applicationPlatform.textureManager(), applicationPlatform.ioManager()), applicationPlatform.ioManager());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         if (applicationPlatform.modules().containsKey(ApplicationModule.TEXTURE_MANAGER)) {
             try {
-                defaultTexture = new Texture("yieldIcon.png", TextureFilter.LINEAR, applicationPlatform.textureManager());
+                defaultTexture = new Texture("yieldIcon.png", TextureFilter.LINEAR, applicationPlatform.textureManager(), applicationPlatform.ioManager());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

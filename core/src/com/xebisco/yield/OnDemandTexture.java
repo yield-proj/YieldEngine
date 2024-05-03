@@ -15,6 +15,7 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.manager.FileIOManager;
 import com.xebisco.yield.manager.TextureManager;
 import com.xebisco.yield.texture.TextureFilter;
 
@@ -26,6 +27,7 @@ import java.io.IOException;
  */
 public class OnDemandTexture extends AbstractTexture {
     private final ReturnTextureManager textureManager;
+    private final FileIOManager ioManager;
 
     /**
      * The {@code ReturnTextureManager} interface provides a method to get the {@link TextureManager}.
@@ -47,9 +49,10 @@ public class OnDemandTexture extends AbstractTexture {
      * @param filter        the filter to be applied to the texture.
      * @param textureManager the {@link ReturnTextureManager} instance.
      */
-    public OnDemandTexture(String path, TextureFilter filter, ReturnTextureManager textureManager) {
+    public OnDemandTexture(String path, TextureFilter filter, ReturnTextureManager textureManager, FileIOManager ioManager) {
         super(path, filter);
         this.textureManager = textureManager;
+        this.ioManager = ioManager;
     }
 
     /**
@@ -64,14 +67,14 @@ public class OnDemandTexture extends AbstractTexture {
     @Override
     public void close() {
         if (textureManager != null && imageRef != null)
-            textureManager().textureManager().unloadTexture(this);
+            textureManager().textureManager().unloadTexture(this, ioManager);
     }
 
     @Override
     public Object imageRef() {
         if(imageRef == null) {
             try {
-                setImageRef(textureManager.textureManager().loadTexture(this, new Vector2D()));
+                setImageRef(textureManager.textureManager().loadTexture(this, new Vector2D(), ioManager));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -87,4 +90,13 @@ public class OnDemandTexture extends AbstractTexture {
     public ReturnTextureManager textureManager() {
         return textureManager;
     }
+
+    /**
+ * Returns the {@link FileIOManager} instance that is responsible for handling file I/O operations.
+ *
+ * @return the {@link FileIOManager} instance.
+ */
+public FileIOManager getIoManager() {
+    return ioManager;
+}
 }
