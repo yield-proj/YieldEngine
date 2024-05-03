@@ -125,17 +125,6 @@ public class Project implements Serializable {
 
         List<File> files = Global.listf(new File(path, "Scripts"));
 
-        //Add default code
-
-        try {
-            File temp = File.createTempFile("ylddef", ".java");
-            Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/inject-code/Launcher.java")), temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            files.add(temp);
-            toDeleteFiles.add(temp);
-        } catch (IOException e) {
-            return e.getMessage();
-        }
-
         Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(files);
 
 
@@ -203,12 +192,15 @@ public class Project implements Serializable {
         return null;
     }
 
-    public String packAssets() {
-        if (new File(path, "Output/data").exists()) deleteDir(new File(path, "Output/data"));
-        new File(path, "Output/data").mkdir();
+    public String packAssets(String folder) {
+        if (new File(path, folder).exists()) deleteDir(new File(path, folder));
+        new File(path, folder).mkdir();
 
         try {
-            try (AssetsCompressing ac = new AssetsCompressing(new File(path, "Output/data"))) {
+            File tempYieldIcon = File.createTempFile("yieldIcon", ".png");
+            Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/logo/logo.png")), tempYieldIcon.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            try (AssetsCompressing ac = new AssetsCompressing(new File(path, folder))) {
                 Global.listf(new File(path, "Assets")).forEach(asset -> {
                     try {
                         ac.addFile(asset, asset.getPath().substring(new File(path, "Assets").getPath().length() + 1));
@@ -216,7 +208,10 @@ public class Project implements Serializable {
                         throw new RuntimeException(e);
                     }
                 });
+                ac.addFile(tempYieldIcon, "yieldIcon.png");
             }
+
+            tempYieldIcon.delete();
         } catch (IOException e) {
             return e.getMessage();
         }

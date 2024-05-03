@@ -28,11 +28,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class Editor extends JFrame {
     public final static HashMap<String, HashMap<String, Serializable>> STD_PROJECT_VALUES = new HashMap<>();
@@ -147,7 +152,7 @@ public class Editor extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String out = project.compileScripts();
-                if(out != null) {
+                if (out != null) {
                     JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Compile Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -157,7 +162,7 @@ public class Editor extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String out = project.createManifest();
-                if(out != null) {
+                if (out != null) {
                     JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Compile Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -175,8 +180,8 @@ public class Editor extends JFrame {
         buildMenu.add(new AbstractAction("Pack Assets") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String out = project.packAssets();
-                if(out != null) {
+                String out = project.packAssets("Output/data");
+                if (out != null) {
                     JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Pack Assets Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -186,7 +191,7 @@ public class Editor extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String out = project.copyLibraries();
-                if(out != null) {
+                if (out != null) {
                     JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Copy Libraries Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -196,7 +201,7 @@ public class Editor extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String out = project.buildToJar();
-                if(out != null) {
+                if (out != null) {
                     JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Build JAR Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -219,13 +224,7 @@ public class Editor extends JFrame {
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                JLabel label = new JLabel("<html>" +
-                        "<p>Build: " + Global.BUILD + "</p> <br>" +
-                        "<p>A JVM game engine, a simple and efficient engine for creating 2d games in Java.</p> <br>" +
-                        "<p>Runtime: " + System.getProperty("java.runtime.version") + "</p>" +
-                        "<p>VM: " + System.getProperty("java.vm.name") + "</p> <br>" +
-                        "<small>Copyright @ 2022-2024 Xebisco. Licensed under the Apache License, Version 2.0</small>" +
-                        "</html>");
+                JLabel label = new JLabel("<html>" + "<p>Build: " + Global.BUILD + "</p> <br>" + "<p>A JVM game engine, a simple and efficient engine for creating 2d games in Java.</p> <br>" + "<p>Runtime: " + System.getProperty("java.runtime.version") + "</p>" + "<p>VM: " + System.getProperty("java.vm.name") + "</p> <br>" + "<small>Copyright @ 2022-2024 Xebisco. Licensed under the Apache License, Version 2.0</small>" + "</html>");
                 label.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
                 dialog.add(label);
 
@@ -305,6 +304,39 @@ public class Editor extends JFrame {
         pauseButton.setEnabled(true);
         stopButton.setEnabled(true);
         //TODO
+
+        CompletableFuture.runAsync(() -> {
+
+            project.clearBuild();
+            project.compileScripts();
+            project.packAssets("Build/data");
+
+
+            try {
+                List<URL> urls = new ArrayList<>();
+                urls.add(new File(project.path(), "Build").toURI().toURL());
+                for (File lib : Global.listf(new File(project.path(), "Libraries"))) {
+                    urls.add(lib.toURI().toURL());
+                }
+                URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[0]));
+                Class<?> launcherClass = loader.loadClass("com.xebisco.yield.editor.runtime.Launcher");
+
+                Method mainMethod = launcherClass.getMethod("main", String[].class);
+                mainMethod.setAccessible(true);
+                try {
+                    mainMethod.invoke(null, new Object[]{new String[]{new File(project.path(), "Build/data").getAbsolutePath()}});
+                } catch (IllegalAccessException e) {
+                    JOptionPane.showMessageDialog(this, e.getMessage(), e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+                } catch (InvocationTargetException e) {
+                    JOptionPane.showMessageDialog(this, e.getCause().getMessage(), e.getTargetException().getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+
+                }
+                stop();
+            } catch (MalformedURLException | ClassNotFoundException | NoSuchMethodException e) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+            }
+
+        });
     }
 
     public void pause() {
