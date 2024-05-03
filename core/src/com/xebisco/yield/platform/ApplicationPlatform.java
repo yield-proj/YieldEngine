@@ -72,6 +72,15 @@ public record ApplicationPlatform(Map<ApplicationModule, Object> modules) implem
         return (GraphicsManager) modules.get(ApplicationModule.GRAPHICS_MANAGER);
     }
 
+    /**
+     * Get the file input/output manager instance.
+     *
+     * @return The file input/output manager instance.
+     */
+    public FileIOManager ioManager() {
+        return (FileIOManager) modules.get(ApplicationModule.FILE_IO_MANAGER);
+    }
+
     @Override
     public void close() throws IOException {
         for(Object mod : modules.values()) {

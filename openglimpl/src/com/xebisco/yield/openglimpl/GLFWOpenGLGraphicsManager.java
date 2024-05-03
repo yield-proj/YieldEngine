@@ -17,6 +17,7 @@ package com.xebisco.yield.openglimpl;
 
 import com.xebisco.yield.Input;
 import com.xebisco.yield.PlatformInit;
+import com.xebisco.yield.manager.FileIOManager;
 import com.xebisco.yield.texture.Texture;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL11;
@@ -91,7 +92,7 @@ public class GLFWOpenGLGraphicsManager extends AbstractOpenGLGraphicsManager {
     }
 
     @Override
-    public void updateWindowIcon(Texture icon) {
+    public void updateWindowIcon(Texture icon, FileIOManager ioManager) {
         ByteBuffer image;
         int width, height;
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -99,9 +100,10 @@ public class GLFWOpenGLGraphicsManager extends AbstractOpenGLGraphicsManager {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
 
-            image = stbi_load(icon.path(), w, h, comp, 4);
+            image = stbi_load(ioManager.loadPath(icon.path()), w, h, comp, 4);
             width = w.get();
             height = h.get();
+            ioManager.releaseFile(icon.path());
         }
         GLFWImage imageB = GLFWImage.malloc();
         GLFWImage.Buffer imagebf = GLFWImage.malloc(1);

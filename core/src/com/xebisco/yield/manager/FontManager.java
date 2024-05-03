@@ -25,14 +25,16 @@ public interface FontManager {
      * The function loads a font object.
      *
      * @param font The "font" parameter in the "loadFont" method is the font that you want to load.
+     * @param ioManager The ioManager used to load the font file.
      */
-    Object loadFont(Font font);
+    Object loadFont(Font font, FileIOManager ioManager);
 
     /**
      * The function unloads a specified font.
      *
      * @param font The parameter "font" is a variable of type "Font" that represents a font loaded in memory. This function
      * "unloadFont" is used to release the memory allocated for the font and free up resources used by the font.
+     * @param ioManager The ioManager used to unload the font file.
      */
-    void unloadFont(Font font);
+    void unloadFont(Font font, FileIOManager ioManager);
 }

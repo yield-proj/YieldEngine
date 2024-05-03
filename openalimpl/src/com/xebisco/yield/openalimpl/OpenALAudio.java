@@ -17,6 +17,7 @@ package com.xebisco.yield.openalimpl;
 
 import com.xebisco.yield.AudioPlayer;
 import com.xebisco.yield.manager.AudioManager;
+import com.xebisco.yield.manager.FileIOManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.*;
 import org.lwjgl.stb.STBVorbis;
@@ -33,7 +34,7 @@ public class OpenALAudio implements AudioManager {
     private boolean started;
 
     @Override
-    public Object loadAudio(AudioPlayer audio) {
+    public Object loadAudio(AudioPlayer audio, FileIOManager ioManager) {
         if (!started) {
             started = true;
             long device = ALC10.alcOpenDevice((ByteBuffer)null);
@@ -47,13 +48,13 @@ public class OpenALAudio implements AudioManager {
 
         switch (audio.audioClip().fileFormat()) {
             case "WAV":
-                WaveData waveData = WaveData.create(new File(audio.audioClip().path()));
+                WaveData waveData = WaveData.create(new File(ioManager.loadPath(audio.audioClip().path())));
                 assert waveData != null;
                 AL10.alBufferData(out.getBuffer(), waveData.format, waveData.data, waveData.samplerate);
                 break;
             case "OGG":
                 try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
-                    ShortBuffer pcm = readVorbis(new BufferedInputStream(new BufferedInputStream(new FileInputStream(audio.audioClip().path()))), info);
+                    ShortBuffer pcm = readVorbis(new BufferedInputStream(new BufferedInputStream(new FileInputStream(ioManager.loadPath(audio.audioClip().path())))), info);
 
                     AL10.alBufferData(out.getBuffer(), info.channels() == 1 ? AL10.AL_FORMAT_MONO16 : AL10.AL_FORMAT_STEREO16, pcm, info.sample_rate());
                 } catch (FileNotFoundException e) {
@@ -67,6 +68,7 @@ public class OpenALAudio implements AudioManager {
         AL10.alSourcei(out.getSource(), AL10.AL_BUFFER, out.getBuffer());
         AL10.alSourcei(out.getSource(), AL10.AL_SOURCE_RELATIVE, AL10.AL_TRUE);
 
+        ioManager.releaseFile(audio.audioClip().path());
         return out;
     }
 
@@ -108,9 +110,10 @@ public class OpenALAudio implements AudioManager {
     }
 
     @Override
-    public void unloadAudio(AudioPlayer audioPlayer) {
+    public void unloadAudio(AudioPlayer audioPlayer, FileIOManager ioManager) {
         AL10.alDeleteSources(((Audio) audioPlayer.clipRef()).getSource());
         AL10.alDeleteBuffers(((Audio) audioPlayer.clipRef()).getBuffer());
+        ioManager.releaseFile(audioPlayer.audioClip().path());
     }
 
     @Override

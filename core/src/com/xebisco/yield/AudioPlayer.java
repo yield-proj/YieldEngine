@@ -67,7 +67,7 @@ public class AudioPlayer extends ComponentBehavior {
         if (audioClip!= null) {
             pause();
             setPosition(0);
-            application().applicationPlatform().audioManager().unloadAudio(this);
+            application().applicationPlatform().audioManager().unloadAudio(this, application().applicationPlatform().ioManager());
         }
     }
 
@@ -116,9 +116,9 @@ public class AudioPlayer extends ComponentBehavior {
      * @return The AudioPlayer instance for method chaining.
      */
     public AudioPlayer setAudioClip(FileInput audioClip) {
-        if (this.audioClip!= null) application().applicationPlatform().audioManager().unloadAudio(this);
+        if (this.audioClip!= null) application().applicationPlatform().audioManager().unloadAudio(this, application().applicationPlatform().ioManager());
         this.audioClip = audioClip;
-        setClipRef(application().applicationPlatform().audioManager().loadAudio(this));
+        setClipRef(application().applicationPlatform().audioManager().loadAudio(this, application().applicationPlatform().ioManager()));
         return this;
     }
 

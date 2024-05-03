@@ -17,6 +17,7 @@ package com.xebisco.yield.openglimpl;
 
 import com.xebisco.yield.AbstractTexture;
 import com.xebisco.yield.Color;
+import com.xebisco.yield.manager.FileIOManager;
 import com.xebisco.yield.rendering.Form;
 import com.xebisco.yield.texture.SpritesheetTexture;
 import com.xebisco.yield.texture.Texture;
@@ -38,12 +39,12 @@ import static org.lwjgl.stb.STBImage.*;
 
 public class OpenGLTextureManager implements TextureManager {
     @Override
-    public Object loadTexture(AbstractTexture texture, Vector2D size) throws IOException {
+    public Object loadTexture(AbstractTexture texture, Vector2D size, FileIOManager ioManager) throws IOException {
         ByteBuffer image;
         IntBuffer w = BufferUtils.createIntBuffer(1);
         IntBuffer h = BufferUtils.createIntBuffer(1);
         IntBuffer c = BufferUtils.createIntBuffer(1);
-        image = stbi_load(texture.path(), w, h, c, 4);
+        image = stbi_load(ioManager.loadPath(texture.path()), w, h, c, 4);
         if (image == null) throw new IOException("Could not load image: " + texture.path());
 
         int width = w.get(0);
@@ -54,6 +55,7 @@ public class OpenGLTextureManager implements TextureManager {
 
         size.set(width, height);
 
+        ioManager.releaseFile(texture.path());
         return handler;
     }
 
@@ -83,21 +85,23 @@ public class OpenGLTextureManager implements TextureManager {
     }
 
     @Override
-    public void unloadTexture(AbstractTexture texture) {
+    public void unloadTexture(AbstractTexture texture, FileIOManager ioManager) {
         glDeleteTextures((int) texture.imageRef());
+        ioManager.releaseFile(texture.path());
     }
 
     @Override
-    public Object loadSpritesheetTexture(SpritesheetTexture spritesheetTexture, Vector2D size) throws IOException {
-        BufferedImage image = ImageIO.read(new File(spritesheetTexture.path()));
+    public Object loadSpritesheetTexture(SpritesheetTexture spritesheetTexture, Vector2D size, FileIOManager ioManager) throws IOException {
+        BufferedImage image = ImageIO.read(new File(ioManager.loadPath(spritesheetTexture.path())));
         size.set(image.getWidth(), image.getHeight());
         return image;
     }
 
     @Override
-    public void unloadSpritesheetTexture(SpritesheetTexture spritesheetTexture) {
+    public void unloadSpritesheetTexture(SpritesheetTexture spritesheetTexture, FileIOManager ioManager) {
         ((BufferedImage) spritesheetTexture.imageRef()).flush();
         spritesheetTexture.setImageRef(null);
+        ioManager.releaseFile(spritesheetTexture.path());
     }
 
     @Override

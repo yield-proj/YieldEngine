@@ -27,13 +27,13 @@ import java.io.IOException;
  * The {@code TextureManager} interface should be implemented by the specific platform running the application, it contains function for manipulation image files.
  */
 public interface TextureManager {
-    Object loadTexture(AbstractTexture texture, Vector2D size) throws IOException;
+    Object loadTexture(AbstractTexture texture, Vector2D size, FileIOManager ioManager) throws IOException;
 
-    void unloadTexture(AbstractTexture texture);
+    void unloadTexture(AbstractTexture texture, FileIOManager ioManager);
 
-    Object loadSpritesheetTexture(SpritesheetTexture spritesheetTexture, Vector2D size) throws IOException;
+    Object loadSpritesheetTexture(SpritesheetTexture spritesheetTexture, Vector2D size, FileIOManager ioManager) throws IOException;
 
-    void unloadSpritesheetTexture(SpritesheetTexture spritesheetTexture);
+    void unloadSpritesheetTexture(SpritesheetTexture spritesheetTexture, FileIOManager ioManager);
 
     Texture getTextureFromRegion(int x, int y, int width, int height, TextureFilter filter, SpritesheetTexture spritesheetTexture);
 }

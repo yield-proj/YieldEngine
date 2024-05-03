@@ -41,8 +41,9 @@ public interface GraphicsManager extends Closeable, Renderer {
      *
      * @param icon The "icon" parameter is a Texture object that represents the image that will be used as the icon for the
      *             window. This function updates the icon of the window to the specified texture.
+     * @param ioManager The ioManager used to load the window icon file.
      */
-    void updateWindowIcon(Texture icon);
+    void updateWindowIcon(Texture icon, FileIOManager ioManager);
 
     /**
      * Returns true if the user has requested that the application close.

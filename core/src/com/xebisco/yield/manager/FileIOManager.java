@@ -13,38 +13,25 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.platform;
+package com.xebisco.yield.manager;
 
 /**
- * Enum representing the different application modules.
+ * Interface for managing file I/O operations.
  */
-public enum ApplicationModule {
-    /**
-     * Represents the Font Manager module.
-     */
-    FONT_MANAGER,
+public interface FileIOManager {
 
     /**
-     * Represents the Texture Manager module.
+     * Loads the specified file path.
+     *
+     * @param fileName the name of the file to be loaded
+     * @return the loaded file path
      */
-    TEXTURE_MANAGER,
+    String loadPath(String fileName);
 
     /**
-     * Represents the PC Input Manager module.
+     * Releases the specified file from memory if possible.
+     *
+     * @param fileName the name of the file to be released
      */
-    PC_INPUT_MANAGER,
-
-    /**
-     * Represents the Audio Manager module.
-     */
-    AUDIO_MANAGER,
-
-    /**
-     * Represents the File IO Manager module.
-     */
-    FILE_IO_MANAGER,
-    /**
-     * Represents the Graphics Manager module.
-     */
-    GRAPHICS_MANAGER
+    void releaseFile(String fileName);
 }

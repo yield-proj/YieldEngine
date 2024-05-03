@@ -16,6 +16,7 @@
 package com.xebisco.yield.font;
 
 import com.xebisco.yield.FileInput;
+import com.xebisco.yield.manager.FileIOManager;
 import com.xebisco.yield.manager.FontManager;
 
 import java.util.HashMap;
@@ -36,10 +37,10 @@ public class Font extends FileInput {
      * @param size The size of the font.
      * @param fontManager The {@link FontManager} instance responsible for loading fonts.
      */
-    public Font(String path, double size, FontManager fontManager) {
+    public Font(String path, double size, FontManager fontManager, FileIOManager ioManager) {
         super(path);
         this.size = size;
-        fontManager.loadFont(this);
+        fontManager.loadFont(this, ioManager);
     }
 
     /**

@@ -27,17 +27,19 @@ public interface AudioManager {
      * @param audio The "audio" parameter in the "loadAudio" method is an object of the "AudioPlayer" class. This object
      * contains an audio file that needs to be loaded into the program. The "loadAudio" method is responsible for loading
      * the audio file into the program and returning its clip reference.
+     * @param ioManager The ioManager used to load the audio file.
      * @return The audio clip reference.
      */
-    Object loadAudio(AudioPlayer audio);
+    Object loadAudio(AudioPlayer audio, FileIOManager ioManager);
 
     /**
      * The function unloads an audio clip from an audio player.
      *
      * @param audio The "audio" parameter is an object of type "AudioPlayer" that contains an audio file that has been
      * loaded into memory. The "unloadAudio" function is used to free up the memory used by the audio file.
+     * @param ioManager The ioManager used to load the audio file.
      */
-    void unloadAudio(AudioPlayer audio);
+    void unloadAudio(AudioPlayer audio, FileIOManager ioManager);
 
     /**
      * The function "play" plays an audio clip from an AudioPlayer object.

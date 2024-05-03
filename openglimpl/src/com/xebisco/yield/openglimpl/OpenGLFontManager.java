@@ -18,6 +18,7 @@ package com.xebisco.yield.openglimpl;
 import com.xebisco.yield.Vector2D;
 import com.xebisco.yield.font.Font;
 import com.xebisco.yield.font.FontCharacter;
+import com.xebisco.yield.manager.FileIOManager;
 import com.xebisco.yield.manager.FontManager;
 import com.xebisco.yield.texture.Texture;
 import com.xebisco.yield.texture.TextureFilter;
@@ -58,7 +59,7 @@ public class OpenGLFontManager implements FontManager {
     }
 
     @Override
-    public Object loadFont(Font font) {
+    public Object loadFont(Font font, FileIOManager ioManager) {
         if (ftLib == null) {
             FT_Init_FreeType(ftLib = MemoryUtil.memAllocPointer(1));
             ftLibL = ftLib.get();
@@ -67,7 +68,7 @@ public class OpenGLFontManager implements FontManager {
 
         PointerBuffer fontPointer;
 
-        FT_New_Face(ftLibL, font.path(), 0, fontPointer = MemoryUtil.memAllocPointer(1));
+        FT_New_Face(ftLibL, ioManager.loadPath(font.path()), 0, fontPointer = MemoryUtil.memAllocPointer(1));
 
         FT_Face face = FT_Face.create(fontPointer.get());
 
@@ -109,11 +110,14 @@ public class OpenGLFontManager implements FontManager {
         }
 
         FT_Done_Face(face);
+
+        ioManager.releaseFile(font.path());
         return null;
     }
 
     @Override
-    public void unloadFont(Font font) {
-
+    public void unloadFont(Font font, FileIOManager ioManager) {
+        font.characterMap().clear();
+        ioManager.releaseFile(font.path());
     }
 }
