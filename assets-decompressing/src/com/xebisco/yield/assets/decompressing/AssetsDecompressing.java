@@ -60,6 +60,11 @@ public class AssetsDecompressing implements AutoCloseable {
         return newFile;
     }
 
+    public void releaseFile(String id) throws IOException {
+        if(!fileIds.containsKey(id)) throw new FileNotFoundException(id);
+        new File(operationsDir, fileIds.getProperty(id) + '.' + INFLATED_SUFFIX).delete();
+    }
+
     @Override
     public void close() {
         if (isTemporaryDir) {
