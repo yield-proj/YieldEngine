@@ -74,7 +74,8 @@ public class AssetsCompressing implements AutoCloseable {
     }
 
     @Override
-    public void close() {
+    public void close() throws IOException {
         if (isTemporary) deleteDir(outDir);
+        else storeFileIds();
     }
 }

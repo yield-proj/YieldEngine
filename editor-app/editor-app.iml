@@ -13,5 +13,6 @@
     <orderEntry type="library" name="editor-app-libs" level="project" />
     <orderEntry type="module" module-name="utils" />
     <orderEntry type="module" module-name="editor-annotations" />
+    <orderEntry type="module" module-name="assets-compressing" />
   </component>
 </module>

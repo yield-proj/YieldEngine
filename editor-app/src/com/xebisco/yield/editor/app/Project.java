@@ -15,6 +15,7 @@
 
 package com.xebisco.yield.editor.app;
 
+import com.xebisco.yield.assets.compressing.AssetsCompressing;
 import com.xebisco.yield.editor.app.editor.Editor;
 
 import javax.tools.*;
@@ -53,6 +54,11 @@ public class Project implements Serializable {
 
         if (!new File(path, "Scripts").exists()) {
             if (ignoreCheck) new File(path, "Scripts").mkdir();
+            else return true;
+        }
+
+        if (!new File(path, "Assets").exists()) {
+            if (ignoreCheck) new File(path, "Assets").mkdir();
             else return true;
         }
 
@@ -184,8 +190,27 @@ public class Project implements Serializable {
     }
 
     public String buildToJar() {
-        try (JarOutputStream jos = new JarOutputStream(new FileOutputStream(new File(path, name().replaceAll("\\s", "_") + ".jar")))) {
-            addFilesToJar(new File(path, "Build"), new File(path, "Build"), jos);
+        try (JarOutputStream jos = new JarOutputStream(new FileOutputStream(new File(path, "Output/" + name().replaceAll("\\s", "_") + ".jar")))) {
+            addFilesToJar(new File(path, "Output"), new File(path, "Build"), jos);
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+        return null;
+    }
+
+    public String packAssets() {
+        new File(path, "Output/data").mkdir();
+
+        try {
+            try(AssetsCompressing ac = new AssetsCompressing(new File(path, "Output/data"))) {
+                Global.listf(new File(path, "Assets")).forEach(asset -> {
+                    try {
+                        ac.addFile(asset, asset.getCanonicalPath());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
         } catch (IOException e) {
             return e.getMessage();
         }
@@ -194,6 +219,11 @@ public class Project implements Serializable {
 
     public void clearBuild() {
         deleteDir(new File(path, "Build"));
+    }
+
+    public void clearOutput() {
+        deleteDir(new File(path, "Output"));
+        new File(path, "Output").mkdir();
     }
 
     private static void deleteDir(File file) {
@@ -213,7 +243,7 @@ public class Project implements Serializable {
                 if (file.isDirectory()) {
                     addFilesToJar(rootDir, file, jos);
                 } else {
-                    String entryName = file.getPath().substring(rootDir.getPath().length() + 1);
+                    String entryName = file.getPath().substring(rootDir.getPath().length());
                     entryName = entryName.replace(File.separatorChar, '/');
                     JarEntry jarEntry = new JarEntry(entryName);
                     jos.putNextEntry(jarEntry);

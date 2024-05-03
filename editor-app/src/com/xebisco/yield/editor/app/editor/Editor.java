@@ -163,7 +163,26 @@ public class Editor extends JFrame {
             }
         });
 
-        buildMenu.add(new AbstractAction("Build JAR") {
+        buildMenu.addSeparator();
+
+        buildMenu.add(new AbstractAction("Clear Output") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                project.clearOutput();
+            }
+        });
+
+        buildMenu.add(new AbstractAction("Pack Assets") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String out = project.packAssets();
+                if(out != null) {
+                    JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Pack Assets Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        buildMenu.add(new AbstractAction("Create output JAR") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String out = project.buildToJar();
