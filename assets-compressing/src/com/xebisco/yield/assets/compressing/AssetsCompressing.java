@@ -21,7 +21,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.zip.DeflaterOutputStream;
 
-import static com.xebisco.yield.assets.compressing.FileUtils.*;
+import static com.xebisco.yield.assets.FileUtils.*;
 
 public class AssetsCompressing implements AutoCloseable {
 

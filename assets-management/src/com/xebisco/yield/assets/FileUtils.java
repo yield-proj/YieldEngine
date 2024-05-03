@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.assets.compressing;
+package com.xebisco.yield.assets;
 
 import java.io.*;
 import java.nio.file.Files;
