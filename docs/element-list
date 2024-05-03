@@ -1,4 +1,15 @@
 com.xebisco.yield
+com.xebisco.yield.assets
+com.xebisco.yield.assets.compressing
+com.xebisco.yield.assets.decompressing
+com.xebisco.yield.defaults
+com.xebisco.yield.font
+com.xebisco.yield.manager
 com.xebisco.yield.physics
+com.xebisco.yield.physics.colliders
+com.xebisco.yield.physics.joints
+com.xebisco.yield.platform
+com.xebisco.yield.rendering
 com.xebisco.yield.save
-com.xebisco.yield.shader
+com.xebisco.yield.texture
+com.xebisco.yield.utils
