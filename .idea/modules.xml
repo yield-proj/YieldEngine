@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/assets/assets.iml" filepath="$PROJECT_DIR$/assets/assets.iml" />
+      <module fileurl="file://$PROJECT_DIR$/assets-compressing/assets-compressing.iml" filepath="$PROJECT_DIR$/assets-compressing/assets-compressing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/assets-decompressing/assets-decompressing.iml" filepath="$PROJECT_DIR$/assets-decompressing/assets-decompressing.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/editor/editor.iml" filepath="$PROJECT_DIR$/editor/editor.iml" />
       <module fileurl="file://$PROJECT_DIR$/editor-annotations/editor-annotations.iml" filepath="$PROJECT_DIR$/editor-annotations/editor-annotations.iml" />
