@@ -15,11 +15,12 @@
 
 package com.xebisco.yield.assets.compressing;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public final class FileUtils {
     public static void doCopy(InputStream is, OutputStream os) throws IOException {
@@ -41,6 +42,25 @@ public final class FileUtils {
             }
         }
         return false;
+    }
+
+    public static void pack(File dir, File zipFile) throws IOException {
+        if(!zipFile.exists()) zipFile.createNewFile();
+        try (ZipOutputStream zs = new ZipOutputStream(new FileOutputStream(zipFile))) {
+            Path pp = dir.toPath();
+            Files.walk(pp)
+                    .filter(path -> !Files.isDirectory(path))
+                    .forEach(path -> {
+                        ZipEntry zipEntry = new ZipEntry(pp.relativize(path).toString());
+                        try {
+                            zs.putNextEntry(zipEntry);
+                            Files.copy(path, zs);
+                            zs.closeEntry();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+        }
     }
 
     public static void deleteDir(File file) {

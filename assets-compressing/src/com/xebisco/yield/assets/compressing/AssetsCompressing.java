@@ -16,7 +16,6 @@
 package com.xebisco.yield.assets.compressing;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Properties;
 import java.util.Random;
@@ -24,7 +23,7 @@ import java.util.zip.DeflaterOutputStream;
 
 import static com.xebisco.yield.assets.compressing.FileUtils.*;
 
-public class AssetsCompressing implements AutoCloseable{
+public class AssetsCompressing implements AutoCloseable {
 
     public static final long VERSION = 1;
 
@@ -40,26 +39,37 @@ public class AssetsCompressing implements AutoCloseable{
     public void addFile(File file, String id) throws IOException {
         String ins;
         do {
-            ins = generateRandomString(12);
+            ins = generateRandomHexString(12);
         } while (containsFile(tempDir, ins + '.' + DEFLATED_SUFFIX));
 
         File deflatedFile = new File(tempDir, ins + '.' + DEFLATED_SUFFIX);
 
-        try(DeflaterOutputStream out = new DeflaterOutputStream(new FileOutputStream(deflatedFile))) {
+        try (DeflaterOutputStream out = new DeflaterOutputStream(new FileOutputStream(deflatedFile))) {
             doCopy(new FileInputStream(file), out);
         }
         fileIds.put(ins, id);
     }
 
-    private String generateRandomString(int length) {
-        byte[] array = new byte[length];
-        random.nextBytes(array);
-        return new String(array, StandardCharsets.UTF_8);
+    public void generateZip(File zipFile) throws IOException {
+        pack(tempDir, zipFile);
+    }
+
+    private String generateRandomHexString(int length){
+        Random r = new Random();
+        StringBuilder sb = new StringBuilder();
+        while(sb.length() < length){
+            sb.append(Integer.toHexString(r.nextInt()));
+        }
+
+        return sb.toString();
+    }
+
+    public void storeFileIds() throws IOException {
+        fileIds.store(new FileWriter(new File(tempDir, "ids.properties")), "Generated with Yield AssetsCompressing v. " + VERSION);
     }
 
     @Override
-    public void close() throws IOException {
-        fileIds.store(new FileWriter(new File(tempDir, "ids.properties")), "Generated with Yield AssetsCompressing v. " + VERSION);
+    public void close() {
         deleteDir(tempDir);
     }
 }
