@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        try(AssetsCompressing ac = new AssetsCompressing()) {
+        try(AssetsCompressing ac = new AssetsCompressing(null)) {
             ac.addFile(new File("icon.png"), "icon.png");
             ac.storeFileIds();
             ac.generateZip(new File("ziptest.zip"));
