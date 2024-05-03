@@ -27,7 +27,7 @@ import java.io.IOException;
  */
 public class OnDemandTexture extends AbstractTexture {
     private final ReturnTextureManager textureManager;
-    private final FileIOManager ioManager;
+    private final ReturnIOManager ioManager;
 
     /**
      * The {@code ReturnTextureManager} interface provides a method to get the {@link TextureManager}.
@@ -43,13 +43,26 @@ public class OnDemandTexture extends AbstractTexture {
     }
 
     /**
+     * The {@code ReturnIOManager} interface provides a method to get the {@link FileIOManager}.
+     * It is used to get the {@link FileIOManager} instance that is responsible for loading and unloading files.
+     */
+    public interface ReturnIOManager {
+        /**
+         * Returns the {@link FileIOManager} instance.
+         *
+         * @return the {@link FileIOManager} instance.
+         */
+        FileIOManager ioManager();
+    }
+
+    /**
      * Constructs a new {@code OnDemandTexture} instance with the specified path, filter, and {@link ReturnTextureManager}.
      *
-     * @param path          the path of the texture file.
-     * @param filter        the filter to be applied to the texture.
+     * @param path           the path of the texture file.
+     * @param filter         the filter to be applied to the texture.
      * @param textureManager the {@link ReturnTextureManager} instance.
      */
-    public OnDemandTexture(String path, TextureFilter filter, ReturnTextureManager textureManager, FileIOManager ioManager) {
+    public OnDemandTexture(String path, TextureFilter filter, ReturnTextureManager textureManager, ReturnIOManager ioManager) {
         super(path, filter);
         this.textureManager = textureManager;
         this.ioManager = ioManager;
@@ -67,14 +80,14 @@ public class OnDemandTexture extends AbstractTexture {
     @Override
     public void close() {
         if (textureManager != null && imageRef != null)
-            textureManager().textureManager().unloadTexture(this, ioManager);
+            textureManager().textureManager().unloadTexture(this, ioManager.ioManager());
     }
 
     @Override
     public Object imageRef() {
-        if(imageRef == null) {
+        if (imageRef == null) {
             try {
-                setImageRef(textureManager.textureManager().loadTexture(this, new Vector2D(), ioManager));
+                setImageRef(textureManager.textureManager().loadTexture(this, new Vector2D(), ioManager.ioManager()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -92,11 +105,11 @@ public class OnDemandTexture extends AbstractTexture {
     }
 
     /**
- * Returns the {@link FileIOManager} instance that is responsible for handling file I/O operations.
- *
- * @return the {@link FileIOManager} instance.
- */
-public FileIOManager getIoManager() {
-    return ioManager;
-}
+     * Returns the {@link ReturnIOManager} instance.
+     *
+     * @return the {@link ReturnIOManager} instance.
+     */
+    public ReturnIOManager getIoManager() {
+        return ioManager;
+    }
 }

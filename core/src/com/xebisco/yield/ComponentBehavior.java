@@ -168,7 +168,7 @@ public abstract class ComponentBehavior extends AbstractBehavior implements Rend
      * @return The texture.
      */
     public final AbstractTexture texture(String path, TextureFilter filter) {
-        return new OnDemandTexture(path, filter, () -> application().applicationPlatform().textureManager(), application().applicationPlatform().ioManager());
+        return new OnDemandTexture(path, filter, () -> application().applicationPlatform().textureManager(), () -> application().applicationPlatform().ioManager());
     }
 
     /**
