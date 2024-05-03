@@ -40,7 +40,8 @@ public class PlatformInit implements Serializable {
             ApplicationModule.TEXTURE_MANAGER,
             ApplicationModule.PC_INPUT_MANAGER,
             ApplicationModule.AUDIO_MANAGER,
-            ApplicationModule.GRAPHICS_MANAGER
+            ApplicationModule.GRAPHICS_MANAGER,
+            ApplicationModule.FILE_IO_MANAGER
     };
 
     /**
