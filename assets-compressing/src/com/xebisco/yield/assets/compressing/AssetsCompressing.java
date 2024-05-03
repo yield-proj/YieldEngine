@@ -28,8 +28,6 @@ public class AssetsCompressing implements AutoCloseable {
     public static final long VERSION = 1;
 
     private final File tempDir;
-    public static final String DEFLATED_SUFFIX = "deflated";
-    private final Random random = new Random();
     private final Properties fileIds = new Properties();
 
     public AssetsCompressing() throws IOException {
@@ -47,7 +45,7 @@ public class AssetsCompressing implements AutoCloseable {
         try (DeflaterOutputStream out = new DeflaterOutputStream(new FileOutputStream(deflatedFile))) {
             doCopy(new FileInputStream(file), out);
         }
-        fileIds.put(ins, id);
+        fileIds.put(id, ins);
     }
 
     public void generateZip(File zipFile) throws IOException {
