@@ -22,18 +22,15 @@ import com.xebisco.yield.editor.app.TitleLabel;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -297,6 +294,8 @@ public class Editor extends JFrame {
         setVisible(true);
     }
 
+    private Process runningProcess;
+
     public void runScene(EditorScene scene) {
         running = true;
         playButton.setEnabled(false);
@@ -306,37 +305,47 @@ public class Editor extends JFrame {
         //TODO
 
         CompletableFuture.runAsync(() -> {
-
             project.clearBuild();
             project.compileScripts();
             project.packAssets("Build/data");
 
+            List<File> libs = Global.listf(new File(project.path(), "Libraries"));
 
-            try {
-                List<URL> urls = new ArrayList<>();
-                urls.add(new File(project.path(), "Build").toURI().toURL());
-                for (File lib : Global.listf(new File(project.path(), "Libraries"))) {
-                    urls.add(lib.toURI().toURL());
-                }
-                URLClassLoader loader = new URLClassLoader(urls.toArray(new URL[0]));
-                Class<?> launcherClass = loader.loadClass("com.xebisco.yield.editor.runtime.Launcher");
-
-                Method mainMethod = launcherClass.getMethod("main", String[].class);
-                mainMethod.setAccessible(true);
-                try {
-                    mainMethod.invoke(null, new Object[]{new String[]{new File(project.path(), "Build/data").getAbsolutePath()}});
-                } catch (IllegalAccessException e) {
-                    JOptionPane.showMessageDialog(this, e.getMessage(), e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
-                } catch (InvocationTargetException e) {
-                    JOptionPane.showMessageDialog(this, e.getCause().getMessage(), e.getTargetException().getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
-
-                }
-                stop();
-            } catch (MalformedURLException | ClassNotFoundException | NoSuchMethodException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(), e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+            StringBuilder jarLibs = new StringBuilder();
+            for (int i = 0; i < libs.size(); i++) {
+                jarLibs.append(libs.get(i).getAbsolutePath());
+                if (i < libs.size() - 1) jarLibs.append(File.pathSeparator);
             }
 
+            ProcessBuilder processBuilder = new ProcessBuilder().directory(new File(project.path(), "Build")).command("java", "-cp", jarLibs.toString(), "com.xebisco.yield.editor.runtime.Launcher");
+            try {
+                runningProcess = processBuilder.start();
+                BufferedReader stdInput = new BufferedReader(new
+                        InputStreamReader(runningProcess.getInputStream()));
+
+                BufferedReader stdError = new BufferedReader(new
+                        InputStreamReader(runningProcess.getErrorStream()));
+
+                runningProcess.waitFor();
+
+                String s;
+                while ((s = stdInput.readLine()) != null) {
+                    System.out.println(s);
+                }
+
+                StringBuilder o = new StringBuilder();
+                while ((s = stdError.readLine()) != null) {
+                    o.append(s).append("<br>");
+                }
+
+                if (!o.isEmpty())
+                    JOptionPane.showMessageDialog(Editor.this, "<html>" + o + "</html>", "Running ERROR", JOptionPane.ERROR_MESSAGE);
+                stop();
+            } catch (InterruptedException | IOException e) {
+                throw new RuntimeException(e);
+            }
         });
+
     }
 
     public void pause() {
@@ -346,12 +355,15 @@ public class Editor extends JFrame {
     }
 
     public void stop() {
-        running = false;
-        playButton.setEnabled(true);
-        playGlobalButton.setEnabled(true);
-        pauseButton.setEnabled(false);
-        stopButton.setEnabled(false);
-        //TODO
+        if (runningProcess != null && runningProcess.isAlive()) {
+            running = false;
+            playButton.setEnabled(true);
+            playGlobalButton.setEnabled(true);
+            pauseButton.setEnabled(false);
+            stopButton.setEnabled(false);
+            runningProcess.destroy();
+            runningProcess = null;
+        }
     }
 
 }

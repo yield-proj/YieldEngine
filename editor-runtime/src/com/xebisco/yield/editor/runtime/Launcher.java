@@ -40,7 +40,7 @@ class Launcher {
         ApplicationManager manager = new ApplicationManager(new ContextTime());
         AssetsDecompressing as = new AssetsDecompressing(new File(dataFolder));
         new Application(manager, customOpenGLOpenAL(as), new PlatformInit(PlatformInit.PC_DEFAULT).setWindowIconPath("icon.png"));
-        manager.run();
+        manager.runAndWait();
         as.close();
     }
 

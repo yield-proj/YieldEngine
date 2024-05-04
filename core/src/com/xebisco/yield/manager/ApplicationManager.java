@@ -51,6 +51,10 @@ public class ApplicationManager implements Runnable {
         managerContext.thread().start();
     }
 
+    public void runAndWait() {
+        managerContext.run();
+    }
+
     /**
      * Handles the behavior of the manager.
      */

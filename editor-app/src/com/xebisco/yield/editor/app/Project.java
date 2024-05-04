@@ -115,7 +115,6 @@ public class Project implements Serializable {
     }
 
     public String compileScripts() {
-        List<File> toDeleteFiles = new ArrayList<>();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
             return "Java compiler not found. Make sure you're using a JDK.";
@@ -152,7 +151,6 @@ public class Project implements Serializable {
             return e.getMessage();
         }
 
-        toDeleteFiles.forEach(File::delete);
         return null;
     }
 
