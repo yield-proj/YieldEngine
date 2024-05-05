@@ -8,9 +8,12 @@ import java.io.Serializable;
 
 public class BooleanProp extends Prop {
     private final JCheckBox checkBox;
-    public BooleanProp(String name, boolean value) {
+    private final boolean prettyString;
+
+    public BooleanProp(String name, boolean value, boolean prettyString) {
         super(name, value);
-        checkBox = new JCheckBox(Srd.LANG.getProperty(name()), value);
+        checkBox = new JCheckBox("", value);
+        this.prettyString = prettyString;
         checkBox.addItemListener(e -> {
             this.value = !(boolean) value;
         });
@@ -20,7 +23,8 @@ public class BooleanProp extends Prop {
     public JComponent render() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        panel.add(checkBox, BorderLayout.WEST);
+        panel.add(westLabel(prettyString), BorderLayout.WEST);
+        panel.add(checkBox);
         return panel;
     }
 

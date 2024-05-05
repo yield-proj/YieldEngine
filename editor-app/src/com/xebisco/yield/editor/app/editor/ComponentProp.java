@@ -196,7 +196,7 @@ public class ComponentProp extends Prop {
                     props.add(new ColorProp(compValue.first().first(), new Color((float) Double.parseDouble(compValue.second()[0]), (float) Double.parseDouble(compValue.second()[1]), (float) Double.parseDouble(compValue.second()[2]), (float) Double.parseDouble(compValue.second()[3])), true));
                 }
                 case BOOLEAN -> {
-                    props.add(new BooleanProp(compValue.first().first(), Boolean.parseBoolean(compValue.second()[0])));
+                    props.add(new BooleanProp(compValue.first().first(), Boolean.parseBoolean(compValue.second()[0]), true));
                 }
                 case FILE -> {
                     FileFilter filter;
