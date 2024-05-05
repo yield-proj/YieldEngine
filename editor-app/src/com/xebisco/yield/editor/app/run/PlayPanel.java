@@ -28,6 +28,8 @@ public class PlayPanel extends JPanel {
 
     private JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
+    //TODO entity viewer
+
     public class Console extends JTextArea {
         public Console() {
             setEditable(false);
