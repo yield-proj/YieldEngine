@@ -17,10 +17,8 @@ package com.xebisco.yield.editor.runtime;
 
 import com.xebisco.yield.Application;
 import com.xebisco.yield.ContextTime;
-import com.xebisco.yield.Global;
 import com.xebisco.yield.PlatformInit;
 import com.xebisco.yield.assets.decompressing.AssetsDecompressing;
-import com.xebisco.yield.defaults.DefaultFileIOManager;
 import com.xebisco.yield.manager.ApplicationManager;
 import com.xebisco.yield.platform.ApplicationModule;
 import com.xebisco.yield.platform.ApplicationPlatform;
@@ -33,9 +31,8 @@ import java.util.Map;
 
 class Launcher {
     public static void main(String[] args) throws ClassNotFoundException, IOException {
-        System.out.println("Hello, World!");
         String dataFolder = "data";
-        if(args.length > 0) {
+        if (args.length > 0) {
             dataFolder = args[0];
         }
         ApplicationManager manager = new ApplicationManager(new ContextTime());
@@ -63,7 +60,8 @@ class Launcher {
             modules.put(ApplicationModule.TEXTURE_MANAGER, openGLTextureManager);
             modules.put(ApplicationModule.FONT_MANAGER, openGLFontManager);
             modules.put(ApplicationModule.FILE_IO_MANAGER, new EditorIOManager(assetsDecompressing));
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
         return new ApplicationPlatform(modules);

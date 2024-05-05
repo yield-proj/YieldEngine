@@ -15,6 +15,8 @@
 
 package com.xebisco.yield;
 
+import com.xebisco.yield.editor.annotations.Config;
+import com.xebisco.yield.editor.annotations.Visible;
 import com.xebisco.yield.platform.ApplicationModule;
 
 import java.io.Serial;
@@ -22,12 +24,18 @@ import java.io.Serializable;
 /**
  * {@code PlatformInit} is a class that represents the platform initialization settings.
  */
+
+@Config
 public class PlatformInit implements Serializable {
     @Serial
     private static final long serialVersionUID = 6160223093067169502L;
+    @Visible
     private Vector2D viewportSize = new Vector2D(1280, 720), windowSize = new Vector2D(1280, 720);
+    @Visible
     private String title = "Yield Window";
+    @Visible
     private boolean fullscreen, undecorated, stretchViewport, invertZIndex, verticalSync;
+    @Visible
     private String windowIconPath = "yieldIcon.png";
     private final ApplicationModule[] requiredPlatformModules;
 
@@ -51,6 +59,13 @@ public class PlatformInit implements Serializable {
      */
     public PlatformInit(ApplicationModule[] requiredPlatformModules) {
         this.requiredPlatformModules = requiredPlatformModules;
+    }
+
+    /**
+     * Constructs a new instance of {@link PlatformInit} with the PC_DEFAULT platform modules.
+     */
+    public PlatformInit() {
+        this.requiredPlatformModules = PC_DEFAULT;
     }
 
     /**

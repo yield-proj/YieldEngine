@@ -19,6 +19,8 @@ import com.xebisco.yield.editor.app.Global;
 import com.xebisco.yield.editor.app.Project;
 import com.xebisco.yield.editor.app.TitleLabel;
 import com.xebisco.yield.editor.app.run.PlayPanel;
+import com.xebisco.yield.uiutils.props.Prop;
+import com.xebisco.yield.uiutils.props.PropPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -118,6 +120,26 @@ public class Editor extends JFrame {
 
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
+
+        fileMenu.add(new AbstractAction("Config Test") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialog dialog = new JDialog();
+                dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                try {
+                    dialog.add(new PropPanel(new Prop[]{
+                            new ConfigProp(yieldEngineClassLoader.loadClass("com.xebisco.yield.PlatformInit"), Editor.this)
+                    }));
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+                dialog.setSize(100, 100);
+                dialog.setVisible(true);
+            }
+        });
+
+        fileMenu.addSeparator();
+
         fileMenu.add(new AbstractAction("New Prefab") {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -401,7 +423,8 @@ public class Editor extends JFrame {
         stopButton.setEnabled(false);
         runningProcess.destroy();
         runningProcess = null;
-        if(tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).equals("Play Panel") && playPanel.wasInScenePanel()) tabbedPane.setSelectedIndex(0);
+        if (tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).equals("Play Panel") && playPanel.wasInScenePanel())
+            tabbedPane.setSelectedIndex(0);
     }
 
 }

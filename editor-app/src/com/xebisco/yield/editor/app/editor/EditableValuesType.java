@@ -18,7 +18,7 @@ package com.xebisco.yield.editor.app.editor;
 import com.xebisco.yield.editor.app.Global;
 
 public enum EditableValuesType {
-    STRING, INT, FLOAT, LONG, DOUBLE, POSITION, ARRAY, COLOR, FILE, TEXTURE, FONT;
+    STRING, INT, FLOAT, LONG, DOUBLE, BOOLEAN, POSITION, ARRAY, COLOR, FILE, TEXTURE, FONT;
 
     public static EditableValuesType getType(Class<?> c, Editor editor) {
         if(c.equals(String.class)) return STRING;
@@ -26,6 +26,7 @@ public enum EditableValuesType {
         if(c.equals(Float.class) || c.equals(float.class)) return FLOAT;
         if(c.equals(Long.class) || c.equals(long.class)) return LONG;
         if(c.equals(Double.class) || c.equals(double.class)) return DOUBLE;
+        if(c.equals(Boolean.class) || c.equals(boolean.class)) return BOOLEAN;
         if(c.getName().equals("com.xebisco.yield.Vector2D")) return POSITION;
         if(c.getName().equals("com.xebisco.yield.Color")) return COLOR;
         try {

@@ -147,7 +147,7 @@ public class ComponentProp extends Prop {
     }
 
 
-    private static List<Prop> getProps(List<Pair<Pair<String, String>, String[]>> compValues, Editor editor) {
+    public static List<Prop> getProps(List<Pair<Pair<String, String>, String[]>> compValues, Editor editor) {
         List<Prop> props = new ArrayList<>();
 
         for (Pair<Pair<String, String>, String[]> compValue : compValues) {
@@ -163,6 +163,7 @@ public class ComponentProp extends Prop {
                         case "long" -> c = long.class;
                         case "float" -> c = float.class;
                         case "double" -> c = double.class;
+                        case "boolean" -> c = boolean.class;
                         default -> throw new RuntimeException(e);
                     }
                 }
@@ -193,6 +194,9 @@ public class ComponentProp extends Prop {
                 }
                 case COLOR -> {
                     props.add(new ColorProp(compValue.first().first(), new Color((float) Double.parseDouble(compValue.second()[0]), (float) Double.parseDouble(compValue.second()[1]), (float) Double.parseDouble(compValue.second()[2]), (float) Double.parseDouble(compValue.second()[3])), true));
+                }
+                case BOOLEAN -> {
+                    props.add(new BooleanProp(compValue.first().first(), Boolean.parseBoolean(compValue.second()[0])));
                 }
                 case FILE -> {
                     FileFilter filter;
