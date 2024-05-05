@@ -33,6 +33,7 @@ import java.util.Map;
 
 class Launcher {
     public static void main(String[] args) throws ClassNotFoundException, IOException {
+        System.out.println("Hello, World!");
         String dataFolder = "data";
         if(args.length > 0) {
             dataFolder = args[0];

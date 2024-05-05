@@ -18,6 +18,7 @@ package com.xebisco.yield.editor.app.editor;
 import com.xebisco.yield.editor.app.Global;
 import com.xebisco.yield.editor.app.Project;
 import com.xebisco.yield.editor.app.TitleLabel;
+import com.xebisco.yield.editor.app.run.PlayPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -31,6 +32,7 @@ import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -55,6 +57,8 @@ public class Editor extends JFrame {
 
     private final Project project;
     private final JPanel scenePanel = new JPanel(new BorderLayout());
+
+    private final PlayPanel playPanel = new PlayPanel();
 
 
     private final JButton playButton, playGlobalButton, pauseButton, stopButton;
@@ -280,10 +284,10 @@ public class Editor extends JFrame {
         add(toolBar, BorderLayout.NORTH);
 
 
-        /*add(tabbedPane);
+        add(tabbedPane);
         tabbedPane.addTab("Scene Panel", scenePanel);
-        tabbedPane.addTab("Code Panel", new CodePanel());*/
-        add(scenePanel);
+        tabbedPane.addTab("Play Panel", playPanel);
+        //add(scenePanel);
         tabbedPane.setTabPlacement(JTabbedPane.BOTTOM);
 
         //TODO actual scenes
@@ -304,10 +308,21 @@ public class Editor extends JFrame {
         stopButton.setEnabled(true);
         //TODO
 
+        playPanel.setWasInScenePanel(tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).equals("Scene Panel"));
+
+        tabbedPane.setSelectedIndex(1);
+        playPanel.start();
+
         CompletableFuture.runAsync(() -> {
+            playPanel.console().clear();
+            playPanel.progress("Clearing Build...");
             project.clearBuild();
+            playPanel.progress("Compiling Scripts...");
             project.compileScripts();
+            playPanel.progress("Packing Assets...");
             project.packAssets("Build/data");
+
+            playPanel.progress("Adding Libraries...");
 
             List<File> libs = Global.listf(new File(project.path(), "Libraries"));
 
@@ -319,19 +334,35 @@ public class Editor extends JFrame {
 
             ProcessBuilder processBuilder = new ProcessBuilder().directory(new File(project.path(), "Build")).command("java", "-cp", jarLibs.toString(), "com.xebisco.yield.editor.runtime.Launcher");
             try {
+                playPanel.console().println(processBuilder.command().toString());
+
+                playPanel.progress("Running Application...");
                 runningProcess = processBuilder.start();
+
                 BufferedReader stdInput = new BufferedReader(new
                         InputStreamReader(runningProcess.getInputStream()));
 
                 BufferedReader stdError = new BufferedReader(new
                         InputStreamReader(runningProcess.getErrorStream()));
 
+                CompletableFuture.runAsync(() -> {
+                    String s;
+                    while (runningProcess.isAlive()) {
+                        try {
+                            if ((s = stdInput.readLine()) != null) {
+                                playPanel.console().println("(" + new Date() + ") " + s);
+                            }
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+
                 runningProcess.waitFor();
 
+                playPanel.progress("Shutting down process...");
+
                 String s;
-                while ((s = stdInput.readLine()) != null) {
-                    System.out.println(s);
-                }
 
                 StringBuilder o = new StringBuilder();
                 while ((s = stdError.readLine()) != null) {
@@ -340,7 +371,7 @@ public class Editor extends JFrame {
 
                 if (!o.isEmpty())
                     JOptionPane.showMessageDialog(Editor.this, "<html>" + o + "</html>", "Running ERROR", JOptionPane.ERROR_MESSAGE);
-                stop();
+                forceStop();
             } catch (InterruptedException | IOException e) {
                 throw new RuntimeException(e);
             }
@@ -356,14 +387,21 @@ public class Editor extends JFrame {
 
     public void stop() {
         if (runningProcess != null && runningProcess.isAlive()) {
-            running = false;
-            playButton.setEnabled(true);
-            playGlobalButton.setEnabled(true);
-            pauseButton.setEnabled(false);
-            stopButton.setEnabled(false);
-            runningProcess.destroy();
-            runningProcess = null;
+            forceStop();
         }
+
+    }
+
+    public void forceStop() {
+        running = false;
+        playPanel.done();
+        playButton.setEnabled(true);
+        playGlobalButton.setEnabled(true);
+        pauseButton.setEnabled(false);
+        stopButton.setEnabled(false);
+        runningProcess.destroy();
+        runningProcess = null;
+        if(tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).equals("Play Panel") && playPanel.wasInScenePanel()) tabbedPane.setSelectedIndex(0);
     }
 
 }
