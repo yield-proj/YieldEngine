@@ -10,5 +10,6 @@
     <orderEntry type="module" module-name="core" />
     <orderEntry type="module" module-name="assets-decompressing" />
     <orderEntry type="module" module-name="assets-management" />
+    <orderEntry type="module" module-name="utils" />
   </component>
 </module>

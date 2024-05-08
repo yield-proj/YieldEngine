@@ -15,9 +15,9 @@
 
 package com.xebisco.yield.editor.app.editor;
 
-import com.xebisco.yield.editor.app.Global;
 import com.xebisco.yield.uiutils.Srd;
 import com.xebisco.yield.uiutils.props.*;
+import com.xebisco.yield.utils.EditableValuesType;
 import com.xebisco.yield.utils.Pair;
 
 import javax.imageio.ImageIO;
@@ -168,7 +168,7 @@ public class ComponentProp extends Prop {
                     }
                 }
             }
-            EditableValuesType type = EditableValuesType.getType(c, editor);
+            EditableValuesType type = EditableValuesType.getType(c, editor.yieldEngineClassLoader);
             if (type == null) {
                 if (c.isEnum()) {
                     try {

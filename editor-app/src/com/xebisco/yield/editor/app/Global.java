@@ -15,15 +15,9 @@
 
 package com.xebisco.yield.editor.app;
 
-import com.xebisco.yield.editor.app.editor.ScenePanel;
-
 import java.io.File;
-import java.lang.annotation.Annotation;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Properties;
 
 public class Global {
@@ -34,14 +28,13 @@ public class Global {
         List<File> files = new ArrayList<>();
 
         File[] fList = directory.listFiles();
-        if(fList != null)
-            for (File file : fList) {
-                if (file.isFile()) {
-                    files.add(file);
-                } else if (file.isDirectory()) {
-                    files.addAll(listf(file));
-                }
+        if (fList != null) for (File file : fList) {
+            if (file.isFile()) {
+                files.add(file);
+            } else if (file.isDirectory()) {
+                files.addAll(listf(file));
             }
+        }
         return files;
     }
 }

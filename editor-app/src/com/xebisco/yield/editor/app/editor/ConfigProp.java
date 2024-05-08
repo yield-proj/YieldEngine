@@ -61,6 +61,7 @@ public class ConfigProp extends Prop {
         JLabel title = new JLabel(Srd.prettyString(configClass.getSimpleName()));
         title.setFont(title.getFont().deriveFont(Font.BOLD));
         title.setForeground(title.getForeground().brighter());
+        header.add(Box.createHorizontalGlue());
         header.add(title);
         header.add(Box.createHorizontalGlue());
 
@@ -77,41 +78,7 @@ public class ConfigProp extends Prop {
     private void addFields(Class<?> clazz, Object o) {
         //noinspection unchecked
         List<Pair<Pair<String, String>, String[]>> fields = (List<Pair<Pair<String, String>, String[]>>) value;
-        for (Field field : clazz.getDeclaredFields()) {
-            field.setAccessible(true);
-            try {
-                String[] value;
-                if (field.getType().getName().equals("com.xebisco.yield.Vector2D")) {
-                    Object obj = field.get(o);
-                    value = new String[]{String.valueOf(obj.getClass().getMethod("x").invoke(obj)), String.valueOf(obj.getClass().getMethod("y").invoke(obj))};
-                } else if (field.getType().getName().equals("com.xebisco.yield.Color")) {
-                    Object obj = field.get(o);
-                    value = new String[]{String.valueOf(obj.getClass().getMethod("red").invoke(obj)), String.valueOf(obj.getClass().getMethod("green").invoke(obj)), String.valueOf(obj.getClass().getMethod("blue").invoke(obj)), String.valueOf(obj.getClass().getMethod("alpha").invoke(obj))};
-                } else if (editor.yieldEngineClassLoader.loadClass("com.xebisco.yield.FileInput").isAssignableFrom(field.getType())) {
-                    Object obj = null;
-                    if (o != null) obj = field.get(o);
-                    String path = null;
-                    if (obj != null) path = (String) obj.getClass().getMethod("path").invoke(obj);
-                    try {
-                        String[] extensions = (String[]) clazz.getMethod("extensions").invoke(null);
-                        StringBuilder extensionsS = new StringBuilder();
-                        for (String ext : extensions) {
-                            extensionsS.append(ext).append(";");
-                        }
-                        if (extensionsS.toString().endsWith(";"))
-                            extensionsS = new StringBuilder(extensionsS.substring(0, extensionsS.length() - 1));
-                        value = new String[]{path, extensionsS.toString()};
-                    } catch (NoSuchMethodException e) {
-                        value = new String[]{path};
-                    }
-                } else value = new String[]{String.valueOf(field.get(o))};
-                if (field.isAnnotationPresent(editor.VISIBLE_ANNOTATION))
-                    fields.add(new Pair<>(new Pair<>(field.getName(), field.getType().getName()), value));
-            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException |
-                     ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        EditorComponent.extractFields(clazz, o, editor, fields, false);
     }
 
     private void addComp(JPanel componentPanel) {

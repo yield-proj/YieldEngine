@@ -257,10 +257,10 @@ public class Color implements Cloneable {
      * the color object.
      */
     public int argb() {
-        return colorValue(alpha, red, green, blue);
+        return eightBitValue(alpha, red, green, blue);
     }
 
-    private static int colorValue(double alpha, double red, double green, double blue) {
+    private static int eightBitValue(double alpha, double red, double green, double blue) {
         return ((int) (alpha * 255)) << 24 + ((int) (red * 255)) << 16 + ((int) (green * 255)) << 8 + ((int) (blue * 255));
     }
 
@@ -273,7 +273,7 @@ public class Color implements Cloneable {
      * then combining them using bitwise operations.
      */
     public int rgba() {
-        return colorValue(red, green, blue, alpha);
+        return eightBitValue(red, green, blue, alpha);
     }
 
     @Override

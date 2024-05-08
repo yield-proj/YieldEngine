@@ -18,6 +18,7 @@ package com.xebisco.yield.editor.app.editor;
 import com.xebisco.yield.editor.app.Global;
 import com.xebisco.yield.utils.Pair;
 
+import javax.swing.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -54,6 +55,10 @@ public class EditorComponent implements Serializable {
     }
 
     private void addFields(Class<?> clazz, Object o) {
+        extractFields(clazz, o, editor, fields, true);
+    }
+
+    static void extractFields(Class<?> clazz, Object o, Editor editor, List<Pair<Pair<String, String>, String[]>> fields, boolean supportFileInput) {
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
             try {
@@ -65,6 +70,10 @@ public class EditorComponent implements Serializable {
                     Object obj = field.get(o);
                     value = new String[]{String.valueOf(obj.getClass().getMethod("red").invoke(obj)), String.valueOf(obj.getClass().getMethod("green").invoke(obj)), String.valueOf(obj.getClass().getMethod("blue").invoke(obj)), String.valueOf(obj.getClass().getMethod("alpha").invoke(obj))};
                 } else if (editor.yieldEngineClassLoader.loadClass("com.xebisco.yield.FileInput").isAssignableFrom(field.getType())) {
+                    if(!supportFileInput) {
+                        JOptionPane.showMessageDialog(null, "It doesn't support fileinput", "Error", JOptionPane.ERROR_MESSAGE);
+                        continue;
+                    }
                     Object obj = null;
                     if (o != null) obj = field.get(o);
                     String path = null;
