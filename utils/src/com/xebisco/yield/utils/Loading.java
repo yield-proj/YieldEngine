@@ -20,23 +20,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class Loading {
-    public static void applyPropsToObject(List<Pair<Pair<String, String>, String[]>> fields, Object o) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public static void applyPropsToObject(List<Pair<Pair<String, String>, String[]>> fields, Object o) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
         for (Pair<Pair<String, String>, String[]> field : fields) {
             Field f = o.getClass().getDeclaredField(field.first().first());
             f.setAccessible(true);
-            Object fo = f.get(o);
             if (field.first().second().equals("com.xebisco.yield.Vector2D")) {
-                f.getType().getMethod("set", double.class, double.class).invoke(fo, Double.parseDouble(field.second()[0]), Double.parseDouble(field.second()[1]));
+                f.set(o, f.getType().getConstructor(double.class, double.class).newInstance(Double.parseDouble(field.second()[0]), Double.parseDouble(field.second()[1])));
             } else if (field.first().second().equals("com.xebisco.yield.Color")) {
-                f.getType().getMethod("setRed", double.class).invoke(o, Double.parseDouble(field.second()[0]));
-                f.getType().getMethod("setGreen", double.class).invoke(o, Double.parseDouble(field.second()[1]));
-                f.getType().getMethod("setBlue", double.class).invoke(o, Double.parseDouble(field.second()[2]));
-                f.getType().getMethod("setAlpha", double.class).invoke(o, Double.parseDouble(field.second()[3]));
+                f.set(o, f.getType().getConstructor(double.class, double.class, double.class, double.class).newInstance(Double.parseDouble(field.second()[0]), Double.parseDouble(field.second()[1]), Double.parseDouble(field.second()[2]), Double.parseDouble(field.second()[3])));
             } else {
                 EditableValuesType type = EditableValuesType.getPrimitiveType(f.getType());
                 if (type == null) {
                     if (f.isEnumConstant()) {
-                        f.set(o, f.getType().getMethod("valueOf", String.class).invoke(o, field.second()[0]));
+                        f.set(o, f.getType().getMethod("valueOf", String.class).invoke(null, field.second()[0]));
                     }
                     continue;
                 }
