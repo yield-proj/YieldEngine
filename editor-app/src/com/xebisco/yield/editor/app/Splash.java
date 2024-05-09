@@ -23,19 +23,28 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class Splash extends JFrame implements AutoCloseable {
-    private final Image splashImage;
+    private static final Image splashImage;
 
-    public Splash() throws IOException {
+    static {
+        try {
+            splashImage = ImageIO.read(Objects.requireNonNull(Splash.class.getResource("/logo/splash.png"))).getScaledInstance(500, -1, Image.SCALE_SMOOTH);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Splash(boolean withoutProgressBar) {
         setResizable(false);
         setUndecorated(true);
         setBackground(new Color(Integer.parseInt("282A3A", 16)));
-        splashImage = ImageIO.read(Objects.requireNonNull(Splash.class.getResource("/logo/splash.png"))).getScaledInstance(500, -1, Image.SCALE_SMOOTH);
         SplashPanel splashPanel;
         add(splashPanel = new SplashPanel());
 
-        JProgressBar progressBar = new JProgressBar();
-        progressBar.setIndeterminate(true);
-        add(progressBar, BorderLayout.SOUTH);
+        if (!withoutProgressBar) {
+            JProgressBar progressBar = new JProgressBar();
+            progressBar.setIndeterminate(true);
+            add(progressBar, BorderLayout.SOUTH);
+        }
 
         pack();
         setLocationRelativeTo(null);
@@ -45,7 +54,7 @@ public class Splash extends JFrame implements AutoCloseable {
         requestFocus();
     }
 
-    class SplashPanel extends JPanel {
+    static class SplashPanel extends JPanel {
 
         public SplashPanel() {
             setPreferredSize(new Dimension(500, 300));

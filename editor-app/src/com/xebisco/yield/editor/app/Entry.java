@@ -33,7 +33,8 @@ public class Entry {
 
         //FlatDarkLaf.setup();
         IntelliJTheme.setup(Entry.class.getResourceAsStream("/octagon.theme.json"));
-        Splash splash = new Splash();
+
+        Splash splash = new Splash(false);
 
         if (SystemInfo.isLinux) {
             JFrame.setDefaultLookAndFeelDecorated(true);
