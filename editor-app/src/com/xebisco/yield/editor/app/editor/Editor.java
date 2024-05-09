@@ -212,7 +212,7 @@ public class Editor extends JFrame {
 
         JMenu buildMenu = new JMenu("Build");
 
-        /*buildMenu.add(new AbstractAction("Clear Build") {
+        buildMenu.add(new AbstractAction("Clear Build") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 project.clearBuild();
@@ -222,30 +222,28 @@ public class Editor extends JFrame {
         buildMenu.add(new AbstractAction("Create Configuration File") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String out = project.createConfigFile();
-                if (out != null) {
-                    JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Config File Error", JOptionPane.ERROR_MESSAGE);
-                }
+                checkError(project.createConfigFile(configPanel.values(), "config.ser", "Build"), "Create Config File");
             }
         });
 
         buildMenu.add(new AbstractAction("Compile Scripts") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String out = project.compileScripts();
-                if (out != null) {
-                    JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Compile Error", JOptionPane.ERROR_MESSAGE);
-                }
+                checkError(project.compileScripts(), "Compile");
+            }
+        });
+
+        buildMenu.add(new AbstractAction("Pack Assets") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                checkError(project.packAssets("Build/data"), "Assets Packing");
             }
         });
 
         buildMenu.add(new AbstractAction("Create Manifest") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String out = project.createManifest();
-                if (out != null) {
-                    JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Compile Error", JOptionPane.ERROR_MESSAGE);
-                }
+                checkError(project.createManifest(), "Manifest");
             }
         });
 
@@ -258,35 +256,12 @@ public class Editor extends JFrame {
             }
         });
 
-        buildMenu.add(new AbstractAction("Pack Assets") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String out = project.packAssets("Output/data");
-                if (out != null) {
-                    JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Pack Assets Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        buildMenu.add(new AbstractAction("Copy Libraries") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String out = project.copyLibraries();
-                if (out != null) {
-                    JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Copy Libraries Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
         buildMenu.add(new AbstractAction("Create output JAR") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String out = project.buildToJar();
-                if (out != null) {
-                    JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Build JAR Error", JOptionPane.ERROR_MESSAGE);
-                }
+                checkError(project.buildToJar(), "Output JAR");
             }
-        });*/
+        });
 
         menuBar.add(buildMenu);
 
@@ -398,18 +373,24 @@ public class Editor extends JFrame {
             playPanel.progress("Clearing Build...");
             project.clearBuild();
             playPanel.progress("Creating Configuration File...");
-            if (checkError(project.createConfigFile(configPanel.values(), "config", "Build"), "Create Config File")) {
+            if (checkError(project.createConfigFile(configPanel.values(), "config.ser", "Build"), "Create Config File")) {
                 forceStop();
                 return;
             }
 
             playPanel.progress("Compiling Scripts...");
-            if (checkError(project.compileScripts(), "Compilation")) {
+            if (checkError(project.compileScripts(), "Compile")) {
                 forceStop();
                 return;
             }
             playPanel.progress("Packing Assets...");
             if (checkError(project.packAssets("Build/data"), "Assets Packing")) {
+                forceStop();
+                return;
+            }
+
+            playPanel.progress("Creating Manifest...");
+            if (checkError(project.createManifest(), "Manifest")) {
                 forceStop();
                 return;
             }
