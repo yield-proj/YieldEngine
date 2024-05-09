@@ -15,5 +15,7 @@
 
 package com.xebisco.yield.utils;
 
-public record Pair<F, S>(F first, S second) {
+import java.io.Serializable;
+
+public record Pair<F, S>(F first, S second) implements Serializable {
 }

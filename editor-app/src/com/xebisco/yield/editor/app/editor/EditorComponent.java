@@ -15,6 +15,7 @@
 
 package com.xebisco.yield.editor.app.editor;
 
+import com.xebisco.yield.editor.annotations.Visible;
 import com.xebisco.yield.editor.app.Global;
 import com.xebisco.yield.utils.Pair;
 
@@ -91,7 +92,7 @@ public class EditorComponent implements Serializable {
                         value = new String[]{path};
                     }
                 } else value = new String[]{String.valueOf(field.get(o))};
-                if (field.isAnnotationPresent(editor.VISIBLE_ANNOTATION))
+                if (field.isAnnotationPresent(editor.VISIBLE_ANNOTATION) || field.isAnnotationPresent(Visible.class))
                     fields.add(new Pair<>(new Pair<>(field.getName(), field.getType().getName()), value));
             } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException |
                      ClassNotFoundException e) {

@@ -33,6 +33,7 @@ public class Entry {
 
         //FlatDarkLaf.setup();
         IntelliJTheme.setup(Entry.class.getResourceAsStream("/octagon.theme.json"));
+        //IntelliJTheme.setup(Entry.class.getResourceAsStream("/Xcode-Dark.theme.json"));
 
         Splash splash = new Splash(false);
 

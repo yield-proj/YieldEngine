@@ -40,22 +40,24 @@ public class ConfigProp extends Prop {
     private final transient Editor editor;
     private final Class<?> configClass;
 
-    public ConfigProp(Class<?> configClass, Editor editor) {
-        super(configClass.getSimpleName(), new ArrayList<Pair<Pair<String, String>, String[]>>());
-        this.configClass = configClass;
+    public ConfigProp(Object configInstance, Editor editor) {
+        super(configInstance.getClass().getSimpleName(), new ArrayList<Pair<Pair<String, String>, String[]>>());
+        this.configClass = configInstance.getClass();
         this.editor = editor;
-        try {
-            addFields(configClass, configClass.getConstructor().newInstance());
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+        addFields(configClass, configInstance);
     }
+
+    public ConfigProp(Class<?> configClass, Editor editor) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        this(configClass.getConstructor().newInstance(), editor);
+    }
+
+    private final JPanel componentPanel = new JPanel(new BorderLayout());
 
     @Override
     public JComponent render() {
         JPanel panel = new JPanel(new BorderLayout());
         JToolBar header = new JToolBar();
-        header.setBackground(header.getBackground().brighter());
+        header.setBackground(header.getBackground().brighter().brighter());
         header.setRollover(true);
         header.setFloatable(false);
         JLabel title = new JLabel(Srd.prettyString(configClass.getSimpleName()));
@@ -65,10 +67,8 @@ public class ConfigProp extends Prop {
         header.add(title);
         header.add(Box.createHorizontalGlue());
 
-        JPanel componentPanel = new JPanel();
-        componentPanel.setLayout(new BorderLayout());
         componentPanel.setOpaque(false);
-        addComp(componentPanel);
+        addComp();
         panel.add(componentPanel);
 
         panel.add(header, BorderLayout.NORTH);
@@ -81,7 +81,7 @@ public class ConfigProp extends Prop {
         EditorComponent.extractFields(clazz, o, editor, fields, false);
     }
 
-    private void addComp(JPanel componentPanel) {
+    public void addComp() {
         componentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         //noinspection unchecked
         props = ComponentProp.getProps(((List<Pair<Pair<String, String>, String[]>>) value), editor);
@@ -100,7 +100,7 @@ public class ConfigProp extends Prop {
                 v = new String[]{String.valueOf(((Point2D.Float) prop.value()).x), String.valueOf(((Point2D.Float) prop.value()).y).toUpperCase()};
             } else if (prop.getClass().equals(ColorProp.class)) {
                 v = new String[]{String.valueOf(((Color) prop.value()).getRed() / 255.), String.valueOf(((Color) prop.value()).getGreen() / 255.), String.valueOf(((Color) prop.value()).getBlue() / 255.), String.valueOf(((Color) prop.value()).getAlpha() / 255.)};
-            } else if(prop instanceof DoubleTextFieldProp || prop instanceof FloatTextFieldProp || prop instanceof IntTextFieldProp || prop instanceof LongTextFieldProp) {
+            } else if (prop instanceof DoubleTextFieldProp || prop instanceof FloatTextFieldProp || prop instanceof IntTextFieldProp || prop instanceof LongTextFieldProp) {
                 v = new String[]{((String) prop.value()).isEmpty() ? "0" : ((String) prop.value())};
             } else {
                 v = new String[]{String.valueOf(prop.value())};

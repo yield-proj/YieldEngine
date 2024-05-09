@@ -1,7 +1,7 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="physics:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/physics_jar</output-path>
-    <root id="archive" name="physics.jar">
+    <root id="archive" name="yield-physics.jar">
       <element id="module-output" name="physics" />
       <element id="module-output" name="core" />
       <element id="extracted-dir" path="$PROJECT_DIR$/physics/libs/jbox2d-library-2.2.1.1.jar" path-in-jar="/" />

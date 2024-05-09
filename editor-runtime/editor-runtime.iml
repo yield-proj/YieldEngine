@@ -11,5 +11,6 @@
     <orderEntry type="module" module-name="assets-decompressing" />
     <orderEntry type="module" module-name="assets-management" />
     <orderEntry type="module" module-name="utils" />
+    <orderEntry type="module" module-name="editor-annotations" />
   </component>
 </module>

@@ -16,6 +16,8 @@
 package com.xebisco.yield.editor.app;
 
 import com.xebisco.yield.assets.compressing.AssetsCompressing;
+import com.xebisco.yield.editor.annotations.Config;
+import com.xebisco.yield.editor.annotations.Visible;
 import com.xebisco.yield.editor.app.editor.Editor;
 
 import javax.tools.*;
@@ -27,13 +29,17 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
+@Config
 public class Project implements Serializable {
     @Serial
     private static final long serialVersionUID = 4908578292511938243L;
-    private final HashMap<String, HashMap<String, Serializable>> propsValues = new HashMap<>();
     private Date lastModified = new Date();
     private final String ID = UUID.randomUUID().toString();
     private transient File path;
+    @Visible
+    private String name, description = "", version = "1.0";
+
+    private HashMap<String, HashMap<String, Serializable>> projectSettings;
 
     private Project() {
     }
@@ -72,19 +78,6 @@ public class Project implements Serializable {
             else return true;
         }
 
-        for (String s : Editor.STD_PROJECT_VALUES.keySet()) {
-            if (!propsValues.containsKey(s)) {
-                if (ignoreCheck) propsValues.put(s, Editor.STD_PROJECT_VALUES.get(s));
-                else return true;
-            } else {
-                for (String s1 : Editor.STD_PROJECT_VALUES.get(s).keySet()) {
-                    if (!propsValues.get(s).containsKey(s1)) {
-                        if (ignoreCheck) propsValues.get(s).put(s1, Editor.STD_PROJECT_VALUES.get(s).get(s1));
-                        else return true;
-                    }
-                }
-            }
-        }
         return false;
     }
 
@@ -123,6 +116,8 @@ public class Project implements Serializable {
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
 
         List<File> files = Global.listf(new File(path, "Scripts"));
+
+        if(files.isEmpty()) return null;
 
         Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(files);
 
@@ -298,6 +293,19 @@ public class Project implements Serializable {
         return options;
     }
 
+    public String createConfigFile(HashMap<String, HashMap<String, Serializable>> contents, String fileName, String folder) {
+        if (new File(path, folder).exists()) deleteDir(new File(path, folder));
+        new File(path, folder).mkdir();
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File(path, folder + "/" + fileName)))) {
+            oos.writeObject(contents);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
+        return null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -311,12 +319,39 @@ public class Project implements Serializable {
         return Objects.hash(ID);
     }
 
+    public HashMap<String, HashMap<String, Serializable>> projectSettings() {
+        return projectSettings;
+    }
+
+    public Project setProjectSettings(HashMap<String, HashMap<String, Serializable>> projectSettings) {
+        this.projectSettings = projectSettings;
+        return this;
+    }
+
     public String name() {
-        return (String) propsValues.get("p_t_general").get("p_t_general_projectName");
+        return name;
     }
 
     public Project setName(String name) {
-        propsValues.get("p_t_general").replace("p_t_general_projectName", name);
+        this.name = name;
+        return this;
+    }
+
+    public String description() {
+        return description;
+    }
+
+    public Project setDescription(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public String version() {
+        return version;
+    }
+
+    public Project setVersion(String version) {
+        this.version = version;
         return this;
     }
 

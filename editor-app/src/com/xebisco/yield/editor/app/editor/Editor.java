@@ -15,12 +15,11 @@
 
 package com.xebisco.yield.editor.app.editor;
 
+import com.xebisco.yield.editor.app.ConfigPanel;
 import com.xebisco.yield.editor.app.Global;
 import com.xebisco.yield.editor.app.Project;
 import com.xebisco.yield.editor.app.TitleLabel;
 import com.xebisco.yield.editor.app.run.PlayPanel;
-import com.xebisco.yield.uiutils.props.Prop;
-import com.xebisco.yield.uiutils.props.PropPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -29,31 +28,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public class Editor extends JFrame {
-    public final static HashMap<String, HashMap<String, Serializable>> STD_PROJECT_VALUES = new HashMap<>();
     private boolean running;
     public final URL yieldEngineJar;
     public final ClassLoader yieldEngineClassLoader;
 
     public final Class<? extends Annotation> VISIBLE_ANNOTATION, HIDE_ANNOTATION, SIZE_ANNOTATION;
-
-    static {
-        HashMap<String, Serializable> general = new HashMap<>();
-        general.put("p_t_general_projectName", "");
-        general.put("p_t_general_projectIcon", new File("icon.png"));
-        STD_PROJECT_VALUES.put("p_t_general", general);
-    }
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
 
@@ -64,6 +58,8 @@ public class Editor extends JFrame {
 
 
     private final JButton playButton, playGlobalButton, pauseButton, stopButton;
+
+    private final ConfigPanel configPanel;
 
     public Editor(Project project) {
         this.project = project;
@@ -118,25 +114,24 @@ public class Editor extends JFrame {
         setMinimumSize(new Dimension(1280, 720));
 
 
+        try {
+            configPanel = new ConfigPanel(new String[]{"Application", "Window"}, new ConfigProp[][]{new ConfigProp[]{new ConfigProp(project, Editor.this)}, new ConfigProp[]{new ConfigProp(yieldEngineClassLoader.loadClass("com.xebisco.yield.PlatformInit"), Editor.this)}});
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException |
+                 ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        if(project.projectSettings() == null) {
+            project.setProjectSettings(configPanel.values());
+        } else {
+            configPanel.insert(project.projectSettings());
+        }
+
+        configPanel.refresh();
+
+
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
-
-        fileMenu.add(new AbstractAction("Config Test") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JDialog dialog = new JDialog();
-                dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                try {
-                    dialog.add(new PropPanel(new Prop[]{
-                            new ConfigProp(yieldEngineClassLoader.loadClass("com.xebisco.yield.PlatformInit"), Editor.this)
-                    }));
-                } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException(ex);
-                }
-                dialog.setSize(100, 100);
-                dialog.setVisible(true);
-            }
-        });
 
         fileMenu.addSeparator();
 
@@ -162,12 +157,75 @@ public class Editor extends JFrame {
             }
         });
 
+        JMenu projectMenu = new JMenu("Project");
+
+        projectMenu.add(new AbstractAction("Project Settings...") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialog dialog = new JDialog(Editor.this, true);
+                dialog.setTitle("Project Settings");
+                dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                ConfigPanel cfg = new ConfigPanel(configPanel.pages(), configPanel.configs());
+                dialog.add(cfg);
+
+                JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+                JButton applyButton = new JButton(new AbstractAction("OK") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        cfg.saveValues();
+                        configPanel.insert(cfg.values());
+                        project.setProjectSettings(configPanel.values());
+                        dialog.dispose();
+                    }
+                });
+                bottom.add(applyButton);
+                dialog.getRootPane().setDefaultButton(applyButton);
+
+                bottom.add(new JButton(new AbstractAction("Close") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        dialog.dispose();
+                    }
+                }));
+
+                bottom.add(new JButton(new AbstractAction("Apply") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        cfg.saveValues();
+                        configPanel.insert(cfg.values());
+                        project.setProjectSettings(configPanel.values());
+                    }
+                }));
+
+                dialog.add(bottom, BorderLayout.SOUTH);
+
+
+                dialog.setSize(600, 400);
+
+                dialog.setLocationRelativeTo(Editor.this);
+                dialog.setVisible(true);
+            }
+        });
+
+        menuBar.add(projectMenu);
+
         JMenu buildMenu = new JMenu("Build");
 
-        buildMenu.add(new AbstractAction("Clear Build") {
+        /*buildMenu.add(new AbstractAction("Clear Build") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 project.clearBuild();
+            }
+        });
+
+        buildMenu.add(new AbstractAction("Create Configuration File") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String out = project.createConfigFile();
+                if (out != null) {
+                    JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Config File Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
@@ -228,7 +286,7 @@ public class Editor extends JFrame {
                     JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", "Build JAR Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        });
+        });*/
 
         menuBar.add(buildMenu);
 
@@ -339,10 +397,22 @@ public class Editor extends JFrame {
             playPanel.console().clear();
             playPanel.progress("Clearing Build...");
             project.clearBuild();
+            playPanel.progress("Creating Configuration File...");
+            if (checkError(project.createConfigFile(configPanel.values(), "config", "Build"), "Create Config File")) {
+                forceStop();
+                return;
+            }
+
             playPanel.progress("Compiling Scripts...");
-            project.compileScripts();
+            if (checkError(project.compileScripts(), "Compilation")) {
+                forceStop();
+                return;
+            }
             playPanel.progress("Packing Assets...");
-            project.packAssets("Build/data");
+            if (checkError(project.packAssets("Build/data"), "Assets Packing")) {
+                forceStop();
+                return;
+            }
 
             playPanel.progress("Adding Libraries...");
 
@@ -361,11 +431,9 @@ public class Editor extends JFrame {
                 playPanel.progress("Running Application...");
                 runningProcess = processBuilder.start();
 
-                BufferedReader stdInput = new BufferedReader(new
-                        InputStreamReader(runningProcess.getInputStream()));
+                BufferedReader stdInput = new BufferedReader(new InputStreamReader(runningProcess.getInputStream()));
 
-                BufferedReader stdError = new BufferedReader(new
-                        InputStreamReader(runningProcess.getErrorStream()));
+                BufferedReader stdError = new BufferedReader(new InputStreamReader(runningProcess.getErrorStream()));
 
                 CompletableFuture.runAsync(() -> {
                     String s;
@@ -399,6 +467,14 @@ public class Editor extends JFrame {
             }
         });
 
+    }
+
+    private boolean checkError(String out, String error) {
+        if (out != null) {
+            JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", error + " Error", JOptionPane.ERROR_MESSAGE);
+            return true;
+        }
+        return false;
     }
 
     public void pause() {
