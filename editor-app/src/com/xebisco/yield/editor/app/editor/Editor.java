@@ -484,6 +484,9 @@ public class Editor extends JFrame {
             tabbedPane.setSelectedIndex(0);
     }
 
+    public Project project() {
+        return project;
+    }
 }
 
 

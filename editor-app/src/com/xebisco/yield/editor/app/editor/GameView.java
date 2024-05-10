@@ -134,7 +134,7 @@ class GameView extends JPanel {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             if (scene != null) {
-                g.setColor(scene.backgroundColor());
+                g.setColor(new Color(scene.backgroundColor()));
                 g.fillRect(0, 0, getWidth(), getHeight());
                 Graphics2D g2 = (Graphics2D) g;
 
@@ -163,7 +163,7 @@ class GameView extends JPanel {
 
                 g2.setStroke(new BasicStroke((float) (1 / zoom)));
 
-                g2.setColor(new Color(255 - scene.backgroundColor().getRed(), 255 - scene.backgroundColor().getGreen(), 255 - scene.backgroundColor().getBlue(), (int) ((gridOpacity / 100f) * 255.)).brighter());
+                g2.setColor(getContrastColor(new Color(scene.backgroundColor())).brighter());
 
                 if (zoom > .5) {
                     int startX = (int) viewPositionX;
@@ -215,6 +215,11 @@ class GameView extends JPanel {
                 ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
                 g.drawString(noSceneLoaded, getWidth() / 2 - s / 2, getHeight() / 2 + g.getFont().getSize() / 2);
             }
+        }
+
+        public Color getContrastColor(Color color) {
+            double y = (299 * color.getRed() + 587 * color.getGreen() + 114 * color.getBlue()) / 1000.;
+            return y >= 128 ? new Color(0, 0, 0, (int) ((gridOpacity / 100f) * 255.)) : new Color(255, 255, 255, (int) ((gridOpacity / 100f) * 255.));
         }
 
         private Point closerGridLocationTo(Point2D.Double point) {

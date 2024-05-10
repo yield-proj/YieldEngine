@@ -1,13 +1,13 @@
 package com.xebisco.yield.uiutils.props;
 
 import com.formdev.flatlaf.icons.FlatOptionPaneErrorIcon;
-import com.xebisco.yield.uiutils.Srd;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -16,7 +16,7 @@ import java.io.IOException;
 public class ImageFileProp extends PathProp {
     private final JLabel imageLabel = new JLabel();
 
-    public ImageFileProp(String name, String value, boolean prettyString) {
+    public ImageFileProp(String name, String value, FileSystemView fileSystemView, boolean prettyString) {
         super(name, value, new FileFilter() {
             @Override
             public boolean accept(File f) {
@@ -27,7 +27,7 @@ public class ImageFileProp extends PathProp {
             public String getDescription() {
                 return "Image Files";
             }
-        }, prettyString);
+        }, fileSystemView, prettyString);
         field().getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {

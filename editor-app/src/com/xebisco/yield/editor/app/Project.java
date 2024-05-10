@@ -306,6 +306,10 @@ public class Project implements Serializable {
         return null;
     }
 
+    public File assetsDirectory() {
+        return new File(path, "Assets");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

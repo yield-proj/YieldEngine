@@ -16,6 +16,7 @@
 package com.xebisco.yield.editor.app.editor;
 
 import com.xebisco.yield.uiutils.Srd;
+import com.xebisco.yield.uiutils.file.DirectoryRestrictedFileSystemView;
 import com.xebisco.yield.uiutils.props.*;
 import com.xebisco.yield.utils.EditableValuesType;
 import com.xebisco.yield.utils.Pair;
@@ -226,10 +227,10 @@ public class ComponentProp extends Prop {
                             return "All Files";
                         }
                     };
-                    props.add(new PathProp(compValue.first().first(), compValue.second()[0], filter, true));
+                    props.add(new PathProp(compValue.first().first(), compValue.second()[0], filter, new DirectoryRestrictedFileSystemView(editor.project().assetsDirectory()), true));
                 }
-                case TEXTURE -> props.add(new ImageFileProp(compValue.first().first(), compValue.second()[0], true));
-                case FONT -> props.add(new FontFileProp(compValue.first().first(), compValue.second()[0], true));
+                case TEXTURE -> props.add(new ImageFileProp(compValue.first().first(), compValue.second()[0], new DirectoryRestrictedFileSystemView(editor.project().assetsDirectory()), true));
+                case FONT -> props.add(new FontFileProp(compValue.first().first(), compValue.second()[0], new DirectoryRestrictedFileSystemView(editor.project().assetsDirectory()), true));
                 case ARRAY -> {
                     //props.add(new ArrayProp<>(compValue.first().first(), getProps(compValue.arrayValues()).toArray(new Prop[0])));nnot invoke "java.awt.Color.getRed()" because "prop.value" is null
                 }

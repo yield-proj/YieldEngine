@@ -25,7 +25,7 @@ public class EditorScene implements Serializable {
     @Serial
     private static final long serialVersionUID = -642348471217520688L;
     private String name = "Empty Scene";
-    private Color backgroundColor = new Color(45, 46, 49);
+    private int backgroundColor = new Color(45, 46, 49).getRGB();
 
     private List<EditorEntity> entities = new ArrayList<>();
 
@@ -38,11 +38,11 @@ public class EditorScene implements Serializable {
         return this;
     }
 
-    public Color backgroundColor() {
+    public int backgroundColor() {
         return backgroundColor;
     }
 
-    public EditorScene setBackgroundColor(Color backgroundColor) {
+    public EditorScene setBackgroundColor(int backgroundColor) {
         this.backgroundColor = backgroundColor;
         return this;
     }

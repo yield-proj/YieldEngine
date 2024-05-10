@@ -4,16 +4,24 @@ import com.xebisco.yield.uiutils.Srd;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.nio.file.FileSystem;
 
 public class PathProp extends TextFieldProp {
     private final FileFilter filter;
+    private FileSystemView fileSystemView;
 
-    public PathProp(String name, String value, FileFilter filter, boolean prettyString) {
+    public PathProp(String name, String value, FileFilter filter, FileSystemView fileSystemView, boolean prettyString) {
         super(name, value, prettyString);
         this.filter = filter;
+        this.fileSystemView = fileSystemView;
+    }
+
+    public PathProp(String name, String value, FileFilter filter, boolean prettyString) {
+        this(name, value, filter, FileSystemView.getFileSystemView(), prettyString);
     }
 
     @Override
@@ -26,16 +34,27 @@ public class PathProp extends TextFieldProp {
         b.add(new JButton(new AbstractAction("Load") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                File start;
-                if (value == null) start = null;
-                else start = new File((String) value);
-                JFileChooser fileChooser;
-                if (start != null && start.exists() && start.isDirectory()) fileChooser = new JFileChooser(start);
-                else fileChooser = new JFileChooser(new File(""));
-                fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                fileChooser.setFileFilter(filter);
+                JFileChooser fileChooser = new JFileChooser(fileSystemView.getHomeDirectory(), fileSystemView);
+                fileChooser.setMultiSelectionEnabled(false);
+                for (FileFilter f : fileChooser.getChoosableFileFilters()) {
+                    fileChooser.removeChoosableFileFilter(f);
+                }
+                fileChooser.setFileFilter(new FileFilter() {
+                    @Override
+                    public boolean accept(File f) {
+                        return filter.accept(f) || f.isDirectory();
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return filter.getDescription();
+                    }
+                });
                 if (fileChooser.showOpenDialog(o) == JFileChooser.APPROVE_OPTION) {
-                    setValue(fileChooser.getSelectedFile().getAbsolutePath());
+                    if (!fileChooser.getSelectedFile().exists() || !filter.accept(fileChooser.getSelectedFile())) {
+                        JOptionPane.showMessageDialog(null, "File is not valid", "File Load Error", JOptionPane.ERROR_MESSAGE);
+                    } else
+                        setValue(fileChooser.getSelectedFile().getAbsolutePath());
                 }
             }
         }), gbc);
