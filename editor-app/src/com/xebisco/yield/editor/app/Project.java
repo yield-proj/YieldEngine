@@ -18,7 +18,7 @@ package com.xebisco.yield.editor.app;
 import com.xebisco.yield.assets.compressing.AssetsCompressing;
 import com.xebisco.yield.editor.annotations.Config;
 import com.xebisco.yield.editor.annotations.Visible;
-import com.xebisco.yield.editor.app.editor.Editor;
+import com.xebisco.yield.editor.app.editor.EditorScene;
 
 import javax.tools.*;
 import java.io.*;
@@ -38,6 +38,7 @@ public class Project implements Serializable {
     private transient File path;
     @Visible
     private String name, description = "", version = "1.0";
+    private final List<EditorScene> scenes = new ArrayList<>();
 
     private HashMap<String, HashMap<String, Serializable>> projectSettings;
 
@@ -95,6 +96,7 @@ public class Project implements Serializable {
         dir.mkdir();
 
         Project p = new Project();
+        p.setPath(dir);
         p.updatePropsToLatest(true);
         p.setName(name);
 
@@ -316,6 +318,10 @@ public class Project implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
         return Objects.equals(ID, project.ID);
+    }
+
+    public List<EditorScene> scenes() {
+        return scenes;
     }
 
     @Override

@@ -30,6 +30,7 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -170,6 +171,9 @@ public class ComponentProp extends Prop {
                 }
             }
             EditableValuesType type = EditableValuesType.getType(c, editor.yieldEngineClassLoader);
+            for(Annotation a : c.getAnnotations())
+                if(a.annotationType().getName().equals("com.xebisco.yield.editor.annotations.IntColor"))
+                    type = EditableValuesType.INT_COLOR;
             if (type == null) {
                 if (c.isEnum()) {
                     try {
@@ -195,6 +199,9 @@ public class ComponentProp extends Prop {
                 }
                 case COLOR -> {
                     props.add(new ColorProp(compValue.first().first(), new Color((float) Double.parseDouble(compValue.second()[0]), (float) Double.parseDouble(compValue.second()[1]), (float) Double.parseDouble(compValue.second()[2]), (float) Double.parseDouble(compValue.second()[3])), true));
+                }
+                case INT_COLOR -> {
+                    props.add(new ColorProp(compValue.first().first(), new Color(Integer.parseInt(compValue.second()[0])), true));
                 }
                 case BOOLEAN -> {
                     props.add(new BooleanProp(compValue.first().first(), Boolean.parseBoolean(compValue.second()[0]), true));

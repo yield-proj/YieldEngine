@@ -274,7 +274,7 @@ public class ProjectEditor extends JFrame {
                         }
                         try {
                             PROJECT_FILES.add(projectFile);
-                            PROJECT_OBJECTS.add(Project.createProject(s, projectFile).setPath(projectFile));
+                            PROJECT_OBJECTS.add(Project.createProject(s, projectFile));
                             sorter.allRowsChanged();
                             table.updateUI();
                             newProjectDialog.dispose();

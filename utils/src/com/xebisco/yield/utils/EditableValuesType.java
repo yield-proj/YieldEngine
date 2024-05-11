@@ -15,8 +15,10 @@
 
 package com.xebisco.yield.utils;
 
+import java.lang.annotation.Annotation;
+
 public enum EditableValuesType {
-    STRING, INT, FLOAT, LONG, DOUBLE, BOOLEAN, POSITION, ARRAY, COLOR, FILE, TEXTURE, FONT;
+    STRING, INT, FLOAT, LONG, DOUBLE, BOOLEAN, POSITION, ARRAY, COLOR, FILE, TEXTURE, FONT, INT_COLOR;
 
     public static EditableValuesType getType(Class<?> c, ClassLoader yieldEngineClassLoader) {
         if (c.equals(String.class)) return STRING;

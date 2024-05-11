@@ -15,16 +15,26 @@
 
 package com.xebisco.yield.editor.app.editor;
 
+import com.xebisco.yield.editor.annotations.Config;
+import com.xebisco.yield.editor.annotations.IntColor;
+import com.xebisco.yield.editor.annotations.Visible;
+
 import java.awt.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Config
 public class EditorScene implements Serializable {
     @Serial
     private static final long serialVersionUID = -642348471217520688L;
+    @Visible
     private String name = "Empty Scene";
+    @Visible
+    private boolean addToBuild = true;
+    @Visible
+    @IntColor
     private int backgroundColor = new Color(45, 46, 49).getRGB();
 
     private List<EditorEntity> entities = new ArrayList<>();
@@ -38,6 +48,11 @@ public class EditorScene implements Serializable {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public int backgroundColor() {
         return backgroundColor;
     }
@@ -46,6 +61,16 @@ public class EditorScene implements Serializable {
         this.backgroundColor = backgroundColor;
         return this;
     }
+
+    public boolean addToBuild() {
+        return addToBuild;
+    }
+
+    public EditorScene setAddToBuild(boolean addToBuild) {
+        this.addToBuild = addToBuild;
+        return this;
+    }
+
 
     public List<EditorEntity> entities() {
         return entities;

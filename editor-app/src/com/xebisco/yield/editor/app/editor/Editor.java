@@ -15,23 +15,23 @@
 
 package com.xebisco.yield.editor.app.editor;
 
-import com.xebisco.yield.editor.app.ConfigPanel;
-import com.xebisco.yield.editor.app.Global;
-import com.xebisco.yield.editor.app.Project;
-import com.xebisco.yield.editor.app.TitleLabel;
+import com.xebisco.yield.editor.app.*;
 import com.xebisco.yield.editor.app.run.PlayPanel;
+import com.xebisco.yield.uiutils.props.Prop;
+import com.xebisco.yield.uiutils.props.PropPanel;
+import com.xebisco.yield.uiutils.props.TextFieldProp;
+import com.xebisco.yield.utils.Loading;
+import com.xebisco.yield.utils.Pair;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -39,15 +39,17 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Editor extends JFrame {
     private boolean running;
     public final URL yieldEngineJar;
     public final ClassLoader yieldEngineClassLoader;
 
-    public final Class<? extends Annotation> VISIBLE_ANNOTATION, HIDE_ANNOTATION, SIZE_ANNOTATION;
+    public final Class<? extends Annotation> VISIBLE_ANNOTATION, HIDE_ANNOTATION, SIZE_ANNOTATION, INT_COLOR_ANNOTATION;
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
 
@@ -107,6 +109,8 @@ public class Editor extends JFrame {
             HIDE_ANNOTATION = (Class<? extends Annotation>) yieldEngineClassLoader.loadClass("com.xebisco.yield.editor.annotations.HideComponent");
             //noinspection unchecked
             SIZE_ANNOTATION = (Class<? extends Annotation>) yieldEngineClassLoader.loadClass("com.xebisco.yield.editor.annotations.AffectsEditorEntitySize");
+            //noinspection unchecked
+            INT_COLOR_ANNOTATION = (Class<? extends Annotation>) yieldEngineClassLoader.loadClass("com.xebisco.yield.editor.annotations.IntColor");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -121,7 +125,7 @@ public class Editor extends JFrame {
             throw new RuntimeException(e);
         }
 
-        if(project.projectSettings() == null) {
+        if (project.projectSettings() == null) {
             project.setProjectSettings(configPanel.values());
         } else {
             configPanel.insert(project.projectSettings());
@@ -133,6 +137,146 @@ public class Editor extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
 
+        fileMenu.add(new AbstractAction("New Scene") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final boolean[] err = {false};
+                do {
+                    JDialog newSceneDialog = new JDialog(Editor.this, true);
+                    newSceneDialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                    newSceneDialog.add(new TitleLabel("New Scene", null), BorderLayout.NORTH);
+                    Prop[] props = new Prop[]{
+                            new TextFieldProp("Scene Name", "Empty Scene", false),
+                    };
+                    PropPanel newProjectProps = new PropPanel(props);
+                    newProjectProps.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+                    newSceneDialog.add(newProjectProps);
+                    newSceneDialog.setMinimumSize(new Dimension(450, 300));
+                    newSceneDialog.setLocationRelativeTo(Editor.this);
+
+                    JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+                    JButton finish = new JButton(new AbstractAction("Finish") {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            Map<String, Serializable> values = PropPanel.values(props);
+                            String s = (String) values.get("Scene Name");
+                            if (s.isEmpty()) {
+                                err[0] = false;
+                                JOptionPane.showMessageDialog(Editor.this, "Project Name must not be empty");
+                                return;
+                            }
+                            AtomicBoolean alreadyExists = new AtomicBoolean(false);
+                            project.scenes().forEach(p -> {
+                                if (p.name().equals(s)) {
+                                    alreadyExists.set(true);
+                                }
+                            });
+
+
+                            if (alreadyExists.get()) {
+                                err[0] = false;
+                                JOptionPane.showMessageDialog(Editor.this, "A scene with this name already exists");
+                                return;
+                            }
+
+                            EditorScene scene = new EditorScene().setName(s);
+                            project.scenes().add(scene);
+                            newSceneDialog.dispose();
+
+                            if (JOptionPane.showConfirmDialog(Editor.this, "Open " + s + "?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                                openScene(scene);
+                            }
+                        }
+                    });
+                    newSceneDialog.getRootPane().setDefaultButton(finish);
+                    bottom.add(finish);
+                    bottom.add(new JButton(new AbstractAction("Cancel") {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            err[0] = false;
+                            newSceneDialog.dispose();
+                        }
+                    }));
+                    newSceneDialog.add(bottom, BorderLayout.SOUTH);
+
+                    newSceneDialog.setVisible(true);
+                } while (err[0]);
+            }
+        });
+
+        fileMenu.add(new AbstractAction("Delete Scene") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialog dialog = new JDialog();
+                dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                dialog.setTitle("Delete Scene");
+                JList<EditorScene> scenes = new JList<>(project.scenes().toArray(new EditorScene[0]));
+                scenes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                scenes.setSelectedIndex(0);
+                dialog.add(scenes);
+                JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+                JButton deleteButton = new JButton(new AbstractAction("Delete") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (JOptionPane.showConfirmDialog(Editor.this, "Delete " + scenes.getSelectedValue().name() + "? This action cannot be undone.", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                            if (scenePanel.getComponent(0) instanceof ScenePanel sp && sp.scene() == scenes.getSelectedValue())
+                                closeScene();
+                            project.scenes().remove(scenes.getSelectedValue());
+                        }
+                        dialog.dispose();
+                    }
+                });
+
+                bottom.add(deleteButton);
+
+                dialog.getRootPane().setDefaultButton(deleteButton);
+
+                if (scenes.getModel().getSize() == 0) deleteButton.setEnabled(false);
+
+                dialog.add(bottom, BorderLayout.SOUTH);
+                dialog.setMinimumSize(new Dimension(300, 200));
+                dialog.setLocationRelativeTo(Editor.this);
+                dialog.setVisible(true);
+            }
+        });
+
+        fileMenu.addSeparator();
+
+        fileMenu.add(new AbstractAction("Open Scene") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialog dialog = new JDialog();
+                dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                dialog.setTitle("Open Scene");
+                JList<EditorScene> scenes = new JList<>(project.scenes().toArray(new EditorScene[0]));
+                scenes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                scenes.setSelectedIndex(0);
+                dialog.add(scenes);
+                JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+                JButton openButton = new JButton(new AbstractAction("Open") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        openScene(scenes.getSelectedValue());
+                        dialog.dispose();
+                    }
+                });
+
+                bottom.add(openButton);
+
+                dialog.getRootPane().setDefaultButton(openButton);
+
+                if (scenes.getModel().getSize() == 0) openButton.setEnabled(false);
+
+                dialog.add(bottom, BorderLayout.SOUTH);
+                dialog.setMinimumSize(new Dimension(300, 200));
+                dialog.setLocationRelativeTo(Editor.this);
+                dialog.setVisible(true);
+            }
+        });
+
         fileMenu.addSeparator();
 
         fileMenu.add(new AbstractAction("New Prefab") {
@@ -142,7 +286,7 @@ public class Editor extends JFrame {
             }
         });
         menuBar.add(fileMenu);
-        fileMenu.add(new AbstractAction("Save") {
+        fileMenu.add(new AbstractAction("Save Project") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 project.saveProjectFile();
@@ -150,7 +294,17 @@ public class Editor extends JFrame {
         });
 
         fileMenu.addSeparator();
-        fileMenu.add(new AbstractAction("Close") {
+
+        fileMenu.add(new AbstractAction("Close Scene") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                closeScene();
+            }
+        });
+
+        fileMenu.addSeparator();
+
+        fileMenu.add(new AbstractAction("Close Editor") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispatchEvent(new WindowEvent(Editor.this, WindowEvent.WINDOW_CLOSING));
@@ -205,6 +359,83 @@ public class Editor extends JFrame {
 
                 dialog.setLocationRelativeTo(Editor.this);
                 dialog.setVisible(true);
+            }
+        });
+
+        projectMenu.add(new AbstractAction("Manage Scenes...") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialog dialog = new JDialog(Editor.this, true);
+                dialog.setTitle("Manage Scenes");
+
+                JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+                JPanel panel = new JPanel(new BorderLayout());
+                splitPane.setBottomComponent(panel);
+
+                Timer save = new Timer(500, null);
+                save.start();
+
+                JList<EditorScene> scenes = new JList<>(project.scenes().toArray(new EditorScene[0]));
+                scenes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                scenes.addListSelectionListener(e1 -> {
+                    panel.removeAll();
+                    panel.setBorder(BorderFactory.createTitledBorder(scenes.getSelectedValue().name()));
+                    ConfigPanel confp;
+                    panel.add(confp = new ConfigPanel(new String[]{"Properties"}, new ConfigProp[][]{new ConfigProp[]{new ConfigProp(scenes.getSelectedValue(), Editor.this)}}));
+                    panel.updateUI();
+                    for (ActionListener al : save.getActionListeners())
+                        save.removeActionListener(al);
+
+                    EditorScene scene = scenes.getSelectedValue();
+
+                    save.addActionListener(e2 -> {
+                        confp.saveValues();
+                        try {
+                            //noinspection unchecked
+                            Loading.applyPropsToObject((List<Pair<Pair<String, String>, String[]>>) confp.values().get("Properties").get("EditorScene"), scene);
+                        } catch (NoSuchFieldException | InstantiationException | IllegalAccessException |
+                                 NoSuchMethodException | InvocationTargetException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        if (scene.name().isEmpty()) {
+                            scene.setName("Unnamed scene");
+                        }
+                        panel.setBorder(BorderFactory.createTitledBorder(scenes.getSelectedValue().name()));
+                        for (EditorScene s : project.scenes()) {
+                            if (s != scene && s.name().equals(scene.name())) {
+                                int i = 0;
+                                while (true) {
+                                    String nn = scene.name() + " " + i;
+                                    boolean repeat = false;
+                                    for (EditorScene s1 : project.scenes()) {
+                                        if (s1 != scene && s1.name().equals(nn)) {
+                                            i++;
+                                            repeat = true;
+                                        }
+                                    }
+                                    if (!repeat) {
+                                        scene.setName(nn);
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        scenes.updateUI();
+                    });
+                });
+                JScrollPane scenesScrollPane = new JScrollPane(scenes);
+                scenesScrollPane.setBorder(BorderFactory.createTitledBorder("Scenes"));
+                splitPane.setTopComponent(scenesScrollPane);
+                scenes.setSelectedIndex(0);
+
+                splitPane.setDividerLocation(150);
+                dialog.add(splitPane);
+
+                dialog.setMinimumSize(new Dimension(600, 500));
+                dialog.setLocationRelativeTo(Editor.this);
+                dialog.setVisible(true);
+                save.stop();
             }
         });
 
@@ -345,12 +576,37 @@ public class Editor extends JFrame {
         //add(scenePanel);
         tabbedPane.setTabPlacement(JTabbedPane.BOTTOM);
 
-        //TODO actual scenes
-        scenePanel.removeAll();
-        scenePanel.add(new ScenePanel(new EditorScene(), project, this));
+        closeScene();
 
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    private void passEditor(EditorEntity entity, ScenePanel scenePanel) {
+        entity.setEditor(this);
+        scenePanel.openEntity(entity, null);
+        for (EditorEntity c : entity.children()) {
+            passEditor(c, scenePanel);
+        }
+    }
+
+    public void openScene(EditorScene scene) {
+        scenePanel.removeAll();
+        ScenePanel scenePanel;
+        this.scenePanel.add(scenePanel = new ScenePanel(scene, project, this));
+        for (EditorEntity e : scene.entities()) passEditor(e, scenePanel);
+        scenePanel.mainP.setRightComponent(null);
+        this.scenePanel.updateUI();
+    }
+
+    public void closeScene() {
+        scenePanel.removeAll();
+        JLabel noScenesLabel = new JLabel("No scenes added");
+        noScenesLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        noScenesLabel.setVerticalAlignment(SwingConstants.CENTER);
+        noScenesLabel.setForeground(noScenesLabel.getBackground().brighter().brighter());
+        scenePanel.add(noScenesLabel);
+        scenePanel.updateUI();
     }
 
     private Process runningProcess;

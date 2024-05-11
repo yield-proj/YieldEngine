@@ -44,7 +44,7 @@ public class EditorEntity implements Serializable {
     private transient Font defaultFont;
 
     public transient List<Object> props;
-    private final transient Editor editor;
+    private transient Editor editor;
 
     private File prefabFile;
     private EditorEntity parent;
@@ -385,6 +385,15 @@ public class EditorEntity implements Serializable {
             }
         }
         return size;
+    }
+
+    public Editor editor() {
+        return editor;
+    }
+
+    public EditorEntity setEditor(Editor editor) {
+        this.editor = editor;
+        return this;
     }
 
     @Override

@@ -46,7 +46,7 @@ public class ScenePanel extends JPanel {
     private final EditorScene scene;
     private final Project project;
     private EntitiesTree entitiesTree;
-    private final JSplitPane mainP;
+    public final JSplitPane mainP;
 
     private final Editor editor;
 
@@ -213,6 +213,7 @@ public class ScenePanel extends JPanel {
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
+                components.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 components.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -538,13 +539,13 @@ public class ScenePanel extends JPanel {
                     }
                 });
 
-                addTreeSelectionListener(e -> {
+                /*addTreeSelectionListener(e -> {
                     if (getSelectionPaths() != null && getSelectionPaths().length == 1) try {
                         gameView.setSelectedEntity(es()[0]);
-                        gameView.repaint();
+                        CompletableFuture.runAsync(() -> openEntity(es()[0], null));
                     } catch (ClassCastException ignore) {
                     }
-                });
+                });*/
             }
 
             public void update() {

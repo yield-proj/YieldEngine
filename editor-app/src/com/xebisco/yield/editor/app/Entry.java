@@ -58,6 +58,8 @@ public class Entry {
             }
         }
 
+        if(!new File(Global.appProps.getProperty("lastWorkspace"), "workspace.ser").exists()) createWorkspace();
+
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(saveFile))) {
                 oo.writeObject(Global.appProps);
