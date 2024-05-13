@@ -539,13 +539,13 @@ public class ScenePanel extends JPanel {
                     }
                 });
 
-                /*addTreeSelectionListener(e -> {
+                addTreeSelectionListener(e -> {
                     if (getSelectionPaths() != null && getSelectionPaths().length == 1) try {
                         gameView.setSelectedEntity(es()[0]);
-                        CompletableFuture.runAsync(() -> openEntity(es()[0], null));
+                        SwingUtilities.invokeLater(() -> openEntity(es()[0], null));
                     } catch (ClassCastException ignore) {
                     }
-                });*/
+                });
             }
 
             public void update() {
