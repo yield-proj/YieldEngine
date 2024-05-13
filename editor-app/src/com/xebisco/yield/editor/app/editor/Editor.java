@@ -26,10 +26,7 @@ import com.xebisco.yield.utils.Pair;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.annotation.Annotation;
@@ -136,6 +133,8 @@ public class Editor extends JFrame {
 
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
+
+        fileMenu.setMnemonic(KeyEvent.VK_F);
 
         fileMenu.add(new AbstractAction("New Scene") {
             @Override
@@ -313,6 +312,8 @@ public class Editor extends JFrame {
 
         JMenu projectMenu = new JMenu("Project");
 
+        projectMenu.setMnemonic(KeyEvent.VK_P);
+
         projectMenu.add(new AbstractAction("Project Settings...") {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -442,6 +443,7 @@ public class Editor extends JFrame {
         menuBar.add(projectMenu);
 
         JMenu buildMenu = new JMenu("Build");
+        projectMenu.setMnemonic(KeyEvent.VK_B);
 
         buildMenu.add(new AbstractAction("Clear Build") {
             @Override
@@ -567,6 +569,7 @@ public class Editor extends JFrame {
         stopButton.setEnabled(false);
         toolBar.addSeparator();
         toolBar.add(Box.createHorizontalGlue());
+
         add(toolBar, BorderLayout.NORTH);
 
 

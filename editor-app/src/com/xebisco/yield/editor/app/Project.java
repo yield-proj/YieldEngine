@@ -75,7 +75,23 @@ public class Project implements Serializable {
 
         if (!new File(path, "Libraries/yield-core.jar").exists()) {
             if (ignoreCheck)
-                Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/engine/core.jar")), new File(path, "Libraries/yield-core.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/engine/yield-core.jar")), new File(path, "Libraries/yield-core.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
+            else return true;
+        }
+        if (!new File(path, "Libraries/yield-editor-runtime.jar").exists()) {
+            if (ignoreCheck)
+                Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/engine/yield-editor-runtime.jar")), new File(path, "Libraries/yield-editor-runtime.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
+            else return true;
+        }
+        if (!new File(path, "Libraries/yield-openalimpl.jar").exists()) {
+            if (ignoreCheck)
+                Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/engine/yield-openalimpl.jar")), new File(path, "Libraries/yield-openalimpl.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
+            else return true;
+        }
+
+        if (!new File(path, "Libraries/yield-openglimpl.jar").exists()) {
+            if (ignoreCheck)
+                Files.copy(Objects.requireNonNull(Project.class.getResourceAsStream("/engine/yield-openglimpl.jar")), new File(path, "Libraries/yield-openglimpl.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
             else return true;
         }
 

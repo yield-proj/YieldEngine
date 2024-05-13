@@ -47,6 +47,7 @@ public class ScenePanel extends JPanel {
     private final Project project;
     private EntitiesTree entitiesTree;
     public final JSplitPane mainP;
+    public final ActionsHandler scenePanelAH = new ActionsHandler();
 
     private final Editor editor;
 
@@ -78,6 +79,17 @@ public class ScenePanel extends JPanel {
             }
         });
         add(mainP);
+
+        JToolBar toolBar = new JToolBar();
+        toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
+        toolBar.setFloatable(false);
+        toolBar.setRollover(false);
+
+        toolBar.setBackground(getBackground());
+
+        toolBar.add(scenePanelAH);
+
+        add(toolBar, BorderLayout.NORTH);
     }
 
     private Timer saveTimer;
