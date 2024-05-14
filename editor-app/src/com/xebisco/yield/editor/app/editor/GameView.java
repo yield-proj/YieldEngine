@@ -389,6 +389,7 @@ class GameView extends JPanel {
                                 }
                             }
                         }
+                        scenePanel.openEntity(entity, null);
                     } else if (e.getButton() == MouseEvent.BUTTON2) {
                         scenePanel.openEntity(entity, null);
                     } else if (e.getButton() == MouseEvent.BUTTON3) {
