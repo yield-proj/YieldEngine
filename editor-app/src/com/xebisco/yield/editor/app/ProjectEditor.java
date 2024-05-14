@@ -186,7 +186,7 @@ public class ProjectEditor extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                int p = table.rowAtPoint(e.getPoint());
+                int p = table.getRowSorter().convertRowIndexToModel(table.getSelectedRow());
                 if (p < 0) return;
                 table.requestFocus();
                 table.clearSelection();
