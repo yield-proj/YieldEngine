@@ -15,7 +15,6 @@
 
 package com.xebisco.yield.editor.app.editor;
 
-import com.xebisco.yield.editor.app.Global;
 import com.xebisco.yield.editor.app.Project;
 import com.xebisco.yield.uiutils.Srd;
 import com.xebisco.yield.uiutils.props.Prop;
@@ -23,7 +22,6 @@ import com.xebisco.yield.uiutils.props.PropPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.Timer;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.filechooser.FileFilter;
@@ -34,9 +32,10 @@ import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.io.*;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -47,7 +46,7 @@ public class ScenePanel extends JPanel {
     private final Project project;
     private EntitiesTree entitiesTree;
     public final JSplitPane mainP;
-    public final ActionsHandler scenePanelAH = new ActionsHandler();
+    public final ActionsHandler scenePanelAH;
 
     private final Editor editor;
 
@@ -81,13 +80,71 @@ public class ScenePanel extends JPanel {
         add(mainP);
 
         JToolBar toolBar = new JToolBar();
-        toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
+        toolBar.setLayout(new BorderLayout());
         toolBar.setFloatable(false);
         toolBar.setRollover(false);
 
         toolBar.setBackground(getBackground());
 
-        toolBar.add(scenePanelAH);
+        JMenu viewMenu = new JMenu("View");
+
+
+        JCheckBox checkBox = new JCheckBox("Origin", true);
+        checkBox.addChangeListener(e -> {
+            gameView.showOrigin = checkBox.isSelected();
+            gameView.repaint();
+        });
+
+        viewMenu.add(checkBox);
+
+
+        JMenu gridMenu = new JMenu("Grid");
+
+        ButtonGroup group = new ButtonGroup();
+
+        AbstractAction gridChange = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameView.gridState = GridState.valueOf(e.getActionCommand());
+                gameView.repaint();
+            }
+        };
+
+        JRadioButton radioButton = new JRadioButton("Simple");
+
+        radioButton.addActionListener(gridChange);
+        radioButton.setActionCommand("SIMPLE");
+        radioButton.setSelected(true);
+        group.add(radioButton);
+        gridMenu.add(radioButton);
+
+        radioButton = new JRadioButton("Advanced");
+
+        radioButton.addActionListener(gridChange);
+        radioButton.setActionCommand("ADVANCED");
+        group.add(radioButton);
+        gridMenu.add(radioButton);
+
+        radioButton = new JRadioButton("Disabled");
+        radioButton.addActionListener(gridChange);
+        radioButton.setActionCommand("DISABLED");
+        group.add(radioButton);
+        gridMenu.add(radioButton);
+
+        gridMenu.addSeparator();
+
+        JSlider slider = new JSlider(10, 255, 40);
+        slider.addChangeListener(e -> {
+            gameView.gridOpacity = slider.getValue();
+            gameView.repaint();
+        });
+        gridMenu.add(slider);
+
+        viewMenu.add(gridMenu);
+
+        JMenu toolsMenu = new JMenu("Tools");
+
+        toolBar.add(scenePanelAH = new ActionsHandler(new JMenu[]{viewMenu, toolsMenu}));
 
         add(toolBar, BorderLayout.NORTH);
     }
@@ -103,8 +160,7 @@ public class ScenePanel extends JPanel {
         Integer divLoc = mainP.getDividerLocation();
         if (mainP.getRightComponent() == null) divLoc = null;
         mainP.setRightComponent(panel);
-        if (divLoc != null)
-            mainP.setDividerLocation(divLoc);
+        if (divLoc != null) mainP.setDividerLocation(divLoc);
 
         JPanel header = new JPanel(new BorderLayout());
         JLabel title = new JLabel(entity.entityName());
@@ -399,14 +455,21 @@ public class ScenePanel extends JPanel {
         sceneAddMenu.add(new AbstractAction(Srd.LANG.getProperty("se_menuBar_scene_add_emptyEntity")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<EditorEntity> entities1 = entities;
-                if (entities1 == null)
-                    entities1 = scene.entities();
+                List<EditorEntity> entities1;
+                if (entities == null) entities1 = scene.entities();
+                else {
+                    entities1 = entities;
+                }
                 EditorEntity ee = new EditorEntity(editor).setParent(parent);
-                if (mousePosition != null) ee.setPosition(mousePosition.x, mousePosition.y);
-                entities1.add(ee);
-                openEntity(ee, null);
-                entitiesTree.tree.update();
+                scenePanelAH.push(new ActionsHandler.ActionHA("Create Entity", () -> {
+                    if (mousePosition != null) ee.setPosition(mousePosition.x, mousePosition.y);
+                    entities1.add(ee);
+                    openEntity(ee, null);
+                    entitiesTree.tree.update();
+                }, () -> {
+                    entities1.remove(ee);
+                    entitiesTree.tree.update();
+                }));
             }
         });
 
@@ -436,8 +499,7 @@ public class ScenePanel extends JPanel {
                     }
                     prefab.setPrefabFile(fileChooser.getSelectedFile());
                     List<EditorEntity> entities1 = entities;
-                    if (entities1 == null)
-                        entities1 = scene.entities();
+                    if (entities1 == null) entities1 = scene.entities();
                     entities1.add(prefab.setParent(parent));
                     openEntity(prefab, fileChooser.getSelectedFile());
                     entitiesTree.tree.update();
@@ -468,36 +530,58 @@ public class ScenePanel extends JPanel {
         popupMenu.add(new AbstractAction("Duplicate") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                CompletableFuture.runAsync(() -> {
+                SwingUtilities.invokeLater(() -> {
                     for (EditorEntity en : entities) {
                         EditorEntity n = new EditorEntity(editor).setEntityName(en.entityName() + " (Clone)").setParent(en.parent()).setPrefabFile(en.prefabFile());
                         n.components().clear();
                         for (EditorComponent c : en.components())
                             n.components().add(c.sameAs());
-                        if (en.parent() == null)
-                            scene.entities().add(n);
-                        else en.parent().children().add(n);
+
+                        List<EditorEntity> entities1;
+                        if (en.parent() == null) entities1 = scene.entities();
+                        else entities1 = en.parent().children();
+                        scenePanelAH.push(new ActionsHandler.ActionHA("Duplicate Entity(" + en.entityName() + ")", () -> {
+                            entities1.add(n);
+                            entitiesTree.tree.update();
+                        }, () -> {
+                            entities1.remove(n);
+                            entitiesTree.tree.update();
+                        }));
                     }
-                    entitiesTree.tree.update();
                 });
             }
         });
         popupMenu.add(new AbstractAction("Delete") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                CompletableFuture.runAsync(() -> {
+                SwingUtilities.invokeLater(() -> {
                     for (EditorEntity en : entities) {
-                        if (en.parent() != null) en.parent().children().remove(en);
-                        else
-                            scene.entities().remove(en);
+
+                        List<EditorEntity> entities1;
+
+                        if (en.parent() != null) entities1 = en.parent().children();
+                        else entities1 = scene.entities();
+
+                        scenePanelAH.push(new ActionsHandler.ActionHA("Delete Entity(" + en.entityName() + ")", () -> {
+                            entities1.remove(en);
+                        }, () -> {
+                            entities1.add(en);
+                        }));
                     }
-                    if (!entityExists(gameView.selectedEntity())) gameView.setSelectedEntity(null);
+                    //if (!entityExists(gameView.selectedEntity())) gameView.setSelectedEntity(null);
+
                     gameView.repaint();
                     entitiesTree.tree.update();
                 });
             }
         });
         popupMenu.show(invoker, invoker.getMousePosition().x, invoker.getMousePosition().y);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (!entityExists(gameView.selectedEntity())) gameView.setSelectedEntity(null);
     }
 
     public void rootEntityPopupPanel(Component invoker, Point2D.Double mousePosition) {
@@ -552,11 +636,18 @@ public class ScenePanel extends JPanel {
                 });
 
                 addTreeSelectionListener(e -> {
-                    if (getSelectionPaths() != null && getSelectionPaths().length == 1) try {
-                        gameView.setSelectedEntity(es()[0]);
-                        SwingUtilities.invokeLater(() -> openEntity(es()[0], null));
-                    } catch (ClassCastException ignore) {
-                    }
+                    if (getSelectionPaths() != null && getSelectionPaths().length == 1 && gameView.selectedEntity() != es()[0])
+                        try {
+                            gameView.setSelectedEntity(es()[0]);
+                            int selected = getMinSelectionRow();
+                            SwingUtilities.invokeLater(() -> {
+                                openEntity(es()[0], null);
+                                Tree.this.requestFocus();
+                                setSelectionRow(selected);
+                            });
+
+                        } catch (ClassCastException ignore) {
+                        }
                 });
             }
 

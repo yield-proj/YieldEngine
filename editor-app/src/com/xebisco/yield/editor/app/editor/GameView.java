@@ -28,7 +28,7 @@ class GameView extends JPanel {
 
     private Point2D.Float gridSize = new Point2D.Float(16, 16);
 
-    private float gridOpacity = 10;
+    public int gridOpacity = 40;
 
     private boolean dragging, moving;
     private Point lastDraggingPosition = new Point();
@@ -37,6 +37,8 @@ class GameView extends JPanel {
     private final JLabel xLabel, yLabel, zoomLabel, gridLabel;
     private final EditorScene scene;
     private final ScenePanel scenePanel;
+    public GridState gridState = GridState.SIMPLE;
+    public boolean showOrigin = true;
 
     private final ScenePanel.EntitiesTree entitiesTree;
 
@@ -163,32 +165,53 @@ class GameView extends JPanel {
 
                 g2.setStroke(new BasicStroke((float) (1 / zoom)));
 
-                g2.setColor(getContrastColor(new Color(scene.backgroundColor())).brighter());
+                if (gridState == GridState.DISABLED) placeInGrid = false;
 
-                if (zoom > .5) {
-                    int startX = (int) viewPositionX;
-                    while (startX % gridSize.x != 0) startX++;
+                if (zoom > .5 || gridState == GridState.ADVANCED) {
+                    if (gridState == GridState.SIMPLE || gridState == GridState.ADVANCED) {
+                        g2.setColor(getContrastColor(new Color(scene.backgroundColor())));
+                        int startX = (int) viewPositionX;
+                        while (startX % gridSize.x != 0) startX++;
 
-                    for (int i = -getWidth() / 2; i < getWidth() * 1.5 / gridSize.x + 1; i++) {
-                        g2.draw(new Line2D.Double(i * gridSize.x + startX, viewPositionY - getHeight() / 2., i * gridSize.x + startX, getHeight() * 1.5 + viewPositionY));
+                        for (int i = -getWidth() / 2; i < getWidth() * 1.5 / gridSize.x + 1; i++) {
+                            g2.draw(new Line2D.Double(i * gridSize.x + startX, viewPositionY - getHeight() / 2., i * gridSize.x + startX, getHeight() * 1.5 + viewPositionY));
+                        }
+
+                        int startY = (int) viewPositionY;
+                        while (startY % gridSize.y != 0) startY++;
+
+                        for (int i = -getHeight() / 2; i < getHeight() * 1.5 / gridSize.y + 1; i++) {
+                            g2.draw(new Line2D.Double(viewPositionX - getWidth() / 2., i * gridSize.y + startY, getWidth() * 1.5 + viewPositionX, i * gridSize.y + startY));
+                        }
                     }
+                    if (zoom > .5 && gridState == GridState.ADVANCED) {
+                        g2.setColor(getContrastColor(new Color(scene.backgroundColor())));
+                        int startX = (int) viewPositionX;
+                        while (startX % (gridSize.x / 8) != 0) startX++;
 
-                    int startY = (int) viewPositionY;
-                    while (startY % gridSize.y != 0) startY++;
+                        for (int i = -getWidth() / 2; i < getWidth() * 1.5 / (gridSize.x / 8) + 1; i++) {
+                            g2.draw(new Line2D.Double(i * (gridSize.x / 8) + startX, viewPositionY - getHeight() / 2., i * (gridSize.x / 8) + startX, getHeight() * 1.5 + viewPositionY));
+                        }
 
-                    for (int i = -getHeight() / 2; i < getHeight() * 1.5 / gridSize.y + 1; i++) {
-                        g2.draw(new Line2D.Double(viewPositionX - getWidth() / 2., i * gridSize.y + startY, getWidth() * 1.5 + viewPositionX, i * gridSize.y + startY));
+                        int startY = (int) viewPositionY;
+                        while (startY % (gridSize.y / 8) != 0) startY++;
+
+                        for (int i = -getHeight() / 2; i < getHeight() * 1.5 / (gridSize.y / 8) + 1; i++) {
+                            g2.draw(new Line2D.Double(viewPositionX - getWidth() / 2., i * (gridSize.y / 8) + startY, getWidth() * 1.5 + viewPositionX, i * (gridSize.y / 8) + startY));
+                        }
                     }
                 }
 
-                //Y
-                g.setColor(new Color(10, 255, 10, 100));
-                g.drawLine(0, (int) viewPositionY - getHeight() / 2, 0, (int) (getHeight() * 1.5 + viewPositionY));
+                if (showOrigin) {
+                    //Y
+                    g.setColor(new Color(10, 255, 10, 100));
+                    g.drawLine(0, (int) viewPositionY - getHeight() / 2, 0, (int) (getHeight() * 1.5 + viewPositionY));
 
 
-                //X
-                g.setColor(new Color(255 - 100, 10, 10, 100));
-                g.drawLine((int) viewPositionX - getWidth() / 2, 0, (int) (getWidth() * 1.5 + viewPositionX), 0);
+                    //X
+                    g.setColor(new Color(255 - 100, 10, 10, 100));
+                    g.drawLine((int) viewPositionX - getWidth() / 2, 0, (int) (getWidth() * 1.5 + viewPositionX), 0);
+                }
 
                 if (placeInGrid) {
                     Point loc = closerGridLocationTo(new Point2D.Double(mousePositionX, mousePositionY));
@@ -219,12 +242,17 @@ class GameView extends JPanel {
 
         public Color getContrastColor(Color color) {
             double y = (299 * color.getRed() + 587 * color.getGreen() + 114 * color.getBlue()) / 1000.;
-            return y >= 128 ? new Color(0, 0, 0, (int) ((gridOpacity / 100f) * 255.)) : new Color(255, 255, 255, (int) ((gridOpacity / 100f) * 255.));
+            return y >= 128 ? new Color(0, 0, 0, gridOpacity) : new Color(255, 255, 255, gridOpacity);
         }
 
         private Point closerGridLocationTo(Point2D.Double point) {
             boolean negativeX = point.x < 0, negativeY = point.y < 0;
-            Point p = new Point((int) ((((int) Math.abs(point.getX()) + (int) gridSize.x / 2) / (int) gridSize.x) * (int) gridSize.x), (int) ((((int) Math.abs(point.getY()) + (int) gridSize.y / 2) / (int) gridSize.y) * (int) gridSize.y));
+            int gridSizeX = (int) gridSize.x, gridSizeY = (int) gridSize.y;
+            if (gridState == GridState.ADVANCED) {
+                gridSizeX /= 8;
+                gridSizeY /= 8;
+            }
+            Point p = new Point(((((int) Math.abs(point.getX()) + gridSizeX / 2) / gridSizeX) * gridSizeX), ((((int) Math.abs(point.getY()) + gridSizeY / 2) / gridSizeY) * gridSizeY));
             if (negativeX) p.x *= -1;
             if (negativeY) p.y *= -1;
             return p;
@@ -278,6 +306,8 @@ class GameView extends JPanel {
             mouseMoved(e);
         }
 
+        private Point2D lastSelectedEntityPosition;
+
         @Override
         public void mouseDragged(MouseEvent e) {
             if (scene == null) return;
@@ -294,6 +324,7 @@ class GameView extends JPanel {
             if (moving) {
                 mouseMoved(e);
                 if (selectedEntity != null) {
+                    if (lastSelectedEntityPosition == null) lastSelectedEntityPosition = selectedEntity.position();
                     if (xArrowSelected) {
                         if (placeInGrid) {
                             Point gridPosition = closerGridLocationTo(new Point2D.Double(mousePositionX, mousePositionY));
@@ -392,6 +423,16 @@ class GameView extends JPanel {
 
         @Override
         public void mouseReleased(MouseEvent e) {
+            if (moving && lastSelectedEntityPosition != null) {
+                EditorEntity se = selectedEntity;
+                Point2D eP = se.position(), leP = lastSelectedEntityPosition;
+                lastSelectedEntityPosition = null;
+                scenePanel.scenePanelAH.push(new ActionsHandler.ActionHA("Move Entity(" + se.entityName() + ")", () -> {
+                    se.setPosition(eP.getX(), eP.getY());
+                }, () -> {
+                    se.setPosition(leP.getX(), leP.getY());
+                }));
+            }
             dragging = false;
             moving = false;
         }
@@ -417,7 +458,7 @@ class GameView extends JPanel {
                 gridSize.setLocation(new Point2D.Float(gridSize.x * 2, gridSize.y * 2));
             if (e.getKeyCode() == KeyEvent.VK_MINUS && gridSize.x > 2 && gridSize.y > 2)
                 gridSize.setLocation(new Point2D.Float(gridSize.x / 2, gridSize.y / 2));
-            if (e.getKeyCode() == KeyEvent.VK_CONTROL) placeInGrid = !placeInGrid;
+            if (e.getKeyCode() == KeyEvent.VK_ALT) placeInGrid = !placeInGrid;
             if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) RIGHT_TIMER.start();
             if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) LEFT_TIMER.start();
             if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) UP_TIMER.start();

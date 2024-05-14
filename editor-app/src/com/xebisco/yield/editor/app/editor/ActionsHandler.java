@@ -16,6 +16,7 @@
 package com.xebisco.yield.editor.app.editor;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -30,10 +31,11 @@ public class ActionsHandler extends JPanel {
     private List<ActionHA> actions = new ArrayList<>();
     private int actualAction = -1;
     private final JMenuItem[] undoRedoActions = new JMenuItem[2];
+    private JPopupMenu actionsMenu = new JPopupMenu("Actions");
+    private JButton actionsButton = new JButton();
 
-    private JMenu actionsMenu = new JMenu("Actions");
-
-    public ActionsHandler() {
+    public ActionsHandler(JMenu[] additionalMenus) {
+        setLayout(new BorderLayout());
         JMenuBar menuBar = new JMenuBar();
 
         JMenu editMenu = new JMenu("Edit");
@@ -42,7 +44,6 @@ public class ActionsHandler extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 undo();
-                if(!undoAvailable()) undoRedoActions[0].setEnabled(false);
             }
         }));
 
@@ -50,31 +51,44 @@ public class ActionsHandler extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 redo();
-                if(!redoAvailable()) undoRedoActions[1].setEnabled(false);
             }
         }));
 
-        editMenu.add(actionsMenu);
+        //editMenu.add(actionsMenu);
 
         undoRedoActions[0].setEnabled(false);
-        undoRedoActions[0].getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK), "asda");
+        undoRedoActions[0].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
         undoRedoActions[1].setEnabled(false);
-
+        undoRedoActions[1].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
 
 
         menuBar.add(editMenu);
 
-        add(menuBar);
+        for(JMenu menu : additionalMenus) menuBar.add(menu);
+
+        add(menuBar, BorderLayout.WEST);
+
+        actionsButton.setAction(new AbstractAction("Actions") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionsMenu.show(actionsButton, -actionsMenu.getWidth() + actionsButton.getWidth(), actionsButton.getHeight());
+            }
+        });
+
+        add(actionsButton, BorderLayout.EAST);
+
 
         updateActionsMenu();
     }
 
     public void push(ActionHA a) {
-        actions.add(a);
+        actionsButton.setText(a.name);
         actualAction++;
-        for(int i = actualAction + 1; i < actions.size();) {
-            actions.remove(actualAction + 1);
+        while (actions.size() > actualAction) {
+            actions.remove(actions.size() - 1);
         }
+        actions.add(a);
+        a.action().run();
         undoRedoActions[0].setEnabled(true);
         updateActionsMenu();
     }
@@ -84,8 +98,9 @@ public class ActionsHandler extends JPanel {
     }
 
     public void redo() {
-        if(!redoAvailable()) return;
-        actions.get(actualAction++).action.run();
+        if (redoAvailable()) {
+            actions.get(++actualAction).action.run();
+        }
         updateActionsMenu();
     }
 
@@ -94,17 +109,41 @@ public class ActionsHandler extends JPanel {
     }
 
     public void undo() {
-        if(!undoAvailable()) return;
-        actions.get(actualAction--).reverse.run();
-        undoRedoActions[1].setEnabled(true);
+        if (undoAvailable()) {
+            actions.get(actualAction--).reverse.run();
+        }
         updateActionsMenu();
     }
 
     private void updateActionsMenu() {
+        System.out.println(actualAction);
+        undoRedoActions[0].setEnabled(undoAvailable());
+        undoRedoActions[1].setEnabled(redoAvailable());
         actionsMenu.removeAll();
         actionsMenu.setEnabled(!actions.isEmpty());
-        for(ActionHA a : actions) {
-            actionsMenu.add(a.name);
+        for (int i = actions.size() - 1; i >= 0; i--) {
+            actionsMenu.add(actionItem(i));
         }
+    }
+
+    private JMenuItem actionItem(int finalI) {
+        JMenuItem a = new JMenuItem(new AbstractAction(actions.get(finalI).name) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int diff = finalI - actualAction;
+                if(diff > 0) {
+                    for(int i = 0; i < Math.abs(diff); i++) {
+                        redo();
+                    }
+                } else {
+                    for(int i = 0; i < Math.abs(diff); i++) {
+                        undo();
+                    }
+                }
+            }
+        });
+        if (finalI != actualAction)
+            a.setForeground(a.getForeground().darker());
+        return a;
     }
 }
