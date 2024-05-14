@@ -87,6 +87,7 @@ public class Editor extends JFrame {
                 }
                 if (a == JOptionPane.YES_OPTION || a == JOptionPane.NO_OPTION) {
                     dispose();
+                    new ProjectEditor(new File(Global.appProps.getProperty("lastWorkspace"), "workspace.ser"), null);
                 }
             }
         });
