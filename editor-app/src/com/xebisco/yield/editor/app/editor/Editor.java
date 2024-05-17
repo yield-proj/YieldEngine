@@ -16,6 +16,7 @@
 package com.xebisco.yield.editor.app.editor;
 
 import com.xebisco.yield.editor.app.*;
+import com.xebisco.yield.editor.app.config.GameViewSettings;
 import com.xebisco.yield.editor.app.run.PlayPanel;
 import com.xebisco.yield.uiutils.props.Prop;
 import com.xebisco.yield.uiutils.props.PropPanel;
@@ -25,6 +26,7 @@ import com.xebisco.yield.utils.Pair;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -34,10 +36,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -88,6 +88,12 @@ public class Editor extends JFrame {
                     project.saveProjectFile();
                 }
                 if (a == JOptionPane.YES_OPTION || a == JOptionPane.NO_OPTION) {
+                    configPanel.saveValues();
+                    try {
+                        Global.appProps.setProperty("editor_config", Entry.convertToString(editorConfig.values()));
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     dispose();
                     new ProjectEditor(new File(Global.appProps.getProperty("lastWorkspace"), "workspace.ser"), null);
                 }
@@ -587,14 +593,30 @@ public class Editor extends JFrame {
         setLocationRelativeTo(null);
 
 
-        editorConfig = new ConfigPanel(
-                new String[]{
+        try {
+            editorConfig = new ConfigPanel(
+                    new String[]{
+                        "Game View"
+                    },
+                    new ConfigProp[][]{
+                        new ConfigProp[] {
+                                new ConfigProp(GameViewSettings.class, this)
+                        }
+                    }
+            );
+        } catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
 
-                },
-                new ConfigProp[][]{
-
-                }
-        );
+        String configString = Global.appProps.getProperty("editor_config");
+        if(configString != null) {
+            try {
+                //noinspection unchecked
+                editorConfig.insert((HashMap<String, HashMap<String, Serializable>>) Entry.convertFrom(configString));
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
 
         setVisible(true);
