@@ -15,20 +15,21 @@
 
 package com.xebisco.yield.editor.app.editor;
 
+import com.xebisco.yield.editor.app.config.GameViewSettings;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
 
 class GameView extends JPanel {
 
     private Point2D.Float gridSize = new Point2D.Float(16, 16);
 
-    public int gridOpacity = 40;
+    public int gridOpacity = 20;
+
+    public Tools tool = Tools.EDIT;
 
     private boolean dragging, moving;
     private Point lastDraggingPosition = new Point();
@@ -75,6 +76,8 @@ class GameView extends JPanel {
     private boolean placeInGrid, xArrowSelected, yArrowSelected;
 
     private EntitySelectedFx entitySelectedFx = null;
+
+    private boolean showingRuler;
 
     private static class EntitySelectedFx {
         int f = 30;
@@ -213,16 +216,161 @@ class GameView extends JPanel {
                     g.drawLine((int) viewPositionX - getWidth() / 2, 0, (int) (getWidth() * 1.5 + viewPositionX), 0);
                 }
 
-                if (placeInGrid) {
-                    Point loc = closerGridLocationTo(new Point2D.Double(mousePositionX, mousePositionY));
-                    double ballSize = 12 / zoom;
-                    Shape circle = new Arc2D.Double(loc.x - ballSize / 2, loc.y - ballSize / 2, ballSize, ballSize, 0, 360, Arc2D.CHORD);
-                    g2.fill(circle);
-                }
 
                 if (entitySelectedFx != null) {
                     g2.setColor(new Color(0, 41, 253, 174));
                     g2.setColor(new Color(66, 213, 255, 174));
+                }
+
+
+                //RULER
+                if (showingRuler) {
+                    g2.setColor(new Color(0x30FFFFFF - scene.backgroundColor(), true));
+                    g2.setStroke(new BasicStroke((float) (4 / zoom)));
+                    //g2.setColor(Color.BLUE);
+
+                    double lmpX = (GameView.this.lastDraggingPosition.x - getWidth() / 2.) / zoom + GameView.this.viewPositionX, lmpY = (GameView.this.lastDraggingPosition.y - getHeight() / 2.) / zoom + GameView.this.viewPositionY;
+
+                    double mpX = mousePositionX, mpY = mpY = mousePositionY;
+
+                    if (placeInGrid) {
+                        Point loc = closerGridLocationTo(new Point2D.Double(lmpX, lmpY));
+                        lmpX = loc.x;
+                        lmpY = loc.y;
+
+                        loc = closerGridLocationTo(new Point2D.Double(mpX, mpY));
+                        mpX = loc.x;
+                        mpY = loc.y;
+                    }
+
+                    boolean isDiffZero = Math.abs(mpX - lmpX) == 0 || Math.abs(mpY - lmpY) == 0;
+
+                    g2.setColor(new Color(0xFFFFFF - scene.backgroundColor()));
+                    g.setFont(new Font("SansSerif", Font.BOLD, 1).deriveFont((float) (16 / zoom)));
+
+                    g2.draw(new Line2D.Double(lmpX, lmpY, mpX, mpY));
+
+                    AffineTransform at = new AffineTransform(g2.getTransform());
+
+                    double ang = angleBetween2Lines(new Line2D.Double(lmpX, lmpY, mpX, mpY), new Line2D.Double(0, mpY, mpX, mpY));
+
+                    if (mpX > 0) {
+                        ang += Math.PI;
+                    }
+
+                    boolean rev = false;
+
+                    if (ang < -Math.PI / 2 || ang > Math.PI / 2) {
+                        ang += Math.PI;
+                        rev = true;
+                    }
+
+                    g2.rotate(ang, mpX, mpY);
+
+                    double dist = Math.abs(Math.sqrt(Math.pow(lmpX - mpX, 2) + Math.pow(lmpY - mpY, 2)));
+
+                    System.out.println(Math.toDegrees(angleBetween2Lines(new Line2D.Double(lmpX, lmpY, mpX, mpY), new Line2D.Double(0, 0, mpX, 0))));
+
+                    String s = String.format("%.2f", dist);
+
+                    double txtWidth = g.getFontMetrics().getStringBounds(s, g).getWidth();
+
+                    g2.drawString(s, (float) (mpX - txtWidth / 2 + (rev ? -1 : 1) * dist / 2), (float) (mpY - 6 / zoom));
+                    g2.setTransform(at);
+
+
+                    if (!isDiffZero) {
+
+                        double nvrM = 15 / zoom, nvdM = 15 / zoom;
+
+                        if (lmpX < mpX) nvrM *= -1;
+                        if (lmpY > mpY) nvdM *= -1;
+
+                        double rM = nvrM, dM = nvdM;
+
+                        while (Math.abs(rM) > Math.abs(mpX - lmpX) || Math.abs(dM) > Math.abs(mpY - lmpY)) {
+                            rM /= 1.5;
+                            dM /= 1.5;
+                        }
+
+
+                        g2.setStroke(new BasicStroke((float) (1 / zoom)));
+                        g2.setColor(new Color(0x60FFFFFF - scene.backgroundColor(), true));
+
+                        g2.draw(new Line2D.Double(mpX, lmpY, mpX + rM, lmpY));
+                        g2.draw(new Line2D.Double(mpX, lmpY, mpX, lmpY + dM));
+                        g2.draw(new Line2D.Double(mpX, lmpY + dM, mpX + rM, lmpY + dM));
+                        g2.draw(new Line2D.Double(mpX + rM, lmpY, mpX + rM, lmpY + dM));
+
+                        g2.draw(new Rectangle2D.Double(mpX + rM / 2 - .5 / zoom, lmpY + dM / 2 - .5 / zoom, 1 / zoom, 1 / zoom));
+
+                        g2.draw(new Line2D.Double(mpX, mpY, mpX, lmpY));
+                        g2.draw(new Line2D.Double(lmpX, lmpY, mpX, lmpY));
+                        g2.setStroke(new BasicStroke((float) (4 / zoom)));
+
+                        g2.setColor(new Color(0xFFFFFF - scene.backgroundColor()));
+
+                        double angle = Math.toDegrees(Math.atan2(mpX - lmpX, mpY - lmpY));
+
+
+                        double rm2 = 40 / zoom, dm2 = 40 / zoom;
+                        while (Math.abs(rm2) > Math.abs(mpX - lmpX) || Math.abs(dm2) > Math.abs(mpY - lmpY)) {
+                            rm2 /= 1.5;
+                            dm2 /= 1.5;
+                        }
+
+                        if (lmpX < mpX && lmpY > mpY) {
+                            g2.draw(new Arc2D.Double(mpX - rm2 / 2, mpY - dm2 / 2, rm2, dm2, -90, angle - 180, Arc2D.OPEN));
+                        } else if (lmpX < mpX) {
+                            g2.draw(new Arc2D.Double(mpX - rm2 / 2, mpY - dm2 / 2, rm2, dm2, 90, angle, Arc2D.OPEN));
+
+                        } else if (lmpY > mpY) {
+                            g2.draw(new Arc2D.Double(mpX - rm2 / 2, mpY - dm2 / 2, rm2, dm2, -90, angle + 180, Arc2D.OPEN));
+
+                        } else {
+                            g2.draw(new Arc2D.Double(mpX - rm2 / 2, mpY - dm2 / 2, rm2, dm2, 90, angle, Arc2D.OPEN));
+                        }
+
+                        double angle1 = Math.abs(angle);
+                        while (angle1 > 90) angle1 -= 90;
+                        if ((angle > 90 && angle < 180) || (angle > -180 && angle < -90)) angle1 = 90 - angle1;
+
+                        s = String.format("%.1f°", angle1);
+
+                        txtWidth = g.getFontMetrics().getStringBounds(s, g).getWidth();
+
+                        g2.drawString(s, (float) (mpX - nvrM * 1.5 - txtWidth / 2), (float) (mpY + nvdM * 1.5 + g.getFont().getSize() / 2));
+
+                        angle = Math.toDegrees(Math.atan2(mpY - lmpY, mpX - lmpX));
+
+                        if (lmpX < mpX && lmpY > mpY) {
+                            g2.draw(new Arc2D.Double(lmpX - rm2 / 2, lmpY - dm2 / 2, rm2, dm2, 0, -angle, Arc2D.OPEN));
+                        } else if (lmpX < mpX) {
+                            g2.draw(new Arc2D.Double(lmpX - rm2 / 2, lmpY - dm2 / 2, rm2, dm2, 0, -angle, Arc2D.OPEN));
+                        } else if (lmpY > mpY) {
+                            g2.draw(new Arc2D.Double(lmpX - rm2 / 2, lmpY - dm2 / 2, rm2, dm2, 180, -angle - 180, Arc2D.OPEN));
+                        } else {
+                            g2.draw(new Arc2D.Double(lmpX - rm2 / 2, lmpY - dm2 / 2, rm2, dm2, -180, -angle + 180, Arc2D.OPEN));
+                        }
+
+                        angle1 = Math.abs(angle);
+                        while (angle1 > 90) angle1 -= 90;
+                        if ((angle > 90 && angle < 180) || (angle > -180 && angle < -90)) angle1 = 90 - angle1;
+
+                        s = String.format("%.1f°", angle1);
+
+                        txtWidth = g.getFontMetrics().getStringBounds(s, g).getWidth();
+
+                        g2.drawString(s, (float) (lmpX + nvrM * 1.5 - txtWidth / 2), (float) (lmpY - nvdM * 1.5 + g.getFont().getSize() / 2));
+                    }
+                } else {
+                    if (placeInGrid) {
+                        Point loc = closerGridLocationTo(new Point2D.Double(mousePositionX, mousePositionY));
+                        double ballSize = 12 / zoom;
+                        Shape circle = new Arc2D.Double(loc.x - ballSize / 2, loc.y - ballSize / 2, ballSize, ballSize, 0, 360, Arc2D.CHORD);
+                        g2.fill(circle);
+                    }
+
                 }
 
                 if (selectedEntity != null) {
@@ -243,6 +391,14 @@ class GameView extends JPanel {
         public Color getContrastColor(Color color) {
             double y = (299 * color.getRed() + 587 * color.getGreen() + 114 * color.getBlue()) / 1000.;
             return y >= 128 ? new Color(0, 0, 0, gridOpacity) : new Color(255, 255, 255, gridOpacity);
+        }
+
+        public static double angleBetween2Lines(Line2D.Double line1, Line2D.Double line2) {
+            double angle1 = Math.atan2(line1.getY1() - line1.getY2(),
+                    line1.getX1() - line1.getX2());
+            double angle2 = Math.atan2(line2.getY1() - line2.getY2(),
+                    line2.getX1() - line2.getX2());
+            return angle1 - angle2;
         }
 
         private Point closerGridLocationTo(Point2D.Double point) {
@@ -318,7 +474,10 @@ class GameView extends JPanel {
                 viewPositionX += ((double) (lastDraggingPosition.x - e.getLocationOnScreen().x) / zoom);
                 viewPositionY += ((double) (lastDraggingPosition.y - e.getLocationOnScreen().y) / zoom);
                 lastDraggingPosition.setLocation(e.getLocationOnScreen());
-                repaint();
+            }
+
+            if (showingRuler) {
+                lastDraggingPosition.setLocation(e.getPoint());
             }
 
             if (moving) {
@@ -342,8 +501,8 @@ class GameView extends JPanel {
                     lastDraggingPosition.setLocation(e.getLocationOnScreen());
                     scenePanel.saveSceneEntity(selectedEntity, false);
                 }
-                repaint();
             }
+            repaint();
         }
 
         @Override
@@ -371,7 +530,7 @@ class GameView extends JPanel {
             if (scene == null) return;
             EditorEntity lastSelected = selectedEntity;
             if (!moving) selectedEntity = null;
-            for (EditorEntity entity : scene.entities()) {
+            if (tool != Tools.RULER) for (EditorEntity entity : scene.entities()) {
                 if (entity.inside(new Point2D.Double(mousePositionX - getWidth() / 2., mousePositionY - getHeight() / 2.))) {
                     if (e.getButton() == MouseEvent.BUTTON1) {
                         if (lastSelected != null && lastSelected.isChildOf(entity)) {
@@ -411,14 +570,19 @@ class GameView extends JPanel {
         public void mousePressed(MouseEvent e) {
             requestFocus();
             if (scene == null) return;
-            if (e.getButton() == MouseEvent.BUTTON2) {
+            if (e.getButton() == MouseEvent.BUTTON2 || tool == Tools.MOVE) {
                 dragging = true;
                 lastDraggingPosition.setLocation(e.getLocationOnScreen());
             }
 
-            if (e.getButton() == MouseEvent.BUTTON1) {
+            if (e.getButton() == MouseEvent.BUTTON1 && tool == Tools.EDIT) {
                 moving = true;
                 lastDraggingPosition.setLocation(e.getLocationOnScreen());
+            }
+
+            if (e.getButton() == MouseEvent.BUTTON1 && tool == Tools.RULER) {
+                showingRuler = true;
+                lastDraggingPosition.setLocation(e.getPoint());
             }
         }
 
@@ -434,6 +598,7 @@ class GameView extends JPanel {
                     se.setPosition(leP.getX(), leP.getY());
                 }));
             }
+            showingRuler = false;
             dragging = false;
             moving = false;
         }

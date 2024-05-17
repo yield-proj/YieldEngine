@@ -16,6 +16,7 @@
 package com.xebisco.yield.editor.app.editor;
 
 import com.xebisco.yield.editor.app.Project;
+import com.xebisco.yield.editor.app.config.GameViewSettings;
 import com.xebisco.yield.uiutils.Srd;
 import com.xebisco.yield.uiutils.props.Prop;
 import com.xebisco.yield.uiutils.props.PropPanel;
@@ -133,7 +134,7 @@ public class ScenePanel extends JPanel {
 
         gridMenu.addSeparator();
 
-        JSlider slider = new JSlider(10, 255, 40);
+        JSlider slider = new JSlider(10, 255, 20);
         slider.addChangeListener(e -> {
             gameView.gridOpacity = slider.getValue();
             gameView.repaint();
@@ -144,7 +145,12 @@ public class ScenePanel extends JPanel {
 
         JMenu toolsMenu = new JMenu("Tools");
 
-        toolBar.add(scenePanelAH = new ActionsHandler(new JMenu[]{viewMenu, toolsMenu}));
+        JComboBox<Tools> comboBox = new JComboBox<>(Tools.values());
+        comboBox.addItemListener(e -> {
+            gameView.tool = (Tools) comboBox.getSelectedItem();
+        });
+
+        toolBar.add(scenePanelAH = new ActionsHandler(new Component[]{viewMenu, toolsMenu, comboBox}));
 
         add(toolBar, BorderLayout.NORTH);
     }

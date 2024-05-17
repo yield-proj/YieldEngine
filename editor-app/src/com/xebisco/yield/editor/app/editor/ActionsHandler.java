@@ -34,7 +34,7 @@ public class ActionsHandler extends JPanel {
     private JPopupMenu actionsMenu = new JPopupMenu("Actions");
     private JButton actionsButton = new JButton();
 
-    public ActionsHandler(JMenu[] additionalMenus) {
+    public ActionsHandler(Component[] additionalMenus) {
         setLayout(new BorderLayout());
         JMenuBar menuBar = new JMenuBar();
 
@@ -64,7 +64,7 @@ public class ActionsHandler extends JPanel {
 
         menuBar.add(editMenu);
 
-        for(JMenu menu : additionalMenus) menuBar.add(menu);
+        for(Component menu : additionalMenus) menuBar.add(menu);
 
         add(menuBar, BorderLayout.WEST);
 

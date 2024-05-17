@@ -50,6 +50,8 @@ public class Editor extends JFrame {
 
     private final JTabbedPane tabbedPane = new JTabbedPane();
 
+    private final ConfigPanel editorConfig;
+
     private final Project project;
     private final JPanel scenePanel = new JPanel(new BorderLayout());
 
@@ -583,6 +585,18 @@ public class Editor extends JFrame {
         closeScene();
 
         setLocationRelativeTo(null);
+
+
+        editorConfig = new ConfigPanel(
+                new String[]{
+
+                },
+                new ConfigProp[][]{
+
+                }
+        );
+
+
         setVisible(true);
     }
 

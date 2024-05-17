@@ -19,10 +19,15 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.IntelliJTheme;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import com.formdev.flatlaf.util.SystemInfo;
+import com.xebisco.yield.editor.app.config.GameViewSettings;
+import com.xebisco.yield.editor.app.editor.ConfigProp;
 import com.xebisco.yield.uiutils.Srd;
 
 import javax.swing.*;
 import java.io.*;
+import java.util.Base64;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.Properties;
 
 import static com.xebisco.yield.editor.app.ProjectEditor.createWorkspace;
@@ -30,6 +35,7 @@ import static com.xebisco.yield.editor.app.ProjectEditor.createWorkspace;
 public class Entry {
     public static void main(String[] args) throws IOException {
         System.setProperty("sun.java2d.opengl", "True");
+        Locale.setDefault(Locale.US);
 
         //FlatDarkLaf.setup();
         IntelliJTheme.setup(Entry.class.getResourceAsStream("/octagon.theme.json"));
@@ -69,5 +75,20 @@ public class Entry {
         }));
 
         new ProjectEditor(new File(Global.appProps.getProperty("lastWorkspace"), "workspace.ser"), splash);
+    }
+
+    public static String convertToString(final Serializable object) throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(object);
+            return Base64.getEncoder().encodeToString(baos.toByteArray());
+        }
+    }
+
+    public static Object convertFrom(final String objectAsString) throws IOException, ClassNotFoundException {
+        final byte[] data = Base64.getDecoder().decode(objectAsString);
+        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data))) {
+            return ois.readObject();
+        }
     }
 }
