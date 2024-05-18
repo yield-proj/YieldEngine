@@ -30,8 +30,9 @@ public class Loading {
                 f.set(o, f.getType().getConstructor(double.class, double.class, double.class, double.class).newInstance(Double.parseDouble(field.second()[0]), Double.parseDouble(field.second()[1]), Double.parseDouble(field.second()[2]), Double.parseDouble(field.second()[3])));
             } else {
                 EditableValuesType type = EditableValuesType.getPrimitiveType(f.getType());
+                System.out.println(field.second()[0]);
                 if (type == null) {
-                    if (f.isEnumConstant()) {
+                    if (f.getType().isEnum()) {
                         f.set(o, f.getType().getMethod("valueOf", String.class).invoke(null, field.second()[0]));
                     }
                     continue;

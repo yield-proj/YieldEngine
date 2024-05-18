@@ -17,7 +17,7 @@ public abstract class Prop {
     protected JLabel westLabel(boolean prettyString) {
         String text = Srd.LANG.getProperty(name());
         if (text == null) text = name();
-        if(prettyString) text = Srd.prettyString(text);
+        if (prettyString) text = Srd.prettyString(text);
         JLabel west = new JLabel(text);
         west.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 6));
         return west;

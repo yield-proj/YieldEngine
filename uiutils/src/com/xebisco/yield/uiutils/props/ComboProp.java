@@ -5,6 +5,8 @@ import com.xebisco.yield.uiutils.Srd;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.Serializable;
 
 public class ComboProp extends Prop {
@@ -18,11 +20,9 @@ public class ComboProp extends Prop {
         this.values = values;
         options = new JComboBox<>(values);
         this.prettyLabel = prettyLabel;
-        options.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setValue((Serializable) options.getSelectedItem());
-            }
+        options.addItemListener(e -> {
+            System.out.println((Serializable) options.getSelectedItem());
+            setValue((Serializable) options.getSelectedItem());
         });
         options.setSelectedItem(value);
     }
@@ -42,6 +42,17 @@ public class ComboProp extends Prop {
         return panel;
     }
 
+    @Override
+    public Prop setValue(Serializable value) {
+        if (options.getSelectedItem() != value)
+            options.setSelectedItem(value);
+        return super.setValue(value);
+    }
+
+    @Override
+    public Serializable value() {
+        return super.value();
+    }
 
     public Object[] values() {
         return values;

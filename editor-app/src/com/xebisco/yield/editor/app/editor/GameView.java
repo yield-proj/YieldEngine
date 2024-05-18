@@ -16,6 +16,7 @@
 package com.xebisco.yield.editor.app.editor;
 
 import com.xebisco.yield.editor.app.config.GameViewSettings;
+import com.xebisco.yield.editor.app.config.PhysicsSettings;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -40,6 +41,8 @@ class GameView extends JPanel {
     private final ScenePanel scenePanel;
     public GridState gridState = GridState.SIMPLE;
     public boolean showOrigin = true;
+    private final GameViewSettings viewSettings;
+    private final PhysicsSettings physicsSettings;
 
     private final ScenePanel.EntitiesTree entitiesTree;
 
@@ -92,6 +95,9 @@ class GameView extends JPanel {
         this.gridLabel = new JLabel();
         this.scene = scenePanel.scene();
         this.scenePanel = scenePanel;
+
+        viewSettings = scenePanel.editor().getSettings("Game View", GameViewSettings.class);
+        physicsSettings = scenePanel.editor().getSettings("Physics", PhysicsSettings.class);
 
         JToolBar toolBar = new JToolBar();
         toolBar.addSeparator();
@@ -269,9 +275,7 @@ class GameView extends JPanel {
 
                     double dist = Math.abs(Math.sqrt(Math.pow(lmpX - mpX, 2) + Math.pow(lmpY - mpY, 2)));
 
-                    System.out.println(Math.toDegrees(angleBetween2Lines(new Line2D.Double(lmpX, lmpY, mpX, mpY), new Line2D.Double(0, 0, mpX, 0))));
-
-                    String s = String.format("%.2f", dist);
+                    String s = String.format("%.2f" + (viewSettings.rulerMeasurementUnit == GameViewSettings.MeasurementUnit.METERS ? "m" : "px"), (viewSettings.rulerMeasurementUnit == GameViewSettings.MeasurementUnit.METERS ? dist / physicsSettings.pixelsPerMeter : dist));
 
                     double txtWidth = g.getFontMetrics().getStringBounds(s, g).getWidth();
 

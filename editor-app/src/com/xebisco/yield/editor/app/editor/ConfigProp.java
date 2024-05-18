@@ -39,10 +39,12 @@ public class ConfigProp extends Prop {
     List<Prop> props;
     private final transient Editor editor;
     private final Class<?> configClass;
+    public final transient Object configInstance;
 
     public ConfigProp(Object configInstance, Editor editor) {
         super(configInstance.getClass().getSimpleName(), new ArrayList<Pair<Pair<String, String>, String[]>>());
         this.configClass = configInstance.getClass();
+        this.configInstance = configInstance;
         this.editor = editor;
         addFields(configClass, configInstance);
     }

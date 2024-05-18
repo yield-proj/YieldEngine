@@ -15,8 +15,10 @@
 
 package com.xebisco.yield.editor.app.editor;
 
+import com.xebisco.yield.editor.annotations.Config;
 import com.xebisco.yield.editor.app.*;
 import com.xebisco.yield.editor.app.config.GameViewSettings;
+import com.xebisco.yield.editor.app.config.PhysicsSettings;
 import com.xebisco.yield.editor.app.run.PlayPanel;
 import com.xebisco.yield.uiutils.props.Prop;
 import com.xebisco.yield.uiutils.props.PropPanel;
@@ -57,10 +59,11 @@ public class Editor extends JFrame {
 
     private final PlayPanel playPanel = new PlayPanel();
 
-
     private final JButton playButton, playGlobalButton, pauseButton, stopButton;
 
     private final ConfigPanel configPanel;
+
+    private final Map<String, Object[]> configMap = new HashMap<>();
 
     public Editor(Project project) {
         this.project = project;
@@ -252,6 +255,71 @@ public class Editor extends JFrame {
 
         fileMenu.addSeparator();
 
+        fileMenu.add(new AbstractAction("Editor Settings") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(() -> {
+                    JDialog dialog = new JDialog(Editor.this, true);
+                    dialog.setTitle("Editor Settings");
+                    dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                    ConfigPanel cfg = editorConfig;
+                    dialog.add(cfg);
+
+                    JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+                    JButton applyButton = new JButton(new AbstractAction("OK") {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            SwingUtilities.invokeLater(() -> {
+                                cfg.saveValues();
+                                editorConfig.insert(cfg.values());
+
+                                HashMap<String, HashMap<String, Serializable>> values = editorConfig.values();
+
+                                for (String t : configMap.keySet()) {
+                                    values.get(t).forEach((s, s1) -> {
+                                        for (Object o : configMap.get(t)) {
+                                            if (o.getClass().getSimpleName().equals(s)) {
+                                                try {
+                                                    //noinspection unchecked
+                                                    Loading.applyPropsToObject((ArrayList<Pair<Pair<String, String>, String[]>>) s1, o);
+                                                } catch (NoSuchFieldException | IllegalAccessException |
+                                                         NoSuchMethodException |
+                                                         InstantiationException | InvocationTargetException ex) {
+                                                    throw new RuntimeException(ex);
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    });
+                                }
+                                dialog.dispose();
+                            });
+                        }
+                    });
+                    bottom.add(applyButton);
+                    dialog.getRootPane().setDefaultButton(applyButton);
+
+                    bottom.add(new JButton(new AbstractAction("Close") {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            dialog.dispose();
+                        }
+                    }));
+
+                    dialog.add(bottom, BorderLayout.SOUTH);
+
+
+                    dialog.setSize(600, 400);
+
+                    dialog.setLocationRelativeTo(Editor.this);
+                    dialog.setVisible(true);
+                });
+            }
+        });
+
+        fileMenu.addSeparator();
+
         fileMenu.add(new AbstractAction("Open Scene") {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -323,7 +391,7 @@ public class Editor extends JFrame {
 
         projectMenu.setMnemonic(KeyEvent.VK_P);
 
-        projectMenu.add(new AbstractAction("Project Settings...") {
+        projectMenu.add(new AbstractAction("Project Settings") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JDialog dialog = new JDialog(Editor.this, true);
@@ -353,15 +421,6 @@ public class Editor extends JFrame {
                     }
                 }));
 
-                bottom.add(new JButton(new AbstractAction("Apply") {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        cfg.saveValues();
-                        configPanel.insert(cfg.values());
-                        project.setProjectSettings(configPanel.values());
-                    }
-                }));
-
                 dialog.add(bottom, BorderLayout.SOUTH);
 
 
@@ -372,7 +431,7 @@ public class Editor extends JFrame {
             }
         });
 
-        projectMenu.add(new AbstractAction("Manage Scenes...") {
+        projectMenu.add(new AbstractAction("Manage Scenes") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JDialog dialog = new JDialog(Editor.this, true);
@@ -596,20 +655,25 @@ public class Editor extends JFrame {
         try {
             editorConfig = new ConfigPanel(
                     new String[]{
-                        "Game View"
+                            "Game View",
+                            "Physics"
                     },
                     new ConfigProp[][]{
-                        new ConfigProp[] {
-                                new ConfigProp(GameViewSettings.class, this)
-                        }
+                            new ConfigProp[]{
+                                    new ConfigProp(GameViewSettings.class, this)
+                            },
+                            new ConfigProp[]{
+                                    new ConfigProp(PhysicsSettings.class, this)
+                            }
                     }
             );
-        } catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e) {
+        } catch (NoSuchMethodException | InstantiationException | InvocationTargetException |
+                 IllegalAccessException e) {
             throw new RuntimeException(e);
         }
 
         String configString = Global.appProps.getProperty("editor_config");
-        if(configString != null) {
+        if (configString != null) {
             try {
                 //noinspection unchecked
                 editorConfig.insert((HashMap<String, HashMap<String, Serializable>>) Entry.convertFrom(configString));
@@ -618,8 +682,32 @@ public class Editor extends JFrame {
             }
         }
 
+        editorConfig.refresh();
+
+        for (int i = 0; i < editorConfig.pages().length; i++) {
+            ConfigProp[] c = editorConfig.configs()[i];
+            Object[] configs = new Object[c.length];
+            for (int i1 = 0; i1 < configs.length; i1++) {
+                configs[i1] = c[i1].configInstance;
+            }
+            configMap.put(editorConfig.pages()[i], configs);
+        }
+
 
         setVisible(true);
+    }
+
+    public <T> T getSettings(String page, Class<?> clazz) {
+        for (String t : configMap.keySet()) {
+            if (t.equals(page)) {
+                for (Object cfg : configMap.get(t)) {
+                    if (cfg.getClass().equals(clazz))
+                        //noinspection unchecked
+                        return (T) cfg;
+                }
+            }
+        }
+        throw new IllegalArgumentException(page + " or " + clazz);
     }
 
     private void passEditor(EditorEntity entity, ScenePanel scenePanel) {

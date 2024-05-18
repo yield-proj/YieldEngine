@@ -728,4 +728,29 @@ public class ScenePanel extends JPanel {
         this.entitiesTree = entitiesTree;
         return this;
     }
+
+    public Project project() {
+        return project;
+    }
+
+    public JSplitPane mainP() {
+        return mainP;
+    }
+
+    public ActionsHandler scenePanelAH() {
+        return scenePanelAH;
+    }
+
+    public Editor editor() {
+        return editor;
+    }
+
+    public Timer saveTimer() {
+        return saveTimer;
+    }
+
+    public ScenePanel setSaveTimer(Timer saveTimer) {
+        this.saveTimer = saveTimer;
+        return this;
+    }
 }
