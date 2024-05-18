@@ -116,7 +116,6 @@ public class ActionsHandler extends JPanel {
     }
 
     private void updateActionsMenu() {
-        System.out.println(actualAction);
         undoRedoActions[0].setEnabled(undoAvailable());
         undoRedoActions[1].setEnabled(redoAvailable());
         actionsMenu.removeAll();

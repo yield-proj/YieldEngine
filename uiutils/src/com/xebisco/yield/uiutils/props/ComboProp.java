@@ -20,10 +20,7 @@ public class ComboProp extends Prop {
         this.values = values;
         options = new JComboBox<>(values);
         this.prettyLabel = prettyLabel;
-        options.addItemListener(e -> {
-            System.out.println((Serializable) options.getSelectedItem());
-            setValue((Serializable) options.getSelectedItem());
-        });
+        options.addItemListener(e -> setValue((Serializable) options.getSelectedItem()));
         options.setSelectedItem(value);
     }
 
