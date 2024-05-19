@@ -15,6 +15,7 @@
 
 package com.xebisco.yield.editor.app.editor;
 
+import com.xebisco.yield.editor.runtime.pack.EditorComponent;
 import com.xebisco.yield.uiutils.Srd;
 import com.xebisco.yield.uiutils.file.DirectoryRestrictedFileSystemView;
 import com.xebisco.yield.uiutils.props.*;
@@ -268,5 +269,41 @@ public class ComponentProp extends Prop {
         }
     }
 
+    public boolean hidden() {
+        return hidden;
+    }
 
+    public ComponentProp setHidden(boolean hidden) {
+        this.hidden = hidden;
+        return this;
+    }
+
+    public Runnable moveUp() {
+        return moveUp;
+    }
+
+    public Runnable moveDown() {
+        return moveDown;
+    }
+
+    public Runnable remove() {
+        return remove;
+    }
+
+    public Runnable reload() {
+        return reload;
+    }
+
+    public List<Prop> props() {
+        return props;
+    }
+
+    public ComponentProp setProps(List<Prop> props) {
+        this.props = props;
+        return this;
+    }
+
+    public Editor editor() {
+        return editor;
+    }
 }

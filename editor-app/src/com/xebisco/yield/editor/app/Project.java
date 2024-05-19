@@ -18,7 +18,7 @@ package com.xebisco.yield.editor.app;
 import com.xebisco.yield.assets.compressing.AssetsCompressing;
 import com.xebisco.yield.editor.annotations.Config;
 import com.xebisco.yield.editor.annotations.Visible;
-import com.xebisco.yield.editor.app.editor.EditorScene;
+import com.xebisco.yield.editor.runtime.pack.EditorScene;
 
 import javax.tools.*;
 import java.io.*;

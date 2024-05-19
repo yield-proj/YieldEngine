@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.editor.app.editor;
+package com.xebisco.yield.editor.runtime.pack;
 
 import com.xebisco.yield.editor.annotations.Config;
 import com.xebisco.yield.editor.annotations.IntColor;

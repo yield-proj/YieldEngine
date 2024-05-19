@@ -15,8 +15,11 @@
 
 package com.xebisco.yield.editor.app.editor;
 
+import com.xebisco.yield.editor.app.Global;
 import com.xebisco.yield.editor.app.Project;
-import com.xebisco.yield.editor.app.config.GameViewSettings;
+import com.xebisco.yield.editor.runtime.pack.EditorComponent;
+import com.xebisco.yield.editor.runtime.pack.EditorEntity;
+import com.xebisco.yield.editor.runtime.pack.EditorScene;
 import com.xebisco.yield.uiutils.Srd;
 import com.xebisco.yield.uiutils.props.Prop;
 import com.xebisco.yield.uiutils.props.PropPanel;
@@ -237,9 +240,8 @@ public class ScenePanel extends JPanel {
             saveTimer.stop();
             saveTimer = null;
         }
-        Font defaultFont;
         try {
-            defaultFont = Font.createFont(Font.TRUETYPE_FONT, new File(project.path(), "Assets/default-font.ttf")).deriveFont(12f);
+            Global.defaultFont = Font.createFont(Font.TRUETYPE_FONT, new File(project.path(), "Assets/default-font.ttf")).deriveFont(12f);
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -252,7 +254,6 @@ public class ScenePanel extends JPanel {
                     saveTimer = null;
                     return;
                 }
-                entity.setDefaultFont(defaultFont);
                 saveSceneEntity(entity, true);
                 if (toSaveFile != null) {
                     try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(saveFile.get()))) {
@@ -292,7 +293,7 @@ public class ScenePanel extends JPanel {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if (e.getClickCount() == 2 && components.getSelectedValue() != null) {
-                            entity.components().add(new EditorComponent(components.getSelectedValue(), editor));
+                            entity.components().add(Global.addFields(components.getSelectedValue(), editor, new EditorComponent(components.getSelectedValue().getName())));
                             addComponentDialog.dispose();
                             reloadFields(props, entity, scrollPane);
                         }
@@ -466,9 +467,9 @@ public class ScenePanel extends JPanel {
                 else {
                     entities1 = entities;
                 }
-                EditorEntity ee = new EditorEntity(editor).setParent(parent);
+                EditorEntity ee = Global.clearComponents(new EditorEntity(), editor).setParent(parent);
                 scenePanelAH.push(new ActionsHandler.ActionHA("Create Entity", () -> {
-                    if (mousePosition != null) ee.setPosition(mousePosition.x, mousePosition.y);
+                    if (mousePosition != null) Global.setPosition(mousePosition.x, mousePosition.y, ee);
                     entities1.add(ee);
                     openEntity(ee, null);
                     entitiesTree.tree.update();
@@ -538,10 +539,10 @@ public class ScenePanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 SwingUtilities.invokeLater(() -> {
                     for (EditorEntity en : entities) {
-                        EditorEntity n = new EditorEntity(editor).setEntityName(en.entityName() + " (Clone)").setParent(en.parent()).setPrefabFile(en.prefabFile());
+                        EditorEntity n = Global.clearComponents(new EditorEntity(), editor).setEntityName(en.entityName() + " (Clone)").setParent(en.parent()).setPrefabFile(en.prefabFile());
                         n.components().clear();
                         for (EditorComponent c : en.components())
-                            n.components().add(c.sameAs());
+                            n.components().add(Global.sameAs(c, editor));
 
                         List<EditorEntity> entities1;
                         if (en.parent() == null) entities1 = scene.entities();

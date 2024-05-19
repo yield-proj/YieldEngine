@@ -15,25 +15,19 @@
 
 package com.xebisco.yield.editor.app.editor;
 
+import com.xebisco.yield.editor.app.Global;
 import com.xebisco.yield.uiutils.Srd;
 import com.xebisco.yield.uiutils.props.*;
 import com.xebisco.yield.utils.Pair;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 public class ConfigProp extends Prop {
     List<Prop> props;
@@ -80,7 +74,7 @@ public class ConfigProp extends Prop {
     private void addFields(Class<?> clazz, Object o) {
         //noinspection unchecked
         List<Pair<Pair<String, String>, String[]>> fields = (List<Pair<Pair<String, String>, String[]>>) value;
-        EditorComponent.extractFields(clazz, o, editor, fields, false);
+        Global.extractFields(clazz, o, editor, fields, false);
     }
 
     public void addComp() {

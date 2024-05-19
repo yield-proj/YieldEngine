@@ -14,5 +14,6 @@
     <orderEntry type="module" module-name="utils" />
     <orderEntry type="module" module-name="editor-annotations" />
     <orderEntry type="module" module-name="assets-compressing" />
+    <orderEntry type="module" module-name="editor-runtime" />
   </component>
 </module>

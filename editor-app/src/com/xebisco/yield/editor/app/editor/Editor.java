@@ -15,11 +15,12 @@
 
 package com.xebisco.yield.editor.app.editor;
 
-import com.xebisco.yield.editor.annotations.Config;
 import com.xebisco.yield.editor.app.*;
 import com.xebisco.yield.editor.app.config.GameViewSettings;
 import com.xebisco.yield.editor.app.config.PhysicsSettings;
 import com.xebisco.yield.editor.app.run.PlayPanel;
+import com.xebisco.yield.editor.runtime.pack.EditorEntity;
+import com.xebisco.yield.editor.runtime.pack.EditorScene;
 import com.xebisco.yield.uiutils.props.Prop;
 import com.xebisco.yield.uiutils.props.PropPanel;
 import com.xebisco.yield.uiutils.props.TextFieldProp;
@@ -27,8 +28,8 @@ import com.xebisco.yield.utils.Loading;
 import com.xebisco.yield.utils.Pair;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -38,8 +39,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -710,7 +711,6 @@ public class Editor extends JFrame {
     }
 
     private void passEditor(EditorEntity entity, ScenePanel scenePanel) {
-        entity.setEditor(this);
         scenePanel.openEntity(entity, null);
         for (EditorEntity c : entity.children()) {
             passEditor(c, scenePanel);

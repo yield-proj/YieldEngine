@@ -15,8 +15,11 @@
 
 package com.xebisco.yield.editor.app.editor;
 
+import com.xebisco.yield.editor.app.Global;
 import com.xebisco.yield.editor.app.config.GameViewSettings;
 import com.xebisco.yield.editor.app.config.PhysicsSettings;
+import com.xebisco.yield.editor.runtime.pack.EditorEntity;
+import com.xebisco.yield.editor.runtime.pack.EditorScene;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -165,7 +168,7 @@ class GameView extends JPanel {
                 //TODO draw objs
 
                 for (EditorEntity e : scene().entities()) {
-                    e.draw(g2);
+                    Global.draw(g2, e);
                     g2.setColor(new Color(213, 213, 213, 65));
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     Point2D.Double position = e.realPosition();
@@ -491,16 +494,16 @@ class GameView extends JPanel {
                     if (xArrowSelected) {
                         if (placeInGrid) {
                             Point gridPosition = closerGridLocationTo(new Point2D.Double(mousePositionX, mousePositionY));
-                            selectedEntity.setPosition(gridPosition.x, selectedEntity.position().y);
+                            Global.setPosition(gridPosition.x, selectedEntity.position().y, selectedEntity);
                         } else
-                            selectedEntity.setPosition(selectedEntity.position().x - ((double) (lastDraggingPosition.x - e.getLocationOnScreen().x) / zoom), selectedEntity.position().y);
+                            Global.setPosition(selectedEntity.position().x - ((double) (lastDraggingPosition.x - e.getLocationOnScreen().x) / zoom), selectedEntity.position().y, selectedEntity);
                     }
                     if (yArrowSelected) {
                         if (placeInGrid) {
                             Point gridPosition = closerGridLocationTo(new Point2D.Double(mousePositionX, mousePositionY));
-                            selectedEntity.setPosition(selectedEntity.position().x, -gridPosition.y);
+                            Global.setPosition(selectedEntity.position().x, -gridPosition.y, selectedEntity);
                         } else
-                            selectedEntity.setPosition(selectedEntity.position().x, selectedEntity.position().y + ((double) (lastDraggingPosition.y - e.getLocationOnScreen().y) / zoom));
+                            Global.setPosition(selectedEntity.position().x, selectedEntity.position().y + ((double) (lastDraggingPosition.y - e.getLocationOnScreen().y) / zoom), selectedEntity);
                     }
                     lastDraggingPosition.setLocation(e.getLocationOnScreen());
                     scenePanel.saveSceneEntity(selectedEntity, false);
@@ -519,7 +522,7 @@ class GameView extends JPanel {
             setToolTipText("");
 
             for (EditorEntity entity : scene.entities()) {
-                Dimension d = entity.size();
+                Dimension d = Global.size(entity, scenePanel.editor());
                 Point2D.Double p = entity.realPosition();
                 if (d.width < 8) d.width = 8;
                 if (d.height < 8) d.height = 8;
@@ -535,7 +538,7 @@ class GameView extends JPanel {
             EditorEntity lastSelected = selectedEntity;
             if (!moving) selectedEntity = null;
             if (tool != Tools.RULER) for (EditorEntity entity : scene.entities()) {
-                if (entity.inside(new Point2D.Double(mousePositionX - getWidth() / 2., mousePositionY - getHeight() / 2.))) {
+                if (Global.inside(new Point2D.Double(mousePositionX - getWidth() / 2., mousePositionY - getHeight() / 2.), entity, scenePanel.editor())) {
                     if (e.getButton() == MouseEvent.BUTTON1) {
                         if (lastSelected != null && lastSelected.isChildOf(entity)) {
                             selectedEntity = lastSelected;
@@ -597,9 +600,9 @@ class GameView extends JPanel {
                 Point2D eP = se.position(), leP = lastSelectedEntityPosition;
                 lastSelectedEntityPosition = null;
                 scenePanel.scenePanelAH.push(new ActionsHandler.ActionHA("Move Entity(" + se.entityName() + ")", () -> {
-                    se.setPosition(eP.getX(), eP.getY());
+                    Global.setPosition(eP.getX(), eP.getY(), se);
                 }, () -> {
-                    se.setPosition(leP.getX(), leP.getY());
+                    Global.setPosition(leP.getX(), leP.getY(), se);
                 }));
             }
             showingRuler = false;
