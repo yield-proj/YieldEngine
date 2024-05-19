@@ -250,7 +250,8 @@ public class EditorEntity implements Serializable {
                             Matcher m = FontFileProp.SIZEP.matcher(field.second()[0]);
                             if (m.find()) {
                                 try {
-                                    font = Font.createFont(Font.TRUETYPE_FONT, new File(m.group(1))).deriveFont(Float.parseFloat(m.group(2)));
+                                    if (!(m.group(1) == null || m.group(1).isEmpty() || m.group(1).equals("null")))
+                                        font = Font.createFont(Font.TRUETYPE_FONT, new File(m.group(1))).deriveFont(Float.parseFloat(m.group(2)));
                                 } catch (FontFormatException | IOException e) {
                                     throw new RuntimeException(e);
                                 }
