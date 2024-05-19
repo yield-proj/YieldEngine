@@ -15,18 +15,23 @@
 
 package com.xebisco.yield.editor.app;
 
+import com.xebisco.yield.editor.app.editor.ComponentProp;
 import com.xebisco.yield.editor.app.editor.ConfigProp;
+import com.xebisco.yield.editor.app.editor.Editor;
 import com.xebisco.yield.uiutils.FilteredListModel;
 import com.xebisco.yield.uiutils.PrettyListCellRenderer;
 import com.xebisco.yield.uiutils.props.Prop;
 import com.xebisco.yield.uiutils.props.PropPanel;
+import com.xebisco.yield.utils.Pair;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ConfigPanel extends JPanel implements Serializable {
     private final HashMap<String, PropPanel> panelMap = new HashMap<>();
@@ -38,7 +43,7 @@ public class ConfigPanel extends JPanel implements Serializable {
         this.pages = pages;
         this.configs = configs;
         for (int i = 0; i < pages.length; i++) {
-            panelMap.put(pages[i], new PropPanel(configs[i]));
+            panelMap.put(pages[i], new PropPanel(configs[i].clone()));
         }
 
         JScrollPane panel = new JScrollPane();
@@ -111,9 +116,15 @@ public class ConfigPanel extends JPanel implements Serializable {
         }
     }
 
-    public void insert(HashMap<String, HashMap<String, Serializable>> values) {
+    public void insert(HashMap<String, HashMap<String, Serializable>> values, Editor editor) {
         for (String s : values.keySet()) {
-            PropPanel.insert(panelMap.get(s).props(), values.get(s));
+            for (Prop p : panelMap.get(s).props()) {
+                //((ConfigProp) p).addComp(values.get(s));
+                //noinspection unchecked
+                ((ConfigProp) p).addComp(PropPanel.values(ComponentProp.getProps((ArrayList<Pair<Pair<String, String>, String[]>>) values.get(s).get(((ConfigProp) p).configClass().getSimpleName()), editor).toArray(new Prop[0])));
+                //((ConfigProp) p).addComp((HashMap<String, Serializable>) values.get(s).get(((ConfigProp) p).configClass().getSimpleName()));
+            }
+            //PropPanel.insert(panelMap.get(s).props(), values.get(s));
         }
     }
 

@@ -145,6 +145,7 @@ public class ComponentProp extends Prop {
         if (props.isEmpty()) props.add(new StringProp("No visible fields"));
         JPanel propPanel = new PropPanel(props.toArray(new Prop[0]));
         propPanel.setOpaque(false);
+        componentPanel.removeAll();
         componentPanel.add(propPanel);
     }
 

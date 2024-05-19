@@ -26,4 +26,7 @@ public class GameViewSettings {
 
     @Visible
     public MeasurementUnit rulerMeasurementUnit = MeasurementUnit.PIXELS;
+
+    @Visible
+    public double scrollSpeed = 2;
 }

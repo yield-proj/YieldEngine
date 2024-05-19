@@ -90,6 +90,19 @@ public class ConfigProp extends Prop {
         if (props.isEmpty()) props.add(new StringProp("No visible fields"));
         JPanel propPanel = new PropPanel(props.toArray(new Prop[0]));
         propPanel.setOpaque(false);
+        componentPanel.removeAll();
+        componentPanel.add(propPanel);
+    }
+
+    public void addComp(HashMap<String, Serializable> update) {
+        componentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        //noinspection unchecked
+        props = ComponentProp.getProps(((List<Pair<Pair<String, String>, String[]>>) value), editor);
+        PropPanel.insert(props.toArray(new Prop[0]), update);
+        if (props.isEmpty()) props.add(new StringProp("No visible fields"));
+        JPanel propPanel = new PropPanel(props.toArray(new Prop[0]));
+        propPanel.setOpaque(false);
+        componentPanel.removeAll();
         componentPanel.add(propPanel);
     }
 
@@ -107,13 +120,38 @@ public class ConfigProp extends Prop {
             } else {
                 v = new String[]{String.valueOf(prop.value())};
             }
-            fields.forEach(p -> {
-                if (p.first().first().equals(prop.name())) {
-                    System.arraycopy(v, 0, p.second(), 0, v.length);
+            for(Pair<Pair<String, String>, String[]> field : fields) {
+                if (field.first().first().equals(prop.name())) {
+                    System.arraycopy(v, 0, field.second(), 0, v.length);
+                    break;
                 }
-            });
+            }
         }
     }
 
 
+    public List<Prop> props() {
+        return props;
+    }
+
+    public ConfigProp setProps(List<Prop> props) {
+        this.props = props;
+        return this;
+    }
+
+    public Editor editor() {
+        return editor;
+    }
+
+    public Class<?> configClass() {
+        return configClass;
+    }
+
+    public Object configInstance() {
+        return configInstance;
+    }
+
+    public JPanel componentPanel() {
+        return componentPanel;
+    }
 }

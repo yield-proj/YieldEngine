@@ -137,7 +137,7 @@ public class Editor extends JFrame {
         if (project.projectSettings() == null) {
             project.setProjectSettings(configPanel.values());
         } else {
-            configPanel.insert(project.projectSettings());
+            configPanel.insert(project.projectSettings(), this);
         }
 
         configPanel.refresh();
@@ -262,7 +262,8 @@ public class Editor extends JFrame {
                     JDialog dialog = new JDialog(Editor.this, true);
                     dialog.setTitle("Editor Settings");
                     dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                    ConfigPanel cfg = editorConfig;
+                    ConfigPanel cfg = new ConfigPanel(editorConfig.pages(), editorConfig.configs());
+                    cfg.refresh();
                     dialog.add(cfg);
 
                     JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -272,7 +273,7 @@ public class Editor extends JFrame {
                         public void actionPerformed(ActionEvent e) {
                             SwingUtilities.invokeLater(() -> {
                                 cfg.saveValues();
-                                editorConfig.insert(cfg.values());
+                                editorConfig.insert(cfg.values(), Editor.this);
 
                                 HashMap<String, HashMap<String, Serializable>> values = editorConfig.values();
 
@@ -406,7 +407,7 @@ public class Editor extends JFrame {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         cfg.saveValues();
-                        configPanel.insert(cfg.values());
+                        configPanel.insert(cfg.values(), Editor.this);
                         project.setProjectSettings(configPanel.values());
                         dialog.dispose();
                     }
@@ -676,13 +677,11 @@ public class Editor extends JFrame {
         if (configString != null) {
             try {
                 //noinspection unchecked
-                editorConfig.insert((HashMap<String, HashMap<String, Serializable>>) Entry.convertFrom(configString));
+                editorConfig.insert((HashMap<String, HashMap<String, Serializable>>) Entry.convertFrom(configString), this);
             } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
-
-        editorConfig.refresh();
 
         for (int i = 0; i < editorConfig.pages().length; i++) {
             ConfigProp[] c = editorConfig.configs()[i];

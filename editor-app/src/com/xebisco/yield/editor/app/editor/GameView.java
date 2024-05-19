@@ -49,25 +49,25 @@ class GameView extends JPanel {
     private final Timer RIGHT_TIMER = new Timer(16, new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            viewPositionX += 1 / zoom * 2;
+            viewPositionX += viewSettings.scrollSpeed / zoom;
             repaint();
         }
     }), LEFT_TIMER = new Timer(16, new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            viewPositionX -= 1 / zoom * 2;
+            viewPositionX -= viewSettings.scrollSpeed / zoom;
             repaint();
         }
     }), UP_TIMER = new Timer(16, new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            viewPositionY -= 1 / zoom * 2;
+            viewPositionY -= viewSettings.scrollSpeed / zoom;
             repaint();
         }
     }), DOWN_TIMER = new Timer(16, new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            viewPositionY += 1 / zoom * 2;
+            viewPositionY += viewSettings.scrollSpeed / zoom;
             repaint();
         }
     });
@@ -96,8 +96,8 @@ class GameView extends JPanel {
         this.scene = scenePanel.scene();
         this.scenePanel = scenePanel;
 
-        viewSettings = scenePanel.editor().getSettings("Game View", GameViewSettings.class);
-        physicsSettings = scenePanel.editor().getSettings("Physics", PhysicsSettings.class);
+        viewSettings = (GameViewSettings) scenePanel.editor().getSettings("Game View", GameViewSettings.class);
+        physicsSettings = (PhysicsSettings) scenePanel.editor().getSettings("Physics", PhysicsSettings.class);
 
         JToolBar toolBar = new JToolBar();
         toolBar.addSeparator();
