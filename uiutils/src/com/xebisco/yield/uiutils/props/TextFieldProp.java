@@ -55,11 +55,8 @@ public class TextFieldProp extends Prop {
 
     @Override
     public Prop setValue(Serializable value) {
-        SwingUtilities.invokeLater(() -> {
-            field.setText((String) value);
-            field.repaint();
-        });
-
+        field.setText((String) value);
+        field.paintImmediately(0, 0, field.getWidth(), field.getHeight());
         return super.setValue(value);
     }
 }

@@ -1,6 +1,7 @@
 package com.xebisco.yield.uiutils.props;
 
 import com.xebisco.yield.uiutils.Srd;
+import com.xebisco.yield.uiutils.file.DirectoryRestrictedFileSystemView;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -8,6 +9,7 @@ import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.Serializable;
 import java.nio.file.FileSystem;
 
 public class PathProp extends TextFieldProp {
@@ -16,6 +18,12 @@ public class PathProp extends TextFieldProp {
 
     public PathProp(String name, String value, FileFilter filter, FileSystemView fileSystemView, boolean prettyString) {
         super(name, value, prettyString);
+        if (value != null) {
+            String p = value;
+            if (p.startsWith(fileSystemView.getHomeDirectory().getAbsolutePath()))
+                p = value.substring(fileSystemView.getHomeDirectory().getAbsolutePath().length() + 1);
+            setValue(p);
+        }
         this.filter = filter;
         this.fileSystemView = fileSystemView;
     }
@@ -53,13 +61,23 @@ public class PathProp extends TextFieldProp {
                 if (fileChooser.showOpenDialog(o) == JFileChooser.APPROVE_OPTION) {
                     if (!fileChooser.getSelectedFile().exists() || !filter.accept(fileChooser.getSelectedFile())) {
                         JOptionPane.showMessageDialog(null, "File is not valid", "File Load Error", JOptionPane.ERROR_MESSAGE);
-                    } else
-                        setValue(fileChooser.getSelectedFile().getAbsolutePath());
+                    } else {
+                        String p = fileChooser.getSelectedFile().getAbsolutePath();
+                        if (p.startsWith(fileSystemView.getHomeDirectory().getAbsolutePath()))
+                            p = p.substring(fileSystemView.getHomeDirectory().getAbsolutePath().length() + 1);
+                        setValue(p);
+                    }
                 }
             }
         }), gbc);
         b.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
         o.add(b, BorderLayout.EAST);
         return o;
+    }
+
+    @Override
+    public Serializable value() {
+        if (value == null) return null;
+        return fileSystemView instanceof DirectoryRestrictedFileSystemView ? new File(fileSystemView.getHomeDirectory(), (String) value).getAbsolutePath() : value;
     }
 }
