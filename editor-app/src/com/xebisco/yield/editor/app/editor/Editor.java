@@ -543,6 +543,13 @@ public class Editor extends JFrame {
             }
         });
 
+        buildMenu.add(new AbstractAction("Pack Scenes") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                checkError(project.packScenes("Build/scenes"), "Scenes Packing");
+            }
+        });
+
         buildMenu.add(new AbstractAction("Create Manifest") {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -768,6 +775,12 @@ public class Editor extends JFrame {
             }
             playPanel.progress("Packing Assets...");
             if (checkError(project.packAssets("Build/data"), "Assets Packing")) {
+                forceStop();
+                return;
+            }
+
+            playPanel.progress("Packing Scenes...");
+            if (checkError(project.packScenes("Build/scenes"), "Scenes Packing")) {
                 forceStop();
                 return;
             }

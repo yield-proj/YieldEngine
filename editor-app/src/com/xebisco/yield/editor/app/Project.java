@@ -38,7 +38,7 @@ public class Project implements Serializable {
     private transient File path;
     @Visible
     private String name, description = "", version = "1.0";
-    private final List<EditorScene> scenes = new ArrayList<>();
+    private final ArrayList<EditorScene> scenes = new ArrayList<>();
 
     private HashMap<String, HashMap<String, Serializable>> projectSettings;
 
@@ -135,7 +135,7 @@ public class Project implements Serializable {
 
         List<File> files = Global.listf(new File(path, "Scripts"));
 
-        if(files.isEmpty()) return null;
+        if (files.isEmpty()) return null;
 
         Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(files);
 
@@ -226,6 +226,28 @@ public class Project implements Serializable {
         } catch (IOException e) {
             return e.getMessage();
         }
+        return null;
+    }
+
+    public String packScenes(String folder) {
+        if (new File(path, folder).exists()) deleteDir(new File(path, folder));
+        new File(path, folder).mkdir();
+
+        try (AssetsCompressing ac = new AssetsCompressing(new File(path, folder))) {
+            for (EditorScene scene : scenes) {
+                File tempSceneFile = File.createTempFile("yieldbuild", "scene");
+                try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(tempSceneFile))) {
+                    oo.writeObject(scene);
+                } catch (IOException e) {
+                    return e.getMessage();
+                }
+                ac.addFile(tempSceneFile, scene.name());
+                tempSceneFile.delete();
+            }
+        } catch (IOException e) {
+            return e.getMessage();
+        }
+
         return null;
     }
 

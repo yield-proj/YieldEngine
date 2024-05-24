@@ -22,22 +22,32 @@ import com.xebisco.yield.assets.decompressing.AssetsDecompressing;
 import com.xebisco.yield.manager.ApplicationManager;
 import com.xebisco.yield.platform.ApplicationModule;
 import com.xebisco.yield.platform.ApplicationPlatform;
+import com.xebisco.yield.utils.Loading;
+import com.xebisco.yield.utils.Pair;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class Launcher {
-    public static void main(String[] args) throws ClassNotFoundException, IOException {
+    public static void main(String[] args) throws ClassNotFoundException, IOException, NoSuchFieldException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
         String dataFolder = "data";
         if (args.length > 0) {
             dataFolder = args[0];
         }
         ApplicationManager manager = new ApplicationManager(new ContextTime());
         AssetsDecompressing as = new AssetsDecompressing(new File(dataFolder));
-        new Application(manager, customOpenGLOpenAL(as), new PlatformInit(PlatformInit.PC_DEFAULT).setWindowIconPath("icon.png"));
+        PlatformInit platformInit = new PlatformInit(PlatformInit.PC_DEFAULT);
+        HashMap<String, HashMap<String, Serializable>> config;
+        try(ObjectInputStream oi = new ObjectInputStream(new FileInputStream("config.ser"))) {
+            //noinspection unchecked
+            config = (HashMap<String, HashMap<String, Serializable>>) oi.readObject();
+        }
+        //noinspection unchecked
+        Loading.applyPropsToObject((List<Pair<Pair<String, String>, String[]>>) config.get("Window").get("PlatformInit"), platformInit);
+        new Application(manager, customOpenGLOpenAL(as), platformInit);
         manager.runAndWait();
         as.close();
     }

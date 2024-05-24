@@ -86,6 +86,7 @@ public class ConfigProp extends Prop {
         propPanel.setOpaque(false);
         componentPanel.removeAll();
         componentPanel.add(propPanel);
+        saveValues();
     }
 
     public void addComp(HashMap<String, Serializable> update) {
@@ -98,6 +99,7 @@ public class ConfigProp extends Prop {
         propPanel.setOpaque(false);
         componentPanel.removeAll();
         componentPanel.add(propPanel);
+        saveValues();
     }
 
     public void saveValues() {
