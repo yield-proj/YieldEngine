@@ -37,7 +37,7 @@ public class Project implements Serializable {
     private final String ID = UUID.randomUUID().toString();
     private transient File path;
     @Visible
-    private String name, description = "", version = "1.0";
+    private String name, description = "", version = "1.0", startScene;
     private final ArrayList<EditorScene> scenes = new ArrayList<>();
 
     private HashMap<String, HashMap<String, Serializable>> projectSettings;

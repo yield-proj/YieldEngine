@@ -168,7 +168,7 @@ class GameView extends JPanel {
                 //TODO draw objs
 
                 for (EditorEntity e : scene().entities()) {
-                    Global.draw(g2, e);
+                    Global.draw(g2, e, scenePanel.editor());
                     g2.setColor(new Color(213, 213, 213, 65));
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     Point2D.Double position = e.realPosition();

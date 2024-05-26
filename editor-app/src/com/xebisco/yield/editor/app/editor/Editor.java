@@ -157,9 +157,7 @@ public class Editor extends JFrame {
                     JDialog newSceneDialog = new JDialog(Editor.this, true);
                     newSceneDialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                     newSceneDialog.add(new TitleLabel("New Scene", null), BorderLayout.NORTH);
-                    Prop[] props = new Prop[]{
-                            new TextFieldProp("Scene Name", "Empty Scene", false),
-                    };
+                    Prop[] props = new Prop[]{new TextFieldProp("Scene Name", "Empty Scene", false),};
                     PropPanel newProjectProps = new PropPanel(props);
                     newProjectProps.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
                     newSceneDialog.add(newProjectProps);
@@ -286,8 +284,8 @@ public class Editor extends JFrame {
                                                     //noinspection unchecked
                                                     Loading.applyPropsToObject((ArrayList<Pair<Pair<String, String>, String[]>>) s1, o);
                                                 } catch (NoSuchFieldException | IllegalAccessException |
-                                                         NoSuchMethodException |
-                                                         InstantiationException | InvocationTargetException ex) {
+                                                         NoSuchMethodException | InstantiationException |
+                                                         InvocationTargetException ex) {
                                                     throw new RuntimeException(ex);
                                                 }
                                                 break;
@@ -620,7 +618,7 @@ public class Editor extends JFrame {
         toolBar.add(playButton = new JButton(new AbstractAction("", new ImageIcon(Objects.requireNonNull(Editor.class.getResource("/icons/play.png")))) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                runScene(null);
+                runScene(((ScenePanel) scenePanel.getComponent(0)).scene());
             }
         }));
         toolBar.add(playGlobalButton = new JButton(new AbstractAction("", new ImageIcon(Objects.requireNonNull(Editor.class.getResource("/icons/playglobal.png")))) {
@@ -662,20 +660,7 @@ public class Editor extends JFrame {
 
 
         try {
-            editorConfig = new ConfigPanel(
-                    new String[]{
-                            "Game View",
-                            "Physics"
-                    },
-                    new ConfigProp[][]{
-                            new ConfigProp[]{
-                                    new ConfigProp(GameViewSettings.class, this)
-                            },
-                            new ConfigProp[]{
-                                    new ConfigProp(PhysicsSettings.class, this)
-                            }
-                    }
-            );
+            editorConfig = new ConfigPanel(new String[]{"Game View", "Physics"}, new ConfigProp[][]{new ConfigProp[]{new ConfigProp(GameViewSettings.class, this)}, new ConfigProp[]{new ConfigProp(PhysicsSettings.class, this)}});
         } catch (NoSuchMethodException | InstantiationException | InvocationTargetException |
                  IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -725,6 +710,8 @@ public class Editor extends JFrame {
     }
 
     public void openScene(EditorScene scene) {
+        if (!running)
+            playButton.setEnabled(true);
         scenePanel.removeAll();
         ScenePanel scenePanel;
         this.scenePanel.add(scenePanel = new ScenePanel(scene, project, this));
@@ -734,6 +721,7 @@ public class Editor extends JFrame {
     }
 
     public void closeScene() {
+        playButton.setEnabled(false);
         scenePanel.removeAll();
         JLabel noScenesLabel = new JLabel("No scenes added");
         noScenesLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -752,6 +740,8 @@ public class Editor extends JFrame {
         pauseButton.setEnabled(true);
         stopButton.setEnabled(true);
         //TODO
+
+        if (scenePanel.getComponent(0) instanceof ScenePanel sp) sp.closeEntity();
 
         playPanel.setWasInScenePanel(tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).equals("Scene Panel"));
 
@@ -800,8 +790,11 @@ public class Editor extends JFrame {
                 jarLibs.append(libs.get(i).getAbsolutePath());
                 if (i < libs.size() - 1) jarLibs.append(File.pathSeparator);
             }
-
-            ProcessBuilder processBuilder = new ProcessBuilder().directory(new File(project.path(), "Build")).command("java", "-cp", jarLibs.toString(), "com.xebisco.yield.editor.runtime.Launcher");
+            ProcessBuilder processBuilder;
+            if (scene != null)
+                processBuilder = new ProcessBuilder().directory(new File(project.path(), "Build")).command("java", "-cp", jarLibs.toString(), "com.xebisco.yield.editor.runtime.Launcher", scene.name());
+            else
+                processBuilder = new ProcessBuilder().directory(new File(project.path(), "Build")).command("java", "-cp", jarLibs.toString(), "com.xebisco.yield.editor.runtime.Launcher");
             try {
                 playPanel.console().println(processBuilder.command().toString());
 
@@ -870,7 +863,8 @@ public class Editor extends JFrame {
     public void forceStop() {
         running = false;
         playPanel.done();
-        playButton.setEnabled(true);
+        if (scenePanel.getComponent(0) instanceof ScenePanel sp && sp.scene() != null)
+            playButton.setEnabled(true);
         playGlobalButton.setEnabled(true);
         pauseButton.setEnabled(false);
         stopButton.setEnabled(false);

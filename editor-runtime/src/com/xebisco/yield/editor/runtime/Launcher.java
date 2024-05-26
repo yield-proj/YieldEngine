@@ -18,6 +18,7 @@ package com.xebisco.yield.editor.runtime;
 import com.xebisco.yield.Application;
 import com.xebisco.yield.ContextTime;
 import com.xebisco.yield.PlatformInit;
+import com.xebisco.yield.Scene;
 import com.xebisco.yield.assets.decompressing.AssetsDecompressing;
 import com.xebisco.yield.manager.ApplicationManager;
 import com.xebisco.yield.platform.ApplicationModule;
@@ -30,26 +31,42 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 class Launcher {
     public static void main(String[] args) throws ClassNotFoundException, IOException, NoSuchFieldException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
         String dataFolder = "data";
-        if (args.length > 0) {
-            dataFolder = args[0];
+        if (args.length > 1) {
+            dataFolder = args[1];
         }
+        Scenes.start();
         ApplicationManager manager = new ApplicationManager(new ContextTime());
         AssetsDecompressing as = new AssetsDecompressing(new File(dataFolder));
         PlatformInit platformInit = new PlatformInit(PlatformInit.PC_DEFAULT);
         HashMap<String, HashMap<String, Serializable>> config;
-        try(ObjectInputStream oi = new ObjectInputStream(new FileInputStream("config.ser"))) {
+        try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream("config.ser"))) {
             //noinspection unchecked
             config = (HashMap<String, HashMap<String, Serializable>>) oi.readObject();
         }
         //noinspection unchecked
         Loading.applyPropsToObject((List<Pair<Pair<String, String>, String[]>>) config.get("Window").get("PlatformInit"), platformInit);
-        new Application(manager, customOpenGLOpenAL(as), platformInit);
+        Application app = new Application(manager, customOpenGLOpenAL(as), platformInit);
+        AtomicReference<String> startScene = new AtomicReference<>();
+        if (args.length > 0) {
+            startScene.set(args[0]);
+        } else {
+            //noinspection unchecked
+            ((List<Pair<Pair<String, String>, String[]>>) config.get("Application").get("Project")).forEach(pair -> {
+                if (pair.first().first().equals("startScene")) {
+                    startScene.set(pair.second()[0]);
+                }
+            });
+        }
+        if (startScene.get() == null) throw new IllegalStateException("No start scene");
+        app.setScene(Scenes.load(startScene.get(), app));
         manager.runAndWait();
         as.close();
+        Scenes.close();
     }
 
     public static ApplicationPlatform customOpenGLOpenAL(AssetsDecompressing assetsDecompressing) throws ClassNotFoundException {

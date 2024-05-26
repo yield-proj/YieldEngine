@@ -160,6 +160,15 @@ public class ScenePanel extends JPanel {
 
     private Timer saveTimer;
 
+    public void closeEntity() {
+        mainP.setRightComponent(null);
+        if (saveTimer != null) {
+            saveTimer.stop();
+            saveTimer = null;
+        }
+        updateUI();
+    }
+
     public void openEntity(EditorEntity entity, File toSaveFile) {
         AtomicReference<File> saveFile = new AtomicReference<>(toSaveFile);
 
@@ -249,9 +258,7 @@ public class ScenePanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!entityExists(entity)) {
-                    mainP.setRightComponent(null);
-                    saveTimer.stop();
-                    saveTimer = null;
+                    closeEntity();
                     return;
                 }
                 saveSceneEntity(entity, true);
@@ -622,7 +629,11 @@ public class ScenePanel extends JPanel {
                 if (getSelectionPaths() == null || getSelectionPaths().length == 0) return new EditorEntity[0];
                 EditorEntity[] entities = new EditorEntity[getSelectionPaths().length];
                 for (int i = 0; i < entities.length; i++) {
-                    entities[i] = ((EntityNode) ((DefaultMutableTreeNode) getSelectionPaths()[i].getLastPathComponent()).getUserObject()).editorEntity;
+                    try {
+                        entities[i] = ((EntityNode) ((DefaultMutableTreeNode) getSelectionPaths()[i].getLastPathComponent()).getUserObject()).editorEntity;
+                    } catch (ClassCastException ignore) {
+
+                    }
                 }
                 return entities;
             }

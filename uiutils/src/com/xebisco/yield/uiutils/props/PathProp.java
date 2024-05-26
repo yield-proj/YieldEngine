@@ -78,6 +78,19 @@ public class PathProp extends TextFieldProp {
     @Override
     public Serializable value() {
         if (value == null || ((String) value).startsWith("null,") || ((String) value).startsWith("null ,")) return null;
-        return fileSystemView instanceof DirectoryRestrictedFileSystemView ? new File(fileSystemView.getHomeDirectory(), (String) value).getAbsolutePath() : value;
+        return value;
+    }
+
+    public FileFilter filter() {
+        return filter;
+    }
+
+    public FileSystemView fileSystemView() {
+        return fileSystemView;
+    }
+
+    public PathProp setFileSystemView(FileSystemView fileSystemView) {
+        this.fileSystemView = fileSystemView;
+        return this;
     }
 }

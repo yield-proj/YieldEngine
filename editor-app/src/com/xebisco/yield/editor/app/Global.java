@@ -101,7 +101,7 @@ public class Global {
         return size;
     }
 
-    public static void draw(Graphics2D g, EditorEntity entity) {
+    public static void draw(Graphics2D g, EditorEntity entity, Editor editor) {
         Point2D.Double position = entity.realPosition(), scale = entity.scale();
         for (EditorComponent c : entity.components()) {
             AffineTransform t = new AffineTransform(g.getTransform());
@@ -156,7 +156,7 @@ public class Global {
                         //image = new Point2D.Double(Double.parseDouble(   field.second()[0]), Double.parseDouble(field.second()[1]));
                         if (field.second().length > 0 && field.second()[0] != null && !field.second()[0].equals("null"))
                             try {
-                                image = Srd.getImage(field.second()[0]);
+                                image = Srd.getImage(new File(editor.project().assetsDirectory(), field.second()[0]).getAbsolutePath());
                             } catch (RuntimeException ignore) {
                             }
                         break;
@@ -217,7 +217,7 @@ public class Global {
             }
             g.setTransform(t);
         }
-        for (EditorEntity child : entity.children()) draw(g, child);
+        for (EditorEntity child : entity.children()) draw(g, child, editor);
     }
 
     public static EditorComponent sameAs(EditorComponent component, Editor editor) {

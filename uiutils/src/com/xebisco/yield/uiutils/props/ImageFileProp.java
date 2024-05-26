@@ -1,6 +1,7 @@
 package com.xebisco.yield.uiutils.props;
 
 import com.formdev.flatlaf.icons.FlatOptionPaneErrorIcon;
+import com.xebisco.yield.uiutils.file.DirectoryRestrictedFileSystemView;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 public class ImageFileProp extends PathProp {
     private final JLabel imageLabel = new JLabel();
@@ -31,26 +33,26 @@ public class ImageFileProp extends PathProp {
         field().getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                updateImage(field().getText());
+                SwingUtilities.invokeLater(() -> updateImage((String) value()));
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                updateImage(field().getText());
+                SwingUtilities.invokeLater(() -> updateImage((String) value()));
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                updateImage(field().getText());
+                SwingUtilities.invokeLater(() -> updateImage((String) value()));
             }
         });
-        updateImage(value);
+        updateImage((String) value());
     }
 
     private void updateImage(String path) {
         try {
             imageLabel.setBorder(BorderFactory.createTitledBorder(new File(path).getName()));
-            imageLabel.setIcon(new ImageIcon(ImageIO.read(new File(path)).getScaledInstance(64, -1, Image.SCALE_SMOOTH)));
+            imageLabel.setIcon(new ImageIcon(ImageIO.read(new File(fileSystemView() instanceof DirectoryRestrictedFileSystemView ? new File(fileSystemView().getHomeDirectory(), path).getAbsolutePath() : path)).getScaledInstance(64, -1, Image.SCALE_SMOOTH)));
         } catch (IOException | NullPointerException e) {
             Icon icon = new FlatOptionPaneErrorIcon();
             imageLabel.setBorder(BorderFactory.createTitledBorder("NONE"));

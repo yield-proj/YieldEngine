@@ -56,7 +56,10 @@ public class PlayPanel extends JPanel {
 
         leftPane.setTabPlacement(JTabbedPane.LEFT);
 
-        leftPane.add("Console", console);
+        JScrollPane consoleScrollPane = new JScrollPane(console);
+        consoleScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        leftPane.add("Console", consoleScrollPane);
 
         splitPane.setLeftComponent(leftPane);
 
