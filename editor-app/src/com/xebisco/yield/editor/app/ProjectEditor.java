@@ -32,9 +32,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
@@ -81,7 +79,7 @@ public class ProjectEditor extends JFrame {
     }
 
     private void openProject(Project project) throws IOException {
-        dispose();
+        ProjectEditor.this.dispatchEvent(new WindowEvent(ProjectEditor.this, WindowEvent.WINDOW_CLOSING));
         if (project.updatePropsToLatest(false)) {
             if (JOptionPane.showConfirmDialog(
                     null,
@@ -122,9 +120,6 @@ public class ProjectEditor extends JFrame {
                 throw new RuntimeException(e);
             }
         }
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            saveWorkspace(workspaceFile, PROJECT_FILES);
-        }));
 
         try {
             setIconImage(ImageIO.read(Objects.requireNonNull(ProjectEditor.class.getResourceAsStream("/logo/logo.png"))));
@@ -133,7 +128,14 @@ public class ProjectEditor extends JFrame {
         }
 
         setTitle(Srd.LANG.getProperty("title_editor_projects"));
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                saveWorkspace(workspaceFile, PROJECT_FILES);
+                dispose();
+            }
+        });
         setMinimumSize(new Dimension(500, 300));
         setSize(new Dimension(800, 600));
         setLocationRelativeTo(null);
@@ -298,20 +300,9 @@ public class ProjectEditor extends JFrame {
             } while (err[0]);
         }, () -> {
             JFileChooser fileChooser = new JFileChooser(workspaceFile.getAbsolutePath());
-            fileChooser.setFileFilter(new FileFilter() {
-                @Override
-                public boolean accept(File f) {
-                    return f.getName().endsWith(".ser");
-                }
-
-                @Override
-                public String getDescription() {
-                    return "Serialized Files";
-                }
-            });
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (fileChooser.showOpenDialog(ProjectEditor.this) == JFileChooser.APPROVE_OPTION) {
-                try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(fileChooser.getSelectedFile()))) {
+                try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(new File(fileChooser.getSelectedFile(), "editor_project.ser")))) {
                     Project p = ((Project) oi.readObject());
                     if (PROJECT_OBJECTS.contains(p)) {
                         JOptionPane.showMessageDialog(fileChooser, "This project is already imported", "Error", JOptionPane.ERROR_MESSAGE);
@@ -351,7 +342,7 @@ public class ProjectEditor extends JFrame {
                         ProjectEditor editor = new ProjectEditor(new File(Global.appProps.getProperty("lastWorkspace"), "workspace.ser"), null);
                         editor.setSize(size);
                         editor.setLocationRelativeTo(ProjectEditor.this);
-                        ProjectEditor.this.dispose();
+                        ProjectEditor.this.dispatchEvent(new WindowEvent(ProjectEditor.this, WindowEvent.WINDOW_CLOSING));
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }

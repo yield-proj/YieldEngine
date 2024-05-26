@@ -39,19 +39,24 @@ public class Loading {
             switch (field.first().second()) {
                 case "com.xebisco.yield.AbstractTexture" -> {
                     try {
-                        System.out.println(Arrays.toString(field.second()));
-                        System.out.println(o.getClass().getClassLoader().loadClass("com.xebisco.yield.texture.Texture").getConstructor(
+                        f.set(o, o.getClass().getClassLoader().loadClass("com.xebisco.yield.texture.Texture").getConstructor(
                                         String.class,
                                         o.getClass().getClassLoader().loadClass("com.xebisco.yield.texture.TextureFilter"),
                                         o.getClass().getClassLoader().loadClass("com.xebisco.yield.manager.TextureManager"),
                                         o.getClass().getClassLoader().loadClass("com.xebisco.yield.manager.FileIOManager"))
                                 .newInstance(field.second()[0], o.getClass().getClassLoader().loadClass("com.xebisco.yield.texture.TextureFilter").getEnumConstants()[0], extras[0], extras[1])
                         );
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                case "com.xebisco.yield.font.Font" -> {
+                    try {
                         f.set(o, o.getClass().getClassLoader().loadClass("com.xebisco.yield.texture.Texture").getConstructor(
-                                String.class,
-                                o.getClass().getClassLoader().loadClass("com.xebisco.yield.texture.TextureFilter"),
-                                o.getClass().getClassLoader().loadClass("com.xebisco.yield.manager.TextureManager"),
-                                o.getClass().getClassLoader().loadClass("com.xebisco.yield.manager.FileIOManager"))
+                                        String.class,
+                                        o.getClass().getClassLoader().loadClass("com.xebisco.yield.texture.TextureFilter"),
+                                        o.getClass().getClassLoader().loadClass("com.xebisco.yield.manager.TextureManager"),
+                                        o.getClass().getClassLoader().loadClass("com.xebisco.yield.manager.FileIOManager"))
                                 .newInstance(field.second()[0], o.getClass().getClassLoader().loadClass("com.xebisco.yield.texture.TextureFilter").getEnumConstants()[0], extras[0], extras[1])
                         );
                     } catch (ClassNotFoundException e) {

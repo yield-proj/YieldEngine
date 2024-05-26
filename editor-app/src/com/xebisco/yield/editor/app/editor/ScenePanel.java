@@ -654,7 +654,7 @@ public class ScenePanel extends JPanel {
                 });
 
                 addTreeSelectionListener(e -> {
-                    if (getSelectionPaths() != null && getSelectionPaths().length == 1 && gameView.selectedEntity() != es()[0])
+                    if (getSelectionPaths() != null && getSelectionPaths().length == 1 && gameView.selectedEntity() != es()[0] && es()[0] != null)
                         try {
                             gameView.setSelectedEntity(es()[0]);
                             int selected = getMinSelectionRow();
