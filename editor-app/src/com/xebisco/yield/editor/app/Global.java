@@ -102,14 +102,34 @@ public class Global {
         return size;
     }
 
+    public static void drawString(Graphics2D g2d, float x, float y, String text, float deg) {
+        for (int i = 0; i < text.length(); i++) {
+            char character = text.charAt(i);
+            String singleChar = String.valueOf(character);
+
+            AffineTransform savedTransform = g2d.getTransform();
+
+            AffineTransform transform = new AffineTransform();
+            int textW = g2d.getFontMetrics().stringWidth(singleChar);
+            transform.rotate(deg, x + textW / 2f, y - g2d.getFont().getSize() / 2f);
+
+            g2d.transform(transform);
+
+            g2d.drawString(singleChar, x, y);
+
+            g2d.setTransform(savedTransform);
+
+            x += textW;
+        }
+    }
+
     public static void draw(Graphics2D g, EditorEntity entity, Editor editor) {
         Point2D.Double position = entity.realPosition(), scale = entity.scale();
         for (EditorComponent c : entity.components()) {
             AffineTransform t = new AffineTransform(g.getTransform());
 
-            g.rotate(Math.toRadians(-entity.rotation()), position.x, -position.y);
             if (c.className().equals("com.xebisco.yield.RectangleMesh")) {
-
+                g.rotate(Math.toRadians(-entity.rotation()), position.x, -position.y);
                 Color color = new Color(0, 0, 0, 1);
                 for (Pair<Pair<String, String>, String[]> field : c.fields()) {
                     if (field.first().first().equals("color")) {
@@ -131,6 +151,7 @@ public class Global {
                 g.setColor(color);
                 g.fill(new Rectangle2D.Double(position.x - (size.x * scale.x / 2), -position.y - (size.y * scale.y / 2), size.x * scale.x, size.y * scale.y));
             } else if (c.className().equals("com.xebisco.yield.texture.TexturedRectangleMesh")) {
+                g.rotate(Math.toRadians(-entity.rotation()), position.x, -position.y);
                 Color color = new Color(0, 0, 0, 1);
                 for (Pair<Pair<String, String>, String[]> field : c.fields()) {
                     if (field.first().first().equals("color")) {
@@ -214,7 +235,7 @@ public class Global {
                 Point2D.Double size = new Point2D.Double(rect.getWidth(), rect.getHeight() / 2);
                 Point2D aP = entity.anchorP(size);
                 g.translate(aP.getX(), aP.getY());
-                g.drawString(contents, (float) (-size.getX() / 2 + position.x), (float) (size.getY() / 2 - position.y));
+                drawString(g, (float) (-size.getX() / 2 + position.x), (float) (size.getY() / 2 - position.y), contents, (float) Math.toRadians(-entity.rotation()));
             }
             g.setTransform(t);
         }

@@ -59,6 +59,8 @@ public final class Scenes {
                                     Object[] extras = null;
                                     if(component instanceof TexturedRectangleMesh)
                                         extras = new Object[] {application().applicationPlatform().textureManager(), application().applicationPlatform().ioManager()};
+                                    else if(component instanceof TextMesh)
+                                        extras = new Object[] {application().applicationPlatform().fontManager(), application().applicationPlatform().ioManager()};
                                     try {
                                         Loading.applyPropsToObject(comp.fields(), component, extras);
                                     } catch (NoSuchFieldException | IllegalAccessException |
@@ -75,7 +77,7 @@ public final class Scenes {
                             //Transform2D
                             try {
                                 Loading.applyPropsToObject(entity.components().get(0).fields(), e.transform());
-                                System.out.println(e.transform().position());
+                                e.transform().position().multiplyLocal(2);
                             } catch (NoSuchFieldException | IllegalAccessException |
                                      NoSuchMethodException | InvocationTargetException | InstantiationException ex) {
                                 throw new RuntimeException(ex);

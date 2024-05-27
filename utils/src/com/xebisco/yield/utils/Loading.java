@@ -17,10 +17,14 @@ package com.xebisco.yield.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Loading {
+
+    public final static Pattern SIZEP = Pattern.compile("^(.*)\\s*,\\s*([0-9]+)$");
+
     public static void applyPropsToObject(List<Pair<Pair<String, String>, String[]>> fields, Object o, Object... extras) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
         for (Pair<Pair<String, String>, String[]> field : fields) {
             Field f = null;
@@ -52,12 +56,14 @@ public class Loading {
                 }
                 case "com.xebisco.yield.font.Font" -> {
                     try {
-                        f.set(o, o.getClass().getClassLoader().loadClass("com.xebisco.yield.texture.Texture").getConstructor(
+                        Matcher m = SIZEP.matcher(field.second()[0]);
+                        m.find();
+                        f.set(o, o.getClass().getClassLoader().loadClass("com.xebisco.yield.font.Font").getConstructor(
                                         String.class,
-                                        o.getClass().getClassLoader().loadClass("com.xebisco.yield.texture.TextureFilter"),
-                                        o.getClass().getClassLoader().loadClass("com.xebisco.yield.manager.TextureManager"),
+                                        double.class,
+                                        o.getClass().getClassLoader().loadClass("com.xebisco.yield.manager.FontManager"),
                                         o.getClass().getClassLoader().loadClass("com.xebisco.yield.manager.FileIOManager"))
-                                .newInstance(field.second()[0], o.getClass().getClassLoader().loadClass("com.xebisco.yield.texture.TextureFilter").getEnumConstants()[0], extras[0], extras[1])
+                                .newInstance(m.group(1), Double.parseDouble(m.group(2)), extras[0], extras[1])
                         );
                     } catch (ClassNotFoundException e) {
                         throw new RuntimeException(e);
