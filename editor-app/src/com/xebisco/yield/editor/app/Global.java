@@ -24,6 +24,7 @@ import com.xebisco.yield.editor.runtime.pack.EditorEntity;
 import com.xebisco.yield.uiutils.Srd;
 import com.xebisco.yield.uiutils.props.PositionProp;
 import com.xebisco.yield.utils.Pair;
+import com.xebisco.yield.utils.Reversed;
 
 import javax.swing.*;
 import java.awt.*;
@@ -217,7 +218,7 @@ public class Global {
             }
             g.setTransform(t);
         }
-        for (EditorEntity child : entity.children()) draw(g, child, editor);
+        for (EditorEntity child : Reversed.reversed(entity.children())) draw(g, child, editor);
     }
 
     public static EditorComponent sameAs(EditorComponent component, Editor editor) {

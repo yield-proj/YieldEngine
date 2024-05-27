@@ -48,6 +48,7 @@ public final class Scenes {
             Scene scene = new Scene(app) {
                 @Override
                 public void onStart() {
+                    int entityIndex = 0;
                     for (EditorEntity entity : editorScene.entities()) {
                         ComponentCreation[] comps = new ComponentCreation[entity.components().size() - 1];
                         for (int i = 0; i < comps.length; i++) {
@@ -69,15 +70,17 @@ public final class Scenes {
                                 throw new RuntimeException(e);
                             }
                         }
+                        int index = entityIndex++;
                         instantiate(new Entity2DPrefab(comps), e -> {
                             //Transform2D
                             try {
                                 Loading.applyPropsToObject(entity.components().get(0).fields(), e.transform());
+                                System.out.println(e.transform().position());
                             } catch (NoSuchFieldException | IllegalAccessException |
                                      NoSuchMethodException | InvocationTargetException | InstantiationException ex) {
                                 throw new RuntimeException(ex);
                             }
-                            //TODO entity tags and stuff
+                            e.setRenderIndex(index);
                         });
                     }
                 }

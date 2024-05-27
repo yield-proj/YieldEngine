@@ -17,6 +17,7 @@ package com.xebisco.yield.editor.app.editor;
 
 import com.xebisco.yield.editor.app.Global;
 import com.xebisco.yield.editor.app.Project;
+import com.xebisco.yield.editor.app.TreeTransferHandler;
 import com.xebisco.yield.editor.runtime.pack.EditorComponent;
 import com.xebisco.yield.editor.runtime.pack.EditorEntity;
 import com.xebisco.yield.editor.runtime.pack.EditorScene;
@@ -606,13 +607,16 @@ public class ScenePanel extends JPanel {
         popupMenu.show(invoker, invoker.getMousePosition().x, invoker.getMousePosition().y);
     }
 
-    class EntitiesTree extends JPanel {
+    public class EntitiesTree extends JPanel {
 
         final Tree tree;
 
         public EntitiesTree() {
             super(new BorderLayout());
-            add(tree = new Tree());
+            add(tree = new Tree(scene));
+            tree.setDragEnabled(true);
+            tree.setDropMode(DropMode.ON_OR_INSERT);
+            tree.setTransferHandler(new TreeTransferHandler());
             JToolBar toolBar = new JToolBar();
             toolBar.add(new JButton(new AbstractAction("Reload") {
                 @Override
@@ -623,22 +627,20 @@ public class ScenePanel extends JPanel {
             add(toolBar, BorderLayout.NORTH);
         }
 
-        class Tree extends JTree {
+        public class Tree extends JTree {
+            public final EditorScene scene;
 
-            private EditorEntity[] es() {
+            private EditorEntity[] es() throws ClassCastException {
                 if (getSelectionPaths() == null || getSelectionPaths().length == 0) return new EditorEntity[0];
                 EditorEntity[] entities = new EditorEntity[getSelectionPaths().length];
                 for (int i = 0; i < entities.length; i++) {
-                    try {
-                        entities[i] = ((EntityNode) ((DefaultMutableTreeNode) getSelectionPaths()[i].getLastPathComponent()).getUserObject()).editorEntity;
-                    } catch (ClassCastException ignore) {
-
-                    }
+                    entities[i] = ((EntityNode) ((DefaultMutableTreeNode) getSelectionPaths()[i].getLastPathComponent()).getUserObject()).editorEntity;
                 }
                 return entities;
             }
 
-            public Tree() {
+            public Tree(EditorScene scene) {
+                this.scene = scene;
                 setShowsRootHandles(true);
 
                 addMouseListener(new MouseAdapter() {
@@ -654,18 +656,21 @@ public class ScenePanel extends JPanel {
                 });
 
                 addTreeSelectionListener(e -> {
-                    if (getSelectionPaths() != null && getSelectionPaths().length == 1 && gameView.selectedEntity() != es()[0] && es()[0] != null)
-                        try {
-                            gameView.setSelectedEntity(es()[0]);
-                            int selected = getMinSelectionRow();
-                            SwingUtilities.invokeLater(() -> {
-                                openEntity(es()[0], null);
-                                Tree.this.requestFocus();
-                                setSelectionRow(selected);
-                            });
+                    try {
+                        EditorEntity[] es = es();
+                        int selected = getMinSelectionRow();
+                        if (selected == -1 || gameView.selectedEntity() == es[0]) return;
 
-                        } catch (ClassCastException ignore) {
-                        }
+                        if (es.length == 1 && getSelectionPaths() != null && getSelectionPaths().length == 1)
+                            gameView.setSelectedEntity(es[0]);
+                        EditorEntity en = es[0];
+                        SwingUtilities.invokeLater(() -> {
+                            openEntity(en, null);
+                            Tree.this.requestFocus();
+                            setSelectionRow(selected);
+                        });
+                    } catch (ClassCastException ignore) {
+                    }
                 });
             }
 
