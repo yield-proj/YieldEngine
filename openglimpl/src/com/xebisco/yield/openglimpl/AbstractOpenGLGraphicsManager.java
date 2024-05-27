@@ -114,7 +114,7 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
                 shader.bind();
 
                 try {
-                    shader.setUniform("transformationMatrix", new Matrix4f().identity().translate(new Vector3f((float) paint.transformation().position().x(), (float) paint.transformation().position().y(), 0)).rotateZ((float) Math.toRadians(paint.transformation().zRotation())).scaleXY((float) (paint.transformation().scale().x() * paint.rectSize().width()), (float) (paint.transformation().scale().y() * paint.rectSize().height())));
+                    shader.setUniform("transformationMatrix", new Matrix4f().identity().translate(new Vector3f((float) paint.transformation().position().x() * 2f, (float) paint.transformation().position().y() * 2f, 0)).rotateZ((float) Math.toRadians(paint.transformation().zRotation())).scaleXY((float) (paint.transformation().scale().x() * paint.rectSize().width()), (float) (paint.transformation().scale().y() * paint.rectSize().height())));
                 } catch (IllegalArgumentException ignore) {
                 }
                 try {
@@ -359,7 +359,7 @@ public abstract class AbstractOpenGLGraphicsManager implements GraphicsManager, 
                         case 30 -> glActiveTexture(GL_TEXTURE30);
                         case 31 -> glActiveTexture(GL_TEXTURE31);
                         default ->
-                                throw new IllegalStateException(o.getClass().getSimpleName() + ": " + field.getName() + " 31 >= activate >= 0");
+                                throw new IllegalStateException(o.getClass().getSimpleName() + ": " + field.getName() + " activate is higher than 31.");
                     }
 
                     glBindTexture(GL_TEXTURE_2D, (int) ((AbstractTexture) v).imageRef());
