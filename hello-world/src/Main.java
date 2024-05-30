@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-import com.xebisco.yield.*;
-import com.xebisco.yield.manager.ApplicationManager;
+import com.xebisco.yieldengine.*;
+import com.xebisco.yieldengine.manager.ApplicationManager;
 
 public class Main extends Scene {
     public static final Entity2DPrefab HELLO_WORLD_TEXT_PREFAB = new Entity2DPrefab(new ComponentCreation(TextMesh.class, c -> ((TextMesh) c).setContents("Hello, World!")));

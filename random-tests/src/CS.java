@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-import com.xebisco.yield.AbstractTexture;
-import com.xebisco.yield.ContextTime;
-import com.xebisco.yield.EmptyRenderable;
-import com.xebisco.yield.openglimpl.shader.*;
-import com.xebisco.yield.openglimpl.shader.types.Sampler2D;
-import com.xebisco.yield.openglimpl.shader.types.Vec2;
+import com.xebisco.yieldengine.AbstractTexture;
+import com.xebisco.yieldengine.ContextTime;
+import com.xebisco.yieldengine.EmptyRenderable;
+import com.xebisco.yieldengine.openglimpl.shader.*;
+import com.xebisco.yieldengine.openglimpl.shader.types.Sampler2D;
+import com.xebisco.yieldengine.openglimpl.shader.types.Vec2;
 
 @BlendFunc
 @ConnectToShader(vert = "shader.vert", frag = "shader.frag")

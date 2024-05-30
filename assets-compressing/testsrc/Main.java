@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import com.xebisco.yield.assets.compressing.AssetsCompressing;
+import com.xebisco.yieldengine.assets.compressing.AssetsCompressing;
 
 import java.io.File;
 import java.io.IOException;

@@ -13,10 +13,8 @@
  * limitations under the License.
  */
 
-import com.xebisco.yield.*;
-import com.xebisco.yield.manager.ApplicationManager;
-import com.xebisco.yield.openglimpl.custom.CustomRectangleMesh;
-import com.xebisco.yield.texture.TexturedRectangleMesh;
+import com.xebisco.yieldengine.*;
+import com.xebisco.yieldengine.manager.ApplicationManager;
 
 public class Main extends Scene {
     public Main(Application application) {

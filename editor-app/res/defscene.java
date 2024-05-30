@@ -1,5 +1,3 @@
-import com.xebisco.yield.*;
-
 public class *_CLASSSCENENAME_* extends Scene {
     private final Entity2DPrefab[] prefabs;
 
