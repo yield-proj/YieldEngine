@@ -16,11 +16,13 @@
 package com.xebisco.yield.editor.app.editor;
 
 import com.xebisco.yield.editor.app.*;
+import com.xebisco.yield.editor.app.code.CodePanel;
 import com.xebisco.yield.editor.app.config.GameViewSettings;
 import com.xebisco.yield.editor.app.config.PhysicsSettings;
 import com.xebisco.yield.editor.app.run.PlayPanel;
 import com.xebisco.yield.editor.runtime.pack.EditorEntity;
 import com.xebisco.yield.editor.runtime.pack.EditorScene;
+import com.xebisco.yield.uiutils.Srd;
 import com.xebisco.yield.uiutils.props.Prop;
 import com.xebisco.yield.uiutils.props.PropPanel;
 import com.xebisco.yield.uiutils.props.TextFieldProp;
@@ -63,8 +65,24 @@ public class Editor extends JFrame {
     private final JButton playButton, playGlobalButton, pauseButton, stopButton;
 
     private final ConfigPanel configPanel;
+    private final CodePanel codePanel;
 
     private final Map<String, Object[]> configMap = new HashMap<>();
+
+    private final List<File> scripts = new ArrayList<>();
+
+    public void updateScripts() {
+        scripts.clear();
+        for(File file : Objects.requireNonNull(project.scriptsDirectory().listFiles())) {
+            if(file.getName().endsWith(".java")) {
+                scripts.add(file);
+            }
+        }
+    }
+
+    private final Timer updateFilesTimer = new Timer(1000, e -> {
+        updateScripts();
+    });
 
     public Editor(Project project) {
         this.project = project;
@@ -98,6 +116,7 @@ public class Editor extends JFrame {
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
+                    updateFilesTimer.stop();
                     dispose();
                     new ProjectEditor(new File(Global.appProps.getProperty("lastWorkspace"), "workspace.ser"), null);
                 }
@@ -149,7 +168,94 @@ public class Editor extends JFrame {
 
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
-        fileMenu.add(new AbstractAction("New Scene") {
+        JMenu fileNewMenu = new JMenu("New");
+
+        fileNewMenu.add(new AbstractAction("Script File...") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final boolean[] err = {false};
+                do {
+                    JDialog newDialog = new JDialog(Editor.this, true);
+                    newDialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                    newDialog.add(new TitleLabel("New Script File", null), BorderLayout.NORTH);
+                    Prop[] props = new Prop[]{new TextFieldProp("Script Name", "EmptyScript", false),};
+                    PropPanel newProjectProps = new PropPanel(props);
+                    newProjectProps.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+                    newDialog.add(newProjectProps);
+                    newDialog.setMinimumSize(new Dimension(450, 300));
+                    newDialog.setLocationRelativeTo(Editor.this);
+
+                    JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+                    JButton finish = new JButton(new AbstractAction("Finish") {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            Map<String, Serializable> values = PropPanel.values(props);
+                            String s = (String) values.get("Script Name");
+                            if (s.isEmpty()) {
+                                err[0] = false;
+                                JOptionPane.showMessageDialog(Editor.this, "Script Name must not be empty");
+                                return;
+                            }
+
+                            if (!Srd.validateClassName(s)) {
+                                err[0] = false;
+                                JOptionPane.showMessageDialog(Editor.this, "Script Name must be a valid class name");
+                                return;
+                            }
+                            AtomicBoolean alreadyExists = new AtomicBoolean(false);
+                            scripts.forEach(p -> {
+                                if (p.getName().replaceAll("\\.java$", "").equals(s)) {
+                                    alreadyExists.set(true);
+                                }
+                            });
+
+
+                            if (alreadyExists.get()) {
+                                err[0] = false;
+                                JOptionPane.showMessageDialog(Editor.this, "A script with this name already exists");
+                                return;
+                            }
+
+                            File newFile = new File(project.scriptsDirectory(), s + ".java");
+
+                            try(FileWriter writer = new FileWriter(newFile)) {
+                                writer
+                                        .append("import com.xebisco.yield.*;\n\npublic class ")
+                                        .append(s)
+                                        .append(" extends ComponentBehavior {\n\n}");
+                            } catch (IOException ex) {
+                                err[0] = false;
+                                JOptionPane.showMessageDialog(Editor.this, ex.getMessage());
+                                return;
+                            }
+
+                            tabbedPane.setSelectedIndex(tabbedPane.indexOfComponent(codePanel));
+                            codePanel.addJavaCodeFile(newFile);
+                            newDialog.dispose();
+                        }
+                    });
+                    newDialog.getRootPane().setDefaultButton(finish);
+                    bottom.add(finish);
+                    bottom.add(new JButton(new AbstractAction("Cancel") {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            err[0] = false;
+                            newDialog.dispose();
+                        }
+                    }));
+                    newDialog.add(bottom, BorderLayout.SOUTH);
+
+                    newDialog.setVisible(true);
+                } while (err[0]);
+            }
+        });
+
+        //TODO New Text File...
+
+        fileNewMenu.addSeparator();
+
+        fileNewMenu.add(new AbstractAction("Scene...") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final boolean[] err = {false};
@@ -173,7 +279,7 @@ public class Editor extends JFrame {
                             String s = (String) values.get("Scene Name");
                             if (s.isEmpty()) {
                                 err[0] = false;
-                                JOptionPane.showMessageDialog(Editor.this, "Project Name must not be empty");
+                                JOptionPane.showMessageDialog(Editor.this, "Scene Name must not be empty");
                                 return;
                             }
                             AtomicBoolean alreadyExists = new AtomicBoolean(false);
@@ -214,6 +320,8 @@ public class Editor extends JFrame {
                 } while (err[0]);
             }
         });
+
+        fileMenu.add(fileNewMenu);
 
         fileMenu.add(new AbstractAction("Delete Scene") {
             @Override
@@ -650,6 +758,7 @@ public class Editor extends JFrame {
 
         add(tabbedPane);
         tabbedPane.addTab("Scene Panel", scenePanel);
+        tabbedPane.addTab("Code Panel", codePanel = new CodePanel(this));
         tabbedPane.addTab("Play Panel", playPanel);
         //add(scenePanel);
         tabbedPane.setTabPlacement(JTabbedPane.BOTTOM);
@@ -687,6 +796,7 @@ public class Editor extends JFrame {
 
 
         setVisible(true);
+        updateFilesTimer.start();
     }
 
     public <T> T getSettings(String page, Class<?> clazz) {
@@ -745,7 +855,7 @@ public class Editor extends JFrame {
 
         playPanel.setWasInScenePanel(tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).equals("Scene Panel"));
 
-        tabbedPane.setSelectedIndex(1);
+        tabbedPane.setSelectedIndex(tabbedPane.indexOfComponent(playPanel));
         playPanel.start();
 
         CompletableFuture.runAsync(() -> {
@@ -871,7 +981,7 @@ public class Editor extends JFrame {
         runningProcess.destroy();
         runningProcess = null;
         if (tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).equals("Play Panel") && playPanel.wasInScenePanel())
-            tabbedPane.setSelectedIndex(0);
+            tabbedPane.setSelectedIndex(tabbedPane.indexOfComponent(scenePanel));
     }
 
     public Project project() {

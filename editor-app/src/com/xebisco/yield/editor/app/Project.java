@@ -133,7 +133,7 @@ public class Project implements Serializable {
 
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
 
-        List<File> files = Global.listf(new File(path, "Scripts"));
+        List<File> files = Global.listf(scriptsDirectory());
 
         if (files.isEmpty()) return null;
 
@@ -173,7 +173,7 @@ public class Project implements Serializable {
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(manifestFile))) {
             writer.println("Manifest-Version: 1.0");
-            File[] libs = new File(path, "Libraries").listFiles();
+            File[] libs = librariesDirectory().listFiles();
             if (libs != null && libs.length > 0) {
                 writer.print("Class-Path: ");
                 StringBuilder jarLibs = new StringBuilder();
@@ -255,7 +255,7 @@ public class Project implements Serializable {
         if (new File(path, "Output/libs").exists()) deleteDir(new File(path, "Output/libs"));
         new File(path, "Output/libs").mkdir();
 
-        for (File lib : Global.listf(new File(path, "Libraries"))) {
+        for (File lib : Global.listf(librariesDirectory())) {
             try {
                 Files.copy(lib.toPath(), new File(path, "Output/libs/" + lib.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
@@ -320,7 +320,7 @@ public class Project implements Serializable {
         options.add("-d");
         options.add(path.getPath() + "/Build");
 
-        File[] libs = new File(path, "Libraries").listFiles();
+        File[] libs = librariesDirectory().listFiles();
         if (libs != null) {
             options.add("-classpath");
             StringBuilder jarLibs = new StringBuilder();
@@ -348,6 +348,14 @@ public class Project implements Serializable {
 
     public File assetsDirectory() {
         return new File(path, "Assets");
+    }
+
+    public File scriptsDirectory() {
+        return new File(path, "Scripts");
+    }
+
+    public File librariesDirectory() {
+        return new File(path, "Libraries");
     }
 
     @Override

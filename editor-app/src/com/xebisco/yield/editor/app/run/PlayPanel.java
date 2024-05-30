@@ -17,6 +17,7 @@ package com.xebisco.yield.editor.app.run;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class PlayPanel extends JPanel {
@@ -64,6 +65,22 @@ public class PlayPanel extends JPanel {
         splitPane.setLeftComponent(leftPane);
 
         add(splitPane);
+    }
+
+    public boolean isWasInScenePanel() {
+        return wasInScenePanel;
+    }
+
+    public JProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+    public Console getConsole() {
+        return console;
+    }
+
+    public JSplitPane getSplitPane() {
+        return splitPane;
     }
 
     public void start() {
@@ -115,4 +132,6 @@ public class PlayPanel extends JPanel {
         this.splitPane = splitPane;
         return this;
     }
+
+
 }

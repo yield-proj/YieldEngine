@@ -39,7 +39,6 @@ public class Loading {
             } while (f == null);
             if (f == null) throw new NoSuchFieldException(field.first().first());
             f.setAccessible(true);
-            System.out.println(field.first().second());
             switch (field.first().second()) {
                 case "com.xebisco.yield.AbstractTexture" -> {
                     try {

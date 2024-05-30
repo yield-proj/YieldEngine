@@ -25,14 +25,15 @@ import com.xebisco.yield.uiutils.Srd;
 
 import javax.swing.*;
 import java.io.*;
-import java.util.Base64;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Properties;
+import java.nio.file.Files;
+import java.util.*;
 
 import static com.xebisco.yield.editor.app.ProjectEditor.createWorkspace;
 
 public class Entry {
+
+    public static final File saveDir = new File(System.getProperty("user.home"), ".yeditor");
+
     public static void main(String[] args) throws IOException {
         System.setProperty("sun.java2d.opengl", "True");
         Locale.setDefault(Locale.US);
@@ -50,12 +51,19 @@ public class Entry {
 
         Srd.LANG.load(Entry.class.getResourceAsStream("/lang/en.properties"));
 
-        File saveFile = new File(System.getProperty("user.home"), ".yeditor");
+        if(!saveDir.isDirectory()) {
+            saveDir.mkdir();
+        }
+
+        File saveFile = new File(saveDir, "globalprops.ser");
 
         if (!saveFile.exists()) {
             File w = createWorkspace();
             if (w == null) System.exit(0);
             saveFile.createNewFile();
+
+            File javaBase = new File(saveDir, "java_base.jar");
+            Files.copy(Objects.requireNonNull(Entry.class.getResourceAsStream("/java21_base.jar")), javaBase.toPath());
         } else {
             try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(saveFile))) {
                 Global.appProps = (Properties) oi.readObject();
