@@ -18,6 +18,7 @@ package com.xebisco.yieldengine.editor.app.editor;
 import com.xebisco.yieldengine.editor.app.Global;
 import com.xebisco.yieldengine.uiutils.Srd;
 import com.xebisco.yieldengine.uiutils.props.*;
+import com.xebisco.yieldengine.utils.Loading;
 import com.xebisco.yieldengine.utils.Pair;
 
 import javax.swing.*;
@@ -122,6 +123,12 @@ public class ConfigProp extends Prop {
                     break;
                 }
             }
+        }
+        try {
+            Loading.applyPropsToObject(fields, configInstance);
+        } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException |
+                 InstantiationException e) {
+            throw new RuntimeException(e);
         }
     }
 

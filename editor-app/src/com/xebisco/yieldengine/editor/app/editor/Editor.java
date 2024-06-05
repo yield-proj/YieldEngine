@@ -73,8 +73,8 @@ public class Editor extends JFrame {
 
     public void updateScripts() {
         scripts.clear();
-        for(File file : Objects.requireNonNull(project.scriptsDirectory().listFiles())) {
-            if(file.getName().endsWith(".java")) {
+        for (File file : Objects.requireNonNull(project.scriptsDirectory().listFiles())) {
+            if (file.getName().endsWith(".java")) {
                 scripts.add(file);
             }
         }
@@ -219,7 +219,7 @@ public class Editor extends JFrame {
 
                             File newFile = new File(project.scriptsDirectory(), s + ".java");
 
-                            try(FileWriter writer = new FileWriter(newFile)) {
+                            try (FileWriter writer = new FileWriter(newFile)) {
                                 writer
                                         .append("import com.xebisco.yieldengine.*;\n\npublic class ")
                                         .append(s)
