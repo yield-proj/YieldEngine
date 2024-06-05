@@ -53,7 +53,7 @@ public class FontFileProp extends PathProp {
     private void updateFont(String path) {
         try {
             Matcher m = SIZEP.matcher(path);
-            if(!m.find()) throw new FontFormatException("wrong formatting");
+            if (!m.find()) throw new FontFormatException("wrong formatting");
             Font font = Font.createFont(Font.TRUETYPE_FONT, new File(m.group(1))).deriveFont(Float.parseFloat(m.group(2)));
             fontLabel.setPreferredSize(new Dimension(100, 60));
             fontLabel.setFont(font);
@@ -64,6 +64,8 @@ public class FontFileProp extends PathProp {
             fontLabel.setBorder(BorderFactory.createTitledBorder("NONE"));
             fontLabel.setText("");
         }
+        fontLabel.repaint();
+        fontLabel.revalidate();
     }
 
     @Override
@@ -81,7 +83,12 @@ public class FontFileProp extends PathProp {
     @Override
     public Prop setValue(Serializable value) {
         Matcher m = SIZEP.matcher((String) value);
-        if(!m.find()) value += ", 12";
+        if (!m.find() && !((String) value).isEmpty() && !value.equals("null")) value += ", 32";
+        Serializable finalValue = value;
+        SwingUtilities.invokeLater(() -> {
+            if (fontLabel != null)
+                updateFont((String) finalValue);
+        });
         return super.setValue(value);
     }
 }

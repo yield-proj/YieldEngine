@@ -251,7 +251,7 @@ public class ScenePanel extends JPanel {
             saveTimer = null;
         }
         try {
-            Global.defaultFont = Font.createFont(Font.TRUETYPE_FONT, new File(project.path(), "Assets/default-font.ttf")).deriveFont(12f);
+            Global.defaultFont = Font.createFont(Font.TRUETYPE_FONT, new File(project.path(), "Assets/default-font.ttf")).deriveFont(32f);
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
