@@ -13,7 +13,7 @@ public class BooleanProp extends Prop {
         checkBox = new JCheckBox("", value);
         this.prettyString = prettyString;
         checkBox.addItemListener(e -> {
-            this.value = !(boolean) value;
+            this.value = checkBox.isSelected();
         });
     }
 

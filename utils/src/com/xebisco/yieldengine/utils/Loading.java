@@ -93,6 +93,7 @@ public class Loading {
                     }
                     switch (type) {
                         case STRING -> f.set(o, field.second()[0]);
+                        case BOOLEAN -> f.set(o, Boolean.parseBoolean(field.second()[0]));
                         case INT -> f.set(o, Integer.parseInt(field.second()[0]));
                         case LONG -> f.set(o, Long.parseLong(field.second()[0]));
                         case FLOAT -> f.set(o, Float.parseFloat(field.second()[0]));
