@@ -124,7 +124,7 @@ public class Editor extends JFrame {
         });
 
         try {
-            yieldEngineJar = new File(project.path(), "Libraries/yieldengine-core.jar").toURI().toURL();
+            yieldEngineJar = new File(project.path(), "Libraries/yield-core.jar").toURI().toURL();
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
