@@ -17,6 +17,7 @@ package com.xebisco.yieldengine.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,6 +56,7 @@ public class Loading {
                 }
                 case "com.xebisco.yieldengine.font.Font" -> {
                     try {
+                        System.out.println(Arrays.toString(field.second()));
                         Matcher m = SIZEP.matcher(field.second()[0]);
                         m.find();
                         f.set(o, o.getClass().getClassLoader().loadClass("com.xebisco.yieldengine.font.Font").getConstructor(
