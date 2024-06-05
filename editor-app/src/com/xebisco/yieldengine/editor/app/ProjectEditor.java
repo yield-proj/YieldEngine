@@ -193,7 +193,7 @@ public class ProjectEditor extends JFrame {
                 table.clearSelection();
                 Project project = PROJECT_OBJECTS.get(p);
                 if (popup) {
-                    JPopupMenu popupMenu = new JPopupMenu(project.name());
+                    JPopupMenu popupMenu = new JPopupMenu(project.editorProject().name());
                     popupMenu.add(new AbstractAction("Open") {
                         @Override
                         public void actionPerformed(ActionEvent e) {
@@ -259,7 +259,7 @@ public class ProjectEditor extends JFrame {
                         }
                         AtomicBoolean alreadyExists = new AtomicBoolean(false);
                         PROJECT_OBJECTS.forEach(p -> {
-                            if (p.name().equals(s)) {
+                            if (p.editorProject().name().equals(s)) {
                                 alreadyExists.set(true);
                             }
                         });
@@ -506,7 +506,7 @@ public class ProjectEditor extends JFrame {
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             return switch (columnIndex) {
-                case 0 -> contents.get(rowIndex).name();
+                case 0 -> contents.get(rowIndex).editorProject().name();
                 case 1 -> contents.get(rowIndex).lastModified();
                 default -> null;
             };

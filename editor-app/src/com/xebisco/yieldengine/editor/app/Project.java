@@ -18,6 +18,7 @@ package com.xebisco.yieldengine.editor.app;
 import com.xebisco.yieldengine.assets.compressing.AssetsCompressing;
 import com.xebisco.yieldengine.editor.annotations.Config;
 import com.xebisco.yieldengine.editor.annotations.Visible;
+import com.xebisco.yieldengine.editor.runtime.pack.EditorProject;
 import com.xebisco.yieldengine.editor.runtime.pack.EditorScene;
 
 import javax.tools.*;
@@ -29,15 +30,13 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
-@Config
 public class Project implements Serializable {
     @Serial
     private static final long serialVersionUID = 4908578292511938243L;
     private Date lastModified = new Date();
     private final String ID = UUID.randomUUID().toString();
     private transient File path;
-    @Visible
-    private String name, description = "", version = "1.0", startScene;
+    private EditorProject editorProject = new EditorProject();
     private final ArrayList<EditorScene> scenes = new ArrayList<>();
 
     private HashMap<String, HashMap<String, Serializable>> projectSettings;
@@ -114,7 +113,7 @@ public class Project implements Serializable {
         Project p = new Project();
         p.setPath(dir);
         p.updatePropsToLatest(true);
-        p.setName(name);
+        p.editorProject().setName(name);
 
         File projectFile = new File(dir, "editor_project.ser");
         projectFile.createNewFile();
@@ -195,7 +194,7 @@ public class Project implements Serializable {
     }
 
     public String buildToJar() {
-        try (JarOutputStream jos = new JarOutputStream(new FileOutputStream(new File(path, "Output/" + name().replaceAll("\\s", "_") + ".jar")))) {
+        try (JarOutputStream jos = new JarOutputStream(new FileOutputStream(new File(path, "Output/" + editorProject().name().replaceAll("\\s", "_") + ".jar")))) {
             addFilesToJar("", new File(path, "Output"), new File(path, "Build"), jos);
         } catch (IOException e) {
             return e.getMessage();
@@ -384,30 +383,12 @@ public class Project implements Serializable {
         return this;
     }
 
-    public String name() {
-        return name;
+    public EditorProject editorProject() {
+        return editorProject;
     }
 
-    public Project setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public String description() {
-        return description;
-    }
-
-    public Project setDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public String version() {
-        return version;
-    }
-
-    public Project setVersion(String version) {
-        this.version = version;
+    public Project setEditorProject(EditorProject editorProject) {
+        this.editorProject = editorProject;
         return this;
     }
 

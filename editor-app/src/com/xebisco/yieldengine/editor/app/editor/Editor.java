@@ -100,7 +100,7 @@ public class Editor extends JFrame {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        setTitle("Yield Editor | " + project.name());
+        setTitle("Yield Editor | " + project.editorProject().name());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -148,7 +148,7 @@ public class Editor extends JFrame {
 
 
         try {
-            configPanel = new ConfigPanel(new String[]{"Application", "Window"}, new ConfigProp[][]{new ConfigProp[]{new ConfigProp(project, Editor.this)}, new ConfigProp[]{new ConfigProp(yieldEngineClassLoader.loadClass("com.xebisco.yieldengine.PlatformInit"), Editor.this)}});
+            configPanel = new ConfigPanel(new String[]{"Application", "Window"}, new ConfigProp[][]{new ConfigProp[]{new ConfigProp(project.editorProject(), Editor.this)}, new ConfigProp[]{new ConfigProp(yieldEngineClassLoader.loadClass("com.xebisco.yieldengine.PlatformInit"), Editor.this)}});
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException |
                  ClassNotFoundException e) {
             throw new RuntimeException(e);

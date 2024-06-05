@@ -55,7 +55,7 @@ class Launcher {
             startScene.set(args[0]);
         } else {
             //noinspection unchecked
-            ((List<Pair<Pair<String, String>, String[]>>) config.get("Application").get("Project")).forEach(pair -> {
+            ((List<Pair<Pair<String, String>, String[]>>) config.get("Application").get("EditorProject")).forEach(pair -> {
                 if (pair.first().first().equals("startScene")) {
                     startScene.set(pair.second()[0]);
                 }
