@@ -58,13 +58,22 @@ public class Loading {
                     try {
                         System.out.println(Arrays.toString(field.second()));
                         Matcher m = SIZEP.matcher(field.second()[0]);
-                        m.find();
+                        String path = "default-font.ttf";
+                        double size = 12;
+                        if (m.find()) {
+                            if (!m.group(1).isEmpty() && !m.group(1).equals("null"))
+                                path = m.group(1);
+                            size = Double.parseDouble(m.group(2));
+                        } else {
+                            if (!field.second()[0].isEmpty() && !field.second()[0].equals("null"))
+                                path = field.second()[0];
+                        }
                         f.set(o, o.getClass().getClassLoader().loadClass("com.xebisco.yieldengine.font.Font").getConstructor(
                                         String.class,
                                         double.class,
                                         o.getClass().getClassLoader().loadClass("com.xebisco.yieldengine.manager.FontManager"),
                                         o.getClass().getClassLoader().loadClass("com.xebisco.yieldengine.manager.FileIOManager"))
-                                .newInstance(m.group(1), Double.parseDouble(m.group(2)), extras[0], extras[1])
+                                .newInstance(path, size, extras[0], extras[1])
                         );
                     } catch (ClassNotFoundException e) {
                         throw new RuntimeException(e);
