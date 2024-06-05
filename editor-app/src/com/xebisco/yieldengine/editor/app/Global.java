@@ -345,6 +345,9 @@ public class Global {
                     if (o != null) obj = field.get(o);
                     String path = null;
                     if (obj != null) path = (String) obj.getClass().getMethod("path").invoke(obj);
+                    if(editor.yieldEngineClassLoader.loadClass("com.xebisco.yieldengine.font.Font").isAssignableFrom(field.getType())) {
+                        if(path == null) path = "default-font.ttf";
+                    }
                     try {
                         String[] extensions = (String[]) clazz.getMethod("extensions").invoke(null);
                         StringBuilder extensionsS = new StringBuilder();
