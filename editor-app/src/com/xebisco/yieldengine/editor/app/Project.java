@@ -234,6 +234,7 @@ public class Project implements Serializable {
 
         try (AssetsCompressing ac = new AssetsCompressing(new File(path, folder))) {
             for (EditorScene scene : scenes) {
+                if(!scene.addToBuild()) continue;
                 File tempSceneFile = File.createTempFile("yieldbuild", "scene");
                 try (ObjectOutputStream oo = new ObjectOutputStream(new FileOutputStream(tempSceneFile))) {
                     oo.writeObject(scene);
