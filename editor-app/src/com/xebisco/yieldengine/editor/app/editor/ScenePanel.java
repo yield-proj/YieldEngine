@@ -431,10 +431,17 @@ public class ScenePanel extends JPanel {
         return classNames;
     }
 
+
+
     private void reloadFields(List<ComponentProp> props, EditorEntity entity, JScrollPane scrollPane) {
         int v = scrollPane.getVerticalScrollBar().getValue();
         props.clear();
         for (EditorComponent comp : entity.components()) {
+            try {
+                Global.updateFields(editor.projectClass(comp.className()), editor, comp.fields());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             props.add(new ComponentProp(comp, () -> {
                 int i = entity.components().indexOf(comp);
                 if (i <= 1) return;

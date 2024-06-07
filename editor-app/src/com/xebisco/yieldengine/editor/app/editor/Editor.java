@@ -951,6 +951,19 @@ public class Editor extends JFrame {
 
     }
 
+    public Class<?> projectClass(String className) throws Exception {
+        List<File> files = new ArrayList<>();
+        for(File f : Global.listf(project.buildDirectory())) {
+            if(f.getName().endsWith(".class")) {
+                files.add(f);
+            }
+        }
+        URLClassLoader classLoader = new URLClassLoader(new URL[] {project.buildDirectory().toURI().toURL()}, yieldEngineClassLoader);
+        Class<?> loaded = classLoader.loadClass(className);
+        classLoader.close();
+        return loaded;
+    }
+
     private boolean checkError(String out, String error) {
         if (out != null) {
             JOptionPane.showMessageDialog(Editor.this, "<html>" + out + "</html>", error + " Error", JOptionPane.ERROR_MESSAGE);

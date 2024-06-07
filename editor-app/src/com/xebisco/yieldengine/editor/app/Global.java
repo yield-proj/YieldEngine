@@ -87,6 +87,23 @@ public class Global {
         } while (!c.isPrimitive() && c.getSuperclass() != null);
     }
 
+    public static void updateFields(Class<?> clazz, Editor editor, List<Pair<Pair<String, String>, String[]>> fields) {
+        List<Pair<Pair<String, String>, String[]>> newFields = new ArrayList<>();
+        addFields(clazz, editor, newFields);
+
+        for(Pair<Pair<String, String>, String[]> field : fields) {
+            for(int i = 0; i < newFields.size(); i++) {
+                Pair<Pair<String, String>, String[]> newField = newFields.get(i);
+                if(field.first().equals(newField.first())) {
+                    newFields.set(i, field);
+                }
+            }
+        }
+
+        fields.clear();
+        fields.addAll(newFields);
+    }
+
     public static Dimension size(EditorEntity entity, Editor editor) {
         Dimension size = new Dimension(0, 0);
         Point2D.Double scale = entity.scale();
@@ -256,8 +273,8 @@ public class Global {
 
     public static EditorComponent sameAs(EditorComponent component, Editor editor) {
         try {
-            return component.sameAs(component.fields(), Global.addFields(editor.yieldEngineClassLoader.loadClass(component.className()), editor, new EditorComponent(component.className())));
-        } catch (ClassNotFoundException e) {
+            return component.sameAs(component.fields(), Global.addFields(editor.projectClass(component.className()), editor, new EditorComponent(component.className())));
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
