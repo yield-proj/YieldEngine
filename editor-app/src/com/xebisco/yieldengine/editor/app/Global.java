@@ -134,17 +134,19 @@ public class Global {
             char character = text.charAt(i);
             String singleChar = String.valueOf(character);
 
-            AffineTransform savedTransform = g2d.getTransform();
+            AffineTransform savedTransform = new AffineTransform(g2d.getTransform());
 
             AffineTransform transform = new AffineTransform();
             int textW = g2d.getFontMetrics().stringWidth(singleChar);
-            //transform.translate(x + textW / 2f, y - g2d.getFont().getSize() / 2f);
-            transform.setToScale(scaleX, scaleY);
-            transform.rotate(deg);
+            transform.translate(x + textW / 2f, y - g2d.getFont().getSize() / 2f);
+            transform.scale(scaleX, scaleY);
+            transform.translate(-(x + textW / 2f), -(y - g2d.getFont().getSize() / 2f));
+            transform.rotate(deg, x + textW / 2f, y - g2d.getFont().getSize() / 2f);
 
             g2d.transform(transform);
 
-            g2d.drawString(singleChar, x / scaleX, (y) / scaleY);
+            g2d.setColor(Color.WHITE);
+            g2d.drawString(singleChar, x, y);
 
             g2d.setTransform(savedTransform);
 
