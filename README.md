@@ -24,7 +24,13 @@ The engine can produce executables capable of running in a number of platforms, 
 The Yield Engine's editor is in active development and here is some screenshots of it:
 
 
-![Editor Screenshot](/images/ed1.png?raw=true "Editor Screenshot")
+![Editor Screenshot](/images/ed1.png?raw=true "Scene Panel Screenshot")
+
+
+Code Panel screenshot:
+
+![Editor Screenshot](/images/ed2.png?raw=true "Code Panel Screenshot")
+
 
 ## 🪪 Documentation
 The Yield Engine documentation is hosted on github websites and is contained in this repository. [Check the docs](https://yield-proj.github.io/YieldEngine/index.html) or [Check the docs folder](https://github.com/yield-proj/YieldEngine/tree/master/docs).
