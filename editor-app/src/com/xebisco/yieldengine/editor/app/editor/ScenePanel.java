@@ -36,6 +36,8 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -245,6 +247,8 @@ public class ScenePanel extends JPanel {
         panel.add(header, BorderLayout.NORTH);
 
         reloadFields(props, entity, scrollPane);
+
+        panel.addHierarchyListener(e -> reloadFields(props, entity, scrollPane));
 
         panel.add(scrollPane);
 
