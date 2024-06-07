@@ -112,7 +112,7 @@ public class Global {
         return size;
     }
 
-    public static void drawString(Graphics2D g2d, float x, float y, String text, float deg) {
+    public static void drawString(Graphics2D g2d, float x, float y, float scaleX, float scaleY, String text, float deg) {
         for (int i = 0; i < text.length(); i++) {
             char character = text.charAt(i);
             String singleChar = String.valueOf(character);
@@ -121,11 +121,13 @@ public class Global {
 
             AffineTransform transform = new AffineTransform();
             int textW = g2d.getFontMetrics().stringWidth(singleChar);
-            transform.rotate(deg, x + textW / 2f, y - g2d.getFont().getSize() / 2f);
+            //transform.translate(x + textW / 2f, y - g2d.getFont().getSize() / 2f);
+            transform.setToScale(scaleX, scaleY);
+            transform.rotate(deg);
 
             g2d.transform(transform);
 
-            g2d.drawString(singleChar, x, y);
+            g2d.drawString(singleChar, x / scaleX, (y) / scaleY);
 
             g2d.setTransform(savedTransform);
 
@@ -245,7 +247,7 @@ public class Global {
                 Point2D.Double size = new Point2D.Double(rect.getWidth(), rect.getHeight() / 2);
                 Point2D aP = entity.anchorP(size);
                 g.translate(aP.getX(), aP.getY());
-                drawString(g, (float) (-size.getX() / 2 + position.x), (float) (size.getY() / 2 - position.y), contents, (float) Math.toRadians(-entity.rotation()));
+                drawString(g, (float) (-size.getX() / 2 + position.x), (float) (size.getY() / 2 - position.y), (float) scale.x, (float) scale.y, contents, (float) Math.toRadians(-entity.rotation()));
             }
             g.setTransform(t);
         }
