@@ -15,6 +15,7 @@
 
 package com.xebisco.yieldengine.editor.app.editor;
 
+import com.xebisco.yieldengine.editor.app.FileBrowser;
 import com.xebisco.yieldengine.editor.app.Global;
 import com.xebisco.yieldengine.editor.app.config.GameViewSettings;
 import com.xebisco.yieldengine.editor.app.config.PhysicsSettings;
@@ -119,7 +120,9 @@ class GameView extends JPanel {
 
         intern.setMinimumSize(new Dimension(600, 400));
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, entitiesTree, intern);
+        JSplitPane left = new JSplitPane(JSplitPane.VERTICAL_SPLIT, entitiesTree, new FileBrowser(f -> true, scenePanel.editor().project().assetsDirectory(), null, scenePanel.scenePanelAH()));
+        SwingUtilities.invokeLater(() -> left.setDividerLocation(.5));
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, left, intern);
 
         add(splitPane);
 

@@ -30,6 +30,8 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
+import static com.xebisco.yieldengine.editor.app.Global.deleteDir;
+
 public class Project implements Serializable {
     @Serial
     private static final long serialVersionUID = 4908578292511938243L;
@@ -37,6 +39,7 @@ public class Project implements Serializable {
     private final String ID = UUID.randomUUID().toString();
     private transient File path;
     private EditorProject editorProject = new EditorProject();
+    private String packageName;
     private final ArrayList<EditorScene> scenes = new ArrayList<>();
 
     private HashMap<String, HashMap<String, Serializable>> projectSettings;
@@ -45,13 +48,18 @@ public class Project implements Serializable {
     }
 
     public boolean updatePropsToLatest(boolean ignoreCheck) throws IOException {
-        if (!new File(path, "Scripts").exists()) {
-            if (ignoreCheck) new File(path, "Scripts").mkdir();
+        if (!scriptsDirectory().exists()) {
+            if (ignoreCheck) scriptsDirectory().mkdir();
             else return true;
         }
 
-        if (!new File(path, "Assets").exists()) {
-            if (ignoreCheck) new File(path, "Assets").mkdir();
+        if (!scriptsPackage().exists()) {
+            if (ignoreCheck) scriptsPackage().mkdirs();
+            else return true;
+        }
+
+        if (!assetsDirectory().exists()) {
+            if (ignoreCheck) assetsDirectory().mkdir();
             else return true;
         }
 
@@ -67,8 +75,8 @@ public class Project implements Serializable {
             else return true;
         }
 
-        if (!new File(path, "Libraries").exists()) {
-            if (ignoreCheck) new File(path, "Libraries").mkdir();
+        if (!librariesDirectory().exists()) {
+            if (ignoreCheck) librariesDirectory().mkdir();
             else return true;
         }
 
@@ -107,11 +115,11 @@ public class Project implements Serializable {
         }
     }
 
-    public static Project createProject(String name, File dir) throws IOException, URISyntaxException {
+    public static Project createProject(String name, String packageName, File dir) throws IOException, URISyntaxException {
         dir.mkdir();
 
         Project p = new Project();
-        p.setPath(dir);
+        p.setPath(dir).setPackageName(packageName);
         p.updatePropsToLatest(true);
         p.editorProject().setName(name);
 
@@ -195,7 +203,7 @@ public class Project implements Serializable {
 
     public String buildToJar() {
         try (JarOutputStream jos = new JarOutputStream(new FileOutputStream(new File(path, "Output/" + editorProject().name().replaceAll("\\s", "_") + ".jar")))) {
-            addFilesToJar("", new File(path, "Output"), new File(path, "Build"), jos);
+            addFilesToJar("", new File(path, "Output"), buildDirectory(), jos);
         } catch (IOException e) {
             return e.getMessage();
         }
@@ -268,23 +276,13 @@ public class Project implements Serializable {
     }
 
     public void clearBuild() {
-        deleteDir(new File(path, "Build"));
-        new File(path, "Build").mkdir();
+        deleteDir(buildDirectory());
+        buildDirectory().mkdir();
     }
 
     public void clearOutput() {
         deleteDir(new File(path, "Output"));
         new File(path, "Output").mkdir();
-    }
-
-    private static void deleteDir(File file) {
-        File[] contents = file.listFiles();
-        if (contents != null) {
-            for (File f : contents) {
-                deleteDir(f);
-            }
-        }
-        file.delete();
     }
 
     private static void addFilesToJar(String jarPackage, File rootDir, File currentDir, JarOutputStream jos) throws IOException {
@@ -318,7 +316,7 @@ public class Project implements Serializable {
         List<String> options = new ArrayList<>();
 
         options.add("-d");
-        options.add(path.getPath() + "/Build");
+        options.add(buildDirectory().getAbsolutePath());
 
         File[] libs = librariesDirectory().listFiles();
         if (libs != null) {
@@ -356,6 +354,14 @@ public class Project implements Serializable {
 
     public File librariesDirectory() {
         return new File(path, "Libraries");
+    }
+
+    public File buildDirectory() {
+        return new File(path, "Build");
+    }
+
+    public File scriptsPackage() {
+        return new File(scriptsDirectory(), packageName.replace(".", File.separator));
     }
 
     @Override
@@ -412,6 +418,15 @@ public class Project implements Serializable {
 
     public Project setPath(File path) {
         this.path = path;
+        return this;
+    }
+
+    public String packageName() {
+        return packageName;
+    }
+
+    public Project setPackageName(String packageName) {
+        this.packageName = packageName;
         return this;
     }
 }

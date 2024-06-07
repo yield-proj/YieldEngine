@@ -53,7 +53,7 @@ public final class Scenes {
                             EditorComponent comp = entity.components().get(i + 1);
                             try {
                                 //noinspection unchecked
-                                comps[i] = new ComponentCreation((Class<? extends ComponentBehavior>) Class.forName(comp.className()), component -> {
+                                comps[i] = new ComponentCreation((Class<? extends ComponentBehavior>) Scenes.class.getClassLoader().loadClass(comp.className()), component -> {
                                     Object[] extras = null;
                                     if(component instanceof TexturedRectangleMesh)
                                         extras = new Object[] {application().applicationPlatform().textureManager(), application().applicationPlatform().ioManager()};

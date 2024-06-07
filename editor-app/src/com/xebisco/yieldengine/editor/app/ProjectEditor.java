@@ -238,6 +238,8 @@ public class ProjectEditor extends JFrame {
                 newProjectDialog.add(new TitleLabel("New Project", null), BorderLayout.NORTH);
                 Prop[] props = new Prop[]{
                         new TextFieldProp("Project Name", "Sample Name", false),
+                        new TextFieldProp("Scripts Package", "com.mycompany.game", false),
+                        new TextFieldProp("Description", "", false),
                 };
                 PropPanel newProjectProps = new PropPanel(props);
                 newProjectProps.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
@@ -255,6 +257,17 @@ public class ProjectEditor extends JFrame {
                         if (s.isEmpty()) {
                             err[0] = false;
                             JOptionPane.showMessageDialog(ProjectEditor.this, "Project Name must not be empty");
+                            return;
+                        }
+                        String pkg = (String) values.get("Scripts Package");
+                        if (pkg.isEmpty()) {
+                            err[0] = false;
+                            JOptionPane.showMessageDialog(ProjectEditor.this, "Scripts Package must not be empty");
+                            return;
+                        }
+                        if (pkg.contains(" ")) {
+                            err[0] = false;
+                            JOptionPane.showMessageDialog(ProjectEditor.this, "Scripts Package must not contain spaces");
                             return;
                         }
                         AtomicBoolean alreadyExists = new AtomicBoolean(false);
@@ -275,7 +288,9 @@ public class ProjectEditor extends JFrame {
                         }
                         try {
                             PROJECT_FILES.add(projectFile);
-                            PROJECT_OBJECTS.add(Project.createProject(s, projectFile));
+                            Project p;
+                            PROJECT_OBJECTS.add(p = Project.createProject(s, pkg, projectFile));
+                            p.editorProject().setDescription((String) values.get("Description"));
                             sorter.allRowsChanged();
                             table.updateUI();
                             newProjectDialog.dispose();

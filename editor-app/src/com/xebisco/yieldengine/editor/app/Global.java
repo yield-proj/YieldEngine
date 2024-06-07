@@ -48,6 +48,16 @@ public class Global {
 
     public static Font defaultFont;
 
+    public static void deleteDir(File file) {
+        File[] contents = file.listFiles();
+        if (contents != null) {
+            for (File f : contents) {
+                deleteDir(f);
+            }
+        }
+        file.delete();
+    }
+
     public static List<File> listf(File directory) {
         List<File> files = new ArrayList<>();
 

@@ -217,11 +217,13 @@ public class Editor extends JFrame {
                                 return;
                             }
 
-                            File newFile = new File(project.scriptsDirectory(), s + ".java");
+                            File newFile = new File(project.scriptsPackage(), s + ".java");
 
                             try (FileWriter writer = new FileWriter(newFile)) {
                                 writer
-                                        .append("import com.xebisco.yieldengine.*;\n\npublic class ")
+                                        .append("package ")
+                                        .append(project.packageName())
+                                        .append(";\n\nimport com.xebisco.yieldengine.*;\nimport com.xebisco.yieldengine.editor.runtime.*;\nimport com.xebisco.yieldengine.editor.annotations.*;\n\n\npublic class ")
                                         .append(s)
                                         .append(" extends ComponentBehavior {\n\n}");
                             } catch (IOException ex) {
@@ -853,7 +855,7 @@ public class Editor extends JFrame {
 
         if (scenePanel.getComponent(0) instanceof ScenePanel sp) sp.closeEntity();
 
-        playPanel.setWasInScenePanel(tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).equals("Scene Panel"));
+        playPanel.setLastPanel(tabbedPane.getSelectedIndex());
 
         tabbedPane.setSelectedIndex(tabbedPane.indexOfComponent(playPanel));
         playPanel.start();
@@ -902,9 +904,9 @@ public class Editor extends JFrame {
             }
             ProcessBuilder processBuilder;
             if (scene != null)
-                processBuilder = new ProcessBuilder().directory(new File(project.path(), "Build")).command("java", "-cp", jarLibs.toString(), "com.xebisco.yieldengine.editor.runtime.Launcher", scene.name());
+                processBuilder = new ProcessBuilder().directory(project.buildDirectory()).command("java", "-cp", "." + File.pathSeparator + jarLibs, "com.xebisco.yieldengine.editor.runtime.Launcher", scene.name());
             else
-                processBuilder = new ProcessBuilder().directory(new File(project.path(), "Build")).command("java", "-cp", jarLibs.toString(), "com.xebisco.yieldengine.editor.runtime.Launcher");
+                processBuilder = new ProcessBuilder().directory(project.buildDirectory()).command("java", "-cp", "." + File.pathSeparator + jarLibs, "com.xebisco.yieldengine.editor.runtime.Launcher");
             try {
                 playPanel.console().println(processBuilder.command().toString());
 
@@ -980,8 +982,8 @@ public class Editor extends JFrame {
         stopButton.setEnabled(false);
         runningProcess.destroy();
         runningProcess = null;
-        if (tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()).equals("Play Panel") && playPanel.wasInScenePanel())
-            tabbedPane.setSelectedIndex(tabbedPane.indexOfComponent(scenePanel));
+        if (tabbedPane.getSelectedComponent() == playPanel)
+            tabbedPane.setSelectedIndex(playPanel.lastPanel());
     }
 
     public Project project() {

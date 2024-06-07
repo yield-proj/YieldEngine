@@ -56,7 +56,6 @@ public class Loading {
                 }
                 case "com.xebisco.yieldengine.font.Font" -> {
                     try {
-                        System.out.println(Arrays.toString(field.second()));
                         Matcher m = SIZEP.matcher(field.second()[0]);
                         String path = "default-font.ttf";
                         double size = 12;

@@ -121,7 +121,6 @@ public class ConfigProp extends Prop {
             for(Pair<Pair<String, String>, String[]> field : fields) {
                 if (field.first().first().equals(prop.name())) {
                     System.arraycopy(v, 0, field.second(), 0, v.length);
-                    System.out.println(Arrays.toString(field.second()));
                     break;
                 }
             }

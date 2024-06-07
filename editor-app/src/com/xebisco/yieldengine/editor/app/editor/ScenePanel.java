@@ -27,6 +27,7 @@ import com.xebisco.yieldengine.uiutils.props.PropPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.filechooser.FileFilter;
@@ -36,11 +37,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.io.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -288,11 +290,24 @@ public class ScenePanel extends JPanel {
                 });
                 addComponentDialog.setTitle(Srd.LANG.getProperty("ce_addComponent"));
                 addComponentDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                addComponentDialog.setSize(200, 200);
+                addComponentDialog.setSize(300, 300);
                 addComponentDialog.setLocationRelativeTo(panel);
                 JList<Class<?>> components;
                 try {
-                    components = new JList<>(getComponentClasses(editor.yieldEngineClassLoader, "com.xebisco.yieldengine", editor).toArray(new Class<?>[0]));
+                    Class<?>[] componentsClasses = getComponentClasses(editor.yieldEngineClassLoader, "com.xebisco.yieldengine", editor).toArray(new Class<?>[0]);
+                    List<Class<?>> classes = new ArrayList<>(Arrays.asList(componentsClasses));
+                    List<File> files = new ArrayList<>();
+                    for(File f : Global.listf(project.buildDirectory())) {
+                        if(f.getName().endsWith(".class")) {
+                            files.add(f);
+                        }
+                    }
+                    URLClassLoader classLoader = new URLClassLoader(new URL[] {project.buildDirectory().toURI().toURL()});
+
+                    for(File f : files) {
+                        classes.add(classLoader.loadClass(f.getAbsolutePath().replace(project.buildDirectory().getAbsolutePath(), "").replace(File.separator, ".").replace(".class", "").substring(1)));
+                    }
+                    components = new JList<>(classes.toArray(new Class<?>[0]));
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }

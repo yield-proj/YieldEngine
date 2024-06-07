@@ -20,7 +20,7 @@ import java.awt.*;
 import java.util.Date;
 
 public class PlayPanel extends JPanel {
-    private boolean wasInScenePanel;
+    private int lastPanel;
 
     private JProgressBar progressBar;
 
@@ -66,8 +66,13 @@ public class PlayPanel extends JPanel {
         add(splitPane);
     }
 
-    public boolean isWasInScenePanel() {
-        return wasInScenePanel;
+    public int lastPanel() {
+        return lastPanel;
+    }
+
+    public PlayPanel setLastPanel(int lastPanel) {
+        this.lastPanel = lastPanel;
+        return this;
     }
 
     public JProgressBar getProgressBar() {
@@ -94,15 +99,6 @@ public class PlayPanel extends JPanel {
     public void done() {
         remove(progressBar);
         repaint();
-    }
-
-    public boolean wasInScenePanel() {
-        return wasInScenePanel;
-    }
-
-    public PlayPanel setWasInScenePanel(boolean wasInScenePanel) {
-        this.wasInScenePanel = wasInScenePanel;
-        return this;
     }
 
     public JProgressBar progressBar() {
