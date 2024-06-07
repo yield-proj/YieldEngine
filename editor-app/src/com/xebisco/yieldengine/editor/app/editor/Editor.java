@@ -843,6 +843,39 @@ public class Editor extends JFrame {
         scenePanel.updateUI();
     }
 
+    public void build() {
+        playPanel.console().clear();
+        playPanel.progress("Clearing Build...");
+        project.clearBuild();
+        playPanel.progress("Creating Configuration File...");
+        if (checkError(project.createConfigFile(configPanel.values(), "config.ser", "Build"), "Create Config File")) {
+            forceStop();
+            return;
+        }
+
+        playPanel.progress("Compiling Scripts...");
+        if (checkError(project.compileScripts(), "Compile")) {
+            forceStop();
+            return;
+        }
+        playPanel.progress("Packing Assets...");
+        if (checkError(project.packAssets("Build/data"), "Assets Packing")) {
+            forceStop();
+            return;
+        }
+
+        playPanel.progress("Packing Scenes...");
+        if (checkError(project.packScenes("Build/scenes"), "Scenes Packing")) {
+            forceStop();
+            return;
+        }
+
+        playPanel.progress("Creating Manifest...");
+        if (checkError(project.createManifest(), "Manifest")) {
+            forceStop();
+        }
+    }
+
     private Process runningProcess;
 
     public void runScene(EditorScene scene) {
@@ -861,37 +894,7 @@ public class Editor extends JFrame {
         playPanel.start();
 
         CompletableFuture.runAsync(() -> {
-            playPanel.console().clear();
-            playPanel.progress("Clearing Build...");
-            project.clearBuild();
-            playPanel.progress("Creating Configuration File...");
-            if (checkError(project.createConfigFile(configPanel.values(), "config.ser", "Build"), "Create Config File")) {
-                forceStop();
-                return;
-            }
-
-            playPanel.progress("Compiling Scripts...");
-            if (checkError(project.compileScripts(), "Compile")) {
-                forceStop();
-                return;
-            }
-            playPanel.progress("Packing Assets...");
-            if (checkError(project.packAssets("Build/data"), "Assets Packing")) {
-                forceStop();
-                return;
-            }
-
-            playPanel.progress("Packing Scenes...");
-            if (checkError(project.packScenes("Build/scenes"), "Scenes Packing")) {
-                forceStop();
-                return;
-            }
-
-            playPanel.progress("Creating Manifest...");
-            if (checkError(project.createManifest(), "Manifest")) {
-                forceStop();
-                return;
-            }
+            build();
 
             playPanel.progress("Adding Libraries...");
 
