@@ -38,16 +38,16 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.net.*;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Editor extends JFrame {
-    private boolean running;
+    private boolean running, paused;
     public final URL yieldEngineJar;
     public final ClassLoader yieldEngineClassLoader;
 
@@ -878,13 +878,28 @@ public class Editor extends JFrame {
 
     private Process runningProcess;
 
+    private Integer serverPort = null;
+
+    public Object sendToServer(Object o) throws IOException {
+        if (serverPort == null)
+            throw new IllegalStateException("Port is null");
+        try (Socket socket = new Socket("localhost", serverPort)) {
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(o);
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            return in.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void runScene(EditorScene scene) {
         running = true;
         playButton.setEnabled(false);
         playGlobalButton.setEnabled(false);
         pauseButton.setEnabled(true);
         stopButton.setEnabled(true);
-        //TODO
+        paused = false;
 
         if (scenePanel.getComponent(0) instanceof ScenePanel sp) sp.closeEntity();
 
@@ -907,9 +922,9 @@ public class Editor extends JFrame {
             }
             ProcessBuilder processBuilder;
             if (scene != null)
-                processBuilder = new ProcessBuilder().directory(project.buildDirectory()).command("java", "-cp", "." + File.pathSeparator + jarLibs, "com.xebisco.yieldengine.editor.runtime.Launcher", scene.name());
+                processBuilder = new ProcessBuilder().directory(project.buildDirectory()).command("java", "-cp", "." + File.pathSeparator + jarLibs, "com.xebisco.yieldengine.editor.runtime.Server", scene.name());
             else
-                processBuilder = new ProcessBuilder().directory(project.buildDirectory()).command("java", "-cp", "." + File.pathSeparator + jarLibs, "com.xebisco.yieldengine.editor.runtime.Launcher");
+                processBuilder = new ProcessBuilder().directory(project.buildDirectory()).command("java", "-cp", "." + File.pathSeparator + jarLibs, "com.xebisco.yieldengine.editor.runtime.Server");
             try {
                 playPanel.console().println(processBuilder.command().toString());
 
@@ -920,48 +935,103 @@ public class Editor extends JFrame {
 
                 BufferedReader stdError = new BufferedReader(new InputStreamReader(runningProcess.getErrorStream()));
 
+                List<String> printed = new ArrayList<>();
+
                 CompletableFuture.runAsync(() -> {
                     String s;
-                    while (runningProcess.isAlive()) {
+                    while (running) {
                         try {
                             if ((s = stdInput.readLine()) != null) {
                                 playPanel.console().println("(" + new Date() + ") " + s);
+                                printed.add(s);
                             }
+
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
                     }
+                }).exceptionally(throwable -> {
+                    //noinspection CallToPrintStackTrace
+                    throwable.printStackTrace();
+                    JOptionPane.showMessageDialog(Editor.this, throwable.getMessage(), throwable.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+                    return null;
                 });
 
-                runningProcess.waitFor();
+                CompletableFuture.runAsync(() -> {
+                    while (printed.isEmpty()) {
+                        try {//noinspection BusyWait
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
 
-                playPanel.progress("Shutting down process...");
+                    Pattern portPattern = Pattern.compile("^Started server on port: ([0-9]+)$");
+                    Matcher portMatcher = portPattern.matcher(printed.get(0));
+                    if (portMatcher.find()) {
+                        serverPort = Integer.parseInt(portMatcher.group(1));
+                    } else {
+                        throw new IllegalStateException("Invalid port number: " + printed.get(0));
+                    }
 
-                String s;
+                    try {
+                        sendToServer("start");
 
-                StringBuilder o = new StringBuilder();
-                while ((s = stdError.readLine()) != null) {
-                    o.append(s).append("<br>");
-                }
+                        try {
+                            while ((boolean) sendToServer("running")) {
+                                //noinspection BusyWait
+                                Thread.sleep(1000);
+                            }
+                        } catch (Exception ignore) {
 
-                if (!o.isEmpty())
-                    JOptionPane.showMessageDialog(Editor.this, "<html>" + o + "</html>", "Running ERROR", JOptionPane.ERROR_MESSAGE);
-                forceStop();
-            } catch (InterruptedException | IOException e) {
+                        }
+                        runningProcess.waitFor();
+                    } catch (IOException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    playPanel.progress("Shutting down process...");
+
+                    try {
+                        String s;
+                        StringBuilder o = new StringBuilder();
+                        while ((s = stdError.readLine()) != null) {
+                            o.append(s).append("<br>");
+                        }
+
+                        if (!o.isEmpty())
+                            JOptionPane.showMessageDialog(Editor.this, "<html>" + o + "</html>", "Running ERROR", JOptionPane.ERROR_MESSAGE);
+                    } catch (IOException ignore) {
+
+                    }
+
+                    forceStop();
+                }).exceptionally(throwable -> {
+                    //noinspection CallToPrintStackTrace
+                    throwable.printStackTrace();
+                    JOptionPane.showMessageDialog(Editor.this, throwable.getMessage(), throwable.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+                    return null;
+                });
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        }).exceptionally(throwable -> {
+            //noinspection CallToPrintStackTrace
+            throwable.printStackTrace();
+            JOptionPane.showMessageDialog(Editor.this, throwable.getMessage(), throwable.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+            return null;
         });
 
     }
 
     public Class<?> projectClass(String className) throws Exception {
         List<File> files = new ArrayList<>();
-        for(File f : Global.listf(project.buildDirectory())) {
-            if(f.getName().endsWith(".class")) {
+        for (File f : Global.listf(project.buildDirectory())) {
+            if (f.getName().endsWith(".class")) {
                 files.add(f);
             }
         }
-        URLClassLoader classLoader = new URLClassLoader(new URL[] {project.buildDirectory().toURI().toURL()}, yieldEngineClassLoader);
+        URLClassLoader classLoader = new URLClassLoader(new URL[]{project.buildDirectory().toURI().toURL()}, yieldEngineClassLoader);
         Class<?> loaded = classLoader.loadClass(className);
         classLoader.close();
         return loaded;
@@ -977,15 +1047,25 @@ public class Editor extends JFrame {
 
     public void pause() {
         if (running) {
-            //TODO
+            try {
+                if (paused) {
+                    sendToServer("resume");
+                } else {
+                    sendToServer("pause");
+                }
+                paused = !paused;
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(Editor.this, e.getMessage(), e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
     public void stop() {
-        if (runningProcess != null && runningProcess.isAlive()) {
+        try {
+            sendToServer("exit");
+        } catch (IOException e) {
             forceStop();
         }
-
     }
 
     public void forceStop() {
@@ -998,6 +1078,7 @@ public class Editor extends JFrame {
         stopButton.setEnabled(false);
         runningProcess.destroy();
         runningProcess = null;
+        serverPort = null;
         if (tabbedPane.getSelectedComponent() == playPanel)
             tabbedPane.setSelectedIndex(playPanel.lastPanel());
     }

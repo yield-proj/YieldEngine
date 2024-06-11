@@ -16,6 +16,8 @@
 package com.xebisco.yieldengine;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -25,15 +27,17 @@ public class Context implements Runnable {
 
     private final Thread thread;
     private final ContextTime contextTime;
-    private final AtomicBoolean running = new AtomicBoolean();
+    private final AtomicBoolean running = new AtomicBoolean(), paused = new AtomicBoolean();
     private final AbstractBehavior abstractBehavior;
+    private final Object pauseLock = new Object();
+    private final List<Runnable> shutdownHooks = new ArrayList<>();
 
     /**
      * Constructs a new Context object.
      *
-     * @param contextTime The context time object.
+     * @param contextTime      The context time object.
      * @param abstractBehavior The behavior to be run.
-     * @param name The name of the thread.
+     * @param name             The name of the thread.
      */
     public Context(ContextTime contextTime, AbstractBehavior abstractBehavior, String name) {
         this.contextTime = contextTime;
@@ -55,6 +59,18 @@ public class Context implements Runnable {
             } else {
                 actual = System.nanoTime();
             }
+
+            if (paused.get()) {
+                paused.set(false);
+                synchronized (pauseLock) {
+                    try {
+                        pauseLock.wait();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
             contextTime.setTimeSinceStart(actual - start);
             contextTime.setDeltaTime((actual - last) / 1_000_000_000f);
             abstractBehavior.onUpdate(contextTime);
@@ -71,11 +87,29 @@ public class Context implements Runnable {
                 }
             }
         }
+        for (Runnable shutdownHook : shutdownHooks) {
+            shutdownHook.run();
+        }
         try {
             abstractBehavior.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void pause() {
+        paused.set(true);
+    }
+
+    public void resume() {
+        paused.set(false);
+        synchronized (pauseLock) {
+            pauseLock.notify();
+        }
+    }
+
+    public List<Runnable> shutdownHooks() {
+        return shutdownHooks;
     }
 
     /**

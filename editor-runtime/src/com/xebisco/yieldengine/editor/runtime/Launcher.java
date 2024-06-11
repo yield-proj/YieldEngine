@@ -34,6 +34,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 class Launcher {
     public static void main(String[] args) throws ClassNotFoundException, IOException, NoSuchFieldException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
+        Pair<ApplicationManager, AssetsDecompressing> app = applicationManager(args);
+        app.first().runAndWait();
+        app.second().close();
+        Scenes.close();
+    }
+
+    public static Pair<ApplicationManager, AssetsDecompressing> applicationManager(String[] args) throws ClassNotFoundException, IOException, NoSuchFieldException, InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
         String dataFolder = "data";
         if (args.length > 1) {
             dataFolder = args[1];
@@ -63,9 +70,7 @@ class Launcher {
         }
         if (startScene.get() == null) throw new IllegalStateException("No start scene");
         app.setScene(Scenes.load(startScene.get(), app));
-        manager.runAndWait();
-        as.close();
-        Scenes.close();
+        return new Pair<>(manager, as);
     }
 
     public static ApplicationPlatform customOpenGLOpenAL(AssetsDecompressing assetsDecompressing) throws ClassNotFoundException {
