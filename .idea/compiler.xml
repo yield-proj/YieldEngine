@@ -7,6 +7,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="compiler" />
+        <module name="glimpl" />
+        <module name="logger" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
