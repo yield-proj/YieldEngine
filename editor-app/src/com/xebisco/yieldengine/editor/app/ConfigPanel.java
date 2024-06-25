@@ -118,12 +118,12 @@ public class ConfigPanel extends JPanel implements Serializable {
     public void insert(HashMap<String, HashMap<String, Serializable>> values, Editor editor) {
         for (String s : values.keySet()) {
             for (Prop p : panelMap.get(s).props()) {
-                //((ConfigProp) p).addComp(values.get(s));
+                //((ConfigProp) p).addComp(values.addComponent(s));
                 //noinspection unchecked
                 ((ConfigProp) p).addComp(PropPanel.values(ComponentProp.getProps((ArrayList<Pair<Pair<String, String>, String[]>>) values.get(s).get(((ConfigProp) p).configClass().getSimpleName()), editor).toArray(new Prop[0])));
-                //((ConfigProp) p).addComp((HashMap<String, Serializable>) values.get(s).get(((ConfigProp) p).configClass().getSimpleName()));
+                //((ConfigProp) p).addComp((HashMap<String, Serializable>) values.addComponent(s).addComponent(((ConfigProp) p).configClass().getSimpleName()));
             }
-            //PropPanel.insert(panelMap.get(s).props(), values.get(s));
+            //PropPanel.insert(panelMap.addComponent(s).props(), values.addComponent(s));
         }
     }
 

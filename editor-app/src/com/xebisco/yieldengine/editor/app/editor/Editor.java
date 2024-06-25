@@ -951,9 +951,7 @@ public class Editor extends JFrame {
                         }
                     }
                 }).exceptionally(throwable -> {
-                    //noinspection CallToPrintStackTrace
-                    throwable.printStackTrace();
-                    JOptionPane.showMessageDialog(Editor.this, throwable.getMessage(), throwable.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+                    DialogUtils.error(Editor.this, throwable);
                     return null;
                 });
 
@@ -1007,18 +1005,14 @@ public class Editor extends JFrame {
 
                     forceStop();
                 }).exceptionally(throwable -> {
-                    //noinspection CallToPrintStackTrace
-                    throwable.printStackTrace();
-                    JOptionPane.showMessageDialog(Editor.this, throwable.getMessage(), throwable.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+                    DialogUtils.error(Editor.this, throwable);
                     return null;
                 });
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }).exceptionally(throwable -> {
-            //noinspection CallToPrintStackTrace
-            throwable.printStackTrace();
-            JOptionPane.showMessageDialog(Editor.this, throwable.getMessage(), throwable.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+            DialogUtils.error(Editor.this, throwable);
             return null;
         });
 
@@ -1055,7 +1049,7 @@ public class Editor extends JFrame {
                 }
                 paused = !paused;
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(Editor.this, e.getMessage(), e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+                DialogUtils.error(Editor.this, e);
             }
         }
     }
@@ -1076,9 +1070,11 @@ public class Editor extends JFrame {
         playGlobalButton.setEnabled(true);
         pauseButton.setEnabled(false);
         stopButton.setEnabled(false);
-        runningProcess.destroy();
-        runningProcess = null;
-        serverPort = null;
+        if (runningProcess != null) {
+            runningProcess.destroy();
+            runningProcess = null;
+            serverPort = null;
+        }
         if (tabbedPane.getSelectedComponent() == playPanel)
             tabbedPane.setSelectedIndex(playPanel.lastPanel());
     }

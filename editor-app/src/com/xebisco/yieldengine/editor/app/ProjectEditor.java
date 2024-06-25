@@ -295,7 +295,7 @@ public class ProjectEditor extends JFrame {
                             table.updateUI();
                             newProjectDialog.dispose();
                         } catch (IOException | URISyntaxException ex) {
-                            JOptionPane.showMessageDialog(ProjectEditor.this, ex.getMessage(), ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+                            DialogUtils.error(ProjectEditor.this, ex);
                         }
                     }
                 });
@@ -327,7 +327,7 @@ public class ProjectEditor extends JFrame {
                         table.updateUI();
                     }
                 } catch (IOException | ClassNotFoundException | ClassCastException e) {
-                    JOptionPane.showMessageDialog(fileChooser, e.getMessage(), e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+                    DialogUtils.error(fileChooser, e);
                 }
 
             }
