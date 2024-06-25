@@ -34,6 +34,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -56,6 +57,15 @@ public class Global {
             }
         }
         file.delete();
+    }
+
+    public static boolean containsAnnotationByName(Class<?> clazz, String annotationName) {
+        for(Annotation annotation : clazz.getAnnotations()) {
+            if(annotation.annotationType().getName().equals(annotationName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static List<File> listf(File directory) {

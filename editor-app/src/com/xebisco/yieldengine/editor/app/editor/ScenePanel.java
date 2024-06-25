@@ -15,6 +15,7 @@
 
 package com.xebisco.yieldengine.editor.app.editor;
 
+import com.xebisco.yieldengine.editor.app.DialogUtils;
 import com.xebisco.yieldengine.editor.app.Global;
 import com.xebisco.yieldengine.editor.app.Project;
 import com.xebisco.yieldengine.editor.app.TreeTransferHandler;
@@ -25,7 +26,6 @@ import com.xebisco.yieldengine.uiutils.Srd;
 import com.xebisco.yieldengine.uiutils.props.Prop;
 import com.xebisco.yieldengine.uiutils.props.PropPanel;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.event.AncestorEvent;
@@ -36,13 +36,8 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.*;
-import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -285,64 +280,12 @@ public class ScenePanel extends JPanel {
         JButton addButton = new JButton(new AbstractAction(Srd.LANG.getProperty("ce_addComponent")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JDialog addComponentDialog = new JDialog();
-                addComponentDialog.addWindowFocusListener(new WindowAdapter() {
-                    @Override
-                    public void windowLostFocus(WindowEvent e) {
-                        addComponentDialog.dispose();
-                    }
-                });
-                addComponentDialog.setTitle(Srd.LANG.getProperty("ce_addComponent"));
-                addComponentDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                addComponentDialog.setSize(300, 300);
-                addComponentDialog.setLocationRelativeTo(panel);
-                JList<Class<?>> components;
-                try {
-                    Class<?>[] componentsClasses = getComponentClasses(editor.yieldEngineClassLoader, "com.xebisco.yieldengine", editor).toArray(new Class<?>[0]);
-                    List<Class<?>> classes = new ArrayList<>(Arrays.asList(componentsClasses));
-                    List<File> files = new ArrayList<>();
-                    for(File f : Global.listf(project.buildDirectory())) {
-                        if(f.getName().endsWith(".class")) {
-                            files.add(f);
-                        }
-                    }
-                    URLClassLoader classLoader = new URLClassLoader(new URL[] {project.buildDirectory().toURI().toURL()});
+                Class<?> comp = DialogUtils.addComponent(editor);
 
-                    for(File f : files) {
-                        classes.add(classLoader.loadClass(f.getAbsolutePath().replace(project.buildDirectory().getAbsolutePath(), "").replace(File.separator, ".").replace(".class", "").substring(1)));
-                    }
-                    components = new JList<>(classes.toArray(new Class<?>[0]));
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
+                if(comp != null) {
+                    entity.components().add(Global.addFields(comp, editor, new EditorComponent(comp.getName())));
+                    reloadFields(props, entity, scrollPane);
                 }
-                components.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                components.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        if (e.getClickCount() == 2 && components.getSelectedValue() != null) {
-                            entity.components().add(Global.addFields(components.getSelectedValue(), editor, new EditorComponent(components.getSelectedValue().getName())));
-                            addComponentDialog.dispose();
-                            reloadFields(props, entity, scrollPane);
-                        }
-                    }
-                });
-                components.setCellRenderer(new DefaultListCellRenderer() {
-                    @Override
-                    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                        JLabel l = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                        l.setText(((Class<?>) value).getSimpleName());
-                        l.setHorizontalAlignment(CENTER);
-                        l.setFont(l.getFont().deriveFont(Font.BOLD));
-                        try {
-                            l.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(ComponentProp.class.getResource("/logo/codeIcon.png"))).getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
-                        } catch (IOException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                        return l;
-                    }
-                });
-                addComponentDialog.add(new JScrollPane(components));
-                addComponentDialog.setVisible(true);
             }
         });
         buttonPanel.add(addButton);
@@ -357,7 +300,7 @@ public class ScenePanel extends JPanel {
                 try (ObjectInputStream oi = new ObjectInputStream(new FileInputStream(entity.prefabFile()))) {
                     loaded = (EditorEntity) oi.readObject();
                 } catch (IOException | ClassNotFoundException ex) {
-                    JOptionPane.showMessageDialog(panel, ex.getMessage(), ex.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+                    DialogUtils.error(panel, ex);
                     return;
                 }
 
