@@ -26,6 +26,7 @@
     <modules>
         <module>../glimpl</module>
         <module>../logger</module>
+        <module>../concurrency</module>
     </modules>
 
     <properties>

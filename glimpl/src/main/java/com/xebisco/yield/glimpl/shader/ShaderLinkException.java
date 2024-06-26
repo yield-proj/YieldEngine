@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.glimpl;
+package com.xebisco.yield.glimpl.shader;
 
 public class ShaderLinkException extends Exception {
     private static final long serialVersionUID = 6390385120791455428L;

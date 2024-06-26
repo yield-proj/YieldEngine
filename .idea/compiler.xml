@@ -6,9 +6,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="compiler" />
         <module name="glimpl" />
+        <module name="compiler" />
         <module name="logger" />
+        <module name="concurrency" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

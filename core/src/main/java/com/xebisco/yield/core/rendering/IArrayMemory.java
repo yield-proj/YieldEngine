@@ -15,20 +15,15 @@
 
 package com.xebisco.yield.core.rendering;
 
-public class VertexArray {
-    private final Object id;
-    private final Object arrayContext;
+import org.joml.Vector2fc;
+import org.joml.Vector3fc;
+import org.joml.Vector4fc;
 
-    protected VertexArray(Object id, Object arrayContext) {
-        this.id = id;
-        this.arrayContext = arrayContext;
-    }
-
-    public Object getId() {
-        return id;
-    }
-
-    public Object getArrayContext() {
-        return arrayContext;
-    }
+public interface IArrayMemory {
+    ArrayContext createArrayContext(int[] elementsArray);
+    void disposeArrayContext(ArrayContext arrayContext);
+    VertexArray createVertexArray(Vector4fc[] vectors, ArrayContext arrayContext);
+    VertexArray createVertexArray(Vector3fc[] vectors, ArrayContext arrayContext);
+    VertexArray createVertexArray(Vector2fc[] vectors, ArrayContext arrayContext);
+    void disposeVertexArray(VertexArray vertexArray);
 }

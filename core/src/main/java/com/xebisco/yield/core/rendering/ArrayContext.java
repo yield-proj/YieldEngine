@@ -15,20 +15,20 @@
 
 package com.xebisco.yield.core.rendering;
 
-public class VertexArray {
-    private final Object id;
-    private final Object arrayContext;
+public final class ArrayContext {
+    private final Object contextObject;
+    private final int vertexCount;
 
-    protected VertexArray(Object id, Object arrayContext) {
-        this.id = id;
-        this.arrayContext = arrayContext;
+    public ArrayContext(Object contextObject, int vertexCount) {
+        this.contextObject = contextObject;
+        this.vertexCount = vertexCount;
     }
 
-    public Object getId() {
-        return id;
+    public Object getContextObject() {
+        return contextObject;
     }
 
-    public Object getArrayContext() {
-        return arrayContext;
+    public int getVertexCount() {
+        return vertexCount;
     }
 }

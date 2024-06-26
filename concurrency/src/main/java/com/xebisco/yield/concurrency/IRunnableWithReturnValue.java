@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.core.rendering;
+package com.xebisco.yield.concurrency;
 
-public interface IBasicRenderer {
-    void render(int program, Uniform[] uniforms, VertexArray[] vertexes);
+@FunctionalInterface
+public interface IRunnableWithReturnValue<R> {
+    R apply();
 }

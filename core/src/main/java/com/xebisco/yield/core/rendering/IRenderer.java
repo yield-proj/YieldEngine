@@ -15,20 +15,6 @@
 
 package com.xebisco.yield.core.rendering;
 
-public class VertexArray {
-    private final Object id;
-    private final Object arrayContext;
-
-    protected VertexArray(Object id, Object arrayContext) {
-        this.id = id;
-        this.arrayContext = arrayContext;
-    }
-
-    public Object getId() {
-        return id;
-    }
-
-    public Object getArrayContext() {
-        return arrayContext;
-    }
+public interface IRenderer {
+    void render(Object program, Uniform[] uniforms, VertexArray[] vertexes);
 }

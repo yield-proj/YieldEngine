@@ -13,22 +13,14 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.core.rendering;
+package com.xebisco.yield.glimpl;
 
-public class VertexArray {
-    private final Object id;
-    private final Object arrayContext;
+import com.xebisco.yield.glimpl.window.OGLWindow;
+import org.lwjgl.opengl.awt.GLData;
 
-    protected VertexArray(Object id, Object arrayContext) {
-        this.id = id;
-        this.arrayContext = arrayContext;
-    }
-
-    public Object getId() {
-        return id;
-    }
-
-    public Object getArrayContext() {
-        return arrayContext;
+public class Test2 {
+    public static void main(String[] args) {
+        GLData data = new GLData();
+        OGLWindow window = new OGLWindow(data, 1280, 720, 1280, 720);
     }
 }

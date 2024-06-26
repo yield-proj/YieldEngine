@@ -13,27 +13,27 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.glimpl;
+package com.xebisco.yield.concurrency;
 
-public class ShaderCreationException extends Exception {
-    private static final long serialVersionUID = -1074584547758151813L;
+public class TimeOutException extends Exception {
+    private static final long serialVersionUID = 8547505210778618952L;
 
-    public ShaderCreationException() {
+    public TimeOutException() {
     }
 
-    public ShaderCreationException(String message) {
+    public TimeOutException(String message) {
         super(message);
     }
 
-    public ShaderCreationException(String message, Throwable cause) {
+    public TimeOutException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ShaderCreationException(Throwable cause) {
+    public TimeOutException(Throwable cause) {
         super(cause);
     }
 
-    public ShaderCreationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public TimeOutException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.glimpl;
+package com.xebisco.yield.glimpl.shader;
 
 import com.xebisco.yield.core.IBindUnbind;
 import com.xebisco.yield.core.IDispose;

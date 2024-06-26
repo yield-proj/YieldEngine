@@ -13,22 +13,17 @@
  * limitations under the License.
  */
 
-package com.xebisco.yield.core.rendering;
+package com.xebisco.yield.glimpl.window;
 
-public class VertexArray {
-    private final Object id;
-    private final Object arrayContext;
+import com.xebisco.yield.core.rendering.IRenderer;
+import com.xebisco.yield.core.rendering.Uniform;
+import com.xebisco.yield.core.rendering.VertexArray;
+import com.xebisco.yield.glimpl.shader.ShaderProgram;
 
-    protected VertexArray(Object id, Object arrayContext) {
-        this.id = id;
-        this.arrayContext = arrayContext;
-    }
-
-    public Object getId() {
-        return id;
-    }
-
-    public Object getArrayContext() {
-        return arrayContext;
+public class OGLRenderer implements IRenderer {
+    @Override
+    public void render(Object program, Uniform[] uniforms, VertexArray[] vertexes) {
+        ShaderProgram shaderProgram = (ShaderProgram) program;
+        shaderProgram.bind();
     }
 }
