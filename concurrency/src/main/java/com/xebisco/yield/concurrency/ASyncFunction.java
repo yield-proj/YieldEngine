@@ -19,7 +19,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public final class ASyncFunction<R> {
+public final class ASyncFunction<R> implements IAWait {
     private final LockProcess lockProcess;
     private R returnValue;
     private final AtomicBoolean timedOut = new AtomicBoolean();
@@ -31,33 +31,50 @@ public final class ASyncFunction<R> {
     public static <R> ASyncFunction<R> aSync(IRunnableWithReturnValue<R> run, int timeOutMillis) {
         ASyncFunction<R> aSyncFunction = new ASyncFunction<>(new LockProcess());
 
-        Thread functionThread = new Thread(() -> {
+        Timer[] timeOutTimer = new Timer[1];
+
+        Thread[] functionThread = new Thread[1];
+
+        if (timeOutMillis > 0) {
+            timeOutTimer[0] = new Timer();
+            timeOutTimer[0].schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (aSyncFunction.getLockProcess().isRunning()) {
+                        aSyncFunction.getTimedOut().set(true);
+                        aSyncFunction.setReturnValue(null);
+
+                        aSyncFunction.getLockProcess().unlock();
+                        functionThread[0].interrupt();
+                        try {
+                            throw new TimedOutException();
+                        } catch (TimedOutException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            }, timeOutMillis);
+        }
+
+        functionThread[0] = new Thread(() -> {
             aSyncFunction.setReturnValue(run.apply());
             aSyncFunction.getLockProcess().unlock();
 
+            if(timeOutTimer[0] != null) {
+                timeOutTimer[0].cancel();
+            }
+
             Thread.currentThread().interrupt();
         }, "ASYNCFUNC");
-        functionThread.setDaemon(true);
-        functionThread.start();
+        functionThread[0].setDaemon(true);
+        functionThread[0].start();
 
-        Timer timeOutTimer = new Timer();
-        timeOutTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (aSyncFunction.getLockProcess().isRunning()) {
-                    aSyncFunction.getTimedOut().set(true);
-                    aSyncFunction.setReturnValue(null);
 
-                    aSyncFunction.getLockProcess().unlock();
-                    functionThread.interrupt();
-                }
-            }
-        }, timeOutMillis);
         return aSyncFunction;
     }
 
     public static <R> ASyncFunction<R> aSync(IRunnableWithReturnValue<R> run) {
-        return aSync(run, 5000);
+        return aSync(run, 0);
     }
 
     public static ASyncFunction<Void> aSync(Runnable run, int timeOutMillis) {
@@ -68,22 +85,20 @@ public final class ASyncFunction<R> {
     }
 
     public static ASyncFunction<Void> aSync(Runnable run) {
-        return aSync(run, 5000);
+        return aSync(run, 0);
     }
 
-    public R aWait() throws InterruptedException, TimeOutException {
+    @Override
+    public void aWait() throws InterruptedException, TimedOutException {
         getLockProcess().aWait();
-        if (isTimedOut()) {
-            throw new TimeOutException();
-        }
-        return getReturnValue();
+        if(isTimedOut()) throw new TimedOutException();
     }
 
-    private boolean isRunning() {
+    public boolean isRunning() {
         return getLockProcess().isRunning();
     }
 
-    private boolean isTimedOut() {
+    public boolean isTimedOut() {
         return getTimedOut().get();
     }
 

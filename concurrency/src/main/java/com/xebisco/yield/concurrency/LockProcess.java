@@ -23,7 +23,9 @@ public final class LockProcess {
 
     public void unlock() {
         getRunning().set(false);
-        getLockObject().notifyAll();
+        synchronized (getLockObject()) {
+            getLockObject().notifyAll();
+        }
     }
 
     public void aWait() throws InterruptedException {
