@@ -29,7 +29,7 @@ public class ParallelForLoop implements IAWait {
         this.lockProcess = lockProcess;
     }
 
-    public static ParallelForLoop executorParallelFor(Function<Integer, Void> prc, IntegerRange range) {
+    public static ParallelForLoop executorParallelFor(IntegerRange range, Function<Integer, Void> prc) {
         ParallelForLoop parallelForLoop = new ParallelForLoop(new LockProcess());
         parallelForLoop.getProcessesLeftAtomic().set(range.getMax() - range.getMin() + 1);
 
@@ -49,7 +49,7 @@ public class ParallelForLoop implements IAWait {
         return parallelForLoop;
     }
 
-    public static ParallelForLoop streamParallelFor(Function<Integer, Void> prc, IntegerRange range, int timeOutMillis) {
+    public static ParallelForLoop streamParallelFor(IntegerRange range, Function<Integer, Void> prc, int timeOutMillis) {
         ParallelForLoop parallelForLoop = new ParallelForLoop(new LockProcess());
         parallelForLoop.getProcessesLeftAtomic().set(range.getMax() - range.getMin() + 1);
 
@@ -66,7 +66,7 @@ public class ParallelForLoop implements IAWait {
         return parallelForLoop;
     }
 
-    public static ParallelForLoop parallelFor(Function<Integer, Void> prc, IntegerRange range, int timeOutMillis) {
+    public static ParallelForLoop parallelFor(IntegerRange range, Function<Integer, Void> prc, int timeOutMillis) {
         ParallelForLoop parallelForLoop = new ParallelForLoop(new LockProcess());
         parallelForLoop.getProcessesLeftAtomic().set(range.getMax() - range.getMin() + 1);
 
@@ -85,12 +85,12 @@ public class ParallelForLoop implements IAWait {
         return parallelForLoop;
     }
 
-    public static ParallelForLoop streamParallelFor(Function<Integer, Void> prc, IntegerRange range) {
-        return streamParallelFor(prc, range, 0);
+    public static ParallelForLoop streamParallelFor(IntegerRange range, Function<Integer, Void> prc) {
+        return streamParallelFor(range, prc, 0);
     }
 
-    public static ParallelForLoop parallelFor(Function<Integer, Void> prc, IntegerRange range) {
-        return parallelFor(prc, range, 0);
+    public static ParallelForLoop parallelFor(IntegerRange range, Function<Integer, Void> prc) {
+        return parallelFor(range, prc, 0);
     }
 
     @Override

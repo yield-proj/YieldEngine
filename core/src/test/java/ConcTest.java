@@ -21,9 +21,9 @@ import com.xebisco.yield.concurrency.TimedOutException;
 
 public class ConcTest {
     public static void main(String[] args) throws TimedOutException, InterruptedException {
-        ASyncFunction.aSync(() ->{
+        ASyncFunction.aSync(() -> {
             try {
-                ParallelForLoop.parallelFor(i -> {
+                ParallelForLoop.parallelFor(IntegerRange.range(0, 1000), i -> {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
@@ -31,7 +31,7 @@ public class ConcTest {
                     }
                     System.out.println(i);
                     return null;
-                }, IntegerRange.range(0, 10000)).aWait();
+                }).aWait();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
