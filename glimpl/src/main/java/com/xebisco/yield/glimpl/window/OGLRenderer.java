@@ -15,15 +15,37 @@
 
 package com.xebisco.yield.glimpl.window;
 
+import com.xebisco.yield.core.rendering.ArrayContext;
 import com.xebisco.yield.core.rendering.IRenderer;
 import com.xebisco.yield.core.rendering.Uniform;
 import com.xebisco.yield.core.rendering.VertexArray;
 import com.xebisco.yield.glimpl.shader.ShaderProgram;
 
+import static org.lwjgl.opengl.GL30.*;
+
 public class OGLRenderer implements IRenderer {
     @Override
-    public void render(Object program, Uniform[] uniforms, VertexArray[] vertexes) {
+    public void render(Object program, Uniform[] uniforms, VertexArray[] vertexes, ArrayContext arrayContext) {
         ShaderProgram shaderProgram = (ShaderProgram) program;
         shaderProgram.bind();
+
+        glBindVertexArray((int) arrayContext.getContextObject());
+
+        for(int i = 0; i < vertexes.length; i++) {
+            VertexArray vertexArray = vertexes[i];
+            glBindBuffer(GL_ARRAY_BUFFER, (int) vertexArray.getId());
+            glVertexAttribPointer(i, vertexArray.getDimensions(), GL_FLOAT, false, 0, 0);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glEnableVertexAttribArray(i);
+        }
+
+        glDrawElements(GL_TRIANGLES, arrayContext.getVertexCount(), GL_UNSIGNED_INT, 0);
+
+        for(int i = 0; i < vertexes.length; i++) {
+            glDisableVertexAttribArray(i);
+        }
+        glBindVertexArray(0);
+
+        shaderProgram.unbind();
     }
 }

@@ -16,5 +16,5 @@
 package com.xebisco.yield.core.rendering;
 
 public interface IRenderer {
-    void render(Object program, Uniform[] uniforms, VertexArray[] vertexes);
+    void render(Object program, Uniform[] uniforms, VertexArray[] vertexes, ArrayContext arrayContext);
 }

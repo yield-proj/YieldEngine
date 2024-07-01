@@ -15,16 +15,23 @@
 
 package com.xebisco.yield.glimpl.window;
 
+import com.xebisco.yield.core.rendering.ArrayContext;
+import com.xebisco.yield.core.rendering.InvalidShaderTypeException;
+import com.xebisco.yield.core.rendering.Uniform;
+import com.xebisco.yield.core.rendering.VertexArray;
+import com.xebisco.yield.glimpl.mem.OGLArrayMemory;
+import com.xebisco.yield.glimpl.shader.ShaderCreationException;
+import com.xebisco.yield.glimpl.shader.ShaderProgram;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.awt.AWTGLCanvas;
 import org.lwjgl.opengl.awt.GLData;
 
 import javax.swing.*;
-
 import java.awt.*;
-import java.util.concurrent.CompletableFuture;
 
-import static org.lwjgl.opengl.GL.*;
+import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL20.*;
 
 public class OGLWindow {
@@ -67,7 +74,7 @@ public class OGLWindow {
         }
 
         private void clear() {
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
 
         @Override
@@ -75,8 +82,29 @@ public class OGLWindow {
             clear();
 
             if (requestedResize) {
-                glViewport(-resWidth / 2, -resHeight / 2, resWidth / 2, resHeight / 2);
+                //glViewport(-resWidth / 2, -resHeight / 2, resWidth / 2, resHeight / 2);
+                glViewport(-1, -1, 1, 1);
                 requestedResize = false;
+            }
+
+            OGLRenderer renderer = new OGLRenderer();
+
+            OGLArrayMemory arrayMemory = new OGLArrayMemory();
+            ArrayContext ac = arrayMemory.createArrayContext(new int[]{0, 1, 3, 3, 1, 2});
+
+            VertexArray positionsArray = arrayMemory.createVertexArray(new Vector3fc[]{
+                    new Vector3f(-0.5f,  0.5f, 0.0f),
+                    new Vector3f(-0.5f, -0.5f, 0.0f),
+                    new Vector3f(0.5f, -0.5f, 0.0f),
+                    new Vector3f(0.5f,  0.5f, 0.0f)
+            }, ac);
+
+            try {
+                ShaderProgram shaderProgram = ShaderProgram.create("#version 330\n" + "\n" + "layout (location =0) in vec3 position;\n" + "\n" + "void main()\n" + "{\n" + "    gl_Position = vec4(position, 1.0);\n" + "}", "#version 330\n" + "\n" + "out vec4 fragColor;\n" + "\n" + "void main()\n" + "{\n" + "    fragColor = vec4(1.0, 1.0, 1.0, 1.0);\n" + "}");
+
+                renderer.render(shaderProgram, new Uniform[]{}, new VertexArray[]{positionsArray}, ac);
+            } catch (ShaderCreationException e) {
+                throw new RuntimeException(e);
             }
 
             swapBuffers();

@@ -38,7 +38,7 @@ public enum DataType {
 
     public static DataType getDataType(Class<?> javaType) throws InvalidShaderTypeException {
         for (DataType dataType : values()) {
-            if (javaType.isAssignableFrom(dataType.javaType)) {
+            if (dataType.javaType.isAssignableFrom(javaType)) {
                 return dataType;
             }
         }

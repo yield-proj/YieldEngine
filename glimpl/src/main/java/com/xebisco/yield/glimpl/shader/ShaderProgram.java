@@ -24,7 +24,7 @@ import static org.lwjgl.opengl.GL20.*;
 public class ShaderProgram implements IBindUnbind, IDispose {
     private final int programID, vertexShaderID, fragmentShaderID;
 
-    public ShaderProgram(int programID, int vertexShaderID, int fragmentShaderID) {
+    private ShaderProgram(int programID, int vertexShaderID, int fragmentShaderID) {
         this.programID = programID;
         this.vertexShaderID = vertexShaderID;
         this.fragmentShaderID = fragmentShaderID;

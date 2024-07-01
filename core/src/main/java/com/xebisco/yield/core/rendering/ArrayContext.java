@@ -18,10 +18,12 @@ package com.xebisco.yield.core.rendering;
 public final class ArrayContext {
     private final Object contextObject;
     private final int vertexCount;
+    private final VertexArray elementsVertexArray;
 
-    public ArrayContext(Object contextObject, int vertexCount) {
+    public ArrayContext(Object contextObject, int vertexCount, VertexArray elementsVertexArray) {
         this.contextObject = contextObject;
         this.vertexCount = vertexCount;
+        this.elementsVertexArray = elementsVertexArray;
     }
 
     public Object getContextObject() {
@@ -30,5 +32,9 @@ public final class ArrayContext {
 
     public int getVertexCount() {
         return vertexCount;
+    }
+
+    public VertexArray getElementsVertexArray() {
+        return elementsVertexArray;
     }
 }

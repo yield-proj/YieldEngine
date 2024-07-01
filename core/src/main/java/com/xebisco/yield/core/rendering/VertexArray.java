@@ -17,18 +17,18 @@ package com.xebisco.yield.core.rendering;
 
 public class VertexArray {
     private final Object id;
-    private final Object arrayContext;
+    private final int dimensions;
 
-    protected VertexArray(Object id, Object arrayContext) {
+    public VertexArray(Object id, int dimensions) {
         this.id = id;
-        this.arrayContext = arrayContext;
+        this.dimensions = dimensions;
     }
 
     public Object getId() {
         return id;
     }
 
-    public Object getArrayContext() {
-        return arrayContext;
+    public int getDimensions() {
+        return dimensions;
     }
 }

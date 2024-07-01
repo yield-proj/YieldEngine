@@ -22,5 +22,7 @@ public class Test2 {
     public static void main(String[] args) {
         GLData data = new GLData();
         OGLWindow window = new OGLWindow(data, 1280, 720, 1280, 720);
+
+            window.paint();
     }
 }
