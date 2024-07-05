@@ -3,8 +3,6 @@
   <component name="AdditionalModuleElements">
     <content url="file://$MODULE_DIR$/core" dumb="true">
       <sourceFolder url="file://$MODULE_DIR$/core/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/core/src/main/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/core/src/test/java" isTestSource="true" />
     </content>
   </component>
 </module>

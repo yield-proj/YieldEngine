@@ -2,10 +2,25 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/assets/assets.iml" filepath="$PROJECT_DIR$/assets/assets.iml" />
+      <module fileurl="file://$PROJECT_DIR$/assets-compressing/assets-compressing.iml" filepath="$PROJECT_DIR$/assets-compressing/assets-compressing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/assets-decompressing/assets-decompressing.iml" filepath="$PROJECT_DIR$/assets-decompressing/assets-decompressing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/assets-management/assets-management.iml" filepath="$PROJECT_DIR$/assets-management/assets-management.iml" />
       <module fileurl="file://$PROJECT_DIR$/core.iml" filepath="$PROJECT_DIR$/core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/editor/editor.iml" filepath="$PROJECT_DIR$/editor/editor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/editor-annotations/editor-annotations.iml" filepath="$PROJECT_DIR$/editor-annotations/editor-annotations.iml" />
+      <module fileurl="file://$PROJECT_DIR$/editor-app/editor-app.iml" filepath="$PROJECT_DIR$/editor-app/editor-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/editor-runtime/editor-runtime.iml" filepath="$PROJECT_DIR$/editor-runtime/editor-runtime.iml" />
       <module fileurl="file://$PROJECT_DIR$/editor_overhead/editor_overhead.iml" filepath="$PROJECT_DIR$/editor_overhead/editor_overhead.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hello-world/hello-world.iml" filepath="$PROJECT_DIR$/hello-world/hello-world.iml" />
       <module fileurl="file://$PROJECT_DIR$/javaxsoundimpl/javaxsoundimpl.iml" filepath="$PROJECT_DIR$/javaxsoundimpl/javaxsoundimpl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/openalimpl/openalimpl.iml" filepath="$PROJECT_DIR$/openalimpl/openalimpl.iml" />
       <module fileurl="file://$PROJECT_DIR$/openglesimpl/openglesimpl.iml" filepath="$PROJECT_DIR$/openglesimpl/openglesimpl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/openglimpl/openglimpl.iml" filepath="$PROJECT_DIR$/openglimpl/openglimpl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/physics/physics.iml" filepath="$PROJECT_DIR$/physics/physics.iml" />
+      <module fileurl="file://$PROJECT_DIR$/random-tests/random-tests.iml" filepath="$PROJECT_DIR$/random-tests/random-tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/uiutils/uiutils.iml" filepath="$PROJECT_DIR$/uiutils/uiutils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/utils/utils.iml" filepath="$PROJECT_DIR$/utils/utils.iml" />
     </modules>
   </component>
 </project>

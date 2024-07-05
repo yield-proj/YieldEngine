@@ -14,10 +14,10 @@
  */
 
 
-import com.xebisco.yield.concurrency.ASyncFunction;
-import com.xebisco.yield.concurrency.IntegerRange;
-import com.xebisco.yield.concurrency.ParallelForLoop;
-import com.xebisco.yield.concurrency.TimedOutException;
+import com.xebisco.yieldengine.concurrency.ASyncFunction;
+import com.xebisco.yieldengine.concurrency.IntegerRange;
+import com.xebisco.yieldengine.concurrency.ParallelForLoop;
+import com.xebisco.yieldengine.concurrency.TimedOutException;
 
 public class ConcTest {
     public static void main(String[] args) throws TimedOutException, InterruptedException {
