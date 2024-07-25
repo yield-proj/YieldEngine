@@ -3,6 +3,7 @@ package com.xebisco.yieldengine.glimpl.mem;
 import com.xebisco.yieldengine.core.io.texture.ITextureLoader;
 import com.xebisco.yieldengine.core.io.texture.Texture;
 import com.xebisco.yieldengine.core.io.texture.TextureFilter;
+import com.xebisco.yieldengine.core.io.texture.TextureMap;
 import com.xebisco.yieldengine.glimpl.window.OGLWindow;
 import org.lwjgl.BufferUtils;
 
@@ -10,7 +11,10 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.lwjgl.opengl.GL30.*;
@@ -18,6 +22,7 @@ import static org.lwjgl.opengl.GL30.*;
 public class OGLTextureLoader implements ITextureLoader {
 
     private final OGLWindow window;
+    private final Map<String, BufferedImage> maps = new HashMap<>();
 
     public OGLTextureLoader(OGLWindow window) {
         this.window = window;
@@ -79,13 +84,35 @@ public class OGLTextureLoader implements ITextureLoader {
             atomicTexId.set(textureID);
         });
 
-        return new Texture((OGLTextureIDGetter) atomicTexId::get, image.getWidth(), image.getHeight());
+        return Texture.create((OGLTextureIDGetter) atomicTexId::get, image.getWidth(), image.getHeight());
     }
 
     @Override
-    public void unloadTexture(Object imageReference) {
+    public void unloadTexture(Serializable imageReference) {
         window.getCallInOpenGLThread().add(() -> {
             glDeleteTextures(((OGLTextureIDGetter) imageReference).getTextureID());
         });
+    }
+
+    @Override
+    public TextureMap loadTextureMap(String absolutePath) {
+        BufferedImage image;
+        try {
+            image = ImageIO.read(new File(absolutePath));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        maps.put(absolutePath, image);
+        return TextureMap.create(absolutePath, image.getWidth(), image.getHeight());
+    }
+
+    @Override
+    public void unloadTextureMap(Serializable imageReference) {
+        maps.get((String) imageReference).flush();
+    }
+
+    @Override
+    public Texture loadTexture(int x, int y, int width, int height, TextureMap textureMap, TextureFilter filter) {
+        return loadTextureFromBufferedImage(maps.get((String) textureMap.getImageReference()).getSubimage(x, y, width, height), filter, window);
     }
 }

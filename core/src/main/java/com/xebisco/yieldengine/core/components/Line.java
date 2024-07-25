@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 public class Line extends Component {
     private Vector2f point1 = new Vector2f(-50, -50), point2 = new Vector2f(50, 50);
-    private float thickness = 1f;
+    private float thickness = 4f;
     private Vector4f color = new Vector4f(1f, 1f, 1f, 1f);
 
     public Line() {

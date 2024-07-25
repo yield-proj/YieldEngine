@@ -15,8 +15,10 @@
 
 package com.xebisco.yieldengine.core;
 
-public abstract class Component extends OnSceneBehavior {
-    private Entity entity;
+import java.io.Serializable;
+
+public abstract class Component extends OnSceneBehavior implements Serializable {
+    private transient Entity entity;
 
     @Override
     public void onCreate() {

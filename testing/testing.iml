@@ -11,5 +11,6 @@
     <orderEntry type="module" module-name="glimpl" />
     <orderEntry type="library" name="testing-libs" level="project" />
     <orderEntry type="module" module-name="alimpl" />
+    <orderEntry type="module" module-name="tilemap" />
   </component>
 </module>

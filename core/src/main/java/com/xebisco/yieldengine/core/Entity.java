@@ -152,6 +152,4 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
     public ArrayList<String> getTags() {
         return tags;
     }
-
-
 }

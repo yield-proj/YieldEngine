@@ -23,7 +23,7 @@ public class OALAudioLoader implements IAudioLoader {
             //copy to buffer
             alBufferData(buffer, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
         }
-        return new Audio(buffer);
+        return Audio.create(buffer);
     }
 
     private static ShortBuffer readVorbis(String path, STBVorbisInfo info) {

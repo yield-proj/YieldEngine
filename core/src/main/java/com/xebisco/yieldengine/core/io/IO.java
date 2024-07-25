@@ -11,6 +11,7 @@ import com.xebisco.yieldengine.core.io.text.IFontLoader;
 import com.xebisco.yieldengine.core.io.texture.ITextureLoader;
 import com.xebisco.yieldengine.core.io.texture.Texture;
 import com.xebisco.yieldengine.core.io.texture.TextureFilter;
+import com.xebisco.yieldengine.core.io.texture.TextureMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public final class IO implements IDispose {
     private final IAudioPlayer audioPlayer;
 
     private final List<Texture> textures = new ArrayList<>();
+    private final List<TextureMap> textureMaps = new ArrayList<>();
     private final List<Font> fonts = new ArrayList<>();
     private final List<Audio> audios = new ArrayList<>();
     private final List<AudioSource> audioSources = new ArrayList<>();
@@ -73,6 +75,30 @@ public final class IO implements IDispose {
         Logger.getInstance().engineDebug("Unloading all textures.");
         while (!textures.isEmpty())
             unloadTexture(textures.get(0));
+    }
+
+    public TextureMap loadTextureMap(String path, boolean addToTextureMapList) {
+        Logger.getInstance().engineDebug("Loading texture map: " + path);
+        TextureMap map = textureLoader.loadTextureMap(absolutePathGetter.getAbsolutePath(path));
+        if (addToTextureMapList)
+            textureMaps.add(map);
+        return map;
+    }
+
+    public TextureMap loadTextureMap(String path) {
+        return loadTextureMap(path, true);
+    }
+
+    public void unloadTextureMap(TextureMap textureMap) {
+        Logger.getInstance().engineDebug("Unloading texture map: " + textureMap);
+        textureLoader.unloadTextureMap(textureMap.getImageReference());
+        textureMaps.remove(textureMap);
+    }
+
+    public void unloadAllTextureMaps() {
+        Logger.getInstance().engineDebug("Unloading all texture maps.");
+        while (!textureMaps.isEmpty())
+            unloadTextureMap(textureMaps.get(0));
     }
 
     public Font loadFont(String path, float size, boolean antiAliasing, boolean addToFontList) {
@@ -128,6 +154,7 @@ public final class IO implements IDispose {
         unloadAllFonts();
         unloadFont(defaultFont);
         unloadAllAudios();
+        unloadAllTextureMaps();
     }
 
     public static IO getInstance() {

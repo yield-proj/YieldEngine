@@ -1,6 +1,7 @@
 package com.xebisco.yieldengine.core.components;
 
 import com.xebisco.yieldengine.core.Global;
+import com.xebisco.yieldengine.core.Transform;
 import com.xebisco.yieldengine.core.io.IO;
 import com.xebisco.yieldengine.core.io.texture.Texture;
 import com.xebisco.yieldengine.core.render.DrawInstruction;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 
 public class Sprite extends Rectangle {
     private Texture texture = IO.getInstance().getDefaultTexture();
+    private Vector2f offset = new Vector2f();
 
     public Sprite() {
     }
@@ -40,6 +42,8 @@ public class Sprite extends Rectangle {
 
     @Override
     public void onLateUpdate() {
+        Transform t = getEntity().getNewWorldTransform();
+        t.translate(offset);
         Render render = Render.getInstance();
         render.getInstructionsList().add(
                 new DrawInstruction()
@@ -52,7 +56,7 @@ public class Sprite extends Rectangle {
                                 }
                         )
                         .setCamera(Global.getCurrentScene().getCamera())
-                        .setTransform(getEntity().getNewWorldTransform())
+                        .setTransform(t)
         );
     }
 
@@ -62,6 +66,15 @@ public class Sprite extends Rectangle {
 
     public Sprite setTexture(Texture texture) {
         this.texture = texture;
+        return this;
+    }
+
+    public Vector2f getOffset() {
+        return offset;
+    }
+
+    public Sprite setOffset(Vector2f offset) {
+        this.offset = offset;
         return this;
     }
 }
