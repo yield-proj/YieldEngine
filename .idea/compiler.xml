@@ -6,12 +6,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="compiler" />
+        <module name="core" />
+        <module name="alimpl" />
+        <module name="glimpl" />
+        <module name="concurrency" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="script" target="17" />
-      <module name="script_compiler" target="17" />
+      <module name="logger" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
