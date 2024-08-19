@@ -48,9 +48,11 @@ public class OGLWindow {
             while (frame.isDisplayable()) {
                 try {
                     repaintLock.aWait();
-                    paint();
+                    do {
+                        paint();
+                    } while (!callInOpenGLThread.isEmpty());
                     repaintLock = new LockProcess();
-                    if(logicLock != null) logicLock.unlock();
+                    if (logicLock != null) logicLock.unlock();
                 } catch (InterruptedException ignore) {
                 }
             }
@@ -63,7 +65,7 @@ public class OGLWindow {
     private final JFrame frame;
     private final List<Runnable> closeHooks = new ArrayList<>();
     private List<DrawInstruction> instructions;
-    private LockProcess repaintLock = new LockProcess(), logicLock;
+    private LockProcess repaintLock = new LockProcess(), logicLock, resourcesLock = new LockProcess();
     private final RepaintManager repaintManager = new RepaintManager();
     private final Thread repaintManagerThread = new Thread(repaintManager, "REPAINT_MANAGER");
 
@@ -110,7 +112,7 @@ public class OGLWindow {
 
         frame.setVisible(true);
 
-        if(frame.getContentPane().getHeight() != height) frame.setSize(width, height + frame.getInsets().top);
+        if (frame.getContentPane().getHeight() != height) frame.setSize(width, height + frame.getInsets().top);
 
         frame.transferFocus();
 
@@ -144,26 +146,29 @@ public class OGLWindow {
 
         @Override
         public void paintGL() {
-            if (requestedResize) {
-                glViewport(0, 0, getWidth(), getHeight());
-                requestedResize = false;
-            }
 
-            try {
-                callInOpenGLThread.removeIf(r -> {
-                    r.run();
-                    return true;
-                });
-            } catch (ConcurrentModificationException ignore) {
-            }
+            if (callInOpenGLThread.isEmpty()) {
+                if (requestedResize) {
+                    glViewport(0, 0, getWidth(), getHeight());
+                    requestedResize = false;
+                }
 
-            if (instructions != null) {
-                for (DrawInstruction ins : instructions)
-                    StaticDrawImplementation.drawInstruction(ins);
-                instructions.clear();
-            }
+                if (instructions != null) {
+                    for (DrawInstruction ins : instructions)
+                        StaticDrawImplementation.drawInstruction(ins);
+                    instructions.clear();
+                }
 
-            swapBuffers();
+                swapBuffers();
+            } else {
+                try {
+                    callInOpenGLThread.removeIf(r -> {
+                        r.run();
+                        return true;
+                    });
+                } catch (ConcurrentModificationException ignore) {
+                }
+            }
         }
     }
 
@@ -233,5 +238,9 @@ public class OGLWindow {
 
     public Set<Runnable> getCallInOpenGLThread() {
         return callInOpenGLThread;
+    }
+
+    public void setResourcesLock(LockProcess resourcesLock) {
+        this.resourcesLock = resourcesLock;
     }
 }

@@ -34,9 +34,11 @@ import org.joml.Vector4fc;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Random;
 
 public class Global {
     private static Scene currentScene;
+    public static final Random RANDOM = new Random();
 
     public static LoopContext getOpenGLOpenALLoopContext(int width, int height) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException {
         Class<?> soundManagerClass = Class.forName("com.xebisco.yieldengine.alimpl.SoundManager");

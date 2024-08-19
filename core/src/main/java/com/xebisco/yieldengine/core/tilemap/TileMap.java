@@ -1,4 +1,4 @@
-package com.xebisco.yieldengine.tilemap;
+package com.xebisco.yieldengine.core.tilemap;
 
 import com.xebisco.yieldengine.core.Component;
 import com.xebisco.yieldengine.core.Entity;
@@ -9,10 +9,7 @@ import com.xebisco.yieldengine.core.io.texture.TextureMap;
 import org.joml.Vector2f;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class TileMap extends Component implements Serializable {
     private final HashMap<Integer, Tile> tileSet;
@@ -30,7 +27,6 @@ public class TileMap extends Component implements Serializable {
 
     @Override
     public void onCreate() {
-        Map<PositionAndSize, Texture> textures = new HashMap<>();
         Entity spritesEntity = new Entity("sprites", new Transform());
         spritesEntity.addToParent(getEntity());
         for(int y = 0; y < map[0].length; y++) {
@@ -38,13 +34,7 @@ public class TileMap extends Component implements Serializable {
                 int tile = map[y][x];
                 if(tile == -1) continue;
                 Tile tileC = tileSet.get(tile);
-                Texture texture;
-                if(textures.containsKey(tileC.getPositionAndSize())) {
-                    texture = textures.get(tileC.getPositionAndSize());
-                } else {
-                    texture = textureMap.getTexture(tileC.getPositionAndSize().getX(), tileC.getPositionAndSize().getY(), tileC.getPositionAndSize().getWidth(), tileC.getPositionAndSize().getHeight());
-                    textures.put(tileC.getPositionAndSize(), texture);
-                }
+                Texture texture = tileC.getTexture();
                 Sprite sprite = new Sprite(tileC.getColor(), tileC.isFitTexture() ? new Vector2f(tileWidth, tileHeight) : new Vector2f(texture.getWidth(), texture.getHeight()), texture);
                 sprite.setOffset(new Vector2f(x * tileWidth + tileWidth / 2f, -y * tileHeight - tileHeight / 2f));
                 spritesEntity.getComponents().add(sprite);
