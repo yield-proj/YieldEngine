@@ -7,13 +7,15 @@ import com.xebisco.yieldengine.uiutils.fields.FieldsPanel;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.Locale;
 
 public class Main {
     public static void main(String[] args) throws IOException, UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         //System.setProperty("sun.java2d.opengl", "True");
+        Locale.setDefault(Locale.US);
         Lang.LANG.load(Main.class.getResourceAsStream("/en.properties"));
 
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        //UIManager.setLookAndFeel(MotifLookAndFeel.class.getName());
 
         testTileSetEditor();
     }

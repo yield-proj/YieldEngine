@@ -204,8 +204,10 @@ public class TileSetEditor extends JPanel {
                 }
             }
         } else if(tileType == 1) {
-            ImageCutterPanel imageCutterPanel = new ImageCutterPanel(tileSet.getImageSheet());
+            JMenuBar menuBar = new JMenuBar();
+            ImageCutterPanel imageCutterPanel = new ImageCutterPanel(tileSet.getImageSheet(), menuBar);
             JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), true);
+            dialog.setJMenuBar(menuBar);
             dialog.setSize(500, 500);
             dialog.add(imageCutterPanel);
             dialog.setLocationRelativeTo(this);

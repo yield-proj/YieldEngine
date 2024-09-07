@@ -1,21 +1,20 @@
 package com.xebisco.yieldengine.uiutils.fields;
 
 import com.xebisco.yieldengine.uiutils.NumberField;
+import com.xebisco.yieldengine.uiutils.Point;
 
 import javax.swing.*;
 import java.awt.*;
 
 import static com.xebisco.yieldengine.uiutils.Lang.getString;
 
-public class PointFieldPanel extends FieldPanel<Point> {
+public class PointFieldPanel<T extends Number> extends FieldPanel<com.xebisco.yieldengine.uiutils.Point<T>> {
 
-    private Point value;
-    private final NumberField xNumberField, yNumberField;
+    private final NumberField<T> xNumberField, yNumberField;
 
-    public PointFieldPanel(String name, Point value, boolean allowsNegatives, boolean isSize, boolean editable) {
+    public PointFieldPanel(String name, Class<T> numberClass, com.xebisco.yieldengine.uiutils.Point<T> value, boolean allowsNegatives, boolean isSize, boolean editable) {
         super(name, editable);
 
-        this.value = value;
         setLayout(new BorderLayout());
         add(new JLabel(getString(name) + ": "), BorderLayout.WEST);
 
@@ -23,8 +22,8 @@ public class PointFieldPanel extends FieldPanel<Point> {
         center.setLayout(new BoxLayout(center, BoxLayout.X_AXIS));
 
         //X
-        xNumberField = new NumberField(Integer.class, allowsNegatives);
-        xNumberField.setValue(value.x);
+        xNumberField = new NumberField<>(numberClass, allowsNegatives);
+        xNumberField.setValue(value.getX());
         JPanel x = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.weightx = 0;
@@ -38,8 +37,8 @@ public class PointFieldPanel extends FieldPanel<Point> {
         center.add(x);
 
         //Y
-        yNumberField = new NumberField(Integer.class, allowsNegatives);
-        yNumberField.setValue(value.y);
+        yNumberField = new NumberField<>(numberClass, allowsNegatives);
+        yNumberField.setValue(value.getY());
         JPanel y = new JPanel(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.weightx = 0;
@@ -56,12 +55,13 @@ public class PointFieldPanel extends FieldPanel<Point> {
     }
 
     @Override
-    public Point getValue() {
-        return null;
+    public com.xebisco.yieldengine.uiutils.Point<T> getValue() {
+        return new Point<>(xNumberField.getValue(), yNumberField.getValue());
     }
 
     @Override
-    public void setValue(Point value) {
-
+    public void setValue(com.xebisco.yieldengine.uiutils.Point<T> value) {
+        xNumberField.setValue(value.getX());
+        yNumberField.setValue(value.getY());
     }
 }

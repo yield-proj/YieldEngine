@@ -1,5 +1,6 @@
 package com.xebisco.yieldengine.tilemapeditor;
 
+import com.xebisco.yieldengine.uiutils.Point;
 import com.xebisco.yieldengine.uiutils.Utils;
 import com.xebisco.yieldengine.uiutils.fields.*;
 
@@ -29,8 +30,8 @@ public class Dialogs {
 
     public static FieldPanel<?>[] newSubImageTileFields() {
         return new FieldPanel<?>[]{
-                new PointFieldPanel("test_point", new Point(1, 2), false, false, true),
-                new PointFieldPanel("test_size", new Point(3, 4), false, true, true),
+                new PointFieldPanel<>("test_point", int.class, new Point<>(1, 2), false, false, true),
+                new PointFieldPanel<>("test_size", int.class, new Point<>(3, 4), false, true, true),
                 new StringFieldPanel(NAME, "", true),
                 new StringFieldPanel(ENTITY_CREATOR_CLASS_NAME, "", true),
                 new BooleanFieldPanel(FIT_TEXTURE, true, true),

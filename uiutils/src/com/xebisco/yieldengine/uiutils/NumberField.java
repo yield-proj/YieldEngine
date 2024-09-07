@@ -7,8 +7,8 @@ import java.awt.event.FocusListener;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
-public class NumberField extends JFormattedTextField {
-    public NumberField(Class<? extends Number> numberClass, boolean allowNegatives) {
+public class NumberField<T extends Number> extends JFormattedTextField {
+    public NumberField(Class<T> numberClass, boolean allowNegatives) {
         super(getNumberFormatter(numberClass, allowNegatives));
         setText("0");
 
@@ -53,5 +53,11 @@ public class NumberField extends JFormattedTextField {
         }
 
         return formatter;
+    }
+
+    @Override
+    public T getValue() {
+        //noinspection unchecked
+        return (T) super.getValue();
     }
 }
