@@ -1,8 +1,11 @@
 package com.xebisco.yieldengine.tilemapeditor.imagecutter;
 
+import com.xebisco.yieldengine.tilemapeditor.tile.SubImageTile;
+import com.xebisco.yieldengine.tilemapeditor.tile.Tile;
 import com.xebisco.yieldengine.uiutils.ColliderRender;
 import com.xebisco.yieldengine.uiutils.Point;
 import com.xebisco.yieldengine.uiutils.Utils;
+import com.xebisco.yieldengine.uiutils.ZoomPanel;
 import com.xebisco.yieldengine.uiutils.fields.PointFieldPanel;
 
 import javax.swing.*;
@@ -14,8 +17,8 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ImageCutterPanel extends JPanel {
 
@@ -23,7 +26,7 @@ public class ImageCutterPanel extends JPanel {
     private boolean drawGrid;
     private Point<Integer> gridSize = new Point<>(16, 16);
 
-    private ArrayList<ColliderRender> tiles = new ArrayList<>();
+    private final List<Tile> tiles;
 
     private ZoomPanel imagePanel = new ZoomPanel() {
         @Override
@@ -60,19 +63,22 @@ public class ImageCutterPanel extends JPanel {
                 }
             }
 
-            for (ColliderRender tile : tiles) {
-                tile.draw((Graphics2D) g, (float) (1 / getZoomFactor()), true);
+            for (Tile tile : tiles) {
+                if (tile instanceof SubImageTile)
+                    new ColliderRender(((SubImageTile) tile).getPoint(), ((SubImageTile) tile).getSize()).draw((Graphics2D) g, (float) (1 / getZoomFactor()), true, tile.getName());
             }
 
             drawInfo((Graphics2D) g);
         }
 
         public void addTile(Point<Integer> position) {
-            ColliderRender colliderRender = new ColliderRender(
+            String name = JOptionPane.showInputDialog("Tile name");
+            if(name == null) return;
+            /*ColliderRender colliderRender = new ColliderRender(
                     position,
                     new Point<>(gridSize.getX(), gridSize.getY())
-            );
-            tiles.add(colliderRender);
+            );*/
+            tiles.add(new SubImageTile(image, name, "", position, new Point<>(gridSize.getX(), gridSize.getY())).load());
             repaint();
         }
 
@@ -118,8 +124,10 @@ public class ImageCutterPanel extends JPanel {
                     selectedTile.getPosition().setX((int) p.getX());
                     selectedTile.getPosition().setY((int) p.getY());
                 }
-                if(selectedTile.getSize().getX() > image.getWidth()) selectedTile.getSize().setX(Math.max(1, image.getWidth() - 100));
-                if(selectedTile.getSize().getY() > image.getHeight()) selectedTile.getSize().setY(Math.max(1, image.getHeight() - 100));
+                if (selectedTile.getSize().getX() > image.getWidth())
+                    selectedTile.getSize().setX(Math.max(1, image.getWidth() - 100));
+                if (selectedTile.getSize().getY() > image.getHeight())
+                    selectedTile.getSize().setY(Math.max(1, image.getHeight() - 100));
                 if (selectedTile.getPosition().getX() + selectedTile.getSize().getX() > image.getWidth()) {
                     selectedTile.getPosition().setX(image.getWidth() - selectedTile.getSize().getX());
                 }
@@ -140,18 +148,21 @@ public class ImageCutterPanel extends JPanel {
 
             selectedTile = null;
 
-            for (ColliderRender tile : tiles) {
-                boolean r = tile.positionB(p, (float) (1 / getZoomFactor()));
-                sizeSelected = false;
-                if (!r) {
-                    r = tile.sizeB(p, (float) (1 / getZoomFactor()));
-                    sizeSelected = true;
-                }
-                if (r) {
-                    if (pressing)
-                        selectedTile = tile;
-                    rep = true;
-                    break;
+            for (Tile tileP : tiles) {
+                if (tileP instanceof SubImageTile) {
+                    ColliderRender tile = new ColliderRender(((SubImageTile) tileP).getPoint(), ((SubImageTile) tileP).getSize());
+                    boolean r = tile.positionB(p, (float) (1 / getZoomFactor()));
+                    sizeSelected = false;
+                    if (!r) {
+                        r = tile.sizeB(p, (float) (1 / getZoomFactor()));
+                        sizeSelected = true;
+                    }
+                    if (r) {
+                        if (pressing)
+                            selectedTile = tile;
+                        rep = true;
+                        break;
+                    }
                 }
             }
 
@@ -189,7 +200,8 @@ public class ImageCutterPanel extends JPanel {
         }
     };
 
-    public ImageCutterPanel(BufferedImage image, JMenuBar menuBar) {
+    public ImageCutterPanel(BufferedImage image, List<Tile> tiles) {
+        this.tiles = tiles;
         setLayout(new BorderLayout());
         this.image = image;
 
@@ -202,10 +214,10 @@ public class ImageCutterPanel extends JPanel {
         JMenuItem populateWithTiles = new JMenuItem(new AbstractAction("Populate") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(JOptionPane.showConfirmDialog(ImageCutterPanel.this, "Populate with tiles?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                    for(int x = 0; x < Math.floorDiv(image.getWidth(), gridSize.getX()); x++) {
-                        for(int y = 0; y < Math.floorDiv(image.getHeight(), gridSize.getY()); y++) {
-                            tiles.add(new ColliderRender(new Point<>(x * gridSize.getX(), y * gridSize.getY()), new Point<>(gridSize.getX(), gridSize.getY())));
+                if (JOptionPane.showConfirmDialog(ImageCutterPanel.this, "Populate with tiles?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    for (int x = 0; x < Math.floorDiv(getImage().getWidth(), gridSize.getX()); x++) {
+                        for (int y = 0; y < Math.floorDiv(getImage().getHeight(), gridSize.getY()); y++) {
+                            tiles.add(new SubImageTile(getImage(), String.valueOf(y * getHeight() + x), "", new Point<>(x * gridSize.getX(), y * gridSize.getY()), new Point<>(gridSize.getX(), gridSize.getY())).load());
                         }
                     }
                 }
@@ -234,30 +246,49 @@ public class ImageCutterPanel extends JPanel {
         });
         gridMenu.add(showGridButton);
 
-        menuBar.add(gridMenu);
-        imagePanel.addViewMenu(menuBar);
+        JToolBar toolBar = new JToolBar();
+        add(toolBar, BorderLayout.NORTH);
+
+        //toolBar.add(gridMenu);
+        imagePanel.addViewMenu(toolBar);
 
 
-
-        //toolBar.add(menuItemButton("Grid", KeyEvent.VK_G, populateWithTiles, setGridSize, showGridButton));
+        toolBar.add(Utils.menuItemButton("Grid", KeyEvent.VK_G, populateWithTiles, setGridSize, showGridButton));
     }
 
-    private JButton menuItemButton(String name, Integer mnemonic, JComponent... menuItem) {
-        JButton button = new JButton();
-        if (mnemonic != null) button.setMnemonic(mnemonic);
+    public BufferedImage getImage() {
+        return image;
+    }
 
-        JPopupMenu popupMenu = new JPopupMenu();
-        for (JComponent item : menuItem) {
-            popupMenu.add(item);
-        }
+    public void setImage(BufferedImage image) {
+        this.image = image;
+    }
 
-        button.setAction(new AbstractAction(name) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                popupMenu.show(ImageCutterPanel.this, getMousePosition().x, getMousePosition().y);
-            }
-        });
+    public boolean isDrawGrid() {
+        return drawGrid;
+    }
 
-        return button;
+    public void setDrawGrid(boolean drawGrid) {
+        this.drawGrid = drawGrid;
+    }
+
+    public Point<Integer> getGridSize() {
+        return gridSize;
+    }
+
+    public void setGridSize(Point<Integer> gridSize) {
+        this.gridSize = gridSize;
+    }
+
+    public List<Tile> getTiles() {
+        return tiles;
+    }
+
+    public ZoomPanel getImagePanel() {
+        return imagePanel;
+    }
+
+    public void setImagePanel(ZoomPanel imagePanel) {
+        this.imagePanel = imagePanel;
     }
 }

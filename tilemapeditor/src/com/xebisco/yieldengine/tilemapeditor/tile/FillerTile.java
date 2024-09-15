@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
 
 public class FillerTile implements Tile {
     @Override
-    public void load() {
-
+    public FillerTile load() {
+        return this;
     }
 
     @Override
@@ -15,8 +15,18 @@ public class FillerTile implements Tile {
     }
 
     @Override
+    public void setName(String name) {
+
+    }
+
+    @Override
     public String getEntityCreatorClassName() {
         return null;
+    }
+
+    @Override
+    public void setEntityCreatorClassName(String entityCreatorClassName) {
+
     }
 
     @Override

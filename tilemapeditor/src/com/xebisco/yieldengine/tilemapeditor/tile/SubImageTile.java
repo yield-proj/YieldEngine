@@ -1,20 +1,16 @@
 package com.xebisco.yieldengine.tilemapeditor.tile;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class SubImageTile implements Tile {
     private transient BufferedImage image;
     private transient Image scaledImage;
     private final transient BufferedImage imageSheet;
     private String name, entityCreatorClassName;
-    private Point point;
-    private Dimension size;
+    private com.xebisco.yieldengine.uiutils.Point<Integer> point, size;
 
-    public SubImageTile(BufferedImage imageSheet, String name, String entityCreatorClassName, Point point, Dimension size) {
+    public SubImageTile(BufferedImage imageSheet, String name, String entityCreatorClassName, com.xebisco.yieldengine.uiutils.Point<Integer> point, com.xebisco.yieldengine.uiutils.Point<Integer> size) {
         this.imageSheet = imageSheet;
         this.name = name;
         this.entityCreatorClassName = entityCreatorClassName;
@@ -23,8 +19,8 @@ public class SubImageTile implements Tile {
     }
 
     @Override
-    public void load() {
-        image = imageSheet.getSubimage(point.x, point.y, size.width, size.height);
+    public SubImageTile load() {
+        image = imageSheet.getSubimage(point.getX(), point.getY(), size.getX(), size.getY());
 
         int w = image.getWidth(), h = image.getHeight();
         if(w > h) {
@@ -36,6 +32,7 @@ public class SubImageTile implements Tile {
         }
 
         scaledImage = image.getScaledInstance(w, h, Image.SCALE_SMOOTH);
+        return this;
     }
 
     @Override
@@ -80,19 +77,19 @@ public class SubImageTile implements Tile {
         this.entityCreatorClassName = entityCreatorClassName;
     }
 
-    public Point getPoint() {
+    public com.xebisco.yieldengine.uiutils.Point<Integer> getPoint() {
         return point;
     }
 
-    public void setPoint(Point point) {
+    public void setPoint(com.xebisco.yieldengine.uiutils.Point<Integer> point) {
         this.point = point;
     }
 
-    public Dimension getSize() {
+    public com.xebisco.yieldengine.uiutils.Point<Integer> getSize() {
         return size;
     }
 
-    public void setSize(Dimension size) {
+    public void setSize(com.xebisco.yieldengine.uiutils.Point<Integer> size) {
         this.size = size;
     }
 }

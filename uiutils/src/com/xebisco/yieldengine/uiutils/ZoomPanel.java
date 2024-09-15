@@ -1,17 +1,15 @@
-package com.xebisco.yieldengine.tilemapeditor.imagecutter;
+package com.xebisco.yieldengine.uiutils;
 
-import com.xebisco.yieldengine.uiutils.Utils;
-import com.xebisco.yieldengine.uiutils.fields.FieldsPanel;
 import com.xebisco.yieldengine.uiutils.fields.NumberFieldPanel;
 import com.xebisco.yieldengine.uiutils.fields.PointFieldPanel;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.Map;
-import javax.swing.*;
 
 public class ZoomPanel extends JPanel implements MouseWheelListener, MouseListener, MouseMotionListener, KeyListener {
     private double zoomFactor = 1;
@@ -19,13 +17,14 @@ public class ZoomPanel extends JPanel implements MouseWheelListener, MouseListen
     private boolean dragging;
     private double xOffset = 0;
     private double yOffset = 0;
-    private Point startPoint;
+    private java.awt.Point startPoint;
 
     public ZoomPanel() {
         initComponent();
     }
 
     private void initComponent() {
+        setBackground(getBackground().darker());
         setFocusable(true);
         addMouseWheelListener(this);
         addMouseMotionListener(this);
@@ -102,21 +101,19 @@ public class ZoomPanel extends JPanel implements MouseWheelListener, MouseListen
     }
 
     public Point2D.Double zoomMouse() {
-        Point mouse = getMousePosition();
+        java.awt.Point mouse = getMousePosition();
         if (mouse != null) {
             return new Point2D.Double(((mouse.x - getxOffset()) / getZoomFactor()), ((mouse.y - getyOffset()) / getZoomFactor()));
         }
         return null;
     }
 
-    public JMenuBar addViewMenu(JMenuBar menuBar) {
-
-        JMenu viewMenu = new JMenu("View");
-
+    public JToolBar addViewMenu(JToolBar toolBar) {
         JMenuItem resetButton = new JMenuItem(new AbstractAction("Reset") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 zoomFactor = 1;
+                prevZoomFactor = 1;
                 updateZoom();
                 xOffset = 0;
                 yOffset = 0;
@@ -125,7 +122,6 @@ public class ZoomPanel extends JPanel implements MouseWheelListener, MouseListen
             }
         });
         resetButton.setMnemonic('R');
-        viewMenu.add(resetButton);
 
         JMenuItem gotoButton = new JMenuItem(new AbstractAction("Go To") {
             @Override
@@ -147,10 +143,10 @@ public class ZoomPanel extends JPanel implements MouseWheelListener, MouseListen
             }
         });
         gotoButton.setMnemonic('T');
-        viewMenu.add(gotoButton);
-        menuBar.add(viewMenu);
 
-        return menuBar;
+        toolBar.add(Utils.menuItemButton("View", KeyEvent.VK_V, resetButton, gotoButton));
+
+        return toolBar;
     }
 
     @Override
@@ -183,7 +179,7 @@ public class ZoomPanel extends JPanel implements MouseWheelListener, MouseListen
     @Override
     public void mouseDragged(MouseEvent e) {
         if (dragging) {
-            Point curPoint = e.getLocationOnScreen();
+            java.awt.Point curPoint = e.getLocationOnScreen();
             xOffset += curPoint.x - startPoint.x;
             yOffset += curPoint.y - startPoint.y;
             startPoint = curPoint;

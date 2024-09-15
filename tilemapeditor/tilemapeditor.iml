@@ -9,5 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="uiutils" />
+    <orderEntry type="library" name="tilemapeditor-libs" level="project" />
   </component>
 </module>

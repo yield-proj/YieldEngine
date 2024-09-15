@@ -1,5 +1,6 @@
 package com.xebisco.yieldengine.tilemapeditor;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.xebisco.yieldengine.tilemapeditor.editor.TileSetEditor;
 import com.xebisco.yieldengine.tilemapeditor.tile.TileSet;
 import com.xebisco.yieldengine.uiutils.Lang;
@@ -13,6 +14,7 @@ public class Main {
     public static void main(String[] args) throws IOException, UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         //System.setProperty("sun.java2d.opengl", "True");
         Locale.setDefault(Locale.US);
+        FlatDarkLaf.setup();
         Lang.LANG.load(Main.class.getResourceAsStream("/en.properties"));
 
         //UIManager.setLookAndFeel(MotifLookAndFeel.class.getName());

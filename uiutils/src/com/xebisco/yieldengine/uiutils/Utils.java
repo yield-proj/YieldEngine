@@ -28,18 +28,17 @@ public class Utils {
         return getAnnotationInstance(FileExtensions.class, values);
     }
 
-    public static HashMap<String, Serializable> showOptions(Window owner, FieldPanel<?>... fieldPanels) {
-        JDialog dialog = new JDialog(owner, Dialog.DEFAULT_MODALITY_TYPE);
-        dialog.setUndecorated(true);
-
+    public static HashMap<String, Serializable> showOptions(String title, Window owner, boolean showApplyButton, FieldPanel<?>... fieldPanels) {
         FieldsPanel fieldsPanel = new FieldsPanel(fieldPanels);
+
+        FieldsDialog dialog = new FieldsDialog(owner, title, fieldsPanel);
+        dialog.setTitle(title);
+        dialog.setUndecorated(true);
 
         //noinspection unchecked
         final HashMap<String, Serializable>[] values = new HashMap[]{fieldsPanel.getMap()};
 
-        fieldsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton okButton = new JButton(new AbstractAction("OK") {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -52,9 +51,19 @@ public class Utils {
         buttonPanel.add(okButton);
         dialog.getRootPane().setDefaultButton(okButton);
 
+        if(showApplyButton) {
+            JButton applyButton = new JButton(new AbstractAction("Apply") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    values[0] = fieldsPanel.getMap();
+                }
+            });
+        }
+
         JButton cancelButton = new JButton(new AbstractAction("Cancel") {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(!showApplyButton) values[0] = null;
                 dialog.dispose();
             }
         });
@@ -68,6 +77,29 @@ public class Utils {
         dialog.setVisible(true);
 
         return values[0];
+    }
+
+    public static HashMap<String, Serializable> showOptions(Window owner, FieldPanel<?>... fieldPanels) {
+        return showOptions(null, owner, true, fieldPanels);
+    }
+
+    public static JButton menuItemButton(String name, Integer mnemonic, JComponent... menuItem) {
+        JButton button = new JButton();
+        if (mnemonic != null) button.setMnemonic(mnemonic);
+
+        JPopupMenu popupMenu = new JPopupMenu();
+        for (JComponent item : menuItem) {
+            popupMenu.add(item);
+        }
+
+        button.setAction(new AbstractAction(name) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                popupMenu.show(button, button.getMousePosition().x, button.getMousePosition().y);
+            }
+        });
+
+        return button;
     }
 
     public static File getFile(JRootPane rootPane, File currentDir, FileExtensions fileExtensions) {

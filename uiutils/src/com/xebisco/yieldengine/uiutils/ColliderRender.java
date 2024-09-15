@@ -17,7 +17,7 @@ public class ColliderRender implements Serializable {
         this.size = size;
     }
 
-    public void draw(Graphics2D g, float stroke, boolean fill) {
+    public void draw(Graphics2D g, float stroke, boolean fill, String name) {
         g.setStroke(new BasicStroke(stroke));
 
         Rectangle2D.Double rect = new Rectangle2D.Double();
@@ -53,6 +53,18 @@ public class ColliderRender implements Serializable {
 
         rect.setRect(position.getX() + size.getX() - s / 2, position.getY() + size.getY() - s / 2, s, s);
         g.fill(rect);
+
+        g.setFont(g.getFont().deriveFont(4f));
+
+        if(name != null && !name.isEmpty()) {
+            int tw = g.getFontMetrics().stringWidth(name)  + 2;
+            int h = g.getFontMetrics().getHeight();
+            g.setColor(new Color(29, 30, 45, 50));
+            rect.setRect(position.getX() + size.getX() / 2f - tw / 2f, position.getY() + size.getY() / 2f - h / 2f, tw, h);
+            g.fill(rect);
+            g.setColor(new Color(255, 255, 255, 100));
+            g.drawString(name, position.getX() + size.getX() / 2f - (tw - 2) / 2f, position.getY() + size.getY() / 2f + h / 4f);
+        }
     }
 
     /*public boolean update(Point2D.Double mouse, float stroke, boolean pressing) {

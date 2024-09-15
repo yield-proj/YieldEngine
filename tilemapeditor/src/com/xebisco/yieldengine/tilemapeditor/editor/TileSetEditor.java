@@ -1,16 +1,13 @@
 package com.xebisco.yieldengine.tilemapeditor.editor;
 
 import com.xebisco.yieldengine.tilemapeditor.Dialogs;
-import com.xebisco.yieldengine.tilemapeditor.imagecutter.ImageCut;
 import com.xebisco.yieldengine.tilemapeditor.imagecutter.ImageCutterPanel;
 import com.xebisco.yieldengine.tilemapeditor.tile.FillerTile;
 import com.xebisco.yieldengine.tilemapeditor.tile.ImageTile;
 import com.xebisco.yieldengine.tilemapeditor.tile.Tile;
 import com.xebisco.yieldengine.tilemapeditor.tile.TileSet;
-import com.xebisco.yieldengine.uiutils.FieldsDialog;
 import com.xebisco.yieldengine.uiutils.NumberField;
 import com.xebisco.yieldengine.uiutils.Utils;
-import com.xebisco.yieldengine.uiutils.fields.*;
 
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
@@ -28,6 +25,7 @@ public class TileSetEditor extends JPanel {
 
     private final TileSet tileSet;
     private final JPanel tileSetPanel = new JPanel(new BorderLayout());
+    private final ImageCutterPanel imageCutterPanel;
 
     static class TileSetEditorListCellRenderer extends JLabel implements ListCellRenderer<Tile> {
 
@@ -98,17 +96,28 @@ public class TileSetEditor extends JPanel {
 
                 menu.addSeparator();
 
+                menu.add(new AbstractAction("Name: " + list.getSelectedValue().getName()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JTextField field = new JTextField(list.getSelectedValue().getName());
+                        if (JOptionPane.showConfirmDialog(TileSetEditor.this, field, "Change Name", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                            list.getSelectedValue().setName(field.getText());
+                            reload();
+                        }
+                    }
+                });
+
                 menu.add(new AbstractAction("Index: " + list.getSelectedIndex()) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        NumberField field = new NumberField(Integer.class, false);
+                        NumberField<Integer> field = new NumberField<>(Integer.class, false);
                         field.setValue(list.getSelectedIndex());
                         if (JOptionPane.showConfirmDialog(TileSetEditor.this, field, "Change Index", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                            if ((Integer) field.getValue() > list.getModel().getSize() - 1) {
+                            if (field.getValue() > list.getModel().getSize() - 1) {
                                 field.setValue(list.getModel().getSize() - 1);
                             }
                             tileSet.getTiles().remove(list.getSelectedValue());
-                            tileSet.getTiles().add((Integer) field.getValue(), list.getSelectedValue());
+                            tileSet.getTiles().add(field.getValue(), list.getSelectedValue());
                             reload();
                         }
                     }
@@ -164,13 +173,22 @@ public class TileSetEditor extends JPanel {
         tile.load();
         tileSet.getTiles().add(tile);
 
-        add(tileSetPanel, BorderLayout.CENTER);
+        JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.BOTTOM);
+
+        tabbedPane.addTab("Tile Set", tileSetPanel);
+
+        imageCutterPanel = new ImageCutterPanel(tileSet.getImageSheet(), tileSet.getTiles());
+        tabbedPane.addTab("Image Sheet", imageCutterPanel);
+
+        add(tabbedPane, BorderLayout.CENTER);
 
         JToolBar toolBar = new JToolBar();
         toolBar.add(new AbstractAction("Reload") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 reload();
+                imageCutterPanel.setImage(tileSet.getImageSheet());
+                imageCutterPanel.repaint();
             }
         });
 
@@ -185,13 +203,10 @@ public class TileSetEditor extends JPanel {
         int tileType = JOptionPane.showOptionDialog(this, "Choose the Tile Type", null, JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[] {"Image", "SubImage"}, "Image");
 
         if(tileType == 0) {
-            FieldsPanel fieldsPanel = new FieldsPanel(Dialogs.newImageTileFields());
+            HashMap<String, Serializable> values = Utils.showOptions("New Image Tile", SwingUtilities.getWindowAncestor(this), false, Dialogs.newImageTileFields());
 
-            boolean resp = FieldsDialog.create((Frame) SwingUtilities.getWindowAncestor(this), "New Image Tile", fieldsPanel);
-
-            if (resp) {
+            if (values == null) {
                 try {
-                    HashMap<String, Serializable> values = fieldsPanel.getMap();
                     String name = (String) values.get(Dialogs.NAME);
                     if (name.isEmpty()) throw new IllegalArgumentException("Name is empty");
                     Tile tile = new ImageTile((File) values.get(Dialogs.IMAGE_FILE), name, (String) values.get(Dialogs.ENTITY_CREATOR_CLASS_NAME));
@@ -204,14 +219,12 @@ public class TileSetEditor extends JPanel {
                 }
             }
         } else if(tileType == 1) {
-            JMenuBar menuBar = new JMenuBar();
-            ImageCutterPanel imageCutterPanel = new ImageCutterPanel(tileSet.getImageSheet(), menuBar);
+            /*ImageCutterPanel imageCutterPanel = new ImageCutterPanel(tileSet.getImageSheet(), tileSet.getTiles());
             JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), true);
-            dialog.setJMenuBar(menuBar);
             dialog.setSize(500, 500);
             dialog.add(imageCutterPanel);
             dialog.setLocationRelativeTo(this);
-            dialog.setVisible(true);
+            dialog.setVisible(true);*/
             //TODO
             /*FieldsPanel fieldsPanel = new FieldsPanel(Dialogs.newSubImageTileFields());
 

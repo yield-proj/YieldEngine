@@ -4,13 +4,12 @@ import com.xebisco.yieldengine.uiutils.fields.FieldsPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class FieldsDialog extends JDialog {
 
 
-    private FieldsDialog(Frame owner, String name, FieldsPanel fieldsPanel) {
-        super(owner, true);
+    public FieldsDialog(Window owner, String name, FieldsPanel fieldsPanel) {
+        super(owner, Dialog.DEFAULT_MODALITY_TYPE);
         setTitle("");
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         JPanel top = new JPanel();
@@ -26,6 +25,7 @@ public class FieldsDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
+    /*
     public static boolean create(Frame owner, String name, FieldsPanel fieldsPanel) {
         FieldsDialog dialog = new FieldsDialog(owner, name, fieldsPanel);
         JPanel bottom = new JPanel();
@@ -50,4 +50,6 @@ public class FieldsDialog extends JDialog {
         dialog.setVisible(true);
         return resp[0];
     }
+    */
+
 }

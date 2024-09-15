@@ -25,7 +25,7 @@ public class ImageTile implements Tile {
     }
 
     @Override
-    public void load() {
+    public ImageTile load() {
         try {
             image = ImageIO.read(imagePath);
         } catch (IOException e) {
@@ -42,6 +42,7 @@ public class ImageTile implements Tile {
         }
 
         scaledImage = image.getScaledInstance(w, h, Image.SCALE_SMOOTH);
+        return this;
     }
 
     @Override
