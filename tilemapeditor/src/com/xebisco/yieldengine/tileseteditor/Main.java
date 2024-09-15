@@ -1,10 +1,10 @@
-package com.xebisco.yieldengine.tilemapeditor;
+package com.xebisco.yieldengine.tileseteditor;
 
 import com.formdev.flatlaf.FlatDarkLaf;
-import com.xebisco.yieldengine.tilemapeditor.editor.TileSetEditor;
-import com.xebisco.yieldengine.tilemapeditor.tile.ImageTile;
-import com.xebisco.yieldengine.tilemapeditor.tile.Tile;
-import com.xebisco.yieldengine.tilemapeditor.tile.TileSet;
+import com.xebisco.yieldengine.tileseteditor.editor.TileSetEditor;
+import com.xebisco.yieldengine.tileseteditor.tile.ImageTile;
+import com.xebisco.yieldengine.tileseteditor.tile.Tile;
+import com.xebisco.yieldengine.tileseteditor.tile.TileSet;
 import com.xebisco.yieldengine.uiutils.Lang;
 
 import javax.swing.*;

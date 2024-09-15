@@ -1,4 +1,4 @@
-package com.xebisco.yieldengine.tilemapeditor.tile;
+package com.xebisco.yieldengine.tileseteditor.tile;
 
 import com.xebisco.yieldengine.uiutils.fields.FileExtensions;
 import com.xebisco.yieldengine.uiutils.fields.Visible;

@@ -1,8 +1,8 @@
-package com.xebisco.yieldengine.tilemapeditor.imagecutter;
+package com.xebisco.yieldengine.tileseteditor.imagecutter;
 
-import com.xebisco.yieldengine.tilemapeditor.tile.SubImageTile;
-import com.xebisco.yieldengine.tilemapeditor.tile.Tile;
-import com.xebisco.yieldengine.tilemapeditor.tile.TileSet;
+import com.xebisco.yieldengine.tileseteditor.tile.SubImageTile;
+import com.xebisco.yieldengine.tileseteditor.tile.Tile;
+import com.xebisco.yieldengine.tileseteditor.tile.TileSet;
 import com.xebisco.yieldengine.uiutils.ColliderRender;
 import com.xebisco.yieldengine.uiutils.Point;
 import com.xebisco.yieldengine.uiutils.Utils;

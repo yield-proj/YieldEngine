@@ -1,12 +1,10 @@
-package com.xebisco.yieldengine.tilemapeditor.tile;
+package com.xebisco.yieldengine.tileseteditor.tile;
 
 import com.xebisco.yieldengine.uiutils.ImageCache;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 public class SubImageTile implements Tile {
     private transient BufferedImage image;

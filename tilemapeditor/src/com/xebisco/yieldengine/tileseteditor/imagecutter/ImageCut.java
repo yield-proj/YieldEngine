@@ -1,4 +1,4 @@
-package com.xebisco.yieldengine.tilemapeditor.imagecutter;
+package com.xebisco.yieldengine.tileseteditor.imagecutter;
 
 import java.awt.*;
 

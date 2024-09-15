@@ -1,4 +1,4 @@
-package com.xebisco.yieldengine.tilemapeditor;
+package com.xebisco.yieldengine.tileseteditor;
 
 import com.xebisco.yieldengine.uiutils.Point;
 import com.xebisco.yieldengine.uiutils.Utils;

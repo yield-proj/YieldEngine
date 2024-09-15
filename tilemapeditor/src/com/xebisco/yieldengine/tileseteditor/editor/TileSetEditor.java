@@ -1,10 +1,9 @@
-package com.xebisco.yieldengine.tilemapeditor.editor;
+package com.xebisco.yieldengine.tileseteditor.editor;
 
-import com.xebisco.yieldengine.tilemapeditor.Dialogs;
-import com.xebisco.yieldengine.tilemapeditor.imagecutter.ImageCutterPanel;
-import com.xebisco.yieldengine.tilemapeditor.tile.*;
+import com.xebisco.yieldengine.tileseteditor.Dialogs;
+import com.xebisco.yieldengine.tileseteditor.imagecutter.ImageCutterPanel;
+import com.xebisco.yieldengine.tileseteditor.tile.*;
 import com.xebisco.yieldengine.uiutils.NumberField;
-import com.xebisco.yieldengine.uiutils.Point;
 import com.xebisco.yieldengine.uiutils.Utils;
 
 import javax.swing.*;
