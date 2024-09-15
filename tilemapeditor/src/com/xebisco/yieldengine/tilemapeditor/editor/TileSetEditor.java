@@ -2,23 +2,24 @@ package com.xebisco.yieldengine.tilemapeditor.editor;
 
 import com.xebisco.yieldengine.tilemapeditor.Dialogs;
 import com.xebisco.yieldengine.tilemapeditor.imagecutter.ImageCutterPanel;
-import com.xebisco.yieldengine.tilemapeditor.tile.FillerTile;
-import com.xebisco.yieldengine.tilemapeditor.tile.ImageTile;
-import com.xebisco.yieldengine.tilemapeditor.tile.Tile;
-import com.xebisco.yieldengine.tilemapeditor.tile.TileSet;
+import com.xebisco.yieldengine.tilemapeditor.tile.*;
 import com.xebisco.yieldengine.uiutils.NumberField;
+import com.xebisco.yieldengine.uiutils.Point;
 import com.xebisco.yieldengine.uiutils.Utils;
 
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.HashMap;
 
 public class TileSetEditor extends JPanel {
@@ -26,6 +27,7 @@ public class TileSetEditor extends JPanel {
     private final TileSet tileSet;
     private final JPanel tileSetPanel = new JPanel(new BorderLayout());
     private final ImageCutterPanel imageCutterPanel;
+    private File defaultSaveFile;
 
     static class TileSetEditorListCellRenderer extends JLabel implements ListCellRenderer<Tile> {
 
@@ -123,6 +125,17 @@ public class TileSetEditor extends JPanel {
                     }
                 });
 
+                menu.add(new AbstractAction("Class: " + list.getSelectedValue().getEntityCreatorClassName()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JTextField field = new JTextField(list.getSelectedValue().getEntityCreatorClassName());
+                        if (JOptionPane.showConfirmDialog(TileSetEditor.this, field, "Change EntityCreatorClassName", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                            list.getSelectedValue().setEntityCreatorClassName(field.getText());
+                            reload();
+                        }
+                    }
+                });
+
                 menu.addSeparator();
 
                 menu.add(new AbstractAction("New Tile Before") {
@@ -165,20 +178,15 @@ public class TileSetEditor extends JPanel {
         super(new BorderLayout());
         this.tileSet = tileSet;
 
-        //TODO remove
-        Tile tile = new ImageTile(new File("yieldIcon.png"), "yieldFile", null);
-        tile.load();
-        tileSet.getTiles().add(tile);
-        tile = new ImageTile(new File("yieldIcon.png"), "yieldFile", null);
-        tile.load();
-        tileSet.getTiles().add(tile);
-
         JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.BOTTOM);
 
         tabbedPane.addTab("Tile Set", tileSetPanel);
 
-        imageCutterPanel = new ImageCutterPanel(tileSet.getImageSheet(), tileSet.getTiles());
+        imageCutterPanel = new ImageCutterPanel(tileSet);
         tabbedPane.addTab("Image Sheet", imageCutterPanel);
+        tabbedPane.addChangeListener(e -> {
+            reload();
+        });
 
         add(tabbedPane, BorderLayout.CENTER);
 
@@ -187,7 +195,6 @@ public class TileSetEditor extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 reload();
-                imageCutterPanel.setImage(tileSet.getImageSheet());
                 imageCutterPanel.repaint();
             }
         });
@@ -197,35 +204,75 @@ public class TileSetEditor extends JPanel {
         reload();
     }
 
+    public void saveToDefault() throws IOException {
+        if (defaultSaveFile != null) {
+            save(defaultSaveFile);
+        } else {
+            save(null);
+        }
+    }
+
+    public void save(File to) throws IOException {
+        if (to == null) {
+            JFileChooser chooser = getTetsFileChooser();
+            if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                defaultSaveFile = chooser.getSelectedFile();
+                to = defaultSaveFile;
+            } else {
+                JOptionPane.showMessageDialog(this, "Could not save.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        try (ObjectOutputStream oo = new ObjectOutputStream(Files.newOutputStream(to.toPath()))) {
+            oo.writeObject(tileSet);
+        }
+    }
+
+    public static JFileChooser getTetsFileChooser() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.getName().endsWith(".tets") || f.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Tile Editor TileSet (.tets)";
+            }
+        });
+        return chooser;
+    }
+
     public void newTile(int index) {
         if (index < 0) index = tileSet.getTiles().size();
 
-        int tileType = JOptionPane.showOptionDialog(this, "Choose the Tile Type", null, JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[] {"Image", "SubImage"}, "Image");
+        //int tileType = JOptionPane.showOptionDialog(this, "Choose the Tile Type", null, JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[] {"Image", "SubImage"}, "Image");
 
-        if(tileType == 0) {
-            HashMap<String, Serializable> values = Utils.showOptions("New Image Tile", SwingUtilities.getWindowAncestor(this), false, Dialogs.newImageTileFields());
+        //if(tileType == 0) {
+        HashMap<String, Serializable> values = Utils.showOptions("New Image Tile", SwingUtilities.getWindowAncestor(this), false, Dialogs.newImageTileFields());
 
-            if (values == null) {
-                try {
-                    String name = (String) values.get(Dialogs.NAME);
-                    if (name.isEmpty()) throw new IllegalArgumentException("Name is empty");
-                    Tile tile = new ImageTile((File) values.get(Dialogs.IMAGE_FILE), name, (String) values.get(Dialogs.ENTITY_CREATOR_CLASS_NAME));
-                    tile.load();
-                    tileSet.getTiles().add(index, tile);
-                    reload();
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(this, e.getMessage(), e.getClass().getName(), JOptionPane.ERROR_MESSAGE);
-                    newTile(index);
-                }
+        if (values != null) {
+            try {
+                String name = (String) values.get(Dialogs.NAME);
+                //if (name.isEmpty()) throw new IllegalArgumentException("Name is empty");
+                Tile tile = new ImageTile((File) values.get(Dialogs.IMAGE_FILE), name, (String) values.get(Dialogs.ENTITY_CREATOR_CLASS_NAME));
+                tile.load();
+                tileSet.getTiles().add(index, tile);
+                reload();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), e.getClass().getName(), JOptionPane.ERROR_MESSAGE);
+                newTile(index);
             }
-        } else if(tileType == 1) {
-            /*ImageCutterPanel imageCutterPanel = new ImageCutterPanel(tileSet.getImageSheet(), tileSet.getTiles());
+        }
+        /*} else if(tileType == 1) {
+            ImageCutterPanel imageCutterPanel = new ImageCutterPanel(tileSet.getImageSheet(), tileSet.getTiles());
             JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), true);
             dialog.setSize(500, 500);
             dialog.add(imageCutterPanel);
             dialog.setLocationRelativeTo(this);
             dialog.setVisible(true);*/
-            //TODO
             /*FieldsPanel fieldsPanel = new FieldsPanel(Dialogs.newSubImageTileFields());
 
             boolean resp = FieldsDialog.create((Frame) SwingUtilities.getWindowAncestor(this), "New SubImage Tile", fieldsPanel);
@@ -243,15 +290,15 @@ public class TileSetEditor extends JPanel {
                     JOptionPane.showMessageDialog(this, e.getMessage(), e.getClass().getName(), JOptionPane.ERROR_MESSAGE);
                     newTile(index);
                 }
-            }*/
-        }
+            }
+        }*/
     }
 
     public JMenu getTileSetMenu() {
         JMenu menu = new JMenu("TileSet");
         menu.setMnemonic('T');
 
-        JMenuItem newTile = new JMenuItem(new AbstractAction("New Tile...") {
+        JMenuItem newTile = new JMenuItem(new AbstractAction("New Image Tile...") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 newTile(-1);
@@ -262,6 +309,16 @@ public class TileSetEditor extends JPanel {
         newTile.setAccelerator(KeyStroke.getKeyStroke("control N"));
 
         menu.add(newTile);
+
+        menu.add(new JMenuItem(new AbstractAction("Delete All") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (JOptionPane.showConfirmDialog(TileSetEditor.this, "Delete all tiles?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    tileSet.getTiles().clear();
+                    reload();
+                }
+            }
+        }));
 
         menu.addSeparator();
 
@@ -333,5 +390,25 @@ public class TileSetEditor extends JPanel {
         tileSetPanel.add(scrollPane, BorderLayout.CENTER);
 
         tileSetPanel.updateUI();
+    }
+
+    public TileSet getTileSet() {
+        return tileSet;
+    }
+
+    public JPanel getTileSetPanel() {
+        return tileSetPanel;
+    }
+
+    public ImageCutterPanel getImageCutterPanel() {
+        return imageCutterPanel;
+    }
+
+    public File getDefaultSaveFile() {
+        return defaultSaveFile;
+    }
+
+    public void setDefaultSaveFile(File defaultSaveFile) {
+        this.defaultSaveFile = defaultSaveFile;
     }
 }

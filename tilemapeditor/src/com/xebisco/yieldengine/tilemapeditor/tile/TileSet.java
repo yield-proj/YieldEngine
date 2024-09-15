@@ -1,27 +1,27 @@
 package com.xebisco.yieldengine.tilemapeditor.tile;
 
-import javax.imageio.ImageIO;
+import com.xebisco.yieldengine.uiutils.ImageCache;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TileSet {
+public final class TileSet implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final List<Tile> tiles = new ArrayList<>();
 
-    private BufferedImage imageSheet;
     private File imageSheetFile;
 
     public void load() throws IOException {
-        if (imageSheetFile != null)
-            imageSheet = ImageIO.read(imageSheetFile);
-        else imageSheet = null;
         tiles.forEach(Tile::load);
     }
 
     public BufferedImage getImageSheet() {
-        return imageSheet;
+        return ImageCache.get(imageSheetFile);
     }
 
     public File getImageSheetFile() {

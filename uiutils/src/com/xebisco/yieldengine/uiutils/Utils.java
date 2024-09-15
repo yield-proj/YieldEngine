@@ -42,9 +42,8 @@ public class Utils {
         JButton okButton = new JButton(new AbstractAction("OK") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-
                 values[0] = fieldsPanel.getMap();
+                dialog.dispose();
             }
         });
 

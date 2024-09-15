@@ -1,17 +1,23 @@
 package com.xebisco.yieldengine.tilemapeditor.tile;
 
+import com.xebisco.yieldengine.uiutils.ImageCache;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class SubImageTile implements Tile {
     private transient BufferedImage image;
     private transient Image scaledImage;
-    private final transient BufferedImage imageSheet;
+    private final File imageSheetFile;
+    private transient BufferedImage imageSheet;
     private String name, entityCreatorClassName;
     private com.xebisco.yieldengine.uiutils.Point<Integer> point, size;
 
-    public SubImageTile(BufferedImage imageSheet, String name, String entityCreatorClassName, com.xebisco.yieldengine.uiutils.Point<Integer> point, com.xebisco.yieldengine.uiutils.Point<Integer> size) {
-        this.imageSheet = imageSheet;
+    public SubImageTile(File imageSheetFile, String name, String entityCreatorClassName, com.xebisco.yieldengine.uiutils.Point<Integer> point, com.xebisco.yieldengine.uiutils.Point<Integer> size) {
+        this.imageSheetFile = imageSheetFile;
         this.name = name;
         this.entityCreatorClassName = entityCreatorClassName;
         this.point = point;
@@ -20,6 +26,7 @@ public class SubImageTile implements Tile {
 
     @Override
     public SubImageTile load() {
+        imageSheet = ImageCache.get(imageSheetFile);
         image = imageSheet.getSubimage(point.getX(), point.getY(), size.getX(), size.getY());
 
         int w = image.getWidth(), h = image.getHeight();

@@ -81,7 +81,7 @@ public class ZoomPanel extends JPanel implements MouseWheelListener, MouseListen
 
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD));
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD).deriveFont(14f));
 
         String text = String.format("zoom(%.2f); offset(%.1f; %.1f)", zoomFactor, xOffset / zoomFactor, yOffset / zoomFactor);
 
@@ -267,13 +267,11 @@ public class ZoomPanel extends JPanel implements MouseWheelListener, MouseListen
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println("aaaa");
 
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        System.out.println("bbbb");
 
     }
 }
