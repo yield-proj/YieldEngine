@@ -388,7 +388,6 @@ public class TileSetEditor extends JPanel {
         else {
             h = 0;
         }
-        System.out.println(h);
         SwingUtilities.invokeLater(() -> {
             tileSetPanel.removeAll();
 
