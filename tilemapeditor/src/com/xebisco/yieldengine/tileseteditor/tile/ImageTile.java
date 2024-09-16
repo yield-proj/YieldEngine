@@ -34,11 +34,11 @@ public class ImageTile implements Tile {
 
         int w = image.getWidth(), h = image.getHeight();
         if(w > h) {
-            w = 100;
+            w = 60;
             h = -1;
         } else {
             w = -1;
-            h = 100;
+            h = 60;
         }
 
         scaledImage = image.getScaledInstance(w, h, Image.SCALE_SMOOTH);
@@ -61,7 +61,7 @@ public class ImageTile implements Tile {
     }
 
     @Override
-    public Image get100pImage() {
+    public Image get60pImage() {
         return scaledImage;
     }
 

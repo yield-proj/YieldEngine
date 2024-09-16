@@ -25,11 +25,21 @@ public class ImageCutterPanel extends JPanel {
     private Point<Integer> gridSize = new Point<>(16, 16);
 
     private final TileSet tileSet;
+    private final Runnable toReload;
 
     private ZoomPanel imagePanel = new ZoomPanel() {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+            if(tileSet.getImageSheetFile() == null) {
+                g.setColor(getBackground());
+                g.fillRect(0, 0, getWidth(), getHeight());
+                ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                g.setColor(getForeground());
+                String t = "No image sheet selected";
+                ((Graphics2D) g).drawString(t, getWidth() / 2f - g.getFontMetrics().stringWidth(t) / 2f, getHeight() / 2f + g.getFontMetrics().getHeight() / 4f);
+                return;
+            }
             processZoom((Graphics2D) g);
             g.drawImage(tileSet.getImageSheet(), 0, 0, this);
 
@@ -77,6 +87,7 @@ public class ImageCutterPanel extends JPanel {
                     new Point<>(gridSize.getX(), gridSize.getY())
             );*/
             tileSet.getTiles().add(new SubImageTile(tileSet.getImageSheetFile(), name, "", position, new Point<>(gridSize.getX(), gridSize.getY())).load());
+            toReload.run();
             repaint();
         }
 
@@ -191,14 +202,16 @@ public class ImageCutterPanel extends JPanel {
         @Override
         public void mouseReleased(MouseEvent e) {
             super.mouseReleased(e);
+            toReload.run();
             if (e.getButton() == MouseEvent.BUTTON1) {
                 pressing = false;
             }
         }
     };
 
-    public ImageCutterPanel(TileSet tileSet) {
+    public ImageCutterPanel(TileSet tileSet, Runnable toReload) {
         this.tileSet = tileSet;
+        this.toReload = toReload;
         setLayout(new BorderLayout());
 
         add(imagePanel, BorderLayout.CENTER);
@@ -215,6 +228,7 @@ public class ImageCutterPanel extends JPanel {
                     for (int y = 0; y < Math.floorDiv(tileSet.getImageSheet().getHeight(), gridSize.getY()); y++) {
                         for (int x = 0; x < Math.floorDiv(tileSet.getImageSheet().getWidth(), gridSize.getX()); x++) {
                             tileSet.getTiles().add(new SubImageTile(tileSet.getImageSheetFile(), String.valueOf(i++), "", new Point<>(x * gridSize.getX(), y * gridSize.getY()), new Point<>(gridSize.getX(), gridSize.getY())).load());
+                            toReload.run();
                         }
                     }
                 }

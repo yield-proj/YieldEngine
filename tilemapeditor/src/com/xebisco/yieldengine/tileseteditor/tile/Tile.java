@@ -11,7 +11,7 @@ public interface Tile extends Serializable {
     String getEntityCreatorClassName();
     void setEntityCreatorClassName(String entityCreatorClassName);
     BufferedImage getImage();
-    Image get100pImage();
+    Image get60pImage();
     int getWidth();
     int getHeight();
 }

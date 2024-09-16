@@ -35,7 +35,7 @@ public class FillerTile implements Tile {
     }
 
     @Override
-    public Image get100pImage() {
+    public Image get60pImage() {
         return null;
     }
 

@@ -11,15 +11,14 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
 
 public class TileSetEditor extends JPanel {
 
@@ -32,6 +31,8 @@ public class TileSetEditor extends JPanel {
 
         @Override
         public Component getListCellRendererComponent(JList<? extends Tile> list, Tile value, int index, boolean isSelected, boolean cellHasFocus) {
+            setFont(getFont().deriveFont(12f));
+            setIconTextGap(-10);
             if (value instanceof FillerTile) {
                 setVerticalTextPosition(JLabel.CENTER);
                 setText("|FILLER|");
@@ -40,8 +41,9 @@ public class TileSetEditor extends JPanel {
             } else {
                 setVerticalTextPosition(JLabel.BOTTOM);
                 setEnabled(true);
-                setIcon(new ImageIcon(value.get100pImage()));
-                setText(value.getName() + " (" + value.getWidth() + "x" + value.getHeight() + ")");
+                setIcon(new ImageIcon(value.get60pImage()));
+                //setText(value.getName() + " (" + value.getWidth() + "x" + value.getHeight() + ")");
+                setText(value.getName());
             }
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
@@ -56,7 +58,7 @@ public class TileSetEditor extends JPanel {
             setHorizontalAlignment(JLabel.CENTER);
             setHorizontalTextPosition(JLabel.CENTER);
 
-            setPreferredSize(new Dimension(120, 120));
+            setPreferredSize(new Dimension(70, 70));
 
             return this;
         }
@@ -177,7 +179,7 @@ public class TileSetEditor extends JPanel {
         super(new BorderLayout());
         this.tileSet = tileSet;
 
-        JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.BOTTOM);
+        /*JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.BOTTOM);
 
         tabbedPane.addTab("Tile Set", tileSetPanel);
 
@@ -187,7 +189,18 @@ public class TileSetEditor extends JPanel {
             reload();
         });
 
-        add(tabbedPane, BorderLayout.CENTER);
+        add(tabbedPane, BorderLayout.CENTER);*/
+
+
+        imageCutterPanel = new ImageCutterPanel(tileSet, this::reload);
+
+        tileSetPanel.setMinimumSize(new Dimension(70, 70));
+
+        JSplitPane mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tileSetPanel, imageCutterPanel);
+
+        //mainPane.setDividerLocation(120);
+
+        add(mainPane);
 
         JToolBar toolBar = new JToolBar();
         toolBar.add(new AbstractAction("Reload") {
@@ -367,28 +380,55 @@ public class TileSetEditor extends JPanel {
         return menu;
     }
 
+    private JScrollPane tileScrollPane;
+
     public void reload() {
-        tileSetPanel.removeAll();
-
-        try {
-            tileSet.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        int h;
+        if(tileScrollPane != null) h = tileScrollPane.getVerticalScrollBar().getValue();
+        else {
+            h = 0;
         }
+        System.out.println(h);
+        SwingUtilities.invokeLater(() -> {
+            tileSetPanel.removeAll();
 
-        JList<Tile> tileList = new TileJList(tileSet.getTiles().toArray(new Tile[0]));
-        tileList.addMouseListener(new TileListPopupMouseListener(tileList));
-        tileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tileList.setCellRenderer(new TileSetEditorListCellRenderer());
-        tileList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-        tileList.setVisibleRowCount(0);
+            try {
+                tileSet.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
-        JScrollPane scrollPane = new JScrollPane(tileList);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JList<Tile> tileList = new TileJList(tileSet.getTiles().toArray(new Tile[0]));
+            tileList.setBackground(getBackground().darker());
+            tileList.addMouseListener(new TileListPopupMouseListener(tileList));
+            tileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            tileList.setCellRenderer(new TileSetEditorListCellRenderer());
+            tileList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+            tileList.setVisibleRowCount(0);
+            tileList.addFocusListener(new FocusListener() {
+                @Override
+                public void focusGained(FocusEvent e) {
 
-        tileSetPanel.add(scrollPane, BorderLayout.CENTER);
+                }
 
-        tileSetPanel.updateUI();
+                @Override
+                public void focusLost(FocusEvent e) {
+                    reload();
+                }
+            });
+
+            tileScrollPane = new JScrollPane(tileList);
+            tileScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+            tileSetPanel.add(tileScrollPane, BorderLayout.CENTER);
+
+            tileSetPanel.updateUI();
+            SwingUtilities.invokeLater(() -> {
+                tileScrollPane.getVerticalScrollBar().setValue(h);
+            });
+
+        });
+        //SwingUtilities.getWindowAncestor(this).repaint();
     }
 
     public TileSet getTileSet() {
