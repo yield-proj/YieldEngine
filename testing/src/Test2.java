@@ -55,7 +55,7 @@ public class Test2 {
             @Override
             public void onUpdate() {
                 getTransform().translate(Axis.HORIZONTAL.getValue(), Axis.VERTICAL.getValue());
-                v += Axis.JUMP.getValue();
+                v += Axis.JUMP.getValue() * Time.getDeltaTime() / 10;
                 getTransform().rotate(v);
             }
         });

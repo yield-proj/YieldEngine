@@ -398,7 +398,6 @@ public class TileSetEditor extends JPanel {
             }
 
             JList<Tile> tileList = new TileJList(tileSet.getTiles().toArray(new Tile[0]));
-            tileList.setBackground(getBackground().darker());
             tileList.addMouseListener(new TileListPopupMouseListener(tileList));
             tileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             tileList.setCellRenderer(new TileSetEditorListCellRenderer());

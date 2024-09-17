@@ -1,10 +1,11 @@
-package com.xebisco.yieldengine.tileseteditor;
+package com.xebisco.yieldengine.tilemapeditor;
 
+import com.xebisco.yieldengine.tilemapeditor.editor.TileMapEditor;
+import com.xebisco.yieldengine.tilemapeditor.map.TileMap;
 import com.xebisco.yieldengine.tileseteditor.editor.TileSetEditor;
-import com.xebisco.yieldengine.tileseteditor.tile.ImageTile;
-import com.xebisco.yieldengine.tileseteditor.tile.Tile;
-import com.xebisco.yieldengine.tileseteditor.tile.TileSet;
-import com.xebisco.yieldengine.uiutils.Lang;
+import com.xebisco.yieldengine.uiutils.Point;
+import com.xebisco.yieldengine.uiutils.Utils;
+import com.xebisco.yieldengine.uiutils.fields.PointFieldPanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -13,31 +14,20 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
-import java.util.Locale;
+import java.util.HashMap;
 
 public class Main {
-    public static void main(String[] args) throws IOException, UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        //System.setProperty("sun.java2d.opengl", "True");
-        Locale.setDefault(Locale.US);
-        Lang.LANG.load(Main.class.getResourceAsStream("/en.properties"));
+    public static void main(String[] args) {
+        TileMap tileMap = new TileMap(new Point<>(100, 100), new Point<>(16, 16));
 
-        //UIManager.setLookAndFeel(MotifLookAndFeel.class.getName());
-
-        TileSet tileSet = new TileSet();
-        Tile tile = new ImageTile(new File("yieldIcon.png"), "yieldFile", null);
-        tile.load();
-        tileSet.getTiles().add(tile);
-        tile = new ImageTile(new File("yieldIcon.png"), "yieldFile", null);
-        tile.load();
-        tileSet.getTiles().add(tile);
-
-        tileSetEditor(tileSet, null);
+        tileMapEditor(tileMap, null);
     }
 
-    public static final String TITLE = "Yield TileSet Editor (DEV0) [@]";
+    public static final String TITLE = "Yield TileMap Editor (DEV0) [@]";
 
-    public static TileSetEditor tileSetEditor(TileSet tileSet, File file) {
+    public static TileMapEditor tileMapEditor(TileMap tileMap,  File file) {
         JFrame frame = new JFrame();
         if(file == null) {
             frame.setTitle(TITLE);
@@ -57,7 +47,7 @@ public class Main {
         frame.setSize(800, 600);
         frame.setLocationRelativeTo(null);
 
-        TileSetEditor editor = new TileSetEditor(tileSet);
+        TileMapEditor editor = new TileMapEditor(tileMap);
         editor.setDefaultSaveFile(file);
 
         frame.add(editor);
@@ -71,34 +61,39 @@ public class Main {
         JMenu newMenu = new JMenu("New");
         newMenu.setMnemonic('N');
 
-        JMenuItem newTileSetItem = new JMenuItem(new AbstractAction("TileSet...") {
+        JMenuItem newTileMapItem = new JMenuItem(new AbstractAction("TileMap...") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tileSetEditor(new TileSet(), null);
+                HashMap<String, Serializable> values = Utils.showOptions("New TileMap", frame, false,
+                        new PointFieldPanel<>("map_size", Integer.class, new Point<>(100, 100), false, true, true),
+                        new PointFieldPanel<>("map_grid_size", Integer.class, new Point<>(16, 16), false, true, true)
+                );
+                //noinspection unchecked
+                tileMapEditor(new TileMap((Point<Integer>) values.get("map_size"), (Point<Integer>) values.get("map_grid_size")), null);
             }
         });
-        newMenu.add(newTileSetItem);
+        newMenu.add(newTileMapItem);
 
         fileMenu.add(newMenu);
 
         JMenu openMenu = new JMenu("Open");
         openMenu.setMnemonic('O');
 
-        JMenuItem openTileSetItem = new JMenuItem(new AbstractAction("TileSet...") {
+        JMenuItem openTileMapItem = new JMenuItem(new AbstractAction("TileMap...") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser chooser = TileSetEditor.getTetsFileChooser();
                 if(chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
                     File file = chooser.getSelectedFile();
                     try(ObjectInputStream oi = new ObjectInputStream(Files.newInputStream(file.toPath()))) {
-                        tileSetEditor((TileSet) oi.readObject(), file);
+                        tileMapEditor((TileMap) oi.readObject(), file);
                     } catch (IOException | ClassNotFoundException ex) {
                         JOptionPane.showMessageDialog(frame, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
         });
-        openMenu.add(openTileSetItem);
+        openMenu.add(openTileMapItem);
 
         fileMenu.add(openMenu);
 
@@ -148,8 +143,9 @@ public class Main {
 
         menuBar.add(fileMenu);
 
+        menuBar.add(editor.getViewMenu());
 
-        menuBar.add(editor.getTileSetMenu());
+        menuBar.add(editor.getTileMapMenu());
 
 
 
