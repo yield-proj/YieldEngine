@@ -9,10 +9,10 @@ import java.io.Serializable;
 public class Tile implements Serializable {
     private final Texture texture;
     private final boolean fitTexture;
-    private final Vector4f color;
+    private final int color;
     private final EntityFactory entityFactory;
 
-    public Tile(Texture texture, boolean fitTexture, Vector4f color, EntityFactory entityFactory) {
+    public Tile(Texture texture, boolean fitTexture, int color, EntityFactory entityFactory) {
         this.texture = texture;
         this.fitTexture = fitTexture;
         this.color = color;
@@ -27,7 +27,7 @@ public class Tile implements Serializable {
         return fitTexture;
     }
 
-    public Vector4f getColor() {
+    public int getColor() {
         return color;
     }
 

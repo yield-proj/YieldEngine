@@ -18,7 +18,6 @@ package com.xebisco.yieldengine.core.camera;
 import com.xebisco.yieldengine.core.Transform;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 
 public class OrthoCamera implements ICamera {
     private final Vector2f viewport;
@@ -34,8 +33,8 @@ public class OrthoCamera implements ICamera {
 
     @Override
     public Matrix4f getViewMatrix() {
-        float mx = viewport.x() / -2, my = viewport.y() / -2;
-        return new Matrix4f().identity().ortho2D(mx, mx + viewport.x(), my, my + viewport.y()).mul(transform.getInvertedAndPreRotatedTransformationMatrix());
+        float mx = viewport.x() / -2f, my = viewport.y() / -2f;
+        return new Matrix4f().identity().ortho2D(mx, mx + viewport.x(), my, my + viewport.y()).mul(transform.getInvertedTransformMatrix());
     }
 
     public Vector2f getViewport() {

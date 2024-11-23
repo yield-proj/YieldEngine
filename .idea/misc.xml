@@ -11,6 +11,7 @@
         <option value="$PROJECT_DIR$/glimpl/pom.xml" />
         <option value="$PROJECT_DIR$/tilemap/pom.xml" />
         <option value="$PROJECT_DIR$/tilemapeditor/pom.xml" />
+        <option value="$PROJECT_DIR$/annotations/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

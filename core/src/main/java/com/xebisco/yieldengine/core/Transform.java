@@ -15,29 +15,30 @@
 
 package com.xebisco.yieldengine.core;
 
+import com.xebisco.yieldengine.annotations.Editable;
+import com.xebisco.yieldengine.annotations.TransformMatrix;
+import com.xebisco.yieldengine.annotations.Visible;
 import org.joml.*;
 
 import java.io.Serializable;
 
 public class Transform implements Serializable {
     private static final long serialVersionUID = 2642369926201568158L;
-    private final Vector3fc position = new Vector3f(), rotation = new Vector3f(), scale = new Vector3f(1, 1, 1), frameTranslation = new Vector3f(), frameRotation = new Vector3f(), frameScale = new Vector3f();
+    @Visible
+    @Editable
+    @TransformMatrix
+    private final Matrix4f transformMatrix = new Matrix4f();
 
     public Transform(Transform transform) {
-        ((Vector3f) position).set(transform.position);
-        ((Vector3f) rotation).set(transform.rotation);
-        ((Vector3f) scale).set(transform.scale);
-        ((Vector3f) frameTranslation).set(transform.frameTranslation);
-        ((Vector3f) frameRotation).set(transform.frameRotation);
-        ((Vector3f) frameScale).set(transform.frameScale);
+        transform.transformMatrix.get(transformMatrix);
     }
 
     public Transform() {
+        transformMatrix.scale(new Vector3f(1, 1, 1));
     }
 
     public Transform translate(Vector3fc translation) {
-        ((Vector3f) position).add(translation);
-        ((Vector3f) frameTranslation).add(translation);
+        transformMatrix.translateLocal(translation);
         return this;
     }
 
@@ -56,9 +57,18 @@ public class Transform implements Serializable {
         return this;
     }
 
+    public Transform rotate(Vector3fc rotation, Vector3fc pivot) {
+        transformMatrix.rotateAroundLocal(new Quaternionf().rotateXYZ(rotation.x(), rotation.y(), rotation.z()), pivot.x(), pivot.y(), pivot.z());
+        return this;
+    }
+
+    public Transform rotate(Quaternionf rotation) {
+        transformMatrix.rotateLocal(rotation);
+        return this;
+    }
+
     public Transform rotate(Vector3fc rotation) {
-        ((Vector3f) this.rotation).add(rotation);
-        ((Vector3f) frameRotation).add(rotation);
+        rotate(rotation, getTranslation());
         return this;
     }
 
@@ -67,24 +77,28 @@ public class Transform implements Serializable {
         return this;
     }
 
-    public Transform rotate(float z) {
-        rotate(new Vector3f(0, 0, z));
+    public Transform scale(Vector3fc scale, Vector3fc pivot) {
+        transformMatrix.scaleAroundLocal(scale.x() + 1, scale.y() + 1, scale.z() + 1, pivot.x(), pivot.y(), pivot.z());
         return this;
     }
 
     public Transform scale(Vector3fc scale) {
-        ((Vector3f) this.scale).add(scale);
-        ((Vector3f) frameScale).add(scale);
+        scale(scale, getTranslation());
         return this;
     }
 
     public Transform scale(float x, float y, float z) {
-        scale(new Vector3f(x, y, z));
+        scale(new Vector3f(x, y, z), getTranslation());
         return this;
     }
 
     public Transform scale(float x, float y) {
-        scale(new Vector3f(x, y, 0));
+        scale(new Vector2f(x, y), new Vector2f(getTranslation()));
+        return this;
+    }
+
+    public Transform scale(Vector2fc scale, Vector2fc center) {
+        scale(new Vector3f(scale, 0), new Vector3f(center, 0));
         return this;
     }
 
@@ -93,98 +107,52 @@ public class Transform implements Serializable {
         return this;
     }
 
-    public Transform rotate(Vector3fc rotation, Vector3fc center) {
-        Vector3f modifiedPosition = new Vector3f(), modifiedRotation = new Vector3f();
-
-        rotateX(rotation.x(), new Vector2f(center.y(), center.z()));
-        rotateY(rotation.y(), new Vector2f(center.x(), center.z()));
-        rotateZ(rotation.z(), new Vector2f(center.x(), center.y()));
-
-        translate(modifiedPosition);
-        rotate(modifiedRotation);
-        return this;
-    }
-
-    private static void positionAfterCustomRotation(float radians, Vector2fc center, Vector2f modifiedPosition) {
-        Vector2fc rotatedXY = Global.rotatePointAroundCenter(radians, center, new Vector2f(modifiedPosition.x(), modifiedPosition.y()));
-
-        modifiedPosition.x = rotatedXY.x();
-        modifiedPosition.y = rotatedXY.y();
-    }
-
-    public Transform rotateX(float radians, Vector2fc center) {
-        Vector2f modifiedPosition = new Vector2f();
-        positionAfterCustomRotation(radians, center, modifiedPosition);
-        //noinspection SuspiciousNameCombination
-        translate(0, modifiedPosition.x, modifiedPosition.y);
+    public Transform rotateX(float radians) {
         rotate(radians, 0, 0);
         return this;
     }
 
-    public Transform rotateY(float radians, Vector2fc center) {
-        Vector2f modifiedPosition = new Vector2f();
-        positionAfterCustomRotation(radians, center, modifiedPosition);
-        translate(modifiedPosition.x, 0, modifiedPosition.y);
+    public Transform rotateY(float radians) {
         rotate(0, radians, 0);
         return this;
     }
 
-    public Transform rotateZ(float radians, Vector2fc center) {
-        Vector2f modifiedPosition = new Vector2f();
-        positionAfterCustomRotation(radians, center, modifiedPosition);
-        translate(modifiedPosition.x, modifiedPosition.y, 0);
+    public Transform rotateZ(float radians) {
         rotate(0, 0, radians);
         return this;
     }
 
-    public Matrix4f getTransformationMatrix() {
-        return getTransformationMatrix(new Vector3f(1, 1, 1));
+    public Matrix4f getTransformMatrix() {
+        return transformMatrix;
     }
 
-    public Matrix4f getTransformationMatrix(Vector3fc scaleMul) {
-        Matrix4f transformationMatrix = new Matrix4f().identity();
-        transformationMatrix.translate(position);
-        transformationMatrix.rotateXYZ(rotation);
-        transformationMatrix.scale(new Vector3f(scale.x() * scaleMul.x(), scale.y() * scaleMul.y(), scale.z() * scaleMul.z()));
-        return transformationMatrix;
+    public Matrix4f getInvertedTransformMatrix() {
+        return transformMatrix.invert(new Matrix4f());
     }
 
-    public Matrix4f getInvertedAndPreRotatedTransformationMatrix() {
-        Matrix4f transformationMatrix = new Matrix4f().identity();
-        transformationMatrix.rotateXYZ(new Vector3f(-rotation.x(), -rotation.y(), -rotation.z()));
-        transformationMatrix.translate(new Vector3f(-position.x(), -position.y(), -position.z()));
-        transformationMatrix.scale(new Vector3f(1 / scale.x(), 1 / scale.y(), 1 / scale.z()));
-        return transformationMatrix;
+    public Matrix4f getTransformMatrix(Vector3fc sizeMul) {
+        Matrix4f transformMatrix = new Matrix4f();
+        transformMatrix.translationRotateScale(getTranslation(), getNormalizedRotation(), new Vector3f(getScale()).mul(sizeMul));
+        return transformMatrix;
     }
 
-    protected Transform resetFrame() {
-        ((Vector3f) frameTranslation).set(0, 0, 0);
-        ((Vector3f) frameRotation).set(0, 0, 0);
-        ((Vector3f) frameScale).set(0, 0, 0);
-        return this;
+    public Vector3fc getTranslation() {
+        return transformMatrix.getTranslation(new Vector3f());
     }
 
-    public Vector3fc getPosition() {
-        return position;
-    }
-
-    public Vector3fc getRotation() {
-        return rotation;
+    public Quaternionf getNormalizedRotation() {
+        return transformMatrix.getNormalizedRotation(new Quaternionf());
     }
 
     public Vector3fc getScale() {
-        return scale;
+        return transformMatrix.getScale(new Vector3f());
     }
 
-    public Vector3fc getFrameTranslation() {
-        return frameTranslation;
-    }
-
-    public Vector3fc getFrameRotation() {
-        return frameRotation;
-    }
-
-    public Vector3fc getFrameScale() {
-        return frameScale;
+    @Override
+    public String toString() {
+        return "Transform{" +
+                "translation=" + getTranslation() +
+                ", normalizedRotation=" + getNormalizedRotation() +
+                ", scale=" + getScale() + "}";
     }
 }

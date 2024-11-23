@@ -1,20 +1,28 @@
 package com.xebisco.yieldengine.core.components;
 
+import com.xebisco.yieldengine.annotations.Color;
+import com.xebisco.yieldengine.annotations.Editable;
+import com.xebisco.yieldengine.annotations.Visible;
 import com.xebisco.yieldengine.core.Component;
 import com.xebisco.yieldengine.core.Global;
 import com.xebisco.yieldengine.core.io.IO;
 import com.xebisco.yieldengine.core.io.text.Font;
 import com.xebisco.yieldengine.core.render.DrawInstruction;
 import com.xebisco.yieldengine.core.render.Render;
-import org.joml.Vector4f;
-import org.joml.Vector4fc;
 
 import java.io.Serializable;
 
 public class Text extends Component {
+    @Visible
+    @Editable
     private String contents = "Sample Text";
+    @Visible
+    @Editable
     private Font font = IO.getInstance().getDefaultFont();
-    private Vector4f color = new Vector4f(1f, 1f, 1f, 1f);
+    @Visible
+    @Editable
+    @Color
+    private int color = 0xFFFFFFFF;
 
     public Text() {
     }
@@ -23,12 +31,12 @@ public class Text extends Component {
         this.contents = contents;
     }
 
-    public Text(String contents, Vector4f color) {
+    public Text(String contents, int color) {
         this.contents = contents;
         this.color = color;
     }
 
-    public Text(String contents, Font font, Vector4f color) {
+    public Text(String contents, Font font, int color) {
         this.contents = contents;
         this.font = font;
         this.color = color;
@@ -70,11 +78,11 @@ public class Text extends Component {
         return this;
     }
 
-    public Vector4f getColor() {
+    public int getColor() {
         return color;
     }
 
-    public Text setColor(Vector4f color) {
+    public Text setColor(int color) {
         this.color = color;
         return this;
     }

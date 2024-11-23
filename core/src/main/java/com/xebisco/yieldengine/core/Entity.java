@@ -15,8 +15,6 @@
 
 package com.xebisco.yieldengine.core;
 
-import org.joml.Vector3f;
-
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -65,7 +63,6 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
 
     @Override
     public void onUpdate() {
-        transform.resetFrame();
         components.forEach(Component::onUpdate);
         children.forEach(Entity::onUpdate);
         setFrames(getFrames() + 1);
@@ -109,9 +106,7 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
     public Transform getNewWorldTransform() {
         if(parent == null) return transform;
         Transform worldTransform = new Transform(parent.getNewWorldTransform());
-        worldTransform.translate(transform.getPosition());
-        worldTransform.rotate(transform.getRotation());
-        worldTransform.scale(new Vector3f(transform.getScale()).sub(1f, 1f, 1f));
+        worldTransform.getTransformMatrix().translationRotateScale(worldTransform.getTranslation(), worldTransform.getNormalizedRotation(),  worldTransform.getScale());
         return worldTransform;
     }
 

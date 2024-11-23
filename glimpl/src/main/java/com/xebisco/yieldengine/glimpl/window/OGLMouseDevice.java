@@ -3,43 +3,45 @@ package com.xebisco.yieldengine.glimpl.window;
 import com.xebisco.yieldengine.core.input.IMouseDevice;
 import com.xebisco.yieldengine.core.input.MouseButton;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class OGLMouseDevice implements IMouseDevice, MouseListener {
-    private final OGLWindow window;
+public class OGLMouseDevice implements IMouseDevice, MouseListener, MouseWheelListener {
+    private final OGLPanel window;
 
     private final Set<MouseButton> buttons = new HashSet<>();
 
-    public OGLMouseDevice(OGLWindow window) {
+    public OGLMouseDevice(OGLPanel window) {
         this.window = window;
         window.getCanvas().addMouseListener(this);
+        window.getCanvas().addMouseWheelListener(this);
     }
 
     @Override
     public float getMouseX() {
         try {
-            return (float) window.getFrame().getContentPane().getMousePosition().x;
+            return ((float) window.getContentPane().getMousePosition().x) / window.getCanvas().getWidth();
         } catch (NullPointerException e) {
-            return 0;
+            return -1;
         }
     }
 
     @Override
     public float getMouseY() {
         try {
-            return (float) window.getFrame().getContentPane().getMousePosition().y;
+            return ((float) (window.getCanvas().getHeight() - window.getContentPane().getMousePosition().y)) / window.getCanvas().getHeight();
         } catch (NullPointerException e) {
-            return 0;
+            return -1;
         }
     }
 
     @Override
     public void addPressedMouseButtons(Collection<MouseButton> mouseButtons) {
         mouseButtons.addAll(buttons);
+        buttons.remove(MouseButton.SCROLL_WELL_UP);
+        buttons.remove(MouseButton.SCROLL_WELL_DOWN);
     }
 
     @Override
@@ -69,5 +71,14 @@ public class OGLMouseDevice implements IMouseDevice, MouseListener {
 
     private static MouseButton awtToYieldButton(MouseEvent e) {
         return MouseButton.values()[e.getButton() - 1];
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        if(e.getWheelRotation() < 0) {
+            buttons.add(MouseButton.SCROLL_WELL_UP);
+        } else {
+            buttons.add(MouseButton.SCROLL_WELL_DOWN);
+        }
     }
 }

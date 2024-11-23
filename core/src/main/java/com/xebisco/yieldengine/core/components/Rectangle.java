@@ -1,16 +1,23 @@
 package com.xebisco.yieldengine.core.components;
 
+import com.xebisco.yieldengine.annotations.Color;
+import com.xebisco.yieldengine.annotations.Editable;
+import com.xebisco.yieldengine.annotations.Visible;
 import com.xebisco.yieldengine.core.Component;
 import com.xebisco.yieldengine.core.Global;
 import com.xebisco.yieldengine.core.render.DrawInstruction;
 import com.xebisco.yieldengine.core.render.Render;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
 import java.io.Serializable;
 
 public class Rectangle extends Component {
-    private Vector4f color = new Vector4f(1f, 1f, 1f, 1f);
+    @Visible
+    @Editable
+    @Color
+    private int color = 0xFFFFFFFF;
+    @Visible
+    @Editable
     private Vector2f size = new Vector2f(100, 100);
 
     public Rectangle() {
@@ -20,7 +27,7 @@ public class Rectangle extends Component {
         this.size = size;
     }
 
-    public Rectangle(Vector4f color, Vector2f size) {
+    public Rectangle(int color, Vector2f size) {
         this.color = color;
         this.size = size;
     }
@@ -42,11 +49,11 @@ public class Rectangle extends Component {
         );
     }
 
-    public Vector4f getColor() {
+    public int getColor() {
         return color;
     }
 
-    public Rectangle setColor(Vector4f color) {
+    public Rectangle setColor(int color) {
         this.color = color;
         return this;
     }

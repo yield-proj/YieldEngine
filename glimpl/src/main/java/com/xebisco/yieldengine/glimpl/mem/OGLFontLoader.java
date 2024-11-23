@@ -4,22 +4,20 @@ import com.xebisco.yieldengine.core.io.text.Font;
 import com.xebisco.yieldengine.core.io.text.IFontLoader;
 import com.xebisco.yieldengine.core.io.texture.Texture;
 import com.xebisco.yieldengine.core.io.texture.TextureFilter;
-import com.xebisco.yieldengine.glimpl.window.OGLWindow;
+import com.xebisco.yieldengine.glimpl.window.OGLPanel;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.stream.IntStream;
 
 public class OGLFontLoader implements IFontLoader {
 
-    private final OGLWindow window;
+    private final OGLPanel window;
 
-    public OGLFontLoader(OGLWindow window) {
+    public OGLFontLoader(OGLPanel window) {
         this.window = window;
     }
 

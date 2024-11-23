@@ -11,8 +11,8 @@ public class OGLKeyDevice implements IKeyDevice, KeyListener {
 
     private final Set<Key> keys = new HashSet<>();
 
-    public OGLKeyDevice(OGLWindow window) {
-        window.getCanvas().addKeyListener(this);
+    public OGLKeyDevice(OGLPanel window) {
+        window.getContentPane().addKeyListener(this);
     }
 
     @Override

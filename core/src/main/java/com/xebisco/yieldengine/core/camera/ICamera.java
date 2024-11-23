@@ -17,6 +17,8 @@ package com.xebisco.yieldengine.core.camera;
 
 import org.joml.Matrix4f;
 
-public interface ICamera {
+import java.io.Serializable;
+
+public interface ICamera extends Serializable {
     Matrix4f getViewMatrix();
 }

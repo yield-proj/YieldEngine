@@ -4,7 +4,6 @@ import com.xebisco.yieldengine.core.Global;
 import com.xebisco.yieldengine.core.render.DrawInstruction;
 import com.xebisco.yieldengine.core.render.Render;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
 import java.io.Serializable;
 
@@ -16,7 +15,7 @@ public class Ellipse extends Rectangle {
         super(size);
     }
 
-    public Ellipse(Vector4f color, Vector2f size) {
+    public Ellipse(int color, Vector2f size) {
         super(color, size);
     }
 

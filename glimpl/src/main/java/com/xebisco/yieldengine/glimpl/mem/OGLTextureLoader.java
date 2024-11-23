@@ -4,7 +4,7 @@ import com.xebisco.yieldengine.core.io.texture.ITextureLoader;
 import com.xebisco.yieldengine.core.io.texture.Texture;
 import com.xebisco.yieldengine.core.io.texture.TextureFilter;
 import com.xebisco.yieldengine.core.io.texture.TextureMap;
-import com.xebisco.yieldengine.glimpl.window.OGLWindow;
+import com.xebisco.yieldengine.glimpl.window.OGLPanel;
 import org.lwjgl.BufferUtils;
 
 import javax.imageio.ImageIO;
@@ -21,10 +21,10 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class OGLTextureLoader implements ITextureLoader {
 
-    private final OGLWindow window;
+    private final OGLPanel window;
     private final Map<String, BufferedImage> maps = new HashMap<>();
 
-    public OGLTextureLoader(OGLWindow window) {
+    public OGLTextureLoader(OGLPanel window) {
         this.window = window;
     }
 
@@ -40,7 +40,7 @@ public class OGLTextureLoader implements ITextureLoader {
         return loadTextureFromBufferedImage(image, filter, window);
     }
 
-    public static Texture loadTextureFromBufferedImage(BufferedImage image, TextureFilter filter, OGLWindow window) {
+    public static Texture loadTextureFromBufferedImage(BufferedImage image, TextureFilter filter, OGLPanel window) {
         AtomicInteger atomicTexId = new AtomicInteger(-1);
 
         int[] pixels = new int[image.getWidth() * image.getHeight()];

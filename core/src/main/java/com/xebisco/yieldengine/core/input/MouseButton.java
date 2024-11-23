@@ -7,5 +7,7 @@ public enum MouseButton {
     BUTTON_4,
     BUTTON_5,
     BUTTON_6,
-    BUTTON_7
+    BUTTON_7,
+    SCROLL_WELL_UP,
+    SCROLL_WELL_DOWN
 }

@@ -35,25 +35,32 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 public class Global {
     private static Scene currentScene;
     public static final Random RANDOM = new Random();
 
-    public static LoopContext getOpenGLOpenALLoopContext(int width, int height) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException {
+    /*public static LoopContext getOpenGLOpenALLoopContext(int width, int height) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        System.setProperty("sun.java2d.opengl", "True");
         Class<?> soundManagerClass = Class.forName("com.xebisco.yieldengine.alimpl.SoundManager");
         soundManagerClass.getMethod("initAL").invoke(null);
-        Class<?> windowClass = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLWindow");
-        Object window = windowClass.getConstructor(int.class, int.class).newInstance(width, height);
+        Class<?> panelClass = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLPanel");
+        Object panel;
+        if(width >= 0 && height >= 0) panel = panelClass.getMethod("newWindow", int.class, int.class).invoke(null, width, height);
+        else panel = panelClass.getConstructor().newInstance();
+        panelClass.getMethod("start").invoke(panel);
         Class<?> keyDeviceClass = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLKeyDevice"), mouseDevice = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLMouseDevice");
-        Input.setInstance(new Input((IKeyDevice) keyDeviceClass.getConstructor(windowClass).newInstance(window), (IMouseDevice) mouseDevice.getConstructor(windowClass).newInstance(window)));
+        Input.setInstance(new Input((IKeyDevice) keyDeviceClass.getConstructor(panelClass).newInstance(panel), (IMouseDevice) mouseDevice.getConstructor(panelClass).newInstance(panel)));
         Class<?> textureLoader = Class.forName("com.xebisco.yieldengine.glimpl.mem.OGLTextureLoader"), fontLoader = Class.forName("com.xebisco.yieldengine.glimpl.mem.OGLFontLoader"), audioLoader = Class.forName("com.xebisco.yieldengine.alimpl.OALAudioLoader"), audioPlayer = Class.forName("com.xebisco.yieldengine.alimpl.OALAudioPlayer");
-        IO.setInstance(new IO(new DefaultAbsolutePathGetter(), (ITextureLoader) textureLoader.getConstructor(windowClass).newInstance(window), (IFontLoader) fontLoader.getConstructor(windowClass).newInstance(window), (IAudioLoader) audioLoader.getConstructor().newInstance(), (IAudioPlayer) audioPlayer.getConstructor().newInstance()));
+        IO.setInstance(new IO(new DefaultAbsolutePathGetter(), (ITextureLoader) textureLoader.getConstructor(panelClass).newInstance(panel), (IFontLoader) fontLoader.getConstructor(panelClass).newInstance(panel), (IAudioLoader) audioLoader.getConstructor().newInstance(), (IAudioPlayer) audioPlayer.getConstructor().newInstance()));
         Class<?> rendererClass = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLRenderer");
-        Object renderer = rendererClass.getConstructor(windowClass).newInstance(window);
+        Object renderer = rendererClass.getConstructor(panelClass).newInstance(panel);
         Render.setInstance(new Render((IRenderer) renderer));
         LoopContext l = new LoopContext("GAME");
-        List<Runnable> closeHooks = (List<Runnable>) windowClass.getMethod("getCloseHooks").invoke(window);
+        l.setDeviceObject(panel);
+        //noinspection unchecked
+        List<Runnable> closeHooks = (List<Runnable>) panelClass.getMethod("getCloseHooks").invoke(panel);
         closeHooks.add(() -> l.getRunning().set(false));
         Method soundManagerGetRunning = soundManagerClass.getMethod("getRunning");
         closeHooks.add(() -> {
@@ -66,6 +73,62 @@ public class Global {
         });
         closeHooks.add(() -> Render.getInstance().dispose());
         closeHooks.add(() -> IO.getInstance().dispose());
+        return l;
+    }*/
+
+    public static LoopContext getOpenGLOpenALLoopContext(int width, int height) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException, InterruptedException {
+        Object panel = getOpenGLOpenALLCP0(width, height);
+        Thread.sleep(200);
+        return getOpenGLOpenALLCP1(panel);
+    }
+
+    public static Object getOpenGLOpenALLCP0(int width, int height) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        Class<?> soundManagerClass = Class.forName("com.xebisco.yieldengine.alimpl.SoundManager");
+        soundManagerClass.getMethod("initAL").invoke(null);
+        Class<?> panelClass = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLPanel");
+        Object panel;
+        if (width >= 0 && height >= 0)
+            panel = panelClass.getMethod("newWindow", int.class, int.class).invoke(null, width, height);
+        else panel = panelClass.getConstructor().newInstance();
+        Class<?> keyDeviceClass = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLKeyDevice"), mouseDevice = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLMouseDevice");
+        Input.setInstance(new Input((IKeyDevice) keyDeviceClass.getConstructor(panelClass).newInstance(panel), (IMouseDevice) mouseDevice.getConstructor(panelClass).newInstance(panel)));
+        Class<?> textureLoader = Class.forName("com.xebisco.yieldengine.glimpl.mem.OGLTextureLoader"), fontLoader = Class.forName("com.xebisco.yieldengine.glimpl.mem.OGLFontLoader"), audioLoader = Class.forName("com.xebisco.yieldengine.alimpl.OALAudioLoader"), audioPlayer = Class.forName("com.xebisco.yieldengine.alimpl.OALAudioPlayer");
+        IO.setInstance(new IO(new DefaultAbsolutePathGetter(), (ITextureLoader) textureLoader.getConstructor(panelClass).newInstance(panel), (IFontLoader) fontLoader.getConstructor(panelClass).newInstance(panel), (IAudioLoader) audioLoader.getConstructor().newInstance(), (IAudioPlayer) audioPlayer.getConstructor().newInstance()));
+        Class<?> rendererClass = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLRenderer");
+        Object renderer = rendererClass.getConstructor(panelClass).newInstance(panel);
+        Render.setInstance(new Render((IRenderer) renderer));
+        return panel;
+    }
+
+    public static LoopContext getOpenGLOpenALLCP1(Object panel) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        Class<?> soundManagerClass = Class.forName("com.xebisco.yieldengine.alimpl.SoundManager");
+        Class<?> panelClass = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLPanel");
+        LoopContext l = new LoopContext("GAME");
+        l.setDeviceObject(panel);
+        //noinspection unchecked
+        List<Runnable> closeHooks = (List<Runnable>) panelClass.getMethod("getCloseHooks").invoke(panel);
+        closeHooks.add(() -> l.getRunning().set(false));
+        Method soundManagerGetRunning = soundManagerClass.getMethod("getRunning");
+        closeHooks.add(() -> {
+            try {
+                Object running = soundManagerGetRunning.invoke(null);
+                running.getClass().getMethod("set", boolean.class).invoke(running, false);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        closeHooks.add(() -> Render.getInstance().dispose());
+        closeHooks.add(() -> IO.getInstance().dispose());
+        CompletableFuture.runAsync(() -> {
+            try {
+                Thread.sleep(200);
+                panel.getClass().getMethod("start").invoke(panel);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }).exceptionally(e -> {
+            throw new RuntimeException(e);
+        });
         return l;
     }
 

@@ -1,18 +1,27 @@
 package com.xebisco.yieldengine.core.components;
 
+import com.xebisco.yieldengine.annotations.Color;
+import com.xebisco.yieldengine.annotations.Editable;
+import com.xebisco.yieldengine.annotations.Visible;
 import com.xebisco.yieldengine.core.Component;
 import com.xebisco.yieldengine.core.Global;
 import com.xebisco.yieldengine.core.render.DrawInstruction;
 import com.xebisco.yieldengine.core.render.Render;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
 import java.io.Serializable;
 
 public class Line extends Component {
+    @Visible
+    @Editable
     private Vector2f point1 = new Vector2f(-50, -50), point2 = new Vector2f(50, 50);
+    @Visible
+    @Editable
     private float thickness = 4f;
-    private Vector4f color = new Vector4f(1f, 1f, 1f, 1f);
+    @Visible
+    @Editable
+    @Color
+    private int color = 0xFFFFFFFF;
 
     public Line() {
     }
@@ -22,7 +31,7 @@ public class Line extends Component {
         this.point2 = point2;
     }
 
-    public Line(Vector2f point1, Vector2f point2, Vector4f color) {
+    public Line(Vector2f point1, Vector2f point2, int color) {
         this.point1 = point1;
         this.point2 = point2;
         this.color = color;
@@ -34,7 +43,7 @@ public class Line extends Component {
         this.thickness = thickness;
     }
 
-    public Line(Vector2f point1, Vector2f point2, float thickness, Vector4f color) {
+    public Line(Vector2f point1, Vector2f point2, float thickness, int color) {
         this.point1 = point1;
         this.point2 = point2;
         this.thickness = thickness;
@@ -84,6 +93,15 @@ public class Line extends Component {
 
     public Line setThickness(float thickness) {
         this.thickness = thickness;
+        return this;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public Line setColor(int color) {
+        this.color = color;
         return this;
     }
 }

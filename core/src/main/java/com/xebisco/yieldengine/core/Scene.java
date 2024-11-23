@@ -15,6 +15,9 @@
 
 package com.xebisco.yieldengine.core;
 
+import com.xebisco.yieldengine.annotations.Color;
+import com.xebisco.yieldengine.annotations.Config;
+import com.xebisco.yieldengine.annotations.Visible;
 import com.xebisco.yieldengine.concurrency.LockProcess;
 import com.xebisco.yieldengine.core.camera.ICamera;
 import com.xebisco.yieldengine.core.camera.OrthoCamera;
@@ -28,11 +31,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Scene implements IDispose {
-    public final class SceneController extends OnSceneBehavior {
+@Config(title = "Scene")
+public final class Scene implements IDispose, Serializable {
+    public Scene(ArrayList<EntityFactory> entityFactories) {
+        this.entityFactories = entityFactories;
+    }
+
+    public final class SceneController extends OnSceneBehavior implements Serializable {
         @Override
         public void onCreate() {
             Logger.getInstance().engineDebug("Creating " + this + ".");
+            if (entityFactories != null)
+                entityFactories.forEach(fac -> entities.add(fac.createEntity()));
+            Logger.getInstance().engineDebug("Creating " + this + " entities.");
             entities.forEach(Entity::onCreate);
             Logger.getInstance().engineDebug(this + " created.");
         }
@@ -96,9 +107,15 @@ public final class Scene implements IDispose {
 
     private final SceneController sceneController = new SceneController();
 
-    private final List<Entity> entities = new ArrayList<>();
+    private final transient List<Entity> entities = new ArrayList<>();
+    private final ArrayList<EntityFactory> entityFactories;
 
-    private Vector3f backgroundColor = new Vector3f();
+    @Visible
+    private String name;
+
+    @Visible
+    @Color
+    private int backgroundColor = 0;
 
     @Override
     public void dispose() {
@@ -126,12 +143,25 @@ public final class Scene implements IDispose {
         return entities;
     }
 
-    public Vector3f getBackgroundColor() {
+    public int getBackgroundColor() {
         return backgroundColor;
     }
 
-    public Scene setBackgroundColor(Vector3f backgroundColor) {
+    public Scene setBackgroundColor(int backgroundColor) {
         this.backgroundColor = backgroundColor;
         return this;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Scene setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public ArrayList<EntityFactory> getEntityFactories() {
+        return entityFactories;
     }
 }

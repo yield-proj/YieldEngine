@@ -24,7 +24,7 @@ public class AudioListener extends Component {
     @Override
     public void onLateUpdate() {
         IAudioPlayer audioPlayer = IO.getInstance().getAudioPlayer();
-        Vector3fc position = getEntity().getNewWorldTransform().getPosition();
+        Vector3fc position = getEntity().getNewWorldTransform().getTranslation();
         audioPlayer.setListenerPosition(position);
         Matrix4f cameraMatrix;
         if (rotateWithCamera)

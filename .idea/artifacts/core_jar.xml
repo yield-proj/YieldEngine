@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="core:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/core_jar</output-path>
+    <root id="archive" name="yield-core.jar">
+      <element id="module-output" name="core" />
+      <element id="module-output" name="concurrency" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/joml/joml/1.10.7/joml-1.10.7.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

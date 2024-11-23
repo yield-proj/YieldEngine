@@ -28,6 +28,7 @@ public class LoopContext implements Runnable {
     private final Thread thread;
     private final AtomicBoolean running = new AtomicBoolean(), paused = new AtomicBoolean();
     private final Object pauseLock = new Object();
+    private Object deviceObject;
     private final List<Runnable> shutdownHooks = new ArrayList<>();
 
     /**
@@ -90,6 +91,10 @@ public class LoopContext implements Runnable {
         }
     }
 
+    public void startThread() {
+        getThread().start();
+    }
+
     public void pause() {
         paused.set(true);
     }
@@ -119,5 +124,14 @@ public class LoopContext implements Runnable {
 
     public List<Runnable> getShutdownHooks() {
         return shutdownHooks;
+    }
+
+    public Object getDeviceObject() {
+        return deviceObject;
+    }
+
+    public LoopContext setDeviceObject(Object deviceObject) {
+        this.deviceObject = deviceObject;
+        return this;
     }
 }

@@ -13,74 +13,31 @@
  * limitations under the License.
  */
 
-import com.xebisco.yieldengine.core.*;
-import com.xebisco.yieldengine.core.input.Axis;
-import com.xebisco.yieldengine.core.io.texture.TextureMap;
-import com.xebisco.yieldengine.core.tilemap.Tile;
-import com.xebisco.yieldengine.core.tilemap.TileMap;
-import org.joml.Vector4f;
+import com.xebisco.yieldengine.core.Global;
+import com.xebisco.yieldengine.core.Logger;
+import com.xebisco.yieldengine.core.LoopContext;
+import com.xebisco.yieldengine.core.Scene;
+import com.xebisco.yieldengine.editorfactories.CF;
+import com.xebisco.yieldengine.editorfactories.CamControl;
+import com.xebisco.yieldengine.editorfactories.TestEF;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Test2 {
 
-    public static void main(String[] args) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
+    public static void main(String[] args) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException, InterruptedException {
         Logger.setInstance(new Logger(true, true));
         LoopContext l = Global.getOpenGLOpenALLoopContext(1280, 720);
-        Scene s = new Scene();
+        Scene s = new Scene(new ArrayList<>());
 
-        Entity e = new Entity("hw", new Transform());
-        TextureMap map = new TextureMap("yieldIcon.png");
-
-        HashMap<Integer, Tile> tileSet = new HashMap<>();
-
-        tileSet.put(0, new Tile(
-                map.getTexture(0, 0, 600, 600),
-                false,
-                new Vector4f(1, 1, 1, 1),
-                (EntityFactory) () -> null
-        ));
-
-        TileMap tileMap = new TileMap(tileSet, new int[][]{
-                new int[]{0, 0, 0},
-                new int[]{0, -1, 0},
-                new int[]{-1, -1, 0}
-        }, 100, 100, map);
-
-        e.getComponents().add(tileMap);
-        e.getComponents().add(new Component() {
-            float v;
-
-            @Override
-            public void onUpdate() {
-                getTransform().translate(Axis.HORIZONTAL.getValue(), Axis.VERTICAL.getValue());
-                v += Axis.JUMP.getValue() * Time.getDeltaTime() / 10;
-                getTransform().rotate(v);
-            }
-        });
-
-
-        /*
-        e.getComponents().add(new Sprite(new Texture("carlinhos.jpg")));
-        e.getComponents().add(new AudioEmitter(new Audio("carlinhos.ogg"), true));
-
-        e.getComponents().add(new AudioListener());
-
-        e.getComponents().add(new Component() {
-
-            @Override
-            public void onUpdate() {
-                getTransform().translate(Axis.HORIZONTAL.getValue(), Axis.VERTICAL.getValue());
-            }
-        });
-        */
-
-        s.getEntities().add(e);
+        s.getEntityFactories().add(new TestEF());
+        s.getEntityFactories().add(new CamControl());
+        s.getEntityFactories().add(new CF());
 
         Global.setCurrentScene(s);
         s.create();
 
-        l.getThread().start();
+        l.startThread();
     }
 }

@@ -38,6 +38,10 @@ public final class Input {
         return pressedMouseButtons.contains(button);
     }
 
+    public int getScrollWheel() {
+        return isMouseButtonPressed(MouseButton.SCROLL_WELL_UP) ? 1 : isMouseButtonPressed(MouseButton.SCROLL_WELL_DOWN) ? -1 : 0;
+    }
+
     public Vector2fc getMousePosition() {
         return new Vector2f(mouseDevice.getMouseX(), mouseDevice.getMouseY());
     }

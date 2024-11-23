@@ -21,9 +21,9 @@ import com.xebisco.yieldengine.core.render.*;
 import java.util.List;
 
 public class OGLRenderer implements IRenderer {
-    private final OGLWindow window;
+    private final OGLPanel window;
 
-    public OGLRenderer(OGLWindow window) {
+    public OGLRenderer(OGLPanel window) {
         this.window = window;
     }
 

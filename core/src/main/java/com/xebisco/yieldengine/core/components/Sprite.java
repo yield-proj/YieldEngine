@@ -1,5 +1,7 @@
 package com.xebisco.yieldengine.core.components;
 
+import com.xebisco.yieldengine.annotations.Editable;
+import com.xebisco.yieldengine.annotations.Visible;
 import com.xebisco.yieldengine.core.Global;
 import com.xebisco.yieldengine.core.Transform;
 import com.xebisco.yieldengine.core.io.IO;
@@ -7,12 +9,15 @@ import com.xebisco.yieldengine.core.io.texture.Texture;
 import com.xebisco.yieldengine.core.render.DrawInstruction;
 import com.xebisco.yieldengine.core.render.Render;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
 import java.io.Serializable;
 
 public class Sprite extends Rectangle {
+    @Visible
+    @Editable
     private Texture texture = IO.getInstance().getDefaultTexture();
+    @Visible
+    @Editable
     private Vector2f offset = new Vector2f();
 
     public Sprite() {
@@ -22,7 +27,7 @@ public class Sprite extends Rectangle {
         super(size);
     }
 
-    public Sprite(Vector4f color, Vector2f size) {
+    public Sprite(int color, Vector2f size) {
         super(color, size);
     }
 
@@ -35,7 +40,7 @@ public class Sprite extends Rectangle {
         this.texture = texture;
     }
 
-    public Sprite(Vector4f color, Vector2f size, Texture texture) {
+    public Sprite(int color, Vector2f size, Texture texture) {
         super(color, size);
         this.texture = texture;
     }

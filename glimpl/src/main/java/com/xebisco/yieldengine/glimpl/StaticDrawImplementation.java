@@ -121,24 +121,32 @@ public final class StaticDrawImplementation {
         arrayMemory.createVertexArray(circleVertices, 0, circleArrayContext);
     }
 
+    public static Vector4fc colorValue(int color) {
+        float r = ((color >> 16) & 0xff) / 255.0f;
+        float g = ((color >> 8) & 0xff) / 255.0f;
+        float b = ((color) & 0xff) / 255.0f;
+        float a = ((color >> 24) & 0xff) / 255.0f;
+        return new Vector4f(r, g, b, a);
+    }
+
     public static void drawInstruction(DrawInstruction instruction) {
         Vector2fc size;
         Vector4fc color;
         switch (instruction.getType()) {
             case "clr":
-                Vector3fc backgroundColor = (Vector3fc) instruction.getDrawObjects()[0];
+                Vector4fc backgroundColor = colorValue((Integer) instruction.getDrawObjects()[0]);
                 glClearColor(backgroundColor.x(), backgroundColor.y(), backgroundColor.z(), 1);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 break;
             case "dw_rect":
-                drawRectangle(instruction.getTransform(), instruction.getCamera(), (Vector2fc) instruction.getDrawObjects()[1], (Vector4fc) instruction.getDrawObjects()[0]);
+                drawRectangle(instruction.getTransform(), instruction.getCamera(), (Vector2fc) instruction.getDrawObjects()[1], colorValue((Integer) instruction.getDrawObjects()[0]));
                 break;
             case "dw_img":
                 size = (Vector2fc) instruction.getDrawObjects()[1];
-                drawImage(((OGLTextureIDGetter) instruction.getDrawObjects()[2]).getTextureID(), instruction.getTransform(), instruction.getCamera(), size.x(), size.y(), (Vector4fc) instruction.getDrawObjects()[0], 0, 0);
+                drawImage(((OGLTextureIDGetter) instruction.getDrawObjects()[2]).getTextureID(), instruction.getTransform(), instruction.getCamera(), size.x(), size.y(), colorValue((Integer) instruction.getDrawObjects()[0]), 0, 0);
                 break;
             case "dw_text":
-                color = (Vector4fc) instruction.getDrawObjects()[0];
+                color = colorValue((Integer) instruction.getDrawObjects()[0]);
                 //noinspection unchecked
                 HashMap<Character, Texture> font = (HashMap<Character, Texture>) instruction.getDrawObjects()[1];
                 String text = (String) instruction.getDrawObjects()[2];
@@ -147,7 +155,7 @@ public final class StaticDrawImplementation {
 
                 int height = font.get(' ').getHeight();
 
-                for(int i = 0; i < lines.length; i++) {
+                for (int i = 0; i < lines.length; i++) {
                     float x = 0;
 
                     char[] chars = lines[i].toCharArray();
@@ -167,22 +175,22 @@ public final class StaticDrawImplementation {
                 }
                 break;
             case "dw_ln":
-                color = (Vector4fc) instruction.getDrawObjects()[0];
+                color = colorValue((Integer) instruction.getDrawObjects()[0]);
                 Vector2fc point1 = (Vector2fc) instruction.getDrawObjects()[1], point2 = (Vector2fc) instruction.getDrawObjects()[2];
                 Transform t = new Transform(instruction.getTransform());
                 float cat1 = point1.x() - point2.x(), cat2 = point1.y() - point2.y();
                 t.translate(cat1 / -2f, cat2 / -2f);
-                t.rotate((float) Math.atan2(cat2, cat1));
+                t.rotateZ((float) Math.atan2(cat2, cat1));
                 drawRectangle(t, instruction.getCamera(), new Vector2f((float) Math.sqrt(Math.pow(cat1, 2) + Math.pow(cat2, 2)), (float) instruction.getDrawObjects()[3]), color);
                 break;
             case "dw_ellipse":
                 rectangleShader.bind();
 
-                color = (Vector4fc) instruction.getDrawObjects()[0];
+                color = colorValue((Integer) instruction.getDrawObjects()[0]);
 
                 size = (Vector2fc) instruction.getDrawObjects()[1];
 
-                rectangleShader.setUniform("transformationMatrix", instruction.getTransform().getTransformationMatrix(new Vector3f(size.x(), size.y(), 1)));
+                rectangleShader.setUniform("transformationMatrix", instruction.getTransform().getTransformMatrix(new Vector3f(size.x(), size.y(), 1)));
                 rectangleShader.setUniform("viewMatrix", instruction.getCamera().getViewMatrix());
 
                 rectangleShader.setUniform("color", color);
@@ -228,7 +236,7 @@ public final class StaticDrawImplementation {
     private static void drawRectangle(Transform transform, ICamera camera, Vector2fc size, Vector4fc color) {
         rectangleShader.bind();
 
-        rectangleShader.setUniform("transformationMatrix", transform.getTransformationMatrix(new Vector3f(size.x(), size.y(), 1)));
+        rectangleShader.setUniform("transformationMatrix", transform.getTransformMatrix(new Vector3f(size.x(), size.y(), 1)));
         rectangleShader.setUniform("viewMatrix", camera.getViewMatrix());
 
         rectangleShader.setUniform("color", color);
@@ -247,7 +255,7 @@ public final class StaticDrawImplementation {
     private static void drawImage(int textureID, Transform transform, ICamera camera, float width, float height, Vector4fc color, float offsetX, float offsetY) {
         imageShader.bind();
 
-        imageShader.setUniform("transformationMatrix", transform.getTransformationMatrix(new Vector3f(width, height, 1)));
+        imageShader.setUniform("transformationMatrix", transform.getTransformMatrix(new Vector3f(width, height, 1)));
         imageShader.setUniform("viewMatrix", camera.getViewMatrix());
 
         imageShader.setUniform("color", color);
