@@ -4,13 +4,16 @@ import com.xebisco.yieldengine.core.Component;
 import com.xebisco.yieldengine.core.Global;
 import com.xebisco.yieldengine.core.io.IO;
 import com.xebisco.yieldengine.core.io.audio.IAudioPlayer;
+import com.xebisco.yieldengine.utils.Editable;
+import com.xebisco.yieldengine.utils.Visible;
 import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 public class AudioListener extends Component {
 
+    @Visible
+    @Editable
     private boolean rotateWithCamera;
 
     public AudioListener(boolean rotateWithCamera) {
@@ -24,7 +27,7 @@ public class AudioListener extends Component {
     @Override
     public void onLateUpdate() {
         IAudioPlayer audioPlayer = IO.getInstance().getAudioPlayer();
-        Vector3fc position = getEntity().getNewWorldTransform().getTranslation();
+        Vector3fc position = getWorldTransform().getTranslation();
         audioPlayer.setListenerPosition(position);
         Matrix4f cameraMatrix;
         if (rotateWithCamera)

@@ -13,13 +13,10 @@
  * limitations under the License.
  */
 
-package com.xebisco.yieldengine.core.render;
+package com.xebisco.yieldengine.core.graphics.yldg1;
 
-import com.xebisco.yieldengine.concurrency.LockProcess;
-import com.xebisco.yieldengine.core.IDispose;
-
-import java.util.List;
-
+/*
 public interface IRenderer extends IDispose {
     void render(List<DrawInstruction> instructionsList, LockProcess lockProcess);
 }
+*/

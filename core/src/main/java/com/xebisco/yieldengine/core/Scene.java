@@ -15,23 +15,22 @@
 
 package com.xebisco.yieldengine.core;
 
-import com.xebisco.yieldengine.annotations.Color;
-import com.xebisco.yieldengine.annotations.Config;
-import com.xebisco.yieldengine.annotations.Visible;
 import com.xebisco.yieldengine.concurrency.LockProcess;
 import com.xebisco.yieldengine.core.camera.ICamera;
 import com.xebisco.yieldengine.core.camera.OrthoCamera;
+import com.xebisco.yieldengine.core.graphics.Graphics;
+import com.xebisco.yieldengine.core.graphics.IPainter;
+import com.xebisco.yieldengine.core.graphics.yldg1.Paint;
 import com.xebisco.yieldengine.core.input.Input;
 import com.xebisco.yieldengine.core.io.IO;
-import com.xebisco.yieldengine.core.render.DrawInstruction;
-import com.xebisco.yieldengine.core.render.Render;
-import org.joml.Vector3f;
+import com.xebisco.yieldengine.utils.Color4f;
+import com.xebisco.yieldengine.utils.Editable;
+import com.xebisco.yieldengine.utils.Visible;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
-@Config(title = "Scene")
 public final class Scene implements IDispose, Serializable {
     public Scene(ArrayList<EntityFactory> entityFactories) {
         this.entityFactories = entityFactories;
@@ -55,6 +54,8 @@ public final class Scene implements IDispose, Serializable {
             Logger.getInstance().engineDebug(this + " started.");
         }
 
+        private final LockProcess renderLockProcess = new LockProcess(false);
+
         @Override
         public void onUpdate() {
             Input input = Input.getInstance();
@@ -63,28 +64,35 @@ public final class Scene implements IDispose, Serializable {
                 input.updateMouseButtonList();
             }
 
-            Render render = Render.getInstance();
+            Queue<IPainter> painters = new LinkedList<>();
 
-            LockProcess renderLock = null;
+            painters.add(g -> g.getG1().clearScreen(new Paint().setColor(backgroundColor)));
 
-            if (render != null) {
-                renderLock = new LockProcess();
-                Render.getInstance().sendRender(renderLock);
-                Render.getInstance().clearInstructions();
-                Render.getInstance().getInstructionsList().add(
-                        new DrawInstruction()
-                                .setType(DrawInstruction.DrawInstructionType.CLEAR_SCREEN.getTypeString())
-                                .setDrawObjects(new Serializable[]{backgroundColor})
-                );
+            entities.forEach(e -> {
+                e.onUpdate();
+                addAllPainters(e, painters);
+            });
+
+            try {
+                renderLockProcess.aWait();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
-            entities.forEach(Entity::onUpdate);
-            if (renderLock != null) {
-                try {
-                    renderLock.aWait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+
+            renderLockProcess.getRunning().set(true);
+
+            CompletableFuture.runAsync(() -> {
+                Graphics.getPainterReceiver().paint(painters);
+                renderLockProcess.unlock();
+            });
+        }
+
+        private void addAllPainters(Entity e, Collection<IPainter> painters) {
+            for (Component c : e.getComponents()) {
+                if (c instanceof IPainter)
+                    painters.add((IPainter) c);
             }
+            e.getChildren().forEach(child -> addAllPainters(child, painters));
         }
 
         @Override
@@ -111,11 +119,12 @@ public final class Scene implements IDispose, Serializable {
     private final ArrayList<EntityFactory> entityFactories;
 
     @Visible
+    @Editable
     private String name;
 
     @Visible
-    @Color
-    private int backgroundColor = 0;
+    @Editable
+    private Color4f backgroundColor = new Color4f(0, 0, 0);
 
     @Override
     public void dispose() {
@@ -143,11 +152,11 @@ public final class Scene implements IDispose, Serializable {
         return entities;
     }
 
-    public int getBackgroundColor() {
+    public Color4f getBackgroundColor() {
         return backgroundColor;
     }
 
-    public Scene setBackgroundColor(int backgroundColor) {
+    public Scene setBackgroundColor(Color4f backgroundColor) {
         this.backgroundColor = backgroundColor;
         return this;
     }

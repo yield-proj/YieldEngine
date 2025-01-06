@@ -26,6 +26,7 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
     private final Transform transform;
     private int preferredIndex;
     private final ArrayList<String> tags = new ArrayList<>();
+    private final Transform worldTransform = new Transform();
 
     public Entity(String name, Transform transform) {
         this.name = name;
@@ -50,13 +51,17 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
 
     @Override
     public void onCreate() {
-        components.forEach(c -> c.setEntity(this));
+        components.forEach(c -> {
+            c.setEntity(this);
+            c.setWorldTransform(worldTransform);
+        });
         components.forEach(Component::onCreate);
         children.forEach(Entity::onCreate);
     }
 
     @Override
     public void onStart() {
+        updateWorldTransform();
         components.forEach(Component::onStart);
         children.forEach(Entity::onStart);
     }
@@ -70,6 +75,7 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
 
     @Override
     public void onLateUpdate() {
+        updateWorldTransform();
         components.forEach(Component::onLateUpdate);
         children.forEach(Entity::onLateUpdate);
     }
@@ -103,7 +109,11 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
         return getComponent(componentClass, 0);
     }
 
-    public Transform getNewWorldTransform() {
+    public void updateWorldTransform() {
+        worldTransform.getTransformMatrix().set(getNewWorldTransform().getTransformMatrix());
+    }
+
+    private Transform getNewWorldTransform() {
         if(parent == null) return transform;
         Transform worldTransform = new Transform(parent.getNewWorldTransform());
         worldTransform.getTransformMatrix().translationRotateScale(worldTransform.getTranslation(), worldTransform.getNormalizedRotation(),  worldTransform.getScale());
@@ -146,5 +156,9 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
 
     public ArrayList<String> getTags() {
         return tags;
+    }
+
+    public Transform getWorldTransform() {
+        return worldTransform;
     }
 }

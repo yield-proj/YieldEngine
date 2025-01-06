@@ -1,24 +1,20 @@
 package com.xebisco.yieldengine.core.components;
 
-import com.xebisco.yieldengine.annotations.Editable;
-import com.xebisco.yieldengine.annotations.Visible;
-import com.xebisco.yieldengine.core.Global;
-import com.xebisco.yieldengine.core.Transform;
+import com.xebisco.yieldengine.core.graphics.Graphics;
+import com.xebisco.yieldengine.core.graphics.yldg1.Paint;
 import com.xebisco.yieldengine.core.io.IO;
 import com.xebisco.yieldengine.core.io.texture.Texture;
-import com.xebisco.yieldengine.core.render.DrawInstruction;
-import com.xebisco.yieldengine.core.render.Render;
+import com.xebisco.yieldengine.utils.Color4f;
+import com.xebisco.yieldengine.utils.Editable;
+import com.xebisco.yieldengine.utils.Visible;
 import org.joml.Vector2f;
-
-import java.io.Serializable;
 
 public class Sprite extends Rectangle {
     @Visible
     @Editable
     private Texture texture = IO.getInstance().getDefaultTexture();
-    @Visible
-    @Editable
-    private Vector2f offset = new Vector2f();
+
+    protected final Paint paint = new Paint();
 
     public Sprite() {
     }
@@ -27,7 +23,7 @@ public class Sprite extends Rectangle {
         super(size);
     }
 
-    public Sprite(int color, Vector2f size) {
+    public Sprite(Color4f color, Vector2f size) {
         super(color, size);
     }
 
@@ -40,29 +36,14 @@ public class Sprite extends Rectangle {
         this.texture = texture;
     }
 
-    public Sprite(int color, Vector2f size, Texture texture) {
+    public Sprite(Color4f color, Vector2f size, Texture texture) {
         super(color, size);
         this.texture = texture;
     }
 
     @Override
-    public void onLateUpdate() {
-        Transform t = getEntity().getNewWorldTransform();
-        t.translate(offset);
-        Render render = Render.getInstance();
-        render.getInstructionsList().add(
-                new DrawInstruction()
-                        .setType(DrawInstruction.DrawInstructionType.DRAW_IMAGE.getTypeString())
-                        .setDrawObjects(
-                                new Serializable[]{
-                                        getColor(),
-                                        getSize(),
-                                        texture.getImageReference()
-                                }
-                        )
-                        .setCamera(Global.getCurrentScene().getCamera())
-                        .setTransform(t)
-        );
+    public void onPaint(Graphics g) {
+        g.getG1().drawRect(getSize().x(), getSize().y(), paint.setTransform(getWorldTransform()).setColor(getColor()).setTexture(texture));
     }
 
     public Texture getTexture() {
@@ -74,12 +55,8 @@ public class Sprite extends Rectangle {
         return this;
     }
 
-    public Vector2f getOffset() {
-        return offset;
-    }
-
-    public Sprite setOffset(Vector2f offset) {
-        this.offset = offset;
-        return this;
+    @Override
+    public Paint getPaint() {
+        return paint;
     }
 }

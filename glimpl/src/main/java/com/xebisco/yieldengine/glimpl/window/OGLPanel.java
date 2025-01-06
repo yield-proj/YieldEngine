@@ -15,12 +15,11 @@
 
 package com.xebisco.yieldengine.glimpl.window;
 
-import com.xebisco.yieldengine.concurrency.LockProcess;
-import com.xebisco.yieldengine.core.render.DrawInstruction;
-import com.xebisco.yieldengine.glimpl.StaticDrawImplementation;
-import com.xebisco.yieldengine.glimpl.shader.ShaderCreationException;
-import com.xebisco.yieldengine.glimpl.shader.ShaderLinkException;
-import org.lwjgl.opengl.GL;
+import com.xebisco.yieldengine.concurrency.RunThread;
+import com.xebisco.yieldengine.core.graphics.Graphics;
+import com.xebisco.yieldengine.core.graphics.IPainter;
+import com.xebisco.yieldengine.core.graphics.IPainterReceiver;
+import com.xebisco.yieldengine.glimpl.YLDG1GLImpl;
 import org.lwjgl.opengl.awt.AWTGLCanvas;
 import org.lwjgl.opengl.awt.GLData;
 
@@ -30,79 +29,31 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.*;
 import java.util.List;
+import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL20.*;
 
-public class OGLPanel {
+public class OGLPanel implements IPainterReceiver {
 
     private final Set<Runnable> callInOpenGLThread = new HashSet<>();
 
-    public class RepaintManager implements Runnable {
-        @Override
-        public void run() {
-            paint();
-            while (!endThread.get()) {
-                try {
-                    repaintLock.aWait();
-                    do {
-                        paint();
-                    } while (!callInOpenGLThread.isEmpty());
-                    repaintLock = new LockProcess();
-                    if (logicLock != null) logicLock.unlock();
-                } catch (InterruptedException ignore) {
-                }
-            }
-        }
-    }
-
     private boolean requestedResize = true;
+    private final List<Runnable> closeHooks = new ArrayList<>();
 
     private final OGLCanvasImpl canvas;
-    private final AtomicBoolean endThread = new AtomicBoolean(false);
-    //private final JFrame frame;
-    private final List<Runnable> closeHooks = new ArrayList<>();
-    private List<DrawInstruction> instructions;
-    private LockProcess repaintLock = new LockProcess(), logicLock, resourcesLock = new LockProcess();
-    private final RepaintManager repaintManager = new RepaintManager();
-    private final Thread repaintManagerThread = new Thread(repaintManager, "REPAINT_MANAGER");
     private final JPanel contentPane = new JPanel(new BorderLayout());
-
-    public void close(Runnable toDispose) {
-        closeHooks.forEach(Runnable::run);
-        CompletableFuture.runAsync(() -> {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
-            repaintLock.unlock();
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
-            if (toDispose != null)
-                toDispose.run();
-            endThread.set(true);
-            repaintLock.unlock();
-        });
-    }
+    private final Graphics graphics = new Graphics(new YLDG1GLImpl());
+    private Queue<IPainter> painters = new LinkedList<>();
+    private RunThread glThread = new RunThread();
 
     public static OGLPanel newWindow(int width, int height) {
         JFrame frame = new JFrame("Yield Engine");
         OGLPanel panel = new OGLPanel();
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                panel.close(frame::dispose);
-            }
-        });
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(width, height);
         frame.setLocationRelativeTo(null);
 
@@ -113,6 +64,7 @@ public class OGLPanel {
         SwingUtilities.invokeLater(() -> {
             if (frame.getContentPane().getHeight() != height) frame.setSize(width, height + frame.getInsets().top);
         });
+
         return panel;
     }
 
@@ -128,24 +80,45 @@ public class OGLPanel {
     }
 
     public void start() {
-        endThread.set(false);
         contentPane.add(canvas, BorderLayout.CENTER);
         contentPane.setFocusable(true);
 
         canvas.setFocusable(false);
 
-        closeHooks.add(repaintManagerThread::interrupt);
-
-        repaintManagerThread.start();
+        glThread.start();
+        paint(null);
 
         SwingUtilities.invokeLater(() -> {
             SwingUtilities.updateComponentTreeUI(SwingUtilities.getWindowAncestor(contentPane));
             contentPane.requestFocusInWindow();
+            SwingUtilities.getWindowAncestor(contentPane).addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    closeHooks.forEach(Runnable::run);
+                    CompletableFuture.runAsync(() -> {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        glThread.interrupt();
+                    });
+                }
+            });
         });
     }
 
     public OGLPanel() {
         this(new GLData());
+    }
+
+    @Override
+    public void paint(Queue<IPainter> painters) {
+        glThread.run(() -> {
+            this.painters = painters;
+            canvas.render();
+            return null;
+        });
     }
 
     class OGLCanvasImpl extends AWTGLCanvas {
@@ -157,11 +130,7 @@ public class OGLPanel {
         @Override
         public void initGL() {
             createCapabilities();
-            try {
-                StaticDrawImplementation.init();
-            } catch (ShaderCreationException | ShaderLinkException e) {
-                throw new RuntimeException(e);
-            }
+            graphics.getG1().initContext();
 
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -175,10 +144,11 @@ public class OGLPanel {
                     requestedResize = false;
                 }
 
-                if (instructions != null) {
-                    for (DrawInstruction ins : instructions)
-                        StaticDrawImplementation.drawInstruction(ins);
-                    instructions.clear();
+                if (painters != null) {
+                    IPainter painter;
+                    while ((painter = painters.poll()) != null) {
+                        painter.onPaint(graphics);
+                    }
                 }
 
                 swapBuffers();
@@ -194,14 +164,6 @@ public class OGLPanel {
         }
     }
 
-    public void paint() {
-        if (endThread.get()) {
-            GL.setCapabilities(null);
-            return;
-        }
-        canvas.render();
-    }
-
     public boolean isRequestedResize() {
         return requestedResize;
     }
@@ -215,58 +177,37 @@ public class OGLPanel {
         return canvas;
     }
 
-    public List<Runnable> getCloseHooks() {
-        return closeHooks;
-    }
-
-    public List<DrawInstruction> getInstructions() {
-        return instructions;
-    }
-
-    public OGLPanel setInstructions(List<DrawInstruction> instructions) {
-        this.instructions = instructions;
-        return this;
-    }
-
-    public LockProcess getRepaintLock() {
-        return repaintLock;
-    }
-
-    public OGLPanel setRepaintLock(LockProcess repaintLock) {
-        this.repaintLock = repaintLock;
-        return this;
-    }
-
-    public RepaintManager getRepaintManager() {
-        return repaintManager;
-    }
-
-    public Thread getRepaintManagerThread() {
-        return repaintManagerThread;
-    }
-
-    public LockProcess getLogicLock() {
-        return logicLock;
-    }
-
-    public OGLPanel setLogicLock(LockProcess logicLock) {
-        this.logicLock = logicLock;
-        return this;
-    }
-
     public Set<Runnable> getCallInOpenGLThread() {
         return callInOpenGLThread;
     }
 
-    public void setResourcesLock(LockProcess resourcesLock) {
-        this.resourcesLock = resourcesLock;
-    }
-
-    public LockProcess getResourcesLock() {
-        return resourcesLock;
-    }
-
     public JPanel getContentPane() {
         return contentPane;
+    }
+
+    public Graphics getGraphics() {
+        return graphics;
+    }
+
+    public Queue<IPainter> getPainters() {
+        return painters;
+    }
+
+    public OGLPanel setPainters(Queue<IPainter> painters) {
+        this.painters = painters;
+        return this;
+    }
+
+    public List<Runnable> getCloseHooks() {
+        return closeHooks;
+    }
+
+    public RunThread getGlThread() {
+        return glThread;
+    }
+
+    public OGLPanel setGlThread(RunThread glThread) {
+        this.glThread = glThread;
+        return this;
     }
 }

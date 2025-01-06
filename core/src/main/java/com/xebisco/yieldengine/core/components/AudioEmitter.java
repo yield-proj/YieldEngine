@@ -1,12 +1,12 @@
 package com.xebisco.yieldengine.core.components;
 
-import com.xebisco.yieldengine.annotations.Editable;
-import com.xebisco.yieldengine.annotations.Visible;
 import com.xebisco.yieldengine.core.Component;
 import com.xebisco.yieldengine.core.io.IO;
 import com.xebisco.yieldengine.core.io.audio.Audio;
 import com.xebisco.yieldengine.core.io.audio.AudioSource;
 import com.xebisco.yieldengine.core.io.audio.IAudioPlayer;
+import com.xebisco.yieldengine.utils.Editable;
+import com.xebisco.yieldengine.utils.Visible;
 
 public class AudioEmitter extends Component {
     @Visible
@@ -48,7 +48,7 @@ public class AudioEmitter extends Component {
 
     private void updateAudio() {
         IAudioPlayer audioPlayer = IO.getInstance().getAudioPlayer();
-        audioPlayer.setSourcePosition(source, getEntity().getNewWorldTransform().getTranslation());
+        audioPlayer.setSourcePosition(source, getWorldTransform().getTranslation());
         audioPlayer.setSourceGain(source, gain);
         audioPlayer.setSourceRolloffFactor(source, rolloffFactor);
         audioPlayer.setSourceRelative(source, relative);

@@ -21,6 +21,13 @@ public final class LockProcess {
     private final Object lockObject = new Object();
     private final AtomicBoolean running = new AtomicBoolean(true);
 
+    public LockProcess(boolean runningStartValue) {
+        running.set(runningStartValue);
+    }
+
+    public LockProcess() {
+    }
+
     public void unlock() {
         getRunning().set(false);
         synchronized (getLockObject()) {
@@ -44,7 +51,7 @@ public final class LockProcess {
         return lockObject;
     }
 
-    private AtomicBoolean getRunning() {
+    public AtomicBoolean getRunning() {
         return running;
     }
 }

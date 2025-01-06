@@ -15,6 +15,8 @@
 
 package com.xebisco.yieldengine.core;
 
+import com.xebisco.yieldengine.core.graphics.Graphics;
+import com.xebisco.yieldengine.core.graphics.IPainterReceiver;
 import com.xebisco.yieldengine.core.input.IKeyDevice;
 import com.xebisco.yieldengine.core.input.IMouseDevice;
 import com.xebisco.yieldengine.core.input.Input;
@@ -24,8 +26,6 @@ import com.xebisco.yieldengine.core.io.audio.IAudioLoader;
 import com.xebisco.yieldengine.core.io.audio.IAudioPlayer;
 import com.xebisco.yieldengine.core.io.text.IFontLoader;
 import com.xebisco.yieldengine.core.io.texture.ITextureLoader;
-import com.xebisco.yieldengine.core.render.IRenderer;
-import com.xebisco.yieldengine.core.render.Render;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector4f;
@@ -78,7 +78,6 @@ public class Global {
 
     public static LoopContext getOpenGLOpenALLoopContext(int width, int height) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException, InterruptedException {
         Object panel = getOpenGLOpenALLCP0(width, height);
-        Thread.sleep(200);
         return getOpenGLOpenALLCP1(panel);
     }
 
@@ -90,17 +89,13 @@ public class Global {
         if (width >= 0 && height >= 0)
             panel = panelClass.getMethod("newWindow", int.class, int.class).invoke(null, width, height);
         else panel = panelClass.getConstructor().newInstance();
+        Graphics.setPainterReceiver((IPainterReceiver) panel);
         Class<?> keyDeviceClass = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLKeyDevice"), mouseDevice = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLMouseDevice");
         Input.setInstance(new Input((IKeyDevice) keyDeviceClass.getConstructor(panelClass).newInstance(panel), (IMouseDevice) mouseDevice.getConstructor(panelClass).newInstance(panel)));
-        Class<?> textureLoader = Class.forName("com.xebisco.yieldengine.glimpl.mem.OGLTextureLoader"), fontLoader = Class.forName("com.xebisco.yieldengine.glimpl.mem.OGLFontLoader"), audioLoader = Class.forName("com.xebisco.yieldengine.alimpl.OALAudioLoader"), audioPlayer = Class.forName("com.xebisco.yieldengine.alimpl.OALAudioPlayer");
-        IO.setInstance(new IO(new DefaultAbsolutePathGetter(), (ITextureLoader) textureLoader.getConstructor(panelClass).newInstance(panel), (IFontLoader) fontLoader.getConstructor(panelClass).newInstance(panel), (IAudioLoader) audioLoader.getConstructor().newInstance(), (IAudioPlayer) audioPlayer.getConstructor().newInstance()));
-        Class<?> rendererClass = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLRenderer");
-        Object renderer = rendererClass.getConstructor(panelClass).newInstance(panel);
-        Render.setInstance(new Render((IRenderer) renderer));
         return panel;
     }
 
-    public static LoopContext getOpenGLOpenALLCP1(Object panel) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException {
+    public static LoopContext getOpenGLOpenALLCP1(Object panel) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException, InterruptedException {
         Class<?> soundManagerClass = Class.forName("com.xebisco.yieldengine.alimpl.SoundManager");
         Class<?> panelClass = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLPanel");
         LoopContext l = new LoopContext("GAME");
@@ -117,18 +112,10 @@ public class Global {
                 throw new RuntimeException(e);
             }
         });
-        closeHooks.add(() -> Render.getInstance().dispose());
         closeHooks.add(() -> IO.getInstance().dispose());
-        CompletableFuture.runAsync(() -> {
-            try {
-                Thread.sleep(200);
-                panel.getClass().getMethod("start").invoke(panel);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).exceptionally(e -> {
-            throw new RuntimeException(e);
-        });
+        panel.getClass().getMethod("start").invoke(panel);
+        Class<?> textureLoader = Class.forName("com.xebisco.yieldengine.glimpl.mem.OGLTextureLoader"), fontLoader = Class.forName("com.xebisco.yieldengine.glimpl.mem.OGLFontLoader"), audioLoader = Class.forName("com.xebisco.yieldengine.alimpl.OALAudioLoader"), audioPlayer = Class.forName("com.xebisco.yieldengine.alimpl.OALAudioPlayer");
+        IO.setInstance(new IO(new DefaultAbsolutePathGetter(), (ITextureLoader) textureLoader.getConstructor(panelClass).newInstance(panel), (IFontLoader) fontLoader.getConstructor(panelClass).newInstance(panel), (IAudioLoader) audioLoader.getConstructor().newInstance(), (IAudioPlayer) audioPlayer.getConstructor().newInstance()));
         return l;
     }
 
@@ -136,32 +123,6 @@ public class Global {
         double sinA = Math.sin(angle);
         double cosA = Math.cos(angle);
         return new Vector2f((float) ((point.x() - center.x()) * cosA - (point.y() - center.y()) * sinA + center.x()), (float) ((point.x() - center.x()) * sinA - (point.y() - center.y()) * cosA + center.y()));
-    }
-
-    public static Vector4f rgb(int color) {
-        Vector4f vec = new Vector4f();
-        vec.x = ((color >> 16) & 0xFF) / 255f;
-        vec.y = ((color >> 8) & 0xFF) / 255f;
-        vec.z = ((color) & 0xFF) / 255f;
-        vec.w = 1;
-        return vec;
-    }
-
-    public static Vector4f argb(int color) {
-        Vector4f vec = new Vector4f();
-        vec.x = ((color >> 24) & 0xFF) / 255f;
-        vec.y = ((color >> 16) & 0xFF) / 255f;
-        vec.z = ((color >> 8) & 0xFF) / 255f;
-        vec.w = ((color) & 0xFF) / 255f;
-        return vec;
-    }
-
-    public int argb(Vector4fc color) {
-        return to8BitInt(color.w(), color.x(), color.y(), color.z());
-    }
-
-    private static int to8BitInt(double alpha, double red, double green, double blue) {
-        return ((int) (alpha * 255)) << 24 + ((int) (red * 255)) << 16 + ((int) (green * 255)) << 8 + ((int) (blue * 255));
     }
 
     public static Scene getCurrentScene() {

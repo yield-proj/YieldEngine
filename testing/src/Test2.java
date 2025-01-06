@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-import com.xebisco.yieldengine.core.Global;
-import com.xebisco.yieldengine.core.Logger;
-import com.xebisco.yieldengine.core.LoopContext;
-import com.xebisco.yieldengine.core.Scene;
-import com.xebisco.yieldengine.editorfactories.CF;
-import com.xebisco.yieldengine.editorfactories.CamControl;
-import com.xebisco.yieldengine.editorfactories.TestEF;
+import com.xebisco.yieldengine.core.*;
+import com.xebisco.yieldengine.core.components.Rectangle;
+import com.xebisco.yieldengine.core.graphics.Graphics;
+import com.xebisco.yieldengine.core.graphics.IPainter;
+import com.xebisco.yieldengine.core.graphics.yldg1.Paint;
+import com.xebisco.yieldengine.core.io.IO;
+import org.joml.Vector2f;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -31,9 +31,11 @@ public class Test2 {
         LoopContext l = Global.getOpenGLOpenALLoopContext(1280, 720);
         Scene s = new Scene(new ArrayList<>());
 
-        s.getEntityFactories().add(new TestEF());
-        s.getEntityFactories().add(new CamControl());
-        s.getEntityFactories().add(new CF());
+        s.getEntityFactories().add((EntityFactory) () -> {
+            Entity e = new Entity("", new Transform());
+            e.getComponents().add(new Rectangle(new Vector2f(10, 10)));
+            return e;
+        });
 
         Global.setCurrentScene(s);
         s.create();

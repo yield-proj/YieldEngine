@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 public abstract class Component extends OnSceneBehavior implements Serializable {
     private transient Entity entity;
+    private Transform worldTransform;
 
     @Override
     public void onCreate() {
@@ -51,6 +52,15 @@ public abstract class Component extends OnSceneBehavior implements Serializable 
 
     Component setEntity(Entity entity) {
         this.entity = entity;
+        return this;
+    }
+
+    public Transform getWorldTransform() {
+        return worldTransform;
+    }
+
+    public Component setWorldTransform(Transform worldTransform) {
+        this.worldTransform = worldTransform;
         return this;
     }
 

@@ -36,7 +36,7 @@ public class TileMap extends Component implements Serializable {
                 Tile tileC = tileSet.get(tile);
                 Texture texture = tileC.getTexture();
                 Sprite sprite = new Sprite(tileC.getColor(), tileC.isFitTexture() ? new Vector2f(tileWidth, tileHeight) : new Vector2f(texture.getWidth(), texture.getHeight()), texture);
-                sprite.setOffset(new Vector2f(x * tileWidth + tileWidth / 2f, -y * tileHeight - tileHeight / 2f));
+                //sprite.setOffset(new Vector2f(x * tileWidth + tileWidth / 2f, -y * tileHeight - tileHeight / 2f));
                 spritesEntity.getComponents().add(sprite);
             }
         }

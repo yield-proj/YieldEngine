@@ -83,12 +83,12 @@ public class OGLTextureLoader implements ITextureLoader {
 
             atomicTexId.set(textureID);
         });
-        window.getRepaintLock().unlock();
-        try {
+        //window.paint(null);
+        /*try {
             Thread.sleep(15);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        }
+        }*/
 
         return Texture.create((OGLTextureIDGetter) atomicTexId::get, image.getWidth(), image.getHeight());
     }
@@ -98,12 +98,7 @@ public class OGLTextureLoader implements ITextureLoader {
         window.getCallInOpenGLThread().add(() -> {
             glDeleteTextures(((OGLTextureIDGetter) imageReference).getTextureID());
         });
-        try {
-            Thread.sleep(15);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        window.getRepaintLock().unlock();
+        window.paint(null);
     }
 
     @Override

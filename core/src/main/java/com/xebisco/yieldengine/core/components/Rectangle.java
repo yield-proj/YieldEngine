@@ -1,24 +1,27 @@
 package com.xebisco.yieldengine.core.components;
 
-import com.xebisco.yieldengine.annotations.Color;
-import com.xebisco.yieldengine.annotations.Editable;
-import com.xebisco.yieldengine.annotations.Visible;
 import com.xebisco.yieldengine.core.Component;
-import com.xebisco.yieldengine.core.Global;
-import com.xebisco.yieldengine.core.render.DrawInstruction;
-import com.xebisco.yieldengine.core.render.Render;
+import com.xebisco.yieldengine.core.graphics.Graphics;
+import com.xebisco.yieldengine.core.graphics.IPainter;
+import com.xebisco.yieldengine.core.graphics.yldg1.Paint;
+import com.xebisco.yieldengine.utils.Color4f;
+import com.xebisco.yieldengine.utils.ColorUtils;
+import com.xebisco.yieldengine.utils.Editable;
+import com.xebisco.yieldengine.utils.Visible;
 import org.joml.Vector2f;
 
-import java.io.Serializable;
-
-public class Rectangle extends Component {
+public class Rectangle extends Component implements IPainter {
     @Visible
     @Editable
-    @Color
-    private int color = 0xFFFFFFFF;
+    private Color4f color = ColorUtils.argb(0xFFFFFFFF);
     @Visible
     @Editable
     private Vector2f size = new Vector2f(100, 100);
+    @Visible
+    @Editable
+    private boolean filled = true;
+
+    protected final Paint paint = new Paint();
 
     public Rectangle() {
     }
@@ -27,33 +30,21 @@ public class Rectangle extends Component {
         this.size = size;
     }
 
-    public Rectangle(int color, Vector2f size) {
+    public Rectangle(Color4f color, Vector2f size) {
         this.color = color;
         this.size = size;
     }
 
     @Override
-    public void onLateUpdate() {
-        Render render = Render.getInstance();
-        render.getInstructionsList().add(
-                new DrawInstruction()
-                        .setType(DrawInstruction.DrawInstructionType.DRAW_RECTANGLE.getTypeString())
-                        .setDrawObjects(
-                                new Serializable[]{
-                                        color,
-                                        size
-                                }
-                        )
-                        .setCamera(Global.getCurrentScene().getCamera())
-                        .setTransform(getEntity().getNewWorldTransform())
-        );
+    public void onPaint(Graphics g) {
+        g.getG1().drawRect(getSize().x(), getSize().y(), paint.setTransform(getWorldTransform()).setColor(color));
     }
 
-    public int getColor() {
+    public Color4f getColor() {
         return color;
     }
 
-    public Rectangle setColor(int color) {
+    public Rectangle setColor(Color4f color) {
         this.color = color;
         return this;
     }
@@ -65,5 +56,18 @@ public class Rectangle extends Component {
     public Rectangle setSize(Vector2f size) {
         this.size = size;
         return this;
+    }
+
+    public boolean isFilled() {
+        return filled;
+    }
+
+    public Rectangle setFilled(boolean filled) {
+        this.filled = filled;
+        return this;
+    }
+
+    protected Paint getPaint() {
+        return paint;
     }
 }

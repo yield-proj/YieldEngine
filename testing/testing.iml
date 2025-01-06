@@ -12,6 +12,5 @@
     <orderEntry type="library" name="testing-libs" level="project" />
     <orderEntry type="module" module-name="alimpl" />
     <orderEntry type="module" module-name="tilemap" />
-    <orderEntry type="module" module-name="editorfactories" />
   </component>
 </module>

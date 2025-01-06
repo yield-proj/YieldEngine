@@ -19,21 +19,23 @@ public class OGLMouseDevice implements IMouseDevice, MouseListener, MouseWheelLi
         window.getCanvas().addMouseWheelListener(this);
     }
 
+    private float lastMouseX, lastMouseY;
+
     @Override
     public float getMouseX() {
         try {
-            return ((float) window.getContentPane().getMousePosition().x) / window.getCanvas().getWidth();
+            return lastMouseX = ((float) window.getContentPane().getMousePosition().x) / window.getCanvas().getWidth();
         } catch (NullPointerException e) {
-            return -1;
+            return lastMouseX;
         }
     }
 
     @Override
     public float getMouseY() {
         try {
-            return ((float) (window.getCanvas().getHeight() - window.getContentPane().getMousePosition().y)) / window.getCanvas().getHeight();
+            return lastMouseY = ((float) (window.getCanvas().getHeight() - window.getContentPane().getMousePosition().y)) / window.getCanvas().getHeight();
         } catch (NullPointerException e) {
-            return -1;
+            return lastMouseY;
         }
     }
 

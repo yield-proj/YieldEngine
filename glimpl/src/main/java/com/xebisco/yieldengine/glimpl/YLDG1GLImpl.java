@@ -1,24 +1,10 @@
-/*
- * Copyright [2022-2024] [Xebisco]
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.xebisco.yieldengine.glimpl;
 
 import com.xebisco.yieldengine.core.Transform;
 import com.xebisco.yieldengine.core.camera.ICamera;
+import com.xebisco.yieldengine.core.graphics.yldg1.Paint;
+import com.xebisco.yieldengine.core.graphics.yldg1.YLDG1;
 import com.xebisco.yieldengine.core.io.texture.Texture;
-import com.xebisco.yieldengine.core.render.DrawInstruction;
 import com.xebisco.yieldengine.glimpl.mem.OGLArrayMemory;
 import com.xebisco.yieldengine.glimpl.mem.OGLTextureIDGetter;
 import com.xebisco.yieldengine.glimpl.shader.ShaderCreationException;
@@ -26,6 +12,7 @@ import com.xebisco.yieldengine.glimpl.shader.ShaderLinkException;
 import com.xebisco.yieldengine.glimpl.shader.ShaderProgram;
 import com.xebisco.yieldengine.glimpl.shader.abstractions.ArrayContext;
 import com.xebisco.yieldengine.glimpl.shader.abstractions.IArrayMemory;
+import com.xebisco.yieldengine.utils.Color4f;
 import org.joml.*;
 
 import java.lang.Math;
@@ -33,18 +20,120 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
-public final class StaticDrawImplementation {
+public class YLDG1GLImpl implements YLDG1 {
+
+    @Override
+    public void initContext() {
+        try {
+            loadShaders();
+            loadVertexArrays();
+        } catch (ShaderCreationException | ShaderLinkException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void drawRect(float width, float height, Paint paint) {
+        drawPolygon(paint.getTransform(), paint.getCamera(), new Vector2f(width, height), paint.getColor(), rectangleArrayContext, 0, 0, true);
+    }
+
+    @Override
+    public void drawText(String str, Paint paint) {
+        //noinspection unchecked
+        HashMap<Character, Texture> font = (HashMap<Character, Texture>) paint.getFont().getFontReference();
+        String[] lines = str.split("\n");
+
+        int height = font.get(' ').getHeight();
+
+        for (int i = 0; i < lines.length; i++) {
+            float x1 = 0;
+
+            char[] chars = lines[i].toCharArray();
+
+            for (char c : chars) {
+                Texture tex = font.get(c);
+                if (tex == null) continue;
+                x1 -= tex.getWidth() / 2f;
+            }
+
+            for (char c : chars) {
+                Texture tex = font.get(c);
+                if (tex == null) continue;
+                drawImage(((OGLTextureIDGetter) tex.getImageReference()).getTextureID(), paint.getTransform(), paint.getCamera(), tex.getWidth(), tex.getHeight(), paint.getColor(), (x1 + tex.getWidth() / 2f) / (float) tex.getWidth(), (height / 4f * lines.length * i) / (float) tex.getHeight());
+                x1 += tex.getWidth();
+            }
+        }
+    }
+
+    @Override
+    public void drawImage(float width, float height, Paint paint) {
+        drawImage(((OGLTextureIDGetter) paint.getTexture().getImageReference()).getTextureID(), paint.getTransform(), paint.getCamera(), width, height, paint.getColor(), 0, 0);
+    }
+
+    @Override
+    public void drawEllipse(float width, float height, Paint paint) {
+        drawPolygon(paint.getTransform(), paint.getCamera(), new Vector2f(width, height), paint.getColor(), circleArrayContext, 0, 0, false);
+    }
+
+    @Override
+    public void drawLine(float x1, float y1, float x2, float y2, Paint paint) {
+        Vector2fc point1 = new Vector2f(x1, y1), point2 = new Vector2f(x2, y2);
+        Transform t = new Transform(paint.getTransform());
+        float cat1 = point1.x() - point2.x(), cat2 = point1.y() - point2.y();
+        t.translate(cat1 / -2f + x1, cat2 / -2f + y1);
+        t.rotateZ((float) Math.atan2(cat2, cat1));
+        drawPolygon(t, paint.getCamera(), new Vector2f((float) Math.sqrt(Math.pow(cat1, 2) + Math.pow(cat2, 2)), paint.getStrokeSize()), paint.getColor(), rectangleArrayContext, 0, 0, true);
+    }
+
+    @Override
+    public float stringWidth(String str, Paint paint) {
+        //noinspection unchecked
+        HashMap<Character, Texture> font = (HashMap<Character, Texture>) paint.getFont().getFontReference();
+        String[] lines = str.split("\n");
+
+        float x = 0;
+
+        for (String line : lines) {
+            float x1 = 0;
+
+            char[] chars = line.toCharArray();
+
+
+            for (char c : chars) {
+                Texture tex = font.get(c);
+                if (tex == null) continue;
+                x1 += tex.getWidth();
+            }
+            if (x1 > x) x = x1;
+        }
+        return x;
+    }
+
+    @Override
+    public float stringHeight(String str, Paint paint) {
+        //noinspection unchecked
+        HashMap<Character, Texture> font = (HashMap<Character, Texture>) paint.getFont().getFontReference();
+        return font.get(' ').getHeight();
+    }
+
+    @Override
+    public void clearScreen(Paint paint) {
+        Color4f backgroundColor = paint.getColor();
+        glClearColor(backgroundColor.x(), backgroundColor.y(), backgroundColor.z(), backgroundColor.w());
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 
     private static ShaderProgram rectangleShader, imageShader;
     private static IArrayMemory arrayMemory;
     private static ArrayContext rectangleArrayContext, imageArrayContext, circleArrayContext;
-
-    public static void init() throws ShaderCreationException, ShaderLinkException {
-        loadShaders();
-        loadVertexArrays();
-    }
 
     private static void loadShaders() throws ShaderCreationException, ShaderLinkException {
         rectangleShader = ShaderProgram.create(
@@ -52,6 +141,8 @@ public final class StaticDrawImplementation {
                         "in vec2 position;\n" +
                         "uniform mat4 transformationMatrix;\n" +
                         "uniform mat4 viewMatrix;\n" +
+                        "uniform float offsetX;\n" +
+                        "uniform float offsetY;\n" +
                         "void main() {\n" +
                         "gl_Position = viewMatrix * transformationMatrix * vec4(position, 0.0, 1.0);\n" +
                         "}",
@@ -121,93 +212,17 @@ public final class StaticDrawImplementation {
         arrayMemory.createVertexArray(circleVertices, 0, circleArrayContext);
     }
 
+    @Override
+    public void dispose() {
+
+    }
+
     public static Vector4fc colorValue(int color) {
         float r = ((color >> 16) & 0xff) / 255.0f;
         float g = ((color >> 8) & 0xff) / 255.0f;
         float b = ((color) & 0xff) / 255.0f;
         float a = ((color >> 24) & 0xff) / 255.0f;
         return new Vector4f(r, g, b, a);
-    }
-
-    public static void drawInstruction(DrawInstruction instruction) {
-        Vector2fc size;
-        Vector4fc color;
-        switch (instruction.getType()) {
-            case "clr":
-                Vector4fc backgroundColor = colorValue((Integer) instruction.getDrawObjects()[0]);
-                glClearColor(backgroundColor.x(), backgroundColor.y(), backgroundColor.z(), 1);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                break;
-            case "dw_rect":
-                drawRectangle(instruction.getTransform(), instruction.getCamera(), (Vector2fc) instruction.getDrawObjects()[1], colorValue((Integer) instruction.getDrawObjects()[0]));
-                break;
-            case "dw_img":
-                size = (Vector2fc) instruction.getDrawObjects()[1];
-                drawImage(((OGLTextureIDGetter) instruction.getDrawObjects()[2]).getTextureID(), instruction.getTransform(), instruction.getCamera(), size.x(), size.y(), colorValue((Integer) instruction.getDrawObjects()[0]), 0, 0);
-                break;
-            case "dw_text":
-                color = colorValue((Integer) instruction.getDrawObjects()[0]);
-                //noinspection unchecked
-                HashMap<Character, Texture> font = (HashMap<Character, Texture>) instruction.getDrawObjects()[1];
-                String text = (String) instruction.getDrawObjects()[2];
-
-                String[] lines = text.split("\n");
-
-                int height = font.get(' ').getHeight();
-
-                for (int i = 0; i < lines.length; i++) {
-                    float x = 0;
-
-                    char[] chars = lines[i].toCharArray();
-
-                    for (char c : chars) {
-                        Texture tex = font.get(c);
-                        if (tex == null) continue;
-                        x -= tex.getWidth() / 2f;
-                    }
-
-                    for (char c : chars) {
-                        Texture tex = font.get(c);
-                        if (tex == null) continue;
-                        drawImage(((OGLTextureIDGetter) tex.getImageReference()).getTextureID(), instruction.getTransform(), instruction.getCamera(), tex.getWidth(), tex.getHeight(), color, (x + tex.getWidth() / 2f) / (float) tex.getWidth(), (height / 4f * lines.length - height * i) / (float) tex.getHeight());
-                        x += tex.getWidth();
-                    }
-                }
-                break;
-            case "dw_ln":
-                color = colorValue((Integer) instruction.getDrawObjects()[0]);
-                Vector2fc point1 = (Vector2fc) instruction.getDrawObjects()[1], point2 = (Vector2fc) instruction.getDrawObjects()[2];
-                Transform t = new Transform(instruction.getTransform());
-                float cat1 = point1.x() - point2.x(), cat2 = point1.y() - point2.y();
-                t.translate(cat1 / -2f, cat2 / -2f);
-                t.rotateZ((float) Math.atan2(cat2, cat1));
-                drawRectangle(t, instruction.getCamera(), new Vector2f((float) Math.sqrt(Math.pow(cat1, 2) + Math.pow(cat2, 2)), (float) instruction.getDrawObjects()[3]), color);
-                break;
-            case "dw_ellipse":
-                rectangleShader.bind();
-
-                color = colorValue((Integer) instruction.getDrawObjects()[0]);
-
-                size = (Vector2fc) instruction.getDrawObjects()[1];
-
-                rectangleShader.setUniform("transformationMatrix", instruction.getTransform().getTransformMatrix(new Vector3f(size.x(), size.y(), 1)));
-                rectangleShader.setUniform("viewMatrix", instruction.getCamera().getViewMatrix());
-
-                rectangleShader.setUniform("color", color);
-
-                glBindVertexArray((int) circleArrayContext.getContextObject());
-
-                glEnableVertexAttribArray(0);
-
-                glDrawArrays(GL_TRIANGLES, 0, circleArrayContext.getVertexCount());
-
-                glDisableVertexAttribArray(0);
-
-                rectangleShader.unbind();
-                break;
-            default:
-                throw new IllegalDrawInstructionTypeException(instruction.getType());
-        }
     }
 
     private static Vector2fc[] buildCircle(int vCount) {
@@ -233,19 +248,25 @@ public final class StaticDrawImplementation {
         return temp.toArray(new Vector2f[0]);
     }
 
-    private static void drawRectangle(Transform transform, ICamera camera, Vector2fc size, Vector4fc color) {
+    private static void drawPolygon(Transform transform, ICamera camera, Vector2fc size, Vector4fc color, ArrayContext arrayContext, float offsetX, float offsetY, boolean drawElements) {
         rectangleShader.bind();
 
         rectangleShader.setUniform("transformationMatrix", transform.getTransformMatrix(new Vector3f(size.x(), size.y(), 1)));
         rectangleShader.setUniform("viewMatrix", camera.getViewMatrix());
+        imageShader.setUniform("offsetX", offsetX);
+        imageShader.setUniform("offsetY", offsetY);
 
         rectangleShader.setUniform("color", color);
 
-        glBindVertexArray((int) rectangleArrayContext.getContextObject());
+        glLineWidth(4);
+
+        glBindVertexArray((int) arrayContext.getContextObject());
 
         glEnableVertexAttribArray(0);
 
-        glDrawElements(GL_TRIANGLES, rectangleArrayContext.getVertexCount(), GL_UNSIGNED_INT, 0);
+        if (drawElements)
+            glDrawElements(GL_TRIANGLES, arrayContext.getVertexCount(), GL_UNSIGNED_INT, 0);
+        else glDrawArrays(GL_TRIANGLES, 0, arrayContext.getVertexCount());
 
         glDisableVertexAttribArray(0);
 

@@ -15,9 +15,9 @@
 
 package com.xebisco.yieldengine.core;
 
-import com.xebisco.yieldengine.annotations.Editable;
-import com.xebisco.yieldengine.annotations.TransformMatrix;
-import com.xebisco.yieldengine.annotations.Visible;
+import com.xebisco.yieldengine.utils.Editable;
+import com.xebisco.yieldengine.utils.TransformMatrix;
+import com.xebisco.yieldengine.utils.Visible;
 import org.joml.*;
 
 import java.io.Serializable;

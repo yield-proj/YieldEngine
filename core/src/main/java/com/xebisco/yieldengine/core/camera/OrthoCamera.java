@@ -16,11 +16,17 @@
 package com.xebisco.yieldengine.core.camera;
 
 import com.xebisco.yieldengine.core.Transform;
+import com.xebisco.yieldengine.utils.Editable;
+import com.xebisco.yieldengine.utils.Visible;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 public class OrthoCamera implements ICamera {
+    @Visible
+    @Editable
     private final Vector2f viewport;
+    @Visible
+    @Editable
     private final Transform transform = new Transform();
 
     public OrthoCamera(Vector2f viewport) {

@@ -13,14 +13,9 @@
  * limitations under the License.
  */
 
-package com.xebisco.yieldengine.core.render;
+package com.xebisco.yieldengine.core.graphics.yldg1;
 
-import com.xebisco.yieldengine.concurrency.LockProcess;
-import com.xebisco.yieldengine.core.IDispose;
-
-import java.util.ArrayList;
-
-public final class Render implements IDispose {
+/*public final class Render implements IDispose {
 
     private static Render instance;
 
@@ -60,4 +55,4 @@ public final class Render implements IDispose {
     public ArrayList<DrawInstruction> getInstructionsList() {
         return instructionsList;
     }
-}
+}*/

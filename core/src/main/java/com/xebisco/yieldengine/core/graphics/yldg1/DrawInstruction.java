@@ -13,13 +13,9 @@
  * limitations under the License.
  */
 
-package com.xebisco.yieldengine.core.render;
+package com.xebisco.yieldengine.core.graphics.yldg1;
 
-import com.xebisco.yieldengine.core.Transform;
-import com.xebisco.yieldengine.core.camera.ICamera;
-
-import java.io.Serializable;
-
+/*
 public final class DrawInstruction implements Serializable {
     private static final long serialVersionUID = -7313521463068476657L;
     private String type;
@@ -81,3 +77,4 @@ public final class DrawInstruction implements Serializable {
         return this;
     }
 }
+*/

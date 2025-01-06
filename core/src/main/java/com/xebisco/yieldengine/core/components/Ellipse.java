@@ -1,11 +1,8 @@
 package com.xebisco.yieldengine.core.components;
 
-import com.xebisco.yieldengine.core.Global;
-import com.xebisco.yieldengine.core.render.DrawInstruction;
-import com.xebisco.yieldengine.core.render.Render;
+import com.xebisco.yieldengine.core.graphics.Graphics;
+import com.xebisco.yieldengine.utils.Color4f;
 import org.joml.Vector2f;
-
-import java.io.Serializable;
 
 public class Ellipse extends Rectangle {
     public Ellipse() {
@@ -15,24 +12,12 @@ public class Ellipse extends Rectangle {
         super(size);
     }
 
-    public Ellipse(int color, Vector2f size) {
+    public Ellipse(Color4f color, Vector2f size) {
         super(color, size);
     }
 
     @Override
-    public void onLateUpdate() {
-        Render render = Render.getInstance();
-        render.getInstructionsList().add(
-                new DrawInstruction()
-                        .setType(DrawInstruction.DrawInstructionType.DRAW_ELLIPSE.getTypeString())
-                        .setDrawObjects(
-                                new Serializable[]{
-                                        getColor(),
-                                        getSize()
-                                }
-                        )
-                        .setCamera(Global.getCurrentScene().getCamera())
-                        .setTransform(getEntity().getNewWorldTransform())
-        );
+    public void onPaint(Graphics g) {
+        g.getG1().drawEllipse(getSize().x(), getSize().y(), paint.setTransform(getWorldTransform()).setColor(getColor()));
     }
 }
