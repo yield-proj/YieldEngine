@@ -15,7 +15,7 @@
 
 package com.xebisco.yieldengine.core;
 
-import com.xebisco.yieldengine.concurrency.LockProcess;
+import com.xebisco.yieldengine.utils.concurrency.LockProcess;
 import com.xebisco.yieldengine.core.camera.ICamera;
 import com.xebisco.yieldengine.core.camera.OrthoCamera;
 import com.xebisco.yieldengine.core.graphics.Graphics;
@@ -25,6 +25,7 @@ import com.xebisco.yieldengine.core.input.Input;
 import com.xebisco.yieldengine.core.io.IO;
 import com.xebisco.yieldengine.utils.Color4f;
 import com.xebisco.yieldengine.utils.Editable;
+import com.xebisco.yieldengine.utils.Logger;
 import com.xebisco.yieldengine.utils.Visible;
 
 import java.io.Serializable;
@@ -39,19 +40,19 @@ public final class Scene implements IDispose, Serializable {
     public final class SceneController extends OnSceneBehavior implements Serializable {
         @Override
         public void onCreate() {
-            Logger.getInstance().engineDebug("Creating " + this + ".");
+            Logger.debug("Creating " + this + ".");
             if (entityFactories != null)
                 entityFactories.forEach(fac -> entities.add(fac.createEntity()));
-            Logger.getInstance().engineDebug("Creating " + this + " entities.");
+            Logger.debug("Creating " + this + " entities.");
             entities.forEach(Entity::onCreate);
-            Logger.getInstance().engineDebug(this + " created.");
+            Logger.debug(this + " created.");
         }
 
         @Override
         public void onStart() {
-            Logger.getInstance().engineDebug("Starting " + this + ".");
+            Logger.debug("Starting " + this + ".");
             entities.forEach(Entity::onStart);
-            Logger.getInstance().engineDebug(this + " started.");
+            Logger.debug(this + " started.");
         }
 
         private final LockProcess renderLockProcess = new LockProcess(false);
@@ -103,11 +104,11 @@ public final class Scene implements IDispose, Serializable {
         @Override
         public void dispose() {
             super.dispose();
-            Logger.getInstance().engineDebug("Disposing " + this + ".");
+            Logger.debug("Disposing " + this + ".");
             entities.forEach(Entity::dispose);
             IO.getInstance().unloadAllTextures();
             IO.getInstance().unloadAllFonts();
-            Logger.getInstance().engineDebug(this + " disposed.");
+            Logger.debug(this + " disposed.");
         }
     }
 

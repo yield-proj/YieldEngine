@@ -3,12 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.xebisco.yieldengine</groupId>
+        <artifactId>core</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../core/pom.xml</relativePath>
+    </parent>
 
-    <groupId>com.xebisco.yieldengine</groupId>
     <artifactId>glimpl</artifactId>
-    <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,7 +23,6 @@
         <joml.version>1.10.7</joml.version>
         <lwjgl3-awt.version>0.1.8</lwjgl3-awt.version>
     </properties>
-
     <profiles>
         <profile>
             <id>lwjgl-natives-linux-amd64</id>
@@ -131,7 +137,6 @@
             </properties>
         </profile>
     </profiles>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -143,8 +148,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-
     <dependencies>
         <dependency>
             <groupId>org.lwjgl</groupId>
@@ -203,11 +206,6 @@
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-stb</artifactId>
             <classifier>${lwjgl.natives}</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.joml</groupId>
-            <artifactId>joml</artifactId>
-            <version>${joml.version}</version>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>

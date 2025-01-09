@@ -15,7 +15,7 @@
 
 package com.xebisco.yieldengine.glimpl.window;
 
-import com.xebisco.yieldengine.concurrency.RunThread;
+import com.xebisco.yieldengine.utils.concurrency.RunThread;
 import com.xebisco.yieldengine.core.graphics.Graphics;
 import com.xebisco.yieldengine.core.graphics.IPainter;
 import com.xebisco.yieldengine.core.graphics.IPainterReceiver;

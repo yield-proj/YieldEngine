@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/YieldEngine.iml" filepath="$PROJECT_DIR$/YieldEngine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/testing/testing.iml" filepath="$PROJECT_DIR$/testing/testing.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tilemapeditor/tilemapeditor.iml" filepath="$PROJECT_DIR$/tilemapeditor/tilemapeditor.iml" />
     </modules>
   </component>
 </project>

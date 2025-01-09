@@ -15,7 +15,7 @@
 
 package com.xebisco.yieldengine.core;
 
-import java.text.DecimalFormat;
+import com.xebisco.yieldengine.utils.Logger;
 
 public final class Time {
     private static float timeScale = 1, deltaTime;
@@ -29,27 +29,6 @@ public final class Time {
     public static long getExecutionTime() {
         if(timeSinceStart == 0) return 0;
         return System.nanoTime() - timeSinceStart;
-    }
-
-    public static String getExecutionTimeString() {
-        double seconds = getExecutionTime() / 1_000_000_000f;
-        int minutes = 0;
-        while (seconds >= 60) {
-            seconds -= 60;
-            minutes++;
-        }
-        int hours = 0;
-        while (minutes >= 60) {
-            minutes -= 60;
-            hours++;
-        }
-
-        DecimalFormat df = new DecimalFormat();
-        df.setMaximumFractionDigits(2);
-        df.setMinimumFractionDigits(2);
-        df.setMinimumIntegerDigits(2);
-
-        return String.format("%02d:%02d:%s", hours, minutes, df.format(seconds));
     }
 
     public static double getTimeScale() {
@@ -73,7 +52,7 @@ public final class Time {
     }
 
     public static void setTargetSleepTime(long targetSleepTime) {
-        Logger.getInstance().engineDebug("Setting target sleep time to '" + targetSleepTime + "' (" + 1f / targetSleepTime + " FPS)");
+        Logger.debug("Setting target sleep time to '" + targetSleepTime + "' (" + 1f / targetSleepTime + " FPS)");
         Time.targetSleepTime = targetSleepTime;
     }
 

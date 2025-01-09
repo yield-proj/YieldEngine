@@ -15,10 +15,6 @@
 
 import com.xebisco.yieldengine.core.*;
 import com.xebisco.yieldengine.core.components.Rectangle;
-import com.xebisco.yieldengine.core.graphics.Graphics;
-import com.xebisco.yieldengine.core.graphics.IPainter;
-import com.xebisco.yieldengine.core.graphics.yldg1.Paint;
-import com.xebisco.yieldengine.core.io.IO;
 import org.joml.Vector2f;
 
 import java.lang.reflect.InvocationTargetException;
@@ -27,7 +23,6 @@ import java.util.ArrayList;
 public class Test2 {
 
     public static void main(String[] args) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException, InterruptedException {
-        Logger.setInstance(new Logger(true, true));
         LoopContext l = Global.getOpenGLOpenALLoopContext(1280, 720);
         Scene s = new Scene(new ArrayList<>());
 

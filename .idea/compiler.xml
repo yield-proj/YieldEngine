@@ -6,17 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="core" />
         <module name="alimpl" />
         <module name="glimpl" />
-        <module name="concurrency" />
+        <module name="utils" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="annotations" target="1.8" />
-      <module name="logger" target="1.8" />
-      <module name="tilemap" target="1.8" />
-      <module name="tilemapeditor" target="1.8" />
+      <module name="concurrency" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="editorfactories:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/editorfactories_jar</output-path>
-    <root id="archive" name="editorfactories.jar">
-      <element id="module-output" name="editorfactories" />
-    </root>
-  </artifact>
-</component>

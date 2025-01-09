@@ -1,7 +1,6 @@
 package com.xebisco.yieldengine.core.io;
 
 import com.xebisco.yieldengine.core.IDispose;
-import com.xebisco.yieldengine.core.Logger;
 import com.xebisco.yieldengine.core.io.audio.Audio;
 import com.xebisco.yieldengine.core.io.audio.AudioSource;
 import com.xebisco.yieldengine.core.io.audio.IAudioLoader;
@@ -12,6 +11,7 @@ import com.xebisco.yieldengine.core.io.texture.ITextureLoader;
 import com.xebisco.yieldengine.core.io.texture.Texture;
 import com.xebisco.yieldengine.core.io.texture.TextureFilter;
 import com.xebisco.yieldengine.core.io.texture.TextureMap;
+import com.xebisco.yieldengine.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +50,7 @@ public final class IO implements IDispose {
     }
 
     public Texture loadTexture(String path, TextureFilter filter, boolean addToTextureList) {
-        Logger.getInstance().engineDebug("Loading texture: " + path);
+        Logger.debug("Loading texture: " + path);
         Texture texture = textureLoader.loadTexture(absolutePathGetter.getAbsolutePath(path), filter);
         if (addToTextureList)
             textures.add(texture);
@@ -66,19 +66,19 @@ public final class IO implements IDispose {
     }
 
     public void unloadTexture(Texture texture) {
-        Logger.getInstance().engineDebug("Unloading texture: " + texture);
+        Logger.debug("Unloading texture: " + texture);
         textureLoader.unloadTexture(texture.getImageReference());
         textures.remove(texture);
     }
 
     public void unloadAllTextures() {
-        Logger.getInstance().engineDebug("Unloading all textures.");
+        Logger.debug("Unloading all textures.");
         while (!textures.isEmpty())
             unloadTexture(textures.get(0));
     }
 
     public TextureMap loadTextureMap(String path, boolean addToTextureMapList) {
-        Logger.getInstance().engineDebug("Loading texture map: " + path);
+        Logger.debug("Loading texture map: " + path);
         TextureMap map = textureLoader.loadTextureMap(absolutePathGetter.getAbsolutePath(path));
         if (addToTextureMapList)
             textureMaps.add(map);
@@ -90,19 +90,19 @@ public final class IO implements IDispose {
     }
 
     public void unloadTextureMap(TextureMap textureMap) {
-        Logger.getInstance().engineDebug("Unloading texture map: " + textureMap);
+        Logger.debug("Unloading texture map: " + textureMap);
         textureLoader.unloadTextureMap(textureMap.getImageReference());
         textureMaps.remove(textureMap);
     }
 
     public void unloadAllTextureMaps() {
-        Logger.getInstance().engineDebug("Unloading all texture maps.");
+        Logger.debug("Unloading all texture maps.");
         while (!textureMaps.isEmpty())
             unloadTextureMap(textureMaps.get(0));
     }
 
     public Font loadFont(String path, float size, boolean antiAliasing, boolean addToFontList) {
-        Logger.getInstance().engineDebug("Loading font: " + path);
+        Logger.debug("Loading font: " + path);
         Font font = fontLoader.loadFont(absolutePathGetter.getAbsolutePath(path), size, antiAliasing);
         if (addToFontList)
             fonts.add(font);
@@ -118,31 +118,31 @@ public final class IO implements IDispose {
     }
 
     public void unloadFont(Font font) {
-        Logger.getInstance().engineDebug("Unloading font: " + font);
+        Logger.debug("Unloading font: " + font);
         fonts.remove(font);
     }
 
     public void unloadAllFonts() {
-        Logger.getInstance().engineDebug("Unloading all fonts.");
+        Logger.debug("Unloading all fonts.");
         while (!fonts.isEmpty())
             unloadFont(fonts.get(0));
     }
 
     public Audio loadAudio(String path) {
-        Logger.getInstance().engineDebug("Loading audio: " + path);
+        Logger.debug("Loading audio: " + path);
         Audio audio = audioLoader.loadAudio(absolutePathGetter.getAbsolutePath(path));
         audios.add(audio);
         return audio;
     }
 
     public void unloadAudio(Audio audio) {
-        Logger.getInstance().engineDebug("Unloading audio: " + audio);
+        Logger.debug("Unloading audio: " + audio);
         audioLoader.unloadAudio(audio.getAudioReference());
         audios.remove(audio);
     }
 
     public void unloadAllAudios() {
-        Logger.getInstance().engineDebug("Unloading all audios.");
+        Logger.debug("Unloading all audios.");
         while (!audios.isEmpty())
             unloadAudio(audios.get(0));
     }
