@@ -26,6 +26,7 @@ import com.xebisco.yieldengine.core.io.audio.IAudioLoader;
 import com.xebisco.yieldengine.core.io.audio.IAudioPlayer;
 import com.xebisco.yieldengine.core.io.text.IFontLoader;
 import com.xebisco.yieldengine.core.io.texture.ITextureLoader;
+import com.xebisco.yieldengine.utils.Logger;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector4f;
@@ -36,10 +37,20 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Matcher;
 
 public class Global {
     private static Scene currentScene;
     public static final Random RANDOM = new Random();
+    public static final Logger LOGGER = new Logger();
+
+    public static void log(Object msg) {
+        LOGGER.log(msg);
+    }
+
+    public static void debug(Object msg) {
+        LOGGER.debug(msg);
+    }
 
     /*public static LoopContext getOpenGLOpenALLoopContext(int width, int height) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException {
         System.setProperty("sun.java2d.opengl", "True");

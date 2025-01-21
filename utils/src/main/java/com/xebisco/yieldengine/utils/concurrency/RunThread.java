@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
 
 public class RunThread {
     private final Thread thread;
@@ -60,10 +61,13 @@ public class RunThread {
         runLock.unlock();
     }
 
-    public <R> R run(IRunnableWithReturnValue<R> runnable) {
+    public <R> R run(IRunnableWithReturnValue<R> runnable, boolean runOnSameThread) {
         LockProcess lock = new LockProcess();
         runQueue.add(new RunnableLock(runnable, lock));
-        runLock.unlock();
+        if (runOnSameThread)
+            runLock.unlock();
+        else
+            CompletableFuture.runAsync(runLock::unlock);
         try {
             lock.aWait();
         } catch (InterruptedException e) {
@@ -73,6 +77,10 @@ public class RunThread {
         R ret = (R) returnObjects.get(runnable);
         returnObjects.remove(runnable);
         return ret;
+    }
+
+    public <R> R run(IRunnableWithReturnValue<R> runnable) {
+        return run(runnable, false);
     }
 
     public void runIgnore(Runnable runnable) {

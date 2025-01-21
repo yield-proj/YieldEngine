@@ -15,8 +15,6 @@
 
 package com.xebisco.yieldengine.core;
 
-import com.xebisco.yieldengine.utils.Logger;
-
 public final class Time {
     private static float timeScale = 1, deltaTime;
     private static long targetSleepTime = 16_666_666, timeSinceStart;
@@ -52,7 +50,7 @@ public final class Time {
     }
 
     public static void setTargetSleepTime(long targetSleepTime) {
-        Logger.debug("Setting target sleep time to '" + targetSleepTime + "' (" + 1f / targetSleepTime + " FPS)");
+        Global.debug("Setting target sleep time to '" + targetSleepTime + "' (" + 1f / targetSleepTime + " FPS)");
         Time.targetSleepTime = targetSleepTime;
     }
 

@@ -17,9 +17,6 @@ public class Rectangle extends Component implements IPainter {
     @Visible
     @Editable
     private Vector2f size = new Vector2f(100, 100);
-    @Visible
-    @Editable
-    private boolean filled = true;
 
     protected final Paint paint = new Paint();
 
@@ -55,15 +52,6 @@ public class Rectangle extends Component implements IPainter {
 
     public Rectangle setSize(Vector2f size) {
         this.size = size;
-        return this;
-    }
-
-    public boolean isFilled() {
-        return filled;
-    }
-
-    public Rectangle setFilled(boolean filled) {
-        this.filled = filled;
         return this;
     }
 

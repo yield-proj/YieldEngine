@@ -16,12 +16,14 @@
 package com.xebisco.yieldengine.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.TreeSet;
 
 public final class Entity extends OnSceneBehavior implements Comparable<Entity> {
     private final String name;
     private Entity parent;
-    private final TreeSet<Entity> children = new TreeSet<>();
+    private final List<Entity> children = new ArrayList<>();
     private final ArrayList<Component> components = new ArrayList<>();
     private final Transform transform;
     private int preferredIndex;
@@ -33,10 +35,22 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
         this.transform = transform;
     }
 
+    private void sortChildren() {
+        Collections.sort(children);
+    }
+
     public void addToParent(Entity parent) {
         Global.getCurrentScene().getEntities().remove(this);
         setParent(parent);
         parent.children.add(this);
+    }
+
+    public Entity[] getAllChildren() {
+        List<Entity> entities = new ArrayList<>(getChildren());
+        for(Entity e : getChildren()) {
+            Collections.addAll(entities, e.getAllChildren());
+        }
+        return entities.toArray(new Entity[0]);
     }
 
     public void removeFromParent() {
@@ -51,6 +65,7 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
 
     @Override
     public void onCreate() {
+        sortChildren();
         components.forEach(c -> {
             c.setEntity(this);
             c.setWorldTransform(worldTransform);
@@ -61,6 +76,7 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
 
     @Override
     public void onStart() {
+        sortChildren();
         updateWorldTransform();
         components.forEach(Component::onStart);
         children.forEach(Entity::onStart);
@@ -68,6 +84,7 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
 
     @Override
     public void onUpdate() {
+        sortChildren();
         components.forEach(Component::onUpdate);
         children.forEach(Entity::onUpdate);
         setFrames(getFrames() + 1);
@@ -109,6 +126,10 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
         return getComponent(componentClass, 0);
     }
 
+    public boolean containsComponent(Class<? extends Component> componentClass) {
+        return getComponent(componentClass) != null;
+    }
+
     public void updateWorldTransform() {
         worldTransform.getTransformMatrix().set(getNewWorldTransform().getTransformMatrix());
     }
@@ -133,7 +154,7 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
         return this;
     }
 
-    public TreeSet<Entity> getChildren() {
+    public List<Entity> getChildren() {
         return children;
     }
 

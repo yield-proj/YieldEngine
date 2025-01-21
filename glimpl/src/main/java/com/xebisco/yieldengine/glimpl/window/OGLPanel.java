@@ -49,6 +49,7 @@ public class OGLPanel implements IPainterReceiver {
     private final Graphics graphics = new Graphics(new YLDG1GLImpl());
     private Queue<IPainter> painters = new LinkedList<>();
     private RunThread glThread = new RunThread();
+    private boolean ignoreCloseHooks;
 
     public static OGLPanel newWindow(int width, int height) {
         JFrame frame = new JFrame("Yield Engine");
@@ -79,14 +80,28 @@ public class OGLPanel implements IPainterReceiver {
         canvas = new OGLCanvasImpl(glData);
     }
 
+    public void runCloseHooks() {
+        closeHooks.forEach(Runnable::run);
+        CompletableFuture.runAsync(() -> {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+            glThread.interrupt();
+        });
+    }
+
     public void start() {
         contentPane.add(canvas, BorderLayout.CENTER);
         contentPane.setFocusable(true);
 
         canvas.setFocusable(false);
 
-        glThread.start();
-        paint(null);
+        CompletableFuture.runAsync(() -> {
+            glThread.start();
+            paint(null);
+        });
 
         SwingUtilities.invokeLater(() -> {
             SwingUtilities.updateComponentTreeUI(SwingUtilities.getWindowAncestor(contentPane));
@@ -94,15 +109,7 @@ public class OGLPanel implements IPainterReceiver {
             SwingUtilities.getWindowAncestor(contentPane).addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    closeHooks.forEach(Runnable::run);
-                    CompletableFuture.runAsync(() -> {
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                        glThread.interrupt();
-                    });
+                    if(!ignoreCloseHooks) runCloseHooks();
                 }
             });
         });
@@ -170,6 +177,15 @@ public class OGLPanel implements IPainterReceiver {
 
     public OGLPanel setRequestedResize(boolean requestedResize) {
         this.requestedResize = requestedResize;
+        return this;
+    }
+
+    public boolean isIgnoreCloseHooks() {
+        return ignoreCloseHooks;
+    }
+
+    public OGLPanel setIgnoreCloseHooks(boolean ignoreCloseHooks) {
+        this.ignoreCloseHooks = ignoreCloseHooks;
         return this;
     }
 

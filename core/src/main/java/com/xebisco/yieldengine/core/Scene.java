@@ -40,19 +40,21 @@ public final class Scene implements IDispose, Serializable {
     public final class SceneController extends OnSceneBehavior implements Serializable {
         @Override
         public void onCreate() {
-            Logger.debug("Creating " + this + ".");
+            Global.debug("Creating " + this + ".");
             if (entityFactories != null)
                 entityFactories.forEach(fac -> entities.add(fac.createEntity()));
-            Logger.debug("Creating " + this + " entities.");
+            Global.debug("Creating " + this + " entities.");
+            sortEntities();
             entities.forEach(Entity::onCreate);
-            Logger.debug(this + " created.");
+            Global.debug(this + " created.");
         }
 
         @Override
         public void onStart() {
-            Logger.debug("Starting " + this + ".");
+            Global.debug("Starting " + this + ".");
+            sortEntities();
             entities.forEach(Entity::onStart);
-            Logger.debug(this + " started.");
+            Global.debug(this + " started.");
         }
 
         private final LockProcess renderLockProcess = new LockProcess(false);
@@ -69,6 +71,7 @@ public final class Scene implements IDispose, Serializable {
 
             painters.add(g -> g.getG1().clearScreen(new Paint().setColor(backgroundColor)));
 
+            sortEntities();
             entities.forEach(e -> {
                 e.onUpdate();
                 addAllPainters(e, painters);
@@ -104,11 +107,11 @@ public final class Scene implements IDispose, Serializable {
         @Override
         public void dispose() {
             super.dispose();
-            Logger.debug("Disposing " + this + ".");
+            Global.debug("Disposing " + this + ".");
             entities.forEach(Entity::dispose);
             IO.getInstance().unloadAllTextures();
             IO.getInstance().unloadAllFonts();
-            Logger.debug(this + " disposed.");
+            Global.debug(this + " disposed.");
         }
     }
 
@@ -136,6 +139,10 @@ public final class Scene implements IDispose, Serializable {
         sceneController.onCreate();
     }
 
+    private void sortEntities() {
+        Collections.sort(entities);
+    }
+
     public SceneController getSceneController() {
         return sceneController;
     }
@@ -151,6 +158,14 @@ public final class Scene implements IDispose, Serializable {
 
     public List<Entity> getEntities() {
         return entities;
+    }
+
+    public Entity[] getAllEntities() {
+        List<Entity> list = new ArrayList<>(entities);
+        for (Entity e : entities) {
+            Collections.addAll(list, e.getAllChildren());
+        }
+        return list.toArray(new Entity[0]);
     }
 
     public Color4f getBackgroundColor() {

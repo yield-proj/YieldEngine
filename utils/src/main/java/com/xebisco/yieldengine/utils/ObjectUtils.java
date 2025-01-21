@@ -5,9 +5,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ObjectUtils {
     public final static HashMap<Class<?>, Creator> OBJECT_CREATORS = new HashMap<>();
@@ -18,6 +16,23 @@ public class ObjectUtils {
 
     public interface Creator {
         Object create();
+    }
+
+    public static <T> Field[] getDeclaredFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        while (clazz != Object.class) {
+            fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+            clazz = clazz.getSuperclass();
+        }
+        return fields.toArray(new Field[0]);
+    }
+
+    public static <T> HashMap<String, Field> getDeclaredFieldsMap(Class<?> clazz) {
+        HashMap<String, Field> map = new HashMap<>();
+        for(Field field : getDeclaredFields(clazz)) {
+            map.put(field.getName(), field);
+        }
+        return map;
     }
 
     public static <T> T newInstance(Class<T> clazz) {
@@ -37,9 +52,10 @@ public class ObjectUtils {
 
     public static void apply(Map<String, Serializable> properties, Object object) {
         Class<?> objectClass = object.getClass();
+        HashMap<String, Field> fields = getDeclaredFieldsMap(objectClass);
         for (Map.Entry<String, Serializable> entry : properties.entrySet()) {
             try {
-                Field field = objectClass.getDeclaredField(entry.getKey());
+                Field field = fields.get(entry.getKey());
                 if (entry.getValue() != null && !entry.getValue().getClass().isAssignableFrom(field.getType())) {
                     throw new RuntimeException(String.format("%s is not assignable from %s.", entry.getKey(), entry.getValue().getClass().getName()));
                 }
@@ -54,11 +70,11 @@ public class ObjectUtils {
     public static ArrayList<Pair<String, Pair<Serializable, Field>>> get(Object object) {
         ArrayList<Pair<String, Pair<Serializable, Field>>> values = new ArrayList<>();
         Class<?> objectClass = object.getClass();
-        for (Field field : objectClass.getDeclaredFields()) {
+        for (Field field : getDeclaredFields(objectClass)) {
             field.setAccessible(true);
             if (field.isAnnotationPresent(Visible.class)) {
                 try {
-                    if (!Serializable.class.isAssignableFrom(field.getType())) {
+                    if (!Serializable.class.isAssignableFrom(field.getType()) && !field.getType().isPrimitive()) {
                         throw new RuntimeException(String.format("%s is not assignable from java.io.Serializable", field.getName()));
                     }
                     if (Modifier.isFinal(field.getModifiers()))

@@ -1,5 +1,6 @@
 package com.xebisco.yieldengine.core.io;
 
+import com.xebisco.yieldengine.core.Global;
 import com.xebisco.yieldengine.core.IDispose;
 import com.xebisco.yieldengine.core.io.audio.Audio;
 import com.xebisco.yieldengine.core.io.audio.AudioSource;
@@ -50,7 +51,7 @@ public final class IO implements IDispose {
     }
 
     public Texture loadTexture(String path, TextureFilter filter, boolean addToTextureList) {
-        Logger.debug("Loading texture: " + path);
+        Global.debug("Loading texture: " + path);
         Texture texture = textureLoader.loadTexture(absolutePathGetter.getAbsolutePath(path), filter);
         if (addToTextureList)
             textures.add(texture);
@@ -66,19 +67,19 @@ public final class IO implements IDispose {
     }
 
     public void unloadTexture(Texture texture) {
-        Logger.debug("Unloading texture: " + texture);
+        Global.debug("Unloading texture: " + texture);
         textureLoader.unloadTexture(texture.getImageReference());
         textures.remove(texture);
     }
 
     public void unloadAllTextures() {
-        Logger.debug("Unloading all textures.");
+        Global.debug("Unloading all textures.");
         while (!textures.isEmpty())
             unloadTexture(textures.get(0));
     }
 
     public TextureMap loadTextureMap(String path, boolean addToTextureMapList) {
-        Logger.debug("Loading texture map: " + path);
+        Global.debug("Loading texture map: " + path);
         TextureMap map = textureLoader.loadTextureMap(absolutePathGetter.getAbsolutePath(path));
         if (addToTextureMapList)
             textureMaps.add(map);
@@ -90,19 +91,19 @@ public final class IO implements IDispose {
     }
 
     public void unloadTextureMap(TextureMap textureMap) {
-        Logger.debug("Unloading texture map: " + textureMap);
+        Global.debug("Unloading texture map: " + textureMap);
         textureLoader.unloadTextureMap(textureMap.getImageReference());
         textureMaps.remove(textureMap);
     }
 
     public void unloadAllTextureMaps() {
-        Logger.debug("Unloading all texture maps.");
+        Global.debug("Unloading all texture maps.");
         while (!textureMaps.isEmpty())
             unloadTextureMap(textureMaps.get(0));
     }
 
     public Font loadFont(String path, float size, boolean antiAliasing, boolean addToFontList) {
-        Logger.debug("Loading font: " + path);
+        Global.debug("Loading font: " + path);
         Font font = fontLoader.loadFont(absolutePathGetter.getAbsolutePath(path), size, antiAliasing);
         if (addToFontList)
             fonts.add(font);
@@ -118,31 +119,31 @@ public final class IO implements IDispose {
     }
 
     public void unloadFont(Font font) {
-        Logger.debug("Unloading font: " + font);
+        Global.debug("Unloading font: " + font);
         fonts.remove(font);
     }
 
     public void unloadAllFonts() {
-        Logger.debug("Unloading all fonts.");
+        Global.debug("Unloading all fonts.");
         while (!fonts.isEmpty())
             unloadFont(fonts.get(0));
     }
 
     public Audio loadAudio(String path) {
-        Logger.debug("Loading audio: " + path);
+        Global.debug("Loading audio: " + path);
         Audio audio = audioLoader.loadAudio(absolutePathGetter.getAbsolutePath(path));
         audios.add(audio);
         return audio;
     }
 
     public void unloadAudio(Audio audio) {
-        Logger.debug("Unloading audio: " + audio);
+        Global.debug("Unloading audio: " + audio);
         audioLoader.unloadAudio(audio.getAudioReference());
         audios.remove(audio);
     }
 
     public void unloadAllAudios() {
-        Logger.debug("Unloading all audios.");
+        Global.debug("Unloading all audios.");
         while (!audios.isEmpty())
             unloadAudio(audios.get(0));
     }
