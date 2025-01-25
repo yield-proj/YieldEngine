@@ -28,7 +28,9 @@ public class Test2 {
 
         s.getEntityFactories().add((EntityFactory) () -> {
             Entity e = new Entity("", new Transform());
-            e.getComponents().add(new Rectangle(new Vector2f(10, 10)));
+            e.addComponents(
+                    new Rectangle(new Vector2f(10, 10))
+            );
             return e;
         });
 

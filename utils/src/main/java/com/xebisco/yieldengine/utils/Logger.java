@@ -15,7 +15,7 @@ public final class Logger {
 
     public void debug(Object msg) {
         if (!debug) return;
-        StackTraceElement element = Thread.currentThread().getStackTrace()[2];
+        StackTraceElement element = Thread.currentThread().getStackTrace()[3];
         Matcher matcher = CLASS_NAME_PATTERN.matcher(element.getClassName());
         String className = "";
         if (matcher.find())

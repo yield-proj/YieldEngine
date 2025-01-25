@@ -15,18 +15,12 @@
 
 package com.xebisco.yieldengine.core;
 
-import com.xebisco.yieldengine.utils.Editable;
-import com.xebisco.yieldengine.utils.TransformMatrix;
-import com.xebisco.yieldengine.utils.Visible;
 import org.joml.*;
 
 import java.io.Serializable;
 
 public class Transform implements Serializable {
     private static final long serialVersionUID = 2642369926201568158L;
-    @Visible
-    @Editable
-    @TransformMatrix
     private final Matrix4f transformMatrix = new Matrix4f();
 
     public Transform(Transform transform) {
@@ -140,8 +134,16 @@ public class Transform implements Serializable {
         return transformMatrix.getTranslation(new Vector3f());
     }
 
-    public Quaternionf getNormalizedRotation() {
+    public Quaternionfc getNormalizedRotation() {
         return transformMatrix.getNormalizedRotation(new Quaternionf());
+    }
+
+    public AxisAngle4f getRotation() {
+        return transformMatrix.getRotation(new AxisAngle4f());
+    }
+
+    public Vector3fc getEulerAngles() {
+        return getNormalizedRotation().getEulerAnglesXYZ(new Vector3f());
     }
 
     public Vector3fc getScale() {

@@ -29,7 +29,7 @@
             <activation>
                 <os>
                     <family>unix</family>
-                    <name>linux</name>
+                    <path>linux</path>
                     <arch>amd64</arch>
                 </os>
             </activation>
@@ -42,7 +42,7 @@
             <activation>
                 <os>
                     <family>unix</family>
-                    <name>linux</name>
+                    <path>linux</path>
                     <arch>aarch64</arch>
                 </os>
             </activation>
@@ -55,7 +55,7 @@
             <activation>
                 <os>
                     <family>unix</family>
-                    <name>linux</name>
+                    <path>linux</path>
                     <arch>arm</arch>
                 </os>
             </activation>
@@ -68,7 +68,7 @@
             <activation>
                 <os>
                     <family>unix</family>
-                    <name>linux</name>
+                    <path>linux</path>
                     <arch>arm32</arch>
                 </os>
             </activation>

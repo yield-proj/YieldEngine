@@ -30,6 +30,8 @@ public class RunThread {
         }
     }
 
+    private LockProcess startLock = new LockProcess();
+
     public RunThread() {
         thread = new Thread(() -> {
             while (runQueue != null) {
@@ -42,6 +44,7 @@ public class RunThread {
                     if (runnableLock.getLock() != null)
                         runnableLock.getLock().unlock();
                 }
+                if (startLock != null) startLock.unlock();
                 try {
                     runLock.aWait();
                 } catch (InterruptedException e) {
@@ -52,12 +55,18 @@ public class RunThread {
     }
 
     public void start() {
-        thread.start();
+        CompletableFuture.runAsync(thread::start);
         try {
             Thread.sleep(15);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        try {
+            startLock.aWait();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         runLock.unlock();
     }
 

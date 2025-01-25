@@ -6,11 +6,10 @@ import com.xebisco.yieldengine.core.graphics.IPainter;
 import com.xebisco.yieldengine.core.graphics.yldg1.Paint;
 import com.xebisco.yieldengine.core.io.IO;
 import com.xebisco.yieldengine.core.io.text.Font;
-import com.xebisco.yieldengine.utils.Color4f;
-import com.xebisco.yieldengine.utils.ColorUtils;
-import com.xebisco.yieldengine.utils.Editable;
-import com.xebisco.yieldengine.utils.Visible;
+import com.xebisco.yieldengine.utils.*;
 import org.joml.Vector2f;
+
+import java.io.File;
 
 public class Text extends Component implements IPainter {
     @Visible
@@ -18,7 +17,8 @@ public class Text extends Component implements IPainter {
     private String contents = "Sample Text";
     @Visible
     @Editable
-    private Font font = IO.getInstance().getDefaultFont();
+    @FileExtensions(value = {"TTF"}, name = "Font Files")
+    private Font font;
     @Visible
     @Editable
     private Color4f color = ColorUtils.argb(0xFFFFFFFF);
@@ -44,12 +44,17 @@ public class Text extends Component implements IPainter {
     }
 
     @Override
+    public void onCreate() {
+        font.loadIfNull();
+    }
+
+    @Override
     public void onPaint(Graphics g) {
-        g.getG1().drawText(contents, paint.setTransform(getWorldTransform()).setColor(color).setFont(font));
+        g.getG1().drawText(contents, paint.setTransform(getWorldTransform()).setColor(color).setFont(font == null ? IO.getInstance().getDefaultFont() : font));
     }
 
     public Vector2f getSize(Graphics g) {
-        paint.setTransform(getWorldTransform()).setColor(color).setFont(font);
+        paint.setTransform(getWorldTransform()).setColor(color).setFont(font == null ? IO.getInstance().getDefaultFont() : font);
         return new Vector2f(g.getG1().stringWidth(contents, paint), g.getG1().stringHeight(contents, paint));
     }
 

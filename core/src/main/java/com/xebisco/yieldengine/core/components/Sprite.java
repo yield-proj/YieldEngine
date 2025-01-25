@@ -6,12 +6,14 @@ import com.xebisco.yieldengine.core.io.IO;
 import com.xebisco.yieldengine.core.io.texture.Texture;
 import com.xebisco.yieldengine.utils.Color4f;
 import com.xebisco.yieldengine.utils.Editable;
+import com.xebisco.yieldengine.utils.FileExtensions;
 import com.xebisco.yieldengine.utils.Visible;
 import org.joml.Vector2f;
 
 public class Sprite extends Rectangle {
     @Visible
     @Editable
+    @FileExtensions(value = {"PNG", "JPEG", "JPG", "GIF", "TIFF", "WBMP", "BMP"}, name = "Image Files")
     private Texture texture = IO.getInstance().getDefaultTexture();
 
     protected final Paint paint = new Paint();
@@ -39,6 +41,11 @@ public class Sprite extends Rectangle {
     public Sprite(Color4f color, Vector2f size, Texture texture) {
         super(color, size);
         this.texture = texture;
+    }
+
+    @Override
+    public void onCreate() {
+        texture.loadIfNull();
     }
 
     @Override

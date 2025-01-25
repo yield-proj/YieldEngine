@@ -6,6 +6,7 @@ import com.xebisco.yieldengine.core.io.audio.Audio;
 import com.xebisco.yieldengine.core.io.audio.AudioSource;
 import com.xebisco.yieldengine.core.io.audio.IAudioPlayer;
 import com.xebisco.yieldengine.utils.Editable;
+import com.xebisco.yieldengine.utils.FileExtensions;
 import com.xebisco.yieldengine.utils.Visible;
 
 public class AudioEmitter extends Component {
@@ -18,6 +19,7 @@ public class AudioEmitter extends Component {
     private final AudioSource source;
     @Visible
     @Editable
+    @FileExtensions(value = {"WAV"}, name = "Audio Files")
     private Audio audio;
     @Visible
     @Editable
@@ -31,6 +33,11 @@ public class AudioEmitter extends Component {
         this();
         this.audio = audio;
         this.startPlaying = startPlaying;
+    }
+
+    @Override
+    public void onCreate() {
+        audio.loadIfNull();
     }
 
     @Override

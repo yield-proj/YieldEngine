@@ -1,30 +1,35 @@
 package com.xebisco.yieldengine.core.io.text;
 
 import com.xebisco.yieldengine.core.IDispose;
+import com.xebisco.yieldengine.core.io.ILoad;
 import com.xebisco.yieldengine.core.io.IO;
 
 import java.io.Serializable;
 
-public final class Font implements Serializable, IDispose {
-    private final String name;
-    private final float size;
-    private final Serializable fontReference;
+public final class Font implements Serializable, IDispose, ILoad {
+    private transient Serializable fontReference;
+    private final FontProperties properties;
 
-    public Font(String path, float size, boolean antiAliasing) {
-        Font created = IO.getInstance().loadFont(path, size, antiAliasing);
-        this.fontReference = created.fontReference;
-        this.name = created.name;
-        this.size = created.size;
+    public Font(FontProperties properties) {
+        this.properties = properties;
     }
 
-    public Font(String path, float size) {
-        this(path, size, true);
-    }
-
-    private Font(Serializable fontReference, String name, float size) {
+    private Font(Serializable fontReference, String path, float size) {
         this.fontReference = fontReference;
-        this.name = name;
-        this.size = size;
+        properties = new FontProperties(path, size, false);
+    }
+
+    @Override
+    public void load() {
+        Font created = IO.getInstance().loadFont(properties.getPath(), properties.getSize(), properties.isAntiAliasing());
+        this.fontReference = created.fontReference;
+    }
+
+    @Override
+    public void loadIfNull() {
+        if(fontReference == null) {
+            load();
+        }
     }
 
     public static Font create(Serializable fontReference, String name, float size) {
@@ -36,12 +41,8 @@ public final class Font implements Serializable, IDispose {
         IO.getInstance().unloadFont(this);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public float getSize() {
-        return size;
+    public FontProperties getProperties() {
+        return properties;
     }
 
     public Serializable getFontReference() {

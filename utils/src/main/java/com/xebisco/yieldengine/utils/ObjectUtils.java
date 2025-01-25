@@ -56,7 +56,7 @@ public class ObjectUtils {
         for (Map.Entry<String, Serializable> entry : properties.entrySet()) {
             try {
                 Field field = fields.get(entry.getKey());
-                if (entry.getValue() != null && !entry.getValue().getClass().isAssignableFrom(field.getType())) {
+                if (entry.getValue() != null && !entry.getValue().getClass().isAssignableFrom(field.getType()) && !field.getType().isPrimitive()) {
                     throw new RuntimeException(String.format("%s is not assignable from %s.", entry.getKey(), entry.getValue().getClass().getName()));
                 }
                 field.setAccessible(true);

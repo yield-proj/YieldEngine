@@ -134,6 +134,11 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
         worldTransform.getTransformMatrix().set(getNewWorldTransform().getTransformMatrix());
     }
 
+    public Entity addComponents(Component... components) {
+        Collections.addAll(getComponents(), components);
+        return this;
+    }
+
     private Transform getNewWorldTransform() {
         if(parent == null) return transform;
         Transform worldTransform = new Transform(parent.getNewWorldTransform());

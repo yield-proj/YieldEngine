@@ -98,10 +98,8 @@ public class OGLPanel implements IPainterReceiver {
 
         canvas.setFocusable(false);
 
-        CompletableFuture.runAsync(() -> {
-            glThread.start();
-            paint(null);
-        });
+        glThread.start();
+        paint(null);
 
         SwingUtilities.invokeLater(() -> {
             SwingUtilities.updateComponentTreeUI(SwingUtilities.getWindowAncestor(contentPane));
@@ -128,7 +126,7 @@ public class OGLPanel implements IPainterReceiver {
         });
     }
 
-    class OGLCanvasImpl extends AWTGLCanvas {
+    public class OGLCanvasImpl extends AWTGLCanvas {
 
         public OGLCanvasImpl(GLData data) {
             super(data);
