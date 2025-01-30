@@ -21,6 +21,7 @@ import com.xebisco.yieldengine.core.input.IKeyDevice;
 import com.xebisco.yieldengine.core.input.IMouseDevice;
 import com.xebisco.yieldengine.core.input.Input;
 import com.xebisco.yieldengine.core.io.DefaultAbsolutePathGetter;
+import com.xebisco.yieldengine.core.io.IAbsolutePathGetter;
 import com.xebisco.yieldengine.core.io.IO;
 import com.xebisco.yieldengine.core.io.audio.IAudioLoader;
 import com.xebisco.yieldengine.core.io.audio.IAudioPlayer;
@@ -29,15 +30,11 @@ import com.xebisco.yieldengine.core.io.texture.ITextureLoader;
 import com.xebisco.yieldengine.utils.Logger;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
-import org.joml.Vector4f;
-import org.joml.Vector4fc;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
-import java.util.regex.Matcher;
 
 public class Global {
     private static Scene currentScene;
@@ -106,7 +103,7 @@ public class Global {
         return panel;
     }
 
-    public static LoopContext getOpenGLOpenALLCP1(Object panel) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException, InterruptedException {
+    public static LoopContext getOpenGLOpenALLCP1(Object panel, IAbsolutePathGetter absolutePathGetter) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException, InterruptedException {
         Class<?> soundManagerClass = Class.forName("com.xebisco.yieldengine.alimpl.SoundManager");
         Class<?> panelClass = Class.forName("com.xebisco.yieldengine.glimpl.window.OGLPanel");
         LoopContext l = new LoopContext("GAME");
@@ -126,8 +123,12 @@ public class Global {
         closeHooks.add(() -> IO.getInstance().dispose());
         panel.getClass().getMethod("start").invoke(panel);
         Class<?> textureLoader = Class.forName("com.xebisco.yieldengine.glimpl.mem.OGLTextureLoader"), fontLoader = Class.forName("com.xebisco.yieldengine.glimpl.mem.OGLFontLoader"), audioLoader = Class.forName("com.xebisco.yieldengine.alimpl.OALAudioLoader"), audioPlayer = Class.forName("com.xebisco.yieldengine.alimpl.OALAudioPlayer");
-        IO.setInstance(new IO(new DefaultAbsolutePathGetter(), (ITextureLoader) textureLoader.getConstructor(panelClass).newInstance(panel), (IFontLoader) fontLoader.getConstructor(panelClass).newInstance(panel), (IAudioLoader) audioLoader.getConstructor().newInstance(), (IAudioPlayer) audioPlayer.getConstructor().newInstance()));
+        IO.setInstance(new IO(absolutePathGetter, (ITextureLoader) textureLoader.getConstructor(panelClass).newInstance(panel), (IFontLoader) fontLoader.getConstructor(panelClass).newInstance(panel), (IAudioLoader) audioLoader.getConstructor().newInstance(), (IAudioPlayer) audioPlayer.getConstructor().newInstance()));
         return l;
+    }
+
+    public static LoopContext getOpenGLOpenALLCP1(Object panel) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException, InterruptedException {
+        return getOpenGLOpenALLCP1(panel, new DefaultAbsolutePathGetter());
     }
 
     public static Vector2f rotatePointAroundCenter(double angle, Vector2fc center, Vector2fc point) {

@@ -56,7 +56,7 @@ public class Transform implements Serializable {
         return this;
     }
 
-    public Transform rotate(Quaternionf rotation) {
+    public Transform rotate(Quaternionfc rotation) {
         transformMatrix.rotateLocal(rotation);
         return this;
     }
@@ -126,7 +126,7 @@ public class Transform implements Serializable {
 
     public Matrix4f getTransformMatrix(Vector3fc sizeMul) {
         Matrix4f transformMatrix = new Matrix4f();
-        transformMatrix.translationRotateScale(getTranslation(), getNormalizedRotation(), new Vector3f(getScale()).mul(sizeMul));
+        transformMatrix.translationRotateScale(getTranslation(), getUnnormalizedRotation(), new Vector3f(getScale()).mul(sizeMul));
         return transformMatrix;
     }
 
@@ -136,6 +136,10 @@ public class Transform implements Serializable {
 
     public Quaternionfc getNormalizedRotation() {
         return transformMatrix.getNormalizedRotation(new Quaternionf());
+    }
+
+    public Quaternionfc getUnnormalizedRotation() {
+        return transformMatrix.getUnnormalizedRotation(new Quaternionf());
     }
 
     public AxisAngle4f getRotation() {

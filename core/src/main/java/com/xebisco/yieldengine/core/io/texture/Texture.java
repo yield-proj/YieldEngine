@@ -11,11 +11,15 @@ public final class Texture implements Serializable, IDispose, ILoad {
     private transient int width, height;
     private final String path;
 
-    private Texture(Serializable imageReference, int width, int height, String path) {
+    public Texture(String path) {
+        this.path = path;
+    }
+
+    private Texture(Serializable imageReference, int width, int height) {
         this.imageReference = imageReference;
         this.width = width;
         this.height = height;
-        this.path = path;
+        this.path = null;
     }
 
     @Override
@@ -34,7 +38,7 @@ public final class Texture implements Serializable, IDispose, ILoad {
     }
 
     public static Texture create(Serializable imageReference, int width, int height) {
-        return new Texture(imageReference, width, height, null);
+        return new Texture(imageReference, width, height);
     }
 
     public String getPath() {

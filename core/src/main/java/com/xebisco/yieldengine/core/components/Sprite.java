@@ -14,7 +14,7 @@ public class Sprite extends Rectangle {
     @Visible
     @Editable
     @FileExtensions(value = {"PNG", "JPEG", "JPG", "GIF", "TIFF", "WBMP", "BMP"}, name = "Image Files")
-    private Texture texture = IO.getInstance().getDefaultTexture();
+    private Texture texture;
 
     protected final Paint paint = new Paint();
 
@@ -50,7 +50,7 @@ public class Sprite extends Rectangle {
 
     @Override
     public void onPaint(Graphics g) {
-        g.getG1().drawRect(getSize().x(), getSize().y(), paint.setTransform(getWorldTransform()).setColor(getColor()).setTexture(texture));
+        g.getG1().drawImage(getSize().x(), getSize().y(), paint.setTransform(getWorldTransform()).setColor(getColor()).setTexture(texture == null ? IO.getInstance().getDefaultTexture() : texture));
     }
 
     public Texture getTexture() {

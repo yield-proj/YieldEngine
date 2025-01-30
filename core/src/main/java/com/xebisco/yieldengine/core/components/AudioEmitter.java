@@ -19,7 +19,7 @@ public class AudioEmitter extends Component {
     private final AudioSource source;
     @Visible
     @Editable
-    @FileExtensions(value = {"WAV"}, name = "Audio Files")
+    @FileExtensions(value = {"OGG"}, name = "Audio Files")
     private Audio audio;
     @Visible
     @Editable

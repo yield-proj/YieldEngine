@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 public @interface FileExtensions {
     String[] IMAGE_EXTENSIONS = new String[]{"PNG", "JPEG", "JPG", "GIF", "TIFF", "WBMP", "BMP"};
     String[] FONT_EXTENSIONS = new String[]{"TTF"};
-    String[] AUDIO_EXTENSIONS = new String[]{"WAV"};
+    String[] AUDIO_EXTENSIONS = new String[]{"OGG"};
 
     String name() default "Custom Files";
 

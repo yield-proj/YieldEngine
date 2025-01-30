@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
@@ -89,7 +88,9 @@ public class YLDG1GLImpl implements YLDG1 {
         Transform t = new Transform(paint.getTransform());
         float cat1 = point1.x() - point2.x(), cat2 = point1.y() - point2.y();
         t.translate(cat1 / -2f + x1, cat2 / -2f + y1);
-        t.rotateZ((float) Math.atan2(cat2, cat1));
+        float rot = (float) Math.atan2(cat2, cat1);
+        if (rot != 0)
+            t.rotateZ(rot);
         drawPolygon(t, paint.getCamera(), new Vector2f((float) Math.sqrt(Math.pow(cat1, 2) + Math.pow(cat2, 2)), paint.getStrokeSize()), paint.getColor(), rectangleArrayContext, 0, 0, true);
     }
 

@@ -10,6 +10,10 @@ public class Audio implements Serializable, IDispose, ILoad {
     private transient Serializable audioReference;
     private final String path;
 
+    public Audio(String path) {
+        this.path = path;
+    }
+
     private Audio(Serializable audioReference) {
         this.path = null;
         this.audioReference = audioReference;

@@ -31,6 +31,8 @@ public class Test2 {
             e.addComponents(
                     new Rectangle(new Vector2f(10, 10))
             );
+            e.getTransform().rotateZ((float) Math.toRadians(180));e.getTransform().scale(2, 0);
+
             return e;
         });
 

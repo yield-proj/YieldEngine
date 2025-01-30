@@ -15,10 +15,11 @@
 
 package com.xebisco.yieldengine.core;
 
+import org.joml.Quaternionf;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.TreeSet;
 
 public final class Entity extends OnSceneBehavior implements Comparable<Entity> {
     private final String name;
@@ -47,7 +48,7 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
 
     public Entity[] getAllChildren() {
         List<Entity> entities = new ArrayList<>(getChildren());
-        for(Entity e : getChildren()) {
+        for (Entity e : getChildren()) {
             Collections.addAll(entities, e.getAllChildren());
         }
         return entities.toArray(new Entity[0]);
@@ -59,7 +60,7 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
     }
 
     public void addToSceneRoot() {
-        if(parent != null) removeFromParent();
+        if (parent != null) removeFromParent();
         Global.getCurrentScene().getEntities().add(this);
     }
 
@@ -140,9 +141,9 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
     }
 
     private Transform getNewWorldTransform() {
-        if(parent == null) return transform;
+        if (parent == null) return transform;
         Transform worldTransform = new Transform(parent.getNewWorldTransform());
-        worldTransform.getTransformMatrix().translationRotateScale(worldTransform.getTranslation(), worldTransform.getNormalizedRotation(),  worldTransform.getScale());
+        worldTransform.getTransformMatrix().translationRotateScale(worldTransform.getTranslation(), worldTransform.getRotation().get(new Quaternionf()), worldTransform.getScale());
         return worldTransform;
     }
 

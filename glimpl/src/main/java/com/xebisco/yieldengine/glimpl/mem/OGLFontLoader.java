@@ -50,7 +50,7 @@ public class OGLFontLoader implements IFontLoader {
                     glyphs.put(c, OGLTextureLoader.loadTextureFromBufferedImage(image, TextureFilter.NEAREST, window));
                 }
             });
-            return Font.create(glyphs, awtFont.getName(), size);
+            return Font.create(glyphs, size);
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }

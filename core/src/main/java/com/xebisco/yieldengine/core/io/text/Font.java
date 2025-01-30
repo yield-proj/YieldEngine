@@ -14,9 +14,9 @@ public final class Font implements Serializable, IDispose, ILoad {
         this.properties = properties;
     }
 
-    private Font(Serializable fontReference, String path, float size) {
+    private Font(Serializable fontReference, float size) {
         this.fontReference = fontReference;
-        properties = new FontProperties(path, size, false);
+        properties = new FontProperties(null, size, false);
     }
 
     @Override
@@ -32,8 +32,8 @@ public final class Font implements Serializable, IDispose, ILoad {
         }
     }
 
-    public static Font create(Serializable fontReference, String name, float size) {
-        return new Font(fontReference, name, size);
+    public static Font create(Serializable fontReference, float size) {
+        return new Font(fontReference, size);
     }
 
     @Override
