@@ -26,6 +26,10 @@ public abstract class Component extends OnSceneBehavior implements Serializable 
 
     }
 
+    public void onUnstoppableUpdate() {
+
+    }
+
     @Override
     public void onLateUpdate() {
 

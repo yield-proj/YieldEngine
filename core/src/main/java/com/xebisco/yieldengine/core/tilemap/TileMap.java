@@ -2,6 +2,7 @@ package com.xebisco.yieldengine.core.tilemap;
 
 import com.xebisco.yieldengine.core.Component;
 import com.xebisco.yieldengine.core.Entity;
+import com.xebisco.yieldengine.core.EntityHeader;
 import com.xebisco.yieldengine.core.Transform;
 import com.xebisco.yieldengine.core.components.Sprite;
 import com.xebisco.yieldengine.core.io.texture.Texture;
@@ -27,7 +28,7 @@ public class TileMap extends Component implements Serializable {
 
     @Override
     public void onCreate() {
-        Entity spritesEntity = new Entity("sprites", new Transform());
+        Entity spritesEntity = new Entity(new EntityHeader("sprites"), new Transform());
         spritesEntity.addToParent(getEntity());
         for(int y = 0; y < map[0].length; y++) {
             for(int x = 0; x < map.length; x++) {

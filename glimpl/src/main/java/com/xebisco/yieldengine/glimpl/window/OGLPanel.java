@@ -15,6 +15,7 @@
 
 package com.xebisco.yieldengine.glimpl.window;
 
+import com.xebisco.yieldengine.core.Global;
 import com.xebisco.yieldengine.utils.concurrency.RunThread;
 import com.xebisco.yieldengine.core.graphics.Graphics;
 import com.xebisco.yieldengine.core.graphics.IPainter;
@@ -52,6 +53,7 @@ public class OGLPanel implements IPainterReceiver {
     private boolean ignoreCloseHooks;
 
     public static OGLPanel newWindow(int width, int height) {
+        Global.debug("Creating SWING UI window.");
         JFrame frame = new JFrame("Yield Engine");
         OGLPanel panel = new OGLPanel();
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -81,6 +83,7 @@ public class OGLPanel implements IPainterReceiver {
     }
 
     public void runCloseHooks() {
+        Global.debug("Running GL implementation close hooks.");
         closeHooks.forEach(Runnable::run);
         CompletableFuture.runAsync(() -> {
             try {
@@ -98,10 +101,12 @@ public class OGLPanel implements IPainterReceiver {
 
         canvas.setFocusable(false);
 
+        Global.debug("Starting GL implementation thread.");
         glThread.start();
-        paint(null);
+        //paint(null);
 
         SwingUtilities.invokeLater(() -> {
+            Global.debug("Updating SWING UI Component Tree.");
             SwingUtilities.updateComponentTreeUI(SwingUtilities.getWindowAncestor(contentPane));
             contentPane.requestFocusInWindow();
             SwingUtilities.getWindowAncestor(contentPane).addWindowListener(new WindowAdapter() {
@@ -134,6 +139,7 @@ public class OGLPanel implements IPainterReceiver {
 
         @Override
         public void initGL() {
+            Global.debug("Starting OGL.");
             createCapabilities();
             graphics.getG1().initContext();
 
@@ -145,6 +151,7 @@ public class OGLPanel implements IPainterReceiver {
         public void paintGL() {
             if (callInOpenGLThread.isEmpty()) {
                 if (requestedResize) {
+                    Global.debug("Updating viewport.");
                     glViewport(0, 0, getWidth(), getHeight());
                     requestedResize = false;
                 }
@@ -159,11 +166,10 @@ public class OGLPanel implements IPainterReceiver {
                 swapBuffers();
             } else {
                 try {
-                    callInOpenGLThread.removeIf(r -> {
-                        r.run();
-                        return true;
-                    });
-                } catch (ConcurrentModificationException ignore) {
+                    callInOpenGLThread.forEach(Runnable::run);
+                    callInOpenGLThread.clear();
+                } catch (ConcurrentModificationException e) {
+                    Global.debug(e.toString());
                 }
             }
         }

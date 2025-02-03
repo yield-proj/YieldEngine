@@ -40,6 +40,15 @@ public class Global {
     private static Scene currentScene;
     public static final Random RANDOM = new Random();
     public static final Logger LOGGER = new Logger();
+    private static String[] tags = new String[] {
+            "default",
+            "player"
+    };
+    private static String[] layers = new String[] {
+            "default",
+            "ui",
+            "post"
+    };
 
     public static void log(Object msg) {
         LOGGER.log(msg);
@@ -144,5 +153,21 @@ public class Global {
     public static void setCurrentScene(Scene currentScene) {
         if (Global.currentScene != null) Global.currentScene.dispose();
         Global.currentScene = currentScene;
+    }
+
+    public static String[] getTags() {
+        return tags;
+    }
+
+    public static void setTags(String[] tags) {
+        Global.tags = tags;
+    }
+
+    public static String[] getLayers() {
+        return layers;
+    }
+
+    public static void setLayers(String[] layers) {
+        Global.layers = layers;
     }
 }

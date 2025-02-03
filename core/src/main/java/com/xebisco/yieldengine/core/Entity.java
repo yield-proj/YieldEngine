@@ -22,17 +22,17 @@ import java.util.Collections;
 import java.util.List;
 
 public final class Entity extends OnSceneBehavior implements Comparable<Entity> {
-    private final String name;
+    private final EntityHeader header;
     private Entity parent;
     private final List<Entity> children = new ArrayList<>();
     private final ArrayList<Component> components = new ArrayList<>();
     private final Transform transform;
     private int preferredIndex;
-    private final ArrayList<String> tags = new ArrayList<>();
     private final Transform worldTransform = new Transform();
+    private boolean started;
 
-    public Entity(String name, Transform transform) {
-        this.name = name;
+    public Entity(EntityHeader header, Transform transform) {
+        this.header = header;
         this.transform = transform;
     }
 
@@ -77,29 +77,40 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
 
     @Override
     public void onStart() {
+        if (!header.isEnabled()) return;
         sortChildren();
         updateWorldTransform();
         components.forEach(Component::onStart);
         children.forEach(Entity::onStart);
+        started = true;
     }
 
     @Override
     public void onUpdate() {
+        if (!header.isEnabled()) return;
+        if (!started) onStart();
         sortChildren();
-        components.forEach(Component::onUpdate);
+        components.forEach(c -> {
+            if (!Global.getCurrentScene().isStopComponentUpdate()) c.onUpdate();
+            c.onUnstoppableUpdate();
+        });
         children.forEach(Entity::onUpdate);
         setFrames(getFrames() + 1);
     }
 
     @Override
     public void onLateUpdate() {
+        if (!header.isEnabled()) return;
         updateWorldTransform();
-        components.forEach(Component::onLateUpdate);
+        components.forEach(c -> {
+            if (!Global.getCurrentScene().isStopComponentUpdate()) c.onLateUpdate();
+        });
         children.forEach(Entity::onLateUpdate);
     }
 
     @Override
     public void dispose() {
+        if (!header.isEnabled()) return;
         super.dispose();
         components.forEach(Component::dispose);
         children.forEach(Entity::dispose);
@@ -109,6 +120,11 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
     @Override
     public int compareTo(Entity o) {
         return Integer.compare(o.preferredIndex, preferredIndex);
+    }
+
+    public boolean containsTag(String tag) {
+        for (String t : header.getTags()) if (tag.hashCode() == t.hashCode() && tag.equals(t)) return true;
+        return false;
     }
 
     public Component getComponent(Class<? extends Component> componentClass, int index) {
@@ -147,10 +163,6 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
         return worldTransform;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public Entity getParent() {
         return parent;
     }
@@ -181,11 +193,20 @@ public final class Entity extends OnSceneBehavior implements Comparable<Entity> 
         return this;
     }
 
-    public ArrayList<String> getTags() {
-        return tags;
-    }
-
     public Transform getWorldTransform() {
         return worldTransform;
+    }
+
+    public EntityHeader getHeader() {
+        return header;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public Entity setStarted(boolean started) {
+        this.started = started;
+        return this;
     }
 }

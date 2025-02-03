@@ -27,7 +27,7 @@ public class Test2 {
         Scene s = new Scene(new ArrayList<>());
 
         s.getEntityFactories().add((EntityFactory) () -> {
-            Entity e = new Entity("", new Transform());
+            Entity e = new Entity(new EntityHeader(""), new Transform());
             e.addComponents(
                     new Rectangle(new Vector2f(10, 10))
             );

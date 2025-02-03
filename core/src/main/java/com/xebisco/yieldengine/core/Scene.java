@@ -130,6 +130,8 @@ public final class Scene implements IDispose, Serializable {
     @Editable
     private Color4f backgroundColor = new Color4f(0, 0, 0);
 
+    private boolean stopComponentUpdate;
+
     @Override
     public void dispose() {
         sceneController.dispose();
@@ -188,5 +190,14 @@ public final class Scene implements IDispose, Serializable {
 
     public ArrayList<EntityFactory> getEntityFactories() {
         return entityFactories;
+    }
+
+    public boolean isStopComponentUpdate() {
+        return stopComponentUpdate;
+    }
+
+    public Scene setStopComponentUpdate(boolean stopComponentUpdate) {
+        this.stopComponentUpdate = stopComponentUpdate;
+        return this;
     }
 }
