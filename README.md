@@ -68,17 +68,16 @@ loop.run();
 ### More Detailed Examples
 1. Creating a sprite with texture:
 ```java
-Texture texture = IO.getInstance().loadTexture("player.png");
+Texture texture = IO.getInstance().loadTexture("path/to/image.png");
 Entity sprite = new Entity(new EntityHeader("Sprite"), new Transform());
 sprite.addComponents(new Sprite(texture));
 ```
 
 2. Adding audio to a scene:
 ```java
-AudioEmitter emitter = new AudioEmitter("background.wav");
-emitter.setGain(0.5f);
-emitter.setLooping(true);
-entity.addComponents(emitter);
+    Audio audio = IO.getInstance().loadAudio("path/to/sound.ogg");
+    Entity emitter = new Entity(new EntityHeader("Emitter"), new Transform());
+    emitter.addComponents(new AudioEmitter(audio, true));
 ```
 
 ## Data Flow

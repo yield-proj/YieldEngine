@@ -7,7 +7,6 @@ This implementation leverages the OpenAL (Open Audio Library) API through LWJGL 
 ## Module Structure
 ```
 alimpl/
-├── pom.xml                 # Maven project configuration with LWJGL dependencies
 └── src/main/java/com/xebisco/yieldengine/alimpl/
     ├── OALAudioLoader.java # Handles loading/unloading of audio files and sources
     ├── OALAudioPlayer.java # Controls audio playback and 3D positioning
