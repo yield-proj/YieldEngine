@@ -35,7 +35,7 @@ public class OGLFontLoader implements IFontLoader {
             metricsImageGraphics.dispose();
             metricsImage.flush();
             HashMap<Character, Texture> glyphs = new HashMap<>();
-            IntStream.range(0, 1000).parallel().forEach(i -> {
+            IntStream.range(0, 255).parallel().forEach(i -> {
                 char c = (char) i;
                 if (awtFont.canDisplay(c) && metrics.charWidth(c) > 0) {
                     BufferedImage image = new BufferedImage(metrics.charWidth(c), metrics.getHeight(), BufferedImage.TYPE_INT_ARGB);

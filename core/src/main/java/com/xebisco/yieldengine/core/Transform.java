@@ -19,16 +19,28 @@ import org.joml.*;
 
 import java.io.Serializable;
 
-public class Transform implements Serializable {
+public class Transform implements Serializable, Cloneable {
     private static final long serialVersionUID = 2642369926201568158L;
     private final Matrix4f transformMatrix = new Matrix4f();
-
-    public Transform(Transform transform) {
-        transform.transformMatrix.get(transformMatrix);
-    }
-
     public Transform() {
         transformMatrix.scale(new Vector3f(1, 1, 1));
+    }
+
+    public Transform(Transform transform) {
+        this();
+        apply(transform);
+    }
+
+    public Transform position(Vector3fc position) {
+        translate(getTranslation().mul(-1, new Vector3f()));
+        translate(position);
+        return this;
+    }
+
+    public Transform position(Vector2fc position) {
+        translate(getTranslation().mul(-1, new Vector3f()));
+        translate(position);
+        return this;
     }
 
     public Transform translate(Vector3fc translation) {
@@ -86,6 +98,11 @@ public class Transform implements Serializable {
         return this;
     }
 
+    public Transform scale(float x, float y, float z, Vector3fc pivot) {
+        scale(new Vector3f(x, y, z), pivot);
+        return this;
+    }
+
     public Transform scale(float x, float y) {
         scale(new Vector2f(x, y), new Vector2f(getTranslation()));
         return this;
@@ -98,6 +115,13 @@ public class Transform implements Serializable {
 
     public Transform scale(Vector2fc scale) {
         scale(scale.x(), scale.y());
+        return this;
+    }
+
+    public Transform apply(Transform t) {
+        translate(t.getTranslation());
+        scale(t.getScale().x() - 1, t.getScale().y() - 1, t.getScale().z() - 1, t.getTranslation());
+        rotate(t.getEulerAngles(), t.getTranslation());
         return this;
     }
 
@@ -147,7 +171,7 @@ public class Transform implements Serializable {
     }
 
     public Vector3fc getEulerAngles() {
-        return getNormalizedRotation().getEulerAnglesXYZ(new Vector3f());
+        return getUnnormalizedRotation().getEulerAnglesXYZ(new Vector3f());
     }
 
     public Vector3fc getScale() {
@@ -160,5 +184,11 @@ public class Transform implements Serializable {
                 "translation=" + getTranslation() +
                 ", normalizedRotation=" + getNormalizedRotation() +
                 ", scale=" + getScale() + "}";
+    }
+
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
+    @Override
+    public Transform clone() {
+        return new Transform(this);
     }
 }

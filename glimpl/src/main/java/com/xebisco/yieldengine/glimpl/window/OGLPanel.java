@@ -40,7 +40,7 @@ import static org.lwjgl.opengl.GL20.*;
 
 public class OGLPanel implements IPainterReceiver {
 
-    private final Set<Runnable> callInOpenGLThread = new HashSet<>();
+    private final List<Runnable> callInOpenGLThread = new ArrayList<>();
 
     private boolean requestedResize = true;
     private final List<Runnable> closeHooks = new ArrayList<>();
@@ -127,6 +127,7 @@ public class OGLPanel implements IPainterReceiver {
         glThread.run(() -> {
             this.painters = painters;
             canvas.render();
+            getContentPane().revalidate();
             return null;
         });
     }
@@ -151,7 +152,7 @@ public class OGLPanel implements IPainterReceiver {
         public void paintGL() {
             if (callInOpenGLThread.isEmpty()) {
                 if (requestedResize) {
-                    Global.debug("Updating viewport.");
+                    Global.debug("Updating viewport to (" + getWidth() + "x" + getHeight() + ")");
                     glViewport(0, 0, getWidth(), getHeight());
                     requestedResize = false;
                 }
@@ -166,8 +167,13 @@ public class OGLPanel implements IPainterReceiver {
                 swapBuffers();
             } else {
                 try {
-                    callInOpenGLThread.forEach(Runnable::run);
-                    callInOpenGLThread.clear();
+                    while (!callInOpenGLThread.isEmpty()) {
+                        try {
+                            callInOpenGLThread.get(0).run();
+                        } catch (NullPointerException ignore) {
+                        }
+                        callInOpenGLThread.remove(0);
+                    }
                 } catch (ConcurrentModificationException e) {
                     Global.debug(e.toString());
                 }
@@ -197,7 +203,7 @@ public class OGLPanel implements IPainterReceiver {
         return canvas;
     }
 
-    public Set<Runnable> getCallInOpenGLThread() {
+    public List<Runnable> getCallInOpenGLThread() {
         return callInOpenGLThread;
     }
 

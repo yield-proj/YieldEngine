@@ -5,6 +5,7 @@ import com.xebisco.yieldengine.core.input.MouseButton;
 
 import java.awt.event.*;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,7 +42,10 @@ public class OGLMouseDevice implements IMouseDevice, MouseListener, MouseWheelLi
 
     @Override
     public void addPressedMouseButtons(Collection<MouseButton> mouseButtons) {
-        mouseButtons.addAll(buttons);
+        try {
+            mouseButtons.addAll(buttons);
+        } catch (ConcurrentModificationException ignore) {
+        }
         buttons.remove(MouseButton.SCROLL_WELL_UP);
         buttons.remove(MouseButton.SCROLL_WELL_DOWN);
     }

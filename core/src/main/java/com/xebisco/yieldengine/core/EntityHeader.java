@@ -6,7 +6,7 @@ import com.xebisco.yieldengine.utils.Visible;
 
 import java.io.Serializable;
 
-public class EntityHeader implements Serializable {
+public class EntityHeader implements Serializable, Cloneable {
     @Visible
     @Editable
     private String name;
@@ -62,5 +62,16 @@ public class EntityHeader implements Serializable {
     public EntityHeader setEnabled(boolean enabled) {
         this.enabled = enabled;
         return this;
+    }
+
+    @Override
+    public EntityHeader clone() {
+        try {
+            EntityHeader clone = (EntityHeader) super.clone();
+            clone.tags = tags.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
