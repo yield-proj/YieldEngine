@@ -45,7 +45,8 @@ public class Sprite extends Rectangle {
 
     @Override
     public void onCreate() {
-        texture.loadIfNull();
+        if (texture != null)
+            texture.loadIfNull();
     }
 
     @Override

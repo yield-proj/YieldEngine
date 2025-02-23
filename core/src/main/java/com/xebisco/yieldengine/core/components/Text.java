@@ -45,7 +45,8 @@ public class Text extends Component implements IPainter {
 
     @Override
     public void onCreate() {
-        font.loadIfNull();
+        if (font != null)
+            font.loadIfNull();
     }
 
     @Override

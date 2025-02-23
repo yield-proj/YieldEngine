@@ -37,6 +37,10 @@ public final class Scene implements IDispose, Serializable {
         this.entityFactories = entityFactories;
     }
 
+    public Scene() {
+        this(new ArrayList<>());
+    }
+
     public final class SceneController extends OnSceneBehavior implements Serializable {
         @Override
         public void onCreate() {

@@ -15,6 +15,7 @@
 
 package com.xebisco.yieldengine.core;
 
+import com.xebisco.yieldengine.core.components.Text;
 import com.xebisco.yieldengine.core.graphics.Graphics;
 import com.xebisco.yieldengine.core.graphics.IPainterReceiver;
 import com.xebisco.yieldengine.core.input.IKeyDevice;
@@ -56,6 +57,10 @@ public class Global {
 
     public static void debug(Object msg) {
         LOGGER.debug(msg);
+    }
+
+    public static EntityFactory textFactory(String contents) {
+        return () -> new Entity(new EntityHeader("TEXT"), new Transform()).addComponents(new Text(contents));
     }
 
     /*public static LoopContext getOpenGLOpenALLoopContext(int width, int height) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException {
