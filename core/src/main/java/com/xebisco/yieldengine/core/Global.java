@@ -37,6 +37,11 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * The Global class provides utility methods and factories for the Yield Engine.
+ * This class serves as a central access point for core engine functionality
+ * and common operations.
+ */
 public class Global {
     private static Scene currentScene;
     public static final Random RANDOM = new Random();
@@ -59,6 +64,13 @@ public class Global {
         LOGGER.debug(msg);
     }
 
+    /**
+     * Creates a text entity factory with the specified text content.
+     * This factory can be used to create text entities in a scene.
+     *
+     * @param contents The text content to be displayed
+     * @return An EntityFactory that creates text entities
+     */
     public static EntityFactory textFactory(String contents) {
         return () -> new Entity(new EntityHeader("TEXT"), new Transform()).addComponents(new Text(contents));
     }
@@ -98,6 +110,14 @@ public class Global {
         return l;
     }*/
 
+    /**
+     * Creates and returns a new OpenGL and OpenAL-based loop context with specified dimensions.
+     *
+     * @param width The width of the window in pixels
+     * @param height The height of the window in pixels
+     * @return A new LoopContext configured for OpenGL and OpenAL
+     * @throws Exception If initialization fails
+     */
     public static LoopContext getOpenGLOpenALLoopContext(int width, int height) throws NoSuchMethodException, ClassNotFoundException, InvocationTargetException, IllegalAccessException, InstantiationException, InterruptedException {
         Object panel = getOpenGLOpenALLCP0(width, height);
         return getOpenGLOpenALLCP1(panel);
@@ -145,16 +165,35 @@ public class Global {
         return getOpenGLOpenALLCP1(panel, new DefaultAbsolutePathGetter());
     }
 
+    /**
+     * A mathematical utility method that rotates a point around a center point by a given angle using trigonometry.
+     *
+     * @param angle The angle of rotation in radians
+     * @param center The center point around which rotation is performed
+     * @param point The point to be rotated
+     * @return The rotated point
+     */
     public static Vector2f rotatePointAroundCenter(double angle, Vector2fc center, Vector2fc point) {
         double sinA = Math.sin(angle);
         double cosA = Math.cos(angle);
         return new Vector2f((float) ((point.x() - center.x()) * cosA - (point.y() - center.y()) * sinA + center.x()), (float) ((point.x() - center.x()) * sinA - (point.y() - center.y()) * cosA + center.y()));
     }
 
+    /**
+     * Returns the current active scene in the engine.
+     *
+     * @return The current scene
+     */
     public static Scene getCurrentScene() {
         return currentScene;
     }
 
+    /**
+     * Sets the current active scene in the engine.
+     * This method should be called before initializing the scene.
+     *
+     * @param currentScene The scene to be set as current
+     */
     public static void setCurrentScene(Scene currentScene) {
         if (Global.currentScene != null) Global.currentScene.dispose();
         Global.currentScene = currentScene;
