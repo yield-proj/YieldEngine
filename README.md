@@ -24,6 +24,83 @@ The engine can produce executables capable of running in a number of platforms, 
 ## 🪪 Documentation
 The Yield Engine documentation is hosted on github websites and is contained in this repository. [Check the docs](https://yield-proj.github.io/YieldEngine/index.html) or [Check the docs folder](https://github.com/yield-proj/YieldEngine/tree/master/docs).
 
+## Core Repository Structure
+```
+core/
+└── src/main/java/com/xebisco/yieldengine/core/
+    ├── Scene.java         # Core scene management
+    ├── Entity.java        # Base entity class for game objects
+    ├── Component.java     # Base component class for entity behaviors
+    ├── components/        # Built-in components for common functionality
+    │   ├── AudioEmitter.java    # Spatial audio source component
+    │   ├── AudioListener.java   # Audio receiver component
+    │   ├── Rectangle.java       # 2D rectangle rendering
+    │   ├── Sprite.java         # 2D image rendering
+    │   └── Text.java           # Text rendering
+    ├── graphics/         # Graphics system implementation
+    │   └── yldg1/       # Primary graphics implementation
+    ├── input/           # Input handling system
+    └── io/             # Resource management (textures, audio, fonts)
+```
+
+### Quick Start
+1. Create a basic game scene:
+```java
+Scene gameScene = new Scene();
+gameScene.setBackgroundColor(new Color4f(0.2f, 0.3f, 0.8f));
+Global.setCurrentScene(gameScene);
+```
+
+2. Add entities to the scene:
+```java
+Entity player = new Entity(new EntityHeader("Player"), new Transform());
+player.addComponents(new Rectangle().setColor(new Color4f(1, 0, 0)));
+gameScene.getEntities().add(player);
+```
+
+3. Start the game loop:
+```java
+LoopContext loop = Global.getOpenGLOpenALLoopContext(800, 600);
+gameScene.create();
+loop.run();
+```
+
+### More Detailed Examples
+1. Creating a sprite with texture:
+```java
+Texture texture = IO.getInstance().loadTexture("player.png");
+Entity sprite = new Entity(new EntityHeader("Sprite"), new Transform());
+sprite.addComponents(new Sprite(texture));
+```
+
+2. Adding audio to a scene:
+```java
+AudioEmitter emitter = new AudioEmitter("background.wav");
+emitter.setGain(0.5f);
+emitter.setLooping(true);
+entity.addComponents(emitter);
+```
+
+## Data Flow
+The engine processes game data through a component-based entity system, managing rendering and updates through a scene graph.
+
+```ascii
+[Input]    ->   [Scene Controller]   ->  [Entity Updates] -> [Component Processing]
+                                               |
+                                               v
+[Resource Manager] <- [Graphics/Audio] <- [Render Queue]
+```
+
+Component interactions:
+1. [Scene/SceneController](https://github.com/yield-proj/YieldEngine/blob/master/core/src/main/java/com/xebisco/yieldengine/core/Scene.java) manages entity lifecycle and updates
+2. [Entities](https://github.com/yield-proj/YieldEngine/blob/master/core/src/main/java/com/xebisco/yieldengine/core/Entity.java) contain components and maintain hierarchical relationships
+3. [Components](https://github.com/yield-proj/YieldEngine/blob/master/core/src/main/java/com/xebisco/yieldengine/core/Component.java) handle specific behaviors (rendering, audio, physics)
+4. [Graphics](https://github.com/yield-proj/YieldEngine/blob/master/core/src/main/java/com/xebisco/yieldengine/core/graphics) system processes render queue using YLDG1 implementations
+5. Resource manager[(IO)](https://github.com/yield-proj/YieldEngine/blob/master/core/src/main/java/com/xebisco/yieldengine/core/Entity.java) handles asset loading and unloading
+6. [Input](https://github.com/yield-proj/YieldEngine/blob/master/core/src/main/java/com/xebisco/yieldengine/core/input) system provides keyboard and mouse state updates
+7. [Audio](https://github.com/yield-proj/YieldEngine/blob/master/core/src/main/java/com/xebisco/yieldengine/core/io/audio) system manages spatial audio through emitter/listener components
+
+
 ## 😁 Getting the engine
 ### Compiled jars
 A compiled version of every main release is hosted here on github, check [Releases](https://github.com/yield-proj/YieldEngine/releases), to choose witch version of the engine to download.
