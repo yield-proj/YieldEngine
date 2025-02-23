@@ -1,4 +1,4 @@
-<img align="right" src="yieldIcon.png" height="200" width="200">
+<img align="right" src="yieldIcon.png" height="200" width="200" alt="yield icon">
 
 ![image](https://img.shields.io/github/languages/top/xebisco/YieldEngine?style=round-square)
 ![image](https://img.shields.io/github/downloads/xebisco/YieldEngine/total?style=round-square)

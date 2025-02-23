@@ -4,6 +4,8 @@ This project demonstrates a basic implementation of the Xebisco Yield Engine, sh
 
 The project utilizes the engine's core components to set up a game loop context, create a scene, and render text. It demonstrates fundamental concepts such as scene management, entity creation, and the engine's threading system. This example is particularly useful for developers who are getting started with the engine and want to understand its basic architecture.
 
+<img align="middle" src="hw.png" height="811" width="1308" alt="module screenshot">
+
 ## Module Structure
 ```
 hello-world/
