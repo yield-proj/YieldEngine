@@ -23,19 +23,20 @@ public final class ASyncFunction<R> implements IAWait {
     private final LockProcess lockProcess;
     private R returnValue;
     private final AtomicBoolean timedOut = new AtomicBoolean();
+    public static final int NONE = 0;
 
     private ASyncFunction(LockProcess lockProcess) {
         this.lockProcess = lockProcess;
     }
 
-    public static <R> ASyncFunction<R> aSync(IRunnableWithReturnValue<R> run, int timeOutMillis) {
+    public static <R> ASyncFunction<R> aSync(IRunnableWithReturnValue<R> run, int timeOutMillis, long sleepTimeMillis) {
         ASyncFunction<R> aSyncFunction = new ASyncFunction<>(new LockProcess());
 
         Timer[] timeOutTimer = new Timer[1];
 
         Thread[] functionThread = new Thread[1];
 
-        if (timeOutMillis > 0) {
+        if (timeOutMillis > NONE) {
             timeOutTimer[0] = new Timer();
             timeOutTimer[0].schedule(new TimerTask() {
                 @Override
@@ -57,6 +58,13 @@ public final class ASyncFunction<R> implements IAWait {
         }
 
         functionThread[0] = new Thread(() -> {
+            if (sleepTimeMillis > NONE) {
+                try {
+                    Thread.sleep(sleepTimeMillis);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             aSyncFunction.setReturnValue(run.apply());
             aSyncFunction.getLockProcess().unlock();
 
@@ -73,8 +81,12 @@ public final class ASyncFunction<R> implements IAWait {
         return aSyncFunction;
     }
 
+    public static <R> ASyncFunction<R> aSync(IRunnableWithReturnValue<R> run, int timeOutMillis) {
+        return aSync(run, timeOutMillis, NONE);
+    }
+
     public static <R> ASyncFunction<R> aSync(IRunnableWithReturnValue<R> run) {
-        return aSync(run, 0);
+        return aSync(run, NONE);
     }
 
     public static ASyncFunction<Void> aSync(Runnable run, int timeOutMillis) {
@@ -85,7 +97,7 @@ public final class ASyncFunction<R> implements IAWait {
     }
 
     public static ASyncFunction<Void> aSync(Runnable run) {
-        return aSync(run, 0);
+        return aSync(run, NONE);
     }
 
     @Override
