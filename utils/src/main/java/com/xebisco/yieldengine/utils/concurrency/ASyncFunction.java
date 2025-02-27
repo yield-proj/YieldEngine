@@ -85,6 +85,13 @@ public final class ASyncFunction<R> implements IAWait {
         return aSync(run, timeOutMillis, NONE);
     }
 
+    public static ASyncFunction<Void> aSync(Runnable run, int timeOutMillis, int sleepTimeMillis) {
+        return aSync(() -> {
+            run.run();
+            return null;
+        }, timeOutMillis, sleepTimeMillis);
+    }
+
     public static <R> ASyncFunction<R> aSync(IRunnableWithReturnValue<R> run) {
         return aSync(run, NONE);
     }
